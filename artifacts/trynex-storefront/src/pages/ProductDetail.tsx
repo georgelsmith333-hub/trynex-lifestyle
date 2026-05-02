@@ -1339,8 +1339,8 @@ export default function ProductDetail() {
                         { label: "Print Method", value: "DTF / Screen Print / Sublimation" },
                         { label: "Available Sizes", value: product.sizes?.join(", ") || "S, M, L, XL, 2XL" },
                         { label: "Available Colors", value: product.colors?.join(", ") || "Multiple" },
-                        { label: "Production Time", value: "24-48 hours", highlight: true },
-                        { label: "Delivery", value: "24-48 hours nationwide", highlight: true },
+                        { label: "Production Time", value: "24 hours", highlight: true },
+                        { label: "Delivery", value: "24 hours nationwide", highlight: true },
                       ].map(({ label, value, highlight }) => (
                         <div key={label} className="flex items-start gap-3 py-2 border-b border-gray-100">
                           <span className="font-bold text-sm text-gray-500 w-36 shrink-0">{label}</span>

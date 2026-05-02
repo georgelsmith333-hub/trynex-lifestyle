@@ -5,9 +5,9 @@ import { Truck, Clock, MapPin, Package, ShieldCheck, AlertCircle } from "lucide-
 
 const SHIPPING_ZONES = [
   { zone: "Dhaka City", time: "24 hours", cost: "৳60" },
-  { zone: "Dhaka Division", time: "24-48 hours", cost: "৳80" },
-  { zone: "Chittagong Division", time: "24-48 hours", cost: "৳100" },
-  { zone: "Other Divisions", time: "24-48 hours", cost: "৳100" },
+  { zone: "Dhaka Division", time: "24 hours", cost: "৳80" },
+  { zone: "Chittagong Division", time: "24 hours", cost: "৳100" },
+  { zone: "Other Divisions", time: "24 hours", cost: "৳100" },
 ];
 
 export default function ShippingPolicy() {
@@ -68,7 +68,7 @@ export default function ShippingPolicy() {
               </h2>
               <div className="p-5 rounded-2xl bg-green-50 border border-green-100">
                 <p className="text-sm text-gray-700 leading-relaxed">
-                  All orders are processed and shipped within <strong className="text-green-600">24-48 hours</strong> of payment confirmation. Ready-made products typically ship within <strong className="text-green-600">24 hours</strong>. Processing does not include weekends or public holidays.
+                  All orders are processed and shipped within <strong className="text-green-600">24 hours</strong> of payment confirmation. Ready-made products typically ship within <strong className="text-green-600">12 hours</strong>. Processing does not include weekends or public holidays.
                 </p>
               </div>
             </section>

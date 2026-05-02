@@ -2207,6 +2207,16 @@ export default function DesignStudio() {
                     />
                   ))}
 
+                  {/* Edge midpoint handles — vertical/horizontal only stretch */}
+                  {selectedLayer && selectedLayer.type === "image" && edgeMidpoints.map(h => (
+                    <rect key={h.key}
+                      x={h.x - 5} y={h.y - 5} width={10} height={10}
+                      rx={2} fill="white" stroke="#E85D04" strokeWidth="2"
+                      style={{ cursor: h.cursor, touchAction: "none", filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.18))" }}
+                      onPointerDown={e => handleEdgeResizeDown(e as unknown as React.PointerEvent<SVGCircleElement>, h.key)}
+                    />
+                  ))}
+
                   {/* Red delete (×) button at the top-right corner of the selected layer */}
                   {selectedLayer && selectedLayer.type === "image" && (() => {
                     const ne = rotatedCorners.find(c => c.key === "ne");

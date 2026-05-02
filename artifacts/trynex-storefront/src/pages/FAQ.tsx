@@ -45,7 +45,7 @@ const faqs: FAQItem[] = [
   {
     category: "Returns & Refunds",
     question: "What if my order arrives damaged?",
-    answer: "We're so sorry if this happens. Please photograph the damaged item and contact us on WhatsApp within 48 hours of receiving it. We'll send a replacement or issue a full refund.",
+    answer: "We're so sorry if this happens. Please photograph the damaged item and contact us on WhatsApp within 24 hours of receiving it. We'll send a replacement or issue a full refund.",
   },
   {
     category: "Sizing & Products",

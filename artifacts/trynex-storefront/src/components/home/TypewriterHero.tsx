@@ -87,25 +87,46 @@ function useTypewriter(phrases: string[], opts?: {
   return text;
 }
 
-const FLOATING_PRODUCTS = [
+// Multi-product grid shown in the hero right column
+const HERO_PRODUCT_GRID = [
+  {
+    src: "/mockups/white-hoodie-front-cutout.png",
+    label: "Custom Hoodie",
+    badge: "Best Seller",
+    badgeColor: "#E85D04",
+    delay: 0.1,
+    floatY: 10,
+    rotate: "-2deg",
+  },
+  {
+    src: "/mockups/white-mug-front-cutout.png",
+    label: "Custom Mug",
+    badge: "Fan Fav",
+    badgeColor: "#0EA5E9",
+    delay: 0.25,
+    floatY: 8,
+    rotate: "2deg",
+  },
   {
     src: "/mockups/white-tshirt-front-cutout.png",
-    alt: "Premium custom T-shirt",
-    style: {
-      top: "8%", left: "12%", width: "78%",
-      transform: "rotate(-4deg)", zIndex: 3,
-    },
-    delay: 0,
-    floatY: 14,
+    label: "Custom T-Shirt",
+    badge: "Top Pick",
+    badgeColor: "#10B981",
+    delay: 0.15,
+    floatY: 12,
+    rotate: "-1deg",
+  },
+  {
+    src: "/mockups/white-cap-front.png",
+    label: "Custom Cap",
+    badge: "Trending",
+    badgeColor: "#7C3AED",
+    delay: 0.3,
+    floatY: 9,
+    rotate: "3deg",
   },
 ];
 
-const ROTATING_BADGES = [
-  { label: "T-Shirts", color: "#E85D04" },
-  { label: "Hoodies", color: "#7C3AED" },
-  { label: "Mugs", color: "#0EA5E9" },
-  { label: "Caps", color: "#10B981" },
-];
 
 export function TypewriterHero() {
   const settings = useSiteSettings();
@@ -372,108 +393,126 @@ export function TypewriterHero() {
           </motion.div>
         </div>
 
-        {/* ── RIGHT: floating product showcase (hidden on mobile) ── */}
-        <div className="hidden lg:block relative aspect-[4/5] w-full max-w-xl ml-auto">
-          {/* Decorative ring */}
-          <div
-            aria-hidden="true"
-            className="absolute inset-[8%] rounded-[40%_60%_55%_45%/50%_45%_55%_50%] opacity-50"
-            style={{
-              background: "linear-gradient(135deg, rgba(251,133,0,0.18), rgba(232,93,4,0.08))",
-              filter: "blur(2px)",
-            }}
-          />
-          <motion.div
-            aria-hidden="true"
-            className="absolute inset-[14%] rounded-full border-2 border-dashed"
-            style={{ borderColor: "rgba(232,93,4,0.18)" }}
-            animate={reduced ? undefined : { rotate: 360 }}
-            transition={reduced ? undefined : { duration: 60, repeat: Infinity, ease: "linear" }}
-          />
+        {/* ── RIGHT: Premium multi-product showcase (desktop only) ── */}
+        <div className="hidden lg:flex flex-col gap-4 w-full max-w-lg ml-auto">
 
-          {FLOATING_PRODUCTS.map((p, i) => (
-            <motion.div
-              key={p.src}
-              className="absolute"
-              style={{
-                ...p.style as React.CSSProperties,
-                filter: "drop-shadow(0 24px 30px rgba(56,30,8,0.22)) drop-shadow(0 4px 6px rgba(56,30,8,0.12))",
-              }}
-              initial={reduced ? false : { opacity: 0, y: 24, scale: 0.92 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.7, delay: 0.2 + p.delay, ease: [0.22, 1, 0.36, 1] }}
-            >
-              {/* Soft halo behind each product to pop white-on-cream */}
-              <div
-                aria-hidden="true"
-                className="absolute inset-[8%] rounded-full"
+          {/* Top row: 2 product cards */}
+          <div className="flex gap-4">
+            {HERO_PRODUCT_GRID.slice(0, 2).map((p, i) => (
+              <motion.div
+                key={p.label}
+                className="flex-1 relative rounded-3xl overflow-hidden"
                 style={{
-                  background: "radial-gradient(ellipse at center, rgba(232,93,4,0.18), transparent 65%)",
-                  filter: "blur(28px)",
-                  zIndex: -1,
+                  background: "linear-gradient(145deg, #FFF8F3, #FFF2E8)",
+                  border: "1.5px solid rgba(232,93,4,0.12)",
+                  boxShadow: "0 12px 40px rgba(56,30,8,0.12), 0 2px 8px rgba(56,30,8,0.06)",
+                  minHeight: "200px",
                 }}
-              />
-              <motion.img
-                src={p.src}
-                alt={p.alt}
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
-                className="w-full h-auto select-none pointer-events-none relative"
-                draggable={false}
-                animate={reduced ? undefined : { y: [0, -p.floatY, 0] }}
-                transition={reduced ? undefined : {
-                  duration: 5 + i * 0.7,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: i * 0.4,
-                }}
-              />
-            </motion.div>
-          ))}
+                initial={reduced ? false : { opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: p.delay, ease: [0.22, 1, 0.36, 1] }}
+              >
+                {/* Badge */}
+                <div
+                  className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-full text-[9px] font-black text-white uppercase tracking-wider"
+                  style={{ background: p.badgeColor }}
+                >
+                  {p.badge}
+                </div>
+                {/* Product image with gentle float */}
+                <motion.img
+                  src={p.src}
+                  alt={p.label}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                  className="w-full h-44 object-contain select-none pointer-events-none px-4 pt-6 pb-2"
+                  draggable={false}
+                  style={{ transform: `rotate(${p.rotate})` }}
+                  animate={reduced ? undefined : { y: [0, -(p.floatY / 2), 0] }}
+                  transition={reduced ? undefined : {
+                    duration: 4 + i * 0.6,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: i * 0.3,
+                  }}
+                />
+                {/* Label */}
+                <div className="pb-3 text-center">
+                  <span className="text-xs font-black text-gray-700">{p.label}</span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
 
-          {/* Floating rating chip */}
+          {/* Bottom row: 2 more product cards */}
+          <div className="flex gap-4">
+            {HERO_PRODUCT_GRID.slice(2, 4).map((p, i) => (
+              <motion.div
+                key={p.label}
+                className="flex-1 relative rounded-3xl overflow-hidden"
+                style={{
+                  background: "linear-gradient(145deg, #FFF8F3, #FFF2E8)",
+                  border: "1.5px solid rgba(232,93,4,0.12)",
+                  boxShadow: "0 12px 40px rgba(56,30,8,0.12), 0 2px 8px rgba(56,30,8,0.06)",
+                  minHeight: "200px",
+                }}
+                initial={reduced ? false : { opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: p.delay, ease: [0.22, 1, 0.36, 1] }}
+              >
+                {/* Badge */}
+                <div
+                  className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-full text-[9px] font-black text-white uppercase tracking-wider"
+                  style={{ background: p.badgeColor }}
+                >
+                  {p.badge}
+                </div>
+                {/* Product image */}
+                <motion.img
+                  src={p.src}
+                  alt={p.label}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-44 object-contain select-none pointer-events-none px-4 pt-6 pb-2"
+                  draggable={false}
+                  style={{ transform: `rotate(${p.rotate})` }}
+                  animate={reduced ? undefined : { y: [0, -(p.floatY / 2), 0] }}
+                  transition={reduced ? undefined : {
+                    duration: 4.5 + i * 0.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: i * 0.4 + 0.2,
+                  }}
+                />
+                {/* Label */}
+                <div className="pb-3 text-center">
+                  <span className="text-xs font-black text-gray-700">{p.label}</span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Bottom trust strip */}
           <motion.div
-            initial={reduced ? false : { opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 1.2 }}
-            className="absolute top-4 left-4 bg-white rounded-2xl px-4 py-3 flex items-center gap-3 z-10"
+            initial={reduced ? false : { opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+            className="flex items-center justify-between bg-white rounded-2xl px-5 py-3"
             style={{
-              boxShadow: "0 16px 40px rgba(232,93,4,0.18), 0 4px 12px rgba(0,0,0,0.06)",
+              boxShadow: "0 4px 20px rgba(232,93,4,0.10)",
               border: "1px solid rgba(232,93,4,0.12)",
             }}
           >
             <div className="flex items-center gap-0.5">
               {[0, 1, 2, 3, 4].map(i => (
-                <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
               ))}
             </div>
-            <div>
-              <div className="font-black text-sm text-gray-900 leading-none">4.9 / 5</div>
-              <div className="text-[10px] text-gray-500 mt-0.5">5,000+ reviews</div>
-            </div>
-          </motion.div>
-
-          {/* Floating delivery chip */}
-          <motion.div
-            initial={reduced ? false : { opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 1.4 }}
-            className="absolute bottom-6 right-2 bg-white rounded-2xl px-4 py-3 flex items-center gap-3 z-10"
-            style={{
-              boxShadow: "0 16px 40px rgba(232,93,4,0.18), 0 4px 12px rgba(0,0,0,0.06)",
-              border: "1px solid rgba(232,93,4,0.12)",
-            }}
-          >
-            <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg, #fff4ee, #ffe8d4)" }}
-            >
-              <Truck className="w-4 h-4 text-orange-600" />
-            </div>
-            <div>
-              <div className="font-black text-sm text-gray-900 leading-none">24-hour</div>
-              <div className="text-[10px] text-gray-500 mt-0.5">Express delivery</div>
+            <div className="text-xs font-black text-gray-800">4.9/5 · 5,000+ Reviews</div>
+            <div className="flex items-center gap-1.5 text-xs font-bold text-orange-600">
+              <Truck className="w-3.5 h-3.5" />
+              24hr Delivery
             </div>
           </motion.div>
         </div>

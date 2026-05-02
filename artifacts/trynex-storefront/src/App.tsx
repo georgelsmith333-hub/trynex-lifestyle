@@ -18,6 +18,7 @@ import { BrandingUpdater } from "@/components/BrandingUpdater";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { BackToTop } from "@/components/BackToTop";
 import { AbandonedCartPopup } from "@/components/AbandonedCartPopup";
+import { DesignDraftReminder } from "@/components/DesignDraftReminder";
 import { ScrollProgressBar } from "@/components/ScrollProgressBar";
 import { SocialProofToast } from "@/components/SocialProofToast";
 import { SocialAuthLoader } from "@/components/SocialAuthLoader";
@@ -242,6 +243,7 @@ function App() {
                 <WhatsAppButton />
                 <BackToTop />
                 <AbandonedCartPopup />
+                <DesignDraftReminder />
                 <ExitIntentPopup />
                 <SocialProofToast />
               </ScrollProvider>
