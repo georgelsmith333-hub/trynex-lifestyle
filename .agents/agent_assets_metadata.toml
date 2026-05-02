@@ -143,3 +143,9 @@ id = "ma1kqNQdymutvUUCXbDsa"
 uri = "file://docs/TryNex-Lifestyle-Overview.pdf"
 type = "pdf"
 title = "TryNex Lifestyle — A-to-Z Platform Overview"
+
+[[outputs]]
+id = "QHbbY1s9J6MhJVIbmme6_"
+uri = "file://trynex-site-overview.pdf"
+type = "pdf"
+title = "TryNex Lifestyle — Full Site Overview PDF"

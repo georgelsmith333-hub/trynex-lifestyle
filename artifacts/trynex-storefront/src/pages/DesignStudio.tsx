@@ -11,7 +11,6 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { getApiUrl } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGesture } from "@use-gesture/react";
-import { useListProducts } from "@workspace/api-client-react";
 import {
   Upload, RotateCcw, Trash2, ShoppingCart,
   ZoomIn, ZoomOut, RotateCw, Move, Ruler,
@@ -46,6 +45,9 @@ interface ImageLayer extends BaseLayer { type: "image"; src: string; naturalW: n
 interface TextLayer extends BaseLayer {
   type: "text"; text: string; fontFamily: string; fontWeight: number;
   fontStyle: "normal" | "italic"; fontSize: number; color: string;
+  strokeColor?: string; strokeWidth?: number;
+  shadowOffsetX?: number; shadowOffsetY?: number; shadowBlur?: number; shadowColor?: string;
+  letterSpacing?: number;
 }
 type Layer = ImageLayer | TextLayer;
 
@@ -269,16 +271,6 @@ export default function DesignStudio() {
   const settings = useSiteSettings();
   const { toast } = useToast();
 
-  /* Real store products (customizable: true) fetched from the API */
-  const { data: storeProductsData } = useListProducts(
-    { limit: 50 } as any,
-    { query: { staleTime: 60_000 } as any }
-  );
-  const customizableStoreProducts = useMemo(
-    () => (storeProductsData?.products ?? []).filter((p: any) => p.customizable),
-    [storeProductsData]
-  );
-
   /* Linked real store product for this design session */
   const [linkedStoreProduct, setLinkedStoreProduct] = useState<LinkedStoreProduct | null>(null);
   const pendingStoreProductIdRef = useRef<number | null>(null);
@@ -483,25 +475,29 @@ export default function DesignStudio() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Apply pending store product once the product list loads
+  // Apply pending store product by fetching its details from the API
   useEffect(() => {
-    if (!pendingStoreProductIdRef.current || customizableStoreProducts.length === 0) return;
+    if (!pendingStoreProductIdRef.current) return;
     const targetId = pendingStoreProductIdRef.current;
-    const found = customizableStoreProducts.find((p: any) => p.id === targetId);
-    if (!found) return;
     pendingStoreProductIdRef.current = null;
-    const category = detectCategoryFromProduct(found);
-    const template = PRODUCTS.find(p => p.category === category) ?? PRODUCTS[0];
-    const garmentColor = detectColorFromProduct(found);
-    const price = parseFloat(String(found.discountPrice || found.price)) || 0;
-    setSelectedProduct(template);
-    setSelectedColor({ name: found.name, hex: garmentColor });
-    setLinkedStoreProduct({ id: found.id, name: found.name, price, imageUrl: found.imageUrl ?? undefined });
-    toast({
-      title: `Designing: ${found.name}`,
-      description: "Upload your artwork or add text to customise this product.",
-    });
-  }, [customizableStoreProducts, toast]);
+    fetch(getApiUrl(`/api/products/${targetId}`))
+      .then(r => r.ok ? r.json() : null)
+      .then((found: any) => {
+        if (!found) return;
+        const category = detectCategoryFromProduct(found);
+        const template = PRODUCTS.find(p => p.category === category) ?? PRODUCTS[0];
+        const garmentColor = detectColorFromProduct(found);
+        const price = parseFloat(String(found.discountPrice || found.price)) || 0;
+        setSelectedProduct(template);
+        setSelectedColor({ name: found.name, hex: garmentColor });
+        setLinkedStoreProduct({ id: found.id, name: found.name, price, imageUrl: found.imageUrl ?? undefined });
+        toast({
+          title: `Designing: ${found.name}`,
+          description: "Upload your artwork or add text to customise this product.",
+        });
+      })
+      .catch(() => {});
+  }, [toast]);
 
   // Auto-save draft when layers / product / color / size change (debounced)
   useEffect(() => {
@@ -1908,6 +1904,11 @@ export default function DesignStudio() {
                       .map(({ layer: l, geom: g }) => {
                       if (!l.visible) return null;
                       if (l.type === "image") {
+                        const lx = l as any;
+                        const hasCssFilter = (lx.brightness != null && lx.brightness !== 100) || (lx.contrast != null && lx.contrast !== 100) || (lx.saturation != null && lx.saturation !== 100);
+                        const cssFilter = hasCssFilter
+                          ? `brightness(${lx.brightness ?? 100}%) contrast(${lx.contrast ?? 100}%) saturate(${lx.saturation ?? 100}%)`
+                          : undefined;
                         return (
                           <image key={l.id}
                             data-layer-id={l.id}
@@ -1916,26 +1917,47 @@ export default function DesignStudio() {
                             opacity={l.transform.opacity}
                             transform={`rotate(${l.transform.rotation}, ${g.cx}, ${g.cy})`}
                             preserveAspectRatio="none"
-                            style={{ cursor: l.locked ? "not-allowed" : "grab" }}
+                            style={{ cursor: l.locked ? "not-allowed" : "grab", filter: cssFilter }}
                           />
                         );
                       }
                       // text — multiply blend so ink looks printed on fabric
+                      const hasShadow = !!(l.shadowBlur || l.shadowOffsetX || l.shadowOffsetY);
+                      const shadowFilterId = hasShadow ? `tshadow-${l.id}` : undefined;
                       return (
-                        <text key={l.id}
-                          data-layer-id={l.id}
-                          x={g.cx} y={g.cy}
-                          fill={l.color}
-                          fontFamily={l.fontFamily}
-                          fontWeight={l.fontWeight}
-                          fontStyle={l.fontStyle}
-                          fontSize={l.fontSize * l.transform.scale}
-                          opacity={l.transform.opacity}
-                          textAnchor="middle"
-                          dominantBaseline="middle"
-                          transform={`rotate(${l.transform.rotation}, ${g.cx}, ${g.cy})`}
-                          style={{ cursor: l.locked ? "not-allowed" : "grab", userSelect: "none", mixBlendMode: "multiply" }}
-                        >{l.text}</text>
+                        <g key={l.id}>
+                          {hasShadow && (
+                            <defs>
+                              <filter id={shadowFilterId} x="-20%" y="-20%" width="140%" height="140%">
+                                <feDropShadow
+                                  dx={l.shadowOffsetX ?? 2}
+                                  dy={l.shadowOffsetY ?? 2}
+                                  stdDeviation={(l.shadowBlur ?? 4) / 2}
+                                  floodColor={l.shadowColor ?? "rgba(0,0,0,0.5)"}
+                                />
+                              </filter>
+                            </defs>
+                          )}
+                          <text
+                            data-layer-id={l.id}
+                            x={g.cx} y={g.cy}
+                            fill={l.color}
+                            fontFamily={l.fontFamily}
+                            fontWeight={l.fontWeight}
+                            fontStyle={l.fontStyle}
+                            fontSize={l.fontSize * l.transform.scale}
+                            opacity={l.transform.opacity}
+                            textAnchor="middle"
+                            dominantBaseline="middle"
+                            letterSpacing={l.letterSpacing != null ? `${l.letterSpacing}em` : undefined}
+                            stroke={l.strokeWidth ? (l.strokeColor ?? "#000000") : "none"}
+                            strokeWidth={l.strokeWidth ? l.strokeWidth * l.transform.scale : undefined}
+                            paintOrder={l.strokeWidth ? "stroke" : undefined}
+                            transform={`rotate(${l.transform.rotation}, ${g.cx}, ${g.cy})`}
+                            filter={shadowFilterId ? `url(#${shadowFilterId})` : undefined}
+                            style={{ cursor: l.locked ? "not-allowed" : "grab", userSelect: "none", mixBlendMode: "multiply" }}
+                          >{l.text}</text>
+                        </g>
                       );
                     })}
                   </g>
@@ -2234,6 +2256,81 @@ export default function DesignStudio() {
                             }}
                           >I</button>
                         </div>
+
+                        {/* Letter Spacing */}
+                        <div>
+                          <div className="flex items-center justify-between mb-1">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">Letter Spacing</label>
+                            <span className="text-[10px] font-bold text-gray-600">{(selectedLayer.letterSpacing ?? 0).toFixed(2)}em</span>
+                          </div>
+                          <input type="range" min="-0.1" max="0.5" step="0.01"
+                            value={selectedLayer.letterSpacing ?? 0}
+                            onChange={e => updateLayer(selectedLayer.id, l => l.type === "text" ? { ...l, letterSpacing: parseFloat(e.target.value) } : l, false)}
+                            onPointerUp={() => commitLayers(layers)}
+                            className="w-full h-1.5 rounded-full appearance-none bg-gray-100" style={{ accentColor: "#E85D04" }} />
+                        </div>
+
+                        {/* Text Outline */}
+                        <div>
+                          <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5">Text Outline</label>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="block text-[9px] text-gray-400 font-semibold mb-1">Color</label>
+                              <input type="color" value={selectedLayer.strokeColor ?? "#000000"}
+                                onChange={e => updateLayer(selectedLayer.id, l => l.type === "text" ? { ...l, strokeColor: e.target.value } : l, false)}
+                                onBlur={() => commitLayers(layers)}
+                                className="w-full h-8 rounded-lg border border-gray-200 cursor-pointer" />
+                            </div>
+                            <div>
+                              <label className="block text-[9px] text-gray-400 font-semibold mb-1">Width (0=off)</label>
+                              <input type="number" min={0} max={20} step={0.5}
+                                value={selectedLayer.strokeWidth ?? 0}
+                                onChange={e => updateLayer(selectedLayer.id, l => l.type === "text" ? { ...l, strokeWidth: Math.max(0, parseFloat(e.target.value) || 0) } : l, false)}
+                                onBlur={() => commitLayers(layers)}
+                                className="w-full px-2 py-1.5 rounded-lg text-sm border border-gray-200 outline-none" />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Text Shadow */}
+                        <div>
+                          <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5">Text Shadow</label>
+                          <div className="grid grid-cols-2 gap-2 mb-2">
+                            <div>
+                              <label className="block text-[9px] text-gray-400 font-semibold mb-1">Color</label>
+                              <input type="color" value={selectedLayer.shadowColor ?? "#000000"}
+                                onChange={e => updateLayer(selectedLayer.id, l => l.type === "text" ? { ...l, shadowColor: e.target.value } : l, false)}
+                                onBlur={() => commitLayers(layers)}
+                                className="w-full h-8 rounded-lg border border-gray-200 cursor-pointer" />
+                            </div>
+                            <div>
+                              <label className="block text-[9px] text-gray-400 font-semibold mb-1">Blur</label>
+                              <input type="number" min={0} max={30} step={1}
+                                value={selectedLayer.shadowBlur ?? 0}
+                                onChange={e => updateLayer(selectedLayer.id, l => l.type === "text" ? { ...l, shadowBlur: Math.max(0, parseInt(e.target.value) || 0) } : l, false)}
+                                onBlur={() => commitLayers(layers)}
+                                className="w-full px-2 py-1.5 rounded-lg text-sm border border-gray-200 outline-none" />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="block text-[9px] text-gray-400 font-semibold mb-1">Offset X</label>
+                              <input type="number" min={-20} max={20} step={1}
+                                value={selectedLayer.shadowOffsetX ?? 0}
+                                onChange={e => updateLayer(selectedLayer.id, l => l.type === "text" ? { ...l, shadowOffsetX: parseInt(e.target.value) || 0 } : l, false)}
+                                onBlur={() => commitLayers(layers)}
+                                className="w-full px-2 py-1.5 rounded-lg text-sm border border-gray-200 outline-none" />
+                            </div>
+                            <div>
+                              <label className="block text-[9px] text-gray-400 font-semibold mb-1">Offset Y</label>
+                              <input type="number" min={-20} max={20} step={1}
+                                value={selectedLayer.shadowOffsetY ?? 0}
+                                onChange={e => updateLayer(selectedLayer.id, l => l.type === "text" ? { ...l, shadowOffsetY: parseInt(e.target.value) || 0 } : l, false)}
+                                onBlur={() => commitLayers(layers)}
+                                className="w-full px-2 py-1.5 rounded-lg text-sm border border-gray-200 outline-none" />
+                            </div>
+                          </div>
+                        </div>
                       </>
                     ) : (
                       <div className="text-xs text-gray-500 p-3 rounded-xl text-center" style={{ background: "#f9fafb" }}>
@@ -2408,6 +2505,83 @@ export default function DesignStudio() {
                             <div />
                           </div>
                         </div>
+
+                        {/* Align to print zone */}
+                        <div>
+                          <label className="block text-[11px] font-black uppercase tracking-widest text-gray-400 mb-1.5">Align to Print Zone</label>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => updateLayer(selectedLayer.id, l => ({ ...l, transform: { ...l.transform, x: 0 } }), true)}
+                              className="flex-1 py-2 rounded-lg text-xs font-bold border flex items-center justify-center gap-1"
+                              style={{ background: "white", borderColor: "#e5e7eb", color: "#374151" }}
+                              title="Center horizontally in print zone"
+                            >
+                              ↔ Center H
+                            </button>
+                            <button
+                              onClick={() => updateLayer(selectedLayer.id, l => ({ ...l, transform: { ...l.transform, y: 0 } }), true)}
+                              className="flex-1 py-2 rounded-lg text-xs font-bold border flex items-center justify-center gap-1"
+                              style={{ background: "white", borderColor: "#e5e7eb", color: "#374151" }}
+                              title="Center vertically in print zone"
+                            >
+                              ↕ Center V
+                            </button>
+                          </div>
+                          <button
+                            onClick={() => updateLayer(selectedLayer.id, l => ({ ...l, transform: { ...l.transform, x: 0, y: 0 } }), true)}
+                            className="w-full mt-1.5 py-2 rounded-lg text-xs font-bold border flex items-center justify-center gap-1"
+                            style={{ background: "#fff4ee", borderColor: "#fdd5b4", color: "#E85D04" }}
+                          >
+                            ⊞ Center Both
+                          </button>
+                        </div>
+
+                        {/* Image filters — only for image layers */}
+                        {selectedLayer.type === "image" && (
+                          <div className="pt-2 border-t border-gray-100 space-y-3">
+                            <div className="text-[11px] font-black uppercase tracking-widest text-gray-400">Image Adjustments</div>
+                            <div>
+                              <div className="flex items-center justify-between mb-1">
+                                <label className="text-[11px] font-bold text-gray-500">Brightness</label>
+                                <span className="text-[11px] font-bold text-gray-600">{(selectedLayer as any).brightness ?? 100}%</span>
+                              </div>
+                              <input type="range" min="20" max="200" step="5"
+                                value={(selectedLayer as any).brightness ?? 100}
+                                onChange={e => updateLayer(selectedLayer.id, l => l.type === "image" ? { ...l, brightness: parseInt(e.target.value) } as any : l, false)}
+                                onPointerUp={() => commitLayers(layers)}
+                                className="w-full h-1.5 rounded-full appearance-none bg-gray-100" style={{ accentColor: "#E85D04" }} />
+                            </div>
+                            <div>
+                              <div className="flex items-center justify-between mb-1">
+                                <label className="text-[11px] font-bold text-gray-500">Contrast</label>
+                                <span className="text-[11px] font-bold text-gray-600">{(selectedLayer as any).contrast ?? 100}%</span>
+                              </div>
+                              <input type="range" min="20" max="200" step="5"
+                                value={(selectedLayer as any).contrast ?? 100}
+                                onChange={e => updateLayer(selectedLayer.id, l => l.type === "image" ? { ...l, contrast: parseInt(e.target.value) } as any : l, false)}
+                                onPointerUp={() => commitLayers(layers)}
+                                className="w-full h-1.5 rounded-full appearance-none bg-gray-100" style={{ accentColor: "#E85D04" }} />
+                            </div>
+                            <div>
+                              <div className="flex items-center justify-between mb-1">
+                                <label className="text-[11px] font-bold text-gray-500">Saturation</label>
+                                <span className="text-[11px] font-bold text-gray-600">{(selectedLayer as any).saturation ?? 100}%</span>
+                              </div>
+                              <input type="range" min="0" max="200" step="5"
+                                value={(selectedLayer as any).saturation ?? 100}
+                                onChange={e => updateLayer(selectedLayer.id, l => l.type === "image" ? { ...l, saturation: parseInt(e.target.value) } as any : l, false)}
+                                onPointerUp={() => commitLayers(layers)}
+                                className="w-full h-1.5 rounded-full appearance-none bg-gray-100" style={{ accentColor: "#E85D04" }} />
+                            </div>
+                            <button
+                              onClick={() => updateLayer(selectedLayer.id, l => l.type === "image" ? { ...l, brightness: 100, contrast: 100, saturation: 100 } as any : l, true)}
+                              className="w-full py-2 rounded-lg text-xs font-bold border"
+                              style={{ background: "white", borderColor: "#e5e7eb", color: "#6b7280" }}
+                            >
+                              Reset Adjustments
+                            </button>
+                          </div>
+                        )}
                       </div>
                     )}
                   </motion.div>
@@ -2733,8 +2907,8 @@ export default function DesignStudio() {
               <div className="px-5 pt-5 pb-3 shrink-0">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h2 className="font-black text-gray-900 text-lg">Choose a Product to Design</h2>
-                    <p className="text-xs text-gray-500 mt-0.5">Pick from your store's customizable items or use a blank template</p>
+                    <h2 className="font-black text-gray-900 text-lg">Choose a Blank to Design</h2>
+                    <p className="text-xs text-gray-500 mt-0.5">Select a clean blank template — T-shirts, hoodies, mugs, caps & more</p>
                   </div>
                   <button
                     onClick={() => setShowProductPicker(false)}
@@ -2781,103 +2955,22 @@ export default function DesignStudio() {
                 {(() => {
                   const query = productSearch.trim().toLowerCase();
 
-                  // Real store customizable products filtered by search/category
-                  const filteredStoreProducts = customizableStoreProducts.filter((p: any) => {
-                    const cat = detectCategoryFromProduct(p);
-                    const matchesCat = productPickerCategory === "all" || cat === productPickerCategory;
-                    const matchesSearch = !query || (p.name ?? "").toLowerCase().includes(query);
-                    return matchesCat && matchesSearch;
-                  });
-
                   const filtered = PRODUCTS.filter(p => {
                     const matchesCat = productPickerCategory === "all" || p.category === productPickerCategory;
                     const matchesSearch = !query || p.name.toLowerCase().includes(query) || p.description.toLowerCase().includes(query);
                     return matchesCat && matchesSearch;
                   });
 
-                  if (filteredStoreProducts.length === 0 && filtered.length === 0) return (
+                  if (filtered.length === 0) return (
                     <div className="flex flex-col items-center justify-center py-12 text-center">
                       <div className="text-4xl mb-3">🔍</div>
-                      <p className="font-bold text-gray-600">No products found</p>
+                      <p className="font-bold text-gray-600">No templates found</p>
                       <p className="text-sm text-gray-400 mt-1">Try a different search or category</p>
                     </div>
                   );
 
                   return (
-                    <div className="pt-2 space-y-5">
-                      {/* ── From Your Store ── */}
-                      {filteredStoreProducts.length > 0 && (
-                        <div>
-                          <p className="text-[11px] font-extrabold uppercase tracking-widest text-orange-500 mb-2.5 flex items-center gap-1.5">
-                            <span className="inline-block w-2 h-2 rounded-full bg-orange-400" />
-                            From Your Store
-                          </p>
-                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                            {filteredStoreProducts.map((sp: any) => {
-                              const isLinked = linkedStoreProduct?.id === sp.id;
-                              const price = parseFloat(String(sp.discountPrice || sp.price)) || 0;
-                              return (
-                                <button
-                                  key={`store-${sp.id}`}
-                                  onClick={() => {
-                                    const category = detectCategoryFromProduct(sp);
-                                    const template = PRODUCTS.find(p => p.category === category) ?? PRODUCTS[0];
-                                    const garmentColor = detectColorFromProduct(sp);
-                                    perProductLayersRef.current[selectedProduct.id] = {
-                                      layers: layersRef.current,
-                                      stack: historyRef.current.stack,
-                                      index: historyRef.current.index,
-                                    };
-                                    flushSync(() => {
-                                      setLayers([]);
-                                      setSelectedLayerId(null);
-                                      setSelectedProduct(template);
-                                      setSelectedColor({ name: sp.name, hex: garmentColor });
-                                      setQuantity(1);
-                                      setActiveFace("front");
-                                      setLinkedStoreProduct({ id: sp.id, name: sp.name, price, imageUrl: sp.imageUrl });
-                                    });
-                                    forceHistoryTick(t => t + 1);
-                                    setShowProductPicker(false);
-                                    toast({ title: `Designing: ${sp.name}`, description: "Upload your artwork or add text to customise this product." });
-                                  }}
-                                  className="flex flex-col rounded-2xl overflow-hidden transition-all text-left group"
-                                  style={{
-                                    border: isLinked ? "2.5px solid #E85D04" : "1.5px solid #e5e7eb",
-                                    boxShadow: isLinked ? "0 4px 16px rgba(232,93,4,0.2)" : "0 1px 6px rgba(0,0,0,0.05)",
-                                    background: isLinked ? "#fff9f6" : "white",
-                                  }}
-                                >
-                                  <div className="w-full aspect-square relative overflow-hidden" style={{ background: "#f9fafb" }}>
-                                    {sp.imageUrl ? (
-                                      <img src={sp.imageUrl} alt={sp.name} className="w-full h-full object-cover" />
-                                    ) : (
-                                      <div className="w-full h-full flex items-center justify-center text-3xl">👕</div>
-                                    )}
-                                    {isLinked && (
-                                      <div className="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center" style={{ background: "#E85D04" }}>
-                                        <svg viewBox="0 0 12 12" className="w-3 h-3 text-white fill-white"><path d="M2 6l3 3 5-5" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                                      </div>
-                                    )}
-                                  </div>
-                                  <div className="p-2.5">
-                                    <p className="font-bold text-gray-900 text-[11px] leading-tight line-clamp-2">{sp.name}</p>
-                                    <p className="text-orange-500 font-black text-xs mt-1">৳{price.toFixed(0)}</p>
-                                  </div>
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* ── Blank Templates ── */}
-                      {filtered.length > 0 && (
-                        <div>
-                          <p className="text-[11px] font-extrabold uppercase tracking-widest text-gray-400 mb-2.5 flex items-center gap-1.5">
-                            <span className="inline-block w-2 h-2 rounded-full bg-gray-300" />
-                            Blank Templates
-                          </p>
+                    <div className="pt-2">
                           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                       {filtered.map(prod => {
                         const isSelected = selectedProduct.id === prod.id && !linkedStoreProduct;
@@ -2949,10 +3042,7 @@ export default function DesignStudio() {
                           </button>
                         );
                       })}
-                          </div>
                         </div>
-                      )}
-
                     </div>
                   );
                 })()}

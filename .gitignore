@@ -48,8 +48,10 @@ Thumbs.db
 .cache/
 .local/
 
-# Generated PDF (excluded from git per project owner)
+# Generated PDFs & screenshots (excluded from git)
 docs/TryNex-Lifestyle-Overview.pdf
+trynex-site-overview.pdf
+screenshots/
 
 
 # Lib package build artifacts (generated; rebuild before typecheck)

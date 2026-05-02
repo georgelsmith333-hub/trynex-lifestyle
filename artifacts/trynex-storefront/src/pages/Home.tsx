@@ -128,48 +128,33 @@ const PAYMENT_METHODS = [
 ];
 
 /**
- * 24/7 rolling flash-sale window. The day is split into TWO 12-hour
- * blocks (BST): 6am-6pm (Day Sale) and 6pm-6am (Night Sale). The
- * countdown always points to the END of the current block, so a visitor
- * at any hour sees a live "grab it before it ends" timer that loops
- * forever — never goes inactive. The label cycles every 12 hours to
- * keep the hero feeling fresh for return visitors.
+ * 24/7 rolling flash-sale countdown (Bangladesh Standard Time = UTC+6).
+ * The day is split into two 12-hour windows:
+ *   00:00–12:00 BST  → "Day Flash Sale"   (timer counts to 12:00 noon)
+ *   12:00–24:00 BST  → "Night Flash Sale" (timer counts to midnight)
+ * The timer ALWAYS has a positive value — it resets the instant it hits 0.
  */
-function getBSTSaleTarget(): { end: Date; label: string; active: boolean } {
-  const now = new Date();
-  const bstOffset = 6 * 60;
-  const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-  const bstMinutes = (utcMinutes + bstOffset) % 1440;
+function getBSTSaleTarget(): { end: Date; label: string } {
+  const nowMs = Date.now();
+  const bstOffsetMs = 6 * 60 * 60 * 1000; // UTC+6
+  const bstNowMs = nowMs + bstOffsetMs;
+  const bstDate = new Date(bstNowMs);
 
-  const todayUTCMidnight = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
-  const bstMidnightUTC = new Date(todayUTCMidnight.getTime() - bstOffset * 60000);
+  // Milliseconds elapsed since BST midnight today
+  const msSinceBSTMidnight =
+    (bstDate.getUTCHours() * 3600 + bstDate.getUTCMinutes() * 60 + bstDate.getUTCSeconds()) * 1000
+    + bstDate.getUTCMilliseconds();
 
-  // 12-hour boundaries in BST minutes-of-day:
-  //   00:00–06:00 BST  → still in the previous "Night Flash Sale" block
-  //                      (which started at 18:00 the day before and ends at 06:00 today)
-  //   06:00–18:00 BST  → "Day Flash Sale"  (ends at 18:00 today)
-  //   18:00–24:00 BST  → "Night Flash Sale" (ends at 06:00 the next day)
-  const blocks: Array<{ end: number; label: string }> = [
-    { end:  6 * 60, label: "Night Flash Sale ⚡" },   //  0–6am  (rolls over from previous evening)
-    { end: 18 * 60, label: "Day Flash Sale ☀️" },    //  6am–6pm
-    { end: 30 * 60, label: "Night Flash Sale ⚡" },   //  6pm–6am next day (end = 30:00 = 6am next day)
-  ];
+  const halfDayMs = 12 * 60 * 60 * 1000; // 12 hours
+  const fullDayMs = 24 * 60 * 60 * 1000; // 24 hours
 
-  for (const block of blocks) {
-    if (bstMinutes < block.end) {
-      return {
-        end: new Date(bstMidnightUTC.getTime() + block.end * 60000),
-        label: block.label,
-        active: true,
-      };
-    }
+  if (msSinceBSTMidnight < halfDayMs) {
+    // 00:00–12:00 BST — count to noon
+    return { end: new Date(nowMs + (halfDayMs - msSinceBSTMidnight)), label: "Day Flash Sale ☀️" };
+  } else {
+    // 12:00–24:00 BST — count to midnight
+    return { end: new Date(nowMs + (fullDayMs - msSinceBSTMidnight)), label: "Night Flash Sale ⚡" };
   }
-  // Fallback (shouldn't hit) — point to next midnight
-  return {
-    end: new Date(bstMidnightUTC.getTime() + 24 * 60 * 60000),
-    label: "Flash Sale",
-    active: true,
-  };
 }
 
 function FlipDigit({ value, prevValue }: { value: string; prevValue: string }) {
@@ -212,19 +197,17 @@ function FlipDigit({ value, prevValue }: { value: string; prevValue: string }) {
 }
 
 function CountdownTimer() {
-  const [sale, setSale] = useState(getBSTSaleTarget);
   const [timeLeft, setTimeLeft] = useState({ h: 0, m: 0, s: 0 });
+  const [saleLabel, setSaleLabel] = useState("Flash Sale ☀️");
   const prevRef = useRef({ h: 0, m: 0, s: 0 });
 
   useEffect(() => {
     const tick = () => {
-      const current = getBSTSaleTarget();
-      if (current.end.getTime() !== sale.end.getTime()) {
-        setSale(current);
-      }
+      const { end, label } = getBSTSaleTarget();
+      setSaleLabel(label);
+      const diff = Math.max(1, end.getTime() - Date.now());
       setTimeLeft(prev => {
         prevRef.current = prev;
-        const diff = Math.max(0, current.end.getTime() - Date.now());
         return {
           h: Math.floor(diff / 3600000),
           m: Math.floor((diff % 3600000) / 60000),
@@ -235,17 +218,16 @@ function CountdownTimer() {
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [sale.end]);
+  }, []);
 
   const pad = (n: number) => String(n).padStart(2, "0");
   const prev = prevRef.current;
-  const label = sale.active ? "Ends in" : sale.label;
 
   return (
     <div className="flex flex-col items-center gap-3 relative">
       <div className="flex items-center gap-2">
         <div className="h-px w-8 sm:w-12" style={{ background: 'linear-gradient(90deg, transparent, rgba(232,93,4,0.4))' }} />
-        <p className="text-gray-500 text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em]">{label}</p>
+        <p className="text-gray-500 text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em]">{saleLabel}</p>
         <div className="h-px w-8 sm:w-12" style={{ background: 'linear-gradient(90deg, rgba(232,93,4,0.4), transparent)' }} />
       </div>
       <div className="flex items-center gap-2 sm:gap-3">
