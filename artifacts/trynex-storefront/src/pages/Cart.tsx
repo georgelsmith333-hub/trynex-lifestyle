@@ -370,7 +370,7 @@ export default function Cart() {
                   >
                     <Sparkles className="w-4 h-4 shrink-0" style={{ color: '#E85D04' }} />
                     <span>
-                      Order in the next <strong className="tabular-nums">{cutoffLabel}</strong> for 48-hour express dispatch — production starts at the 6 PM cutoff.
+                      Order in the next <strong className="tabular-nums">{cutoffLabel}</strong> for 24-hour express dispatch — production starts at the 6 PM cutoff.
                     </span>
                   </div>
                   <h3 className="text-xl font-bold font-display mb-6 text-gray-900">Order Summary</h3>

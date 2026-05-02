@@ -790,13 +790,13 @@ export function WaterBottleBody({
         />
       </mesh>
 
-      {/* ── Lid ──────────────────────────────────────── */}
+      {/* ── Lid (always dark/black like a real bottle cap) ─── */}
       <mesh geometry={lidGeo} position={[0, 1.580, 0]} castShadow>
         <meshPhysicalMaterial
-          color={garmentColor}
-          roughness={0.40}
-          metalness={0.10}
-          clearcoat={0.30}
+          color="#1a1a1a"
+          roughness={0.50}
+          metalness={0.08}
+          clearcoat={0.20}
         />
       </mesh>
     </group>

@@ -7,6 +7,7 @@
 
 export interface ComposerTransform {
   x: number; y: number; scale: number; rotation: number; opacity: number;
+  scaleX?: number; scaleY?: number;
 }
 export interface ComposerImageLayer {
   type: "image";
@@ -67,12 +68,13 @@ function layerGeom(l: ComposerLayer, pz: ComposerPrintZone) {
   const cy = pz.y + pz.h / 2 + l.transform.y;
   if (l.type === "image") {
     const aspect = l.naturalW / Math.max(l.naturalH, 1);
-    const w = pz.w * l.transform.scale;
-    const h = w / aspect;
+    const baseW = pz.w * l.transform.scale;
+    const w = baseW * (l.transform.scaleX ?? 1);
+    const h = (baseW / aspect) * (l.transform.scaleY ?? 1);
     return { cx, cy, w, h };
   }
-  const w = (l.text.length * l.fontSize * 0.55) * l.transform.scale;
-  const h = l.fontSize * 1.2 * l.transform.scale;
+  const w = (l.text.length * l.fontSize * 0.55) * l.transform.scale * (l.transform.scaleX ?? 1);
+  const h = l.fontSize * 1.2 * l.transform.scale * (l.transform.scaleY ?? 1);
   return { cx, cy, w, h };
 }
 

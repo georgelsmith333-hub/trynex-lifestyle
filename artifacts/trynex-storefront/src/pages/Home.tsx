@@ -38,7 +38,7 @@ const FEATURES = [
   },
   {
     icon: Zap,
-    title: "48-Hour Express",
+    title: "24-Hour Express",
     desc: "Lightning-fast production with nationwide delivery across all 64 districts. Speed meets premium quality.",
     color: "#d97706",
     bg: "#fffbeb",
@@ -1451,7 +1451,7 @@ export default function Home() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-6 mt-12 text-sm font-semibold text-gray-500">
-            {["Free shipping above ৳1,500", "48-hour production", "100% satisfaction guarantee"].map(t => (
+            {["Free shipping above ৳1,500", "24-hour production", "100% satisfaction guarantee"].map(t => (
               <span key={t} className="flex items-center gap-2">
                 <Check className="w-4 h-4 text-orange-500" /> {t}
               </span>

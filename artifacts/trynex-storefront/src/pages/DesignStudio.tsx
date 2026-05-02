@@ -36,7 +36,7 @@ const ProductViewer3D = lazy(() => import("./design-studio/ProductViewer3D"));
    LAYER MODEL
 ════════════════════════════════════════════════════════ */
 
-interface Transform { x: number; y: number; scale: number; rotation: number; opacity: number }
+interface Transform { x: number; y: number; scale: number; rotation: number; opacity: number; scaleX?: number; scaleY?: number }
 const ZERO_TRANSFORM: Transform = { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 };
 
 type Face = "front" | "back" | "left-sleeve" | "right-sleeve" | "neck-label";
@@ -850,16 +850,18 @@ export default function DesignStudio() {
 
       // Propagate a scaled copy of this image to every OTHER product so
       // switching products shows the design pre-placed and centred in their
-      // print zone. The design is scaled proportionally to fit each zone.
+      // print zone. Same-category products get the same face/zone; others get front.
       const currentPZ = pzRef.current;
+      const currentFace = activeFaceRef.current;
       PRODUCTS.forEach(prod => {
         if (prod.id === selectedProduct.id) return;
-        const targetPZ = prod.printZone;
+        const targetFace: Face = prod.category === selectedProduct.category ? currentFace : "front";
+        const targetPZ = getZonePZ(targetFace, prod);
         const scaleRatio = Math.min(targetPZ.w / currentPZ.w, targetPZ.h / currentPZ.h);
         const propagated: ImageLayer = {
           ...layer,
           id: uid(),
-          face: "front",
+          face: targetFace,
           transform: { x: 0, y: 0, scale: layer.transform.scale * scaleRatio, rotation: 0, opacity: 1 },
         };
         const existing = perProductLayersRef.current[prod.id] ?? { layers: [], stack: [[]], index: 0 };
@@ -1274,13 +1276,14 @@ export default function DesignStudio() {
     const cy = pz.y + pz.h / 2 + l.transform.y;
     if (l.type === "image") {
       const aspect = l.naturalW / Math.max(l.naturalH, 1);
-      const w = pz.w * l.transform.scale;
-      const h = w / aspect;
+      const baseW = pz.w * l.transform.scale;
+      const w = baseW * (l.transform.scaleX ?? 1);
+      const h = (baseW / aspect) * (l.transform.scaleY ?? 1);
       return { cx, cy, w, h, x: cx - w / 2, y: cy - h / 2 };
     }
     // text — approximate bounding box from font metrics
-    const w = (l.text.length * l.fontSize * 0.55) * l.transform.scale;
-    const h = l.fontSize * 1.2 * l.transform.scale;
+    const w = (l.text.length * l.fontSize * 0.55) * l.transform.scale * (l.transform.scaleX ?? 1);
+    const h = l.fontSize * 1.2 * l.transform.scale * (l.transform.scaleY ?? 1);
     return { cx, cy, w, h, x: cx - w / 2, y: cy - h / 2 };
   };
 
@@ -1566,6 +1569,62 @@ export default function DesignStudio() {
       setLayers(curr => { commitLayers(curr); return curr; });
     };
     window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+  }, [selectedLayer, clientToSVG, pz, commitLayers]);
+
+  /* ── Edge midpoint handles for directional (non-proportional) resize ── */
+  const edgeMidpoints = useMemo(() => {
+    if (!selectedLayer || !selGeom) return [];
+    const { cx, cy, x, y, w, h } = selGeom;
+    const rad = (selectedLayer.transform.rotation * Math.PI) / 180;
+    const rot = (px: number, py: number) => ({
+      x: cx + (px - cx) * Math.cos(rad) - (py - cy) * Math.sin(rad),
+      y: cy + (px - cx) * Math.sin(rad) + (py - cy) * Math.cos(rad),
+    });
+    return [
+      { key: "n", ...rot(cx, y),     cursor: "ns-resize" },
+      { key: "s", ...rot(cx, y + h), cursor: "ns-resize" },
+      { key: "e", ...rot(x + w, cy), cursor: "ew-resize" },
+      { key: "w", ...rot(x, cy),     cursor: "ew-resize" },
+    ];
+  }, [selectedLayer, selGeom]);
+
+  const handleEdgeResizeDown = useCallback((e: React.PointerEvent<SVGCircleElement>, edgeKey: string) => {
+    e.stopPropagation();
+    if (!selectedLayer || selectedLayer.locked || selectedLayer.type !== "image") return;
+    (e.target as Element).setPointerCapture(e.pointerId);
+    const startT = { ...selectedLayer.transform };
+    const geom = (() => {
+      const cx = pz.x + pz.w / 2 + startT.x;
+      const cy = pz.y + pz.h / 2 + startT.y;
+      const aspect = (selectedLayer as ImageLayer).naturalW / Math.max((selectedLayer as ImageLayer).naturalH, 1);
+      const baseW = pz.w * startT.scale;
+      return { cx, cy, aspect, baseW };
+    })();
+
+    const onMove = (me: PointerEvent) => {
+      const pt = clientToSVG(me.clientX, me.clientY);
+      const dx = pt.x - geom.cx; const dy = pt.y - geom.cy;
+      const rad = -(startT.rotation * Math.PI) / 180;
+      const lx = dx * Math.cos(rad) - dy * Math.sin(rad);
+      const ly = dx * Math.sin(rad) + dy * Math.cos(rad);
+      if (edgeKey === "n" || edgeKey === "s") {
+        const baseH = geom.baseW / geom.aspect;
+        const newScaleY = Math.max(0.05, Math.min(10, (Math.abs(ly) * 2) / baseH));
+        setLayers(prev => prev.map(l => l.id === selectedLayer.id
+          ? { ...l, transform: { ...l.transform, scaleY: newScaleY } } : l));
+      } else {
+        const newScaleX = Math.max(0.05, Math.min(10, (Math.abs(lx) * 2) / geom.baseW));
+        setLayers(prev => prev.map(l => l.id === selectedLayer.id
+          ? { ...l, transform: { ...l.transform, scaleX: newScaleX } } : l));
+      }
+    };
+    const onUp = () => {
+      window.removeEventListener("pointermove", onMove as EventListener);
+      window.removeEventListener("pointerup", onUp);
+      setLayers(curr => { commitLayers(curr); return curr; });
+    };
+    window.addEventListener("pointermove", onMove as EventListener);
     window.addEventListener("pointerup", onUp);
   }, [selectedLayer, clientToSVG, pz, commitLayers]);
 

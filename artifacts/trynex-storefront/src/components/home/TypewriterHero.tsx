@@ -17,7 +17,7 @@ const DEFAULT_PHRASES: string[] = [
 
 const HERO_STATS = [
   { value: "5,000+", label: "Happy Customers" },
-  { value: "48hr", label: "Production" },
+  { value: "24hr", label: "Production" },
   { value: "64", label: "Districts" },
   { value: "4.9★", label: "Rated" },
 ];
@@ -284,7 +284,7 @@ export function TypewriterHero() {
             className="text-sm sm:text-lg text-gray-600 max-w-xl mb-6 leading-relaxed"
           >
             {settings.heroSubtitle ||
-              "Premium 320GSM cotton, vibrant prints, and 48-hour express delivery to all 64 districts of Bangladesh."}
+              "Premium 320GSM cotton, vibrant prints, and 24-hour express delivery to all 64 districts of Bangladesh."}
           </motion.p>
 
           {/* CTAs */}
@@ -330,7 +330,7 @@ export function TypewriterHero() {
             className="flex flex-wrap gap-2 sm:gap-2.5 justify-center lg:justify-start mb-7"
           >
             {[
-              { icon: Zap, label: "48hr Production" },
+              { icon: Zap, label: "24hr Production" },
               { icon: Truck, label: "64 Districts" },
               { icon: Layers, label: "320GSM Fabric" },
               { icon: ShieldCheck, label: "COD Available" },
@@ -472,7 +472,7 @@ export function TypewriterHero() {
               <Truck className="w-4 h-4 text-orange-600" />
             </div>
             <div>
-              <div className="font-black text-sm text-gray-900 leading-none">48-hour</div>
+              <div className="font-black text-sm text-gray-900 leading-none">24-hour</div>
               <div className="text-[10px] text-gray-500 mt-0.5">Express delivery</div>
             </div>
           </motion.div>
