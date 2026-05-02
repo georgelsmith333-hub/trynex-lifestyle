@@ -87,3 +87,5 @@ channel = "stable-25_05"
 [userenv]
 
 [userenv.shared]
+ALLOWED_ORIGINS = "https://5dbc2c72-08b1-41e9-9ac4-3a850eaaa07c-00-1b9rag63a79s6.pike.replit.dev,http://localhost:5000,http://localhost:5173"
+NODE_ENV = "development"
