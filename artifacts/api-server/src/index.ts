@@ -3,14 +3,7 @@ import { logger } from "./lib/logger";
 import { runMigrations, autoSeedIfEmpty } from "./lib/autoSeed";
 import { logActiveStorageBackend, ObjectStorageService } from "./lib/objectStorage";
 
-const rawPort = process.env["PORT"];
-
-if (!rawPort) {
-  throw new Error(
-    "PORT environment variable is required but was not provided.",
-  );
-}
-
+const rawPort = process.env["PORT"] || "8080";
 const port = Number(rawPort);
 
 if (Number.isNaN(port) || port <= 0) {
@@ -115,17 +108,9 @@ if (process.env.NODE_ENV === "production") {
   logger.info({ present, storageBackend }, "[env] All required env vars confirmed present");
 }
 
-const server = app.listen(port, async (err) => {
-  if (err) {
-    logger.error({ err }, "Error listening on port");
-    process.exit(1);
-  }
-
+const server = app.listen(port, async () => {
   logger.info({ port }, "Server listening");
-
-  // Log the active object storage backend (r2 / s3 / local).
   logActiveStorageBackend(logger);
-
   await runMigrations();
   await autoSeedIfEmpty();
 });
