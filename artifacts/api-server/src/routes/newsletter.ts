@@ -4,7 +4,7 @@ import { eq, sql } from "drizzle-orm";
 
 const router: IRouter = Router();
 
-router.post("/api/newsletter/subscribe", async (req, res) => {
+router.post("/newsletter/subscribe", async (req, res) => {
   try {
     const { email, source = "footer" } = req.body as { email?: string; source?: string };
     if (!email || typeof email !== "string" || !email.includes("@")) {
@@ -38,7 +38,7 @@ router.post("/api/newsletter/subscribe", async (req, res) => {
   }
 });
 
-router.get("/api/newsletter/subscribers", async (req, res) => {
+router.get("/newsletter/subscribers", async (req, res) => {
   try {
     const rows = await db
       .select()

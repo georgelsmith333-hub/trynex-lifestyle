@@ -3,7 +3,7 @@ import { LayoutDashboard, Package, ShoppingCart, Settings, LogOut, Menu, X, File
 import { useAdminLogout, useAdminMe } from "@workspace/api-client-react";
 import { useEffect, useState } from "react";
 import { Loader } from "@/components/ui/Loader";
-import { cn } from "@/lib/utils";
+import { cn, getAuthHeaders } from "@/lib/utils";
 
 const MENU = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -31,9 +31,10 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const token = sessionStorage.getItem('trynex_admin_token');
+  const authOpts = { request: { headers: getAuthHeaders() } };
 
-  const { data, isLoading, isError } = useAdminMe();
-  const { mutateAsync: logout } = useAdminLogout();
+  const { data, isLoading, isError } = useAdminMe(authOpts);
+  const { mutateAsync: logout } = useAdminLogout(authOpts);
 
   useEffect(() => {
     if (!token) {

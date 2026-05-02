@@ -575,7 +575,7 @@ export const useListOrders = (params?: {
   limit?: number;
   page?: number;
   search?: string;
-}, _opts?: ReqOpts) => {
+}, opts?: ReqOpts) => {
   const searchParams = new URLSearchParams();
   if (params?.status) searchParams.set("status", params.status);
   if (params?.limit) searchParams.set("limit", String(params.limit));
@@ -583,10 +583,15 @@ export const useListOrders = (params?: {
   if (params?.search) searchParams.set("search", params.search);
   const qs = searchParams.toString();
   const url = `/api/orders${qs ? `?${qs}` : ""}`;
+  const customKey = (opts as { query?: { queryKey?: unknown } })?.query?.queryKey;
+  const queryOptions = opts?.query ?? {};
   return useQuery({
-    queryKey: getListOrdersQueryKey(params),
-    queryFn: () => customFetch<{ orders: Order[]; total?: number }>(url),
-  });
+    queryKey: customKey ? (customKey as unknown[]) : getListOrdersQueryKey(params),
+    queryFn: () => customFetch<{ orders: Order[]; total?: number }>(url, {
+      headers: opts?.request?.headers,
+    }),
+    ...(queryOptions as object),
+  } as any);
 };
 
 export const useUpdateOrderStatus = () => {
@@ -646,12 +651,13 @@ export const useAdminLogin = () => {
   });
 };
 
-export const useAdminLogout = () => {
+export const useAdminLogout = (opts?: ReqOpts) => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: () =>
       customFetch<{ message: string }>("/api/admin/logout", {
         method: "POST",
+        headers: opts?.request?.headers,
       }),
     onSuccess: () => {
       qc.clear();
@@ -659,11 +665,13 @@ export const useAdminLogout = () => {
   });
 };
 
-export const useAdminMe = () => {
+export const useAdminMe = (opts?: ReqOpts) => {
   return useQuery({
     queryKey: ["/api/admin/me"],
     queryFn: () =>
-      customFetch<{ admin: { id: number; username: string } }>("/api/admin/me"),
+      customFetch<{ admin: { id: number; username: string } }>("/api/admin/me", {
+        headers: opts?.request?.headers,
+      }),
     retry: false,
     staleTime: 60 * 1000,
   });
@@ -671,7 +679,7 @@ export const useAdminMe = () => {
 
 // ─── Admin Stats Hooks ────────────────────────────────────────────────────────
 
-export const useGetAdminStats = (_opts?: ReqOpts) => {
+export const useGetAdminStats = (opts?: ReqOpts) => {
   return useQuery({
     queryKey: ["/api/admin/stats"],
     queryFn: () =>
@@ -687,11 +695,13 @@ export const useGetAdminStats = (_opts?: ReqOpts) => {
         recentOrders?: { id: number; orderNumber: string; customerName: string; status: string; paymentMethod: string; total: number }[];
         weeklyData: AdminStatsWeeklyDataItem[];
         paymentDistribution: AdminStatsPaymentDistributionItem[];
-      }>("/api/admin/stats"),
+      }>("/api/admin/stats", {
+        headers: opts?.request?.headers,
+      }),
   });
 };
 
-export const useListAdminCustomers = () => {
+export const useListAdminCustomers = (opts?: ReqOpts) => {
   return useQuery({
     queryKey: ["/api/admin/customers"],
     queryFn: () =>
@@ -700,7 +710,7 @@ export const useListAdminCustomers = () => {
         totalCustomers?: number;
         totalOrders?: number;
         topDistricts?: { district: string; count: number }[];
-      }>("/api/admin/customers"),
+      }>("/api/admin/customers", { headers: opts?.request?.headers }),
   });
 };
 
@@ -722,24 +732,25 @@ export interface AdminGuestCustomer {
   shippingAddress: string | null;
 }
 
-export const useListAdminGuestCustomers = () => {
+export const useListAdminGuestCustomers = (opts?: ReqOpts) => {
   return useQuery({
     queryKey: ["/api/admin/guest-customers"],
     queryFn: () =>
       customFetch<{ totalGuests: number; withOrders: number; guests: AdminGuestCustomer[] }>(
-        "/api/admin/guest-customers"
+        "/api/admin/guest-customers",
+        { headers: opts?.request?.headers }
       ),
   });
 };
 
-export const useConvertGuestCustomer = () => {
+export const useConvertGuestCustomer = (opts?: ReqOpts) => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, email, password, name }: { id: number; email: string; password: string; name?: string }) =>
       customFetch<{ success: boolean }>(`/api/admin/guest-customers/${id}/convert`, {
         method: "POST",
         body: JSON.stringify({ email, password, name }),
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...(opts?.request?.headers ?? {}) },
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["/api/admin/guest-customers"] });
@@ -748,11 +759,14 @@ export const useConvertGuestCustomer = () => {
   });
 };
 
-export const useDeleteGuestCustomer = () => {
+export const useDeleteGuestCustomer = (opts?: ReqOpts) => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id }: { id: number }) =>
-      customFetch<{ success: boolean }>(`/api/admin/guest-customers/${id}`, { method: "DELETE" }),
+      customFetch<{ success: boolean }>(`/api/admin/guest-customers/${id}`, {
+        method: "DELETE",
+        headers: opts?.request?.headers,
+      }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["/api/admin/guest-customers"] });
     },

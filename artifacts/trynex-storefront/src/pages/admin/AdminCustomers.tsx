@@ -50,14 +50,15 @@ const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?:
 };
 
 export default function AdminCustomers() {
-  const { data, isLoading, error } = useListAdminCustomers();
-  const { data: guestData, isLoading: guestsLoading } = useListAdminGuestCustomers();
+  const authOpts = { request: { headers: getAuthHeaders() } };
+  const { data, isLoading, error } = useListAdminCustomers(authOpts);
+  const { data: guestData, isLoading: guestsLoading } = useListAdminGuestCustomers(authOpts);
   const [search, setSearch] = useState("");
   const [expandedCustomer, setExpandedCustomer] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<"recent" | "spent" | "orders">("recent");
   const [tab, setTab] = useState<"buyers" | "guests">("buyers");
-  const convertGuest = useConvertGuestCustomer();
-  const deleteGuest = useDeleteGuestCustomer();
+  const convertGuest = useConvertGuestCustomer(authOpts);
+  const deleteGuest = useDeleteGuestCustomer(authOpts);
   const { toast } = useToast();
 
   if (isLoading) return <AdminLayout><Loader fullScreen /></AdminLayout>;
