@@ -215,6 +215,9 @@ const DRAFT_STORAGE_KEY = "trynex-design-draft-v1";
 // Bumped to v2 when garment coordinate space changed from per-product viewBoxes
 // to a unified 1000x1000 space (photographic mockups). Old drafts are dropped.
 const DRAFT_VERSION = 2;
+
+/** The 3 most popular products shown as quick-switch tabs. */
+const QUICK_PRODUCT_IDS = ["white-tshirt", "white-mug", "white-waterbottle"] as const;
 type SaveStatus = "idle" | "saving" | "saved";
 interface DraftPayload {
   version: number;
@@ -223,6 +226,7 @@ interface DraftPayload {
   color: { name: string; hex: string };
   size: string;
   savedAt: number;
+  mugMode?: string;
   linkedStoreProductId?: number;
   linkedStoreProductName?: string;
   linkedStoreProductPrice?: number;
@@ -336,6 +340,14 @@ export default function DesignStudio() {
     setActiveFace(mugMode === "side1" ? "front" : "back");
   }, [mugMode, isMugProduct]);
 
+  // Auto-switch to 3D when Full Wrap is selected — 3D gives the only
+  // accurate cylindrical preview of how the wrap looks around the mug.
+  useEffect(() => {
+    if (isMugProduct && mugMode === "wrap" && supports3D) {
+      setViewMode("3d");
+    }
+  }, [isMugProduct, mugMode, supports3D]);
+
   // Exposed flag the 3D mug preview reads to decide between "panel" decal
   // (Side 2) and "full body wrap" (Wrap full body) when rendering.
   const isWrapMode = isMugProduct && mugMode === "wrap";
@@ -416,6 +428,9 @@ export default function DesignStudio() {
             setSelectedColor(data.color as { name: string; hex: string });
           }
           if (typeof data.size === "string") setSelectedSize(data.size);
+          if (data.mugMode && ["side1", "side2", "wrap"].includes(data.mugMode as string)) {
+            setMugMode(data.mugMode as "side1" | "side2" | "wrap");
+          }
           // Restore linked store product if saved
           if (data.linkedStoreProductId && data.linkedStoreProductName && data.linkedStoreProductPrice) {
             setLinkedStoreProduct({
@@ -526,6 +541,7 @@ export default function DesignStudio() {
           productId: selectedProduct.id,
           color: selectedColor,
           size: selectedSize,
+          mugMode,
           savedAt: Date.now(),
           ...(linkedStoreProduct ? {
             linkedStoreProductId: linkedStoreProduct.id,
@@ -574,6 +590,33 @@ export default function DesignStudio() {
     toast({ title: "Draft cleared", description: "Your saved design has been removed." });
   }, [toast]);
 
+  /** Switch to one of the quick-tab products (T-Shirt / Mug / Bottle). */
+  const handleQuickProductSwitch = useCallback((prod: DesignProduct) => {
+    if (prod.id === selectedProduct.id) return;
+    perProductLayersRef.current[selectedProduct.id] = {
+      layers: layersRef.current,
+      stack: historyRef.current.stack,
+      index: historyRef.current.index,
+    };
+    const saved = perProductLayersRef.current[prod.id];
+    const newLayers = saved?.layers ?? [];
+    const newStack = saved?.stack ?? [[]];
+    const newHistIdx = saved?.index ?? 0;
+    historyRef.current = { stack: newStack, index: newHistIdx };
+    flushSync(() => {
+      setLayers(newLayers);
+      setSelectedLayerId(null);
+      setSelectedProduct(prod);
+      setSelectedColor({ name: prod.name, hex: prod.garmentColor });
+      setLinkedStoreProduct(null);
+      setQuantity(1);
+      setActiveFace("front");
+      if (prod.category !== "mug") setMugMode("side1");
+    });
+    forceHistoryTick(t => t + 1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedProduct.id]);
+
   const svgRef = useRef<SVGSVGElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fileInputAddRef = useRef<HTMLInputElement>(null);
@@ -593,6 +636,9 @@ export default function DesignStudio() {
 
   const activeFaceRef = useRef(activeFace);
   useEffect(() => { activeFaceRef.current = activeFace; }, [activeFace]);
+
+  const isMugProductRef = useRef(isMugProduct);
+  useEffect(() => { isMugProductRef.current = isMugProduct; }, [isMugProduct]);
 
   /* Per-product design isolation — layers/history are stored separately for
      each product so switching between T-Shirt and Hoodie doesn't mix them up. */
@@ -764,8 +810,17 @@ export default function DesignStudio() {
       // flushSync forces React to flush state updates synchronously so the
       // image appears immediately — critical on mobile where async callbacks
       // may otherwise defer rendering until the next user interaction.
+
+      // For mug: also stamp the same image on the OTHER side (front→back or
+      // back→front) so switching between Side 1 / Side 2 shows the design.
+      const layersToAdd: Layer[] = [layer];
+      if (isMugProductRef.current) {
+        const otherMugFace: Face = activeFaceRef.current === "front" ? "back" : "front";
+        layersToAdd.push({ ...layer, id: uid(), face: otherMugFace });
+      }
+
       flushSync(() => {
-        commitLayers([...layersRef.current, layer]);
+        commitLayers([...layersRef.current, ...layersToAdd]);
         setSelectedLayerId(layer.id);
         setActiveTab("layers");
       });
@@ -1710,6 +1765,42 @@ export default function DesignStudio() {
                 </div>
               </button>
             </div>
+
+            {/* ── Quick product tabs ── T-Shirt · Mug · Bottle (+ "More" opens full picker) */}
+            {!linkedStoreProduct && (
+              <div className="flex gap-1.5 mb-3" data-testid="quick-product-tabs">
+                {QUICK_PRODUCT_IDS.map(pid => {
+                  const prod = PRODUCTS.find(p => p.id === pid)!;
+                  const isActive = selectedProduct.id === pid && !linkedStoreProduct;
+                  return (
+                    <button
+                      key={pid}
+                      onClick={() => handleQuickProductSwitch(prod)}
+                      className="flex-1 flex flex-col items-center gap-0.5 py-2 rounded-xl text-[10px] font-bold transition-all"
+                      style={{
+                        background: isActive ? "linear-gradient(135deg,#E85D04,#FB8500)" : "white",
+                        color: isActive ? "white" : "#374151",
+                        border: isActive ? "2px solid transparent" : "1.5px solid #e5e7eb",
+                        boxShadow: isActive ? "0 4px 12px rgba(232,93,4,0.28)" : "none",
+                      }}
+                      title={prod.name}
+                    >
+                      <span className="text-lg leading-none">{prod.icon}</span>
+                      <span className="mt-0.5 leading-tight">{prod.name.split(" ")[0]}</span>
+                    </button>
+                  );
+                })}
+                <button
+                  onClick={() => { setShowProductPicker(true); setProductSearch(""); setProductPickerCategory("all"); }}
+                  className="shrink-0 flex flex-col items-center gap-0.5 py-2 px-2.5 rounded-xl text-[10px] font-bold transition-all"
+                  style={{ background: "white", color: "#6b7280", border: "1.5px solid #e5e7eb" }}
+                  title="Browse all products"
+                >
+                  <Package className="w-4 h-4" />
+                  <span className="mt-0.5">More</span>
+                </button>
+              </div>
+            )}
 
             {/* Zone switcher — hidden in 3D mode.
                 Apparel (tshirt/longsleeve/hoodie): shows 5 zone tabs (Front, Back,

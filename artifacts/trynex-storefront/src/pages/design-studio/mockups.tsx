@@ -85,7 +85,7 @@ export const SLEEVE_PZ: PrintZone           = { x: 175, y: 175, w: 650, h: 650 }
 /** Neck label — wider than tall (1299×945px real-world ratio). */
 export const NECK_LABEL_PZ: PrintZone       = { x: 150, y: 265, w: 700, h: 470 };
 
-export const WATERBOTTLE_MOCKUP_URL = "/mockups/white-waterbottle-front.svg";
+export const WATERBOTTLE_MOCKUP_URL = "/mockups/white-waterbottle-front.png";
 
 /* ── Zone configuration ─────────────────────────────────── */
 export interface ApparelZone {
@@ -340,12 +340,12 @@ export function FlatZoneSVG({
     <>
       <defs>
         <filter id="flat-blur-bg">
-          <feGaussianBlur stdDeviation="3" />
+          <feGaussianBlur stdDeviation="1.2" />
           <feColorMatrix type="matrix"
-            values="0.7 0 0 0 0.08
-                    0 0.7 0 0 0.08
-                    0 0 0.7 0 0.08
-                    0 0 0 0.55 0" />
+            values="0.85 0 0 0 0.06
+                    0 0.85 0 0 0.06
+                    0 0 0.85 0 0.06
+                    0 0 0 0.82 0" />
         </filter>
         <filter id="flat-artboard-glow">
           <feDropShadow dx="0" dy="0" stdDeviation="18" floodColor="rgba(255,255,255,0.60)" />
@@ -359,8 +359,9 @@ export function FlatZoneSVG({
         </clipPath>
       </defs>
 
-      {/* Full background — real garment photo (dimmed + blurred for context) */}
-      <rect width={1000} height={1000} fill="#1a1a1a" />
+      {/* Full background — real garment photo (lightly dimmed for context so
+          the user can see they're designing for a real sleeve / neck label). */}
+      <rect width={1000} height={1000} fill="#e8e5e0" />
       {garmentPhotoSrc ? (
         <image
           href={garmentPhotoSrc}
@@ -370,13 +371,13 @@ export function FlatZoneSVG({
           style={{ pointerEvents: "none" }}
         />
       ) : (
-        <rect width={1000} height={1000} fill="#1e1e24" />
+        <rect width={1000} height={1000} fill="#d4d0ca" />
       )}
 
-      {/* Subtle vignette overlay */}
+      {/* Very subtle vignette — just enough to lift the artboard off the background */}
       <radialGradient id="flat-vig" cx="50%" cy="50%" r="70%" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="1000">
         <stop offset="0%" stopColor="transparent" />
-        <stop offset="100%" stopColor="rgba(0,0,0,0.55)" />
+        <stop offset="100%" stopColor="rgba(0,0,0,0.22)" />
       </radialGradient>
       <rect width={1000} height={1000} fill="url(#flat-vig)" style={{ pointerEvents: "none" }} />
 
