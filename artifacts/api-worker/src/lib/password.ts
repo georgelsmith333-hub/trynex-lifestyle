@@ -1,4 +1,4 @@
-import { argon2id, verifyHash } from "hash-wasm";
+import { argon2id, argon2Verify } from "hash-wasm";
 
 async function getRandomSalt(): Promise<Uint8Array> {
   return crypto.getRandomValues(new Uint8Array(16));
@@ -19,7 +19,7 @@ export async function hashPasswordArgon2(password: string): Promise<string> {
 
 export async function verifyPasswordArgon2(hash: string, password: string): Promise<boolean> {
   try {
-    return await verifyHash(hash, password);
+    return await argon2Verify({ hash, password });
   } catch {
     return false;
   }

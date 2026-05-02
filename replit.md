@@ -94,23 +94,39 @@ Any `false` value points directly at the missing config. `google_configured: fal
 - **Fixes shipped:** created `public/offline.html`; added 30s SW self-unregister safety net if `activate` never fires; navigation handler now requires HTML content-type + non-zero body before returning a cached response and falls back to network when offline page is unavailable; pre-hydration brand splash + 18s watchdog in `index.html` so visitors never see a totally blank screen (loop-guarded to 2 attempts / 10 min); bumped `CURRENT_BUILD` to `2026.04.21-blank-homepage-fix-offline-html` to nuke stale SWs for returning visitors.
 - **Prevention:** every release that changes precache entries must (a) verify referenced files exist via `pnpm build`, and (b) bump `CURRENT_BUILD` in `src/lib/cache-recovery.ts`.
 
-## Replit Independence
+## Production Architecture (May 2026 — Cloudflare-only stack)
 
-Production is **fully Replit-independent**. The Replit GCS sidecar (object storage fallback) is the lowest-priority backend and is only activated in the Replit dev sandbox when no R2/S3 env vars are set. In production (`NODE_ENV=production`) the server hard-exits at boot if the storage backend resolves to `"replit"`, preventing silent failures on Render.
-
-Full audit: `docs/replit-independence.md`
+Production is **fully Replit-independent** and **fully Render-independent**.
 
 Production topology:
-- **Storefront** — Cloudflare Pages (static build, free forever) — trynexshop.com
-- **API** — Render Web Service (Express 5, free tier, never expires, kept awake by UptimeRobot)
-- **Database** — Neon PostgreSQL (free forever, serverless) — migrated from Render PostgreSQL (May 2026)
-- **Object storage** — Cloudflare R2 via S3-compatible API (`R2_*` env vars)
-- **API Proxy** — Cloudflare Pages Function (`functions/api/[[route]].js`) proxies `/api/*` → Render
+- **Storefront** — Cloudflare Pages — trynexshop.com (`trynex-lifestyle-shop` project)
+- **API** — Cloudflare Workers (Hono framework) — `https://trynex-api.trynexstore.workers.dev`
+- **Database** — Neon PostgreSQL (serverless, free forever) — all 14 tables, live data
+- **Object storage** — Cloudflare R2 (`trynex` bucket) — native R2 bindings in Worker
+- **API Proxy** — Cloudflare Pages Function (`functions/api/[[route]].js`) proxies `/api/*` → Worker via `TRYNEX_API_URL` CF Pages env var
 
-> **Database migration note (May 2026):** All 17 tables + 33 orders + 13 customers migrated from
-> Render PostgreSQL to Neon. To complete: update `DATABASE_URL` on Render to the Neon connection string.
+### Cloudflare Worker (`artifacts/api-worker/`)
+- **Framework**: Hono 4 (Workers-native)
+- **DB**: `@neondatabase/serverless` + `drizzle-orm/neon-http` (HTTP-mode, no TCP needed)
+- **Auth**: `jose` for JWT (Workers Web Crypto), `hash-wasm` argon2id for passwords (32MB, WebAssembly)
+- **TOTP**: Pure Web Crypto HMAC-SHA1 (no Node crypto), stateless partial tokens via short-lived JWTs
+- **Storage**: Native R2 bindings (`env.R2`) — upload proxy, signed-download HMAC, public serve
+- **Secrets set on Worker**: `DATABASE_URL`, `JWT_SECRET`, `ADMIN_JWT_SECRET`, `ALLOWED_ORIGINS`, `ADMIN_SALT`, `CUSTOMER_SALT`, `GOOGLE_CLIENT_ID`, `CALLMEBOT_PHONE`
+- **Secrets still needed** (set via `npx wrangler secret put`):
+  - `CALLMEBOT_APIKEY` — WhatsApp notification API key
+  - `ADMIN_PASSWORD` — only needed if resetting the admin via `/api/admin/setup`
 
-No component depends on `*.replit.dev`, `*.repl.co`, or the Replit Object Storage sidecar in production.
+### Deploying the Worker
+```bash
+cd artifacts/api-worker
+npx wrangler deploy          # redeploy after code changes
+npx wrangler secret put NAME  # add/update a secret
+```
+
+### CF Pages env var
+`TRYNEX_API_URL=https://trynex-api.trynexstore.workers.dev` is set in the CF Pages production environment, so `/api/*` requests from the storefront route to the Worker automatically.
+
+No component depends on Render, `*.replit.dev`, `*.repl.co`, or Replit Object Storage in production.
 
 ## Session Updates (April 2026)
 
