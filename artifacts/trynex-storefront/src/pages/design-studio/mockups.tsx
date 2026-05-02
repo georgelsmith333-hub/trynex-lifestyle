@@ -85,7 +85,7 @@ export const SLEEVE_PZ: PrintZone           = { x: 175, y: 175, w: 650, h: 650 }
 /** Neck label — wider than tall (1299×945px real-world ratio). */
 export const NECK_LABEL_PZ: PrintZone       = { x: 150, y: 265, w: 700, h: 470 };
 
-export const WATERBOTTLE_MOCKUP_URL = "/mockups/white-waterbottle-front.png";
+export const WATERBOTTLE_MOCKUP_URL = "/mockups/white-waterbottle-blank.png";
 
 /* ── Zone configuration ─────────────────────────────────── */
 export interface ApparelZone {

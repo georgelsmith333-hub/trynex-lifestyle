@@ -689,7 +689,7 @@ export function WaterBottleBody({
   //   base disk: y = -1.04
 
   return (
-    <group scale={1.05}>
+    <group scale={0.62}>
       {/* ── Main body (base colour) ───────────────────── */}
       <mesh geometry={bodyGeo} castShadow receiveShadow>
         <meshPhysicalMaterial
@@ -802,8 +802,8 @@ export const VIEWER_FRAMING: Record<ViewerCategory, {
   longsleeve:  { radius: 4.0, cameraY:  0.10, minDistance: 2.8, maxDistance: 5.5, shadowY: -1.30 },
   hoodie:      { radius: 4.0, cameraY:  0.10, minDistance: 2.8, maxDistance: 5.5, shadowY: -1.30 },
   cap:         { radius: 3.0, cameraY:  0.05, minDistance: 2.2, maxDistance: 4.5, shadowY: -1.05 },
-  mug:         { radius: 3.4, cameraY:  0.40, minDistance: 2.4, maxDistance: 5.0, shadowY: -0.85 },
-  waterbottle: { radius: 2.9, cameraY:  0.32, minDistance: 2.0, maxDistance: 4.6, shadowY: -1.12 },
+  mug:         { radius: 3.5, cameraY:  0.10, minDistance: 2.8, maxDistance: 6.0, shadowY: -0.40 },
+  waterbottle: { radius: 3.5, cameraY:  0.18, minDistance: 2.8, maxDistance: 6.0, shadowY: -0.65 },
 };
 
 /**

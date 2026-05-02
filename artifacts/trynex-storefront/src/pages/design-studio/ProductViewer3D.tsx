@@ -436,7 +436,9 @@ export default function ProductViewer3D({
           <CameraRig activeFace={activeFace} category={product.category} />
 
           {product.category === "mug" && (
-            <MugBody wrapTex={mugTex ?? undefined} garmentColor={garmentColor} />
+            <group scale={0.45}>
+              <MugBody wrapTex={mugTex ?? undefined} garmentColor={garmentColor} />
+            </group>
           )}
 
           {product.category === "tshirt" && (

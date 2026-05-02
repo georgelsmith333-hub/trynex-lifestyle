@@ -1786,7 +1786,9 @@ export default function DesignStudio() {
                       title={prod.name}
                     >
                       <span className="text-lg leading-none">{prod.icon}</span>
-                      <span className="mt-0.5 leading-tight">{prod.name.split(" ")[0]}</span>
+                      <span className="mt-0.5 leading-tight">
+                        {pid === "white-mug" ? "Mug" : pid === "white-waterbottle" ? "Bottle" : prod.name.split(" ")[0]}
+                      </span>
                     </button>
                   );
                 })}
