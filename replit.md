@@ -129,6 +129,41 @@ npx wrangler secret put NAME  # add/update a secret
 
 No component depends on Render, `*.replit.dev`, `*.repl.co`, or Replit Object Storage in production.
 
+## Session Updates (May 2026)
+
+### Design Studio — Cross-Product Image Sharing
+When a user uploads an image on any product (T-shirt, mug, bottle, etc.), a scaled copy is automatically placed on every other product's canvas. The copy is scaled proportionally using `Math.min(targetPZ.w/currentPZ.w, targetPZ.h/currentPZ.h)` and centred in the target print zone. Implemented in `handleFileUpload` in `DesignStudio.tsx` (lines 776–797).
+
+### Water Bottle Mockup — Blank SVG
+Replaced the old cartoon water bottle PNG with a professional blank stainless-steel SVG (`public/mockups/white-waterbottle-front.svg`). The SVG uses `1000×1000` viewBox matching the existing print-zone coordinate space (zone: x=358, y=345, w=284, h=420). The `WATERBOTTLE_MOCKUP_URL` constant in `mockups.tsx` now points to the `.svg`.
+
+### Error Boundary — Navigation Reset
+`AppErrorBoundary.tsx` now adds `popstate` and `hashchange` event listeners in `componentDidMount` that auto-clear the error state when the user navigates back/forward. A "Go to Home" soft-navigation button is also added for non-chunk errors, so users are never stuck on the error screen.
+
+### Bangladesh Address & Zip Codes — Comprehensive Rewrite
+`bd-addresses.ts` completely rewritten with:
+- All 8 divisions, all 64 districts, all upazilas (400+ entries)
+- Upazila-level post codes for every district (`BD_UPAZILA_POST_CODES`)
+- **Habiganj upazilas**: Chunarughat=3320, Habiganj Sadar=3300, Nabiganj=3310, Ajmiriganj=3340, Baniachong=3330, Bahubal=3360, Lakhai=3350, Madhabpur=3370, Shaistaganj=3301
+- New helper `getUpazilasForDistrict(district)` and `getAllDistricts()` functions
+- All imports in `DeliveryAreaPicker.tsx` and `Checkout.tsx` remain compatible
+
+### 3D "No Design Yet" Overlay — Improved
+In 3D mode the overlay is now a small pill at the bottom ("Switch to 2D to add your design") instead of a full-screen blocking card, so the 3D model remains fully visible and rotatable.
+
+### Admin 2FA (TOTP) — Verified
+`artifacts/api-server/src/lib/totp.ts` is a complete, standards-compliant TOTP implementation (RFC 6238, HOTP RFC 4226). Generates secrets, QR codes (via `qrcode` package), and verifies with ±1 step window. Endpoints: `GET /admin/totp-setup`, `POST /admin/totp-enable`, `POST /admin/totp-disable`.
+
+### GitHub Deployment Settings — Saved to DB
+GitHub credentials (owner: `georgelsmith333-hub`, repo: `trynex-liestyle`, branch: `main`, PAT) inserted directly into the `settings` table keys: `github_owner`, `github_repo`, `github_branch`, `github_token`, `github_author_name`, `github_author_email`. Accessible from Admin → Deployment panel.
+
+### Brand Features Already Present (verified)
+- `ViewerCount` component on ProductDetail — animated "X people are viewing this"
+- Estimated delivery date block (order today → receive in 3–5 business days)
+- `SocialProofToast` — purchase notifications bottom-left, fires every 30–50s
+- `ExitIntentPopup` + `AbandonedCartPopup` — mounted in `App.tsx`
+- Admin backup (`AdminBackup.tsx`) — export/import full JSON snapshot
+
 ## Session Updates (April 2026)
 
 ### Products Added (IDs 10–16)

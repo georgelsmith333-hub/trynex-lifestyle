@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
+  <rect width="1000" height="1000" fill="#f4f3f1"/>
+
+  <defs>
+    <linearGradient id="bodyG" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#a8a8a8"/>
+      <stop offset="8%"   stop-color="#c8c8c8"/>
+      <stop offset="22%"  stop-color="#ebebeb"/>
+      <stop offset="38%"  stop-color="#f8f8f8"/>
+      <stop offset="52%"  stop-color="#f5f5f5"/>
+      <stop offset="68%"  stop-color="#e2e2e2"/>
+      <stop offset="85%"  stop-color="#cccccc"/>
+      <stop offset="100%" stop-color="#a0a0a0"/>
+    </linearGradient>
+    <linearGradient id="capG" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#323232"/>
+      <stop offset="30%"  stop-color="#5a5a5a"/>
+      <stop offset="52%"  stop-color="#767676"/>
+      <stop offset="72%"  stop-color="#525252"/>
+      <stop offset="100%" stop-color="#282828"/>
+    </linearGradient>
+    <linearGradient id="neckG" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#b0b0b0"/>
+      <stop offset="48%"  stop-color="#dcdcdc"/>
+      <stop offset="100%" stop-color="#a4a4a4"/>
+    </linearGradient>
+    <linearGradient id="rimG" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#949494"/>
+      <stop offset="46%"  stop-color="#cccccc"/>
+      <stop offset="100%" stop-color="#848484"/>
+    </linearGradient>
+    <linearGradient id="hlG" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="rgba(255,255,255,0)"/>
+      <stop offset="28%"  stop-color="rgba(255,255,255,0.46)"/>
+      <stop offset="40%"  stop-color="rgba(255,255,255,0.62)"/>
+      <stop offset="54%"  stop-color="rgba(255,255,255,0.06)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </linearGradient>
+    <linearGradient id="edgeG" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="rgba(0,0,0,0.10)"/>
+      <stop offset="12%"  stop-color="rgba(0,0,0,0)"/>
+      <stop offset="88%"  stop-color="rgba(0,0,0,0)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0.13)"/>
+    </linearGradient>
+    <filter id="ds" x="-18%" y="-6%" width="136%" height="118%">
+      <feDropShadow dx="5" dy="10" stdDeviation="16" flood-color="rgba(0,0,0,0.20)"/>
+    </filter>
+    <linearGradient id="bottomG" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#b0b0b0"/>
+      <stop offset="50%"  stop-color="#d8d8d8"/>
+      <stop offset="100%" stop-color="#a8a8a8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Floor shadow -->
+  <ellipse cx="500" cy="908" rx="182" ry="20" fill="rgba(0,0,0,0.09)"/>
+
+  <g filter="url(#ds)">
+    <!-- ── BODY ─────────────────────────────────────── -->
+    <!-- Slightly tapered: narrower at top, slightly wider at base -->
+    <path d="M 340,248 C 338,248 322,860 322,860 Q 324,886 500,892 Q 676,886 678,860 C 678,860 662,248 660,248 Z"
+          fill="url(#bodyG)"/>
+
+    <!-- ── SHOULDER ─────────────────────────────────── -->
+    <path d="M 432,178 L 568,178 L 660,248 L 340,248 Z" fill="url(#neckG)"/>
+
+    <!-- ── NECK ─────────────────────────────────────── -->
+    <rect x="436" y="106" width="128" height="76" rx="5" fill="url(#neckG)"/>
+
+    <!-- Neck screw thread groove -->
+    <rect x="436" y="142" width="128" height="3" rx="1.5" fill="rgba(0,0,0,0.08)"/>
+    <rect x="436" y="150" width="128" height="3" rx="1.5" fill="rgba(0,0,0,0.08)"/>
+    <rect x="436" y="158" width="128" height="3" rx="1.5" fill="rgba(0,0,0,0.08)"/>
+
+    <!-- ── CAP BODY ─────────────────────────────────── -->
+    <rect x="424" y="65" width="152" height="46" rx="10" fill="url(#capG)"/>
+
+    <!-- Cap grip ridges -->
+    <rect x="424" y="70"  width="152" height="4" rx="2" fill="rgba(255,255,255,0.10)"/>
+    <rect x="424" y="77"  width="152" height="4" rx="2" fill="rgba(255,255,255,0.10)"/>
+    <rect x="424" y="84"  width="152" height="4" rx="2" fill="rgba(255,255,255,0.10)"/>
+    <rect x="424" y="91"  width="152" height="4" rx="2" fill="rgba(255,255,255,0.10)"/>
+    <rect x="424" y="98"  width="152" height="4" rx="2" fill="rgba(255,255,255,0.10)"/>
+    <rect x="424" y="105" width="152" height="3" rx="1.5" fill="rgba(255,255,255,0.08)"/>
+
+    <!-- ── CAP TOP ───────────────────────────────────── -->
+    <rect x="448" y="48" width="104" height="22" rx="8" fill="#484848"/>
+    <rect x="460" y="52" width="80"  height="12" rx="5" fill="#545454"/>
+
+    <!-- ── RIM BAND at body top ──────────────────────── -->
+    <rect x="337" y="243" width="326" height="12" rx="4" fill="url(#rimG)"/>
+
+    <!-- ── BASE DISK ─────────────────────────────────── -->
+    <ellipse cx="500" cy="886" rx="180" ry="15" fill="#b8b8b8"/>
+    <ellipse cx="500" cy="882" rx="174" ry="10" fill="#cacaca"/>
+    <ellipse cx="500" cy="879" rx="168" ry="7"  fill="#d6d6d6"/>
+  </g>
+
+  <!-- ── HIGHLIGHT (no drop-shadow to keep it crisp) ── -->
+  <path d="M 340,248 C 338,248 322,860 322,860 Q 324,886 500,892 Q 676,886 678,860 C 678,860 662,248 660,248 Z"
+        fill="url(#hlG)"/>
+  <path d="M 432,178 L 568,178 L 660,248 L 340,248 Z" fill="url(#hlG)"/>
+
+  <!-- Edge darkening (gives the cylinder illusion) -->
+  <path d="M 340,248 C 338,248 322,860 322,860 Q 324,886 500,892 Q 676,886 678,860 C 678,860 662,248 660,248 Z"
+        fill="url(#edgeG)"/>
+
+  <!-- Left specular streak -->
+  <line x1="412" y1="252" x2="400" y2="870"
+        stroke="rgba(255,255,255,0.52)" stroke-width="26"
+        stroke-linecap="round" opacity="0.32"/>
+
+  <!-- Horizontal separation lines (premium detail) -->
+  <path d="M 334,360 L 666,360" stroke="rgba(200,200,200,0.55)" stroke-width="2"/>
+  <path d="M 328,540 L 672,540" stroke="rgba(200,200,200,0.55)" stroke-width="2"/>
+  <path d="M 324,720 L 676,720" stroke="rgba(200,200,200,0.55)" stroke-width="2"/>
+
+  <!-- Subtle right-side specular -->
+  <line x1="580" y1="252" x2="590" y2="870"
+        stroke="rgba(255,255,255,0.28)" stroke-width="12"
+        stroke-linecap="round" opacity="0.25"/>
+</svg>

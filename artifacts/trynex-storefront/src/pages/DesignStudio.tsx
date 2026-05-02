@@ -769,7 +769,31 @@ export default function DesignStudio() {
         setSelectedLayerId(layer.id);
         setActiveTab("layers");
       });
-      toast({ title: "✓ Image added", description: "Drag to reposition · Pinch or scroll to resize." });
+
+      // Propagate a scaled copy of this image to every OTHER product so
+      // switching products shows the design pre-placed and centred in their
+      // print zone. The design is scaled proportionally to fit each zone.
+      const currentPZ = pzRef.current;
+      PRODUCTS.forEach(prod => {
+        if (prod.id === selectedProduct.id) return;
+        const targetPZ = prod.printZone;
+        const scaleRatio = Math.min(targetPZ.w / currentPZ.w, targetPZ.h / currentPZ.h);
+        const propagated: ImageLayer = {
+          ...layer,
+          id: uid(),
+          face: "front",
+          transform: { x: 0, y: 0, scale: layer.transform.scale * scaleRatio, rotation: 0, opacity: 1 },
+        };
+        const existing = perProductLayersRef.current[prod.id] ?? { layers: [], stack: [[]], index: 0 };
+        const newLayers = [...existing.layers, propagated];
+        perProductLayersRef.current[prod.id] = {
+          layers: newLayers,
+          stack: [...existing.stack, newLayers],
+          index: existing.stack.length,
+        };
+      });
+
+      toast({ title: "✓ Image added to all products", description: "Design applied across all products. Switch products to preview." });
     };
     reader.readAsDataURL(file);
   };
@@ -1841,13 +1865,11 @@ export default function DesignStudio() {
                       Drag to rotate · Scroll to zoom
                     </div>
                     {layers.length === 0 && (
-                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div className="text-center px-6 py-5 rounded-2xl" style={{ background: "rgba(255,255,255,0.88)", border: "2px dashed rgba(232,93,4,0.35)" }}>
-                          <div className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2" style={{ background: "linear-gradient(135deg,#fff4ee,#ffe8d4)" }}>
-                            <Upload className="w-5 h-5 text-orange-500" />
-                          </div>
-                          <p className="font-black text-gray-800 text-sm mb-0.5">No design yet</p>
-                          <p className="text-xs text-gray-500">Switch to 2D to add layers →</p>
+                      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 pointer-events-none">
+                        <div className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold"
+                          style={{ background: "rgba(255,255,255,0.82)", border: "1.5px dashed rgba(232,93,4,0.40)", backdropFilter: "blur(6px)", color: "#6b7280", whiteSpace: "nowrap" }}>
+                          <Upload className="w-3.5 h-3.5 text-orange-400" />
+                          Switch to 2D to add your design
                         </div>
                       </div>
                     )}
