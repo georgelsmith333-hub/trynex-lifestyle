@@ -147,7 +147,7 @@ export const PRODUCTS: DesignProduct[] = [
   { id: "black-longsleeve", name: "Long Sleeve (Black)", icon: "👔", category: "longsleeve", garmentColor: "#1a1a1a",
     description: "240GSM Cotton",  viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: LONGSLEEVE_PZ,
-    frontSrc: "/mockups/white-longsleeve-front.png", backSrc: "/mockups/white-longsleeve-back.png" },
+    frontSrc: "/mockups/white-longsleeve-front-cutout.png", backSrc: "/mockups/white-longsleeve-back-cutout.png" },
   { id: "white-mug",        name: "Coffee Mug",        icon: "☕", category: "mug",        garmentColor: "#F5F5F5",
     description: "11oz Ceramic",   badge: "Popular", viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: MUG_SIDE_PZ,

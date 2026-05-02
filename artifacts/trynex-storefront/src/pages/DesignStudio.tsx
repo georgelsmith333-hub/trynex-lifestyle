@@ -798,6 +798,64 @@ export default function DesignStudio() {
   const [aiGenerating, setAiGenerating] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
   const [aiHistory, setAiHistory] = useState<{ url: string; prompt: string }[]>([]);
+
+  const handleGenerateAI = async () => {
+    const prompt = aiPrompt.trim();
+    if (!prompt) return;
+    setAiGenerating(true);
+    setAiError(null);
+    try {
+      // Pollinations free API — no key needed, great for t-shirt/sticker designs
+      const seed = Math.floor(Math.random() * 99999);
+      const encodedPrompt = encodeURIComponent(
+        prompt + ", t-shirt print design, white background, high contrast, vector style, clean edges, no text unless requested"
+      );
+      const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=512&seed=${seed}&nologo=true&model=flux`;
+
+      // Fetch via img element to avoid CORS issues
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error("Image generation failed"));
+        img.src = url;
+      });
+
+      // Convert to data URL for layer system
+      const canvas = document.createElement("canvas");
+      canvas.width = img.naturalWidth || 512;
+      canvas.height = img.naturalHeight || 512;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("Canvas failed");
+      ctx.drawImage(img, 0, 0);
+      const dataUrl = canvas.toDataURL("image/png");
+
+      const currentPz = pzRef.current;
+      const layer: ImageLayer = {
+        id: uid(), name: prompt.slice(0, 30),
+        type: "image", src: dataUrl,
+        naturalW: canvas.width, naturalH: canvas.height,
+        visible: true, locked: false,
+        transform: { x: 0, y: 0, scale: 0.85, rotation: 0, opacity: 1 },
+        face: activeFaceRef.current,
+      };
+      void currentPz; // used by smart placement logic
+
+      flushSync(() => {
+        commitLayers([...layersRef.current, layer]);
+        setSelectedLayerId(layer.id);
+        setActiveTab("layers");
+      });
+      setAiHistory(h => [{ url: dataUrl, prompt }, ...h].slice(0, 8));
+      toast({ title: "✨ AI image added!", description: "Tip: use Remove Background for a clean cutout." });
+    } catch (err) {
+      console.error("[ai-gen]", err);
+      setAiError("Generation failed. Check your internet and try a simpler prompt.");
+    } finally {
+      setAiGenerating(false);
+    }
+  };
+
   const handleUpscale = async () => {
     if (!selectedLayer || selectedLayer.type !== "image") return;
     setIsUpscaling(true);
@@ -1885,11 +1943,12 @@ export default function DesignStudio() {
                 {[
                   { id: "upload" as const,    label: "Upload",    icon: Upload },
                   { id: "text" as const,      label: "Text",      icon: Type },
+                  { id: "ai" as const,        label: "AI Art",    icon: Wand2 },
                   { id: "layers" as const,    label: "Layers",    icon: LayersIcon },
                   { id: "templates" as const, label: "Templates", icon: Sparkles },
                 ].map(({ id, label, icon: Icon }) => (
                   <button key={id} onClick={() => setActiveTab(id)}
-                    className="flex-1 flex flex-col items-center justify-center gap-0.5 py-3 text-[10px] font-bold transition-colors"
+                    className="flex-1 flex flex-col items-center justify-center gap-0.5 py-3 text-[9px] font-bold transition-colors"
                     style={{
                       color: activeTab === id ? "#E85D04" : "#6b7280",
                       borderBottom: activeTab === id ? "2px solid #E85D04" : "2px solid transparent",
@@ -1897,6 +1956,7 @@ export default function DesignStudio() {
                     }}
                   >
                     <Icon className="w-4 h-4" />{label}
+                    {id === "ai" && <span className="absolute -top-0.5 -right-0.5 bg-orange-500 text-white text-[7px] px-1 rounded-full font-black">NEW</span>}
                   </button>
                 ))}
               </div>
