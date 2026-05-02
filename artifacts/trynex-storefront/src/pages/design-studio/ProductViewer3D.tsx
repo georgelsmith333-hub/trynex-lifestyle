@@ -365,11 +365,14 @@ export default function ProductViewer3D({
   const isWaterBottle = product.category === "waterbottle";
   const isGarment     = !isMug && !isWaterBottle;
 
+  // Auto-detect full-wrap: when BOTH front and back faces have design layers.
+  const autoWrapMode = isMug && front.layers.length > 0 && !!back && back.layers.length > 0;
+
   /* Mug: combined cylindrical wrap texture from both sides */
   const mugTex = useMugWrapTexture(
     isMug ? front : { layers: [], printZone: front.printZone, baseHeight: front.baseHeight },
     isMug ? back : undefined,
-    isMug && isWrapMode
+    autoWrapMode
   );
 
   /* Water bottle: front-face-only wrap texture */
@@ -437,7 +440,7 @@ export default function ProductViewer3D({
 
           {product.category === "mug" && (
             <group scale={0.45}>
-              <MugBody wrapTex={mugTex ?? undefined} garmentColor={garmentColor} />
+              <MugBody wrapTex={mugTex ?? undefined} garmentColor={garmentColor} isWrapMode={autoWrapMode} />
             </group>
           )}
 
@@ -500,7 +503,7 @@ export default function ProductViewer3D({
             zoomSpeed={0.8}
             minDistance={VIEWER_FRAMING[product.category].minDistance}
             maxDistance={VIEWER_FRAMING[product.category].maxDistance}
-            minPolarAngle={Math.PI * 0.25}
+            minPolarAngle={isMug ? Math.PI * 0.40 : Math.PI * 0.25}
             maxPolarAngle={Math.PI * 0.65}
             touches={{ ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN }}
           />

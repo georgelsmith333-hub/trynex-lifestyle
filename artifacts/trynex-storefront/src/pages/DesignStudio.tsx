@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import {
   PRODUCTS, type DesignProduct, GarmentSVG, FlatZoneSVG,
-  STICKERS, BASE_BY_CATEGORY, MUG_SIDE_PZ, MUG_PZ,
+  STICKERS, BASE_BY_CATEGORY, MUG_SIDE_PZ,
   getApparelZones, getZonePZ, type ApparelZone,
 } from "./design-studio/mockups";
 import { composeLayers, composeGarmentMockup, composeDesignTexture, hasWebGL2, type ComposerLayer } from "./design-studio/composer";
@@ -314,7 +314,7 @@ export default function DesignStudio() {
   // (Side 1 / Side 2 / Wrap) instead of the apparel "Front / Back" tabs.
   // Side 1 → existing front face data, Side 2 → existing back face data,
   // Wrap   → a virtual "back" face used as a continuous 360° body design.
-  type MugMode = "side1" | "side2" | "wrap";
+  type MugMode = "side1" | "side2";
   const [mugMode, setMugMode] = useState<MugMode>("side1");
 
   const isMugProduct = selectedProduct.category === "mug";
@@ -340,17 +340,7 @@ export default function DesignStudio() {
     setActiveFace(mugMode === "side1" ? "front" : "back");
   }, [mugMode, isMugProduct]);
 
-  // Auto-switch to 3D when Full Wrap is selected — 3D gives the only
-  // accurate cylindrical preview of how the wrap looks around the mug.
-  useEffect(() => {
-    if (isMugProduct && mugMode === "wrap" && supports3D) {
-      setViewMode("3d");
-    }
-  }, [isMugProduct, mugMode, supports3D]);
-
-  // Exposed flag the 3D mug preview reads to decide between "panel" decal
-  // (Side 2) and "full body wrap" (Wrap full body) when rendering.
-  const isWrapMode = isMugProduct && mugMode === "wrap";
+  // isWrapMode is now auto-detected from layers (computed after layers state is declared).
   // Reset face to "front" when switching to a single-face product
   useEffect(() => { if (!supportsBack) setActiveFace("front"); }, [supportsBack]);
 
@@ -383,6 +373,18 @@ export default function DesignStudio() {
   }, []);
   const canUndo = historyRef.current.index > 0;
   const canRedo = historyRef.current.index < historyRef.current.stack.length - 1;
+
+  // Auto-detected full-wrap: true when both faces have design layers on a mug.
+  const isWrapMode = useMemo(
+    () => isMugProduct
+      && layers.filter(l => (l.face ?? "front") === "front").length > 0
+      && layers.filter(l => (l.face ?? "front") === "back").length > 0,
+    [isMugProduct, layers]
+  );
+
+  // Crop state
+  const [cropLayerId, setCropLayerId] = useState<string | null>(null);
+  const [cropPct, setCropPct] = useState({ x: 0, y: 0, w: 100, h: 100 });
 
   /* Snap guides */
   const [snapGuides, setSnapGuides] = useState<{ v: boolean; h: boolean }>({ v: false, h: false });
@@ -428,8 +430,8 @@ export default function DesignStudio() {
             setSelectedColor(data.color as { name: string; hex: string });
           }
           if (typeof data.size === "string") setSelectedSize(data.size);
-          if (data.mugMode && ["side1", "side2", "wrap"].includes(data.mugMode as string)) {
-            setMugMode(data.mugMode as "side1" | "side2" | "wrap");
+          if (data.mugMode && ["side1", "side2"].includes(data.mugMode as string)) {
+            setMugMode(data.mugMode as "side1" | "side2");
           }
           // Restore linked store product if saved
           if (data.linkedStoreProductId && data.linkedStoreProductName && data.linkedStoreProductPrice) {
@@ -626,11 +628,9 @@ export default function DesignStudio() {
   // Apparel sleeve/neck zones: use getZonePZ which returns SLEEVE_PZ or NECK_LABEL_PZ.
   // Apparel front/back: product's own printZone.
   const pz = useMemo(() => {
-    if (isMugProduct) {
-      return mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ;
-    }
+    if (isMugProduct) return MUG_SIDE_PZ;
     return getZonePZ(activeFace, selectedProduct);
-  }, [isMugProduct, mugMode, activeFace, selectedProduct]);
+  }, [isMugProduct, activeFace, selectedProduct]);
   const pzRef = useRef(pz);
   useEffect(() => { pzRef.current = pz; }, [pz]);
 
@@ -748,6 +748,29 @@ export default function DesignStudio() {
     commitLayers(next);
     if (selectedLayerId === id) setSelectedLayerId(next[next.length - 1]?.id ?? null);
   }, [layers, selectedLayerId, commitLayers]);
+
+  const applyCrop = useCallback(() => {
+    const layer = layers.find(l => l.id === cropLayerId);
+    if (!layer || layer.type !== "image") return;
+    const src = (layer as ImageLayer).src;
+    const img = new Image();
+    img.onload = () => {
+      const sx = (cropPct.x / 100) * img.naturalWidth;
+      const sy = (cropPct.y / 100) * img.naturalHeight;
+      const sw = Math.max(1, (cropPct.w / 100) * img.naturalWidth);
+      const sh = Math.max(1, (cropPct.h / 100) * img.naturalHeight);
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(sw);
+      canvas.height = Math.round(sh);
+      canvas.getContext("2d")!.drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+      const newSrc = canvas.toDataURL("image/png");
+      updateLayer(cropLayerId!, l => l.type === "image"
+        ? { ...l, src: newSrc, naturalW: canvas.width, naturalH: canvas.height }
+        : l, true);
+      setCropLayerId(null);
+    };
+    img.src = src;
+  }, [cropLayerId, cropPct, layers, updateLayer]);
 
   const moveLayer = useCallback((id: string, dir: -1 | 1) => {
     const idx = layers.findIndex(l => l.id === id);
@@ -1894,7 +1917,6 @@ export default function DesignStudio() {
                 {([
                   { v: "side1", label: "Left Side" },
                   { v: "side2", label: "Right Side" },
-                  { v: "wrap",  label: "Full Wrap" },
                 ] as const).map(({ v, label }) => (
                   <button key={v}
                     onClick={() => setMugMode(v)}
@@ -2126,6 +2148,25 @@ export default function DesignStudio() {
                     />
                   ))}
 
+                  {/* Red delete (×) button at the top-right corner of the selected layer */}
+                  {selectedLayer && selectedLayer.type === "image" && (() => {
+                    const ne = rotatedCorners.find(c => c.key === "ne");
+                    if (!ne) return null;
+                    return (
+                      <g
+                        onClick={(e) => { e.stopPropagation(); removeLayer(selectedLayer.id); }}
+                        style={{ cursor: "pointer" }}
+                        pointerEvents="all"
+                      >
+                        <circle cx={ne.x} cy={ne.y} r={13}
+                          fill="#ef4444" stroke="white" strokeWidth={2.5}
+                          style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))" }} />
+                        <line x1={ne.x - 4.5} y1={ne.y - 4.5} x2={ne.x + 4.5} y2={ne.y + 4.5} stroke="white" strokeWidth={2.2} strokeLinecap="round" />
+                        <line x1={ne.x + 4.5} y1={ne.y - 4.5} x2={ne.x - 4.5} y2={ne.y + 4.5} stroke="white" strokeWidth={2.2} strokeLinecap="round" />
+                      </g>
+                    );
+                  })()}
+
                   {/* Snap guides */}
                   {snapGuides.v && (
                     <line x1={pz.x + pz.w / 2} y1={pz.y - 8} x2={pz.x + pz.w / 2} y2={pz.y + pz.h + 8}
@@ -2274,6 +2315,17 @@ export default function DesignStudio() {
                             </p>
                           )}
                         </div>
+                        <button
+                          onClick={() => {
+                            setCropPct({ x: 0, y: 0, w: 100, h: 100 });
+                            setCropLayerId(selectedLayer.id);
+                          }}
+                          disabled={isRemoving || isUpscaling}
+                          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm disabled:opacity-50"
+                          style={{ background: "#f3f4f6", color: "#374151", border: "1px solid #e5e7eb" }}
+                        >
+                          <Scissors className="w-4 h-4" /> Crop Image
+                        </button>
                         <button onClick={handleUpscale} disabled={isRemoving || isUpscaling}
                           className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm disabled:opacity-50"
                           style={{ background: "linear-gradient(135deg,#FEF3C7,#FDE68A)", color: "#92400E", border: "1px solid #FCD34D" }}
@@ -3254,6 +3306,128 @@ export default function DesignStudio() {
           </>
         )}
       </AnimatePresence>
+
+      {/* ═══════════════════ CROP IMAGE MODAL ═══════════════════ */}
+      {cropLayerId && (() => {
+        const cl = layers.find(l => l.id === cropLayerId) as ImageLayer | undefined;
+        if (!cl || cl.type !== "image") return null;
+        const aspect = cl.naturalW / Math.max(cl.naturalH, 1);
+        // Crop handle drag logic (uses closure refs to avoid stale captures)
+        const dragRef = { active: false, corner: "", startX: 0, startY: 0, startCrop: cropPct };
+        const CORNERS = [
+          { key: "tl", cx: cropPct.x,              cy: cropPct.y,              cursor: "nw-resize" },
+          { key: "tr", cx: cropPct.x + cropPct.w,  cy: cropPct.y,              cursor: "ne-resize" },
+          { key: "bl", cx: cropPct.x,              cy: cropPct.y + cropPct.h,  cursor: "sw-resize" },
+          { key: "br", cx: cropPct.x + cropPct.w,  cy: cropPct.y + cropPct.h,  cursor: "se-resize" },
+        ];
+        return (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ background: "rgba(0,0,0,0.75)" }}
+            onClick={() => setCropLayerId(null)}
+          >
+            <div
+              className="bg-white rounded-2xl shadow-2xl overflow-hidden"
+              style={{ width: "min(480px, 95vw)" }}
+              onClick={e => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+                <span className="font-bold text-gray-800 text-sm">Crop Image</span>
+                <button onClick={() => setCropLayerId(null)} className="text-gray-400 hover:text-gray-600">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              {/* Image + SVG crop overlay */}
+              <div className="p-4">
+                <div
+                  className="relative mx-auto overflow-hidden rounded-xl"
+                  style={{
+                    width: "100%",
+                    maxHeight: "340px",
+                    aspectRatio: String(aspect),
+                    background: "repeating-conic-gradient(#ccc 0% 25%,#f0f0f0 0% 50%) 0 0/16px 16px",
+                  }}
+                >
+                  <img
+                    src={cl.src} alt="Crop preview"
+                    className="absolute inset-0 w-full h-full object-fill"
+                    draggable={false}
+                    style={{ userSelect: "none" }}
+                  />
+                  {/* SVG crop overlay — dark mask + bright rect + handles */}
+                  <svg
+                    className="absolute inset-0 w-full h-full"
+                    viewBox="0 0 100 100"
+                    preserveAspectRatio="none"
+                    style={{ touchAction: "none" }}
+                    onPointerMove={e => {
+                      if (!dragRef.active) return;
+                      const rect = (e.currentTarget as SVGSVGElement).getBoundingClientRect();
+                      const px = ((e.clientX - rect.left) / rect.width) * 100;
+                      const py = ((e.clientY - rect.top) / rect.height) * 100;
+                      const dx = px - dragRef.startX;
+                      const dy = py - dragRef.startY;
+                      const s = dragRef.startCrop;
+                      const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+                      setCropPct(prev => {
+                        let { x, y, w, h } = s;
+                        if (dragRef.corner === "tl") { x = clamp(s.x + dx, 0, s.x + s.w - 5); y = clamp(s.y + dy, 0, s.y + s.h - 5); w = s.w - (x - s.x); h = s.h - (y - s.y); }
+                        else if (dragRef.corner === "tr") { w = clamp(s.w + dx, 5, 100 - s.x); y = clamp(s.y + dy, 0, s.y + s.h - 5); h = s.h - (y - s.y); }
+                        else if (dragRef.corner === "bl") { x = clamp(s.x + dx, 0, s.x + s.w - 5); w = s.w - (x - s.x); h = clamp(s.h + dy, 5, 100 - s.y); }
+                        else if (dragRef.corner === "br") { w = clamp(s.w + dx, 5, 100 - s.x); h = clamp(s.h + dy, 5, 100 - s.y); }
+                        return { x, y, w, h };
+                      });
+                      void prev;
+                    }}
+                    onPointerUp={() => { dragRef.active = false; }}
+                  >
+                    {/* Dark mask outside crop rect */}
+                    <path
+                      fillRule="evenodd"
+                      d={`M0,0 H100 V100 H0 Z M${cropPct.x},${cropPct.y} H${cropPct.x + cropPct.w} V${cropPct.y + cropPct.h} H${cropPct.x} Z`}
+                      fill="rgba(0,0,0,0.45)"
+                    />
+                    {/* Crop border */}
+                    <rect x={cropPct.x} y={cropPct.y} width={cropPct.w} height={cropPct.h}
+                      fill="none" stroke="white" strokeWidth="0.6" strokeDasharray="2 1.5" />
+                    {/* Corner handles */}
+                    {CORNERS.map(c => (
+                      <circle key={c.key} cx={c.cx} cy={c.cy} r={2.5}
+                        fill="white" stroke="#E85D04" strokeWidth="0.5"
+                        style={{ cursor: c.cursor, touchAction: "none" }}
+                        onPointerDown={e => {
+                          e.stopPropagation();
+                          (e.target as Element).setPointerCapture(e.pointerId);
+                          const rect = (e.currentTarget.ownerSVGElement as SVGSVGElement).getBoundingClientRect();
+                          dragRef.active = true;
+                          dragRef.corner = c.key;
+                          dragRef.startX = ((e.clientX - rect.left) / rect.width) * 100;
+                          dragRef.startY = ((e.clientY - rect.top) / rect.height) * 100;
+                          dragRef.startCrop = { ...cropPct };
+                        }}
+                      />
+                    ))}
+                  </svg>
+                </div>
+                <p className="text-[11px] text-gray-400 text-center mt-2">Drag the corners to adjust the crop area</p>
+              </div>
+              {/* Actions */}
+              <div className="flex gap-2 px-4 pb-4">
+                <button onClick={() => setCropLayerId(null)}
+                  className="flex-1 py-2.5 rounded-xl text-sm font-bold border border-gray-200 text-gray-600 hover:bg-gray-50">
+                  Cancel
+                </button>
+                <button onClick={applyCrop}
+                  className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white"
+                  style={{ background: "linear-gradient(135deg,#E85D04,#FB8500)" }}>
+                  Apply Crop
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

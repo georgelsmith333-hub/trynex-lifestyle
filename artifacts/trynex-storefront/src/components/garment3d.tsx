@@ -480,36 +480,60 @@ useGLTF.preload("/models/cap.glb");
 export function MugBody({
   wrapTex,
   garmentColor,
+  isWrapMode = false,
 }: {
   wrapTex?: THREE.Texture | null;
   garmentColor: string;
+  /** True when both sides have designs — wraps the texture around the full 360° body. */
+  isWrapMode?: boolean;
 }) {
   const { scene } = useGLTF("/models/mug.glb") as { scene: THREE.Group };
   const meshes = useMemo(() => collectMeshes(scene), [scene]);
 
+  // Front-half cylinder (−X → +Z → +X) with planar XY UV projection.
+  // Keeps the design strictly on the front-facing half — no wrap around handle.
+  // UV: u = (x + R) / (2R),  v = (y + H/2) / H  (bottom=0, top=1).
+  // Calibrated offsets centre MUG_SIDE_PZ design at the mug's +Z front face.
+  const frontOverlayGeo = useMemo(() => {
+    const R = 0.72, H = 1.70;
+    const geo = new THREE.CylinderGeometry(
+      R + 0.003, R + 0.003, H,
+      80, 1, true,
+      (3 * Math.PI) / 2,
+      Math.PI,
+    );
+    const pos = geo.attributes.position as THREE.BufferAttribute;
+    const uvArr = new Float32Array(pos.count * 2);
+    for (let i = 0; i < pos.count; i++) {
+      uvArr[i * 2]     = (pos.getX(i) + R) / (2 * R);
+      uvArr[i * 2 + 1] = (pos.getY(i) + H / 2) / H;
+    }
+    geo.setAttribute("uv", new THREE.BufferAttribute(uvArr, 2));
+    return geo;
+  }, []);
+
   useEffect(() => {
-    if (wrapTex) {
+    if (!wrapTex) return;
+    if (isWrapMode) {
+      // Full 360° wrap — original cylindrical UV offset trick.
       wrapTex.wrapS = THREE.RepeatWrapping;
       wrapTex.wrapT = THREE.ClampToEdgeWrapping;
-      // Wrap canvas layout (2048×768):
-      //   [0–1024]    = Left Side (front face) — design centred at canvas x=512
-      //   [1024–2048] = Right Side (back face) — design centred at canvas x=1536
-      //
-      // THREE CylinderGeometry UV convention (thetaStart=0, CW from +Y):
-      //   u=0.00 → +Z (front, camera-facing)
-      //   u=0.25 → +X (handle side)
-      //   u=0.50 → −Z (back)
-      //   u=0.75 → −X (left)
-      //
-      // We need u_geo=0 (front) → canvas x=512 (centre of left half) → u_tex=0.25
-      // Solve: u_tex = u_geo + offset  →  0.25 = 0 + 0.25  → offset = 0.25
-      // Verify: u_geo=0.50 (back) → u_tex=0.75 → canvas x=1536 (centre right) ✓
       wrapTex.repeat.set(1, 1);
       wrapTex.offset.set(0.25, 0);
       wrapTex.flipY = true;
-      wrapTex.needsUpdate = true;
+    } else {
+      // Single-side planar — show only left-half canvas (front design).
+      // repeat.x=0.5 maps u_geo[0,1] → canvas x[0,1024] (left half of 2048 canvas).
+      // offset.x=-0.05 shifts so MUG_SIDE_PZ centre (canvas x≈407) lands at mug front (u=0.5).
+      // offset.y=+0.009 corrects the tiny vertical calibration offset.
+      wrapTex.wrapS = THREE.ClampToEdgeWrapping;
+      wrapTex.wrapT = THREE.ClampToEdgeWrapping;
+      wrapTex.repeat.set(0.5, 1);
+      wrapTex.offset.set(-0.05, 0.009);
+      wrapTex.flipY = true;
     }
-  }, [wrapTex]);
+    wrapTex.needsUpdate = true;
+  }, [wrapTex, isWrapMode]);
 
   if (meshes.length < 5) return null;
 
@@ -529,7 +553,23 @@ export function MugBody({
         />
       </mesh>
 
-      {wrapTex && (
+      {/* Single-side: planar front-half — design stays on the front face only */}
+      {wrapTex && !isWrapMode && (
+        <mesh geometry={frontOverlayGeo}>
+          <meshStandardMaterial
+            map={wrapTex}
+            transparent
+            roughness={0.25}
+            metalness={0}
+            depthWrite={false}
+            alphaTest={0.02}
+            side={THREE.FrontSide}
+          />
+        </mesh>
+      )}
+
+      {/* Full wrap: design spans entire 360° body */}
+      {wrapTex && isWrapMode && (
         <mesh geometry={bodyGeo} scale={1.001}>
           <meshStandardMaterial
             map={wrapTex}
@@ -543,8 +583,9 @@ export function MugBody({
         </mesh>
       )}
 
+      {/* Inner liner — warm ceramic colour so it looks natural when camera looks down */}
       <mesh geometry={innerGeo}>
-        <meshStandardMaterial color={"#161616"} side={THREE.BackSide} roughness={0.55} />
+        <meshStandardMaterial color={"#efe8df"} side={THREE.BackSide} roughness={0.55} />
       </mesh>
 
       <mesh geometry={bottomGeo}>
