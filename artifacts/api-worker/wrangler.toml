@@ -1,0 +1,14 @@
+name = "trynex-api"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+
+[[r2_buckets]]
+binding = "R2"
+bucket_name = "trynex"
+
+[vars]
+NODE_ENV = "production"
