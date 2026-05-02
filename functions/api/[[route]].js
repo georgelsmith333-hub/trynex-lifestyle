@@ -1,25 +1,13 @@
 /**
  * Cloudflare Pages Function — proxies all /api/* requests to the Cloudflare Worker.
  *
- * Set TRYNEX_API_URL in CF Pages → Settings → Environment Variables to point
- * to your deployed Worker URL, e.g.:
- *   https://trynex-api.<subdomain>.workers.dev
- *
- * The proxy forwards the full path + query string, preserves all request
- * headers, and streams the response body back to the browser.
+ * The worker URL can be overridden via TRYNEX_API_URL in CF Pages environment variables.
+ * Falls back to the primary production worker URL if the env var is not set.
  */
 export async function onRequest({ request, env }) {
   const workerUrl =
     (typeof env !== "undefined" && env.TRYNEX_API_URL) ||
-    (typeof TRYNEX_API_URL !== "undefined" && TRYNEX_API_URL) ||
-    "";
-
-  if (!workerUrl) {
-    return new Response(
-      JSON.stringify({ error: "not_configured", message: "API worker URL not configured. Set TRYNEX_API_URL in CF Pages environment variables." }),
-      { status: 503, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } },
-    );
-  }
+    "https://api.trynexstore.workers.dev";
 
   const url = new URL(request.url);
   const base = workerUrl.replace(/\/$/, "");
