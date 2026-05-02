@@ -604,8 +604,8 @@ export default function DesignStudio() {
 
   /** Zones list for apparel (tshirt/longsleeve/hoodie) — 5 tabs. */
   const apparelZones = useMemo(
-    () => getApparelZones(selectedProduct.category, selectedProduct.printZone),
-    [selectedProduct.category, selectedProduct.printZone]
+    () => getApparelZones(selectedProduct.category, selectedProduct.printZone, selectedProduct.printZoneBack ?? undefined),
+    [selectedProduct.category, selectedProduct.printZone, selectedProduct.printZoneBack]
   );
   /** True when the product supports the multi-zone tab bar. */
   const isZoneTabs = useMemo(
@@ -918,18 +918,53 @@ export default function DesignStudio() {
   const [aiError, setAiError] = useState<string | null>(null);
   const [aiHistory, setAiHistory] = useState<{ url: string; prompt: string }[]>([]);
 
+  /* Reference image for img2img editing */
+  const [aiRefFile, setAiRefFile] = useState<File | null>(null);
+  const [aiRefPreviewUrl, setAiRefPreviewUrl] = useState<string | null>(null);
+  const aiRefInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!aiRefFile) { setAiRefPreviewUrl(null); return; }
+    const url = URL.createObjectURL(aiRefFile);
+    setAiRefPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [aiRefFile]);
+
   const handleGenerateAI = async () => {
     const prompt = aiPrompt.trim();
     if (!prompt) return;
     setAiGenerating(true);
     setAiError(null);
     try {
-      // Pollinations free API — no key needed, great for t-shirt/sticker designs
       const seed = Math.floor(Math.random() * 99999);
-      const encodedPrompt = encodeURIComponent(
-        prompt + ", t-shirt print design, white background, high contrast, vector style, clean edges, no text unless requested"
-      );
-      const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=512&seed=${seed}&nologo=true&model=flux`;
+      let pollinationsUrl: string;
+
+      if (aiRefFile) {
+        // img2img — convert ref image to base64, upload to our server to get a
+        // public URL, then pass it to Pollinations kontext model for guided editing.
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(aiRefFile);
+        });
+        const uploadRes = await fetch("/api/ai/reference", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image: base64 }),
+        });
+        if (!uploadRes.ok) throw new Error("Reference upload failed");
+        const { url: refUrl } = await uploadRes.json() as { url: string };
+        const encodedPrompt = encodeURIComponent(prompt);
+        const encodedRef = encodeURIComponent(refUrl);
+        pollinationsUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=512&seed=${seed}&nologo=true&model=kontext&image_url=${encodedRef}`;
+      } else {
+        // text-to-image
+        const encodedPrompt = encodeURIComponent(
+          prompt + ", t-shirt print design, white background, high contrast, vector style, clean edges, no text unless requested"
+        );
+        pollinationsUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=512&seed=${seed}&nologo=true&model=flux`;
+      }
 
       // Fetch via img element to avoid CORS issues
       const img = new Image();
@@ -937,7 +972,7 @@ export default function DesignStudio() {
       await new Promise<void>((resolve, reject) => {
         img.onload = () => resolve();
         img.onerror = () => reject(new Error("Image generation failed"));
-        img.src = url;
+        img.src = pollinationsUrl;
       });
 
       // Convert to data URL for layer system
@@ -949,7 +984,6 @@ export default function DesignStudio() {
       ctx.drawImage(img, 0, 0);
       const dataUrl = canvas.toDataURL("image/png");
 
-      const currentPz = pzRef.current;
       const layer: ImageLayer = {
         id: uid(), name: prompt.slice(0, 30),
         type: "image", src: dataUrl,
@@ -958,7 +992,6 @@ export default function DesignStudio() {
         transform: { x: 0, y: 0, scale: 0.85, rotation: 0, opacity: 1 },
         face: activeFaceRef.current,
       };
-      void currentPz; // used by smart placement logic
 
       flushSync(() => {
         commitLayers([...layersRef.current, layer]);
@@ -2619,19 +2652,67 @@ export default function DesignStudio() {
                       <div>
                         <div className="text-xs font-black text-orange-800">AI Image Generator</div>
                         <div className="text-[10px] text-orange-700 leading-tight mt-0.5">
-                          Describe any image — logo, pattern, character, art — and drop it straight onto your design. Free, no account needed.
+                          Describe any image, or upload a photo and let AI edit it with your command. Free, no account needed.
                         </div>
                       </div>
                     </div>
 
+                    {/* Reference image upload */}
+                    <div>
+                      <label className="block text-[11px] font-black uppercase tracking-widest text-gray-400 mb-1.5">
+                        Reference image <span className="normal-case font-medium text-gray-400">(optional — AI will edit your photo)</span>
+                      </label>
+                      <input
+                        ref={aiRefInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={e => {
+                          const f = e.target.files?.[0] ?? null;
+                          setAiRefFile(f);
+                          e.target.value = "";
+                        }}
+                      />
+                      {aiRefPreviewUrl ? (
+                        <div className="flex items-center gap-2 p-2 rounded-xl border border-purple-200"
+                          style={{ background: "rgba(124,58,237,0.04)" }}>
+                          <img src={aiRefPreviewUrl} alt="reference" className="w-14 h-14 rounded-lg object-cover shrink-0 border border-gray-200" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[11px] font-bold text-gray-700 truncate">{aiRefFile?.name}</p>
+                            <p className="text-[10px] text-purple-600 mt-0.5">AI will edit this image using your description below</p>
+                          </div>
+                          <button onClick={() => setAiRefFile(null)}
+                            className="shrink-0 p-1 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors">
+                            <XIcon className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => aiRefInputRef.current?.click()}
+                          className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl border-2 border-dashed transition-all hover:border-purple-300 hover:bg-purple-50"
+                          style={{ borderColor: "#d1d5db", background: "#fafafa" }}
+                        >
+                          <Upload className="w-4 h-4 text-gray-400 shrink-0" />
+                          <div className="text-left">
+                            <p className="text-[11px] font-bold text-gray-600">Upload your image</p>
+                            <p className="text-[10px] text-gray-400">JPG, PNG, WebP · AI will transform it</p>
+                          </div>
+                        </button>
+                      )}
+                    </div>
+
                     {/* Prompt input */}
                     <div>
-                      <label className="block text-[11px] font-black uppercase tracking-widest text-gray-400 mb-1.5">Describe your image</label>
+                      <label className="block text-[11px] font-black uppercase tracking-widest text-gray-400 mb-1.5">
+                        {aiRefFile ? "Editing command" : "Describe your image"}
+                      </label>
                       <textarea
                         value={aiPrompt}
                         onChange={e => { setAiPrompt(e.target.value); setAiError(null); }}
                         onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleGenerateAI(); } }}
-                        placeholder="e.g. &quot;Lion with crown, streetwear style&quot; or &quot;ফুলের ডিজাইন, রঙিন&quot;"
+                        placeholder={aiRefFile
+                          ? 'e.g. "Remove background and make it a cartoon" or "Make it look like a watercolor painting"'
+                          : 'e.g. "Lion with crown, streetwear style" or "ফুলের ডিজাইন, রঙিন"'}
                         rows={3}
                         className="w-full px-3 py-2 rounded-xl text-sm border border-gray-200 focus:border-orange-400 outline-none resize-none"
                         style={{ background: "#fafafa" }}
@@ -2639,38 +2720,45 @@ export default function DesignStudio() {
                     </div>
 
                     {/* Prompt suggestions */}
-                    <div>
-                      <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5">Quick ideas</label>
-                      <div className="flex flex-wrap gap-1.5">
-                        {[
-                          "Vintage rose graphic",
-                          "Bengali tiger bold",
-                          "Minimalist mountain",
-                          "Geometric mandala",
-                          "Skull streetwear",
-                          "Dhaka city art",
-                          "Dragon logo",
-                          "Sun & moon boho",
-                        ].map(s => (
-                          <button key={s} onClick={() => { setAiPrompt(s); setAiError(null); }}
-                            className="px-2 py-1 rounded-lg text-[10px] font-bold border transition-all hover:border-orange-300 hover:bg-orange-50"
-                            style={{ background: "white", borderColor: "#e5e7eb", color: "#374151" }}>
-                            {s}
-                          </button>
-                        ))}
+                    {!aiRefFile && (
+                      <div>
+                        <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5">Quick ideas</label>
+                        <div className="flex flex-wrap gap-1.5">
+                          {[
+                            "Vintage rose graphic",
+                            "Bengali tiger bold",
+                            "Minimalist mountain",
+                            "Geometric mandala",
+                            "Skull streetwear",
+                            "Dhaka city art",
+                            "Dragon logo",
+                            "Sun & moon boho",
+                          ].map(s => (
+                            <button key={s} onClick={() => { setAiPrompt(s); setAiError(null); }}
+                              className="px-2 py-1 rounded-lg text-[10px] font-bold border transition-all hover:border-orange-300 hover:bg-orange-50"
+                              style={{ background: "white", borderColor: "#e5e7eb", color: "#374151" }}>
+                              {s}
+                            </button>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     {/* Generate button */}
                     <button
                       onClick={handleGenerateAI}
                       disabled={aiGenerating || !aiPrompt.trim()}
                       className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-black text-sm text-white disabled:opacity-50 transition-all"
-                      style={{ background: "linear-gradient(135deg,#7c3aed,#a855f7)", boxShadow: "0 4px 14px rgba(124,58,237,0.35)" }}
+                      style={{ background: aiRefFile
+                        ? "linear-gradient(135deg,#7c3aed,#6d28d9)"
+                        : "linear-gradient(135deg,#7c3aed,#a855f7)",
+                        boxShadow: "0 4px 14px rgba(124,58,237,0.35)" }}
                     >
                       {aiGenerating
-                        ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating… (10-20s)</>
-                        : <><Wand2 className="w-4 h-4" /> Generate AI Image</>}
+                        ? <><Loader2 className="w-4 h-4 animate-spin" /> {aiRefFile ? "Editing…" : "Generating…"} (10-30s)</>
+                        : aiRefFile
+                          ? <><Wand2 className="w-4 h-4" /> Edit with AI</>
+                          : <><Wand2 className="w-4 h-4" /> Generate AI Image</>}
                     </button>
 
                     {aiError && (

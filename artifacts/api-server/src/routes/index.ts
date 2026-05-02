@@ -23,6 +23,7 @@ import abandonedCartRouter from "./abandonedCart";
 import activityLogRouter from "./activityLog";
 import seoRouter from "./seo";
 import newsletterRouter from "./newsletter";
+import aiRouter from "./ai";
 
 const router: IRouter = Router();
 
@@ -50,5 +51,6 @@ router.use(abandonedCartRouter);
 router.use(activityLogRouter);
 router.use(seoRouter);
 router.use(newsletterRouter);
+router.use(aiRouter);
 
 export default router;

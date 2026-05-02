@@ -47,26 +47,43 @@ export interface DesignProduct {
 
 /* ── Per-zone print zones ─────────────────────────────────
    All in the unified 1000×1000 viewBox.
+   Calibrated against actual product mockup photography.
+
+   Front zones are the standard chest / body print area.
+   Back zones are larger (no collar notch) and start higher.
+   Hoodie front is intentionally short — stops before kangaroo pocket.
+
    Garment zones:
-     TSHIRT_PZ / LONGSLEEVE_PZ / HOODIE_PZ / CAP_PZ — front/back
+     TSHIRT_PZ / _BACK_PZ      — t-shirt front / back
+     LONGSLEEVE_PZ / _BACK_PZ  — long-sleeve front / back
+     HOODIE_PZ / _BACK_PZ      — hoodie front (above pocket) / back
+     CAP_PZ                    — cap front panel
    Flat-template zones (no garment image):
-     SLEEVE_PZ    — left-sleeve and right-sleeve
-     NECK_LABEL_PZ — neck-label
-   Mug zones:
-     MUG_SIDE_PZ — single-side editing
-     MUG_PZ      — full 360° wrap
+     SLEEVE_PZ      — left-sleeve and right-sleeve
+     NECK_LABEL_PZ  — neck-label
+   Drinkware zones:
+     MUG_SIDE_PZ    — single-side editing (side view)
+     MUG_PZ         — full 360° wrap
+     WATERBOTTLE_PZ — bottle body (cylindrical section)
 ──────────────────────────────────────────────────────── */
-export const TSHIRT_PZ: PrintZone        = { x: 320, y: 270, w: 360, h: 430 };
-export const LONGSLEEVE_PZ: PrintZone    = { x: 330, y: 285, w: 340, h: 410 };
-export const HOODIE_PZ: PrintZone        = { x: 335, y: 305, w: 330, h: 380 };
-export const CAP_PZ: PrintZone           = { x: 365, y: 370, w: 270, h: 200 };
-export const MUG_PZ: PrintZone           = { x: 150, y: 180, w: 700, h: 640 };
-export const MUG_SIDE_PZ: PrintZone      = { x: 185, y: 205, w: 430, h: 570 };
-export const WATERBOTTLE_PZ: PrintZone   = { x: 358, y: 345, w: 284, h: 420 };
+export const TSHIRT_PZ: PrintZone           = { x: 308, y: 225, w: 384, h: 385 };
+export const TSHIRT_BACK_PZ: PrintZone      = { x: 292, y: 192, w: 416, h: 455 };
+export const LONGSLEEVE_PZ: PrintZone       = { x: 314, y: 235, w: 372, h: 390 };
+export const LONGSLEEVE_BACK_PZ: PrintZone  = { x: 298, y: 200, w: 404, h: 448 };
+/** Hoodie front — stops at ~y=530 to clear the kangaroo pocket (pocket starts ~y=565). */
+export const HOODIE_PZ: PrintZone           = { x: 338, y: 258, w: 324, h: 272 };
+export const HOODIE_BACK_PZ: PrintZone      = { x: 298, y: 188, w: 404, h: 440 };
+/** Cap front panel — structured 5-panel cap, panel height ≈ 24% of mockup height. */
+export const CAP_PZ: PrintZone              = { x: 342, y: 305, w: 316, h: 248 };
+export const MUG_PZ: PrintZone              = { x: 150, y: 180, w: 700, h: 640 };
+/** Mug side — starts below the rim band, stops above the base band. */
+export const MUG_SIDE_PZ: PrintZone         = { x: 188, y: 252, w: 420, h: 478 };
+/** Water bottle — cylindrical body between neck taper and base taper. */
+export const WATERBOTTLE_PZ: PrintZone      = { x: 354, y: 325, w: 292, h: 448 };
 /** Sleeve print area — roughly square (1228×1087px real-world ratio). */
-export const SLEEVE_PZ: PrintZone        = { x: 175, y: 175, w: 650, h: 650 };
+export const SLEEVE_PZ: PrintZone           = { x: 175, y: 175, w: 650, h: 650 };
 /** Neck label — wider than tall (1299×945px real-world ratio). */
-export const NECK_LABEL_PZ: PrintZone    = { x: 150, y: 265, w: 700, h: 470 };
+export const NECK_LABEL_PZ: PrintZone       = { x: 150, y: 265, w: 700, h: 470 };
 
 export const WATERBOTTLE_MOCKUP_URL = "/mockups/white-waterbottle-front.svg";
 
@@ -90,15 +107,17 @@ const NECK_DIMS = "1299 × 945 px";
 export function getApparelZones(
   category: DesignProduct["category"],
   productPZ?: PrintZone,
+  productBackPZ?: PrintZone,
 ): ApparelZone[] {
   const frontPZ = productPZ ?? TSHIRT_PZ;
+  const backPZ  = productBackPZ ?? frontPZ;
   switch (category) {
     case "tshirt":
     case "longsleeve":
     case "hoodie":
       return [
         { face: "front",       label: "Front",       shortLabel: "Front",    pxDimensions: FRONT_BACK_DIMS, pz: frontPZ,       isFlat: false },
-        { face: "back",        label: "Back",        shortLabel: "Back",     pxDimensions: FRONT_BACK_DIMS, pz: frontPZ,       isFlat: false },
+        { face: "back",        label: "Back",        shortLabel: "Back",     pxDimensions: FRONT_BACK_DIMS, pz: backPZ,        isFlat: false },
         { face: "left-sleeve", label: "Left Sleeve", shortLabel: "L.Sleeve", pxDimensions: SLEEVE_DIMS,     pz: SLEEVE_PZ,     isFlat: true },
         { face: "right-sleeve",label: "Right Sleeve",shortLabel: "R.Sleeve", pxDimensions: SLEEVE_DIMS,     pz: SLEEVE_PZ,     isFlat: true },
         { face: "neck-label",  label: "Neck Label",  shortLabel: "Neck",     pxDimensions: NECK_DIMS,       pz: NECK_LABEL_PZ, isFlat: true },
@@ -126,27 +145,27 @@ const BASE = 1000;
 export const PRODUCTS: DesignProduct[] = [
   { id: "white-tshirt",     name: "Unisex T-Shirt",    icon: "👕", category: "tshirt",     garmentColor: "#F5F5F3",
     description: "230GSM Cotton",   badge: "Best Seller", viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
-    printZone: TSHIRT_PZ,
+    printZone: TSHIRT_PZ, printZoneBack: TSHIRT_BACK_PZ,
     frontSrc: "/mockups/white-tshirt-front.png", backSrc: "/mockups/white-tshirt-back.png" },
   { id: "black-tshirt",     name: "Unisex T-Shirt (Black)", icon: "👕", category: "tshirt", garmentColor: "#1a1a1a",
     description: "230GSM Cotton",  viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
-    printZone: TSHIRT_PZ,
+    printZone: TSHIRT_PZ, printZoneBack: TSHIRT_BACK_PZ,
     frontSrc: "/mockups/black-tshirt-front.png", backSrc: "/mockups/black-tshirt-back.png" },
   { id: "white-hoodie",     name: "Unisex Hoodie",     icon: "🧥", category: "hoodie",     garmentColor: "#F2EFE9",
     description: "320GSM Fleece",   badge: "New", viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
-    printZone: HOODIE_PZ,
+    printZone: HOODIE_PZ, printZoneBack: HOODIE_BACK_PZ,
     frontSrc: "/mockups/white-hoodie-front.png", backSrc: "/mockups/white-hoodie-back.png" },
   { id: "black-hoodie",     name: "Unisex Hoodie (Black)", icon: "🧥", category: "hoodie",  garmentColor: "#1a1a1a",
     description: "320GSM Fleece",  viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
-    printZone: HOODIE_PZ,
+    printZone: HOODIE_PZ, printZoneBack: HOODIE_BACK_PZ,
     frontSrc: "/mockups/black-hoodie-front.png", backSrc: "/mockups/black-hoodie-back.png" },
   { id: "white-longsleeve", name: "Unisex Long Sleeve", icon: "👔", category: "longsleeve", garmentColor: "#F5F5F3",
     description: "240GSM Cotton",   viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
-    printZone: LONGSLEEVE_PZ,
+    printZone: LONGSLEEVE_PZ, printZoneBack: LONGSLEEVE_BACK_PZ,
     frontSrc: "/mockups/white-longsleeve-front.png", backSrc: "/mockups/white-longsleeve-back.png" },
   { id: "black-longsleeve", name: "Long Sleeve (Black)", icon: "👔", category: "longsleeve", garmentColor: "#1a1a1a",
     description: "240GSM Cotton",  viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
-    printZone: LONGSLEEVE_PZ,
+    printZone: LONGSLEEVE_PZ, printZoneBack: LONGSLEEVE_BACK_PZ,
     frontSrc: "/mockups/white-longsleeve-front-cutout.png", backSrc: "/mockups/white-longsleeve-back-cutout.png" },
   { id: "white-mug",        name: "Coffee Mug",        icon: "☕", category: "mug",        garmentColor: "#F5F5F5",
     description: "11oz Ceramic",   badge: "Popular", viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
