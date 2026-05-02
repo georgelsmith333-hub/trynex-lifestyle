@@ -1,2 +1,5 @@
 name = "trynex-lifestyle-shop"
 pages_build_output_dir = "artifacts/trynex-storefront/dist"
+
+[vars]
+TRYNEX_API_URL = "https://api.trynexstore.workers.dev"

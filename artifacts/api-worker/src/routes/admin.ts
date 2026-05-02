@@ -323,11 +323,11 @@ app.post("/admin/reset-password", async (c) => {
     await db.update(adminTable)
       .set({ passwordHash: newHash, totpEnabled: false, totpSecret: null })
       .where(eq(adminTable.id, admin.id));
-    await revokeAllAdminSessions(db).catch(() => {});
+    await revokeAllAdminSessions(db);
     return c.json({ success: true, message: "Admin password reset. Please log in with your new password." });
   } catch (err) {
     console.error("reset-password error:", err);
-    return c.json({ error: "internal_error", message: "Password reset failed", detail: String(err) }, 500);
+    return c.json({ error: "internal_error", message: "Password reset failed" }, 500);
   }
 });
 

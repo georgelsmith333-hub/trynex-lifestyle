@@ -1,13 +1,23 @@
 /**
  * Cloudflare Pages Function — proxies all /api/* requests to the Cloudflare Worker.
  *
- * The worker URL can be overridden via TRYNEX_API_URL in CF Pages environment variables.
- * Falls back to the primary production worker URL if the env var is not set.
+ * TRYNEX_API_URL must be set in CF Pages → Settings → Environment Variables
+ * (or via wrangler.toml [vars]) to point to the deployed Worker URL.
+ * Deployments without this variable will return a 503 configuration error.
  */
 export async function onRequest({ request, env }) {
   const workerUrl =
-    (typeof env !== "undefined" && env.TRYNEX_API_URL) ||
-    "https://api.trynexstore.workers.dev";
+    (typeof env !== "undefined" && env.TRYNEX_API_URL) || "";
+
+  if (!workerUrl) {
+    return new Response(
+      JSON.stringify({
+        error: "not_configured",
+        message: "API worker URL not configured. Set TRYNEX_API_URL in CF Pages environment variables.",
+      }),
+      { status: 503, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } },
+    );
+  }
 
   const url = new URL(request.url);
   const base = workerUrl.replace(/\/$/, "");
@@ -33,7 +43,7 @@ export async function onRequest({ request, env }) {
     });
   } catch (err) {
     return new Response(
-      JSON.stringify({ error: "proxy_error", message: "API worker unavailable", detail: String(err) }),
+      JSON.stringify({ error: "proxy_error", message: "API worker unavailable" }),
       { status: 503, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } },
     );
   }
