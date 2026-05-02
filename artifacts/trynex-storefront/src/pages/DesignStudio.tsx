@@ -1948,7 +1948,7 @@ export default function DesignStudio() {
                   { id: "templates" as const, label: "Templates", icon: Sparkles },
                 ].map(({ id, label, icon: Icon }) => (
                   <button key={id} onClick={() => setActiveTab(id)}
-                    className="flex-1 flex flex-col items-center justify-center gap-0.5 py-3 text-[9px] font-bold transition-colors"
+                    className="relative flex-1 flex flex-col items-center justify-center gap-0.5 py-3 text-[9px] font-bold transition-colors"
                     style={{
                       color: activeTab === id ? "#E85D04" : "#6b7280",
                       borderBottom: activeTab === id ? "2px solid #E85D04" : "2px solid transparent",
@@ -1956,7 +1956,7 @@ export default function DesignStudio() {
                     }}
                   >
                     <Icon className="w-4 h-4" />{label}
-                    {id === "ai" && <span className="absolute -top-0.5 -right-0.5 bg-orange-500 text-white text-[7px] px-1 rounded-full font-black">NEW</span>}
+                    {id === "ai" && <span className="absolute top-1 right-1 bg-orange-500 text-white text-[6px] px-1 py-0.5 rounded-full font-black leading-none">AI</span>}
                   </button>
                 ))}
               </div>
@@ -2303,6 +2303,124 @@ export default function DesignStudio() {
                         </div>
                       </div>
                     )}
+                  </motion.div>
+                )}
+
+                {/* ── AI ART TAB ── */}
+                {activeTab === "ai" && (
+                  <motion.div key="ai" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="p-4 space-y-3">
+                    {/* Header */}
+                    <div className="flex items-start gap-2 p-3 rounded-xl"
+                      style={{ background: "linear-gradient(135deg,#fff4ee,#fde8d8)", border: "1px solid #fdd5b4" }}>
+                      <Wand2 className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" />
+                      <div>
+                        <div className="text-xs font-black text-orange-800">AI Image Generator</div>
+                        <div className="text-[10px] text-orange-700 leading-tight mt-0.5">
+                          Describe any image — logo, pattern, character, art — and drop it straight onto your design. Free, no account needed.
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Prompt input */}
+                    <div>
+                      <label className="block text-[11px] font-black uppercase tracking-widest text-gray-400 mb-1.5">Describe your image</label>
+                      <textarea
+                        value={aiPrompt}
+                        onChange={e => { setAiPrompt(e.target.value); setAiError(null); }}
+                        onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleGenerateAI(); } }}
+                        placeholder="e.g. &quot;Lion with crown, streetwear style&quot; or &quot;ফুলের ডিজাইন, রঙিন&quot;"
+                        rows={3}
+                        className="w-full px-3 py-2 rounded-xl text-sm border border-gray-200 focus:border-orange-400 outline-none resize-none"
+                        style={{ background: "#fafafa" }}
+                      />
+                    </div>
+
+                    {/* Prompt suggestions */}
+                    <div>
+                      <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5">Quick ideas</label>
+                      <div className="flex flex-wrap gap-1.5">
+                        {[
+                          "Vintage rose graphic",
+                          "Bengali tiger bold",
+                          "Minimalist mountain",
+                          "Geometric mandala",
+                          "Skull streetwear",
+                          "Dhaka city art",
+                          "Dragon logo",
+                          "Sun & moon boho",
+                        ].map(s => (
+                          <button key={s} onClick={() => { setAiPrompt(s); setAiError(null); }}
+                            className="px-2 py-1 rounded-lg text-[10px] font-bold border transition-all hover:border-orange-300 hover:bg-orange-50"
+                            style={{ background: "white", borderColor: "#e5e7eb", color: "#374151" }}>
+                            {s}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Generate button */}
+                    <button
+                      onClick={handleGenerateAI}
+                      disabled={aiGenerating || !aiPrompt.trim()}
+                      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-black text-sm text-white disabled:opacity-50 transition-all"
+                      style={{ background: "linear-gradient(135deg,#7c3aed,#a855f7)", boxShadow: "0 4px 14px rgba(124,58,237,0.35)" }}
+                    >
+                      {aiGenerating
+                        ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating… (10-20s)</>
+                        : <><Wand2 className="w-4 h-4" /> Generate AI Image</>}
+                    </button>
+
+                    {aiError && (
+                      <div className="flex items-start gap-2 p-3 rounded-xl text-xs text-red-700"
+                        style={{ background: "#fef2f2", border: "1px solid #fecaca" }}>
+                        <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                        <span>{aiError}</span>
+                      </div>
+                    )}
+
+                    {/* History */}
+                    {aiHistory.length > 0 && (
+                      <div className="pt-3 border-t border-gray-100">
+                        <label className="block text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2">Recent generations</label>
+                        <div className="grid grid-cols-4 gap-1.5">
+                          {aiHistory.map((h, i) => (
+                            <button key={i} title={h.prompt}
+                              onClick={() => {
+                                const img = new Image();
+                                img.onload = () => {
+                                  const layer: ImageLayer = {
+                                    id: uid(), name: h.prompt.slice(0, 30),
+                                    type: "image", src: h.url,
+                                    naturalW: img.naturalWidth || 512,
+                                    naturalH: img.naturalHeight || 512,
+                                    visible: true, locked: false,
+                                    transform: { x: 0, y: 0, scale: 0.85, rotation: 0, opacity: 1 },
+                                    face: activeFaceRef.current,
+                                  };
+                                  flushSync(() => {
+                                    commitLayers([...layersRef.current, layer]);
+                                    setSelectedLayerId(layer.id);
+                                    setActiveTab("layers");
+                                  });
+                                };
+                                img.src = h.url;
+                              }}
+                              className="aspect-square rounded-lg overflow-hidden border border-gray-100 hover:border-orange-300 transition-all hover:shadow-sm"
+                              style={{ background: "#f9fafb" }}
+                            >
+                              <img src={h.url} alt={h.prompt} className="w-full h-full object-cover" />
+                            </button>
+                          ))}
+                        </div>
+                        <p className="text-[10px] text-gray-400 mt-1.5 text-center">Tap any previous result to re-add it</p>
+                      </div>
+                    )}
+
+                    <div className="flex items-start gap-2 p-2.5 rounded-xl text-[10px] text-gray-500"
+                      style={{ background: "#f9fafb" }}>
+                      <Info className="w-3 h-3 shrink-0 mt-0.5 text-gray-400" />
+                      <span>After generating, use <strong>Remove Background</strong> in the Layers tab for a transparent cutout — perfect for t-shirt prints.</span>
+                    </div>
                   </motion.div>
                 )}
 
