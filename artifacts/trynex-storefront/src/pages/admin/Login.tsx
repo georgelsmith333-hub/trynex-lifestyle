@@ -66,6 +66,8 @@ export default function AdminLogin() {
       }
       if (status === 401) {
         setErrorMsg("Incorrect password. Please try again.");
+      } else if (status === 429) {
+        setErrorMsg("Too many failed attempts. Please wait 15 minutes and try again.");
       } else if (status === 405 || status === 404) {
         setErrorMsg("Server unreachable: API route is misconfigured.");
       } else if (status && status >= 500) {

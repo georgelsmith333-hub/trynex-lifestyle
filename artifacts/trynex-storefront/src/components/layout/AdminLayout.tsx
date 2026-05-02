@@ -33,7 +33,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const token = sessionStorage.getItem('trynex_admin_token');
   const authOpts = { request: { headers: getAuthHeaders() } };
 
-  const { data, isLoading, isError } = useAdminMe(authOpts);
+  const { data, isPending, isFetching, isError } = useAdminMe(authOpts);
   const { mutateAsync: logout } = useAdminLogout(authOpts);
 
   useEffect(() => {
@@ -41,11 +41,15 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
       setLocation("/admin/login");
       return;
     }
-    if (!isLoading && (isError || (data && !data.admin))) {
+    // Only redirect on auth failure once the query has settled (not while
+    // a fetch/refetch is in progress). This prevents the redirect loop that
+    // happens when a cached 401 error is being replaced by a fresh fetch
+    // after login.
+    if (!isPending && !isFetching && (isError || (data && !data.admin))) {
       sessionStorage.removeItem('trynex_admin_token');
       setLocation("/admin/login");
     }
-  }, [isLoading, isError, data, setLocation, token]);
+  }, [isPending, isFetching, isError, data, setLocation, token]);
 
   const handleLogout = async () => {
     sessionStorage.removeItem('trynex_admin_token');
@@ -53,7 +57,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     setLocation("/admin/login");
   };
 
-  if (!token || isLoading) return <Loader fullScreen />;
+  if (!token || isPending || isFetching) return <Loader fullScreen />;
   if (isError || !data?.admin) return <Loader fullScreen />;
 
   return (

@@ -666,12 +666,19 @@ export const useAdminLogout = (opts?: ReqOpts) => {
 };
 
 export const useAdminMe = (opts?: ReqOpts) => {
+  // Include whether an auth token is present in the query key so that the
+  // cached 401 error from an unauthenticated state is never reused after
+  // the user logs in. Without this, the error cache would immediately
+  // trigger the redirect-to-login loop even with a valid token.
+  const headers = opts?.request?.headers as Record<string, string> | undefined;
+  const isAuthed = Boolean(headers?.Authorization || headers?.authorization);
   return useQuery({
-    queryKey: ["/api/admin/me"],
+    queryKey: ["/api/admin/me", isAuthed],
     queryFn: () =>
       customFetch<{ admin: { id: number; username: string } }>("/api/admin/me", {
         headers: opts?.request?.headers,
       }),
+    enabled: isAuthed,
     retry: false,
     staleTime: 60 * 1000,
   });
