@@ -51,7 +51,7 @@ app.get("/products", async (c) => {
         or(
           ilike(productsTable.name, pattern),
           ilike(productsTable.description, pattern),
-          ilike(sql`array_to_string(${productsTable.tags}, ' ')`, pattern),
+          ilike(sql`${productsTable.tags}::text`, pattern),
         )!,
       );
     }

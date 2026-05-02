@@ -59,11 +59,18 @@ const SIZE_CHART = [
 ];
 
 const FONT_FAMILIES = [
-  { label: "Sans (Inter)",  value: "Inter, system-ui, sans-serif" },
-  { label: "Display Bold",  value: "'Helvetica Neue', Arial, sans-serif" },
-  { label: "Serif",         value: "'Playfair Display', Georgia, serif" },
-  { label: "Mono",          value: "'JetBrains Mono', ui-monospace, monospace" },
-  { label: "Script",        value: "'Brush Script MT', cursive" },
+  { label: "Sans",           value: "Inter, system-ui, sans-serif" },
+  { label: "Bold Display",   value: "'Helvetica Neue', Arial, sans-serif" },
+  { label: "Space Grotesk",  value: "'Space Grotesk', sans-serif" },
+  { label: "Bebas Neue",     value: "'Bebas Neue', Impact, sans-serif" },
+  { label: "Barlow Cond.",   value: "'Barlow Condensed', 'Arial Narrow', sans-serif" },
+  { label: "Nunito",         value: "'Nunito', 'Comic Sans MS', sans-serif" },
+  { label: "Playfair",       value: "'Playfair Display', Georgia, serif" },
+  { label: "Pacifico",       value: "'Pacifico', cursive" },
+  { label: "Marker",         value: "'Permanent Marker', 'Brush Script MT', cursive" },
+  { label: "বাংলা (Bangla)", value: "'Hind Siliguri', sans-serif" },
+  { label: "Mono",           value: "'JetBrains Mono', ui-monospace, monospace" },
+  { label: "Script",         value: "'Brush Script MT', cursive" },
 ];
 
 interface Template { id: string; name: string; preview: string; create: () => Layer[] }
@@ -131,13 +138,75 @@ const TEMPLATES: Template[] = [
       fontStyle: "normal", fontSize: 44, color: "#dc2626",
     }],
   },
+  {
+    id: "tpl-bebas", name: "Impact", preview: "LEGEND",
+    create: () => [{
+      id: uid(), name: "LEGEND", type: "text", visible: true, locked: false,
+      transform: { ...ZERO_TRANSFORM, scale: 1.5 },
+      text: "LEGEND", fontFamily: FONT_FAMILIES[3].value, fontWeight: 900,
+      fontStyle: "normal", fontSize: 72, color: "#111111",
+    }],
+  },
+  {
+    id: "tpl-bangla", name: "বাংলা", preview: "বাংলাদেশ",
+    create: () => [{
+      id: uid(), name: "বাংলাদেশ", type: "text", visible: true, locked: false,
+      transform: { ...ZERO_TRANSFORM },
+      text: "বাংলাদেশ", fontFamily: FONT_FAMILIES[9].value, fontWeight: 700,
+      fontStyle: "normal", fontSize: 46, color: "#006a4e",
+    }],
+  },
+  {
+    id: "tpl-pacifico", name: "Chill Vibes", preview: "Chill",
+    create: () => [{
+      id: uid(), name: "Chill", type: "text", visible: true, locked: false,
+      transform: { ...ZERO_TRANSFORM },
+      text: "Chill Vibes", fontFamily: FONT_FAMILIES[7].value, fontWeight: 700,
+      fontStyle: "normal", fontSize: 52, color: "#7c3aed",
+    }],
+  },
+  {
+    id: "tpl-marker", name: "Marker Art", preview: "✏ CUSTOM",
+    create: () => [{
+      id: uid(), name: "CUSTOM", type: "text", visible: true, locked: false,
+      transform: { ...ZERO_TRANSFORM, rotation: -5 },
+      text: "CUSTOM", fontFamily: FONT_FAMILIES[8].value, fontWeight: 700,
+      fontStyle: "normal", fontSize: 54, color: "#1a1a1a",
+    }],
+  },
+  {
+    id: "tpl-twoline", name: "BD Pride", preview: "🇧🇩 PRIDE",
+    create: () => [
+      {
+        id: uid(), name: "MADE IN", type: "text", visible: true, locked: false,
+        transform: { ...ZERO_TRANSFORM, y: -28, scale: 0.9 },
+        text: "MADE IN", fontFamily: FONT_FAMILIES[4].value, fontWeight: 700,
+        fontStyle: "normal", fontSize: 36, color: "#6b7280",
+      },
+      {
+        id: uid(), name: "BANGLADESH", type: "text", visible: true, locked: false,
+        transform: { ...ZERO_TRANSFORM, y: 16 },
+        text: "BANGLADESH", fontFamily: FONT_FAMILIES[3].value, fontWeight: 900,
+        fontStyle: "normal", fontSize: 44, color: "#006a4e",
+      },
+    ],
+  },
+  {
+    id: "tpl-minimal", name: "Minimal Line", preview: "——— name ———",
+    create: () => [{
+      id: uid(), name: "name", type: "text", visible: true, locked: false,
+      transform: { ...ZERO_TRANSFORM },
+      text: "——— your name ———", fontFamily: FONT_FAMILIES[0].value, fontWeight: 400,
+      fontStyle: "normal", fontSize: 28, color: "#374151",
+    }],
+  },
 ];
 
 /* ═══════════════════════════════════════════════════════
    MAIN PAGE
 ════════════════════════════════════════════════════════ */
 
-type RightTab = "upload" | "text" | "layers" | "templates";
+type RightTab = "upload" | "text" | "layers" | "templates" | "ai";
 
 const DRAFT_STORAGE_KEY = "trynex-design-draft-v1";
 // Bumped to v2 when garment coordinate space changed from per-product viewBoxes
@@ -329,7 +398,7 @@ export default function DesignStudio() {
         }
       }
       const urlTab = sp.get("tab");
-      if (urlTab && ["upload", "text", "layers", "templates"].includes(urlTab)) {
+      if (urlTab && ["upload", "text", "layers", "templates", "ai"].includes(urlTab)) {
         setActiveTab(urlTab as typeof activeTab);
       }
       if (sp.get("view") === "back") setActiveFace("back");
@@ -723,6 +792,12 @@ export default function DesignStudio() {
         Runs in-browser using canvas; no server cost. Helps low-res photos
         print sharper at large sizes. */
   const [isUpscaling, setIsUpscaling] = useState(false);
+
+  /* ── AI Image Generation (Pollinations.ai — free, no API key needed) ── */
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [aiGenerating, setAiGenerating] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [aiHistory, setAiHistory] = useState<{ url: string; prompt: string }[]>([]);
   const handleUpscale = async () => {
     if (!selectedLayer || selectedLayer.type !== "image") return;
     setIsUpscaling(true);
