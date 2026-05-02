@@ -1,9 +1,14 @@
 # TryNex Lifestyle — Production Deployment Guide
 
 ## Architecture
-- **Frontend**: Cloudflare Pages (free) — static SPA
-- **Backend + DB**: Render.com (free tier) — Node.js API + PostgreSQL
-- **Uptime**: UptimeRobot (free) — prevents Render free-tier sleep
+- **Frontend**: Cloudflare Pages (free forever) — static SPA
+- **API**: Render.com (free tier web service, never expires) — Node.js Express
+- **Database**: Neon PostgreSQL (free forever, serverless) — replaces Render PostgreSQL
+- **Storage**: Cloudflare R2 (free tier) — user-uploaded design files
+- **Uptime**: UptimeRobot (free) — pings Render every 5 min to prevent sleep
+
+> **Why this stack?** Render's *web service* is free forever. Only Render's *PostgreSQL database*
+> expires after 90 days. Neon is the free-forever replacement — same pg driver, zero code changes.
 
 ---
 
@@ -14,7 +19,22 @@ Make sure all code is pushed to your GitHub repo:
 
 ---
 
-## Step 2: Deploy Backend on Render.com
+## Step 2: Update DATABASE_URL on Render to Neon
+
+The Render PostgreSQL database expires after 90 days. Replace it with Neon (free forever):
+
+1. Go to https://dashboard.render.com → your **trynex-api** web service
+2. Click **Environment** tab
+3. Find or add `DATABASE_URL` and set it to your Neon connection string:
+   ```
+   postgresql://neondb_owner:<password>@ep-proud-hill-am7gl9jg-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require
+   ```
+4. Click **Save Changes** — Render will auto-redeploy
+5. After redeploy, verify: `curl https://trynex-api.onrender.com/api/auth/health`
+
+---
+
+## Step 2b: Deploy Backend on Render.com (first time setup)
 
 1. Go to https://dashboard.render.com
 2. Click **New** → **Blueprint**

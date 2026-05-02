@@ -101,10 +101,14 @@ Production is **fully Replit-independent**. The Replit GCS sidecar (object stora
 Full audit: `docs/replit-independence.md`
 
 Production topology:
-- **Storefront** — Cloudflare Pages (static build)
-- **API** — Render Web Service (Express 5)
-- **Database** — Standard PostgreSQL via `DATABASE_URL` (any provider: Render, Supabase, Neon, etc.)
+- **Storefront** — Cloudflare Pages (static build, free forever) — trynexshop.com
+- **API** — Render Web Service (Express 5, free tier, never expires, kept awake by UptimeRobot)
+- **Database** — Neon PostgreSQL (free forever, serverless) — migrated from Render PostgreSQL (May 2026)
 - **Object storage** — Cloudflare R2 via S3-compatible API (`R2_*` env vars)
+- **API Proxy** — Cloudflare Pages Function (`functions/api/[[route]].js`) proxies `/api/*` → Render
+
+> **Database migration note (May 2026):** All 17 tables + 33 orders + 13 customers migrated from
+> Render PostgreSQL to Neon. To complete: update `DATABASE_URL` on Render to the Neon connection string.
 
 No component depends on `*.replit.dev`, `*.repl.co`, or the Replit Object Storage sidecar in production.
 

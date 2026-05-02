@@ -1,4 +1,4 @@
-const RENDER_API = "https://trynex-api.onrender.com";
+const RENDER_API = (typeof TRYNEX_API_URL !== "undefined" && TRYNEX_API_URL) || "https://trynex-api.onrender.com";
 
 export async function onRequest({ request }) {
   const url = new URL(request.url);
