@@ -1054,6 +1054,31 @@ export default function ProductDetail() {
                     Customize Your Design
                   </label>
 
+                  {/* Design in Studio CTA */}
+                  <Link href={`/design-studio?storeProductId=${product.id}`}>
+                    <motion.div
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
+                      className="flex items-center gap-3 p-4 rounded-2xl cursor-pointer transition-all"
+                      style={{
+                        background: "linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%)",
+                        border: "2px solid #FED7AA",
+                      }}
+                    >
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                        style={{ background: "linear-gradient(135deg, #E85D04, #FB8500)" }}>
+                        <Sparkles className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-black text-sm text-gray-900">Open in Design Studio</p>
+                        <p className="text-xs text-orange-600 mt-0.5">Add text, logos & artwork with our visual editor</p>
+                      </div>
+                      <ArrowRight className="w-4 h-4 text-orange-400 shrink-0" />
+                    </motion.div>
+                  </Link>
+
+                  <p className="text-xs text-gray-400 text-center font-medium">— or describe your idea below —</p>
+
                   <textarea
                     value={customNote}
                     onChange={(e) => setCustomNote(e.target.value)}

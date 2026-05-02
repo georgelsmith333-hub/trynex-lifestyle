@@ -11,6 +11,7 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { getApiUrl } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGesture } from "@use-gesture/react";
+import { useListProducts } from "@workspace/api-client-react";
 import {
   Upload, RotateCcw, Trash2, ShoppingCart,
   ZoomIn, ZoomOut, RotateCw, Move, Ruler,
@@ -220,6 +221,46 @@ interface DraftPayload {
   color: { name: string; hex: string };
   size: string;
   savedAt: number;
+  linkedStoreProductId?: number;
+  linkedStoreProductName?: string;
+  linkedStoreProductPrice?: number;
+}
+
+interface LinkedStoreProduct {
+  id: number;
+  name: string;
+  price: number;
+  imageUrl?: string;
+}
+
+function detectCategoryFromProduct(prod: any): DesignProduct["category"] {
+  const text = [
+    prod.name ?? "",
+    prod.category?.name ?? "",
+    prod.categoryName ?? "",
+    ...(Array.isArray(prod.tags) ? prod.tags : []),
+  ].join(" ").toLowerCase();
+  if (text.includes("mug") || text.includes("cup")) return "mug";
+  if (text.includes("hoodie") || text.includes("sweatshirt")) return "hoodie";
+  if (text.includes("cap") || text.includes("hat")) return "cap";
+  if (text.includes("long sleeve") || text.includes("longsleeve") || text.includes("long-sleeve")) return "longsleeve";
+  if (text.includes("bottle") || text.includes("tumbler") || text.includes("flask")) return "waterbottle";
+  return "tshirt";
+}
+
+function detectColorFromProduct(prod: any): string {
+  const name = (prod.name ?? "").toLowerCase();
+  if (name.includes("black")) return "#1a1a1a";
+  if (name.includes("navy")) return "#1e3a5f";
+  if (name.includes("maroon")) return "#7f1d1d";
+  if (name.includes("grey") || name.includes("gray")) return "#6b7280";
+  if (name.includes("olive")) return "#4a5240";
+  if (Array.isArray(prod.colors) && prod.colors.length > 0) {
+    const first = prod.colors[0];
+    if (typeof first === "string" && first.startsWith("#")) return first;
+    if (typeof first === "object" && first?.hex) return first.hex;
+  }
+  return "#F5F5F3";
 }
 
 export default function DesignStudio() {
@@ -227,6 +268,20 @@ export default function DesignStudio() {
   const { addToCart } = useCartActions();
   const settings = useSiteSettings();
   const { toast } = useToast();
+
+  /* Real store products (customizable: true) fetched from the API */
+  const { data: storeProductsData } = useListProducts(
+    { limit: 50 } as any,
+    { query: { staleTime: 60_000 } as any }
+  );
+  const customizableStoreProducts = useMemo(
+    () => (storeProductsData?.products ?? []).filter((p: any) => p.customizable),
+    [storeProductsData]
+  );
+
+  /* Linked real store product for this design session */
+  const [linkedStoreProduct, setLinkedStoreProduct] = useState<LinkedStoreProduct | null>(null);
+  const pendingStoreProductIdRef = useRef<number | null>(null);
 
   const [selectedProduct, setSelectedProduct] = useState<DesignProduct>(PRODUCTS[0]);
   const [selectedColor, setSelectedColor] = useState<{ name: string; hex: string }>(
@@ -369,6 +424,14 @@ export default function DesignStudio() {
             setSelectedColor(data.color as { name: string; hex: string });
           }
           if (typeof data.size === "string") setSelectedSize(data.size);
+          // Restore linked store product if saved
+          if (data.linkedStoreProductId && data.linkedStoreProductName && data.linkedStoreProductPrice) {
+            setLinkedStoreProduct({
+              id: data.linkedStoreProductId,
+              name: data.linkedStoreProductName,
+              price: data.linkedStoreProductPrice,
+            });
+          }
           if (validLayers.length > 0) {
             setLayers(validLayers);
             historyRef.current = { stack: [validLayers], index: 0 };
@@ -397,6 +460,12 @@ export default function DesignStudio() {
           setSelectedColor({ name: found.name, hex: found.garmentColor });
         }
       }
+      // storeProductId: link to a real store product by numeric ID
+      const urlStoreProductId = sp.get("storeProductId");
+      if (urlStoreProductId) {
+        const numId = parseInt(urlStoreProductId, 10);
+        if (!isNaN(numId)) pendingStoreProductIdRef.current = numId;
+      }
       const urlTab = sp.get("tab");
       if (urlTab && ["upload", "text", "layers", "templates", "ai"].includes(urlTab)) {
         setActiveTab(urlTab as typeof activeTab);
@@ -413,6 +482,26 @@ export default function DesignStudio() {
     urlInitRef.current = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Apply pending store product once the product list loads
+  useEffect(() => {
+    if (!pendingStoreProductIdRef.current || customizableStoreProducts.length === 0) return;
+    const targetId = pendingStoreProductIdRef.current;
+    const found = customizableStoreProducts.find((p: any) => p.id === targetId);
+    if (!found) return;
+    pendingStoreProductIdRef.current = null;
+    const category = detectCategoryFromProduct(found);
+    const template = PRODUCTS.find(p => p.category === category) ?? PRODUCTS[0];
+    const garmentColor = detectColorFromProduct(found);
+    const price = parseFloat(String(found.discountPrice || found.price)) || 0;
+    setSelectedProduct(template);
+    setSelectedColor({ name: found.name, hex: garmentColor });
+    setLinkedStoreProduct({ id: found.id, name: found.name, price, imageUrl: found.imageUrl ?? undefined });
+    toast({
+      title: `Designing: ${found.name}`,
+      description: "Upload your artwork or add text to customise this product.",
+    });
+  }, [customizableStoreProducts, toast]);
 
   // Auto-save draft when layers / product / color / size change (debounced)
   useEffect(() => {
@@ -442,6 +531,11 @@ export default function DesignStudio() {
           color: selectedColor,
           size: selectedSize,
           savedAt: Date.now(),
+          ...(linkedStoreProduct ? {
+            linkedStoreProductId: linkedStoreProduct.id,
+            linkedStoreProductName: linkedStoreProduct.name,
+            linkedStoreProductPrice: linkedStoreProduct.price,
+          } : {}),
         };
         localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(payload));
         setHasDraft(true);
@@ -452,13 +546,17 @@ export default function DesignStudio() {
       }
     }, 500);
     return () => window.clearTimeout(handle);
-  }, [layers, selectedProduct, selectedColor, selectedSize, legacyDraftFound]);
+  }, [layers, selectedProduct, selectedColor, selectedSize, legacyDraftFound, linkedStoreProduct]);
 
   // Sync shareable URL params whenever key state changes (after init)
   useEffect(() => {
     if (!urlInitRef.current) return;
     const params = new URLSearchParams();
-    if (selectedProduct.id !== PRODUCTS[0].id) params.set("product", selectedProduct.id);
+    if (linkedStoreProduct) {
+      params.set("storeProductId", String(linkedStoreProduct.id));
+    } else if (selectedProduct.id !== PRODUCTS[0].id) {
+      params.set("product", selectedProduct.id);
+    }
     if (activeTab !== "upload") params.set("tab", activeTab);
     if (activeFace !== "front") params.set("view", activeFace);
     if (selectedSize !== "M") params.set("size", selectedSize);
@@ -467,7 +565,7 @@ export default function DesignStudio() {
     if (newUrl !== window.location.pathname + window.location.search) {
       window.history.replaceState(null, "", newUrl);
     }
-  }, [selectedProduct.id, activeTab, activeFace, selectedSize]);
+  }, [selectedProduct.id, activeTab, activeFace, selectedSize, linkedStoreProduct]);
 
   const clearDraft = useCallback(() => {
     try { localStorage.removeItem(DRAFT_STORAGE_KEY); } catch {}
@@ -553,12 +651,13 @@ export default function DesignStudio() {
   }, [selectedProduct, selectedColor.hex]);
 
   /* ── Per-product price (used in UI + cart serialisation) ── */
-  const studioPrice = useMemo(
-    () => isMug || isWaterBottle
+  const studioPrice = useMemo(() => {
+    // If a real store product is linked, use its price
+    if (linkedStoreProduct?.price) return linkedStoreProduct.price;
+    return isMug || isWaterBottle
       ? (settings.studioMugPrice || 799)
-      : (settings.studioTshirtPrice || 1099),
-    [isMug, isWaterBottle, settings.studioMugPrice, settings.studioTshirtPrice]
-  );
+      : (settings.studioTshirtPrice || 1099);
+  }, [linkedStoreProduct, isMug, isWaterBottle, settings.studioMugPrice, settings.studioTshirtPrice]);
 
   const selectedLayer = useMemo(
     () => layers.find(l => l.id === selectedLayerId) ?? null,
@@ -1220,12 +1319,17 @@ export default function DesignStudio() {
           color: selectedColor,
           size: selectedSize,
           savedAt: Date.now(),
+          ...(linkedStoreProduct ? {
+            linkedStoreProductId: linkedStoreProduct.id,
+            linkedStoreProductName: linkedStoreProduct.name,
+            linkedStoreProductPrice: linkedStoreProduct.price,
+          } : {}),
         }));
       } catch { /* quota exceeded — re-edit won't be available but cart works fine */ }
 
       addToCart({
-        productId: 0,
-        name: `Custom ${selectedProduct.name}`,
+        productId: linkedStoreProduct?.id ?? 0,
+        name: linkedStoreProduct?.name ?? `Custom ${selectedProduct.name}`,
         price: displayPrice,
         quantity,
         size: isMug || isCap || isWaterBottle ? undefined : selectedSize,
@@ -1273,7 +1377,7 @@ export default function DesignStudio() {
     } finally {
       setIsAddingToCart(false);
     }
-  }, [layers, selectedProduct, displayProduct, selectedColor, selectedSize, quantity, isMug, isCap, isWaterBottle, isZoneTabs, studioPrice, pz, addToCart, toast, navigate, settings]);
+  }, [layers, selectedProduct, displayProduct, selectedColor, selectedSize, quantity, isMug, isCap, isWaterBottle, isZoneTabs, studioPrice, pz, addToCart, toast, navigate, settings, linkedStoreProduct]);
 
   /* ── Studio color palette — per product category ───── */
   const parseColors = (raw: string) => {
@@ -1391,7 +1495,10 @@ export default function DesignStudio() {
             <h1 className="font-display font-black text-base sm:text-xl text-gray-900 truncate">Design Studio</h1>
             <p className="text-xs text-gray-500 mt-0.5 truncate">
               <span className="hidden sm:inline">Designing: </span>
-              <strong className="text-gray-700">{selectedProduct.name}</strong>
+              <strong className="text-gray-700">{linkedStoreProduct?.name ?? selectedProduct.name}</strong>
+              {linkedStoreProduct && (
+                <span className="ml-1 px-1.5 py-0.5 rounded-full text-[9px] font-black text-white" style={{ background: "#E85D04" }}>STORE</span>
+              )}
               <span className="text-gray-400"> · {
                 isMugProduct
                   ? (mugMode === "side1" ? "Left Side" : mugMode === "side2" ? "Right Side" : "Full Wrap")
@@ -2626,8 +2733,8 @@ export default function DesignStudio() {
               <div className="px-5 pt-5 pb-3 shrink-0">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h2 className="font-black text-gray-900 text-lg">Choose a Blank Product</h2>
-                    <p className="text-xs text-gray-500 mt-0.5">Select any product to start designing</p>
+                    <h2 className="font-black text-gray-900 text-lg">Choose a Product to Design</h2>
+                    <p className="text-xs text-gray-500 mt-0.5">Pick from your store's customizable items or use a blank template</p>
                   </div>
                   <button
                     onClick={() => setShowProductPicker(false)}
@@ -2673,13 +2780,22 @@ export default function DesignStudio() {
               <div className="overflow-y-auto flex-1 px-5 pb-6">
                 {(() => {
                   const query = productSearch.trim().toLowerCase();
+
+                  // Real store customizable products filtered by search/category
+                  const filteredStoreProducts = customizableStoreProducts.filter((p: any) => {
+                    const cat = detectCategoryFromProduct(p);
+                    const matchesCat = productPickerCategory === "all" || cat === productPickerCategory;
+                    const matchesSearch = !query || (p.name ?? "").toLowerCase().includes(query);
+                    return matchesCat && matchesSearch;
+                  });
+
                   const filtered = PRODUCTS.filter(p => {
                     const matchesCat = productPickerCategory === "all" || p.category === productPickerCategory;
                     const matchesSearch = !query || p.name.toLowerCase().includes(query) || p.description.toLowerCase().includes(query);
                     return matchesCat && matchesSearch;
                   });
 
-                  if (filtered.length === 0) return (
+                  if (filteredStoreProducts.length === 0 && filtered.length === 0) return (
                     <div className="flex flex-col items-center justify-center py-12 text-center">
                       <div className="text-4xl mb-3">🔍</div>
                       <p className="font-bold text-gray-600">No products found</p>
@@ -2688,9 +2804,83 @@ export default function DesignStudio() {
                   );
 
                   return (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+                    <div className="pt-2 space-y-5">
+                      {/* ── From Your Store ── */}
+                      {filteredStoreProducts.length > 0 && (
+                        <div>
+                          <p className="text-[11px] font-extrabold uppercase tracking-widest text-orange-500 mb-2.5 flex items-center gap-1.5">
+                            <span className="inline-block w-2 h-2 rounded-full bg-orange-400" />
+                            From Your Store
+                          </p>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            {filteredStoreProducts.map((sp: any) => {
+                              const isLinked = linkedStoreProduct?.id === sp.id;
+                              const price = parseFloat(String(sp.discountPrice || sp.price)) || 0;
+                              return (
+                                <button
+                                  key={`store-${sp.id}`}
+                                  onClick={() => {
+                                    const category = detectCategoryFromProduct(sp);
+                                    const template = PRODUCTS.find(p => p.category === category) ?? PRODUCTS[0];
+                                    const garmentColor = detectColorFromProduct(sp);
+                                    perProductLayersRef.current[selectedProduct.id] = {
+                                      layers: layersRef.current,
+                                      stack: historyRef.current.stack,
+                                      index: historyRef.current.index,
+                                    };
+                                    flushSync(() => {
+                                      setLayers([]);
+                                      setSelectedLayerId(null);
+                                      setSelectedProduct(template);
+                                      setSelectedColor({ name: sp.name, hex: garmentColor });
+                                      setQuantity(1);
+                                      setActiveFace("front");
+                                      setLinkedStoreProduct({ id: sp.id, name: sp.name, price, imageUrl: sp.imageUrl });
+                                    });
+                                    forceHistoryTick(t => t + 1);
+                                    setShowProductPicker(false);
+                                    toast({ title: `Designing: ${sp.name}`, description: "Upload your artwork or add text to customise this product." });
+                                  }}
+                                  className="flex flex-col rounded-2xl overflow-hidden transition-all text-left group"
+                                  style={{
+                                    border: isLinked ? "2.5px solid #E85D04" : "1.5px solid #e5e7eb",
+                                    boxShadow: isLinked ? "0 4px 16px rgba(232,93,4,0.2)" : "0 1px 6px rgba(0,0,0,0.05)",
+                                    background: isLinked ? "#fff9f6" : "white",
+                                  }}
+                                >
+                                  <div className="w-full aspect-square relative overflow-hidden" style={{ background: "#f9fafb" }}>
+                                    {sp.imageUrl ? (
+                                      <img src={sp.imageUrl} alt={sp.name} className="w-full h-full object-cover" />
+                                    ) : (
+                                      <div className="w-full h-full flex items-center justify-center text-3xl">👕</div>
+                                    )}
+                                    {isLinked && (
+                                      <div className="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center" style={{ background: "#E85D04" }}>
+                                        <svg viewBox="0 0 12 12" className="w-3 h-3 text-white fill-white"><path d="M2 6l3 3 5-5" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div className="p-2.5">
+                                    <p className="font-bold text-gray-900 text-[11px] leading-tight line-clamp-2">{sp.name}</p>
+                                    <p className="text-orange-500 font-black text-xs mt-1">৳{price.toFixed(0)}</p>
+                                  </div>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* ── Blank Templates ── */}
+                      {filtered.length > 0 && (
+                        <div>
+                          <p className="text-[11px] font-extrabold uppercase tracking-widest text-gray-400 mb-2.5 flex items-center gap-1.5">
+                            <span className="inline-block w-2 h-2 rounded-full bg-gray-300" />
+                            Blank Templates
+                          </p>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                       {filtered.map(prod => {
-                        const isSelected = selectedProduct.id === prod.id;
+                        const isSelected = selectedProduct.id === prod.id && !linkedStoreProduct;
                         return (
                           <button
                             key={prod.id}
@@ -2710,6 +2900,7 @@ export default function DesignStudio() {
                                 setSelectedLayerId(null);
                                 setSelectedProduct(prod);
                                 setSelectedColor({ name: prod.name, hex: prod.garmentColor });
+                                setLinkedStoreProduct(null);
                                 setQuantity(1);
                                 setActiveFace("front");
                               });
@@ -2758,6 +2949,10 @@ export default function DesignStudio() {
                           </button>
                         );
                       })}
+                          </div>
+                        </div>
+                      )}
+
                     </div>
                   );
                 })()}
