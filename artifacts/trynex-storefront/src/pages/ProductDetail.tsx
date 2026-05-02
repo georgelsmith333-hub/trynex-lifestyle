@@ -23,7 +23,7 @@ import { RecentlyViewed } from "@/components/RecentlyViewed";
 import {
   Minus, Plus, ShoppingBag, ShieldCheck, Truck, Star, Search,
   RotateCcw, ArrowLeft, ArrowRight, Check, Heart, Share2, Ruler, MessageCircle, Sparkles,
-  Upload, Image as ImageIcon, X as XIcon, ZoomIn
+  Upload, Image as ImageIcon, X as XIcon, ZoomIn, Bell, Calendar, Package2, ShoppingCart
 } from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useRef, useCallback } from "react";
@@ -224,6 +224,21 @@ function ReviewsSection({ productId, rating }: { productId: number; rating: numb
   );
 }
 
+function addBusinessDays(date: Date, days: number): Date {
+  const result = new Date(date);
+  let added = 0;
+  while (added < days) {
+    result.setDate(result.getDate() + 1);
+    const dow = result.getDay();
+    if (dow !== 0 && dow !== 6) added++;
+  }
+  return result;
+}
+
+function formatDeliveryDate(date: Date): string {
+  return date.toLocaleDateString('en-BD', { weekday: 'short', month: 'short', day: 'numeric' });
+}
+
 function compressAndConvertToBase64(file: File, maxWidth = 800, quality = 0.7): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -309,6 +324,14 @@ export default function ProductDetail() {
   );
   const relatedProducts = (relatedData?.products || []).filter(p => p.id !== productId).slice(0, 4);
 
+  const { data: fbtData } = useListProducts(
+    { limit: 8 } as any,
+    { query: { enabled: !!product, staleTime: 60000 } as any }
+  );
+  const fbtProducts = (fbtData?.products || [])
+    .filter((p: any) => p.id !== productId && p.categoryId !== product?.categoryId && p.stock > 0)
+    .slice(0, 3);
+
   const [stats, setStats] = useState<any>(null);
 
   useEffect(() => {
@@ -329,6 +352,10 @@ export default function ProductDetail() {
 
   const prefersReducedMotion = useReducedMotion();
   const [quantity, setQuantity] = useState(1);
+
+  const [notifyEmail, setNotifyEmail] = useState("");
+  const [notifySubmitted, setNotifySubmitted] = useState(false);
+  const [notifySubmitting, setNotifySubmitting] = useState(false);
   const [qtyPulse, setQtyPulse] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [selectedColor, setSelectedColor] = useState<string>("");
@@ -457,6 +484,20 @@ export default function ProductDetail() {
     }
   };
 
+  const handleNotifyMe = async () => {
+    if (!notifyEmail || notifySubmitting) return;
+    setNotifySubmitting(true);
+    try {
+      await fetch(getApiUrl("/api/newsletter/subscribe"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: notifyEmail, source: `back-in-stock:${product?.id}` }),
+      });
+    } catch {}
+    setNotifySubmitted(true);
+    setNotifySubmitting(false);
+  };
+
   const handleAddToCart = () => {
     if (product.stock < 1) return;
     const itemPrice = product.discountPrice || product.price;
@@ -464,13 +505,14 @@ export default function ProductDetail() {
       productId: product.id,
       name: product.name,
       price: itemPrice,
+      originalPrice: product.price,
       quantity,
       imageUrl: displayImage || product.imageUrl,
       size: selectedSize || undefined,
       color: selectedColor || undefined,
       customNote: customNote || undefined,
       customImages: customImages.length > 0 ? customImages : undefined,
-    });
+    } as any);
     setAddedToBag(true);
     toast({
       title: "✓ Added to cart!",
@@ -865,6 +907,29 @@ export default function ProductDetail() {
                   </span>
                 </div>
                 <ViewerCount productId={product.id} />
+
+                {/* Estimated Delivery */}
+                {product.stock > 0 && (() => {
+                  const today = new Date();
+                  const minDate = addBusinessDays(today, 3);
+                  const maxDate = addBusinessDays(today, 5);
+                  return (
+                    <div
+                      className="flex items-center gap-2.5 mt-3 px-3 py-2 rounded-xl"
+                      style={{ background: 'rgba(37,99,235,0.06)', border: '1px solid rgba(37,99,235,0.15)' }}
+                    >
+                      <Calendar className="w-4 h-4 text-blue-600 shrink-0" />
+                      <div>
+                        <p className="text-xs font-black text-blue-700">
+                          Order today → Receive by {formatDeliveryDate(minDate)}–{formatDeliveryDate(maxDate)}
+                        </p>
+                        <p className="text-[10px] text-blue-500 font-medium">
+                          Nationwide delivery across all 64 districts
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Sizes */}
@@ -1134,6 +1199,48 @@ export default function ProductDetail() {
                 </motion.button>
               </div>
 
+              {/* Back-in-Stock Alert (only when sold out) */}
+              {product.stock === 0 && (
+                <div className="mb-6 p-5 rounded-2xl" style={{ background: '#f9fafb', border: '1px solid #e5e7eb' }}>
+                  {notifySubmitted ? (
+                    <div className="flex items-center gap-3 text-center justify-center py-1">
+                      <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                        <Check className="w-4 h-4 text-green-600" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-green-700 text-sm">You're on the list!</p>
+                        <p className="text-xs text-gray-500">We'll email you when it's back in stock.</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-2 mb-3">
+                        <Bell className="w-4 h-4 text-orange-500" />
+                        <p className="font-bold text-gray-900 text-sm">Notify me when available</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <input
+                          type="email"
+                          placeholder="Your email address"
+                          value={notifyEmail}
+                          onChange={e => setNotifyEmail(e.target.value)}
+                          onKeyDown={e => e.key === 'Enter' && handleNotifyMe()}
+                          className="flex-1 px-3 py-2.5 rounded-xl text-sm border border-gray-200 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-100"
+                        />
+                        <button
+                          onClick={handleNotifyMe}
+                          disabled={!notifyEmail || notifySubmitting}
+                          className="px-4 py-2.5 rounded-xl font-bold text-sm text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                          style={{ background: 'linear-gradient(135deg, #E85D04, #FB8500)' }}
+                        >
+                          {notifySubmitting ? "..." : "Notify"}
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+
               {/* WhatsApp Order */}
               <button
                 onClick={handleWhatsAppOrder}
@@ -1231,6 +1338,102 @@ export default function ProductDetail() {
           </div>
         </div>
       </main>
+
+      {/* Frequently Bought Together */}
+      {fbtProducts.length > 0 && (
+        <section className="py-12 px-4 bg-gray-50 border-t border-gray-100">
+          <div className="max-w-7xl mx-auto">
+            <div className="mb-6">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-3"
+                style={{ background: '#fff4ee', color: '#E85D04' }}>
+                <Package2 className="w-3 h-3" /> Bundle &amp; Save
+              </span>
+              <h2 className="text-2xl font-black font-display tracking-tight text-gray-900">Frequently Bought Together</h2>
+            </div>
+            <div className="flex flex-col lg:flex-row gap-6 items-start">
+              <div className="flex flex-wrap gap-4 flex-1">
+                {/* Current product */}
+                <div className="relative flex flex-col items-center gap-2 w-28">
+                  <div className="w-28 h-28 rounded-2xl overflow-hidden border-2 border-orange-400 shadow-md">
+                    {product.imageUrl ? (
+                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full bg-orange-50 flex items-center justify-center">
+                        <ShoppingCart className="w-8 h-8 text-orange-300" />
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-xs font-bold text-gray-700 text-center leading-tight line-clamp-2">{product.name}</p>
+                  <p className="text-xs font-black text-orange-600">{formatPrice(product.discountPrice || product.price)}</p>
+                  <div className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-orange-500 flex items-center justify-center">
+                    <Check className="w-3 h-3 text-white" />
+                  </div>
+                </div>
+
+                {fbtProducts.map((fbtProduct: any, i: number) => (
+                  <div key={fbtProduct.id} className="flex items-start gap-2">
+                    <span className="text-gray-400 font-black text-xl mt-8 shrink-0">+</span>
+                    <div className="flex flex-col items-center gap-2 w-28">
+                      <Link href={`/product/${fbtProduct.id}`} className="w-28 h-28 rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:border-orange-300 transition-colors block">
+                        {fbtProduct.imageUrl ? (
+                          <img src={fbtProduct.imageUrl} alt={fbtProduct.name} className="w-full h-full object-cover" loading="lazy" />
+                        ) : (
+                          <div className="w-full h-full bg-gray-50 flex items-center justify-center">
+                            <ShoppingCart className="w-8 h-8 text-gray-300" />
+                          </div>
+                        )}
+                      </Link>
+                      <p className="text-xs font-bold text-gray-700 text-center leading-tight line-clamp-2">{fbtProduct.name}</p>
+                      <p className="text-xs font-black text-orange-600">{formatPrice(fbtProduct.discountPrice || fbtProduct.price)}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="lg:w-60 shrink-0 p-5 rounded-2xl bg-white border border-gray-200 shadow-sm">
+                <p className="text-xs font-bold text-gray-500 mb-1">Bundle Total</p>
+                <p className="text-2xl font-black text-orange-600 mb-1">
+                  {formatPrice(
+                    parseFloat(String(product.discountPrice || product.price)) +
+                    fbtProducts.reduce((acc: number, p: any) => acc + parseFloat(String(p.discountPrice || p.price)), 0)
+                  )}
+                </p>
+                <p className="text-xs text-gray-400 mb-4">for {1 + fbtProducts.length} items</p>
+                <button
+                  onClick={() => {
+                    const mainPrice = parseFloat(String(product.discountPrice || product.price));
+                    addToCart({
+                      productId: product.id,
+                      name: product.name,
+                      price: mainPrice,
+                      originalPrice: product.price,
+                      quantity: 1,
+                      imageUrl: product.imageUrl,
+                    } as any);
+                    fbtProducts.forEach((fbtP: any) => {
+                      const fbtPrice = parseFloat(String(fbtP.discountPrice || fbtP.price));
+                      addToCart({
+                        productId: fbtP.id,
+                        name: fbtP.name,
+                        price: fbtPrice,
+                        originalPrice: fbtP.price,
+                        quantity: 1,
+                        imageUrl: fbtP.imageUrl,
+                      } as any);
+                    });
+                    toast({ title: "Bundle added to bag! 🎉", description: `${1 + fbtProducts.length} items ready for checkout` });
+                  }}
+                  className="w-full h-11 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+                  style={{ background: 'linear-gradient(135deg, #E85D04, #FB8500)', boxShadow: '0 4px 16px rgba(232,93,4,0.3)' }}
+                >
+                  <ShoppingCart className="w-4 h-4" /> Add Bundle to Bag
+                </button>
+                <p className="text-[10px] text-gray-400 text-center mt-2">Items added separately to your cart</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {relatedProducts.length > 0 && (
         <section className="py-16 px-4 bg-white border-t border-gray-100">

@@ -12,6 +12,7 @@ import { Link, useLocation } from "wouter";
   import { cn } from "@/lib/utils";
   import { useQueryClient } from "@tanstack/react-query";
   import { getApiUrl } from "@/lib/utils";
+  import { QuickViewModal } from "@/components/QuickViewModal";
 
   interface ProductCardProps {
     product: Product;
@@ -36,6 +37,7 @@ import { Link, useLocation } from "wouter";
     const [isAdding, setIsAdding] = useState(false);
     const [hovered, setHovered] = useState(false);
     const [imgLoaded, setImgLoaded] = useState(false);
+    const [quickViewOpen, setQuickViewOpen] = useState(false);
     const cardRef = useRef<HTMLDivElement>(null);
     const [tilt, setTilt] = useState({ x: 0, y: 0, glare: { x: 50, y: 50 } });
     const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 768);
@@ -99,6 +101,7 @@ import { Link, useLocation } from "wouter";
           productId: product.id,
           name: product.name,
           price: discountPrice || price,
+          originalPrice: price,
           quantity: 1,
           imageUrl: product.imageUrl ?? undefined,
         });
@@ -175,6 +178,7 @@ import { Link, useLocation } from "wouter";
     }, [queryClient, product.id, product.imageUrl, (product as any).images]);
 
     return (
+      <>
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -332,7 +336,7 @@ import { Link, useLocation } from "wouter";
                 >
                   <button
                     type="button"
-                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); goToDetail(); }}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setQuickViewOpen(true); }}
                     className="btn-press pointer-events-auto w-full py-2 rounded-xl font-bold text-sm text-gray-700 flex items-center justify-center gap-2 transition-all"
                     style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)', border: '1px solid rgba(0,0,0,0.08)' }}
                   >
@@ -460,6 +464,13 @@ import { Link, useLocation } from "wouter";
           </div>
         </div>
       </motion.div>
+
+      <QuickViewModal
+        product={quickViewOpen ? product : null}
+        open={quickViewOpen}
+        onClose={() => setQuickViewOpen(false)}
+      />
+      </>
     );
   }
   

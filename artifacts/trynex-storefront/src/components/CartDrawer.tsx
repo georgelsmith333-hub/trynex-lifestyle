@@ -291,6 +291,25 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
 
                 {/* Footer */}
                 <div className="border-t border-gray-100 px-5 py-4 space-y-3 shrink-0 pb-safe">
+                  {(() => {
+                    const totalSavings = items.reduce((acc, item) => {
+                      if (item.originalPrice && item.originalPrice > item.price) {
+                        return acc + (item.originalPrice - item.price) * item.quantity;
+                      }
+                      return acc;
+                    }, 0);
+                    return totalSavings > 0 ? (
+                      <div
+                        className="flex items-center justify-between px-3 py-2 rounded-xl"
+                        style={{ background: 'rgba(22,163,74,0.07)', border: '1px solid rgba(22,163,74,0.15)' }}
+                      >
+                        <span className="text-xs font-bold text-green-700 flex items-center gap-1.5">
+                          <Sparkles className="w-3.5 h-3.5" /> You're saving
+                        </span>
+                        <span className="text-sm font-black text-green-600">{formatPrice(totalSavings)}</span>
+                      </div>
+                    ) : null;
+                  })()}
                   <div className="flex justify-between items-center">
                     <div>
                       <span className="text-sm text-gray-500">Subtotal</span>

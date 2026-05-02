@@ -8,7 +8,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { ProductCardSkeleton } from "@/components/ui/skeleton";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useListProducts, useListCategories } from "@workspace/api-client-react";
-import { Search, SlidersHorizontal, X, ArrowUpDown, Grid3X3, LayoutList, Sparkles, Zap, Tag, Package } from "lucide-react";
+import { Search, SlidersHorizontal, X, ArrowUpDown, Grid3X3, LayoutList, Sparkles, Zap, Tag, Package, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
@@ -70,6 +70,9 @@ export default function Products() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [sort, setSort] = useState<SortOption>("default");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [priceMin, setPriceMin] = useState("");
+  const [priceMax, setPriceMax] = useState("");
+  const [inStockOnly, setInStockOnly] = useState(false);
 
   const { data: categoriesData } = useListCategories();
   const categories = categoriesData?.categories || [];
@@ -108,15 +111,25 @@ export default function Products() {
     return 99;
   };
 
-  const sortedProducts = [...products].sort((a: any, b: any) => {
-    if (sort === "price-asc") return (a.discountPrice || a.price) - (b.discountPrice || b.price);
-    if (sort === "price-desc") return (b.discountPrice || b.price) - (a.discountPrice || a.price);
-    if (sort === "name") return a.name.localeCompare(b.name);
-    if (sort === "rating") return (parseFloat(String(b.rating || 0))) - (parseFloat(String(a.rating || 0)));
-    const wa = categoryWeight(a), wb = categoryWeight(b);
-    if (wa !== wb) return wa - wb;
-    return (b.id || 0) - (a.id || 0);
-  });
+  const sortedProducts = [...products]
+    .filter((p: any) => {
+      const effectivePrice = parseFloat(String(p.discountPrice || p.price)) || 0;
+      if (priceMin && effectivePrice < parseFloat(priceMin)) return false;
+      if (priceMax && effectivePrice > parseFloat(priceMax)) return false;
+      if (inStockOnly && p.stock <= 0) return false;
+      return true;
+    })
+    .sort((a: any, b: any) => {
+      if (sort === "price-asc") return (a.discountPrice || a.price) - (b.discountPrice || b.price);
+      if (sort === "price-desc") return (b.discountPrice || b.price) - (a.discountPrice || a.price);
+      if (sort === "name") return a.name.localeCompare(b.name);
+      if (sort === "rating") return (parseFloat(String(b.rating || 0))) - (parseFloat(String(a.rating || 0)));
+      const wa = categoryWeight(a), wb = categoryWeight(b);
+      if (wa !== wb) return wa - wb;
+      return (b.id || 0) - (a.id || 0);
+    });
+
+  const hasActiveFilters = !!priceMin || !!priceMax || inStockOnly;
 
   const activeCategoryData = useMemo(() => {
     if (!activeCategory || categories.length === 0) return null;
@@ -330,6 +343,77 @@ export default function Products() {
                           ))}
                         </div>
                       </div>
+
+                      {/* Price Range Filter */}
+                      <div className="mt-3 bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                        <p className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-4">Price Range (৳)</p>
+                        <div className="flex gap-2 items-center mb-3">
+                          <input
+                            type="number"
+                            placeholder="Min"
+                            value={priceMin}
+                            onChange={e => setPriceMin(e.target.value)}
+                            className="w-full px-3 py-2 rounded-xl text-sm font-medium border border-gray-200 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-100"
+                          />
+                          <span className="text-gray-400 font-bold text-xs shrink-0">–</span>
+                          <input
+                            type="number"
+                            placeholder="Max"
+                            value={priceMax}
+                            onChange={e => setPriceMax(e.target.value)}
+                            className="w-full px-3 py-2 rounded-xl text-sm font-medium border border-gray-200 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-100"
+                          />
+                        </div>
+                        <div className="flex gap-1.5 flex-wrap">
+                          {[
+                            { label: "Under ৳500", min: "", max: "500" },
+                            { label: "৳500–1000", min: "500", max: "1000" },
+                            { label: "৳1000+", min: "1000", max: "" },
+                          ].map(preset => (
+                            <button
+                              key={preset.label}
+                              onClick={() => { setPriceMin(preset.min); setPriceMax(preset.max); }}
+                              className={cn(
+                                "px-2.5 py-1 rounded-lg text-xs font-bold transition-all",
+                                priceMin === preset.min && priceMax === preset.max
+                                  ? "bg-orange-500 text-white"
+                                  : "bg-gray-100 text-gray-600 hover:bg-orange-50 hover:text-orange-600"
+                              )}
+                            >
+                              {preset.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Availability Filter */}
+                      <div className="mt-3 bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                        <p className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-3">Availability</p>
+                        <button
+                          onClick={() => setInStockOnly(!inStockOnly)}
+                          className="flex items-center gap-3 w-full group"
+                        >
+                          <div
+                            className="w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all shrink-0"
+                            style={{ background: inStockOnly ? '#E85D04' : 'white', borderColor: inStockOnly ? '#E85D04' : '#d1d5db' }}
+                          >
+                            {inStockOnly && <Check className="w-3 h-3 text-white" />}
+                          </div>
+                          <span className="text-sm font-semibold text-gray-700 group-hover:text-orange-600 transition-colors">
+                            In Stock Only
+                          </span>
+                        </button>
+                      </div>
+
+                      {/* Clear all filters */}
+                      {(hasActiveFilters || activeCategory) && (
+                        <button
+                          onClick={() => { setPriceMin(""); setPriceMax(""); setInStockOnly(false); setActiveCategory(undefined); }}
+                          className="mt-2 w-full py-2 rounded-xl text-xs font-bold text-red-500 border border-red-100 hover:bg-red-50 transition-colors flex items-center justify-center gap-1.5"
+                        >
+                          <X className="w-3 h-3" /> Clear All Filters
+                        </button>
+                      )}
 
                       {/* Special offers upsell box */}
                       <button
