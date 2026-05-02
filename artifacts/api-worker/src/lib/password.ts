@@ -6,11 +6,12 @@ const pbkdf2 = promisify(pbkdf2Cb);
 
 // ---------------------------------------------------------------------------
 // PBKDF2-SHA256 via Node.js crypto (available via nodejs_compat CF flag)
+// CF Workers cap PBKDF2 iterations at 100,000.
 // Format: $pbkdf2-sha256$<iterations>$<saltHex>$<hashHex>
 // ---------------------------------------------------------------------------
 const PBKDF2_ITERATIONS = 100_000;
 
-export async function hashPasswordArgon2(password: string): Promise<string> {
+export async function hashPassword(password: string): Promise<string> {
   const salt = randomBytes(16);
   const hash = await pbkdf2(password, salt, PBKDF2_ITERATIONS, 32, "sha256");
   return `$pbkdf2-sha256$${PBKDF2_ITERATIONS}$${salt.toString("hex")}$${hash.toString("hex")}`;
@@ -25,7 +26,6 @@ export async function verifyPasswordPbkdf2(encoded: string, password: string): P
     const salt = Buffer.from(parts[3], "hex");
     const expected = Buffer.from(parts[4], "hex");
     const candidate = await pbkdf2(password, salt, iterations, expected.length, "sha256");
-    // Constant-time compare
     if (candidate.length !== expected.length) return false;
     let diff = 0;
     for (let i = 0; i < candidate.length; i++) diff |= candidate[i] ^ expected[i];
@@ -35,6 +35,7 @@ export async function verifyPasswordPbkdf2(encoded: string, password: string): P
   }
 }
 
+// Kept for backward-compat: verify hashes produced by older argon2 implementations.
 export async function verifyPasswordArgon2(hash: string, password: string): Promise<boolean> {
   try {
     return await argon2Verify({ hash, password });

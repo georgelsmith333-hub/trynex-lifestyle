@@ -8,7 +8,7 @@ import {
   customerPasswordResetTokensTable,
   settingsTable,
 } from "../schema";
-import { hashPasswordArgon2, verifyPasswordAny, sha256Hex, isArgon2Hash } from "../lib/password";
+import { hashPassword, verifyPasswordAny, sha256Hex } from "../lib/password";
 import {
   signCustomerToken,
   verifyCustomerToken,
@@ -60,7 +60,7 @@ app.post("/auth/register", async (c) => {
     if (existing && !existing.isGuest) {
       return c.json({ error: "email_taken", message: "An account with this email already exists" }, 409);
     }
-    const passwordHash = await hashPasswordArgon2(password);
+    const passwordHash = await hashPassword(password);
     let customer: CustomerRow;
     if (existing?.isGuest) {
       [customer] = await db.update(customersTable).set({
@@ -112,11 +112,6 @@ app.post("/auth/login", async (c) => {
     const valid = await verifyPasswordAny(customer.passwordHash, password, salt);
     if (!valid) {
       return c.json({ error: "invalid_credentials", message: "Invalid email or password" }, 401);
-    }
-
-    if (!isArgon2Hash(customer.passwordHash)) {
-      const newHash = await hashPasswordArgon2(password);
-      await db.update(customersTable).set({ passwordHash: newHash }).where(eq(customersTable.id, customer.id)).catch(() => {});
     }
 
     const token = await signCustomerToken({ id: customer.id, email: customer.email }, c.env.JWT_SECRET);
@@ -190,7 +185,7 @@ app.post("/auth/change-password", async (c) => {
     const salt = c.env.CUSTOMER_SALT || "";
     const valid = await verifyPasswordAny(customer.passwordHash, currentPassword, salt);
     if (!valid) return c.json({ error: "invalid_credentials", message: "Current password is incorrect" }, 400);
-    const newHash = await hashPasswordArgon2(newPassword);
+    const newHash = await hashPassword(newPassword);
     await db.update(customersTable).set({ passwordHash: newHash, updatedAt: new Date() }).where(eq(customersTable.id, payload.id));
     return c.json({ success: true });
   } catch (err) {
@@ -323,7 +318,7 @@ app.post("/auth/reset-password", async (c) => {
     if (!resetToken) {
       return c.json({ error: "invalid_token", message: "Invalid or expired reset token" }, 400);
     }
-    const newHash = await hashPasswordArgon2(newPassword);
+    const newHash = await hashPassword(newPassword);
     await db.update(customersTable).set({ passwordHash: newHash, updatedAt: new Date() }).where(eq(customersTable.id, resetToken.customerId));
     await db.update(customerPasswordResetTokensTable).set({ usedAt: new Date() }).where(eq(customerPasswordResetTokensTable.id, resetToken.id));
     return c.json({ success: true });
