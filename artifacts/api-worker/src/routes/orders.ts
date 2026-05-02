@@ -537,7 +537,7 @@ app.patch("/orders/:id/status", requireAdmin, async (c) => {
     const id = parseInt(c.req.param("id"), 10);
     const body = await c.req.json();
     const { status } = body;
-    const VALID_STATUSES = ["pending", "confirmed", "processing", "shipped", "delivered", "cancelled"];
+    const VALID_STATUSES = ["pending", "confirmed", "processing", "shipped", "ongoing", "delivered", "cancelled"];
     if (!status || !VALID_STATUSES.includes(status)) {
       return c.json({ error: "validation_error", message: `status must be one of: ${VALID_STATUSES.join(", ")}` }, 400);
     }
@@ -558,7 +558,7 @@ app.patch("/orders/:id/payment-status", requireAdmin, async (c) => {
     const id = parseInt(c.req.param("id"), 10);
     const body = await c.req.json();
     const { paymentStatus } = body;
-    const VALID = ["pending", "paid", "failed", "refunded"];
+    const VALID = ["pending", "paid", "failed", "refunded", "submitted", "verified", "wrong", "cod", "not_paid"];
     if (!paymentStatus || !VALID.includes(paymentStatus)) {
       return c.json({ error: "validation_error", message: `paymentStatus must be one of: ${VALID.join(", ")}` }, 400);
     }

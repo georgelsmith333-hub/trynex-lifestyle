@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { eq, desc, sql, and, isNull, gt, lt, gte } from "drizzle-orm";
+import { eq, desc, sql, and, isNull, gt, lt, lte, gte } from "drizzle-orm";
 import { setCookie, getCookie, deleteCookie } from "hono/cookie";
 import { createDb } from "../db";
 import {
@@ -366,77 +366,109 @@ app.post("/admin/sessions/revoke-all", requireAdmin, async (c) => {
 app.get("/admin/stats", requireAdmin, async (c) => {
   try {
     const db = createDb(c.env.DATABASE_URL);
-    const period = c.req.query("period") || "30";
-    const daysAgo = parseInt(period, 10) || 30;
-    const since = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000);
 
     const [
-      totalOrdersResult,
-      pendingOrdersResult,
-      recentOrdersResult,
+      totalResult,
+      pendingResult,
+      processingResult,
+      shippedResult,
+      deliveredResult,
       totalRevenueResult,
-      recentRevenueResult,
-      totalCustomersResult,
-      newCustomersResult,
+      todayRevenueResult,
       totalProductsResult,
       lowStockResult,
-      totalBlogResult,
     ] = await Promise.all([
       db.select({ count: sql<number>`count(*)` }).from(ordersTable),
       db.select({ count: sql<number>`count(*)` }).from(ordersTable).where(eq(ordersTable.status, "pending")),
-      db.select({ count: sql<number>`count(*)` }).from(ordersTable).where(gte(ordersTable.createdAt, since)),
-      db.select({ sum: sql<string>`COALESCE(sum(total::numeric), 0)` }).from(ordersTable).where(eq(ordersTable.paymentStatus, "paid")),
-      db.select({ sum: sql<string>`COALESCE(sum(total::numeric), 0)` }).from(ordersTable).where(and(eq(ordersTable.paymentStatus, "paid"), gte(ordersTable.createdAt, since))),
-      db.select({ count: sql<number>`count(*)` }).from(customersTable).where(eq(customersTable.isGuest, false)),
-      db.select({ count: sql<number>`count(*)` }).from(customersTable).where(and(eq(customersTable.isGuest, false), gte(customersTable.createdAt, since))),
+      db.select({ count: sql<number>`count(*)` }).from(ordersTable).where(eq(ordersTable.status, "processing")),
+      db.select({ count: sql<number>`count(*)` }).from(ordersTable).where(eq(ordersTable.status, "shipped")),
+      db.select({ count: sql<number>`count(*)` }).from(ordersTable).where(eq(ordersTable.status, "delivered")),
+      db.select({ total: sql<number>`COALESCE(SUM(total::numeric), 0)` }).from(ordersTable),
+      db.select({ total: sql<number>`COALESCE(SUM(total::numeric), 0)` }).from(ordersTable).where(sql`created_at::date = CURRENT_DATE`),
       db.select({ count: sql<number>`count(*)` }).from(productsTable),
-      db.select({ count: sql<number>`count(*)` }).from(productsTable).where(lt(productsTable.stock, 10)),
-      db.select({ count: sql<number>`count(*)` }).from(blogPostsTable),
+      db.select({ count: sql<number>`count(*)` }).from(productsTable).where(lte(productsTable.stock, 5)),
     ]);
 
-    const recentOrders = await db.select({
-      id: ordersTable.id,
-      orderNumber: ordersTable.orderNumber,
-      customerName: ordersTable.customerName,
-      total: ordersTable.total,
-      status: ordersTable.status,
-      paymentMethod: ordersTable.paymentMethod,
-      createdAt: ordersTable.createdAt,
-    }).from(ordersTable).orderBy(desc(ordersTable.createdAt)).limit(10);
+    const recentOrdersRaw = await db.select().from(ordersTable).orderBy(desc(ordersTable.createdAt)).limit(5);
 
-    const ordersByStatus = await db.select({
-      status: ordersTable.status,
-      count: sql<number>`count(*)`,
-    }).from(ordersTable).groupBy(ordersTable.status);
+    const mapOrder = (o: any) => ({
+      id: o.id,
+      orderNumber: o.orderNumber,
+      customerName: o.customerName,
+      customerEmail: o.customerEmail,
+      customerPhone: o.customerPhone,
+      shippingAddress: o.shippingAddress,
+      shippingCity: o.shippingCity,
+      shippingDistrict: o.shippingDistrict,
+      paymentMethod: o.paymentMethod,
+      paymentStatus: o.paymentStatus,
+      status: o.status,
+      items: (o.items ?? []).map((item: any, idx: number) => ({ id: idx + 1, ...item })),
+      subtotal: parseFloat(o.subtotal),
+      shippingCost: parseFloat(o.shippingCost ?? "0"),
+      total: parseFloat(o.total),
+      notes: o.notes,
+      createdAt: o.createdAt?.toISOString(),
+      updatedAt: o.updatedAt?.toISOString(),
+    });
 
-    const revenueByDay = await db.execute(sql`
-      SELECT date_trunc('day', created_at)::date AS date,
-             SUM(total::numeric) AS revenue,
-             COUNT(*) AS orders
-      FROM orders
-      WHERE created_at >= ${since}
-        AND payment_status = 'paid'
-      GROUP BY 1
-      ORDER BY 1 ASC
-    `);
+    const [weeklyRevenueData, paymentMethodData, topProductsData] = await Promise.all([
+      db.execute(sql`
+        SELECT TO_CHAR(created_at, 'Dy') AS day, COALESCE(SUM(total::numeric), 0) AS revenue, COUNT(*) AS orders
+        FROM orders
+        WHERE created_at >= NOW() - INTERVAL '7 days'
+        GROUP BY TO_CHAR(created_at, 'Dy'), DATE(created_at)
+        ORDER BY DATE(created_at)
+      `),
+      db.select({ method: ordersTable.paymentMethod, count: sql<number>`COUNT(*)` })
+        .from(ordersTable).groupBy(ordersTable.paymentMethod),
+      db.execute(sql`
+        SELECT item->>'productId' AS id, item->>'productName' AS name, item->>'productImage' AS "imageUrl",
+               COALESCE(SUM((item->>'quantity')::int), 0) AS "totalSold"
+        FROM orders, jsonb_array_elements(items) AS item
+        GROUP BY item->>'productId', item->>'productName', item->>'productImage'
+        ORDER BY "totalSold" DESC LIMIT 5
+      `),
+    ]);
+
+    const totalPaymentOrders = paymentMethodData.reduce((s, p) => s + Number(p.count), 0);
+    const paymentColors: Record<string, string> = { bkash: "#e2136e", nagad: "#f7941d", cod: "#16a34a", rocket: "#8b2291" };
+    const paymentLabels: Record<string, string> = { bkash: "bKash", nagad: "Nagad", cod: "COD", rocket: "Rocket" };
+    const paymentDistribution = paymentMethodData.map((p) => ({
+      name: paymentLabels[p.method] || p.method,
+      value: totalPaymentOrders > 0 ? Math.round((Number(p.count) / totalPaymentOrders) * 100) : 0,
+      color: paymentColors[p.method] || "#6b7280",
+    }));
+
+    const weeklyRows = (weeklyRevenueData.rows ?? weeklyRevenueData) as any[];
+    const weeklyData = weeklyRows.map((w: any) => ({
+      day: w.day,
+      revenue: Number(w.revenue),
+      orders: Number(w.orders),
+    }));
+
+    const topRows = (topProductsData.rows ?? topProductsData) as any[];
+    const topProducts = topRows.map((p: any) => ({
+      id: Number(p.id),
+      name: String(p.name ?? ""),
+      imageUrl: String(p.imageUrl ?? ""),
+      totalSold: Number(p.totalSold ?? 0),
+    }));
 
     return c.json({
-      totals: {
-        orders: Number(totalOrdersResult[0]?.count ?? 0),
-        pendingOrders: Number(pendingOrdersResult[0]?.count ?? 0),
-        recentOrders: Number(recentOrdersResult[0]?.count ?? 0),
-        revenue: parseFloat(totalRevenueResult[0]?.sum ?? "0"),
-        recentRevenue: parseFloat(recentRevenueResult[0]?.sum ?? "0"),
-        customers: Number(totalCustomersResult[0]?.count ?? 0),
-        newCustomers: Number(newCustomersResult[0]?.count ?? 0),
-        products: Number(totalProductsResult[0]?.count ?? 0),
-        lowStockProducts: Number(lowStockResult[0]?.count ?? 0),
-        blogPosts: Number(totalBlogResult[0]?.count ?? 0),
-      },
-      recentOrders: recentOrders.map((o) => ({ ...o, total: parseFloat(String(o.total)) })),
-      ordersByStatus: ordersByStatus.map((r) => ({ status: r.status, count: Number(r.count) })),
-      revenueByDay: (revenueByDay.rows ?? revenueByDay).map((r: any) => ({ date: r.date, revenue: parseFloat(r.revenue ?? 0), orders: Number(r.orders) })),
-      period: daysAgo,
+      totalOrders: Number(totalResult[0]?.count ?? 0),
+      pendingOrders: Number(pendingResult[0]?.count ?? 0),
+      processingOrders: Number(processingResult[0]?.count ?? 0),
+      shippedOrders: Number(shippedResult[0]?.count ?? 0),
+      deliveredOrders: Number(deliveredResult[0]?.count ?? 0),
+      totalRevenue: Number(totalRevenueResult[0]?.total ?? 0),
+      todayRevenue: Number(todayRevenueResult[0]?.total ?? 0),
+      totalProducts: Number(totalProductsResult[0]?.count ?? 0),
+      lowStockProducts: Number(lowStockResult[0]?.count ?? 0),
+      recentOrders: recentOrdersRaw.map(mapOrder),
+      weeklyData,
+      paymentDistribution,
+      topProducts,
     });
   } catch (err) {
     console.error("Admin stats error", err);
@@ -447,27 +479,140 @@ app.get("/admin/stats", requireAdmin, async (c) => {
 app.get("/admin/customers", requireAdmin, async (c) => {
   try {
     const db = createDb(c.env.DATABASE_URL);
-    const page = c.req.query("page") || "1";
-    const limit = c.req.query("limit") || "20";
-    const search = c.req.query("search") || "";
-    const pageNum = parseInt(page, 10);
-    const limitNum = parseInt(limit, 10);
-    const offset = (pageNum - 1) * limitNum;
-    const where = search
-      ? sql`(name ILIKE ${"%" + search + "%"} OR email ILIKE ${"%" + search + "%"} OR phone ILIKE ${"%" + search + "%"})`
-      : undefined;
-    const [customers, countResult] = await Promise.all([
-      db.select({ id: customersTable.id, name: customersTable.name, email: customersTable.email, phone: customersTable.phone, avatar: customersTable.avatar, isGuest: customersTable.isGuest, googleId: sql<boolean>`CASE WHEN ${customersTable.googleId} IS NOT NULL THEN true ELSE false END`, facebookId: sql<boolean>`CASE WHEN ${customersTable.facebookId} IS NOT NULL THEN true ELSE false END`, createdAt: customersTable.createdAt }).from(customersTable).where(where).orderBy(desc(customersTable.createdAt)).limit(limitNum).offset(offset),
-      db.select({ count: sql<number>`count(*)` }).from(customersTable).where(where),
-    ]);
-    return c.json({
-      customers,
-      total: Number(countResult[0]?.count ?? 0),
-      page: pageNum,
-      limit: limitNum,
-    });
+    const allOrders = await db.select().from(ordersTable).orderBy(desc(ordersTable.createdAt));
+
+    const customerMap = new Map<string, {
+      name: string; email: string; phone: string; district: string; city: string; address: string;
+      totalOrders: number; totalSpent: number; firstOrder: string; lastOrder: string;
+      paymentMethods: string[]; statuses: string[];
+    }>();
+
+    for (const o of allOrders) {
+      const key = o.customerPhone || o.customerEmail;
+      const existing = customerMap.get(key);
+      if (existing) {
+        existing.totalOrders += 1;
+        existing.totalSpent += parseFloat(String(o.total));
+        const oIso = o.createdAt?.toISOString() ?? "";
+        if (oIso && oIso < existing.firstOrder) existing.firstOrder = oIso;
+        if (oIso && oIso > existing.lastOrder) existing.lastOrder = oIso;
+        if (!existing.paymentMethods.includes(o.paymentMethod)) existing.paymentMethods.push(o.paymentMethod);
+        if (!existing.statuses.includes(o.status)) existing.statuses.push(o.status);
+      } else {
+        const oIso = o.createdAt?.toISOString() ?? "";
+        customerMap.set(key, {
+          name: o.customerName, email: o.customerEmail, phone: o.customerPhone,
+          district: o.shippingDistrict || "", city: o.shippingCity || "", address: o.shippingAddress || "",
+          totalOrders: 1, totalSpent: parseFloat(String(o.total)),
+          firstOrder: oIso, lastOrder: oIso,
+          paymentMethods: [o.paymentMethod], statuses: [o.status],
+        });
+      }
+    }
+
+    const customers = Array.from(customerMap.values()).sort(
+      (a, b) => new Date(b.lastOrder).getTime() - new Date(a.lastOrder).getTime()
+    );
+
+    const districtCounts: Record<string, number> = {};
+    for (const cust of customers) {
+      if (cust.district) districtCounts[cust.district] = (districtCounts[cust.district] || 0) + 1;
+    }
+    const topDistricts = Object.entries(districtCounts)
+      .sort((a, b) => b[1] - a[1]).slice(0, 10)
+      .map(([district, count]) => ({ district, count }));
+
+    return c.json({ totalCustomers: customers.length, totalOrders: allOrders.length, customers, topDistricts });
   } catch (err) {
     return c.json({ error: "internal_error", message: "Failed to list customers" }, 500);
+  }
+});
+
+app.get("/admin/guest-customers", requireAdmin, async (c) => {
+  try {
+    const db = createDb(c.env.DATABASE_URL);
+    const guests = await db.select().from(customersTable)
+      .where(eq(customersTable.isGuest, true))
+      .orderBy(desc(customersTable.createdAt));
+
+    const enriched = await Promise.all(guests.map(async (g) => {
+      const orders = await db.select().from(ordersTable)
+        .where(eq(ordersTable.customerEmail, g.email))
+        .orderBy(desc(ordersTable.createdAt));
+      const totalSpent = orders.reduce((s, o) => s + parseFloat(String(o.total)), 0);
+      const last = orders[0];
+      const username = g.email.includes("@") ? g.email.split("@")[0] : g.email;
+      return {
+        id: g.id,
+        guestSequence: (g as any).guestSequence ?? null,
+        username,
+        name: g.name,
+        email: g.email,
+        phone: g.phone,
+        createdAt: g.createdAt?.toISOString(),
+        totalOrders: orders.length,
+        totalSpent,
+        lastOrderAt: last?.createdAt?.toISOString() || null,
+        lastOrderNumber: last?.orderNumber || null,
+        lastOrderStatus: last?.status || null,
+        shippingDistrict: last?.shippingDistrict || null,
+        shippingCity: last?.shippingCity || null,
+        shippingAddress: last?.shippingAddress || null,
+      };
+    }));
+
+    return c.json({
+      totalGuests: enriched.length,
+      withOrders: enriched.filter((g) => g.totalOrders > 0).length,
+      guests: enriched,
+    });
+  } catch (err) {
+    return c.json({ error: "internal_error", message: "Failed to load guest customers" }, 500);
+  }
+});
+
+app.post("/admin/guest-customers/:id/convert", requireAdmin, async (c) => {
+  try {
+    const db = createDb(c.env.DATABASE_URL);
+    const id = Number(c.req.param("id"));
+    if (!Number.isFinite(id)) return c.json({ error: "validation_error", message: "Invalid id" }, 400);
+    const body = await c.req.json();
+    const { email, password, name } = body as { email?: string; password?: string; name?: string };
+    if (!email || !password) return c.json({ error: "validation_error", message: "email and password are required" }, 400);
+    if (password.length < 6) return c.json({ error: "validation_error", message: "Password must be at least 6 characters" }, 400);
+    const emailLc = email.toLowerCase().trim();
+    const [existing] = await db.select().from(customersTable).where(eq(customersTable.id, id)).limit(1);
+    if (!existing) return c.json({ error: "not_found", message: "Customer not found" }, 404);
+    if (!existing.isGuest) return c.json({ error: "bad_request", message: "Only guest accounts can be converted from this endpoint" }, 400);
+    const [taken] = await db.select().from(customersTable).where(eq(customersTable.email, emailLc)).limit(1);
+    if (taken && taken.id !== id) return c.json({ error: "conflict", message: "An account with this email already exists" }, 409);
+    await db.update(ordersTable).set({ customerEmail: emailLc, customerId: id }).where(eq(ordersTable.customerEmail, existing.email));
+    const passwordHash = await hashPassword(password);
+    const updates: Record<string, unknown> = { email: emailLc, passwordHash, isGuest: false, verified: true, updatedAt: new Date() };
+    if (name?.trim()) updates.name = name.trim();
+    const [updated] = await db.update(customersTable).set(updates as any).where(eq(customersTable.id, id)).returning();
+    if (!updated) return c.json({ error: "not_found", message: "Customer not found" }, 404);
+    logActivity(db, { action: "update", entity: "customer", entityId: id, entityName: updated.name ?? updated.email, before: existing as unknown as Record<string, unknown>, after: updated as unknown as Record<string, unknown>, adminId: getAdminId(c) });
+    return c.json({ success: true, customer: { id: updated.id, name: updated.name, email: updated.email, isGuest: updated.isGuest } });
+  } catch (err: any) {
+    if (err?.code === "23505") return c.json({ error: "conflict", message: "An account with this email already exists" }, 409);
+    return c.json({ error: "internal_error", message: "Failed to convert guest account" }, 500);
+  }
+});
+
+app.delete("/admin/guest-customers/:id", requireAdmin, async (c) => {
+  try {
+    const db = createDb(c.env.DATABASE_URL);
+    const id = Number(c.req.param("id"));
+    if (!Number.isFinite(id)) return c.json({ error: "validation_error", message: "Invalid id" }, 400);
+    const [existing] = await db.select().from(customersTable).where(eq(customersTable.id, id)).limit(1);
+    if (!existing) return c.json({ error: "not_found", message: "Customer not found" }, 404);
+    if (!existing.isGuest) return c.json({ error: "bad_request", message: "Refusing to delete a non-guest account from this endpoint" }, 400);
+    await db.delete(customersTable).where(eq(customersTable.id, id));
+    logActivity(db, { action: "delete", entity: "customer", entityId: id, entityName: existing.name ?? existing.email, before: existing as unknown as Record<string, unknown>, adminId: getAdminId(c) });
+    return c.json({ success: true });
+  } catch (err) {
+    return c.json({ error: "internal_error", message: "Failed to delete guest customer" }, 500);
   }
 });
 
