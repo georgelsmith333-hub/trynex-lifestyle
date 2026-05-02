@@ -9,8 +9,8 @@ export interface Env {
   ADMIN_RESET_KEY_HASH: string;
   ADMIN_RESET_KEY_FORCE_SYNC: string;
   ALLOWED_ORIGINS: string;
-  CALLMEBOT_PHONE: string;
-  CALLMEBOT_APIKEY: string;
+  TELEGRAM_BOT_TOKEN: string;
+  TELEGRAM_CHAT_ID: string;
   GOOGLE_CLIENT_ID: string;
   CUSTOMER_SALT: string;
   NODE_ENV: string;

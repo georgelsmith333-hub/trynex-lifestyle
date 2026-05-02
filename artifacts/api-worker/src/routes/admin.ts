@@ -461,4 +461,74 @@ app.post("/admin/setup", async (c) => {
   }
 });
 
+app.get("/admin/telegram/setup", requireAdmin, async (c) => {
+  const token = c.env.TELEGRAM_BOT_TOKEN;
+  if (!token) {
+    return c.json({ error: "not_configured", message: "TELEGRAM_BOT_TOKEN secret is not set on the Worker." }, 400);
+  }
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${token}/getUpdates?limit=10&timeout=0`, {
+      signal: AbortSignal.timeout(8000),
+    });
+    const data: any = await res.json();
+    if (!data.ok) {
+      return c.json({ error: "telegram_error", message: data.description || "Telegram API error" }, 502);
+    }
+    const updates: any[] = data.result || [];
+    const chatIds: { id: number; type: string; name: string; date: number }[] = [];
+    const seen = new Set<number>();
+    for (const u of updates) {
+      const chat = u.message?.chat || u.channel_post?.chat;
+      if (chat && !seen.has(chat.id)) {
+        seen.add(chat.id);
+        chatIds.push({
+          id: chat.id,
+          type: chat.type,
+          name: chat.title || `${chat.first_name || ""} ${chat.last_name || ""}`.trim(),
+          date: u.message?.date || u.channel_post?.date || 0,
+        });
+      }
+    }
+    const chatIdConfigured = !!c.env.TELEGRAM_CHAT_ID;
+    return c.json({
+      bot_token_set: true,
+      chat_id_configured: chatIdConfigured,
+      current_chat_id: chatIdConfigured ? c.env.TELEGRAM_CHAT_ID : null,
+      recent_chats: chatIds,
+      instructions: chatIdConfigured
+        ? "Telegram is fully configured. Notifications are active."
+        : "Send any message (e.g. /start) to @TryNex_Lifestyle_bot, then copy the chat id from recent_chats and set it as the TELEGRAM_CHAT_ID Worker secret.",
+    });
+  } catch (err) {
+    return c.json({ error: "fetch_error", message: String(err) }, 500);
+  }
+});
+
+app.post("/admin/telegram/test", requireAdmin, async (c) => {
+  const token = c.env.TELEGRAM_BOT_TOKEN;
+  const chatId = c.env.TELEGRAM_CHAT_ID;
+  if (!token || !chatId) {
+    return c.json({ error: "not_configured", message: "TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID must both be set." }, 400);
+  }
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: "✅ <b>TryNex Lifestyle</b>\n\nTelegram notifications are working! You will receive new order alerts here.",
+        parse_mode: "HTML",
+      }),
+      signal: AbortSignal.timeout(8000),
+    });
+    const data: any = await res.json();
+    if (!data.ok) {
+      return c.json({ error: "telegram_error", message: data.description || "Failed to send message" }, 502);
+    }
+    return c.json({ success: true, message: "Test message sent to your Telegram." });
+  } catch (err) {
+    return c.json({ error: "fetch_error", message: String(err) }, 500);
+  }
+});
+
 export default app;

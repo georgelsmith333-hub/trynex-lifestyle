@@ -53,17 +53,21 @@ function mapOrder(o: any) {
   };
 }
 
-async function sendWhatsAppNotification(
-  phone: string,
-  apiKey: string,
+async function sendTelegramNotification(
+  botToken: string,
+  chatId: string,
   message: string,
 ): Promise<void> {
   try {
-    const encoded = encodeURIComponent(message);
-    const url = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encoded}&apikey=${apiKey}`;
-    await fetch(url, { signal: AbortSignal.timeout(5000) });
+    const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+    await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: "HTML" }),
+      signal: AbortSignal.timeout(5000),
+    });
   } catch (err) {
-    console.error("[WhatsApp] Notification failed:", err);
+    console.error("[Telegram] Notification failed:", err);
   }
 }
 
@@ -491,20 +495,20 @@ app.post("/orders", async (c) => {
       }
     }
 
-    const whatsappPhone = c.env.CALLMEBOT_PHONE;
-    const whatsappKey = c.env.CALLMEBOT_APIKEY;
-    if (whatsappPhone && whatsappKey) {
+    const tgToken = c.env.TELEGRAM_BOT_TOKEN;
+    const tgChat = c.env.TELEGRAM_CHAT_ID;
+    if (tgToken && tgChat) {
       const itemsList = validatedItems.slice(0, 3).map((it) => `• ${it.name} x${it.quantity}`).join("\n");
       const msg =
-        `🛍️ NEW ORDER #${orderNumber}\n` +
-        `Customer: ${customerName}\n` +
-        `Phone: ${customerPhone}\n` +
-        `Payment: ${paymentMethod.toUpperCase()}\n` +
-        `Total: ৳${total.toFixed(0)}\n` +
-        `Items:\n${itemsList}${validatedItems.length > 3 ? `\n... +${validatedItems.length - 3} more` : ""}\n` +
-        `City: ${shippingCity || "N/A"}\n` +
-        (promoCode ? `Promo: ${promoCode} (-৳${promoDiscount})\n` : "");
-      sendWhatsAppNotification(whatsappPhone, whatsappKey, msg).catch(() => {});
+        `🛍️ <b>NEW ORDER #${orderNumber}</b>\n` +
+        `👤 Customer: ${customerName}\n` +
+        `📞 Phone: ${customerPhone}\n` +
+        `💳 Payment: ${paymentMethod.toUpperCase()}\n` +
+        `💰 Total: ৳${total.toFixed(0)}\n` +
+        `📦 Items:\n${itemsList}${validatedItems.length > 3 ? `\n   ... +${validatedItems.length - 3} more` : ""}\n` +
+        `🏙️ City: ${shippingCity || "N/A"}\n` +
+        (promoCode ? `🎟️ Promo: ${promoCode} (-৳${promoDiscount})\n` : "");
+      sendTelegramNotification(tgToken, tgChat, msg).catch(() => {});
     }
 
     sendMetaCAPIEvent(c.env, {
