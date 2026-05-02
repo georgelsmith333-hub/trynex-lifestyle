@@ -155,3 +155,9 @@ id = "QHbbY1s9J6MhJVIbmme6_"
 uri = "file://trynex-site-overview.pdf"
 type = "pdf"
 title = "TryNex Lifestyle — Full Site Overview PDF"
+
+[[outputs]]
+id = "I-7KaRrqrjrSNoCqlGWDP"
+uri = "file://trynex-tech-overview.md"
+type = "text"
+title = "TryNex Lifestyle — Tech Stack & Platform Overview"
