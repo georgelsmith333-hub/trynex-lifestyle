@@ -132,6 +132,12 @@ uri = "file://artifacts/trynex-storefront/public/mockups/white-waterbottle-blank
 type = "image"
 title = "blank white water bottle product photo"
 
+[[generated]]
+id = "JxljXXSmyGK4tKKnhk9za"
+uri = "file://attached_assets/generated_images/trynex-opengraph.png"
+type = "image"
+title = "generated_image"
+
 [[outputs]]
 id = "tCytvaUKpj7oEILkFIdkO"
 uri = "file://attached_assets/FULL_AUDIT_REPORT.txt"
