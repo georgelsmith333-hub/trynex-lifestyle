@@ -184,7 +184,7 @@ export default function AdminTechStack() {
                 { method: "GET", path: "/api/products/:id", desc: "Get product (ID or slug)" },
                 { method: "GET", path: "/api/categories", desc: "List categories" },
                 { method: "POST", path: "/api/orders", desc: "Create order" },
-                { method: "GET", path: "/api/orders/track/:orderNumber", desc: "Track order" },
+                { method: "POST", path: "/api/orders/track", desc: "Track order (requires email or phone)" },
                 { method: "GET", path: "/api/blog", desc: "List blog posts" },
                 { method: "POST", path: "/api/auth/register", desc: "Customer signup" },
                 { method: "POST", path: "/api/auth/login", desc: "Customer login" },

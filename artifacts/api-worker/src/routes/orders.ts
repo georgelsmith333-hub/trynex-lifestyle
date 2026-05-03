@@ -345,33 +345,88 @@ app.get("/orders/customer/me", async (c) => {
   }
 });
 
+// POST /orders/track — identity-verified tracking (primary endpoint used by the storefront)
+// Requires orderNumber + email OR phone to prevent order enumeration.
+app.post("/orders/track", async (c) => {
+  try {
+    const db = createDb(c.env.DATABASE_URL);
+    const body = await c.req.json();
+    const { orderNumber, email, phone } = body as { orderNumber?: string; email?: string; phone?: string };
+
+    if (!orderNumber) {
+      return c.json({ error: "validation_error", message: "orderNumber is required" }, 400);
+    }
+
+    const identifier = (email || "").trim().toLowerCase();
+    const phoneClean = (phone || "").replace(/\D/g, "").slice(-10);
+    if (!identifier && !phoneClean) {
+      return c.json({ error: "validation_error", message: "email or phone is required" }, 400);
+    }
+
+    const orderNum = orderNumber.toUpperCase().trim();
+    let order: typeof ordersTable.$inferSelect | undefined;
+
+    if (identifier) {
+      const rows = await db.select().from(ordersTable).where(
+        and(eq(ordersTable.orderNumber, orderNum), eq(ordersTable.customerEmail, identifier)),
+      );
+      order = rows[0];
+    }
+
+    if (!order && phoneClean) {
+      const [candidate] = await db.select().from(ordersTable).where(eq(ordersTable.orderNumber, orderNum));
+      if (candidate) {
+        const storedPhone = (candidate.customerPhone || "").replace(/\D/g, "").slice(-10);
+        if (storedPhone === phoneClean) order = candidate;
+      }
+    }
+
+    if (!order) {
+      return c.json({ error: "not_found", message: "Order not found. Check your order number and contact details." }, 404);
+    }
+
+    return c.json(mapOrder(order));
+  } catch (err) {
+    console.error("Failed to track order", err instanceof Error ? err.message : String(err));
+    return c.json({ error: "internal_error", message: "Failed to track order" }, 500);
+  }
+});
+
+// GET /orders/track/:orderNumber — identity-verified tracking via query params (keeps backward compat)
+// Requires ?email= OR ?phone= to prevent order enumeration by number alone.
 app.get("/orders/track/:orderNumber", async (c) => {
   try {
     const db = createDb(c.env.DATABASE_URL);
     const orderNumber = c.req.param("orderNumber").toUpperCase().trim();
-    const [order] = await db.select({
-      orderNumber: ordersTable.orderNumber,
-      status: ordersTable.status,
-      paymentStatus: ordersTable.paymentStatus,
-      customerName: ordersTable.customerName,
-      total: ordersTable.total,
-      createdAt: ordersTable.createdAt,
-      updatedAt: ordersTable.updatedAt,
-    }).from(ordersTable).where(eq(ordersTable.orderNumber, orderNumber));
+    const email = (c.req.query("email") || "").trim().toLowerCase();
+    const phone = (c.req.query("phone") || "").replace(/\D/g, "").slice(-10);
 
-    if (!order) return c.json({ error: "not_found", message: "Order not found. Please check your order number." }, 404);
+    if (!email && !phone) {
+      return c.json({ error: "validation_error", message: "email or phone query param is required" }, 400);
+    }
 
-    return c.json({
-      orderNumber: order.orderNumber,
-      status: order.status,
-      paymentStatus: order.paymentStatus,
-      customerName: order.customerName,
-      total: parseFloat(String(order.total)),
-      createdAt: order.createdAt?.toISOString(),
-      updatedAt: order.updatedAt?.toISOString(),
-    });
+    let order: typeof ordersTable.$inferSelect | undefined;
+
+    if (email) {
+      const rows = await db.select().from(ordersTable).where(
+        and(eq(ordersTable.orderNumber, orderNumber), eq(ordersTable.customerEmail, email)),
+      );
+      order = rows[0];
+    }
+
+    if (!order && phone) {
+      const [candidate] = await db.select().from(ordersTable).where(eq(ordersTable.orderNumber, orderNumber));
+      if (candidate) {
+        const storedPhone = (candidate.customerPhone || "").replace(/\D/g, "").slice(-10);
+        if (storedPhone === phone) order = candidate;
+      }
+    }
+
+    if (!order) return c.json({ error: "not_found", message: "Order not found. Check your order number and contact details." }, 404);
+
+    return c.json(mapOrder(order));
   } catch (err) {
-    console.error("Failed to track order", err);
+    console.error("Failed to track order", err instanceof Error ? err.message : String(err));
     return c.json({ error: "internal_error", message: "Failed to track order" }, 500);
   }
 });
