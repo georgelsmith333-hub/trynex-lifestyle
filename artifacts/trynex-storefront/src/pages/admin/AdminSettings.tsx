@@ -155,6 +155,7 @@ export default function AdminSettings() {
       { key: "bkashNumber", label: "bKash Number" },
       { key: "nagadNumber", label: "Nagad Number" },
       { key: "rocketNumber", label: "Rocket Number" },
+      { key: "upayNumber", label: "uPay Number" },
     ];
     const bdPhoneRegex = /^(\+?880\s?)?0?1[3-9]\d{2}[-\s]?\d{6}$/;
     for (const { key, label } of phoneFields) {
@@ -363,6 +364,12 @@ export default function AdminSettings() {
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-black" style={{ color: '#8b2291' }}>R</span>
               <input {...register("rocketNumber")} className={inputClass} style={{ ...inputStyle, paddingLeft: '2.5rem' }} placeholder="01611-234567" />
+            </div>
+          </Field>
+          <Field label="uPay Merchant Number">
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-black" style={{ color: '#0077cc' }}>uP</span>
+              <input {...register("upayNumber")} className={inputClass} style={{ ...inputStyle, paddingLeft: '2.5rem' }} placeholder="01700-000000" />
             </div>
           </Field>
         </SectionCard>

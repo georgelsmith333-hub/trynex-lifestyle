@@ -448,7 +448,7 @@ app.post("/orders", async (c) => {
       return c.json({ error: "validation_error", message: "Missing required order fields" }, 400);
     }
 
-    const ALLOWED_PAYMENT_METHODS = ["bkash", "nagad", "rocket", "cod", "bank_transfer", "card"];
+    const ALLOWED_PAYMENT_METHODS = ["bkash", "nagad", "rocket", "upay", "cod", "bank_transfer", "card"];
     if (!ALLOWED_PAYMENT_METHODS.includes(paymentMethod)) {
       return c.json({ error: "validation_error", message: "Invalid payment method" }, 400);
     }

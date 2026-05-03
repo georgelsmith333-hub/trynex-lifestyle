@@ -6,7 +6,7 @@ import type { AppEnv } from "../types";
 
 const app = new Hono<AppEnv>();
 
-app.get("/public/stats", async (c) => {
+app.get("/public-stats", async (c) => {
   try {
     const db = createDb(c.env.DATABASE_URL);
     const [
