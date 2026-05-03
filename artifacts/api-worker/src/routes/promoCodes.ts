@@ -150,6 +150,37 @@ app.put("/promo-codes/:id/use", async (c) => {
   }
 });
 
+app.patch("/promo-codes/:id", requireAdmin, async (c) => {
+  try {
+    const db = createDb(c.env.DATABASE_URL);
+    const id = parseInt(c.req.param("id"), 10);
+    if (isNaN(id)) return c.json({ error: "validation_error", message: "Invalid id" }, 400);
+    const body = await c.req.json();
+    const parsed = PromoUpdateSchema.safeParse(body);
+    if (!parsed.success) {
+      return c.json({ error: "validation_error", message: parsed.error.errors.map((e) => e.message).join("; ") }, 400);
+    }
+    const { active, discountType, discountValue, minOrderAmount, maxUses, expiresAt } = parsed.data;
+    const updates: Record<string, unknown> = {};
+    if (active !== undefined) updates.active = active;
+    if (discountType !== undefined) updates.discountType = discountType;
+    if (discountValue !== undefined) updates.discountValue = String(discountValue);
+    if (minOrderAmount !== undefined) updates.minOrderAmount = String(minOrderAmount);
+    if (maxUses !== undefined) updates.maxUses = maxUses;
+    if (expiresAt !== undefined) updates.expiresAt = expiresAt ? new Date(expiresAt) : null;
+    if (Object.keys(updates).length === 0) {
+      return c.json({ error: "validation_error", message: "No fields to update" }, 400);
+    }
+    const [before] = await db.select().from(promoCodesTable).where(eq(promoCodesTable.id, id));
+    if (!before) return c.json({ error: "not_found", message: "Promo code not found" }, 404);
+    const [updated] = await db.update(promoCodesTable).set(updates).where(eq(promoCodesTable.id, id)).returning();
+    logActivity(db, { action: "update", entity: "promo", entityId: id, entityName: updated.code, before: before as unknown as Record<string, unknown>, after: updated as unknown as Record<string, unknown>, adminId: getAdminId(c) });
+    return c.json(updated);
+  } catch (err) {
+    return c.json({ error: "internal_error", message: "Failed to update promo code" }, 500);
+  }
+});
+
 app.delete("/promo-codes/:id", requireAdmin, async (c) => {
   try {
     const db = createDb(c.env.DATABASE_URL);

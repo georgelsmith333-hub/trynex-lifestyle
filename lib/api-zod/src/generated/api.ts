@@ -668,6 +668,54 @@ export const ValidatePromoCodeResponse = zod.object({
 });
 
 /**
+ * @summary Partially update a promo code (admin)
+ */
+export const UpdatePromoCodeParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const UpdatePromoCodeBody = zod.object({
+  active: zod.boolean().optional(),
+  discountType: zod.enum(["percentage", "fixed"]).optional(),
+  discountValue: zod.number().optional(),
+  minOrderAmount: zod.number().optional(),
+  maxUses: zod.number().optional(),
+  expiresAt: zod.coerce.date().nullish(),
+});
+
+/**
+ * @summary Delete a promo code (admin)
+ */
+export const DeletePromoCodeParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+/**
+ * @summary List referral codes (admin)
+ */
+export const ListReferralsResponse = zod.object({
+  referrals: zod.array(zod.object({}).passthrough()),
+});
+
+/**
+ * @summary Toggle referral active status (admin)
+ */
+export const UpdateReferralParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const UpdateReferralBody = zod.object({
+  active: zod.boolean(),
+});
+
+/**
+ * @summary Delete a referral (admin)
+ */
+export const DeleteReferralParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+/**
  * @summary List approved reviews for a product
  */
 export const ListProductReviewsParams = zod.object({

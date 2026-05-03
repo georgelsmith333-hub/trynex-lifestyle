@@ -428,6 +428,33 @@ export type ValidatePromoCode200 = {
   isReferral?: boolean;
 };
 
+export type UpdatePromoCodeBodyDiscountType =
+  (typeof UpdatePromoCodeBodyDiscountType)[keyof typeof UpdatePromoCodeBodyDiscountType];
+
+export const UpdatePromoCodeBodyDiscountType = {
+  percentage: "percentage",
+  fixed: "fixed",
+} as const;
+
+export type UpdatePromoCodeBody = {
+  active?: boolean;
+  discountType?: UpdatePromoCodeBodyDiscountType;
+  discountValue?: number;
+  minOrderAmount?: number;
+  maxUses?: number;
+  expiresAt?: string | null;
+};
+
+export type ListReferrals200ReferralsItem = { [key: string]: unknown };
+
+export type ListReferrals200 = {
+  referrals: ListReferrals200ReferralsItem[];
+};
+
+export type UpdateReferralBody = {
+  active: boolean;
+};
+
 export type ListProductReviews200ReviewsItem = { [key: string]: unknown };
 
 export type ListProductReviews200StatsDistribution = { [key: string]: unknown };
@@ -3081,6 +3108,423 @@ export const useValidatePromoCode = <
   TContext
 > => {
   return useMutation(getValidatePromoCodeMutationOptions(options));
+};
+
+/**
+ * @summary Partially update a promo code (admin)
+ */
+export const getUpdatePromoCodeUrl = (id: number) => {
+  return `/api/promo-codes/${id}`;
+};
+
+export const updatePromoCode = async (
+  id: number,
+  updatePromoCodeBody: UpdatePromoCodeBody,
+  options?: RequestInit,
+): Promise<void> => {
+  return customFetch<void>(getUpdatePromoCodeUrl(id), {
+    ...options,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(updatePromoCodeBody),
+  });
+};
+
+export const getUpdatePromoCodeMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updatePromoCode>>,
+    TError,
+    { id: number; data: BodyType<UpdatePromoCodeBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updatePromoCode>>,
+  TError,
+  { id: number; data: BodyType<UpdatePromoCodeBody> },
+  TContext
+> => {
+  const mutationKey = ["updatePromoCode"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updatePromoCode>>,
+    { id: number; data: BodyType<UpdatePromoCodeBody> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return updatePromoCode(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdatePromoCodeMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updatePromoCode>>
+>;
+export type UpdatePromoCodeMutationBody = BodyType<UpdatePromoCodeBody>;
+export type UpdatePromoCodeMutationError = ErrorType<void>;
+
+/**
+ * @summary Partially update a promo code (admin)
+ */
+export const useUpdatePromoCode = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updatePromoCode>>,
+    TError,
+    { id: number; data: BodyType<UpdatePromoCodeBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updatePromoCode>>,
+  TError,
+  { id: number; data: BodyType<UpdatePromoCodeBody> },
+  TContext
+> => {
+  return useMutation(getUpdatePromoCodeMutationOptions(options));
+};
+
+/**
+ * @summary Delete a promo code (admin)
+ */
+export const getDeletePromoCodeUrl = (id: number) => {
+  return `/api/promo-codes/${id}`;
+};
+
+export const deletePromoCode = async (
+  id: number,
+  options?: RequestInit,
+): Promise<void> => {
+  return customFetch<void>(getDeletePromoCodeUrl(id), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getDeletePromoCodeMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deletePromoCode>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deletePromoCode>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ["deletePromoCode"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deletePromoCode>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return deletePromoCode(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeletePromoCodeMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deletePromoCode>>
+>;
+
+export type DeletePromoCodeMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Delete a promo code (admin)
+ */
+export const useDeletePromoCode = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deletePromoCode>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deletePromoCode>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  return useMutation(getDeletePromoCodeMutationOptions(options));
+};
+
+/**
+ * @summary List referral codes (admin)
+ */
+export const getListReferralsUrl = () => {
+  return `/api/referrals`;
+};
+
+export const listReferrals = async (
+  options?: RequestInit,
+): Promise<ListReferrals200> => {
+  return customFetch<ListReferrals200>(getListReferralsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListReferralsQueryKey = () => {
+  return [`/api/referrals`] as const;
+};
+
+export const getListReferralsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listReferrals>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listReferrals>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListReferralsQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listReferrals>>> = ({
+    signal,
+  }) => listReferrals({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listReferrals>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListReferralsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listReferrals>>
+>;
+export type ListReferralsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List referral codes (admin)
+ */
+
+export function useListReferrals<
+  TData = Awaited<ReturnType<typeof listReferrals>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listReferrals>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListReferralsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Toggle referral active status (admin)
+ */
+export const getUpdateReferralUrl = (id: number) => {
+  return `/api/referrals/${id}`;
+};
+
+export const updateReferral = async (
+  id: number,
+  updateReferralBody: UpdateReferralBody,
+  options?: RequestInit,
+): Promise<void> => {
+  return customFetch<void>(getUpdateReferralUrl(id), {
+    ...options,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(updateReferralBody),
+  });
+};
+
+export const getUpdateReferralMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateReferral>>,
+    TError,
+    { id: number; data: BodyType<UpdateReferralBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateReferral>>,
+  TError,
+  { id: number; data: BodyType<UpdateReferralBody> },
+  TContext
+> => {
+  const mutationKey = ["updateReferral"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateReferral>>,
+    { id: number; data: BodyType<UpdateReferralBody> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return updateReferral(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateReferralMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateReferral>>
+>;
+export type UpdateReferralMutationBody = BodyType<UpdateReferralBody>;
+export type UpdateReferralMutationError = ErrorType<void>;
+
+/**
+ * @summary Toggle referral active status (admin)
+ */
+export const useUpdateReferral = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateReferral>>,
+    TError,
+    { id: number; data: BodyType<UpdateReferralBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateReferral>>,
+  TError,
+  { id: number; data: BodyType<UpdateReferralBody> },
+  TContext
+> => {
+  return useMutation(getUpdateReferralMutationOptions(options));
+};
+
+/**
+ * @summary Delete a referral (admin)
+ */
+export const getDeleteReferralUrl = (id: number) => {
+  return `/api/referrals/${id}`;
+};
+
+export const deleteReferral = async (
+  id: number,
+  options?: RequestInit,
+): Promise<void> => {
+  return customFetch<void>(getDeleteReferralUrl(id), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getDeleteReferralMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteReferral>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteReferral>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ["deleteReferral"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteReferral>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return deleteReferral(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteReferralMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteReferral>>
+>;
+
+export type DeleteReferralMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Delete a referral (admin)
+ */
+export const useDeleteReferral = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteReferral>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteReferral>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  return useMutation(getDeleteReferralMutationOptions(options));
 };
 
 /**

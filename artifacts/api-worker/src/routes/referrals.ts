@@ -96,6 +96,23 @@ app.get("/referrals/my/:email", async (c) => {
   }
 });
 
+app.patch("/referrals/:id", requireAdmin, async (c) => {
+  try {
+    const db = createDb(c.env.DATABASE_URL);
+    const id = parseInt(c.req.param("id"), 10);
+    if (isNaN(id)) return c.json({ error: "validation_error", message: "Invalid id" }, 400);
+    const body = await c.req.json();
+    const { active } = body as { active?: boolean };
+    if (active === undefined) return c.json({ error: "validation_error", message: "active field required" }, 400);
+    const [updated] = await db.update(referralsTable).set({ active: Boolean(active) }).where(eq(referralsTable.id, id)).returning();
+    if (!updated) return c.json({ error: "not_found", message: "Referral not found" }, 404);
+    return c.json({ referral: updated });
+  } catch (err) {
+    console.error("Failed to update referral", err);
+    return c.json({ error: "internal_error", message: "Failed to update referral" }, 500);
+  }
+});
+
 app.delete("/referrals/:id", requireAdmin, async (c) => {
   try {
     const db = createDb(c.env.DATABASE_URL);

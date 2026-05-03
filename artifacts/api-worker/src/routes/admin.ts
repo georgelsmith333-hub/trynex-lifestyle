@@ -413,7 +413,11 @@ app.delete("/admin/sessions/:id", requireAdmin, async (c) => {
     if (isNaN(id)) {
       return c.json({ error: "validation_error", message: "Invalid session id" }, 400);
     }
-    await db.update(adminSessionsTable).set({ revokedAt: new Date() }).where(eq(adminSessionsTable.id, id));
+    const session = c.get("adminSession")!;
+    const adminId = session.adminId;
+    await db.update(adminSessionsTable)
+      .set({ revokedAt: new Date() })
+      .where(and(eq(adminSessionsTable.id, id), adminId != null ? eq(adminSessionsTable.adminId, adminId) : sql`1=1`));
     return c.json({ success: true });
   } catch (err) {
     return c.json({ error: "internal_error", message: "Could not revoke session" }, 500);
