@@ -22,10 +22,10 @@ app.post("/newsletter/subscribe", async (c) => {
       source: source || "footer",
       ip,
     });
-    return c.json({ success: true, message: "Subscribed successfully!" });
+    return c.json({ ok: true, message: "Subscribed! Watch your inbox for exclusive deals." });
   } catch (err: any) {
     if (err?.code === "23505" || String(err?.message).includes("unique")) {
-      return c.json({ success: true, message: "Already subscribed!" });
+      return c.json({ ok: true, message: "You're already subscribed — welcome back!" });
     }
     console.error("Newsletter subscribe failed", err);
     return c.json({ error: "internal_error", message: "Subscription failed" }, 500);
