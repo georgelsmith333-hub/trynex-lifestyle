@@ -1628,7 +1628,7 @@ export default function DesignStudio() {
     : (parseColors(settings.studioTshirtColors) ?? DEFAULT_TSHIRT_COLORS);
 
   /* ── Selected layer: corner handles for resize ─────── */
-  const handleResizeDown = useCallback((e: React.PointerEvent<SVGCircleElement>) => {
+  const handleResizeDown = useCallback((e: React.PointerEvent<SVGCircleElement | SVGRectElement>) => {
     e.stopPropagation();
     if (!selectedLayer || selectedLayer.locked) return;
     (e.target as Element).setPointerCapture(e.pointerId);
@@ -1673,7 +1673,23 @@ export default function DesignStudio() {
     ];
   }, [selectedLayer, selGeom]);
 
-  const handleEdgeResizeDown = useCallback((e: React.PointerEvent<SVGCircleElement>, edgeKey: string) => {
+  /* ── Delete button pointer-down handler ────────────── */
+  const handleDeletePointerDown = useCallback((e: React.PointerEvent<SVGCircleElement>) => {
+    e.stopPropagation();
+    if (!selectedLayer) return;
+    const target = e.target as Element;
+    target.setPointerCapture(e.pointerId);
+    const layerId = selectedLayer.id;
+    const pointerId = e.pointerId;
+    const onUp = (ue: PointerEvent) => {
+      if (ue.pointerId !== pointerId) return;
+      window.removeEventListener("pointerup", onUp);
+      removeLayer(layerId);
+    };
+    window.addEventListener("pointerup", onUp);
+  }, [selectedLayer, removeLayer]);
+
+  const handleEdgeResizeDown = useCallback((e: React.PointerEvent<SVGCircleElement | SVGRectElement>, edgeKey: string) => {
     e.stopPropagation();
     if (!selectedLayer || selectedLayer.locked || selectedLayer.type !== "image") return;
     (e.target as Element).setPointerCapture(e.pointerId);
@@ -2282,22 +2298,44 @@ export default function DesignStudio() {
                         transform={`rotate(${selectedLayer.transform.rotation}, ${selGeom.cx}, ${selGeom.cy})`} />
                     </g>
                   )}
+                  {/* Corner resize handles — visible dot + transparent 44px hit area */}
                   {selectedLayer && rotatedCorners.map(h => (
-                    <circle key={h.key} cx={h.x} cy={h.y} r={7}
-                      fill="white" stroke="#E85D04" strokeWidth="2"
-                      style={{ cursor: "nwse-resize", touchAction: "none", filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.2))" }}
-                      onPointerDown={handleResizeDown}
-                    />
+                    <g key={h.key}>
+                      {/* Visible handle dot (no pointer events — hit area below handles it) */}
+                      <circle cx={h.x} cy={h.y} r={7}
+                        fill="white" stroke="#E85D04" strokeWidth="2"
+                        style={{ filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.2))" }}
+                        pointerEvents="none"
+                      />
+                      {/* Transparent 44-px hit area so finger taps register reliably */}
+                      <circle cx={h.x} cy={h.y} r={22}
+                        fill="transparent"
+                        style={{ cursor: "nwse-resize", touchAction: "none" }}
+                        pointerEvents="all"
+                        onPointerDown={handleResizeDown}
+                      />
+                    </g>
                   ))}
 
-                  {/* Edge midpoint handles — vertical/horizontal only stretch */}
+                  {/* Edge midpoint handles — visible rect + transparent 44×44 hit rect */}
                   {selectedLayer && selectedLayer.type === "image" && edgeMidpoints.map(h => (
-                    <rect key={h.key}
-                      x={h.x - 5} y={h.y - 5} width={10} height={10}
-                      rx={2} fill="white" stroke="#E85D04" strokeWidth="2"
-                      style={{ cursor: h.cursor, touchAction: "none", filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.18))" }}
-                      onPointerDown={e => handleEdgeResizeDown(e as unknown as React.PointerEvent<SVGCircleElement>, h.key)}
-                    />
+                    <g key={h.key}>
+                      {/* Visible handle rect */}
+                      <rect
+                        x={h.x - 5} y={h.y - 5} width={10} height={10}
+                        rx={2} fill="white" stroke="#E85D04" strokeWidth="2"
+                        style={{ filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.18))" }}
+                        pointerEvents="none"
+                      />
+                      {/* Transparent 44×44 hit area */}
+                      <rect
+                        x={h.x - 22} y={h.y - 22} width={44} height={44}
+                        fill="transparent"
+                        style={{ cursor: h.cursor, touchAction: "none" }}
+                        pointerEvents="all"
+                        onPointerDown={e => handleEdgeResizeDown(e as unknown as React.PointerEvent<SVGCircleElement | SVGRectElement>, h.key)}
+                      />
+                    </g>
                   ))}
 
                   {/* Red delete (×) button at the top-right corner of the selected layer */}
@@ -2305,16 +2343,22 @@ export default function DesignStudio() {
                     const ne = rotatedCorners.find(c => c.key === "ne");
                     if (!ne) return null;
                     return (
-                      <g
-                        onClick={(e) => { e.stopPropagation(); removeLayer(selectedLayer.id); }}
-                        style={{ cursor: "pointer" }}
-                        pointerEvents="all"
-                      >
+                      <g pointerEvents="all" style={{ cursor: "pointer" }}>
+                        {/* Visible delete circle */}
                         <circle cx={ne.x} cy={ne.y} r={13}
                           fill="#ef4444" stroke="white" strokeWidth={2.5}
-                          style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))" }} />
-                        <line x1={ne.x - 4.5} y1={ne.y - 4.5} x2={ne.x + 4.5} y2={ne.y + 4.5} stroke="white" strokeWidth={2.2} strokeLinecap="round" />
-                        <line x1={ne.x + 4.5} y1={ne.y - 4.5} x2={ne.x - 4.5} y2={ne.y + 4.5} stroke="white" strokeWidth={2.2} strokeLinecap="round" />
+                          style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))" }}
+                          pointerEvents="none"
+                        />
+                        <line x1={ne.x - 4.5} y1={ne.y - 4.5} x2={ne.x + 4.5} y2={ne.y + 4.5} stroke="white" strokeWidth={2.2} strokeLinecap="round" pointerEvents="none" />
+                        <line x1={ne.x + 4.5} y1={ne.y - 4.5} x2={ne.x - 4.5} y2={ne.y + 4.5} stroke="white" strokeWidth={2.2} strokeLinecap="round" pointerEvents="none" />
+                        {/* Transparent 44-px hit area — fires delete on pointerup so gesture filterTaps can't swallow it */}
+                        <circle cx={ne.x} cy={ne.y} r={22}
+                          fill="transparent"
+                          style={{ touchAction: "none" }}
+                          pointerEvents="all"
+                          onPointerDown={handleDeletePointerDown}
+                        />
                       </g>
                     );
                   })()}

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Shield, ShieldCheck, ShieldOff, KeyRound, Smartphone, Trash2, RefreshCw, Eye, EyeOff, CheckCircle, AlertCircle, LogOut, Monitor } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { AdminLayout } from "@/components/layout/AdminLayout";
 
 const API_BASE = import.meta.env.VITE_API_URL || "/api";
 
@@ -207,7 +208,8 @@ export default function AdminSecurity() {
   const btnDanger = "px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 disabled:opacity-50 transition-all border";
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <AdminLayout>
+    <div className="space-y-6">
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center gap-3 mb-2">
@@ -491,5 +493,6 @@ export default function AdminSecurity() {
         </div>
       </div>
     </div>
+    </AdminLayout>
   );
 }

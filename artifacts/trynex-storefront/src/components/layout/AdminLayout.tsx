@@ -1,12 +1,12 @@
 import { Link, useLocation } from "wouter";
 import { LayoutDashboard, Package, ShoppingCart, Settings, LogOut, Menu, X, FileText, Users, HardDrive, Sparkles, Star, Code2, BookOpen, Paintbrush, GitBranch, Gift, Layers, History, Shield, Search, Tag, Share2 } from "lucide-react";
 import { useAdminLogout, useAdminMe } from "@workspace/api-client-react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Loader } from "@/components/ui/Loader";
 import { cn, getAuthHeaders } from "@/lib/utils";
 
-const MENU = [
-  { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+const MENU: { name: string; href: string; icon: React.ElementType; exact?: boolean }[] = [
+  { name: "Dashboard", href: "/admin", icon: LayoutDashboard, exact: true },
   { name: "Products", href: "/admin/products", icon: Package },
   { name: "Categories", href: "/admin/categories", icon: Layers },
   { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
@@ -107,7 +107,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {MENU.map(item => {
             const Icon = item.icon;
-            const active = location === item.href;
+            const active = item.exact ? location === item.href : (location === item.href || location.startsWith(item.href + "/"));
             return (
               <Link
                 key={item.name}

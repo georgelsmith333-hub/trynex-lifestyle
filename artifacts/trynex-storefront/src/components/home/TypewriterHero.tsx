@@ -390,7 +390,7 @@ export function TypewriterHero() {
             initial={reduced ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.35 }}
-            className="flex flex-wrap gap-2 sm:gap-2.5 justify-center md:justify-start mb-7"
+            className="flex flex-wrap gap-1.5 sm:gap-2.5 justify-center md:justify-start mb-7"
           >
             {[
               { icon: Zap, label: "24hr Production" },
@@ -414,20 +414,20 @@ export function TypewriterHero() {
             initial={reduced ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.45 }}
-            className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-3 sm:gap-5 w-full max-w-[280px] sm:max-w-none"
+            className="grid grid-cols-2 sm:grid-cols-4 gap-x-3 gap-y-2 sm:gap-5 w-full max-w-[280px] sm:max-w-none"
           >
             {HERO_STATS.map((s) => (
               <div
                 key={s.label}
-                className="flex flex-col items-center md:items-start"
+                className="flex flex-col items-center md:items-start lg:px-5 lg:border-l lg:border-orange-200 first:lg:border-l-0 first:lg:pl-0 min-w-0"
               >
                 <span
-                  className="font-black text-xl sm:text-2xl lg:text-3xl leading-none"
+                  className="font-black text-base sm:text-2xl lg:text-3xl leading-none truncate w-full text-center md:text-left"
                   style={{ color: "var(--color-primary)" }}
                 >
                   {s.value}
                 </span>
-                <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-gray-500 font-semibold mt-1">
+                <span className="text-[9px] sm:text-[11px] uppercase tracking-wide text-gray-500 font-semibold mt-1 text-center lg:text-left leading-tight">
                   {s.label}
                 </span>
               </div>
