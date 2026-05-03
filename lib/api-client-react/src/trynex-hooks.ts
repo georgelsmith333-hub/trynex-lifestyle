@@ -584,14 +584,14 @@ export const useListOrders = (params?: {
   const qs = searchParams.toString();
   const url = `/api/orders${qs ? `?${qs}` : ""}`;
   const customKey = (opts as { query?: { queryKey?: unknown } })?.query?.queryKey;
-  const queryOptions = opts?.query ?? {};
-  return useQuery({
+  const queryOptions = (opts?.query ?? {}) as Omit<UseQueryOptions<{ orders: Order[]; total: number }>, "queryKey" | "queryFn">;
+  return useQuery<{ orders: Order[]; total: number }>({
     queryKey: customKey ? (customKey as unknown[]) : getListOrdersQueryKey(params),
-    queryFn: () => customFetch<{ orders: Order[]; total?: number }>(url, {
+    queryFn: () => customFetch<{ orders: Order[]; total: number }>(url, {
       headers: opts?.request?.headers,
     }),
-    ...(queryOptions as object),
-  } as any);
+    ...queryOptions,
+  });
 };
 
 export const useUpdateOrderStatus = () => {

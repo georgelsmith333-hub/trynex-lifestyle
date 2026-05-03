@@ -50,12 +50,12 @@ export default function AdminLogin() {
     setErrorMsg("");
     setIsPending(true);
     try {
-      const data = await apiPost("/admin/login", { username: "admin", password }) as any;
+      const data = await apiPost("/admin/login", { username: "admin", password });
       if (data.requiresTotp) {
-        setPartialToken(data.partialToken);
+        setPartialToken(data.partialToken as string);
         setStep("totp");
       } else {
-        issueSession(data);
+        issueSession(data as { token?: string });
       }
     } catch (err: unknown) {
       const status = (err as { status?: number })?.status;
@@ -121,8 +121,8 @@ export default function AdminLogin() {
     }
     setIsPending(true);
     try {
-      const data = await apiPost("/admin/reset-password", { resetKey, newPassword }) as any;
-      setSuccessMsg(data.message || "Password reset successfully. You can now log in with your new password.");
+      const data = await apiPost("/admin/reset-password", { resetKey, newPassword });
+      setSuccessMsg((data.message as string | undefined) || "Password reset successfully. You can now log in with your new password.");
       setResetKey("");
       setNewPassword("");
       setConfirmPassword("");

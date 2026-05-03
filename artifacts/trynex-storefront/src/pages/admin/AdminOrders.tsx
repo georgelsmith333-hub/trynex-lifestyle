@@ -47,7 +47,7 @@ export default function AdminOrders() {
   const openLightbox = (items: PreviewItem[], index: number) => setLightbox({ items, index });
   const closeLightbox = () => setLightbox(null);
 
-  const { data: _ordersData, isLoading, refetch, dataUpdatedAt } = useListOrders(
+  const { data, isLoading, refetch, dataUpdatedAt } = useListOrders(
     { limit: 200, ...(statusFilter !== "all" ? { status: statusFilter } : {}) },
     {
       request: { headers: getAuthHeaders() },
@@ -57,10 +57,9 @@ export default function AdminOrders() {
         refetchOnWindowFocus: true,
         refetchOnReconnect: true,
         staleTime: 0,                    // never serve stale data — always show latest
-      } as any
+      }
     }
   );
-  const data = _ordersData as { orders: any[]; total: number } | undefined;
 
   const [isUpdating, setIsUpdating] = useState(false);
 
