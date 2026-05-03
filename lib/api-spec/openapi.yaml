@@ -522,6 +522,41 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
+  /blog/categories:
+    get:
+      operationId: listBlogCategories
+      tags: [blog]
+      summary: List blog categories
+      responses:
+        "200":
+          description: Blog categories
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  categories:
+                    type: array
+                    items: { type: string }
+                required: [categories]
+
+  /blog/settings:
+    get:
+      operationId: getBlogSettings
+      tags: [blog]
+      summary: Get blog configuration settings
+      responses:
+        "200":
+          description: Blog settings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  enabled: { type: boolean }
+                  postsPerPage: { type: integer }
+                required: [enabled]
+
   /hampers:
     get:
       operationId: listHampers
@@ -558,6 +593,113 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Hamper"
+
+  /admin/hampers:
+    get:
+      operationId: adminListHampers
+      tags: [admin, hampers]
+      summary: List all hampers (admin)
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          description: All hampers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hampers:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Hamper"
+                required: [hampers]
+    post:
+      operationId: adminCreateHamper
+      tags: [admin, hampers]
+      summary: Create a new hamper package
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                slug: { type: string }
+                name: { type: string }
+                nameBn: { type: string }
+                description: { type: string }
+                descriptionBn: { type: string }
+                category: { type: string }
+                occasion: { type: string }
+                imageUrl: { type: string }
+                images: { type: array, items: { type: string } }
+                basePrice: { type: number }
+                discountPrice: { type: number }
+                items: { type: array, items: { type: object } }
+                isCustomizable: { type: boolean }
+                active: { type: boolean }
+                featured: { type: boolean }
+                sortOrder: { type: integer }
+                stock: { type: integer }
+                tags: { type: array, items: { type: string } }
+              required: [slug, name, basePrice]
+      responses:
+        "201":
+          description: Created hamper
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Hamper"
+        "409":
+          description: Slug already exists
+
+  /admin/hampers/{id}:
+    put:
+      operationId: adminUpdateHamper
+      tags: [admin, hampers]
+      summary: Update a hamper package
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Hamper"
+      responses:
+        "200":
+          description: Updated hamper
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Hamper"
+        "404":
+          description: Not found
+    delete:
+      operationId: adminDeleteHamper
+      tags: [admin, hampers]
+      summary: Delete a hamper package
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                required: [ok]
 
   /promo-codes/validate:
     post:
@@ -900,9 +1042,8 @@ paths:
             schema:
               type: object
               properties:
-                secret: { type: string }
                 totpCode: { type: string, minLength: 6 }
-              required: [secret, totpCode]
+              required: [totpCode]
       responses:
         "200":
           description: 2FA enabled
@@ -1173,16 +1314,87 @@ components:
         tagline: { type: string }
         phone: { type: string }
         email: { type: string }
+        address: { type: string }
+        facebookUrl: { type: string }
+        instagramUrl: { type: string }
+        youtubeUrl: { type: string }
+        heroTitle: { type: string }
+        heroSubtitle: { type: string }
+        heroImageUrl: { type: string }
+        heroGradient: { type: string }
+        heroCTAText: { type: string }
+        heroCTALink: { type: string }
+        heroTypewriterPhrases: { type: string }
+        announcementBar: { type: string }
+        announcementEnabled: { type: boolean }
+        announcementColor: { type: string }
+        announcementAutoHide: { type: boolean }
+        freeShippingThreshold: { type: number }
         bkashNumber: { type: string }
         nagadNumber: { type: string }
         rocketNumber: { type: string }
         upayNumber: { type: string }
         whatsappNumber: { type: string }
         shippingCost: { type: number }
-        freeShippingThreshold: { type: number }
+        googleAnalyticsId: { type: string }
+        facebookPixelId: { type: string }
+        googleAdsId: { type: string }
+        siteIcon: { type: string }
+        facebookAppId: { type: string }
+        googleClientId: { type: string }
+        googleSiteVerification: { type: string }
         primaryColor: { type: string }
-        announcementBar: { type: string }
-        announcementEnabled: { type: boolean }
-        spinWheelEnabled: { type: boolean }
+        promoBannerTitle: { type: string }
+        promoBannerSubtitle: { type: string }
+        promoBannerDiscount: { type: string }
+        promoBannerCTA: { type: string }
+        promoBannerEnabled: { type: boolean }
+        studioTshirtColors: { type: string }
+        studioMugColors: { type: string }
+        studioTshirtPrice: { type: number }
+        studioMugPrice: { type: number }
+        trustBadge1Title: { type: string }
+        trustBadge1Desc: { type: string }
+        trustBadge1Icon: { type: string }
+        trustBadge2Title: { type: string }
+        trustBadge2Desc: { type: string }
+        trustBadge2Icon: { type: string }
+        trustBadge3Title: { type: string }
+        trustBadge3Desc: { type: string }
+        trustBadge3Icon: { type: string }
+        trustBadge4Title: { type: string }
+        trustBadge4Desc: { type: string }
+        trustBadge4Icon: { type: string }
+        sectionFeaturedEnabled: { type: boolean }
+        sectionCategoriesEnabled: { type: boolean }
+        sectionFlashSaleEnabled: { type: boolean }
+        sectionTestimonialsEnabled: { type: boolean }
+        sectionStatsEnabled: { type: boolean }
+        categoryTshirtsEnabled: { type: boolean }
+        categoryHoodiesEnabled: { type: boolean }
+        categoryCapsEnabled: { type: boolean }
+        categoryMugsEnabled: { type: boolean }
+        categoryCustomEnabled: { type: boolean }
         flashSaleEnabled: { type: boolean }
+        flashSaleEndTime: { type: string }
+        flashSaleMessage: { type: string }
+        scarcityThreshold: { type: integer }
+        exitIntentPromoEnabled: { type: boolean }
+        exitIntentPromoCode: { type: string }
+        exitIntentPromoDiscount: { type: string }
+        salePageTitle: { type: string }
+        salePageSubtitle: { type: string }
+        salePageBadge: { type: string }
+        spinWheelEnabled: { type: boolean }
+        spinWheelDelay: { type: integer }
+        spinWheelTitle: { type: string }
+        spinWheelSubtitle: { type: string }
+        spinWheelResetAt: { type: integer }
+        spinWheelCooldownHours: { type: integer }
+        seoDefaultTitle: { type: string }
+        seoDefaultDescription: { type: string }
+        seoDefaultKeywords: { type: string }
+        seoOgImage: { type: string }
+        seoTwitterHandle: { type: string }
+        metaCapiTokenConfigured: { type: boolean }
       required: [siteName, shippingCost, freeShippingThreshold]

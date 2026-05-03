@@ -50,6 +50,9 @@ app.delete("/newsletter/subscribers/:id", requireAdmin, async (c) => {
   try {
     const db = createDb(c.env.DATABASE_URL);
     const id = parseInt(c.req.param("id"), 10);
+    if (isNaN(id)) {
+      return c.json({ error: "invalid_id", message: "Invalid subscriber id" }, 400);
+    }
     await db.delete(newsletterSubscribersTable).where(eq(newsletterSubscribersTable.id, id));
     return c.json({ success: true });
   } catch (err) {

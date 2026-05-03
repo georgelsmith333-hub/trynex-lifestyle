@@ -187,18 +187,89 @@ export interface SiteSettings {
   tagline?: string;
   phone?: string;
   email?: string;
+  address?: string;
+  facebookUrl?: string;
+  instagramUrl?: string;
+  youtubeUrl?: string;
+  heroTitle?: string;
+  heroSubtitle?: string;
+  heroImageUrl?: string;
+  heroGradient?: string;
+  heroCTAText?: string;
+  heroCTALink?: string;
+  heroTypewriterPhrases?: string;
+  announcementBar?: string;
+  announcementEnabled?: boolean;
+  announcementColor?: string;
+  announcementAutoHide?: boolean;
+  freeShippingThreshold: number;
   bkashNumber?: string;
   nagadNumber?: string;
   rocketNumber?: string;
   upayNumber?: string;
   whatsappNumber?: string;
   shippingCost: number;
-  freeShippingThreshold: number;
+  googleAnalyticsId?: string;
+  facebookPixelId?: string;
+  googleAdsId?: string;
+  siteIcon?: string;
+  facebookAppId?: string;
+  googleClientId?: string;
+  googleSiteVerification?: string;
   primaryColor?: string;
-  announcementBar?: string;
-  announcementEnabled?: boolean;
-  spinWheelEnabled?: boolean;
+  promoBannerTitle?: string;
+  promoBannerSubtitle?: string;
+  promoBannerDiscount?: string;
+  promoBannerCTA?: string;
+  promoBannerEnabled?: boolean;
+  studioTshirtColors?: string;
+  studioMugColors?: string;
+  studioTshirtPrice?: number;
+  studioMugPrice?: number;
+  trustBadge1Title?: string;
+  trustBadge1Desc?: string;
+  trustBadge1Icon?: string;
+  trustBadge2Title?: string;
+  trustBadge2Desc?: string;
+  trustBadge2Icon?: string;
+  trustBadge3Title?: string;
+  trustBadge3Desc?: string;
+  trustBadge3Icon?: string;
+  trustBadge4Title?: string;
+  trustBadge4Desc?: string;
+  trustBadge4Icon?: string;
+  sectionFeaturedEnabled?: boolean;
+  sectionCategoriesEnabled?: boolean;
+  sectionFlashSaleEnabled?: boolean;
+  sectionTestimonialsEnabled?: boolean;
+  sectionStatsEnabled?: boolean;
+  categoryTshirtsEnabled?: boolean;
+  categoryHoodiesEnabled?: boolean;
+  categoryCapsEnabled?: boolean;
+  categoryMugsEnabled?: boolean;
+  categoryCustomEnabled?: boolean;
   flashSaleEnabled?: boolean;
+  flashSaleEndTime?: string;
+  flashSaleMessage?: string;
+  scarcityThreshold?: number;
+  exitIntentPromoEnabled?: boolean;
+  exitIntentPromoCode?: string;
+  exitIntentPromoDiscount?: string;
+  salePageTitle?: string;
+  salePageSubtitle?: string;
+  salePageBadge?: string;
+  spinWheelEnabled?: boolean;
+  spinWheelDelay?: number;
+  spinWheelTitle?: string;
+  spinWheelSubtitle?: string;
+  spinWheelResetAt?: number;
+  spinWheelCooldownHours?: number;
+  seoDefaultTitle?: string;
+  seoDefaultDescription?: string;
+  seoDefaultKeywords?: string;
+  seoOgImage?: string;
+  seoTwitterHandle?: string;
+  metaCapiTokenConfigured?: boolean;
 }
 
 export type ListProductsParams = {
@@ -299,8 +370,48 @@ export type ListBlogPosts200 = {
   posts: BlogPost[];
 };
 
+export type ListBlogCategories200 = {
+  categories: string[];
+};
+
+export type GetBlogSettings200 = {
+  enabled: boolean;
+  postsPerPage?: number;
+};
+
 export type ListHampers200 = {
   hampers: Hamper[];
+};
+
+export type AdminListHampers200 = {
+  hampers: Hamper[];
+};
+
+export type AdminCreateHamperBodyItemsItem = { [key: string]: unknown };
+
+export type AdminCreateHamperBody = {
+  slug: string;
+  name: string;
+  nameBn?: string;
+  description?: string;
+  descriptionBn?: string;
+  category?: string;
+  occasion?: string;
+  imageUrl?: string;
+  images?: string[];
+  basePrice: number;
+  discountPrice?: number;
+  items?: AdminCreateHamperBodyItemsItem[];
+  isCustomizable?: boolean;
+  active?: boolean;
+  featured?: boolean;
+  sortOrder?: number;
+  stock?: number;
+  tags?: string[];
+};
+
+export type AdminDeleteHamper200 = {
+  ok: boolean;
 };
 
 export type ValidatePromoCodeBody = {
@@ -422,7 +533,6 @@ export type AdminTotpSetup200 = {
 };
 
 export type AdminTotpEnableBody = {
-  secret: string;
   /** @minLength 6 */
   totpCode: string;
 };
@@ -2241,6 +2351,156 @@ export function useGetBlogPost<
 }
 
 /**
+ * @summary List blog categories
+ */
+export const getListBlogCategoriesUrl = () => {
+  return `/api/blog/categories`;
+};
+
+export const listBlogCategories = async (
+  options?: RequestInit,
+): Promise<ListBlogCategories200> => {
+  return customFetch<ListBlogCategories200>(getListBlogCategoriesUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListBlogCategoriesQueryKey = () => {
+  return [`/api/blog/categories`] as const;
+};
+
+export const getListBlogCategoriesQueryOptions = <
+  TData = Awaited<ReturnType<typeof listBlogCategories>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listBlogCategories>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListBlogCategoriesQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listBlogCategories>>
+  > = ({ signal }) => listBlogCategories({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listBlogCategories>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListBlogCategoriesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listBlogCategories>>
+>;
+export type ListBlogCategoriesQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List blog categories
+ */
+
+export function useListBlogCategories<
+  TData = Awaited<ReturnType<typeof listBlogCategories>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listBlogCategories>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListBlogCategoriesQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Get blog configuration settings
+ */
+export const getGetBlogSettingsUrl = () => {
+  return `/api/blog/settings`;
+};
+
+export const getBlogSettings = async (
+  options?: RequestInit,
+): Promise<GetBlogSettings200> => {
+  return customFetch<GetBlogSettings200>(getGetBlogSettingsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetBlogSettingsQueryKey = () => {
+  return [`/api/blog/settings`] as const;
+};
+
+export const getGetBlogSettingsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getBlogSettings>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getBlogSettings>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetBlogSettingsQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getBlogSettings>>> = ({
+    signal,
+  }) => getBlogSettings({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getBlogSettings>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetBlogSettingsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getBlogSettings>>
+>;
+export type GetBlogSettingsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get blog configuration settings
+ */
+
+export function useGetBlogSettings<
+  TData = Awaited<ReturnType<typeof getBlogSettings>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getBlogSettings>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetBlogSettingsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
  * @summary List gift hamper packages
  */
 export const getListHampersUrl = () => {
@@ -2399,6 +2659,338 @@ export function useGetHamper<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * @summary List all hampers (admin)
+ */
+export const getAdminListHampersUrl = () => {
+  return `/api/admin/hampers`;
+};
+
+export const adminListHampers = async (
+  options?: RequestInit,
+): Promise<AdminListHampers200> => {
+  return customFetch<AdminListHampers200>(getAdminListHampersUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getAdminListHampersQueryKey = () => {
+  return [`/api/admin/hampers`] as const;
+};
+
+export const getAdminListHampersQueryOptions = <
+  TData = Awaited<ReturnType<typeof adminListHampers>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof adminListHampers>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getAdminListHampersQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof adminListHampers>>
+  > = ({ signal }) => adminListHampers({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof adminListHampers>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type AdminListHampersQueryResult = NonNullable<
+  Awaited<ReturnType<typeof adminListHampers>>
+>;
+export type AdminListHampersQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List all hampers (admin)
+ */
+
+export function useAdminListHampers<
+  TData = Awaited<ReturnType<typeof adminListHampers>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof adminListHampers>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getAdminListHampersQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Create a new hamper package
+ */
+export const getAdminCreateHamperUrl = () => {
+  return `/api/admin/hampers`;
+};
+
+export const adminCreateHamper = async (
+  adminCreateHamperBody: AdminCreateHamperBody,
+  options?: RequestInit,
+): Promise<Hamper> => {
+  return customFetch<Hamper>(getAdminCreateHamperUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(adminCreateHamperBody),
+  });
+};
+
+export const getAdminCreateHamperMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminCreateHamper>>,
+    TError,
+    { data: BodyType<AdminCreateHamperBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof adminCreateHamper>>,
+  TError,
+  { data: BodyType<AdminCreateHamperBody> },
+  TContext
+> => {
+  const mutationKey = ["adminCreateHamper"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof adminCreateHamper>>,
+    { data: BodyType<AdminCreateHamperBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return adminCreateHamper(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AdminCreateHamperMutationResult = NonNullable<
+  Awaited<ReturnType<typeof adminCreateHamper>>
+>;
+export type AdminCreateHamperMutationBody = BodyType<AdminCreateHamperBody>;
+export type AdminCreateHamperMutationError = ErrorType<void>;
+
+/**
+ * @summary Create a new hamper package
+ */
+export const useAdminCreateHamper = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminCreateHamper>>,
+    TError,
+    { data: BodyType<AdminCreateHamperBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof adminCreateHamper>>,
+  TError,
+  { data: BodyType<AdminCreateHamperBody> },
+  TContext
+> => {
+  return useMutation(getAdminCreateHamperMutationOptions(options));
+};
+
+/**
+ * @summary Update a hamper package
+ */
+export const getAdminUpdateHamperUrl = (id: number) => {
+  return `/api/admin/hampers/${id}`;
+};
+
+export const adminUpdateHamper = async (
+  id: number,
+  hamper: Hamper,
+  options?: RequestInit,
+): Promise<Hamper> => {
+  return customFetch<Hamper>(getAdminUpdateHamperUrl(id), {
+    ...options,
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(hamper),
+  });
+};
+
+export const getAdminUpdateHamperMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminUpdateHamper>>,
+    TError,
+    { id: number; data: BodyType<Hamper> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof adminUpdateHamper>>,
+  TError,
+  { id: number; data: BodyType<Hamper> },
+  TContext
+> => {
+  const mutationKey = ["adminUpdateHamper"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof adminUpdateHamper>>,
+    { id: number; data: BodyType<Hamper> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return adminUpdateHamper(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AdminUpdateHamperMutationResult = NonNullable<
+  Awaited<ReturnType<typeof adminUpdateHamper>>
+>;
+export type AdminUpdateHamperMutationBody = BodyType<Hamper>;
+export type AdminUpdateHamperMutationError = ErrorType<void>;
+
+/**
+ * @summary Update a hamper package
+ */
+export const useAdminUpdateHamper = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminUpdateHamper>>,
+    TError,
+    { id: number; data: BodyType<Hamper> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof adminUpdateHamper>>,
+  TError,
+  { id: number; data: BodyType<Hamper> },
+  TContext
+> => {
+  return useMutation(getAdminUpdateHamperMutationOptions(options));
+};
+
+/**
+ * @summary Delete a hamper package
+ */
+export const getAdminDeleteHamperUrl = (id: number) => {
+  return `/api/admin/hampers/${id}`;
+};
+
+export const adminDeleteHamper = async (
+  id: number,
+  options?: RequestInit,
+): Promise<AdminDeleteHamper200> => {
+  return customFetch<AdminDeleteHamper200>(getAdminDeleteHamperUrl(id), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getAdminDeleteHamperMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminDeleteHamper>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof adminDeleteHamper>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ["adminDeleteHamper"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof adminDeleteHamper>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return adminDeleteHamper(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AdminDeleteHamperMutationResult = NonNullable<
+  Awaited<ReturnType<typeof adminDeleteHamper>>
+>;
+
+export type AdminDeleteHamperMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Delete a hamper package
+ */
+export const useAdminDeleteHamper = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminDeleteHamper>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof adminDeleteHamper>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  return useMutation(getAdminDeleteHamperMutationOptions(options));
+};
 
 /**
  * @summary Validate a promo or referral code

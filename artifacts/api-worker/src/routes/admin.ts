@@ -285,17 +285,20 @@ app.post("/admin/totp-enable", requireAdmin, async (c) => {
     const session = c.get("adminSession")!;
     if (!session.adminId) return c.json({ error: "forbidden" }, 403);
     const body = await c.req.json();
-    const { secret, totpCode } = body;
-    if (!secret || !totpCode) {
-      return c.json({ error: "validation_error", message: "secret and totpCode are required" }, 400);
+    const { totpCode } = body;
+    if (!totpCode) {
+      return c.json({ error: "validation_error", message: "totpCode is required" }, 400);
     }
     const [admin] = await db.select().from(adminTable).where(eq(adminTable.id, session.adminId));
     if (!admin) return c.json({ error: "not_found" }, 404);
-    const isValid = await verifyTotp(String(totpCode).replace(/\s/g, ""), secret);
+    if (!admin.totpSecret) {
+      return c.json({ error: "not_setup", message: "TOTP not set up. Please request a new setup QR code." }, 400);
+    }
+    const isValid = await verifyTotp(String(totpCode).replace(/\s/g, ""), admin.totpSecret);
     if (!isValid) {
       return c.json({ error: "invalid_code", message: "Invalid verification code. Please check your authenticator app." }, 400);
     }
-    await db.update(adminTable).set({ totpSecret: secret, totpEnabled: true }).where(eq(adminTable.id, admin.id));
+    await db.update(adminTable).set({ totpEnabled: true }).where(eq(adminTable.id, admin.id));
     await revokeAllAdminSessions(db);
     return c.json({ success: true, message: "2FA enabled. All existing sessions have been revoked. Please log in again." });
   } catch (err) {
