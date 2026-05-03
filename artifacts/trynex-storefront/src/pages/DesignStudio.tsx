@@ -389,106 +389,152 @@ export default function DesignStudio() {
   /* Snap guides */
   const [snapGuides, setSnapGuides] = useState<{ v: boolean; h: boolean }>({ v: false, h: false });
 
-  /* ── Draft persistence (localStorage) ──────────────── */
+  /* ── Draft persistence (localStorage + cloud) ──────────────── */
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [hasDraft, setHasDraft] = useState(false);
   const [legacyDraftFound, setLegacyDraftFound] = useState<{ version: number } | null>(null);
   const draftRestoredRef = useRef(false);
   const urlInitRef = useRef(false);
 
-  // Restore draft on mount (runs once)
-  useEffect(() => {
-    try {
-      const searchParams = new URLSearchParams(window.location.search);
-      const isEdit = searchParams.get("edit") === "1";
+  function getCustomerToken(): string | null {
+    return localStorage.getItem("trynex_customer_token");
+  }
 
-      const raw = localStorage.getItem(DRAFT_STORAGE_KEY);
-      if (raw) {
-        const data = JSON.parse(raw) as Partial<DraftPayload>;
-        // Defensive shape validation — malformed/foreign data should be ignored, not crash the page.
-        const isValidLayer = (l: any): l is Layer =>
-          l && typeof l === "object"
-          && typeof l.id === "string"
-          && (l.type === "image" || l.type === "text")
-          && l.transform && typeof l.transform.x === "number" && typeof l.transform.y === "number"
-          && typeof l.transform.scale === "number" && typeof l.transform.rotation === "number"
-          && typeof l.transform.opacity === "number"
-          && (l.type === "text"
-            ? typeof l.text === "string" && typeof l.fontSize === "number"
-            : typeof l.src === "string" && typeof l.naturalW === "number" && typeof l.naturalH === "number");
-        const validLayers = Array.isArray(data?.layers) ? (data!.layers as any[]).filter(isValidLayer) as Layer[] : [];
-        // For older-format drafts, prompt the user before discarding (data not lost silently)
-        if (data && typeof data.version === "number" && data.version !== DRAFT_VERSION) {
-          setLegacyDraftFound({ version: data.version });
+  function getCustomerHeaders(): Record<string, string> {
+    const token = getCustomerToken();
+    return token
+      ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" }
+      : { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" };
+  }
+
+  const isValidLayer = (l: any): l is Layer =>
+    l && typeof l === "object"
+    && typeof l.id === "string"
+    && (l.type === "image" || l.type === "text")
+    && l.transform && typeof l.transform.x === "number" && typeof l.transform.y === "number"
+    && typeof l.transform.scale === "number" && typeof l.transform.rotation === "number"
+    && typeof l.transform.opacity === "number"
+    && (l.type === "text"
+      ? typeof l.text === "string" && typeof l.fontSize === "number"
+      : typeof l.src === "string" && typeof l.naturalW === "number" && typeof l.naturalH === "number");
+
+  function applyDraftPayload(data: Partial<DraftPayload>, isEdit: boolean, source: "cloud" | "local") {
+    const validLayers = Array.isArray(data?.layers) ? (data!.layers as any[]).filter(isValidLayer) as Layer[] : [];
+    if (data && typeof data.version === "number" && data.version !== DRAFT_VERSION) {
+      setLegacyDraftFound({ version: data.version });
+      return false;
+    }
+    if (data && data.version === DRAFT_VERSION) {
+      if (typeof data.productId === "string") {
+        const p = PRODUCTS.find(x => x.id === data.productId);
+        if (p) setSelectedProduct(p);
+      }
+      if (data.color && typeof (data.color as any).hex === "string" && typeof (data.color as any).name === "string") {
+        setSelectedColor(data.color as { name: string; hex: string });
+      }
+      if (typeof data.size === "string") setSelectedSize(data.size);
+      if (data.mugMode && ["side1", "side2"].includes(data.mugMode as string)) {
+        setMugMode(data.mugMode as "side1" | "side2");
+      }
+      if (data.linkedStoreProductId && data.linkedStoreProductName && data.linkedStoreProductPrice) {
+        setLinkedStoreProduct({
+          id: data.linkedStoreProductId,
+          name: data.linkedStoreProductName,
+          price: data.linkedStoreProductPrice,
+        });
+      }
+      if (validLayers.length > 0) {
+        setLayers(validLayers);
+        historyRef.current = { stack: [validLayers], index: 0 };
+        forceHistoryTick(t => t + 1);
+        setHasDraft(true);
+        setSaveStatus("saved");
+        if (isEdit) {
+          toast({ title: "Design Restored", description: "Your design has been restored for editing." });
+        } else if (source === "cloud") {
+          toast({ title: "Draft restored", description: "Your saved design has been loaded from the cloud." });
+        } else {
+          toast({ title: "Draft restored", description: "We brought back your last design." });
         }
-        if (data && data.version === DRAFT_VERSION) {
-          if (typeof data.productId === "string") {
-            const p = PRODUCTS.find(x => x.id === data.productId);
-            if (p) setSelectedProduct(p);
-          }
-          if (data.color && typeof (data.color as any).hex === "string" && typeof (data.color as any).name === "string") {
-            setSelectedColor(data.color as { name: string; hex: string });
-          }
-          if (typeof data.size === "string") setSelectedSize(data.size);
-          if (data.mugMode && ["side1", "side2"].includes(data.mugMode as string)) {
-            setMugMode(data.mugMode as "side1" | "side2");
-          }
-          // Restore linked store product if saved
-          if (data.linkedStoreProductId && data.linkedStoreProductName && data.linkedStoreProductPrice) {
-            setLinkedStoreProduct({
-              id: data.linkedStoreProductId,
-              name: data.linkedStoreProductName,
-              price: data.linkedStoreProductPrice,
-            });
-          }
-          if (validLayers.length > 0) {
-            setLayers(validLayers);
-            historyRef.current = { stack: [validLayers], index: 0 };
-            forceHistoryTick(t => t + 1);
-            setHasDraft(true);
-            setSaveStatus("saved");
-            if (isEdit) {
-              toast({ title: "Design Restored", description: "Your design has been restored for editing." });
-            } else {
-              toast({ title: "Draft restored", description: "We brought back your last design." });
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // Restore draft on mount (runs once) — checks cloud first for authenticated users
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const isEdit = searchParams.get("edit") === "1";
+    const token = getCustomerToken();
+
+    async function restore() {
+      // 1. Try cloud draft first (authenticated users only)
+      if (token) {
+        try {
+          const res = await fetch(getApiUrl("/api/drafts"), {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (res.ok) {
+            const json = await res.json();
+            if (json.draft?.payload) {
+              const applied = applyDraftPayload(json.draft.payload as Partial<DraftPayload>, isEdit, "cloud");
+              if (applied) {
+                draftRestoredRef.current = true;
+                urlInitRef.current = true;
+                return;
+              }
             }
           }
+        } catch {
+          // Cloud unavailable — fall through to localStorage
         }
       }
-    } catch {
-      // Corrupt JSON or storage access failure — ignore and start fresh.
-    }
-    // URL params override draft settings (URL is the source of truth when shared)
-    try {
-      const sp = new URLSearchParams(window.location.search);
-      const urlProduct = sp.get("product");
-      if (urlProduct) {
-        const found = PRODUCTS.find(p => p.id === urlProduct || p.category === urlProduct);
-        if (found) {
-          setSelectedProduct(found);
-          setSelectedColor({ name: found.name, hex: found.garmentColor });
+
+      // 2. Fall back to localStorage
+      try {
+        const raw = localStorage.getItem(DRAFT_STORAGE_KEY);
+        if (raw) {
+          const data = JSON.parse(raw) as Partial<DraftPayload>;
+          applyDraftPayload(data, isEdit, "local");
         }
+      } catch {
+        // Corrupt JSON or storage access failure — ignore and start fresh.
       }
-      // storeProductId: link to a real store product by numeric ID
-      const urlStoreProductId = sp.get("storeProductId");
-      if (urlStoreProductId) {
-        const numId = parseInt(urlStoreProductId, 10);
-        if (!isNaN(numId)) pendingStoreProductIdRef.current = numId;
-      }
-      const urlTab = sp.get("tab");
-      if (urlTab && ["upload", "text", "layers", "templates", "ai"].includes(urlTab)) {
-        setActiveTab(urlTab as typeof activeTab);
-      }
-      if (sp.get("view") === "back") setActiveFace("back");
-      const urlSize = sp.get("size");
-      if (urlSize && ["XS", "S", "M", "L", "XL", "XXL", "XXXL"].includes(urlSize)) {
-        setSelectedSize(urlSize);
-      }
-    } catch {
-      // Ignore URL parsing errors
     }
-    draftRestoredRef.current = true;
-    urlInitRef.current = true;
+
+    restore().finally(() => {
+      // URL params override draft settings (URL is the source of truth when shared)
+      try {
+        const sp = new URLSearchParams(window.location.search);
+        const urlProduct = sp.get("product");
+        if (urlProduct) {
+          const found = PRODUCTS.find(p => p.id === urlProduct || p.category === urlProduct);
+          if (found) {
+            setSelectedProduct(found);
+            setSelectedColor({ name: found.name, hex: found.garmentColor });
+          }
+        }
+        const urlStoreProductId = sp.get("storeProductId");
+        if (urlStoreProductId) {
+          const numId = parseInt(urlStoreProductId, 10);
+          if (!isNaN(numId)) pendingStoreProductIdRef.current = numId;
+        }
+        const urlTab = sp.get("tab");
+        if (urlTab && ["upload", "text", "layers", "templates", "ai"].includes(urlTab)) {
+          setActiveTab(urlTab as typeof activeTab);
+        }
+        if (sp.get("view") === "back") setActiveFace("back");
+        const urlSize = sp.get("size");
+        if (urlSize && ["XS", "S", "M", "L", "XL", "XXL", "XXXL"].includes(urlSize)) {
+          setSelectedSize(urlSize);
+        }
+      } catch {
+        // Ignore URL parsing errors
+      }
+      draftRestoredRef.current = true;
+      urlInitRef.current = true;
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -517,6 +563,7 @@ export default function DesignStudio() {
   }, [toast]);
 
   // Auto-save draft when layers / product / color / size change (debounced)
+  // Authenticated users: saves to cloud + localStorage. Guests: localStorage only.
   useEffect(() => {
     if (!draftRestoredRef.current) return;
 
@@ -530,34 +577,62 @@ export default function DesignStudio() {
         return;
       }
       try { localStorage.removeItem(DRAFT_STORAGE_KEY); } catch {}
+      // Also clear cloud draft for authenticated users so next restore starts fresh.
+      const token = getCustomerToken();
+      if (token) {
+        fetch(getApiUrl("/api/drafts"), {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}`, "X-Requested-With": "XMLHttpRequest" },
+        }).catch(() => {});
+      }
       setHasDraft(false);
       setSaveStatus("idle");
       return;
     }
     setSaveStatus("saving");
-    const handle = window.setTimeout(() => {
+    const handle = window.setTimeout(async () => {
+      const payload: DraftPayload = {
+        version: DRAFT_VERSION,
+        layers,
+        productId: selectedProduct.id,
+        color: selectedColor,
+        size: selectedSize,
+        mugMode,
+        savedAt: Date.now(),
+        ...(linkedStoreProduct ? {
+          linkedStoreProductId: linkedStoreProduct.id,
+          linkedStoreProductName: linkedStoreProduct.name,
+          linkedStoreProductPrice: linkedStoreProduct.price,
+        } : {}),
+      };
+
+      // Always save to localStorage as a fast local backup
       try {
-        const payload: DraftPayload = {
-          version: DRAFT_VERSION,
-          layers,
-          productId: selectedProduct.id,
-          color: selectedColor,
-          size: selectedSize,
-          mugMode,
-          savedAt: Date.now(),
-          ...(linkedStoreProduct ? {
-            linkedStoreProductId: linkedStoreProduct.id,
-            linkedStoreProductName: linkedStoreProduct.name,
-            linkedStoreProductPrice: linkedStoreProduct.price,
-          } : {}),
-        };
         localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(payload));
-        setHasDraft(true);
-        setSaveStatus("saved");
       } catch {
-        // Quota exceeded or serialization failure — leave status as-is silently.
-        setSaveStatus("idle");
+        // Quota exceeded — continue silently
       }
+
+      // Additionally save to cloud for authenticated users
+      const token = getCustomerToken();
+      if (token) {
+        try {
+          const cloudRes = await fetch(getApiUrl("/api/drafts"), {
+            method: "PUT",
+            headers: getCustomerHeaders(),
+            body: JSON.stringify({ payload }),
+          });
+          if (!cloudRes.ok) {
+            // Log but don't surface to user — localStorage backup still available
+            console.warn("[draft] cloud save returned", cloudRes.status);
+          }
+        } catch {
+          // Network error — localStorage backup still available
+        }
+      }
+
+      setHasDraft(true);
+      setSaveStatus("saved");
     }, 500);
     return () => window.clearTimeout(handle);
   }, [layers, selectedProduct, selectedColor, selectedSize, legacyDraftFound, linkedStoreProduct]);
@@ -583,6 +658,14 @@ export default function DesignStudio() {
 
   const clearDraft = useCallback(() => {
     try { localStorage.removeItem(DRAFT_STORAGE_KEY); } catch {}
+    // Delete cloud draft for authenticated users
+    const token = getCustomerToken();
+    if (token) {
+      fetch(getApiUrl("/api/drafts"), {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}`, "X-Requested-With": "XMLHttpRequest" },
+      }).catch(() => {});
+    }
     setLayers([]);
     setSelectedLayerId(null);
     historyRef.current = { stack: [[]], index: 0 };

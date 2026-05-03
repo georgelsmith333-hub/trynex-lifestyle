@@ -256,3 +256,13 @@ export const newsletterSubscribersTable = pgTable("newsletter_subscribers", {
   ip: text("ip"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+export const designDraftsTable = pgTable("design_drafts", {
+  id: serial("id").primaryKey(),
+  customerId: integer("customer_id").notNull().unique(),
+  payload: jsonb("payload").notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export type DesignDraft = typeof designDraftsTable.$inferSelect;
+export type InsertDesignDraft = typeof designDraftsTable.$inferInsert;

@@ -101,6 +101,21 @@ router.get("/referrals/my/:email", async (req, res) => {
   }
 });
 
+router.patch("/referrals/:id", requireAdmin, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id as string, 10);
+    if (!Number.isFinite(id)) { res.status(400).json({ error: "validation_error", message: "Invalid id" }); return; }
+    const { active } = req.body as { active?: boolean };
+    if (active === undefined) { res.status(400).json({ error: "validation_error", message: "active field required" }); return; }
+    const [updated] = await db.update(referralsTable).set({ active: Boolean(active) }).where(eq(referralsTable.id, id)).returning();
+    if (!updated) { res.status(404).json({ error: "not_found", message: "Referral not found" }); return; }
+    res.json({ referral: updated });
+  } catch (err) {
+    req.log.error({ err }, "Failed to update referral");
+    res.status(500).json({ error: "internal_error", message: "Failed to update referral" });
+  }
+});
+
 router.delete("/referrals/:id", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id as string, 10);

@@ -24,6 +24,7 @@ import activityLogRouter from "./activityLog";
 import seoRouter from "./seo";
 import newsletterRouter from "./newsletter";
 import aiRouter from "./ai";
+import draftsRouter from "./drafts";
 
 const router: IRouter = Router();
 
@@ -52,5 +53,6 @@ router.use(activityLogRouter);
 router.use(seoRouter);
 router.use(newsletterRouter);
 router.use(aiRouter);
+router.use(draftsRouter);
 
 export default router;

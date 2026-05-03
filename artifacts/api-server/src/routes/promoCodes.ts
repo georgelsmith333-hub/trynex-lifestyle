@@ -207,6 +207,32 @@ router.put("/promo-codes/:id/use", async (req, res) => {
   }
 });
 
+router.patch("/promo-codes/:id", requireAdmin, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id as string, 10);
+    if (!Number.isFinite(id)) { res.status(400).json({ error: "validation_error", message: "Invalid id" }); return; }
+    const parsed = parsePromoBody(PromoUpdateSchema, req.body);
+    if (!parsed.ok) { res.status(400).json({ error: "validation_error", message: parsed.message }); return; }
+    const { active, discountType, discountValue, minOrderAmount, maxUses, expiresAt } = parsed.data;
+    const updates: Record<string, unknown> = {};
+    if (active !== undefined) updates.active = active;
+    if (discountType !== undefined) updates.discountType = discountType;
+    if (discountValue !== undefined) updates.discountValue = String(discountValue);
+    if (minOrderAmount !== undefined) updates.minOrderAmount = String(minOrderAmount);
+    if (maxUses !== undefined) updates.maxUses = maxUses;
+    if (expiresAt !== undefined) updates.expiresAt = expiresAt ? new Date(expiresAt) : null;
+    if (Object.keys(updates).length === 0) { res.status(400).json({ error: "validation_error", message: "No fields to update" }); return; }
+    const [before] = await db.select().from(promoCodesTable).where(eq(promoCodesTable.id, id));
+    if (!before) { res.status(404).json({ error: "not_found", message: "Promo code not found" }); return; }
+    const [updated] = await db.update(promoCodesTable).set(updates).where(eq(promoCodesTable.id, id)).returning();
+    logActivity({ action: "update", entity: "promo", entityId: id, entityName: updated.code, before: before as unknown as Record<string, unknown>, after: updated as unknown as Record<string, unknown>, adminId: getAdminId(req) });
+    res.json(updated);
+  } catch (err) {
+    req.log.error({ err }, "Failed to update promo code");
+    res.status(500).json({ error: "internal_error", message: "Failed to update promo code" });
+  }
+});
+
 router.delete("/promo-codes/:id", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id as string, 10);
