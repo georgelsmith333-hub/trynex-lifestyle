@@ -225,27 +225,31 @@ export function TypewriterHero() {
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-[1.1fr_1fr] gap-6 md:gap-8 lg:gap-12 items-center">
 
         {/* ── LEFT: copy ── */}
-        <div className="flex flex-col items-center md:items-start text-center md:text-left">
+        <div className="flex flex-col items-center md:items-start text-center md:text-left min-w-0 w-full">
 
           {/* Eyebrow */}
           <motion.div
             initial={reduced ? false : { opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full mb-5 font-bold text-[11px] sm:text-xs tracking-wide"
-            style={{
-              background: "linear-gradient(135deg, #fff4ee, #ffe8d4)",
-              color: "var(--color-primary)",
-              border: "1.5px solid #fdd5b4",
-            }}
+            className="w-full flex justify-center md:justify-start mb-5"
           >
-            <Flame className="w-3.5 h-3.5" aria-hidden="true" />
-            Bangladesh's #1 Custom Apparel Brand
             <span
-              className="px-1.5 py-0.5 rounded-full text-[9px] text-white font-black tracking-wider"
-              style={{ background: "var(--color-primary)" }}
+              className="inline-flex flex-wrap items-center justify-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-bold text-[11px] sm:text-xs tracking-wide max-w-full"
+              style={{
+                background: "linear-gradient(135deg, #fff4ee, #ffe8d4)",
+                color: "var(--color-primary)",
+                border: "1.5px solid #fdd5b4",
+              }}
             >
-              NEW
+              <Flame className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+              <span>Bangladesh's #1 Custom Apparel Brand</span>
+              <span
+                className="px-1.5 py-0.5 rounded-full text-[9px] text-white font-black tracking-wider shrink-0"
+                style={{ background: "var(--color-primary)" }}
+              >
+                NEW
+              </span>
             </span>
           </motion.div>
 
@@ -299,7 +303,7 @@ export function TypewriterHero() {
             initial={reduced ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.15 }}
-            className="text-sm sm:text-lg text-gray-600 max-w-xl mb-6 leading-relaxed"
+            className="text-sm sm:text-lg text-gray-600 w-full max-w-xl mb-6 leading-relaxed"
           >
             {settings.heroSubtitle ||
               "Premium 320GSM cotton, vibrant prints, and 24-hour express delivery to all 64 districts of Bangladesh."}
@@ -348,8 +352,8 @@ export function TypewriterHero() {
             className="md:hidden w-full mt-6"
           >
             <div
-              className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1"
-              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+              className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}
             >
               {HERO_PRODUCT_GRID.map((p, i) => (
                 <div
@@ -390,7 +394,7 @@ export function TypewriterHero() {
             initial={reduced ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.35 }}
-            className="flex flex-wrap gap-1.5 sm:gap-2.5 justify-center md:justify-start mb-7"
+            className="w-full flex flex-wrap gap-1.5 sm:gap-2.5 justify-center md:justify-start mb-7"
           >
             {[
               { icon: Zap, label: "24hr Production" },

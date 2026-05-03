@@ -389,6 +389,13 @@ export default function DesignStudio() {
   /* Snap guides */
   const [snapGuides, setSnapGuides] = useState<{ v: boolean; h: boolean }>({ v: false, h: false });
 
+  /* Canvas-level zoom/pan (mobile pinch-to-zoom) */
+  const [canvasZoom, setCanvasZoom] = useState(1);
+  const [canvasPan, setCanvasPan] = useState({ x: 0, y: 0 });
+  const canvasZoomRef = useRef(1);
+  const canvasPanRef = useRef({ x: 0, y: 0 });
+  const isCanvasZoomed = canvasZoom !== 1 || canvasPan.x !== 0 || canvasPan.y !== 0;
+
   /* ── Draft persistence (localStorage + cloud) ──────────────── */
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [hasDraft, setHasDraft] = useState(false);
@@ -1245,6 +1252,7 @@ export default function DesignStudio() {
   const gestureRef = useRef<
     | { mode: "drag"; layerId: string; startSvg: { x: number; y: number }; startT: Transform }
     | { mode: "pinch"; layerId: string; startMid: { x: number; y: number }; startT: Transform }
+    | { mode: "canvas-pinch"; startZoom: number; startPan: { x: number; y: number }; startOrigin: { x: number; y: number } }
     | null
   >(null);
 
@@ -1296,25 +1304,60 @@ export default function DesignStudio() {
       },
       onPinchStart: ({ event, origin: [ox, oy] }) => {
         const target = event.target as Element;
+        // Only check the actual hit element — never fall back to the selected layer.
+        // This ensures pinching on empty canvas always zooms the canvas, even when
+        // a layer is selected.
         const hitId = target.getAttribute?.("data-layer-id") ?? null;
-        const targetId = hitId ?? selectedLayerIdRef.current;
-        if (!targetId) return;
-        const layer = layersRef.current.find(l => l.id === targetId);
+        if (!hitId) {
+          // Pinch started on empty canvas → canvas-level zoom/pan
+          gestureRef.current = {
+            mode: "canvas-pinch",
+            startZoom: canvasZoomRef.current,
+            startPan: { ...canvasPanRef.current },
+            startOrigin: { x: ox, y: oy },
+          };
+          return;
+        }
+        // Pinch started on a specific layer → layer scale/rotate/pan
+        const layer = layersRef.current.find(l => l.id === hitId);
         if (!layer || layer.locked) return;
-        if (selectedLayerIdRef.current !== targetId) {
-          setSelectedLayerId(targetId);
-          selectedLayerIdRef.current = targetId;
+        if (selectedLayerIdRef.current !== hitId) {
+          setSelectedLayerId(hitId);
+          selectedLayerIdRef.current = hitId;
         }
         gestureRef.current = {
           mode: "pinch",
-          layerId: targetId,
+          layerId: hitId,
           startMid: clientToSVG(ox, oy),
           startT: { ...layer.transform },
         };
       },
       onPinch: ({ origin: [ox, oy], offset: [scaleOffset, angleOffset] }) => {
         const g = gestureRef.current;
-        if (!g || g.mode !== "pinch") return;
+        if (!g) return;
+        if (g.mode === "canvas-pinch") {
+          const newZoom = Math.max(1, Math.min(4, g.startZoom * scaleOffset));
+          // Track origin movement for pan — movement is in screen pixels
+          const dx = ox - g.startOrigin.x;
+          const dy = oy - g.startOrigin.y;
+          const rawPanX = g.startPan.x + dx;
+          const rawPanY = g.startPan.y + dy;
+          // Clamp pan based on rendered canvas size so canvas stays in view.
+          // Allow panning by at most half the canvas dimension times the extra zoom.
+          const rect = svgRef.current?.getBoundingClientRect();
+          const halfW = rect ? rect.width / 2 : 160;
+          const halfH = rect ? rect.height / 2 : 160;
+          const maxPanX = halfW * (newZoom - 1);
+          const maxPanY = halfH * (newZoom - 1);
+          const newPanX = Math.max(-maxPanX, Math.min(maxPanX, rawPanX));
+          const newPanY = Math.max(-maxPanY, Math.min(maxPanY, rawPanY));
+          canvasZoomRef.current = newZoom;
+          canvasPanRef.current = { x: newPanX, y: newPanY };
+          setCanvasZoom(newZoom);
+          setCanvasPan({ x: newPanX, y: newPanY });
+          return;
+        }
+        if (g.mode !== "pinch") return;
         const mid = clientToSVG(ox, oy);
         const scale = Math.max(0.1, Math.min(5, g.startT.scale * scaleOffset));
         const rotation = g.startT.rotation + angleOffset;
@@ -1323,6 +1366,17 @@ export default function DesignStudio() {
         setLayers(prev => prev.map(l => l.id === g.layerId ? { ...l, transform: { ...l.transform, scale, rotation, x, y } } : l));
       },
       onPinchEnd: () => {
+        if (gestureRef.current?.mode === "canvas-pinch") {
+          // If zoom snapped back to 1, also reset pan
+          if (canvasZoomRef.current <= 1) {
+            canvasZoomRef.current = 1;
+            canvasPanRef.current = { x: 0, y: 0 };
+            setCanvasZoom(1);
+            setCanvasPan({ x: 0, y: 0 });
+          }
+          gestureRef.current = null;
+          return;
+        }
         if (gestureRef.current?.mode === "pinch") {
           commitLayers(layersRef.current);
           gestureRef.current = null;
@@ -1352,6 +1406,14 @@ export default function DesignStudio() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [undo, redo, selectedLayerId, removeLayer]);
+
+  /* ── Reset canvas zoom/pan when product, face, or view-mode changes ── */
+  useEffect(() => {
+    canvasZoomRef.current = 1;
+    canvasPanRef.current = { x: 0, y: 0 };
+    setCanvasZoom(1);
+    setCanvasPan({ x: 0, y: 0 });
+  }, [selectedProduct.id, activeFace, viewMode]);
 
   /* ── Compute layer SVG geometry ────────────────────── */
   const layerGeom = (l: Layer) => {
@@ -2140,7 +2202,14 @@ export default function DesignStudio() {
             >
               <div
                 className="relative w-full"
-                style={{ aspectRatio: `${selectedProduct.aspect}`, touchAction: "none" }}
+                style={{
+                  aspectRatio: `${selectedProduct.aspect}`,
+                  touchAction: "none",
+                  transform: `translate(${canvasPan.x}px, ${canvasPan.y}px) scale(${canvasZoom})`,
+                  transformOrigin: "center center",
+                  transition: gestureRef.current?.mode === "canvas-pinch" ? "none" : "transform 0.2s ease-out",
+                  willChange: "transform",
+                }}
               >
                 {viewMode === "3d" && effectiveSupports3D ? (
                   <div className="absolute inset-0" data-testid="viewer-3d">
@@ -2429,12 +2498,31 @@ export default function DesignStudio() {
                 )}
               </div>
 
+              {/* Reset zoom pill — appears when canvas is zoomed/panned */}
+              {isCanvasZoomed && (
+                <div className="absolute top-3 right-3 z-20">
+                  <button
+                    onClick={() => {
+                      canvasZoomRef.current = 1;
+                      canvasPanRef.current = { x: 0, y: 0 };
+                      setCanvasZoom(1);
+                      setCanvasPan({ x: 0, y: 0 });
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold"
+                    style={{ background: "rgba(17,24,39,0.80)", color: "white", backdropFilter: "blur(6px)", boxShadow: "0 2px 8px rgba(0,0,0,0.18)" }}
+                  >
+                    <ZoomOut className="w-3 h-3" />
+                    Reset zoom
+                  </button>
+                </div>
+              )}
+
               {/* Interaction hint */}
               {layers.length > 0 && (
                 <div className="px-4 py-2.5 text-[11px] font-semibold text-gray-500 flex items-center gap-2 border-t border-gray-100"
                   style={{ background: "white" }}>
                   <Move className="w-3.5 h-3.5 text-orange-400 shrink-0" />
-                  Drag to move · Pinch to scale & rotate · Center snaps when aligned
+                  Drag to move · Pinch to scale & rotate · Pinch empty area to zoom canvas
                 </div>
               )}
             </div>
