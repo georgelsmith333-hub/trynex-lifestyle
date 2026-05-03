@@ -231,7 +231,7 @@ app.put("/admin/change-password", requireAdmin, async (c) => {
     const session = c.get("adminSession")!;
     if (!session.adminId) return c.json({ error: "forbidden", message: "No admin account to update" }, 403);
     const body = await c.req.json();
-    const { currentPassword, newPassword } = body;
+    const { currentPassword, newPassword, totpCode } = body;
     if (!currentPassword || !newPassword) {
       return c.json({ error: "validation_error", message: "currentPassword and newPassword are required" }, 400);
     }
@@ -245,9 +245,18 @@ app.put("/admin/change-password", requireAdmin, async (c) => {
     if (!valid) {
       return c.json({ error: "invalid_credentials", message: "Current password is incorrect" }, 400);
     }
+    if (admin.totpEnabled && admin.totpSecret) {
+      if (!totpCode) {
+        return c.json({ error: "totp_required", message: "Authenticator code required to change password" }, 400);
+      }
+      const isTotpValid = await verifyTotp(String(totpCode).replace(/\s/g, ""), admin.totpSecret);
+      if (!isTotpValid) {
+        return c.json({ error: "invalid_code", message: "Authenticator code is incorrect" }, 400);
+      }
+    }
     const newHash = await hashPassword(newPassword);
     await db.update(adminTable).set({ passwordHash: newHash }).where(eq(adminTable.id, session.adminId));
-    return c.json({ success: true });
+    return c.json({ success: true, message: "Password changed successfully." });
   } catch (err) {
     return c.json({ error: "internal_error", message: "Failed to change password" }, 500);
   }
@@ -276,17 +285,17 @@ app.post("/admin/totp-enable", requireAdmin, async (c) => {
     const session = c.get("adminSession")!;
     if (!session.adminId) return c.json({ error: "forbidden" }, 403);
     const body = await c.req.json();
-    const { code } = body;
-    if (!code) return c.json({ error: "validation_error", message: "TOTP code is required" }, 400);
-    const [admin] = await db.select().from(adminTable).where(eq(adminTable.id, session.adminId));
-    if (!admin?.totpSecret) {
-      return c.json({ error: "not_setup", message: "TOTP not set up. Please request a new setup QR code." }, 400);
+    const { secret, totpCode } = body;
+    if (!secret || !totpCode) {
+      return c.json({ error: "validation_error", message: "secret and totpCode are required" }, 400);
     }
-    const isValid = await verifyTotp(String(code).replace(/\s/g, ""), admin.totpSecret);
+    const [admin] = await db.select().from(adminTable).where(eq(adminTable.id, session.adminId));
+    if (!admin) return c.json({ error: "not_found" }, 404);
+    const isValid = await verifyTotp(String(totpCode).replace(/\s/g, ""), secret);
     if (!isValid) {
       return c.json({ error: "invalid_code", message: "Invalid verification code. Please check your authenticator app." }, 400);
     }
-    await db.update(adminTable).set({ totpEnabled: true }).where(eq(adminTable.id, admin.id));
+    await db.update(adminTable).set({ totpSecret: secret, totpEnabled: true }).where(eq(adminTable.id, admin.id));
     await revokeAllAdminSessions(db);
     return c.json({ success: true, message: "2FA enabled. All existing sessions have been revoked. Please log in again." });
   } catch (err) {
@@ -300,14 +309,14 @@ app.post("/admin/totp-disable", requireAdmin, async (c) => {
     const session = c.get("adminSession")!;
     if (!session.adminId) return c.json({ error: "forbidden" }, 403);
     const body = await c.req.json();
-    const { code } = body;
-    if (!code) return c.json({ error: "validation_error", message: "TOTP code required to disable 2FA" }, 400);
+    const { totpCode } = body;
+    if (!totpCode) return c.json({ error: "validation_error", message: "totpCode required to disable 2FA" }, 400);
     const [admin] = await db.select().from(adminTable).where(eq(adminTable.id, session.adminId));
     if (!admin) return c.json({ error: "not_found" }, 404);
     if (!admin.totpEnabled || !admin.totpSecret) {
       return c.json({ error: "not_enabled", message: "2FA is not currently enabled" }, 400);
     }
-    const isValid = await verifyTotp(String(code).replace(/\s/g, ""), admin.totpSecret);
+    const isValid = await verifyTotp(String(totpCode).replace(/\s/g, ""), admin.totpSecret);
     if (!isValid) {
       return c.json({ error: "invalid_code", message: "Invalid verification code. Please check your authenticator app." }, 400);
     }
