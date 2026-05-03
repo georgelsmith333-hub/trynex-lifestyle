@@ -225,7 +225,7 @@ app.post("/admin/login-totp", async (c) => {
   }
 });
 
-app.post("/admin/change-password", requireAdmin, async (c) => {
+app.put("/admin/change-password", requireAdmin, async (c) => {
   try {
     const db = createDb(c.env.DATABASE_URL);
     const session = c.get("adminSession")!;
@@ -253,7 +253,7 @@ app.post("/admin/change-password", requireAdmin, async (c) => {
   }
 });
 
-app.get("/admin/totp/setup", requireAdmin, async (c) => {
+app.get("/admin/totp-setup", requireAdmin, async (c) => {
   try {
     const db = createDb(c.env.DATABASE_URL);
     const session = c.get("adminSession")!;
@@ -270,7 +270,7 @@ app.get("/admin/totp/setup", requireAdmin, async (c) => {
   }
 });
 
-app.post("/admin/totp/enable", requireAdmin, async (c) => {
+app.post("/admin/totp-enable", requireAdmin, async (c) => {
   try {
     const db = createDb(c.env.DATABASE_URL);
     const session = c.get("adminSession")!;
@@ -294,7 +294,7 @@ app.post("/admin/totp/enable", requireAdmin, async (c) => {
   }
 });
 
-app.post("/admin/totp/disable", requireAdmin, async (c) => {
+app.post("/admin/totp-disable", requireAdmin, async (c) => {
   try {
     const db = createDb(c.env.DATABASE_URL);
     const session = c.get("adminSession")!;

@@ -317,6 +317,21 @@ export type ValidatePromoCode200 = {
   isReferral?: boolean;
 };
 
+export type ListProductReviews200ReviewsItem = { [key: string]: unknown };
+
+export type ListProductReviews200StatsDistribution = { [key: string]: unknown };
+
+export type ListProductReviews200Stats = {
+  total: number;
+  average: number;
+  distribution: ListProductReviews200StatsDistribution;
+};
+
+export type ListProductReviews200 = {
+  reviews: ListProductReviews200ReviewsItem[];
+  stats: ListProductReviews200Stats;
+};
+
 export type SubscribeNewsletterBody = {
   email: string;
   source?: string;
@@ -363,10 +378,47 @@ export type AdminLoginTotp200 = {
   token?: string;
 };
 
+export type GetAdminMe200Admin = {
+  id: number;
+  username: string;
+  authenticated: boolean;
+  totpEnabled: boolean;
+};
+
+export type GetAdminMe200 = {
+  admin: GetAdminMe200Admin;
+};
+
+export type GetAdminStats200RecentOrdersItem = { [key: string]: unknown };
+
+export type GetAdminStats200 = {
+  totalOrders: number;
+  pendingOrders?: number;
+  processingOrders?: number;
+  shippedOrders?: number;
+  deliveredOrders?: number;
+  totalRevenue: number;
+  todayRevenue?: number;
+  totalProducts: number;
+  lowStockProducts?: number;
+  recentOrders?: GetAdminStats200RecentOrdersItem[];
+};
+
 export type AdminChangePasswordBody = {
   currentPassword: string;
   /** @minLength 8 */
   newPassword: string;
+  totpCode?: string;
+};
+
+export type AdminChangePassword200 = {
+  success: boolean;
+  message?: string;
+};
+
+export type AdminTotpSetup200 = {
+  secret: string;
+  qrDataUrl: string;
 };
 
 export type AdminTotpEnableBody = {
@@ -378,6 +430,19 @@ export type AdminTotpEnableBody = {
 export type AdminTotpDisableBody = {
   /** @minLength 6 */
   totpCode: string;
+};
+
+export type ListAdminSessions200SessionsItem = {
+  id: number;
+  createdAt?: string;
+  lastUsedAt?: string;
+  expiresAt?: string;
+  userAgent?: string | null;
+  ip?: string | null;
+};
+
+export type ListAdminSessions200 = {
+  sessions: ListAdminSessions200SessionsItem[];
 };
 
 export type AdminResetPasswordBody = {
@@ -2431,11 +2496,14 @@ export const getListProductReviewsUrl = (productId: number) => {
 export const listProductReviews = async (
   productId: number,
   options?: RequestInit,
-): Promise<void> => {
-  return customFetch<void>(getListProductReviewsUrl(productId), {
-    ...options,
-    method: "GET",
-  });
+): Promise<ListProductReviews200> => {
+  return customFetch<ListProductReviews200>(
+    getListProductReviewsUrl(productId),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
 };
 
 export const getListProductReviewsQueryKey = (productId: number) => {
@@ -3253,8 +3321,10 @@ export const getGetAdminMeUrl = () => {
   return `/api/admin/me`;
 };
 
-export const getAdminMe = async (options?: RequestInit): Promise<void> => {
-  return customFetch<void>(getGetAdminMeUrl(), {
+export const getAdminMe = async (
+  options?: RequestInit,
+): Promise<GetAdminMe200> => {
+  return customFetch<GetAdminMe200>(getGetAdminMeUrl(), {
     ...options,
     method: "GET",
   });
@@ -3326,8 +3396,10 @@ export const getGetAdminStatsUrl = () => {
   return `/api/admin/stats`;
 };
 
-export const getAdminStats = async (options?: RequestInit): Promise<void> => {
-  return customFetch<void>(getGetAdminStatsUrl(), {
+export const getAdminStats = async (
+  options?: RequestInit,
+): Promise<GetAdminStats200> => {
+  return customFetch<GetAdminStats200>(getGetAdminStatsUrl(), {
     ...options,
     method: "GET",
   });
@@ -3402,10 +3474,10 @@ export const getAdminChangePasswordUrl = () => {
 export const adminChangePassword = async (
   adminChangePasswordBody: AdminChangePasswordBody,
   options?: RequestInit,
-): Promise<void> => {
-  return customFetch<void>(getAdminChangePasswordUrl(), {
+): Promise<AdminChangePassword200> => {
+  return customFetch<AdminChangePassword200>(getAdminChangePasswordUrl(), {
     ...options,
-    method: "POST",
+    method: "PUT",
     headers: { "Content-Type": "application/json", ...options?.headers },
     body: JSON.stringify(adminChangePasswordBody),
   });
@@ -3485,8 +3557,10 @@ export const getAdminTotpSetupUrl = () => {
   return `/api/admin/totp-setup`;
 };
 
-export const adminTotpSetup = async (options?: RequestInit): Promise<void> => {
-  return customFetch<void>(getAdminTotpSetupUrl(), {
+export const adminTotpSetup = async (
+  options?: RequestInit,
+): Promise<AdminTotpSetup200> => {
+  return customFetch<AdminTotpSetup200>(getAdminTotpSetupUrl(), {
     ...options,
     method: "GET",
   });
@@ -3732,8 +3806,8 @@ export const getListAdminSessionsUrl = () => {
 
 export const listAdminSessions = async (
   options?: RequestInit,
-): Promise<void> => {
-  return customFetch<void>(getListAdminSessionsUrl(), {
+): Promise<ListAdminSessions200> => {
+  return customFetch<ListAdminSessions200>(getListAdminSessionsUrl(), {
     ...options,
     method: "GET",
   });

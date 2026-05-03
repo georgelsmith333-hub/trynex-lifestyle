@@ -603,6 +603,20 @@ paths:
       responses:
         "200":
           description: Reviews and aggregate stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reviews: { type: array, items: { type: object } }
+                  stats:
+                    type: object
+                    properties:
+                      total: { type: integer }
+                      average: { type: number }
+                      distribution: { type: object }
+                    required: [total, average, distribution]
+                required: [reviews, stats]
 
   /settings:
     get:
@@ -785,6 +799,20 @@ paths:
       responses:
         "200":
           description: Admin profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  admin:
+                    type: object
+                    properties:
+                      id: { type: integer }
+                      username: { type: string }
+                      authenticated: { type: boolean }
+                      totpEnabled: { type: boolean }
+                    required: [id, username, authenticated, totpEnabled]
+                required: [admin]
 
   /admin/stats:
     get:
@@ -795,9 +823,25 @@ paths:
       responses:
         "200":
           description: Dashboard stats with revenue, orders, products
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalOrders: { type: integer }
+                  pendingOrders: { type: integer }
+                  processingOrders: { type: integer }
+                  shippedOrders: { type: integer }
+                  deliveredOrders: { type: integer }
+                  totalRevenue: { type: number }
+                  todayRevenue: { type: number }
+                  totalProducts: { type: integer }
+                  lowStockProducts: { type: integer }
+                  recentOrders: { type: array, items: { type: object } }
+                required: [totalOrders, totalRevenue, totalProducts]
 
   /admin/change-password:
-    post:
+    put:
       operationId: adminChangePassword
       tags: [admin]
       summary: Change admin password
@@ -811,10 +855,19 @@ paths:
               properties:
                 currentPassword: { type: string }
                 newPassword: { type: string, minLength: 8 }
+                totpCode: { type: string }
               required: [currentPassword, newPassword]
       responses:
         "200":
           description: Password changed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  message: { type: string }
+                required: [success]
 
   /admin/totp-setup:
     get:
@@ -825,6 +878,14 @@ paths:
       responses:
         "200":
           description: TOTP setup info with QR data URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  secret: { type: string }
+                  qrDataUrl: { type: string }
+                required: [secret, qrDataUrl]
 
   /admin/totp-enable:
     post:
@@ -874,6 +935,24 @@ paths:
       responses:
         "200":
           description: Session list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: { type: integer }
+                        createdAt: { type: string, format: date-time }
+                        lastUsedAt: { type: string, format: date-time }
+                        expiresAt: { type: string, format: date-time }
+                        userAgent: { type: string, nullable: true }
+                        ip: { type: string, nullable: true }
+                      required: [id]
+                required: [sessions]
 
   /admin/sessions/revoke-all:
     post:

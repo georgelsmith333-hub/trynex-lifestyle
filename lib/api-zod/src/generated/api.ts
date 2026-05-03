@@ -574,6 +574,15 @@ export const ListProductReviewsParams = zod.object({
   productId: zod.coerce.number(),
 });
 
+export const ListProductReviewsResponse = zod.object({
+  reviews: zod.array(zod.object({}).passthrough()),
+  stats: zod.object({
+    total: zod.number(),
+    average: zod.number(),
+    distribution: zod.object({}).passthrough(),
+  }),
+});
+
 /**
  * @summary Get public site settings
  */
@@ -704,6 +713,34 @@ export const AdminLoginTotpResponse = zod.object({
 });
 
 /**
+ * @summary Get current admin profile
+ */
+export const GetAdminMeResponse = zod.object({
+  admin: zod.object({
+    id: zod.number(),
+    username: zod.string(),
+    authenticated: zod.boolean(),
+    totpEnabled: zod.boolean(),
+  }),
+});
+
+/**
+ * @summary Admin dashboard statistics
+ */
+export const GetAdminStatsResponse = zod.object({
+  totalOrders: zod.number(),
+  pendingOrders: zod.number().optional(),
+  processingOrders: zod.number().optional(),
+  shippedOrders: zod.number().optional(),
+  deliveredOrders: zod.number().optional(),
+  totalRevenue: zod.number(),
+  todayRevenue: zod.number().optional(),
+  totalProducts: zod.number(),
+  lowStockProducts: zod.number().optional(),
+  recentOrders: zod.array(zod.object({}).passthrough()).optional(),
+});
+
+/**
  * @summary Change admin password
  */
 export const adminChangePasswordBodyNewPasswordMin = 8;
@@ -711,6 +748,20 @@ export const adminChangePasswordBodyNewPasswordMin = 8;
 export const AdminChangePasswordBody = zod.object({
   currentPassword: zod.string(),
   newPassword: zod.string().min(adminChangePasswordBodyNewPasswordMin),
+  totpCode: zod.string().optional(),
+});
+
+export const AdminChangePasswordResponse = zod.object({
+  success: zod.boolean(),
+  message: zod.string().optional(),
+});
+
+/**
+ * @summary Generate TOTP secret and QR code for 2FA setup
+ */
+export const AdminTotpSetupResponse = zod.object({
+  secret: zod.string(),
+  qrDataUrl: zod.string(),
 });
 
 /**
@@ -730,6 +781,22 @@ export const adminTotpDisableBodyTotpCodeMin = 6;
 
 export const AdminTotpDisableBody = zod.object({
   totpCode: zod.string().min(adminTotpDisableBodyTotpCodeMin),
+});
+
+/**
+ * @summary List active admin sessions
+ */
+export const ListAdminSessionsResponse = zod.object({
+  sessions: zod.array(
+    zod.object({
+      id: zod.number(),
+      createdAt: zod.coerce.date().optional(),
+      lastUsedAt: zod.coerce.date().optional(),
+      expiresAt: zod.coerce.date().optional(),
+      userAgent: zod.string().nullish(),
+      ip: zod.string().nullish(),
+    }),
+  ),
 });
 
 /**
