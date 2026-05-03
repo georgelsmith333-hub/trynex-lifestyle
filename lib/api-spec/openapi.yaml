@@ -889,16 +889,6 @@ paths:
         "200":
           description: Password reset
 
-  /admin/newsletter/subscribers:
-    get:
-      operationId: adminListNewsletterSubscribers
-      tags: [admin, newsletter]
-      summary: List all newsletter subscribers (admin alias)
-      security: [{ bearerAuth: [] }]
-      responses:
-        "200":
-          description: Subscriber list
-
 components:
   securitySchemes:
     bearerAuth:

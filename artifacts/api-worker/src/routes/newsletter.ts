@@ -32,7 +32,7 @@ app.post("/newsletter/subscribe", async (c) => {
   }
 });
 
-app.get("/admin/newsletter/subscribers", requireAdmin, async (c) => {
+app.get("/newsletter/subscribers", requireAdmin, async (c) => {
   try {
     const db = createDb(c.env.DATABASE_URL);
     const subscribers = await db
@@ -46,7 +46,7 @@ app.get("/admin/newsletter/subscribers", requireAdmin, async (c) => {
   }
 });
 
-app.delete("/admin/newsletter/subscribers/:id", requireAdmin, async (c) => {
+app.delete("/newsletter/subscribers/:id", requireAdmin, async (c) => {
   try {
     const db = createDb(c.env.DATABASE_URL);
     const id = parseInt(c.req.param("id"), 10);
