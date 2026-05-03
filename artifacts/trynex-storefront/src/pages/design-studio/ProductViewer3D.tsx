@@ -336,7 +336,7 @@ function CameraRig({
 }) {
   const f = VIEWER_FRAMING[category];
   const b = VIEWER_FRAMING_BACK[category] || {};
-  const hasBackFace = category === "tshirt" || category === "longsleeve" || category === "hoodie";
+  const hasBackFace = category === "tshirt" || category === "longsleeve" || category === "hoodie" || category === "mug";
   const isBack = hasBackFace && activeFace === "back";
   const targetY = isBack ? Math.PI : 0;
   const radius  = isBack && b.radius   !== undefined ? b.radius   : f.radius;
@@ -366,7 +366,7 @@ export default function ProductViewer3D({
   const isGarment     = !isMug && !isWaterBottle;
 
   // Auto-detect full-wrap: when BOTH front and back faces have design layers.
-  const autoWrapMode = isMug && front.layers.length > 0 && !!back && back.layers.length > 0;
+  const autoWrapMode = isMug && !!back && back.layers.length > 0;
 
   /* Mug: combined cylindrical wrap texture from both sides */
   const mugTex = useMugWrapTexture(

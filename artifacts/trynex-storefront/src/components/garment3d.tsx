@@ -484,20 +484,26 @@ export function MugBody({
 }: {
   wrapTex?: THREE.Texture | null;
   garmentColor: string;
-  /** True when both sides have designs — wraps the texture around the full 360° body. */
   isWrapMode?: boolean;
 }) {
-  const { scene } = useGLTF("/models/mug.glb") as { scene: THREE.Group };
-  const meshes = useMemo(() => collectMeshes(scene), [scene]);
+  const H     = 1.80;
+  const R_TOP = 0.72;
+  const R_BOT = 0.65;
+  const SEG   = 80;
 
-  // Front-half cylinder (−X → +Z → +X) with planar XY UV projection.
-  // Keeps the design strictly on the front-facing half — no wrap around handle.
-  // UV: u = (x + R) / (2R),  v = (y + H/2) / H  (bottom=0, top=1).
-  // Calibrated offsets centre MUG_SIDE_PZ design at the mug's +Z front face.
+  // Outer body — open-ended so Three.js generates clean side UVs (u wraps 0→1).
+  const bodyGeo = useMemo(
+    () => new THREE.CylinderGeometry(R_TOP, R_BOT, H, SEG, 1, true),
+    []
+  );
+
+  // Front-half overlay for single-side mode.
+  // Half-cylinder spanning −X → +Z → +X with a planar XY UV projection so the
+  // design maps straight onto the front face without wrapping around the handle side.
+  // UV: u = (x + R_TOP) / (2·R_TOP),  v = (y + H/2) / H
   const frontOverlayGeo = useMemo(() => {
-    const R = 0.72, H = 1.70;
     const geo = new THREE.CylinderGeometry(
-      R + 0.003, R + 0.003, H,
+      R_TOP + 0.004, R_BOT + 0.004, H,
       80, 1, true,
       (3 * Math.PI) / 2,
       Math.PI,
@@ -505,27 +511,46 @@ export function MugBody({
     const pos = geo.attributes.position as THREE.BufferAttribute;
     const uvArr = new Float32Array(pos.count * 2);
     for (let i = 0; i < pos.count; i++) {
-      uvArr[i * 2]     = (pos.getX(i) + R) / (2 * R);
+      uvArr[i * 2]     = (pos.getX(i) + R_TOP) / (2 * R_TOP);
       uvArr[i * 2 + 1] = (pos.getY(i) + H / 2) / H;
     }
     geo.setAttribute("uv", new THREE.BufferAttribute(uvArr, 2));
     return geo;
   }, []);
 
+  // Inner ceramic liner — visible when the camera looks down into the cup.
+  const innerGeo = useMemo(
+    () => new THREE.CylinderGeometry(R_TOP - 0.04, R_BOT - 0.04, H - 0.03, SEG, 1, false),
+    []
+  );
+
+  // Flat base disk.
+  const bottomGeo = useMemo(() => new THREE.CircleGeometry(R_BOT, SEG), []);
+
+  // Horizontal rim torus at the top lip.
+  const rimGeo = useMemo(() => new THREE.TorusGeometry(R_TOP, 0.028, 16, SEG), []);
+
+  // C-shaped handle on the +X (right) side — smooth TubeGeometry curve.
+  const handleGeo = useMemo(() => {
+    const curve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(R_TOP - 0.01,  H / 2 - 0.22, 0),
+      new THREE.Vector3(R_TOP + 0.44,  H / 2 - 0.40, 0),
+      new THREE.Vector3(R_TOP + 0.58,  0.08,          0),
+      new THREE.Vector3(R_TOP + 0.44, -H / 2 + 0.52, 0),
+      new THREE.Vector3(R_BOT - 0.01, -H / 2 + 0.38, 0),
+    ]);
+    return new THREE.TubeGeometry(curve, 40, 0.058, 12, false);
+  }, []);
+
   useEffect(() => {
     if (!wrapTex) return;
     if (isWrapMode) {
-      // Full 360° wrap — original cylindrical UV offset trick.
       wrapTex.wrapS = THREE.RepeatWrapping;
       wrapTex.wrapT = THREE.ClampToEdgeWrapping;
       wrapTex.repeat.set(1, 1);
       wrapTex.offset.set(0.25, 0);
       wrapTex.flipY = true;
     } else {
-      // Single-side planar — show only left-half canvas (front design).
-      // repeat.x=0.5 maps u_geo[0,1] → canvas x[0,1024] (left half of 2048 canvas).
-      // offset.x=-0.05 shifts so MUG_SIDE_PZ centre (canvas x≈407) lands at mug front (u=0.5).
-      // offset.y=+0.009 corrects the tiny vertical calibration offset.
       wrapTex.wrapS = THREE.ClampToEdgeWrapping;
       wrapTex.wrapT = THREE.ClampToEdgeWrapping;
       wrapTex.repeat.set(0.5, 1);
@@ -535,12 +560,9 @@ export function MugBody({
     wrapTex.needsUpdate = true;
   }, [wrapTex, isWrapMode]);
 
-  if (meshes.length < 5) return null;
-
-  const [bodyGeo, innerGeo, bottomGeo, rimGeo, handleGeo] = meshes.map((m) => m.geometry);
-
   return (
     <group>
+      {/* Outer body (base colour) */}
       <mesh geometry={bodyGeo} castShadow receiveShadow>
         <meshPhysicalMaterial
           color={garmentColor}
@@ -548,12 +570,11 @@ export function MugBody({
           metalness={0.02}
           clearcoat={0.78}
           clearcoatRoughness={0.12}
-          side={THREE.DoubleSide}
-          roughnessMap={FABRIC_MAPS?.rough ?? null}
+          side={THREE.FrontSide}
         />
       </mesh>
 
-      {/* Single-side: planar front-half — design stays on the front face only */}
+      {/* Single-side: planar front-half overlay */}
       {wrapTex && !isWrapMode && (
         <mesh geometry={frontOverlayGeo}>
           <meshStandardMaterial
@@ -570,7 +591,7 @@ export function MugBody({
 
       {/* Full wrap: design spans entire 360° body */}
       {wrapTex && isWrapMode && (
-        <mesh geometry={bodyGeo} scale={1.001}>
+        <mesh geometry={bodyGeo} scale={1.002}>
           <meshStandardMaterial
             map={wrapTex}
             transparent
@@ -583,26 +604,46 @@ export function MugBody({
         </mesh>
       )}
 
-      {/* Inner liner — warm ceramic colour so it looks natural when camera looks down */}
+      {/* Inner liner — warm off-white ceramic colour */}
       <mesh geometry={innerGeo}>
-        <meshStandardMaterial color={"#efe8df"} side={THREE.BackSide} roughness={0.55} />
+        <meshStandardMaterial color="#efe8df" side={THREE.BackSide} roughness={0.55} />
       </mesh>
 
-      <mesh geometry={bottomGeo}>
-        <meshStandardMaterial color={garmentColor} roughness={0.40} />
+      {/* Bottom disk */}
+      <mesh geometry={bottomGeo} position={[0, -H / 2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <meshPhysicalMaterial
+          color={garmentColor}
+          roughness={0.38}
+          metalness={0.02}
+          clearcoat={0.35}
+        />
       </mesh>
 
-      <mesh geometry={rimGeo}>
-        <meshPhysicalMaterial color={garmentColor} roughness={0.30} clearcoat={0.3} side={THREE.DoubleSide} />
+      {/* Rim torus — lies in XZ plane (rotated π/2 around X) at the top lip */}
+      <mesh geometry={rimGeo} position={[0, H / 2, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <meshPhysicalMaterial
+          color={garmentColor}
+          roughness={0.30}
+          metalness={0.02}
+          clearcoat={0.55}
+          clearcoatRoughness={0.10}
+          side={THREE.DoubleSide}
+        />
       </mesh>
 
+      {/* Handle — C-shape on the right (+X) side */}
       <mesh geometry={handleGeo} castShadow>
-        <meshPhysicalMaterial color={garmentColor} roughness={0.28} clearcoat={0.55} clearcoatRoughness={0.2} />
+        <meshPhysicalMaterial
+          color={garmentColor}
+          roughness={0.28}
+          metalness={0.02}
+          clearcoat={0.55}
+          clearcoatRoughness={0.20}
+        />
       </mesh>
     </group>
   );
 }
-useGLTF.preload("/models/mug.glb");
 
 /* ─────────────────────── PHOTO BILLBOARD 3D ─────────
  * Used for Hoodie, Long Sleeve, and Structured Cap — products where
