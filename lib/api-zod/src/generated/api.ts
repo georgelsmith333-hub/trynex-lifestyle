@@ -350,6 +350,13 @@ export const LoginCustomerResponse = zod.object({
 });
 
 /**
+ * @summary Customer logout (clears cookie)
+ */
+export const LogoutCustomerResponse = zod.object({
+  success: zod.boolean(),
+});
+
+/**
  * @summary Google One-Tap or OAuth sign-in
  */
 export const GoogleAuthBody = zod.object({
@@ -683,11 +690,26 @@ export const UpdatePromoCodeBody = zod.object({
   expiresAt: zod.coerce.date().nullish(),
 });
 
+export const UpdatePromoCodeResponse = zod.object({
+  id: zod.number(),
+  code: zod.string(),
+  discountType: zod.string(),
+  discountValue: zod.string(),
+  active: zod.boolean(),
+  minOrderAmount: zod.string().optional(),
+  maxUses: zod.number().optional(),
+  expiresAt: zod.coerce.date().nullish(),
+});
+
 /**
  * @summary Delete a promo code (admin)
  */
 export const DeletePromoCodeParams = zod.object({
   id: zod.coerce.number(),
+});
+
+export const DeletePromoCodeResponse = zod.object({
+  success: zod.boolean(),
 });
 
 /**
@@ -708,11 +730,25 @@ export const UpdateReferralBody = zod.object({
   active: zod.boolean(),
 });
 
+export const UpdateReferralResponse = zod.object({
+  referral: zod.object({
+    id: zod.number(),
+    ownerName: zod.string().optional(),
+    ownerEmail: zod.string().optional(),
+    referralCode: zod.string(),
+    active: zod.boolean(),
+  }),
+});
+
 /**
  * @summary Delete a referral (admin)
  */
 export const DeleteReferralParams = zod.object({
   id: zod.coerce.number(),
+});
+
+export const DeleteReferralResponse = zod.object({
+  success: zod.boolean(),
 });
 
 /**
@@ -1037,6 +1073,10 @@ export const DeleteNewsletterSubscriberParams = zod.object({
   id: zod.coerce.number(),
 });
 
+export const DeleteNewsletterSubscriberResponse = zod.object({
+  success: zod.boolean(),
+});
+
 /**
  * @summary Anonymous public order count statistics
  */
@@ -1072,6 +1112,13 @@ export const AdminLoginTotpBody = zod.object({
 export const AdminLoginTotpResponse = zod.object({
   success: zod.boolean().optional(),
   token: zod.string().optional(),
+});
+
+/**
+ * @summary Admin logout (revokes session)
+ */
+export const AdminLogoutResponse = zod.object({
+  success: zod.boolean(),
 });
 
 /**
@@ -1135,6 +1182,11 @@ export const AdminTotpEnableBody = zod.object({
   totpCode: zod.string().min(adminTotpEnableBodyTotpCodeMin),
 });
 
+export const AdminTotpEnableResponse = zod.object({
+  success: zod.boolean(),
+  message: zod.string().optional(),
+});
+
 /**
  * @summary Disable 2FA with a valid TOTP code
  */
@@ -1142,6 +1194,11 @@ export const adminTotpDisableBodyTotpCodeMin = 6;
 
 export const AdminTotpDisableBody = zod.object({
   totpCode: zod.string().min(adminTotpDisableBodyTotpCodeMin),
+});
+
+export const AdminTotpDisableResponse = zod.object({
+  success: zod.boolean(),
+  message: zod.string().optional(),
 });
 
 /**
@@ -1172,6 +1229,14 @@ export const RevokeAdminSessionResponse = zod.object({
 });
 
 /**
+ * @summary Revoke all active admin sessions
+ */
+export const RevokeAllAdminSessionsResponse = zod.object({
+  success: zod.boolean(),
+  message: zod.string().optional(),
+});
+
+/**
  * @summary Reset admin password using a pre-shared reset key
  */
 export const adminResetPasswordBodyNewPasswordMin = 8;
@@ -1179,4 +1244,9 @@ export const adminResetPasswordBodyNewPasswordMin = 8;
 export const AdminResetPasswordBody = zod.object({
   resetKey: zod.string(),
   newPassword: zod.string().min(adminResetPasswordBodyNewPasswordMin),
+});
+
+export const AdminResetPasswordResponse = zod.object({
+  success: zod.boolean(),
+  message: zod.string().optional(),
 });

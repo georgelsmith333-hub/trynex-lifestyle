@@ -330,6 +330,10 @@ export type LoginCustomerBody = {
   password: string;
 };
 
+export type LogoutCustomer200 = {
+  success: boolean;
+};
+
 export type GoogleAuthBody = {
   /** Google ID token */
   credential: string;
@@ -445,6 +449,21 @@ export type UpdatePromoCodeBody = {
   expiresAt?: string | null;
 };
 
+export type UpdatePromoCode200 = {
+  id: number;
+  code: string;
+  discountType: string;
+  discountValue: string;
+  active: boolean;
+  minOrderAmount?: string;
+  maxUses?: number;
+  expiresAt?: string | null;
+};
+
+export type DeletePromoCode200 = {
+  success: boolean;
+};
+
 export type ListReferrals200ReferralsItem = { [key: string]: unknown };
 
 export type ListReferrals200 = {
@@ -453,6 +472,22 @@ export type ListReferrals200 = {
 
 export type UpdateReferralBody = {
   active: boolean;
+};
+
+export type UpdateReferral200Referral = {
+  id: number;
+  ownerName?: string;
+  ownerEmail?: string;
+  referralCode: string;
+  active: boolean;
+};
+
+export type UpdateReferral200 = {
+  referral: UpdateReferral200Referral;
+};
+
+export type DeleteReferral200 = {
+  success: boolean;
 };
 
 export type ListProductReviews200ReviewsItem = { [key: string]: unknown };
@@ -489,6 +524,10 @@ export type ListNewsletterSubscribers200 = {
   total: number;
 };
 
+export type DeleteNewsletterSubscriber200 = {
+  success: boolean;
+};
+
 export type GetPublicStats200 = {
   todayOrders: number;
   totalOrders: number;
@@ -515,6 +554,10 @@ export type AdminLoginTotpBody = {
 export type AdminLoginTotp200 = {
   success?: boolean;
   token?: string;
+};
+
+export type AdminLogout200 = {
+  success: boolean;
 };
 
 export type GetAdminMe200Admin = {
@@ -565,9 +608,19 @@ export type AdminTotpEnableBody = {
   totpCode: string;
 };
 
+export type AdminTotpEnable200 = {
+  success: boolean;
+  message?: string;
+};
+
 export type AdminTotpDisableBody = {
   /** @minLength 6 */
   totpCode: string;
+};
+
+export type AdminTotpDisable200 = {
+  success: boolean;
+  message?: string;
 };
 
 export type ListAdminSessions200SessionsItem = {
@@ -587,10 +640,20 @@ export type RevokeAdminSession200 = {
   success: boolean;
 };
 
+export type RevokeAllAdminSessions200 = {
+  success: boolean;
+  message?: string;
+};
+
 export type AdminResetPasswordBody = {
   resetKey: string;
   /** @minLength 8 */
   newPassword: string;
+};
+
+export type AdminResetPassword200 = {
+  success: boolean;
+  message?: string;
 };
 
 type AwaitedInput<T> = PromiseLike<T> | T;
@@ -1710,8 +1773,10 @@ export const getLogoutCustomerUrl = () => {
   return `/api/auth/logout`;
 };
 
-export const logoutCustomer = async (options?: RequestInit): Promise<void> => {
-  return customFetch<void>(getLogoutCustomerUrl(), {
+export const logoutCustomer = async (
+  options?: RequestInit,
+): Promise<LogoutCustomer200> => {
+  return customFetch<LogoutCustomer200>(getLogoutCustomerUrl(), {
     ...options,
     method: "POST",
   });
@@ -3121,8 +3186,8 @@ export const updatePromoCode = async (
   id: number,
   updatePromoCodeBody: UpdatePromoCodeBody,
   options?: RequestInit,
-): Promise<void> => {
-  return customFetch<void>(getUpdatePromoCodeUrl(id), {
+): Promise<UpdatePromoCode200> => {
+  return customFetch<UpdatePromoCode200>(getUpdatePromoCodeUrl(id), {
     ...options,
     method: "PATCH",
     headers: { "Content-Type": "application/json", ...options?.headers },
@@ -3207,8 +3272,8 @@ export const getDeletePromoCodeUrl = (id: number) => {
 export const deletePromoCode = async (
   id: number,
   options?: RequestInit,
-): Promise<void> => {
-  return customFetch<void>(getDeletePromoCodeUrl(id), {
+): Promise<DeletePromoCode200> => {
+  return customFetch<DeletePromoCode200>(getDeletePromoCodeUrl(id), {
     ...options,
     method: "DELETE",
   });
@@ -3367,8 +3432,8 @@ export const updateReferral = async (
   id: number,
   updateReferralBody: UpdateReferralBody,
   options?: RequestInit,
-): Promise<void> => {
-  return customFetch<void>(getUpdateReferralUrl(id), {
+): Promise<UpdateReferral200> => {
+  return customFetch<UpdateReferral200>(getUpdateReferralUrl(id), {
     ...options,
     method: "PATCH",
     headers: { "Content-Type": "application/json", ...options?.headers },
@@ -3453,8 +3518,8 @@ export const getDeleteReferralUrl = (id: number) => {
 export const deleteReferral = async (
   id: number,
   options?: RequestInit,
-): Promise<void> => {
-  return customFetch<void>(getDeleteReferralUrl(id), {
+): Promise<DeleteReferral200> => {
+  return customFetch<DeleteReferral200>(getDeleteReferralUrl(id), {
     ...options,
     method: "DELETE",
   });
@@ -3955,11 +4020,14 @@ export const getDeleteNewsletterSubscriberUrl = (id: number) => {
 export const deleteNewsletterSubscriber = async (
   id: number,
   options?: RequestInit,
-): Promise<void> => {
-  return customFetch<void>(getDeleteNewsletterSubscriberUrl(id), {
-    ...options,
-    method: "DELETE",
-  });
+): Promise<DeleteNewsletterSubscriber200> => {
+  return customFetch<DeleteNewsletterSubscriber200>(
+    getDeleteNewsletterSubscriberUrl(id),
+    {
+      ...options,
+      method: "DELETE",
+    },
+  );
 };
 
 export const getDeleteNewsletterSubscriberMutationOptions = <
@@ -4283,8 +4351,10 @@ export const getAdminLogoutUrl = () => {
   return `/api/admin/logout`;
 };
 
-export const adminLogout = async (options?: RequestInit): Promise<void> => {
-  return customFetch<void>(getAdminLogoutUrl(), {
+export const adminLogout = async (
+  options?: RequestInit,
+): Promise<AdminLogout200> => {
+  return customFetch<AdminLogout200>(getAdminLogoutUrl(), {
     ...options,
     method: "POST",
   });
@@ -4676,8 +4746,8 @@ export const getAdminTotpEnableUrl = () => {
 export const adminTotpEnable = async (
   adminTotpEnableBody: AdminTotpEnableBody,
   options?: RequestInit,
-): Promise<void> => {
-  return customFetch<void>(getAdminTotpEnableUrl(), {
+): Promise<AdminTotpEnable200> => {
+  return customFetch<AdminTotpEnable200>(getAdminTotpEnableUrl(), {
     ...options,
     method: "POST",
     headers: { "Content-Type": "application/json", ...options?.headers },
@@ -4762,8 +4832,8 @@ export const getAdminTotpDisableUrl = () => {
 export const adminTotpDisable = async (
   adminTotpDisableBody: AdminTotpDisableBody,
   options?: RequestInit,
-): Promise<void> => {
-  return customFetch<void>(getAdminTotpDisableUrl(), {
+): Promise<AdminTotpDisable200> => {
+  return customFetch<AdminTotpDisable200>(getAdminTotpDisableUrl(), {
     ...options,
     method: "POST",
     headers: { "Content-Type": "application/json", ...options?.headers },
@@ -5006,11 +5076,14 @@ export const getRevokeAllAdminSessionsUrl = () => {
 
 export const revokeAllAdminSessions = async (
   options?: RequestInit,
-): Promise<void> => {
-  return customFetch<void>(getRevokeAllAdminSessionsUrl(), {
-    ...options,
-    method: "POST",
-  });
+): Promise<RevokeAllAdminSessions200> => {
+  return customFetch<RevokeAllAdminSessions200>(
+    getRevokeAllAdminSessionsUrl(),
+    {
+      ...options,
+      method: "POST",
+    },
+  );
 };
 
 export const getRevokeAllAdminSessionsMutationOptions = <
@@ -5088,8 +5161,8 @@ export const getAdminResetPasswordUrl = () => {
 export const adminResetPassword = async (
   adminResetPasswordBody: AdminResetPasswordBody,
   options?: RequestInit,
-): Promise<void> => {
-  return customFetch<void>(getAdminResetPasswordUrl(), {
+): Promise<AdminResetPassword200> => {
+  return customFetch<AdminResetPassword200>(getAdminResetPasswordUrl(), {
     ...options,
     method: "POST",
     headers: { "Content-Type": "application/json", ...options?.headers },

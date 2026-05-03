@@ -353,6 +353,13 @@ paths:
       responses:
         "200":
           description: Logged out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                required: [success]
 
   /auth/google:
     post:
@@ -759,6 +766,20 @@ paths:
       responses:
         "200":
           description: Updated promo code
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: { type: integer }
+                  code: { type: string }
+                  discountType: { type: string }
+                  discountValue: { type: string }
+                  active: { type: boolean }
+                  minOrderAmount: { type: string }
+                  maxUses: { type: integer }
+                  expiresAt: { type: string, format: date-time, nullable: true }
+                required: [id, code, discountType, discountValue, active]
         "400":
           description: Validation error
         "404":
@@ -776,6 +797,13 @@ paths:
       responses:
         "200":
           description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                required: [success]
 
   /referrals:
     get:
@@ -819,6 +847,21 @@ paths:
       responses:
         "200":
           description: Updated referral
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  referral:
+                    type: object
+                    properties:
+                      id: { type: integer }
+                      ownerName: { type: string }
+                      ownerEmail: { type: string }
+                      referralCode: { type: string }
+                      active: { type: boolean }
+                    required: [id, referralCode, active]
+                required: [referral]
         "400":
           description: Validation error
         "404":
@@ -836,6 +879,13 @@ paths:
       responses:
         "200":
           description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                required: [success]
 
   /reviews/{productId}:
     get:
@@ -955,6 +1005,13 @@ paths:
       responses:
         "200":
           description: Subscriber deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                required: [success]
 
   /public-stats:
     get:
@@ -1037,6 +1094,13 @@ paths:
       responses:
         "200":
           description: Logged out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                required: [success]
 
   /admin/me:
     get:
@@ -1153,6 +1217,14 @@ paths:
       responses:
         "200":
           description: 2FA enabled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  message: { type: string }
+                required: [success]
 
   /admin/totp-disable:
     post:
@@ -1172,6 +1244,14 @@ paths:
       responses:
         "200":
           description: 2FA disabled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  message: { type: string }
+                required: [success]
 
   /admin/sessions:
     get:
@@ -1236,6 +1316,14 @@ paths:
       responses:
         "200":
           description: All sessions revoked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  message: { type: string }
+                required: [success]
 
   /admin/reset-password:
     post:
@@ -1255,6 +1343,14 @@ paths:
       responses:
         "200":
           description: Password reset
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  message: { type: string }
+                required: [success]
 
 components:
   securitySchemes:
