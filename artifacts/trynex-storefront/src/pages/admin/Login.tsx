@@ -50,7 +50,7 @@ export default function AdminLogin() {
     setErrorMsg("");
     setIsPending(true);
     try {
-      const data = await apiPost("/admin/login", { username: "admin", password });
+      const data = await apiPost("/admin/login", { username: "admin", password }) as any;
       if (data.requiresTotp) {
         setPartialToken(data.partialToken);
         setStep("totp");
@@ -121,7 +121,7 @@ export default function AdminLogin() {
     }
     setIsPending(true);
     try {
-      const data = await apiPost("/admin/reset-password", { resetKey, newPassword });
+      const data = await apiPost("/admin/reset-password", { resetKey, newPassword }) as any;
       setSuccessMsg(data.message || "Password reset successfully. You can now log in with your new password.");
       setResetKey("");
       setNewPassword("");

@@ -33,6 +33,7 @@ export function DesignDraftReminder() {
         return () => clearTimeout(timer);
       }
     } catch { }
+    return;
   }, [isStudio]);
 
   const handleDismiss = () => {

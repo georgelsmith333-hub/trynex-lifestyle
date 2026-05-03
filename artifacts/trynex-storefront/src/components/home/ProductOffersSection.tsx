@@ -18,7 +18,7 @@ const cardVariant = {
     y: 0,
     transition: { delay: i * 0.07, duration: 0.55, ease: [0.23, 1, 0.32, 1] as number[] },
   }),
-};
+} as any;
 
 interface DisplayProduct {
   id: string | number;
@@ -130,10 +130,12 @@ export function ProductOffersSection({ fullPage = false }: { fullPage?: boolean 
       return tags.includes("special-offer");
     });
     const discounted = all
-      .filter((p) => p.discountPrice && p.discountPrice < p.price)
+      .filter((p) => p.discountPrice && parseFloat(String(p.discountPrice)) < parseFloat(String(p.price)))
       .sort((a, b) => {
-        const savA = ((a.price - (a.discountPrice ?? a.price)) / a.price) * 100;
-        const savB = ((b.price - (b.discountPrice ?? b.price)) / b.price) * 100;
+        const pa = parseFloat(String(a.price)); const da = parseFloat(String(a.discountPrice ?? a.price));
+        const pb = parseFloat(String(b.price)); const db = parseFloat(String(b.discountPrice ?? b.price));
+        const savA = ((pa - da) / pa) * 100;
+        const savB = ((pb - db) / pb) * 100;
         return savB - savA;
       });
     const merged = [...specialOfferTagged, ...discounted.filter(p => {
@@ -141,31 +143,35 @@ export function ProductOffersSection({ fullPage = false }: { fullPage?: boolean 
       return !tags.includes("special-offer");
     })];
     const source = merged.length >= 3 ? merged : (discounted.length >= 3 ? discounted : all);
-    return source.slice(0, 9).map((p, i) => ({
-      id: p.id,
-      name: p.name,
-      imageUrl: p.imageUrl,
-      description: p.description,
-      price: p.price,
-      discountPrice: p.discountPrice,
-      highlight: i === 0,
-      tag: (() => {
-        if (!p.discountPrice) return undefined;
-        const pct = Math.round(((p.price - p.discountPrice) / p.price) * 100);
-        if (i === 0) return "BEST DEAL";
-        if (pct >= 30) return `${pct}% OFF`;
-        if (pct >= 15) return "ON SALE";
-        return undefined;
-      })(),
-      tagColor: (() => {
-        if (!p.discountPrice) return undefined;
-        const pct = Math.round(((p.price - p.discountPrice) / p.price) * 100);
-        if (i === 0) return "#E85D04";
-        if (pct >= 30) return "#16a34a";
-        return "#2563eb";
-      })(),
-      href: `/product/${p.id}`,
-    }));
+    return source.slice(0, 9).map((p, i) => {
+      const price = parseFloat(String(p.price));
+      const discountPrice = p.discountPrice ? parseFloat(String(p.discountPrice)) : null;
+      return {
+        id: p.id,
+        name: p.name,
+        imageUrl: p.imageUrl,
+        description: p.description,
+        price,
+        discountPrice,
+        highlight: i === 0,
+        tag: (() => {
+          if (!discountPrice) return undefined;
+          const pct = Math.round(((price - discountPrice) / price) * 100);
+          if (i === 0) return "BEST DEAL";
+          if (pct >= 30) return `${pct}% OFF`;
+          if (pct >= 15) return "ON SALE";
+          return undefined;
+        })(),
+        tagColor: (() => {
+          if (!discountPrice) return undefined;
+          const pct = Math.round(((price - discountPrice) / price) * 100);
+          if (i === 0) return "#E85D04";
+          if (pct >= 30) return "#16a34a";
+          return "#2563eb";
+        })(),
+        href: `/product/${p.id}`,
+      };
+    });
   })();
 
   const products: DisplayProduct[] =

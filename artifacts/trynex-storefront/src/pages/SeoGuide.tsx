@@ -38,7 +38,7 @@ export function SeoGuide() {
       <SEOHead
         title="SEO & Google Ranking Guide — TryNex Lifestyle"
         description="Complete SEO setup guide for TryNex Lifestyle: Google Search Console, indexing, keyword strategy, AI platform ranking, and performance tips."
-        noIndex
+        noindex
       />
       <div className="print:hidden">
         <Navbar />

@@ -1572,6 +1572,7 @@ export default function DesignStudio() {
     window.addEventListener("pointerup", onUp);
   }, [selectedLayer, clientToSVG, pz, commitLayers]);
 
+  const selGeom = selectedLayer ? layerGeom(selectedLayer) : null;
   /* ── Edge midpoint handles for directional (non-proportional) resize ── */
   const edgeMidpoints = useMemo(() => {
     if (!selectedLayer || !selGeom) return [];
@@ -1630,7 +1631,6 @@ export default function DesignStudio() {
 
   /* ── Renderable layer geometry list (memo) ─────────── */
   const layersRender = layers.map(l => ({ layer: l, geom: layerGeom(l) }));
-  const selGeom = selectedLayer ? layerGeom(selectedLayer) : null;
   // Rotated handle positions for the selected layer
   const rotatedCorners = useMemo(() => {
     if (!selectedLayer || !selGeom) return [];
@@ -2897,7 +2897,7 @@ export default function DesignStudio() {
                           </div>
                           <button onClick={() => setAiRefFile(null)}
                             className="shrink-0 p-1 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors">
-                            <XIcon className="w-4 h-4" />
+                            <X className="w-4 h-4" />
                           </button>
                         </div>
                       ) : (
@@ -3447,7 +3447,6 @@ export default function DesignStudio() {
                         else if (dragRef.corner === "br") { w = clamp(s.w + dx, 5, 100 - s.x); h = clamp(s.h + dy, 5, 100 - s.y); }
                         return { x, y, w, h };
                       });
-                      void prev;
                     }}
                     onPointerUp={() => { dragRef.active = false; }}
                   >
