@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import { db, newsletterSubscribersTable } from "@workspace/db";
 import { eq, sql } from "drizzle-orm";
+import { requireAdmin } from "../middlewares/adminAuth";
 
 const router: IRouter = Router();
 
@@ -33,12 +34,12 @@ router.post("/newsletter/subscribe", async (req, res) => {
 
     res.json({ ok: true, message: "Subscribed! Watch your inbox for exclusive deals." });
   } catch (err) {
-    console.error("[newsletter] subscribe error:", err);
+    req.log.error({ err }, "[newsletter] subscribe error");
     res.status(500).json({ error: "internal", message: "Failed to subscribe. Please try again." });
   }
 });
 
-router.get("/newsletter/subscribers", async (req, res) => {
+router.get("/newsletter/subscribers", requireAdmin, async (req, res) => {
   try {
     const rows = await db
       .select()

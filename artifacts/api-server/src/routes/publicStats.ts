@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import { db, ordersTable } from "@workspace/db";
 import { sql, desc, gte } from "drizzle-orm";
+import { logger } from "../lib/logger";
 
 const router: IRouter = Router();
 
@@ -40,7 +41,7 @@ router.get("/public-stats", async (_req, res) => {
 
     res.json({ todayOrders, totalOrders, minutesSinceLastOrder });
   } catch (err) {
-    console.warn("Failed to get public stats", err);
+    logger.warn({ err }, "Failed to get public stats");
     res.json({ todayOrders: 0, totalOrders: 0, minutesSinceLastOrder: null });
   }
 });

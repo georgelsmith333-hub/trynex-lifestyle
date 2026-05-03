@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { Loader } from "@/components/ui/Loader";
 import { cn, getAuthHeaders } from "@/lib/utils";
 
-const MENU: { name: string; href: string; icon: React.ElementType; exact?: boolean }[] = [
+const MENU: { name: string; href: string; icon: React.ComponentType<{ className?: string }>; exact?: boolean }[] = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard, exact: true },
   { name: "Products", href: "/admin/products", icon: Package },
   { name: "Categories", href: "/admin/categories", icon: Layers },

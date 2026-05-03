@@ -128,7 +128,7 @@ router.get("/sitemap.xml", async (_req, res) => {
     res.header("Cache-Control", "public, max-age=3600");
     res.send(xml);
   } catch (err) {
-    console.error("Sitemap generation failed:", err);
+    logger.error({ err }, "Sitemap generation failed");
     res.status(500).send("Sitemap generation failed");
   }
 });

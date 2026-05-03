@@ -72,7 +72,7 @@ router.post("/ai/reference", async (req: Request, res: Response) => {
   try {
     fs.writeFileSync(filePath, buf);
   } catch (err) {
-    console.error("[ai/reference] write error:", err);
+    console.error("[ai/reference] write error:", err instanceof Error ? err.message : String(err));
     return res.status(500).json({ error: "Failed to save reference image." });
   }
 
