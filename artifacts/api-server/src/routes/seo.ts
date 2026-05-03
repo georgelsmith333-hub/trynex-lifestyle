@@ -175,10 +175,10 @@ router.post("/admin/seo/submit-gsc", requireAdmin, async (req, res) => {
       after: { success: submitOk, httpCode: submitStatus, message: submitMessage },
     });
 
-    res.json({ success: submitOk, message: submitMessage, httpCode: submitStatus, submittedAt });
-  } catch (err: any) {
+    return res.json({ success: submitOk, message: submitMessage, httpCode: submitStatus, submittedAt });
+  } catch (err: unknown) {
     logger.error({ err }, "POST /api/admin/seo/submit-gsc failed");
-    res.status(500).json({ message: err?.message ?? "Failed to submit sitemap to Google Search Console" });
+    return res.status(500).json({ message: err instanceof Error ? err.message : "Failed to submit sitemap to Google Search Console" });
   }
 });
 
@@ -209,10 +209,10 @@ router.put("/admin/seo/gsc-config", requireAdmin, async (req, res) => {
       }
     }
 
-    res.json({ success: true });
+    return res.json({ success: true });
   } catch (err) {
     logger.error({ err }, "PUT /api/admin/seo/gsc-config failed");
-    res.status(500).json({ message: "Failed to save GSC config" });
+    return res.status(500).json({ message: "Failed to save GSC config" });
   }
 });
 

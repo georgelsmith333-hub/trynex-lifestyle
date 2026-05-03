@@ -125,7 +125,8 @@ router.post("/blog/categories", requireAdmin, async (req, res) => {
 // Optional query param: reassignTo — moves posts in this category to another before deleting
 router.delete("/blog/categories/:name", requireAdmin, async (req, res) => {
   try {
-    const name = decodeURIComponent(req.params.name ?? "").trim();
+    const rawName = req.params.name;
+    const name = decodeURIComponent((Array.isArray(rawName) ? rawName[0] : rawName) ?? "").trim();
     if (!name) {
       res.status(400).json({ error: "validation_error", message: "Category name is required" });
       return;

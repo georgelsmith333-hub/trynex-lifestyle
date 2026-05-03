@@ -86,7 +86,8 @@ router.post("/ai/reference", async (req: Request, res: Response) => {
  * Pollinations uses this URL to fetch the reference image for img2img.
  */
 router.get("/ai/ref/:filename", (req: Request, res: Response) => {
-  const { filename } = req.params;
+  const rawFilename = req.params.filename;
+  const filename = Array.isArray(rawFilename) ? rawFilename[0] : rawFilename;
   if (!filename || !/^ai-ref-[a-zA-Z0-9_-]+\.[a-z]+$/.test(filename)) {
     return res.status(400).json({ error: "Invalid filename." });
   }
