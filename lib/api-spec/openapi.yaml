@@ -680,6 +680,21 @@ paths:
                   total: { type: integer }
                 required: [subscribers, total]
 
+  /newsletter/subscribers/{id}:
+    delete:
+      operationId: deleteNewsletterSubscriber
+      tags: [newsletter]
+      summary: Delete a newsletter subscriber (admin)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Subscriber deleted
+
   /public-stats:
     get:
       operationId: getPublicStats
@@ -710,9 +725,8 @@ paths:
             schema:
               type: object
               properties:
-                username: { type: string }
                 password: { type: string }
-              required: [username, password]
+              required: [password]
       responses:
         "200":
           description: Authenticated or 2FA required
@@ -802,7 +816,7 @@ paths:
         "200":
           description: Password changed
 
-  /admin/totp/setup:
+  /admin/totp-setup:
     get:
       operationId: adminTotpSetup
       tags: [admin]
@@ -812,7 +826,7 @@ paths:
         "200":
           description: TOTP setup info with QR data URL
 
-  /admin/totp/enable:
+  /admin/totp-enable:
     post:
       operationId: adminTotpEnable
       tags: [admin]
@@ -825,13 +839,14 @@ paths:
             schema:
               type: object
               properties:
-                code: { type: string }
-              required: [code]
+                secret: { type: string }
+                totpCode: { type: string, minLength: 6 }
+              required: [secret, totpCode]
       responses:
         "200":
           description: 2FA enabled
 
-  /admin/totp/disable:
+  /admin/totp-disable:
     post:
       operationId: adminTotpDisable
       tags: [admin]
@@ -844,8 +859,8 @@ paths:
             schema:
               type: object
               properties:
-                code: { type: string }
-              required: [code]
+                totpCode: { type: string, minLength: 6 }
+              required: [totpCode]
       responses:
         "200":
           description: 2FA disabled

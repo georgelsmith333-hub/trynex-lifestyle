@@ -2,6 +2,7 @@ import { Router, type IRouter } from "express";
 import { db, newsletterSubscribersTable } from "@workspace/db";
 import { eq, sql } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
+import { logger } from "../lib/logger";
 
 const router: IRouter = Router();
 
@@ -49,6 +50,21 @@ router.get("/newsletter/subscribers", requireAdmin, async (req, res) => {
     res.json({ subscribers: rows, total: rows.length });
   } catch (err) {
     res.status(500).json({ error: "internal" });
+  }
+});
+
+router.delete("/newsletter/subscribers/:id", requireAdmin, async (req, res) => {
+  try {
+    const id = parseInt(String(req.params.id), 10);
+    if (isNaN(id)) {
+      res.status(400).json({ error: "invalid_id", message: "Invalid subscriber id" });
+      return;
+    }
+    await db.delete(newsletterSubscribersTable).where(eq(newsletterSubscribersTable.id, id));
+    res.json({ success: true });
+  } catch (err) {
+    logger.error({ err }, "[newsletter] delete subscriber error");
+    res.status(500).json({ error: "internal", message: "Failed to delete subscriber" });
   }
 });
 

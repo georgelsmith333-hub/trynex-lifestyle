@@ -661,6 +661,13 @@ export const ListNewsletterSubscribersResponse = zod.object({
 });
 
 /**
+ * @summary Delete a newsletter subscriber (admin)
+ */
+export const DeleteNewsletterSubscriberParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+/**
  * @summary Anonymous public order count statistics
  */
 export const GetPublicStatsResponse = zod.object({
@@ -673,7 +680,6 @@ export const GetPublicStatsResponse = zod.object({
  * @summary Admin password login (step 1 of 2FA flow)
  */
 export const AdminLoginBody = zod.object({
-  username: zod.string(),
   password: zod.string(),
 });
 
@@ -710,15 +716,20 @@ export const AdminChangePasswordBody = zod.object({
 /**
  * @summary Confirm and enable 2FA with a valid TOTP code
  */
+export const adminTotpEnableBodyTotpCodeMin = 6;
+
 export const AdminTotpEnableBody = zod.object({
-  code: zod.string(),
+  secret: zod.string(),
+  totpCode: zod.string().min(adminTotpEnableBodyTotpCodeMin),
 });
 
 /**
  * @summary Disable 2FA with a valid TOTP code
  */
+export const adminTotpDisableBodyTotpCodeMin = 6;
+
 export const AdminTotpDisableBody = zod.object({
-  code: zod.string(),
+  totpCode: zod.string().min(adminTotpDisableBodyTotpCodeMin),
 });
 
 /**

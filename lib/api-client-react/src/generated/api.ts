@@ -343,7 +343,6 @@ export type GetPublicStats200 = {
 };
 
 export type AdminLoginBody = {
-  username: string;
   password: string;
 };
 
@@ -371,11 +370,14 @@ export type AdminChangePasswordBody = {
 };
 
 export type AdminTotpEnableBody = {
-  code: string;
+  secret: string;
+  /** @minLength 6 */
+  totpCode: string;
 };
 
 export type AdminTotpDisableBody = {
-  code: string;
+  /** @minLength 6 */
+  totpCode: string;
 };
 
 export type AdminResetPasswordBody = {
@@ -2835,6 +2837,90 @@ export function useListNewsletterSubscribers<
 }
 
 /**
+ * @summary Delete a newsletter subscriber (admin)
+ */
+export const getDeleteNewsletterSubscriberUrl = (id: number) => {
+  return `/api/newsletter/subscribers/${id}`;
+};
+
+export const deleteNewsletterSubscriber = async (
+  id: number,
+  options?: RequestInit,
+): Promise<void> => {
+  return customFetch<void>(getDeleteNewsletterSubscriberUrl(id), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getDeleteNewsletterSubscriberMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteNewsletterSubscriber>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteNewsletterSubscriber>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ["deleteNewsletterSubscriber"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteNewsletterSubscriber>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return deleteNewsletterSubscriber(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteNewsletterSubscriberMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteNewsletterSubscriber>>
+>;
+
+export type DeleteNewsletterSubscriberMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Delete a newsletter subscriber (admin)
+ */
+export const useDeleteNewsletterSubscriber = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteNewsletterSubscriber>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteNewsletterSubscriber>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  return useMutation(getDeleteNewsletterSubscriberMutationOptions(options));
+};
+
+/**
  * @summary Anonymous public order count statistics
  */
 export const getGetPublicStatsUrl = () => {
@@ -3396,7 +3482,7 @@ export const useAdminChangePassword = <
  * @summary Generate TOTP secret and QR code for 2FA setup
  */
 export const getAdminTotpSetupUrl = () => {
-  return `/api/admin/totp/setup`;
+  return `/api/admin/totp-setup`;
 };
 
 export const adminTotpSetup = async (options?: RequestInit): Promise<void> => {
@@ -3407,7 +3493,7 @@ export const adminTotpSetup = async (options?: RequestInit): Promise<void> => {
 };
 
 export const getAdminTotpSetupQueryKey = () => {
-  return [`/api/admin/totp/setup`] as const;
+  return [`/api/admin/totp-setup`] as const;
 };
 
 export const getAdminTotpSetupQueryOptions = <
@@ -3469,7 +3555,7 @@ export function useAdminTotpSetup<
  * @summary Confirm and enable 2FA with a valid TOTP code
  */
 export const getAdminTotpEnableUrl = () => {
-  return `/api/admin/totp/enable`;
+  return `/api/admin/totp-enable`;
 };
 
 export const adminTotpEnable = async (
@@ -3555,7 +3641,7 @@ export const useAdminTotpEnable = <
  * @summary Disable 2FA with a valid TOTP code
  */
 export const getAdminTotpDisableUrl = () => {
-  return `/api/admin/totp/disable`;
+  return `/api/admin/totp-disable`;
 };
 
 export const adminTotpDisable = async (
