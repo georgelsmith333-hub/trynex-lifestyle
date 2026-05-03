@@ -32,7 +32,7 @@ import { requireAdmin } from "../middleware/adminAuth";
 import { logActivity, getAdminId } from "../lib/activityLog";
 import type { AppEnv } from "../types";
 
-// ─── Local types ─────────────────────────────────────────────────────────────
+// Local types
 type OrderRow = typeof ordersTable.$inferSelect;
 
 interface OrderItem {

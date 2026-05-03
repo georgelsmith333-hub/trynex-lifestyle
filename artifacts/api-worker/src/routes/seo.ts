@@ -90,11 +90,10 @@ app.post("/admin/seo/ping-google", requireAdmin, async (c) => {
         pingStatus = "error";
         message = `Google ping returned HTTP ${httpCode}`;
       }
-    } catch (fetchErr: any) {
+    } catch (fetchErr: unknown) {
       pingStatus = "error";
-      message = fetchErr?.message?.includes("aborted")
-        ? "Request timed out after 10s"
-        : (fetchErr?.message ?? "Network error");
+      const fetchErrMsg = fetchErr instanceof Error ? fetchErr.message : String(fetchErr);
+      message = fetchErrMsg.includes("aborted") ? "Request timed out after 10s" : fetchErrMsg;
     }
     const now = new Date().toISOString();
     await setSetting(db, "seoLastGooglePingAt", now);
@@ -125,8 +124,9 @@ app.post("/admin/seo/submit-gsc", requireAdmin, async (c) => {
     let jwtToken: string;
     try {
       jwtToken = await signJwt(serviceAccountEmail, privateKey);
-    } catch (keyErr: any) {
-      return c.json({ message: `Failed to sign JWT with the stored private key: ${keyErr?.message ?? keyErr}` }, 500);
+    } catch (keyErr: unknown) {
+      const keyErrMsg = keyErr instanceof Error ? keyErr.message : String(keyErr);
+      return c.json({ message: `Failed to sign JWT with the stored private key: ${keyErrMsg}` }, 500);
     }
     const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
@@ -161,9 +161,9 @@ app.post("/admin/seo/submit-gsc", requireAdmin, async (c) => {
     await setSetting(db, "seoLastGooglePingStatus", submitOk ? `ok:${submitMessage}` : `error:${submitMessage}`);
     logActivity(db, { adminId: getAdminId(c), action: "update", entity: "setting", entityId: "sitemap", entityName: "Google Search Console Sitemap Submission", after: { success: submitOk, httpCode: submitStatus, message: submitMessage } });
     return c.json({ success: submitOk, message: submitMessage, httpCode: submitStatus, submittedAt });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("POST /admin/seo/submit-gsc failed", err);
-    return c.json({ message: err?.message ?? "Failed to submit sitemap to Google Search Console" }, 500);
+    return c.json({ message: err instanceof Error ? err.message : "Failed to submit sitemap to Google Search Console" }, 500);
   }
 });
 
