@@ -32,6 +32,48 @@ import { requireAdmin } from "../middleware/adminAuth";
 import { logActivity, getAdminId } from "../lib/activityLog";
 import type { AppEnv } from "../types";
 
+// ─── Local types ─────────────────────────────────────────────────────────────
+type OrderRow = typeof ordersTable.$inferSelect;
+
+interface OrderItem {
+  productId?: string;
+  productName?: string;
+  productImage?: string;
+  quantity?: number;
+  price?: string | number;
+  [key: string]: unknown;
+}
+
+interface WeeklyRow {
+  day: string;
+  revenue: string | number;
+  orders: string | number;
+}
+
+interface TopProductRow {
+  id: string | number | null;
+  name: string | null;
+  imageUrl: string | null;
+  totalSold: string | number | null;
+}
+
+interface TelegramChat {
+  id: number;
+  type: string;
+  title?: string;
+  first_name?: string;
+  last_name?: string;
+}
+
+interface TelegramApiResponse {
+  ok: boolean;
+  description?: string;
+  result?: Array<{
+    message?: { chat?: TelegramChat; date?: number };
+    channel_post?: { chat?: TelegramChat; date?: number };
+  }>;
+}
+
 const app = new Hono<AppEnv>();
 
 const ADMIN_COOKIE_OPTS = {
@@ -391,7 +433,7 @@ app.get("/admin/stats", requireAdmin, async (c) => {
 
     const recentOrdersRaw = await db.select().from(ordersTable).orderBy(desc(ordersTable.createdAt)).limit(5);
 
-    const mapOrder = (o: any) => ({
+    const mapOrder = (o: OrderRow) => ({
       id: o.id,
       orderNumber: o.orderNumber,
       customerName: o.customerName,
@@ -403,10 +445,10 @@ app.get("/admin/stats", requireAdmin, async (c) => {
       paymentMethod: o.paymentMethod,
       paymentStatus: o.paymentStatus,
       status: o.status,
-      items: (o.items ?? []).map((item: any, idx: number) => ({ id: idx + 1, ...item })),
-      subtotal: parseFloat(o.subtotal),
-      shippingCost: parseFloat(o.shippingCost ?? "0"),
-      total: parseFloat(o.total),
+      items: (Array.isArray(o.items) ? (o.items as OrderItem[]) : []).map((item, idx) => ({ id: idx + 1, ...item })),
+      subtotal: parseFloat(String(o.subtotal)),
+      shippingCost: parseFloat(String(o.shippingCost ?? "0")),
+      total: parseFloat(String(o.total)),
       notes: o.notes,
       createdAt: o.createdAt?.toISOString(),
       updatedAt: o.updatedAt?.toISOString(),
@@ -440,15 +482,17 @@ app.get("/admin/stats", requireAdmin, async (c) => {
       color: paymentColors[p.method] || "#6b7280",
     }));
 
-    const weeklyRows = (weeklyRevenueData.rows ?? weeklyRevenueData) as any[];
-    const weeklyData = weeklyRows.map((w: any) => ({
+    const weeklyRows = ((weeklyRevenueData as unknown as { rows?: WeeklyRow[] }).rows
+      ?? weeklyRevenueData as unknown as WeeklyRow[]);
+    const weeklyData = weeklyRows.map((w) => ({
       day: w.day,
       revenue: Number(w.revenue),
       orders: Number(w.orders),
     }));
 
-    const topRows = (topProductsData.rows ?? topProductsData) as any[];
-    const topProducts = topRows.map((p: any) => ({
+    const topRows = ((topProductsData as unknown as { rows?: TopProductRow[] }).rows
+      ?? topProductsData as unknown as TopProductRow[]);
+    const topProducts = topRows.map((p) => ({
       id: Number(p.id),
       name: String(p.name ?? ""),
       imageUrl: String(p.imageUrl ?? ""),
@@ -544,7 +588,7 @@ app.get("/admin/guest-customers", requireAdmin, async (c) => {
       const username = g.email.includes("@") ? g.email.split("@")[0] : g.email;
       return {
         id: g.id,
-        guestSequence: (g as any).guestSequence ?? null,
+        guestSequence: g.guestSequence ?? null,
         username,
         name: g.name,
         email: g.email,
@@ -588,14 +632,19 @@ app.post("/admin/guest-customers/:id/convert", requireAdmin, async (c) => {
     if (taken && taken.id !== id) return c.json({ error: "conflict", message: "An account with this email already exists" }, 409);
     await db.update(ordersTable).set({ customerEmail: emailLc, customerId: id }).where(eq(ordersTable.customerEmail, existing.email));
     const passwordHash = await hashPassword(password);
-    const updates: Record<string, unknown> = { email: emailLc, passwordHash, isGuest: false, verified: true, updatedAt: new Date() };
-    if (name?.trim()) updates.name = name.trim();
-    const [updated] = await db.update(customersTable).set(updates as any).where(eq(customersTable.id, id)).returning();
+    const [updated] = await db.update(customersTable).set({
+      email: emailLc,
+      passwordHash,
+      isGuest: false,
+      verified: true,
+      updatedAt: new Date(),
+      name: name?.trim() || undefined,
+    }).where(eq(customersTable.id, id)).returning();
     if (!updated) return c.json({ error: "not_found", message: "Customer not found" }, 404);
     logActivity(db, { action: "update", entity: "customer", entityId: id, entityName: updated.name ?? updated.email, before: existing as unknown as Record<string, unknown>, after: updated as unknown as Record<string, unknown>, adminId: getAdminId(c) });
     return c.json({ success: true, customer: { id: updated.id, name: updated.name, email: updated.email, isGuest: updated.isGuest } });
-  } catch (err: any) {
-    if (err?.code === "23505") return c.json({ error: "conflict", message: "An account with this email already exists" }, 409);
+  } catch (err: unknown) {
+    if ((err as { code?: string })?.code === "23505") return c.json({ error: "conflict", message: "An account with this email already exists" }, 409);
     return c.json({ error: "internal_error", message: "Failed to convert guest account" }, 500);
   }
 });
@@ -655,8 +704,8 @@ app.post("/admin/setup", async (c) => {
       passwordHash,
     }).returning();
     return c.json({ success: true, id: admin.id, username: admin.username }, 201);
-  } catch (err: any) {
-    if (err?.code === "23505") {
+  } catch (err: unknown) {
+    if ((err as { code?: string })?.code === "23505") {
       return c.json({ error: "duplicate", message: "Username already exists" }, 409);
     }
     return c.json({ error: "internal_error", message: "Failed to create admin account" }, 500);
@@ -672,11 +721,11 @@ app.get("/admin/telegram/setup", requireAdmin, async (c) => {
     const res = await fetch(`https://api.telegram.org/bot${token}/getUpdates?limit=10&timeout=0`, {
       signal: AbortSignal.timeout(8000),
     });
-    const data: any = await res.json();
+    const data = await res.json() as TelegramApiResponse;
     if (!data.ok) {
       return c.json({ error: "telegram_error", message: data.description || "Telegram API error" }, 502);
     }
-    const updates: any[] = data.result || [];
+    const updates = data.result ?? [];
     const chatIds: { id: number; type: string; name: string; date: number }[] = [];
     const seen = new Set<number>();
     for (const u of updates) {
@@ -723,7 +772,7 @@ app.post("/admin/telegram/test", requireAdmin, async (c) => {
       }),
       signal: AbortSignal.timeout(8000),
     });
-    const data: any = await res.json();
+    const data = await res.json() as TelegramApiResponse;
     if (!data.ok) {
       return c.json({ error: "telegram_error", message: data.description || "Failed to send message" }, 502);
     }
