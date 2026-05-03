@@ -343,6 +343,51 @@ export function TypewriterHero() {
             </Link>
           </motion.div>
 
+          {/* ── MOBILE PRODUCT STRIP (hidden on lg+) ── */}
+          <motion.div
+            initial={reduced ? false : { opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.55 }}
+            className="lg:hidden w-full mt-6"
+          >
+            <div
+              className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            >
+              {HERO_PRODUCT_GRID.map((p, i) => (
+                <div
+                  key={p.label}
+                  className="flex-none relative rounded-2xl overflow-hidden"
+                  style={{
+                    width: "130px",
+                    background: "linear-gradient(145deg, #FFF8F3, #FFF2E8)",
+                    border: "1.5px solid rgba(232,93,4,0.12)",
+                    boxShadow: "0 6px 20px rgba(56,30,8,0.10), 0 1px 4px rgba(56,30,8,0.06)",
+                  }}
+                >
+                  <div
+                    className="absolute top-2 left-2 z-10 px-2 py-0.5 rounded-full text-[8px] font-black text-white uppercase tracking-wider"
+                    style={{ background: p.badgeColor }}
+                  >
+                    {p.badge}
+                  </div>
+                  <img
+                    src={p.src}
+                    alt={p.label}
+                    loading={i < 2 ? "eager" : "lazy"}
+                    decoding="async"
+                    className="w-full object-contain select-none pointer-events-none px-3 pt-6 pb-1"
+                    style={{ height: "100px", transform: `rotate(${p.rotate})` }}
+                    draggable={false}
+                  />
+                  <div className="pb-2.5 text-center">
+                    <span className="text-[10px] font-black text-gray-700">{p.label}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
           {/* Trust chips */}
           <motion.div
             initial={reduced ? false : { opacity: 0, y: 10 }}
@@ -391,6 +436,7 @@ export function TypewriterHero() {
               </div>
             ))}
           </motion.div>
+
         </div>
 
         {/* ── RIGHT: Premium multi-product showcase (desktop only) ── */}
