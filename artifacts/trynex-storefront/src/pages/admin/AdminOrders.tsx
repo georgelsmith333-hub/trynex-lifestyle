@@ -313,8 +313,8 @@ export default function AdminOrders() {
 
       {isLoading ? <Loader /> : (
         <div className="rounded-2xl overflow-hidden" style={{ background: 'white', border: '1px solid #e5e7eb' }}>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto -mx-0">
+            <table className="w-full text-sm min-w-[820px]">
               <thead>
                 <tr style={{ background: '#f9fafb' }}>
                   {["Order #", "Date", "Customer", "Items", "Total", "Payment", "Pay Status", "Order Status", "Action"].map(h => (

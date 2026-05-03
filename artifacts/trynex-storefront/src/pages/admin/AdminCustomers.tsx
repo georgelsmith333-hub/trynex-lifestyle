@@ -220,7 +220,7 @@ export default function AdminCustomers() {
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm min-w-[900px]">
                   <thead className="bg-gray-50 border-b border-gray-100">
                     <tr className="text-left">
                       <th className="px-5 py-3 text-[10px] font-bold uppercase tracking-wider text-gray-400">#</th>
@@ -394,7 +394,7 @@ export default function AdminCustomers() {
                           exit={{ height: 0, opacity: 0 }}
                           className="overflow-hidden"
                         >
-                          <div className="px-5 pb-5 pt-1 ml-14 space-y-3">
+                          <div className="px-5 pb-5 pt-1 sm:ml-14 space-y-3">
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                               <div className="bg-gray-50 rounded-xl p-3.5">
                                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Contact</p>
