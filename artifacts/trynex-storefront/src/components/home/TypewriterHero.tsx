@@ -179,11 +179,8 @@ export function TypewriterHero() {
 
   return (
     <section
-      className="relative overflow-hidden"
-      style={{
-        paddingTop: "calc(var(--announcement-height, 0px) + 4.25rem + 2.5rem)",
-        paddingBottom: "3rem",
-      }}
+      className="relative overflow-hidden pb-12 md:pb-16"
+      style={{ paddingTop: "calc(var(--announcement-height, 0px) + 4.25rem + 2.5rem)" }}
       aria-label="Hero"
     >
       {/* Hidden phrase-level live region for assistive tech */}
@@ -225,10 +222,10 @@ export function TypewriterHero() {
         />
       </div>
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-[1.05fr_1fr] gap-10 lg:gap-12 items-center">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-[1.1fr_1fr] gap-6 md:gap-8 lg:gap-12 items-center">
 
         {/* ── LEFT: copy ── */}
-        <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
+        <div className="flex flex-col items-center md:items-start text-center md:text-left">
 
           {/* Eyebrow */}
           <motion.div
@@ -256,7 +253,7 @@ export function TypewriterHero() {
           <h1
             className="font-display font-black leading-[1.02] mb-4 sm:mb-5 text-gray-900"
             style={{
-              fontSize: "clamp(2.1rem, 5.6vw, 4.5rem)",
+              fontSize: "clamp(1.75rem, 6vw, 4.5rem)",
               letterSpacing: "-0.03em",
             }}
           >
@@ -313,7 +310,7 @@ export function TypewriterHero() {
             initial={reduced ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.25 }}
-            className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 w-full sm:w-auto mb-6"
+            className="flex flex-col sm:flex-row md:flex-col lg:flex-row gap-2.5 sm:gap-3 w-full sm:w-auto md:w-full lg:w-auto mb-6"
           >
             <Link
               href="/design-studio"
@@ -348,7 +345,7 @@ export function TypewriterHero() {
             initial={reduced ? false : { opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.55 }}
-            className="lg:hidden w-full mt-6"
+            className="md:hidden w-full mt-6"
           >
             <div
               className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1"
@@ -393,7 +390,7 @@ export function TypewriterHero() {
             initial={reduced ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.35 }}
-            className="flex flex-wrap gap-2 sm:gap-2.5 justify-center lg:justify-start mb-7"
+            className="flex flex-wrap gap-2 sm:gap-2.5 justify-center md:justify-start mb-7"
           >
             {[
               { icon: Zap, label: "24hr Production" },
@@ -417,15 +414,15 @@ export function TypewriterHero() {
             initial={reduced ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.45 }}
-            className="grid grid-cols-4 gap-3 sm:gap-5 w-full max-w-md lg:max-w-none lg:w-auto"
+            className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-3 sm:gap-5 w-full max-w-[280px] sm:max-w-none"
           >
-            {HERO_STATS.map((s, i) => (
+            {HERO_STATS.map((s) => (
               <div
                 key={s.label}
-                className="flex flex-col items-center lg:items-start lg:px-5 lg:border-l lg:border-orange-200 first:lg:border-l-0 first:lg:pl-0"
+                className="flex flex-col items-center md:items-start"
               >
                 <span
-                  className="font-black text-lg sm:text-2xl lg:text-3xl leading-none"
+                  className="font-black text-xl sm:text-2xl lg:text-3xl leading-none"
                   style={{ color: "var(--color-primary)" }}
                 >
                   {s.value}
@@ -439,20 +436,20 @@ export function TypewriterHero() {
 
         </div>
 
-        {/* ── RIGHT: Premium multi-product showcase (desktop only) ── */}
-        <div className="hidden lg:flex flex-col gap-4 w-full max-w-lg ml-auto">
+        {/* ── RIGHT: Premium multi-product showcase (tablet + desktop) ── */}
+        <div className="hidden md:flex flex-col gap-3 lg:gap-4 w-full max-w-lg ml-auto">
 
           {/* Top row: 2 product cards */}
-          <div className="flex gap-4">
+          <div className="flex gap-3 lg:gap-4">
             {HERO_PRODUCT_GRID.slice(0, 2).map((p, i) => (
               <motion.div
                 key={p.label}
-                className="flex-1 relative rounded-3xl overflow-hidden"
+                className="flex-1 relative rounded-2xl lg:rounded-3xl overflow-hidden"
                 style={{
                   background: "linear-gradient(145deg, #FFF8F3, #FFF2E8)",
                   border: "1.5px solid rgba(232,93,4,0.12)",
-                  boxShadow: "0 12px 40px rgba(56,30,8,0.12), 0 2px 8px rgba(56,30,8,0.06)",
-                  minHeight: "200px",
+                  boxShadow: "0 8px 24px rgba(56,30,8,0.10), 0 2px 6px rgba(56,30,8,0.05)",
+                  minHeight: "160px",
                 }}
                 initial={reduced ? false : { opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -460,7 +457,7 @@ export function TypewriterHero() {
               >
                 {/* Badge */}
                 <div
-                  className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-full text-[9px] font-black text-white uppercase tracking-wider"
+                  className="absolute top-2.5 left-2.5 z-10 px-2 py-0.5 rounded-full text-[8px] lg:text-[9px] font-black text-white uppercase tracking-wider"
                   style={{ background: p.badgeColor }}
                 >
                   {p.badge}
@@ -472,7 +469,7 @@ export function TypewriterHero() {
                   loading="eager"
                   fetchPriority="high"
                   decoding="async"
-                  className="w-full h-44 object-contain select-none pointer-events-none px-4 pt-6 pb-2"
+                  className="w-full h-28 md:h-32 lg:h-44 object-contain select-none pointer-events-none px-3 lg:px-4 pt-5 lg:pt-6 pb-1 lg:pb-2"
                   draggable={false}
                   style={{ transform: `rotate(${p.rotate})` }}
                   animate={reduced ? undefined : { y: [0, -(p.floatY / 2), 0] }}
@@ -484,24 +481,24 @@ export function TypewriterHero() {
                   }}
                 />
                 {/* Label */}
-                <div className="pb-3 text-center">
-                  <span className="text-xs font-black text-gray-700">{p.label}</span>
+                <div className="pb-2.5 text-center">
+                  <span className="text-[10px] lg:text-xs font-black text-gray-700">{p.label}</span>
                 </div>
               </motion.div>
             ))}
           </div>
 
           {/* Bottom row: 2 more product cards */}
-          <div className="flex gap-4">
+          <div className="flex gap-3 lg:gap-4">
             {HERO_PRODUCT_GRID.slice(2, 4).map((p, i) => (
               <motion.div
                 key={p.label}
-                className="flex-1 relative rounded-3xl overflow-hidden"
+                className="flex-1 relative rounded-2xl lg:rounded-3xl overflow-hidden"
                 style={{
                   background: "linear-gradient(145deg, #FFF8F3, #FFF2E8)",
                   border: "1.5px solid rgba(232,93,4,0.12)",
-                  boxShadow: "0 12px 40px rgba(56,30,8,0.12), 0 2px 8px rgba(56,30,8,0.06)",
-                  minHeight: "200px",
+                  boxShadow: "0 8px 24px rgba(56,30,8,0.10), 0 2px 6px rgba(56,30,8,0.05)",
+                  minHeight: "160px",
                 }}
                 initial={reduced ? false : { opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -509,7 +506,7 @@ export function TypewriterHero() {
               >
                 {/* Badge */}
                 <div
-                  className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-full text-[9px] font-black text-white uppercase tracking-wider"
+                  className="absolute top-2.5 left-2.5 z-10 px-2 py-0.5 rounded-full text-[8px] lg:text-[9px] font-black text-white uppercase tracking-wider"
                   style={{ background: p.badgeColor }}
                 >
                   {p.badge}
@@ -520,7 +517,7 @@ export function TypewriterHero() {
                   alt={p.label}
                   loading="lazy"
                   decoding="async"
-                  className="w-full h-44 object-contain select-none pointer-events-none px-4 pt-6 pb-2"
+                  className="w-full h-28 md:h-32 lg:h-44 object-contain select-none pointer-events-none px-3 lg:px-4 pt-5 lg:pt-6 pb-1 lg:pb-2"
                   draggable={false}
                   style={{ transform: `rotate(${p.rotate})` }}
                   animate={reduced ? undefined : { y: [0, -(p.floatY / 2), 0] }}
@@ -532,8 +529,8 @@ export function TypewriterHero() {
                   }}
                 />
                 {/* Label */}
-                <div className="pb-3 text-center">
-                  <span className="text-xs font-black text-gray-700">{p.label}</span>
+                <div className="pb-2.5 text-center">
+                  <span className="text-[10px] lg:text-xs font-black text-gray-700">{p.label}</span>
                 </div>
               </motion.div>
             ))}
@@ -544,7 +541,7 @@ export function TypewriterHero() {
             initial={reduced ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.6 }}
-            className="flex items-center justify-between bg-white rounded-2xl px-5 py-3"
+            className="flex items-center justify-between bg-white rounded-xl lg:rounded-2xl px-4 lg:px-5 py-2.5 lg:py-3"
             style={{
               boxShadow: "0 4px 20px rgba(232,93,4,0.10)",
               border: "1px solid rgba(232,93,4,0.12)",
@@ -552,12 +549,12 @@ export function TypewriterHero() {
           >
             <div className="flex items-center gap-0.5">
               {[0, 1, 2, 3, 4].map(i => (
-                <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
+                <Star key={i} className="w-2.5 h-2.5 lg:w-3 lg:h-3 fill-amber-400 text-amber-400" />
               ))}
             </div>
-            <div className="text-xs font-black text-gray-800">4.9/5 · 5,000+ Reviews</div>
-            <div className="flex items-center gap-1.5 text-xs font-bold text-orange-600">
-              <Truck className="w-3.5 h-3.5" />
+            <div className="text-[10px] lg:text-xs font-black text-gray-800">4.9/5 · 5,000+ Reviews</div>
+            <div className="flex items-center gap-1 text-[10px] lg:text-xs font-bold text-orange-600">
+              <Truck className="w-3 h-3 lg:w-3.5 lg:h-3.5" />
               24hr Delivery
             </div>
           </motion.div>
