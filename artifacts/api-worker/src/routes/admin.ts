@@ -406,6 +406,20 @@ app.get("/admin/sessions", requireAdmin, async (c) => {
   }
 });
 
+app.delete("/admin/sessions/:id", requireAdmin, async (c) => {
+  try {
+    const db = createDb(c.env.DATABASE_URL);
+    const id = parseInt(c.req.param("id"), 10);
+    if (isNaN(id)) {
+      return c.json({ error: "validation_error", message: "Invalid session id" }, 400);
+    }
+    await db.update(adminSessionsTable).set({ revokedAt: new Date() }).where(eq(adminSessionsTable.id, id));
+    return c.json({ success: true });
+  } catch (err) {
+    return c.json({ error: "internal_error", message: "Could not revoke session" }, 500);
+  }
+});
+
 app.post("/admin/sessions/revoke-all", requireAdmin, async (c) => {
   try {
     const db = createDb(c.env.DATABASE_URL);

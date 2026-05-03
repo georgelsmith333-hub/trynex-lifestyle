@@ -1002,6 +1002,7 @@ export const GetPublicStatsResponse = zod.object({
  * @summary Admin password login (step 1 of 2FA flow)
  */
 export const AdminLoginBody = zod.object({
+  username: zod.string(),
   password: zod.string(),
 });
 
@@ -1109,6 +1110,17 @@ export const ListAdminSessionsResponse = zod.object({
       ip: zod.string().nullish(),
     }),
   ),
+});
+
+/**
+ * @summary Revoke a single admin session by ID
+ */
+export const RevokeAdminSessionParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const RevokeAdminSessionResponse = zod.object({
+  success: zod.boolean(),
 });
 
 /**

@@ -469,6 +469,7 @@ export type GetPublicStats200 = {
 };
 
 export type AdminLoginBody = {
+  username: string;
   password: string;
 };
 
@@ -553,6 +554,10 @@ export type ListAdminSessions200SessionsItem = {
 
 export type ListAdminSessions200 = {
   sessions: ListAdminSessions200SessionsItem[];
+};
+
+export type RevokeAdminSession200 = {
+  success: boolean;
 };
 
 export type AdminResetPasswordBody = {
@@ -4463,6 +4468,90 @@ export function useListAdminSessions<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * @summary Revoke a single admin session by ID
+ */
+export const getRevokeAdminSessionUrl = (id: number) => {
+  return `/api/admin/sessions/${id}`;
+};
+
+export const revokeAdminSession = async (
+  id: number,
+  options?: RequestInit,
+): Promise<RevokeAdminSession200> => {
+  return customFetch<RevokeAdminSession200>(getRevokeAdminSessionUrl(id), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getRevokeAdminSessionMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof revokeAdminSession>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof revokeAdminSession>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ["revokeAdminSession"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof revokeAdminSession>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return revokeAdminSession(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RevokeAdminSessionMutationResult = NonNullable<
+  Awaited<ReturnType<typeof revokeAdminSession>>
+>;
+
+export type RevokeAdminSessionMutationError = ErrorType<void>;
+
+/**
+ * @summary Revoke a single admin session by ID
+ */
+export const useRevokeAdminSession = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof revokeAdminSession>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof revokeAdminSession>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  return useMutation(getRevokeAdminSessionMutationOptions(options));
+};
 
 /**
  * @summary Revoke all active admin sessions

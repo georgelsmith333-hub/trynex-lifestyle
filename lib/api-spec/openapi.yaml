@@ -881,8 +881,9 @@ paths:
             schema:
               type: object
               properties:
+                username: { type: string }
                 password: { type: string }
-              required: [password]
+              required: [username, password]
       responses:
         "200":
           description: Authenticated or 2FA required
@@ -1094,6 +1095,32 @@ paths:
                         ip: { type: string, nullable: true }
                       required: [id]
                 required: [sessions]
+
+  /admin/sessions/{id}:
+    delete:
+      operationId: revokeAdminSession
+      tags: [admin]
+      summary: Revoke a single admin session by ID
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Session revoked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                required: [success]
+        "400":
+          description: Invalid session id
+        "500":
+          description: Server error
 
   /admin/sessions/revoke-all:
     post:
