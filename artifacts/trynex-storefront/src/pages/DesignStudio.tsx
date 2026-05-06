@@ -476,29 +476,39 @@ export default function DesignStudio() {
     const token = getCustomerToken();
 
     async function restore() {
-      // 1. Try cloud draft first (authenticated users only)
+      // 1. Try cloud draft first (authenticated users only).
+      //    Hard 3-second timeout prevents a slow/hung API from causing a white blank page.
       if (token) {
         try {
-          const res = await fetch(getApiUrl("/api/drafts"), {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (res.ok) {
-            const json = await res.json();
-            if (json.draft?.payload) {
-              const applied = applyDraftPayload(json.draft.payload as Partial<DraftPayload>, isEdit, "cloud");
-              if (applied) {
-                draftRestoredRef.current = true;
-                urlInitRef.current = true;
-                return;
+          const controller = new AbortController();
+          const cloudTimeout = setTimeout(() => controller.abort(), 3000);
+          try {
+            const res = await fetch(getApiUrl("/api/drafts"), {
+              headers: { Authorization: `Bearer ${token}` },
+              signal: controller.signal,
+            });
+            clearTimeout(cloudTimeout);
+            if (res.ok) {
+              const json = await res.json();
+              if (json.draft?.payload) {
+                const applied = applyDraftPayload(json.draft.payload as Partial<DraftPayload>, isEdit, "cloud");
+                if (applied) {
+                  draftRestoredRef.current = true;
+                  urlInitRef.current = true;
+                  return;
+                }
               }
             }
+          } catch {
+            clearTimeout(cloudTimeout);
+            // Cloud unavailable or timed out — fall through to localStorage
           }
         } catch {
-          // Cloud unavailable — fall through to localStorage
+          // Outer safety net — fall through to localStorage
         }
       }
 
-      // 2. Fall back to localStorage
+      // 2. Fall back to localStorage (always fast — no network)
       try {
         const raw = localStorage.getItem(DRAFT_STORAGE_KEY);
         if (raw) {
@@ -803,9 +813,9 @@ export default function DesignStudio() {
   );
   const otherFaceCount = layers.length - currentFaceLayers.length;
 
-  // Auto-hide the print-zone outline once a layer exists on the active face,
-  // unless the user has explicitly toggled it on. The outline is only useful as a guide.
-  const effectiveShowPrintZone = showPrintZone && currentFaceLayers.length === 0;
+  // Always show print-zone outline when the toggle is on — users need to see the
+  // print boundary even when layers are present so they can position correctly.
+  const effectiveShowPrintZone = showPrintZone;
 
   /* ── Coord helpers ─────────────────────────────────── */
   const clientToSVG = useCallback((clientX: number, clientY: number) => {
@@ -1183,7 +1193,9 @@ export default function DesignStudio() {
     setIsUpscaling(true);
     try {
       const img = new Image();
-      img.crossOrigin = "anonymous";
+      // data: URLs are same-origin — setting crossOrigin="anonymous" on them
+      // causes some browsers to reject the load. Only set it for external URLs.
+      if (!selectedLayer.src.startsWith("data:")) img.crossOrigin = "anonymous";
       await new Promise<void>((res, rej) => { img.onload = () => res(); img.onerror = rej; img.src = selectedLayer.src; });
       try { await img.decode?.(); } catch {}
 
@@ -1641,9 +1653,8 @@ export default function DesignStudio() {
           mockupSrc: garmentSrc,
           printZone: frontPZ,
           printZoneBack: selectedProduct.printZoneBack ?? null,
-          // Print-ready originals — admin downloads these to fulfill the order.
-          originalAssets,
-          originalAssetUrls,
+          // NOTE: originalAssets and originalAssetUrls are stored as top-level
+          // cart item fields (not here) to keep this JSON well under 2 KB.
         }),
       });
 
@@ -1718,20 +1729,20 @@ export default function DesignStudio() {
   }, [selectedLayer, clientToSVG, pz, commitLayers]);
 
   const selGeom = selectedLayer ? layerGeom(selectedLayer) : null;
-  /* ── Edge midpoint handles for directional (non-proportional) resize ── */
+  /* ── Edge strip handles for directional (non-proportional) resize ──
+     Each entry stores the local (un-rotated) midpoint + strip dimensions.
+     The SVG rendering applies rotation via transform="rotate(...)".
+     Strips span the FULL edge length so any touch near the border works —
+     not just a small 44×44 target at the midpoint. */
   const edgeMidpoints = useMemo(() => {
-    if (!selectedLayer || !selGeom) return [];
+    if (!selectedLayer || !selGeom || selectedLayer.type !== "image") return [];
     const { cx, cy, x, y, w, h } = selGeom;
-    const rad = (selectedLayer.transform.rotation * Math.PI) / 180;
-    const rot = (px: number, py: number) => ({
-      x: cx + (px - cx) * Math.cos(rad) - (py - cy) * Math.sin(rad),
-      y: cy + (px - cx) * Math.sin(rad) + (py - cy) * Math.cos(rad),
-    });
+    // stripW / stripH is the hit-area size. Spans the full edge + 20px padding each side.
     return [
-      { key: "n", ...rot(cx, y),     cursor: "ns-resize" },
-      { key: "s", ...rot(cx, y + h), cursor: "ns-resize" },
-      { key: "e", ...rot(x + w, cy), cursor: "ew-resize" },
-      { key: "w", ...rot(x, cy),     cursor: "ew-resize" },
+      { key: "n", midX: cx,    midY: y,     stripW: Math.max(w + 20, 60), stripH: 38, cursor: "ns-resize" },
+      { key: "s", midX: cx,    midY: y + h, stripW: Math.max(w + 20, 60), stripH: 38, cursor: "ns-resize" },
+      { key: "e", midX: x + w, midY: cy,    stripW: 38, stripH: Math.max(h + 20, 60), cursor: "ew-resize" },
+      { key: "w", midX: x,     midY: cy,    stripW: 38, stripH: Math.max(h + 20, 60), cursor: "ew-resize" },
     ];
   }, [selectedLayer, selGeom]);
 
@@ -2359,6 +2370,28 @@ export default function DesignStudio() {
                     })}
                   </g>
 
+                  {/* Always-visible print-zone boundary — rendered OUTSIDE the clip path
+                      so it stays visible at any zoom level, with or without layers.
+                      vectorEffect="non-scaling-stroke" keeps the line exactly 2 screen-px
+                      regardless of canvasZoom, so it never disappears or blows up. */}
+                  {showPrintZone && (
+                    <>
+                      {/* Soft glow halo */}
+                      <rect
+                        x={pz.x - 2} y={pz.y - 2} width={pz.w + 4} height={pz.h + 4} rx="7"
+                        fill="none" stroke="rgba(232,93,4,0.10)" strokeWidth="8"
+                        vectorEffect="non-scaling-stroke" pointerEvents="none"
+                      />
+                      {/* Crisp dashed outline */}
+                      <rect
+                        x={pz.x} y={pz.y} width={pz.w} height={pz.h} rx="4"
+                        fill="none" stroke="rgba(232,93,4,0.65)" strokeWidth="2"
+                        strokeDasharray="8 5" vectorEffect="non-scaling-stroke"
+                        pointerEvents="none"
+                      />
+                    </>
+                  )}
+
                   {/* Selection outline + handles */}
                   {selectedLayer && selGeom && (
                     <g pointerEvents="none">
@@ -2376,8 +2409,8 @@ export default function DesignStudio() {
                         style={{ filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.2))" }}
                         pointerEvents="none"
                       />
-                      {/* Transparent 44-px hit area so finger taps register reliably */}
-                      <circle cx={h.x} cy={h.y} r={22}
+                      {/* Transparent hit area — 30px radius on all devices for reliable finger taps */}
+                      <circle cx={h.x} cy={h.y} r={30}
                         fill="transparent"
                         style={{ cursor: "nwse-resize", touchAction: "none" }}
                         pointerEvents="all"
@@ -2387,22 +2420,35 @@ export default function DesignStudio() {
                   ))}
 
                   {/* Edge midpoint handles — visible rect + transparent 44×44 hit rect */}
-                  {selectedLayer && selectedLayer.type === "image" && edgeMidpoints.map(h => (
-                    <g key={h.key}>
-                      {/* Visible handle rect */}
+                  {selectedLayer && selectedLayer.type === "image" && selGeom && edgeMidpoints.map(h => (
+                    /* Each strip is rendered in LOCAL (un-rotated) layer coordinates,
+                       then rotated around the layer center via SVG transform.
+                       This makes the entire edge length touchable — not just the midpoint. */
+                    <g key={h.key} transform={`rotate(${selectedLayer.transform.rotation}, ${selGeom.cx}, ${selGeom.cy})`}>
+                      {/* Full-edge transparent hit strip — spans the whole side */}
                       <rect
-                        x={h.x - 5} y={h.y - 5} width={10} height={10}
-                        rx={2} fill="white" stroke="#E85D04" strokeWidth="2"
-                        style={{ filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.18))" }}
-                        pointerEvents="none"
-                      />
-                      {/* Transparent 44×44 hit area */}
-                      <rect
-                        x={h.x - 22} y={h.y - 22} width={44} height={44}
+                        x={h.midX - h.stripW / 2}
+                        y={h.midY - h.stripH / 2}
+                        width={h.stripW}
+                        height={h.stripH}
                         fill="transparent"
                         style={{ cursor: h.cursor, touchAction: "none" }}
                         pointerEvents="all"
                         onPointerDown={e => handleEdgeResizeDown(e as unknown as React.PointerEvent<SVGCircleElement | SVGRectElement>, h.key)}
+                      />
+                      {/* Pill-shaped visible indicator at the edge midpoint */}
+                      <rect
+                        x={h.key === "n" || h.key === "s" ? h.midX - 13 : h.midX - 5}
+                        y={h.key === "n" || h.key === "s" ? h.midY - 5 : h.midY - 13}
+                        width={h.key === "n" || h.key === "s" ? 26 : 10}
+                        height={h.key === "n" || h.key === "s" ? 10 : 26}
+                        rx={5}
+                        fill="white"
+                        stroke="#E85D04"
+                        strokeWidth="2"
+                        vectorEffect="non-scaling-stroke"
+                        style={{ filter: "drop-shadow(0 1px 4px rgba(0,0,0,0.22))" }}
+                        pointerEvents="none"
                       />
                     </g>
                   ))}
@@ -2498,21 +2544,51 @@ export default function DesignStudio() {
                 )}
               </div>
 
-              {/* Reset zoom pill — appears when canvas is zoomed/panned */}
-              {isCanvasZoomed && (
-                <div className="absolute top-3 right-3 z-20">
+              {/* Zoom controls — always visible once layers are present so users can
+                  easily zoom out after uploading an image on mobile devices. */}
+              {layers.length > 0 && (
+                <div className="absolute top-3 right-3 z-20 flex items-center gap-1">
+                  {/* Zoom out */}
                   <button
+                    aria-label="Zoom out"
                     onClick={() => {
-                      canvasZoomRef.current = 1;
-                      canvasPanRef.current = { x: 0, y: 0 };
-                      setCanvasZoom(1);
-                      setCanvasPan({ x: 0, y: 0 });
+                      const next = Math.max(0.4, Math.round((canvasZoom - 0.2) * 10) / 10);
+                      canvasZoomRef.current = next;
+                      setCanvasZoom(next);
                     }}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold"
-                    style={{ background: "rgba(17,24,39,0.80)", color: "white", backdropFilter: "blur(6px)", boxShadow: "0 2px 8px rgba(0,0,0,0.18)" }}
+                    className="flex items-center justify-center w-8 h-8 rounded-full text-sm font-black"
+                    style={{ background: "rgba(17,24,39,0.78)", color: "white", backdropFilter: "blur(6px)", boxShadow: "0 2px 8px rgba(0,0,0,0.18)" }}
                   >
-                    <ZoomOut className="w-3 h-3" />
-                    Reset zoom
+                    −
+                  </button>
+                  {/* Zoom level / Reset */}
+                  {isCanvasZoomed && (
+                    <button
+                      onClick={() => {
+                        canvasZoomRef.current = 1;
+                        canvasPanRef.current = { x: 0, y: 0 };
+                        setCanvasZoom(1);
+                        setCanvasPan({ x: 0, y: 0 });
+                      }}
+                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[10px] font-bold"
+                      style={{ background: "rgba(17,24,39,0.78)", color: "white", backdropFilter: "blur(6px)", boxShadow: "0 2px 8px rgba(0,0,0,0.18)" }}
+                    >
+                      <ZoomOut className="w-3 h-3" />
+                      {Math.round(canvasZoom * 100)}%
+                    </button>
+                  )}
+                  {/* Zoom in */}
+                  <button
+                    aria-label="Zoom in"
+                    onClick={() => {
+                      const next = Math.min(4, Math.round((canvasZoom + 0.2) * 10) / 10);
+                      canvasZoomRef.current = next;
+                      setCanvasZoom(next);
+                    }}
+                    className="flex items-center justify-center w-8 h-8 rounded-full text-sm font-black"
+                    style={{ background: "rgba(17,24,39,0.78)", color: "white", backdropFilter: "blur(6px)", boxShadow: "0 2px 8px rgba(0,0,0,0.18)" }}
+                  >
+                    +
                   </button>
                 </div>
               )}
@@ -2522,7 +2598,7 @@ export default function DesignStudio() {
                 <div className="px-4 py-2.5 text-[11px] font-semibold text-gray-500 flex items-center gap-2 border-t border-gray-100"
                   style={{ background: "white" }}>
                   <Move className="w-3.5 h-3.5 text-orange-400 shrink-0" />
-                  Drag to move · Pinch to scale & rotate · Pinch empty area to zoom canvas
+                  Drag to move · Pinch to scale &amp; rotate · Use +/− buttons to zoom canvas
                 </div>
               )}
             </div>
@@ -3085,6 +3161,75 @@ export default function DesignStudio() {
                         </div>
                       </div>
                     </div>
+
+                    {/* ── Quick-edit panel for the currently selected image layer ── */}
+                    {selectedLayer?.type === "image" && (
+                      <div className="rounded-xl p-3 space-y-2.5"
+                        style={{ background: "linear-gradient(135deg,#f5f3ff,#ede9fe)", border: "1.5px solid #ddd6fe" }}>
+                        <div className="flex items-center gap-2">
+                          <div className="text-[11px] font-black text-purple-800 flex-1">Selected layer</div>
+                          <span className="text-[9px] font-bold text-purple-500 bg-purple-100 px-1.5 py-0.5 rounded-full">image</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <img
+                            src={selectedLayer.src}
+                            className="w-10 h-10 rounded-lg object-cover border border-purple-200 shrink-0"
+                            style={{ background: "repeating-conic-gradient(#ddd6fe 0% 25%,#ede9fe 0% 50%) 0 0/12px 12px" }}
+                            alt=""
+                          />
+                          <span className="text-[11px] font-semibold text-purple-700 truncate flex-1">{selectedLayer.name}</span>
+                        </div>
+                        {/* Three action buttons */}
+                        <div className="grid grid-cols-3 gap-1.5">
+                          <button
+                            onClick={() => {
+                              // Convert data URL → Blob → File so the existing
+                              // handleGenerateAI img2img flow works unchanged.
+                              const src = (selectedLayer as any).src as string;
+                              fetch(src)
+                                .then(r => r.blob())
+                                .then(blob => {
+                                  const name = (selectedLayer.name || "layer").replace(/[^a-zA-Z0-9._-]/g, "_");
+                                  const file = new File([blob], `${name}.png`, { type: blob.type || "image/png" });
+                                  setAiRefFile(file);
+                                  toast({ title: "Layer loaded as AI reference", description: "Describe how to edit it below." });
+                                })
+                                .catch(() => toast({ title: "Could not load layer", variant: "destructive" }));
+                            }}
+                            className="py-2 rounded-lg text-[10px] font-black flex flex-col items-center gap-0.5 transition-all hover:scale-[1.02]"
+                            style={{ background: "white", color: "#7c3aed", border: "1.5px solid #ddd6fe" }}
+                          >
+                            <Wand2 className="w-3.5 h-3.5" />
+                            Use as ref
+                          </button>
+                          <button
+                            onClick={handleRemoveBg}
+                            disabled={isRemoving || isUpscaling}
+                            className="py-2 rounded-lg text-[10px] font-black flex flex-col items-center gap-0.5 disabled:opacity-50 transition-all hover:scale-[1.02]"
+                            style={{ background: "white", color: "#E85D04", border: "1.5px solid #fdd5b4" }}
+                          >
+                            {isRemoving
+                              ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              : <Scissors className="w-3.5 h-3.5" />}
+                            {isRemoving ? "Removing…" : "Remove BG"}
+                          </button>
+                          <button
+                            onClick={handleUpscale}
+                            disabled={isRemoving || isUpscaling}
+                            className="py-2 rounded-lg text-[10px] font-black flex flex-col items-center gap-0.5 disabled:opacity-50 transition-all hover:scale-[1.02]"
+                            style={{ background: "white", color: "#92400E", border: "1.5px solid #FCD34D" }}
+                          >
+                            {isUpscaling
+                              ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              : <Wand2 className="w-3.5 h-3.5" />}
+                            {isUpscaling ? "Upscaling…" : "Upscale HD"}
+                          </button>
+                        </div>
+                        <p className="text-[9px] text-purple-500 text-center leading-tight">
+                          "Use as ref" → describe the edit below → tap <strong>Edit with AI</strong>
+                        </p>
+                      </div>
+                    )}
 
                     {/* Reference image upload */}
                     <div>
