@@ -290,13 +290,25 @@ export function GarmentSVG({
 
       {showPrintZone && (
         <g style={{ pointerEvents: "none" }}>
+          {/* Outer glow track — slightly larger, low-opacity fill for visibility on any bg */}
+          <rect
+            x={displayPZ.x - 2} y={displayPZ.y - 2}
+            width={displayPZ.w + 4} height={displayPZ.h + 4}
+            fill="none"
+            stroke="rgba(232,93,4,0.12)"
+            strokeWidth={8}
+            rx={8}
+            vectorEffect="non-scaling-stroke"
+          />
+          {/* Main dashed border — non-scaling so it stays crisply 2 px regardless of canvas zoom */}
           <rect
             x={displayPZ.x} y={displayPZ.y} width={displayPZ.w} height={displayPZ.h}
             fill="none"
-            stroke="rgba(232,93,4,0.55)"
-            strokeWidth={2.5}
-            strokeDasharray="8 6"
+            stroke="rgba(232,93,4,0.70)"
+            strokeWidth={2}
+            strokeDasharray="10 6"
             rx={6}
+            vectorEffect="non-scaling-stroke"
           />
           <text
             x={displayPZ.x + displayPZ.w / 2} y={displayPZ.y - 10}
