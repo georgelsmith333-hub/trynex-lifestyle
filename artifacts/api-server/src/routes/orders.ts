@@ -19,10 +19,15 @@ const OrderItemSchema = z.object({
   name:         z.string().max(300).optional(),
   size:         z.string().max(50).optional().nullable(),
   color:        z.string().max(50).optional().nullable(),
-  customNote:   z.string().max(5000).optional().nullable(),
-  customImages: z.array(z.string().max(2048)).max(10).optional().nullable(),
+  customNote:   z.string().max(10000).optional().nullable(),
+  // customImages may contain base64 data-URLs (for studio mockup preview) which
+  // are far longer than a plain URL — no per-item length cap here; we strip
+  // data-URLs before DB storage below.
+  customImages: z.array(z.string()).max(20).optional().nullable(),
   price:        z.number().nonnegative().optional(),
-  imageUrl:     z.string().max(2048).optional().nullable(),
+  // No length cap — imageUrl may be a data-URL (base64 mockup preview) which can be 50–200 KB.
+  // Data-URLs are stripped server-side before DB storage; only object-storage paths are kept.
+  imageUrl:     z.string().optional().nullable(),
 });
 
 const OrderCreateSchema = z.object({
@@ -483,6 +488,25 @@ router.post("/orders", async (req, res) => {
       return;
     }
 
+    // Strip base64 data-URLs from customImages before DB storage.
+    // Data-URLs are used only for in-browser preview (cart/3D viewer) and must
+    // not be persisted — original uploads are already in object storage via
+    // originalAssetUrls. Keeping only real paths (/ or http) keeps the DB lean.
+    function sanitizeCustomImages(imgs: string[] | null | undefined): string[] {
+      if (!Array.isArray(imgs)) return [];
+      return imgs.filter(s => typeof s === "string" && !s.startsWith("data:"));
+    }
+
+    // Strip data-URLs from imageUrl — a base64 mockup thumbnail can be 50–200 KB.
+    // Only real object-storage paths (starting with / or http) are kept.
+    // The admin panel uses this URL for display; if it's absent the panel falls
+    // back gracefully to the product image or a placeholder.
+    function sanitizeImageUrl(url: string | null | undefined): string | null {
+      if (!url || typeof url !== "string") return null;
+      if (url.startsWith("data:")) return null;
+      return url;
+    }
+
     const catalogOrderItems = catalogItems.map((item: any) => {
       const product = productMap[item.productId];
       const price = product.discountPrice ? parseFloat(product.discountPrice) : parseFloat(product.price);
@@ -495,7 +519,8 @@ router.post("/orders", async (req, res) => {
         color: item.color,
         price,
         customNote: item.customNote,
-        customImages: item.customImages || [],
+        customImages: sanitizeCustomImages(item.customImages),
+        imageUrl: sanitizeImageUrl(item.imageUrl),
         isStudio: false,
       };
     });
@@ -510,13 +535,14 @@ router.post("/orders", async (req, res) => {
       return {
         productId: 0,
         productName: item.name || (isMug ? "Custom Studio Mug" : "Custom Studio T-Shirt"),
-        productImage: item.imageUrl || null,
+        productImage: sanitizeImageUrl(item.imageUrl),
         quantity: Math.max(1, Math.floor(Number(item.quantity))),
         size: item.size,
         color: item.color,
         price: serverPrice,
         customNote: item.customNote,
-        customImages: item.customImages || [],
+        customImages: sanitizeCustomImages(item.customImages),
+        imageUrl: sanitizeImageUrl(item.imageUrl),
         isStudio: true,
       };
     });
