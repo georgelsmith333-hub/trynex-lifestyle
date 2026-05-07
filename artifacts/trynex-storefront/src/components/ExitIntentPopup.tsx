@@ -104,7 +104,10 @@ export function ExitIntentPopup() {
     try {
       const response = await fetch(getApiUrl("/api/promo-codes/exit-intent"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+        },
         body: JSON.stringify({ contact: contact.trim() }),
       });
 

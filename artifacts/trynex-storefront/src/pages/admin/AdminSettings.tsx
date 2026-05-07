@@ -120,6 +120,10 @@ export default function AdminSettings() {
   // Studio colors managed outside react-hook-form — separate per product type
   const [tshirtColorsJson, setTshirtColorsJson] = useState("");
   const [mugColorsJson, setMugColorsJson] = useState("");
+  const [hoodieColorsJson, setHoodieColorsJson] = useState("");
+  const [longsleeveColorsJson, setLongsleeveColorsJson] = useState("");
+  const [capColorsJson, setCapColorsJson] = useState("");
+  const [waterbottleColorsJson, setWaterbottleColorsJson] = useState("");
 
   // Remove.bg configured status — fetched from /api/remove-bg/status
   const [removeBgConfigured, setRemoveBgConfigured] = useState<boolean | null>(null);
@@ -134,8 +138,12 @@ export default function AdminSettings() {
   useEffect(() => {
     if (settings) {
       reset(settings);
-      setTshirtColorsJson(settings.studioTshirtColors ?? "");
-      setMugColorsJson(settings.studioMugColors ?? "");
+      setTshirtColorsJson((settings as any).studioTshirtColors ?? "");
+      setMugColorsJson((settings as any).studioMugColors ?? "");
+      setHoodieColorsJson((settings as any).studioHoodieColors ?? "");
+      setLongsleeveColorsJson((settings as any).studioLongsleeveColors ?? "");
+      setCapColorsJson((settings as any).studioCapColors ?? "");
+      setWaterbottleColorsJson((settings as any).studioWaterbottleColors ?? "");
     }
   }, [settings, reset]);
 
@@ -214,6 +222,10 @@ export default function AdminSettings() {
         scarcityThreshold: "10",
         studioTshirtPrice: "1099",
         studioMugPrice: "799",
+        studioHoodiePrice: "1699",
+        studioLongsleevePrice: "1299",
+        studioCapPrice: "699",
+        studioWaterbottlePrice: "899",
       };
       for (const [key, fallback] of Object.entries(numericDefaults)) {
         const val = safeData[key];
@@ -226,6 +238,10 @@ export default function AdminSettings() {
         ...(safeData as Record<string, string>),
         studioTshirtColors: tshirtColorsJson,
         studioMugColors: mugColorsJson,
+        studioHoodieColors: hoodieColorsJson,
+        studioLongsleeveColors: longsleeveColorsJson,
+        studioCapColors: capColorsJson,
+        studioWaterbottleColors: waterbottleColorsJson,
       };
       if (turningWheelOn) payload.spinWheelResetAt = String(Date.now());
 
@@ -457,29 +473,53 @@ export default function AdminSettings() {
               Free tier gives 50 removals/month. Leave blank to keep the existing key. When no key is configured, background removal falls back to an in-browser AI model (free, slower).
             </p>
           </Field>
-          <Field label="Custom T-Shirt Price (৳)" full={false}>
+          <Field label="T-Shirt Price (৳)" full={false}>
             <input {...register("studioTshirtPrice")} className={inputClass} style={inputStyle} placeholder="1099" type="number" min="0" max="50000" step="1" />
-            <p className="text-xs text-gray-400 mt-1">
-              Price charged per custom studio T-shirt order. Applied server-side — clients cannot override this.
-            </p>
+            <p className="text-xs text-gray-400 mt-1">Base price for custom T-shirt orders from the Design Studio.</p>
           </Field>
-          <Field label="Custom Mug Price (৳)" full={false}>
+          <Field label="Hoodie Price (৳)" full={false}>
+            <input {...register("studioHoodiePrice")} className={inputClass} style={inputStyle} placeholder="1699" type="number" min="0" max="50000" step="1" />
+            <p className="text-xs text-gray-400 mt-1">Base price for custom Hoodie orders.</p>
+          </Field>
+          <Field label="Long Sleeve Price (৳)" full={false}>
+            <input {...register("studioLongsleevePrice")} className={inputClass} style={inputStyle} placeholder="1299" type="number" min="0" max="50000" step="1" />
+            <p className="text-xs text-gray-400 mt-1">Base price for custom Long Sleeve orders.</p>
+          </Field>
+          <Field label="Cap Price (৳)" full={false}>
+            <input {...register("studioCapPrice")} className={inputClass} style={inputStyle} placeholder="699" type="number" min="0" max="50000" step="1" />
+            <p className="text-xs text-gray-400 mt-1">Base price for custom Cap orders.</p>
+          </Field>
+          <Field label="Mug Price (৳)" full={false}>
             <input {...register("studioMugPrice")} className={inputClass} style={inputStyle} placeholder="799" type="number" min="0" max="50000" step="1" />
-            <p className="text-xs text-gray-400 mt-1">
-              Price charged per custom studio Mug order. Applied server-side — clients cannot override this.
-            </p>
+            <p className="text-xs text-gray-400 mt-1">Base price for custom Mug orders.</p>
+          </Field>
+          <Field label="Water Bottle Price (৳)" full={false}>
+            <input {...register("studioWaterbottlePrice")} className={inputClass} style={inputStyle} placeholder="899" type="number" min="0" max="50000" step="1" />
+            <p className="text-xs text-gray-400 mt-1">Base price for custom Water Bottle orders.</p>
           </Field>
           <Field label="T-Shirt Colors" full>
             <StudioColorsManager value={tshirtColorsJson} onChange={setTshirtColorsJson} />
-            <p className="text-xs text-gray-400 mt-2">
-              Colors shown in the Design Studio swatch grid when a T-shirt product is selected. Clicking a swatch updates the live mockup color. Leave empty for 12 defaults.
-            </p>
+            <p className="text-xs text-gray-400 mt-2">Swatches shown in Design Studio for T-shirts. Leave empty for 12 built-in defaults.</p>
+          </Field>
+          <Field label="Hoodie Colors" full>
+            <StudioColorsManager value={hoodieColorsJson} onChange={setHoodieColorsJson} />
+            <p className="text-xs text-gray-400 mt-2">Swatches shown for Hoodies. Leave empty to share T-shirt defaults.</p>
+          </Field>
+          <Field label="Long Sleeve Colors" full>
+            <StudioColorsManager value={longsleeveColorsJson} onChange={setLongsleeveColorsJson} />
+            <p className="text-xs text-gray-400 mt-2">Swatches shown for Long Sleeves. Leave empty to share T-shirt defaults.</p>
+          </Field>
+          <Field label="Cap Colors" full>
+            <StudioColorsManager value={capColorsJson} onChange={setCapColorsJson} />
+            <p className="text-xs text-gray-400 mt-2">Swatches shown for Caps. Leave empty for 6 built-in defaults.</p>
           </Field>
           <Field label="Mug Colors" full>
             <StudioColorsManager value={mugColorsJson} onChange={setMugColorsJson} />
-            <p className="text-xs text-gray-400 mt-2">
-              Colors shown when a Mug product is selected. Leave empty for 6 defaults.
-            </p>
+            <p className="text-xs text-gray-400 mt-2">Swatches shown for Mugs. Leave empty for 6 built-in defaults.</p>
+          </Field>
+          <Field label="Water Bottle Colors" full>
+            <StudioColorsManager value={waterbottleColorsJson} onChange={setWaterbottleColorsJson} />
+            <p className="text-xs text-gray-400 mt-2">Swatches shown for Water Bottles. Leave empty for built-in defaults.</p>
           </Field>
         </SectionCard>
 

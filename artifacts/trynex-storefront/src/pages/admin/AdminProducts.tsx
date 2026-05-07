@@ -7,7 +7,7 @@ import {
 } from "@workspace/api-client-react";
 import { Loader } from "@/components/ui/Loader";
 import { getAuthHeaders, formatPrice, getApiUrl } from "@/lib/utils";
-import { Plus, Trash2, X, Package, Edit3, AlertTriangle, Search, Star, Upload, FileText, CheckCircle, Zap } from "lucide-react";
+import { Plus, Trash2, X, Package, Edit3, AlertTriangle, Search, Star, Upload, FileText, CheckCircle, Zap, Wand2, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -197,6 +197,37 @@ export default function AdminProducts() {
   const [bulkUploading, setBulkUploading] = useState(false);
   const [bulkResult, setBulkResult] = useState<{ success: number; failed: number; errors: string[] } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isAiGenerating, setIsAiGenerating] = useState(false);
+
+  const handleAiDescription = async () => {
+    const name = (document.querySelector('input[name="name"]') as HTMLInputElement)?.value?.trim();
+    if (!name) {
+      toast({ title: "Enter a product name first", variant: "destructive" });
+      return;
+    }
+    setIsAiGenerating(true);
+    try {
+      const prompt = `Write a concise, compelling 2-3 sentence product description for a Bangladesh e-commerce store called TryNex Lifestyle. Product: "${name}". Write in English, highlight quality and customizability. Be enthusiastic but professional. Output ONLY the description text, no labels.`;
+      const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
+      if (!res.ok) throw new Error("AI service unavailable");
+      const text = (await res.text()).trim().replace(/^["']|["']$/g, "");
+      if (text && text.length > 10) {
+        const textarea = document.querySelector('textarea[name="description"]') as HTMLTextAreaElement;
+        if (textarea) {
+          const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value")?.set;
+          nativeInputValueSetter?.call(textarea, text);
+          textarea.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+        toast({ title: "✨ Description generated!" });
+      } else {
+        throw new Error("Empty response");
+      }
+    } catch {
+      toast({ title: "AI generation failed", description: "Please write the description manually.", variant: "destructive" });
+    } finally {
+      setIsAiGenerating(false);
+    }
+  };
 
   const parseCsvRows = (text: string): string[][] => {
     const rows: string[][] = [];
@@ -548,8 +579,20 @@ export default function AdminProducts() {
                     <input {...register("imageUrl")} className={inputClass} style={inputStyle} placeholder="https://..." />
                   </div>
                   <div className="col-span-2">
-                    <Label>Description</Label>
-                    <textarea {...register("description")} rows={3} className={`${inputClass} resize-none`} style={inputStyle} placeholder="Product description..." />
+                    <div className="flex items-center justify-between mb-1.5">
+                      <Label>Description</Label>
+                      <button
+                        type="button"
+                        onClick={handleAiDescription}
+                        disabled={isAiGenerating}
+                        className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-[11px] font-bold transition-all"
+                        style={{ background: isAiGenerating ? '#f3f4f6' : 'linear-gradient(135deg,#fff4ee,#fde8d8)', border: '1px solid #fdd5b4', color: isAiGenerating ? '#9ca3af' : '#E85D04' }}
+                      >
+                        {isAiGenerating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
+                        {isAiGenerating ? "Writing..." : "AI Write"}
+                      </button>
+                    </div>
+                    <textarea {...register("description")} rows={3} className={`${inputClass} resize-none`} style={inputStyle} placeholder="Product description... or click AI Write above." />
                   </div>
                   <div>
                     <Label>Sizes (comma separated)</Label>

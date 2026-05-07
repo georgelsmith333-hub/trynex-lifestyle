@@ -20,6 +20,10 @@ const SETTINGS_KEYS = [
   // Design Studio keys — removeBgApiKey is secret (write-only via admin, NEVER in public response)
   "removeBgApiKey", "studioTshirtColors", "studioMugColors",
   "studioTshirtPrice", "studioMugPrice",
+  "studioHoodieColors", "studioHoodiePrice",
+  "studioLongsleeveColors", "studioLongsleevePrice",
+  "studioCapColors", "studioCapPrice",
+  "studioWaterbottleColors", "studioWaterbottlePrice",
   // Visual Designer keys (Task #7)
   "heroImageUrl", "heroGradient", "heroCTAText", "heroCTALink",
   "primaryColor", "announcementColor",
@@ -98,9 +102,17 @@ async function buildSettings(map: Record<string, string | null>) {
     // Public Design Studio settings (safe to expose) — per product type
     studioTshirtColors: map["studioTshirtColors"] ?? "",
     studioMugColors: map["studioMugColors"] ?? "",
+    studioHoodieColors: map["studioHoodieColors"] ?? "",
+    studioLongsleeveColors: map["studioLongsleeveColors"] ?? "",
+    studioCapColors: map["studioCapColors"] ?? "",
+    studioWaterbottleColors: map["studioWaterbottleColors"] ?? "",
     // Admin-configured prices for custom studio orders (BDT)
     studioTshirtPrice: parseFloat(map["studioTshirtPrice"] ?? "1099"),
     studioMugPrice: parseFloat(map["studioMugPrice"] ?? "799"),
+    studioHoodiePrice: parseFloat(map["studioHoodiePrice"] ?? "1699"),
+    studioLongsleevePrice: parseFloat(map["studioLongsleevePrice"] ?? "1299"),
+    studioCapPrice: parseFloat(map["studioCapPrice"] ?? "699"),
+    studioWaterbottlePrice: parseFloat(map["studioWaterbottlePrice"] ?? "899"),
     // Visual Designer settings (Task #7)
     heroImageUrl: map["heroImageUrl"] ?? "",
     heroGradient: map["heroGradient"] ?? "",

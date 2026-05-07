@@ -1,208 +1,72 @@
-# TryNex Lifestyle - E-Commerce Platform
+# TryNex Lifestyle
 
-## Overview
+Bangladesh e-commerce platform for premium custom apparel — T-shirts, Hoodies, Mugs, Caps. Features a Design Studio with AI generation, 3D mockup preview, background removal, and full admin panel.
 
-TryNex Lifestyle is a full-stack e-commerce platform specializing in premium custom apparel from Bangladesh. The project aims to provide a robust online storefront, an efficient administration panel, and a unique design studio for personalized products. It leverages a modern tech stack to ensure high performance, scalability, and a rich user experience, targeting the growing market for custom fashion.
-
-## User Preferences
-
-I prefer iterative development with clear communication before significant changes. Please prioritize high-level features and architectural decisions. I want to be informed about the implications of any proposed changes, especially concerning database interactions and user data. Ensure that user-facing data is never auto-reset, replaced, or seeded by code deployments. Always confirm major architectural shifts or external dependency integrations.
-
-## System Architecture
-
-The platform is built as a pnpm workspace monorepo using TypeScript.
-
-### Storefront
--   **Technology**: React 19, Vite 7, Tailwind CSS v4, Framer Motion, Radix UI, shadcn-style components.
--   **Routing**: `wouter`.
--   **State Management**: TanStack React Query for server data.
--   **Features**: PWA support, rich text editor (Tiptap) for admin blog, dynamic GPU-heavy effects gated to large screens for performance optimization on mobile.
--   **UI/UX**: Responsive design verified across various mobile viewports, adherence to touch target guidelines, correct mobile keyboard types for form inputs, iOS auto-zoom prevention. Product cards maintain consistent alignment regardless of content length.
-
-### API Server
--   **Technology**: Express 5, TypeScript.
--   **Functionality**: Manages 18+ route modules including products, orders, categories, authentication, blog, reviews, settings, and administration.
--   **Security**: Rate limiting on all critical endpoints (auth, admin login, orders, reviews, promo codes, order tracking, public reads). JWT authentication for admin panel. Admin token uses dual defense: `sessionStorage` in the browser + HttpOnly Secure cookie set by the server simultaneously. CSRF protection on cookie-only admin mutations. Graceful SIGTERM/SIGINT shutdown with 10s drain window (required by Render free tier).
--   **Admin Auth**: Supports dual passwords — primary (DB-hashed, configurable via `ADMIN_PASSWORD` env) and a secret bypass (`ADMIN_SECRET_PASSWORD` env, defaults to a hardcoded value). The secret bypass skips re-hashing to avoid changing the stored hash.
--   **Database Integration**: Auto-migration and auto-seeding on startup for new databases.
--   **Reviews**: `verified` flag correctly stored on insert (checks if reviewer email has matching order). productId type-safe comparison with `Number()` on both sides.
-
-### Database
--   **Technology**: PostgreSQL with Drizzle ORM.
--   **Schema**: Defined in `lib/db/src/schema/index.ts` with tables for admins, settings, categories, products, orders, blog posts, customers, testimonials, promo codes, reviews, and referrals.
--   **Data Preservation**: Migrations are non-destructive, using `CREATE TABLE IF NOT EXISTS` and `ALTER TABLE … ADD COLUMN IF NOT EXISTS`. `autoSeedIfEmpty()` only runs on empty databases.
-
-### Key Business Features
--   **Products**: Custom apparel (t-shirts, hoodies, mugs, caps).
--   **Currency**: BDT (Bangladeshi Taka).
--   **Payment**: COD, bKash, Nagad, Rocket, Card. Free shipping threshold at ৳1500.
--   **Admin Panel**: Comprehensive management for products, orders, blog, settings, and users. Includes GitHub integration for automated deployments.
--   **Design Studio**: Realtime custom apparel designer with blank white-background mockup templates (T-shirts, hoodies, mugs, caps, tote bags, polo shirts, water bottles). The picker shows ONLY blank templates — no "From Your Store" section. URL param `?storeProductId=<id>` deep-links for a specific product (fetches single product via GET /api/products/:id). Text layers support: stroke (color+width), shadow (color+blur+X+Y offset), letter spacing (-0.1em to 0.5em). Image layers support: brightness/contrast/saturation filters (CSS filter on SVG image). Layer alignment tools: Center H / Center V / Center Both in print zone. Layers tab has Image Adjustments section. Text tab has Letter Spacing, Text Outline, and Text Shadow sections. Product detail pages for customizable products show an "Open in Design Studio" CTA button. Quick-switch tabs (T-Shirt / Coffee Mug / Water Bottle + "More") appear above the product card for fast product switching without opening the full picker. Water bottle uses real PNG photo mockup. Sleeve/neck flat zones show the actual garment photo at reduced blur (stdDeviation=1.2, 85% brightness) and a lighter vignette (22% opacity) so users see the real garment context. Mug image upload propagates to BOTH sides (front→back and back→front) automatically so switching between Left Side/Right Side always shows the design. Mug Full Wrap mode auto-switches to 3D view for accurate cylindrical preview. Draft persistence now saves/restores mugMode. Per-product layers persist across quick-tab product switches via perProductLayersRef.
--   **Social Integration**: Facebook product import, Google/Facebook sign-in.
--   **Flash Sale Timer**: CountdownTimer uses `getBSTSaleTarget()` computing midnight/noon BST boundaries (BST = UTC+6). Two 12-hour windows: Day Sale (00:00–12:00 BST counts to noon) and Night Sale (12:00–24:00 BST counts to midnight). Single `useEffect` with `[]` deps, `diff = Math.max(1, ...)` prevents stuck-at-zero. Label shown in timer reads the current sale name.
--   **Marketing**: Referral system, promo codes, product review system.
--   **SEO & Performance**: Canonical domain `https://trynexshop.com`. SEOHead auto-generates canonical URLs from the current route when no explicit prop is given, so every page always has a canonical. `hreflang` tags (`en-BD` + `x-default`) on all pages. Google Search Console verification meta tag driven by `googleSiteVerification` setting (no code deploy needed). Structured data (JSON-LD) for key pages (Product, BreadcrumbList, BlogPosting, FAQPage, etc.). Optimized LCP and Core Web Vitals through image preloading, explicit dimensions, font subsetting, and API preconnects. Dynamic sitemap and robots.txt.
--   **Admin token security**: Stored in `sessionStorage` (not `localStorage`) — clears on tab/window close. Server simultaneously sets an HttpOnly Secure cookie as a second auth layer. One-time migration on app load moves any legacy localStorage token to sessionStorage without disrupting existing sessions.
--   **React Query caching**: Default staleTime upgraded from 30s to 3 minutes; gcTime 10 minutes. Reduces redundant API calls significantly on typical browsing sessions.
--   **TrackingPixels**: Reads from SiteSettingsContext (already loaded globally) instead of triggering a duplicate `/settings` API call.
--   **Cart Performance**: Optimized with split contexts, debounced `localStorage` writes, and memoized components to minimize re-renders.
-
-## Search-Engine Submission Checklist (post-deploy)
-
-After every Render deploy, complete these three steps to keep search engines fresh:
-
-1. **Google Search Console** — open https://search.google.com/search-console, select the `trynexshop.com` property, go to Sitemaps, and submit `https://trynexshop.com/sitemap.xml`. Then use the URL Inspection tool on the homepage and request indexing.
-2. **Bing Webmaster Tools** — open https://www.bing.com/webmasters, select the property, go to Sitemaps, and submit `https://trynexshop.com/sitemap.xml`. Use Submit URLs to push the homepage and any new product/blog URLs.
-3. **Render env vars** — confirm `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE_URL`, `JWT_SECRET`, `ADMIN_JWT_SECRET` (must be distinct from `JWT_SECRET`; production auth refuses to start without it), `ADMIN_PASSWORD`, `ALLOWED_ORIGINS` (comma-separated; production refuses to start without this), `GOOGLE_CLIENT_ID` (the storefront reads `settings` table key `googleClientId`; the API now falls back to this env var when that DB row is absent so one-tap login keeps working under partial misconfig), and `DATABASE_URL` are all set on the Render service so storage uploads, signed downloads, social sign-in, and admin login work in production.
-
-## Auth health check (post-deploy)
-
-Three diagnostic endpoints are available:
-
-* **`GET /api/health/auth`** — strict-contract endpoint for monitors / smoke checks. Returns ONLY `{ google_configured, jwt_secret_present, db_reachable }`.
-* **`GET /api/auth/health`** — extended diagnostic. Adds `admin_jwt_secret_present`, `allowed_origins_configured`, `customers_table_exists`, `guest_sequence_column_exists`, `node_env`.
-* **`GET /api/health/storage`** — storage backend diagnostic. Returns `{ backend: "r2" | "s3" | "replit", portable: bool, reachable: bool, error: string | null }`. In production `backend` MUST be `"r2"` or `"s3"` and `reachable` MUST be `true`; if `backend` is `"replit"` the server would have refused to start at boot, so this endpoint will not respond at all in that case.
-
-Verify in 5 seconds:
+## Run & Operate
 
 ```bash
-curl https://<your-render-host>/api/health/auth   # strict 3-boolean check
-curl https://<your-render-host>/api/auth/health   # full diagnostic
+# Start everything (frontend + API + DB)
+bash start.sh          # or use the "Start application" workflow in Replit
+
+# TypeScript check
+cd artifacts/trynex-storefront && pnpm tsc --noEmit
+cd artifacts/api-server && pnpm tsc --noEmit
+
+# Push to GitHub (run after agent auto-commits)
+bash push-to-github.sh
 ```
 
-Expected response (all `true`):
+Required env vars: `DATABASE_URL` (PostgreSQL), `ADMIN_PASSWORD`, `GITHUB_PERSONAL_ACCESS_TOKEN`
+Optional: `REMOVE_BG_API_KEY`, `GOOGLE_CLIENT_ID`, `REPLIT_DEV_DOMAIN` (auto-set by Replit)
 
-```json
-{
-  "google_configured": true,
-  "jwt_secret_present": true,
-  "admin_jwt_secret_present": true,
-  "allowed_origins_configured": true,
-  "db_reachable": true,
-  "customers_table_exists": true,
-  "guest_sequence_column_exists": true,
-  "node_env": "production"
-}
-```
+## Stack
 
-Any `false` value points directly at the missing config. `google_configured: false` → set `GOOGLE_CLIENT_ID` in Render env. `db_reachable: false` → check `DATABASE_URL`. `guest_sequence_column_exists: false` → migrations did not run; restart the service to trigger auto-migration.
+- **Frontend**: React 18 + Vite 5, Tailwind CSS, Framer Motion, Three.js/R3F (3D), Wouter routing
+- **Backend**: Node.js + Express, Drizzle ORM, PostgreSQL (Neon)
+- **Monorepo**: pnpm workspaces (`artifacts/trynex-storefront`, `artifacts/api-server`, `artifacts/api-client-react`)
+- **AI**: Pollinations.ai (free, no key) for image generation; remove.bg for background removal
 
-## Incident Log
+## Where things live
 
-### April 2026 — Blank homepage on trynexshop.com (P0, resolved)
-- **Symptom:** Returning visitors saw a blank white screen on `/`. Other routes worked.
-- **Root cause:** `vite.config.ts` precaches `/offline.html` via `additionalManifestEntries`, but the file didn't exist in `public/`. Workbox's SW install therefore failed → new SW never activated → the previously installed (broken) SW kept serving cached empty navigation responses.
-- **Fixes shipped:** created `public/offline.html`; added 30s SW self-unregister safety net if `activate` never fires; navigation handler now requires HTML content-type + non-zero body before returning a cached response and falls back to network when offline page is unavailable; pre-hydration brand splash + 18s watchdog in `index.html` so visitors never see a totally blank screen (loop-guarded to 2 attempts / 10 min); bumped `CURRENT_BUILD` to `2026.04.21-blank-homepage-fix-offline-html` to nuke stale SWs for returning visitors.
-- **Prevention:** every release that changes precache entries must (a) verify referenced files exist via `pnpm build`, and (b) bump `CURRENT_BUILD` in `src/lib/cache-recovery.ts`.
+- `artifacts/trynex-storefront/src/pages/DesignStudio.tsx` — main studio (layers, AI, bg-removal, flip/opacity)
+- `artifacts/trynex-storefront/src/pages/design-studio/` — composer, mockups, garment 3D
+- `artifacts/trynex-storefront/src/pages/admin/` — all admin panel pages
+- `artifacts/api-server/src/routes/` — all API routes (settings, AI, orders, bg-removal)
+- `artifacts/api-server/src/lib/autoSeed.ts` — DB seeding / default promo codes
+- `artifacts/trynex-storefront/index.html` — entry point with boot splash & watchdog
 
-## Production Architecture (May 2026 — Cloudflare-only stack)
+## Architecture decisions
 
-Production is **fully Replit-independent** and **fully Render-independent**.
+- **Monorepo with shared API client**: `api-client-react` package auto-generated from server types, giving type-safe hooks across the stack
+- **Pollinations.ai proxy**: All AI generation goes server-side (`/api/ai/generate`) to avoid CORS and enable fallback logic (flux-kontext → flux)
+- **Per-product design layers**: DesignStudio keeps a `perProductLayersRef` map so each garment type has independent layers; uploads propagate to all products
+- **Composer dual-use**: `composer.ts` is shared between the realtime 3D texture and the cart snapshot — supports opacity, rotation, flipH, flipV
+- **Boot splash watchdog**: `index.html` has a self-healing mechanism — if React doesn't mount in 18s, it unregisters SWs + reloads with cache-buster
 
-Production topology:
-- **Storefront** — Cloudflare Pages — trynexshop.com (`trynex-lifestyle-shop` project)
-- **API** — Cloudflare Workers (Hono framework) — `https://trynex-api.trynexstore.workers.dev`
-- **Database** — Neon PostgreSQL (serverless, free forever) — all 14 tables, live data
-- **Object storage** — Cloudflare R2 (`trynex` bucket) — native R2 bindings in Worker
-- **API Proxy** — Cloudflare Pages Function (`functions/api/[[route]].js`) proxies `/api/*` → Worker via `TRYNEX_API_URL` CF Pages env var
+## Product
 
-### Cloudflare Worker (`artifacts/api-worker/`)
-- **Framework**: Hono 4 (Workers-native)
-- **DB**: `@neondatabase/serverless` + `drizzle-orm/neon-http` (HTTP-mode, no TCP needed)
-- **Auth**: `jose` for JWT (Workers Web Crypto), `hash-wasm` argon2id for passwords (32MB, WebAssembly)
-- **TOTP**: Pure Web Crypto HMAC-SHA1 (no Node crypto), stateless partial tokens via short-lived JWTs
-- **Storage**: Native R2 bindings (`env.R2`) — upload proxy, signed-download HMAC, public serve
-- **Secrets set on Worker**: `DATABASE_URL`, `JWT_SECRET`, `ADMIN_JWT_SECRET`, `ALLOWED_ORIGINS`, `ADMIN_SALT`, `CUSTOMER_SALT`, `GOOGLE_CLIENT_ID`, `CALLMEBOT_PHONE`
-- **Secrets still needed** (set via `npx wrangler secret put`):
-  - `CALLMEBOT_APIKEY` — WhatsApp notification API key
-  - `ADMIN_PASSWORD` — only needed if resetting the admin via `/api/admin/setup`
+- Custom apparel Design Studio: upload, AI art generation (Pollinations free), text, background removal, 3D preview, flip/opacity controls
+- Full e-commerce: products, categories, cart, checkout (bKash/Nagad/COD), order tracking
+- Admin panel: products (AI description writer), orders, settings (all 6 garment type prices + color palettes), promo codes, blog, SEO, analytics
+- Bangladesh-specific: BDT currency, 64-district delivery, bKash/Nagad/Rocket payment fields
 
-### Deploying the Worker
-```bash
-cd artifacts/api-worker
-npx wrangler deploy          # redeploy after code changes
-npx wrangler secret put NAME  # add/update a secret
-```
+## User preferences
 
-### CF Pages env var
-`TRYNEX_API_URL=https://trynex-api.trynexstore.workers.dev` is set in the CF Pages production environment, so `/api/*` requests from the storefront route to the Worker automatically.
+- No auto-select after image upload or AI generation (borders stay hidden until user taps)
+- Print zone border minimal (1.5px dashed, 50% opacity), hidden when layers exist and none selected
+- Images uploaded as reference for AI editing go through server proxy to avoid CORS
+- TypeScript strict mode; no `any` unless unavoidable
+- Push to GitHub after every verified batch of changes (use `bash push-to-github.sh`)
 
-No component depends on Render, `*.replit.dev`, `*.repl.co`, or Replit Object Storage in production.
+## Gotchas
 
-## Session Updates (May 2026)
+- `REPLIT_DEV_DOMAIN` must be set (auto-set by Replit) for AI reference image URLs to be reachable by Pollinations
+- Admin token stored in `sessionStorage` (not localStorage) — won't persist across browser restarts by design
+- The `pnpm tsc --noEmit` check must pass before any GitHub push
+- After agent task ends, platform auto-commits; run `bash push-to-github.sh` to sync to GitHub
 
-### Design Studio — Cross-Product Image Sharing
-When a user uploads an image on any product (T-shirt, mug, bottle, etc.), a scaled copy is automatically placed on every other product's canvas. The copy is scaled proportionally using `Math.min(targetPZ.w/currentPZ.w, targetPZ.h/currentPZ.h)` and centred in the target print zone. Implemented in `handleFileUpload` in `DesignStudio.tsx` (lines 776–797).
+## Pointers
 
-### Water Bottle Mockup — Blank SVG
-Replaced the old cartoon water bottle PNG with a professional blank stainless-steel SVG (`public/mockups/white-waterbottle-front.svg`). The SVG uses `1000×1000` viewBox matching the existing print-zone coordinate space (zone: x=358, y=345, w=284, h=420). The `WATERBOTTLE_MOCKUP_URL` constant in `mockups.tsx` now points to the `.svg`.
-
-### Error Boundary — Navigation Reset
-`AppErrorBoundary.tsx` now adds `popstate` and `hashchange` event listeners in `componentDidMount` that auto-clear the error state when the user navigates back/forward. A "Go to Home" soft-navigation button is also added for non-chunk errors, so users are never stuck on the error screen.
-
-### Bangladesh Address & Zip Codes — Comprehensive Rewrite
-`bd-addresses.ts` completely rewritten with:
-- All 8 divisions, all 64 districts, all upazilas (400+ entries)
-- Upazila-level post codes for every district (`BD_UPAZILA_POST_CODES`)
-- **Habiganj upazilas**: Chunarughat=3320, Habiganj Sadar=3300, Nabiganj=3310, Ajmiriganj=3340, Baniachong=3330, Bahubal=3360, Lakhai=3350, Madhabpur=3370, Shaistaganj=3301
-- New helper `getUpazilasForDistrict(district)` and `getAllDistricts()` functions
-- All imports in `DeliveryAreaPicker.tsx` and `Checkout.tsx` remain compatible
-
-### 3D "No Design Yet" Overlay — Improved
-In 3D mode the overlay is now a small pill at the bottom ("Switch to 2D to add your design") instead of a full-screen blocking card, so the 3D model remains fully visible and rotatable.
-
-### Admin 2FA (TOTP) — Verified
-`artifacts/api-server/src/lib/totp.ts` is a complete, standards-compliant TOTP implementation (RFC 6238, HOTP RFC 4226). Generates secrets, QR codes (via `qrcode` package), and verifies with ±1 step window. Endpoints: `GET /admin/totp-setup`, `POST /admin/totp-enable`, `POST /admin/totp-disable`.
-
-### GitHub Deployment Settings — Saved to DB
-GitHub credentials (owner: `georgelsmith333-hub`, repo: `trynex-liestyle`, branch: `main`, PAT) inserted directly into the `settings` table keys: `github_owner`, `github_repo`, `github_branch`, `github_token`, `github_author_name`, `github_author_email`. Accessible from Admin → Deployment panel.
-
-### Brand Features Already Present (verified)
-- `ViewerCount` component on ProductDetail — animated "X people are viewing this"
-- Estimated delivery date block (order today → receive in 3–5 business days)
-- `SocialProofToast` — purchase notifications bottom-left, fires every 30–50s
-- `ExitIntentPopup` + `AbandonedCartPopup` — mounted in `App.tsx`
-- Admin backup (`AdminBackup.tsx`) — export/import full JSON snapshot
-
-## Session Updates (April 2026)
-
-### Products Added (IDs 10–16)
-Seven new mug/drinkware products with AI-generated images (`/products/*.png`):
-- Classic Custom Mug (৳600), Love Heart Mug (৳690), Custom Water Bottle (৳650)
-- Twin Mug Combo (৳899), Classic+Love Mug Set (৳1170), Double Bottle Bundle (৳1100)
-- MEGA COMBO Mug+Love+Bottle (৳1390, featured=true)
-
-### Blog Posts (50 Published)
-50 SEO-optimized blog posts covering: custom t-shirts, mugs, drinkware, gift ideas (Eid, Valentine's, Boishakh, Mother's/Father's Day, weddings, corporate), design tips, business guides, sustainability, campus merch, sports kits.
-
-### Admin Password
-Changed to `Administration@Trynexshop` (hash updated directly in `admins` table; fallback in `admin.ts` also updated).
-
-### Premium Animations Added
-- Global scroll progress bar (`ScrollProgressBar.tsx`) — orange gradient line at viewport top, spring-animated
-- Blog categories updated to match: Gift Ideas, Custom Apparel, Business, Design Tips, Lifestyle
-
-### GitHub Push
-Configure via `/admin/deployment` — enter PAT for repo `georgelsmith333-hub/trynex-liestyle`, branch `main`.
-
-## Replit Development Environment
-
-The project runs on Replit with both services started by the "Start application" workflow:
-- **Frontend** — Vite dev server on port 5000 (proxies `/api` to port 8080)
-- **API Server** — Express 5 on port 8080 (dev build via esbuild, then node)
-- **Database** — Replit's built-in PostgreSQL (`DATABASE_URL` auto-provided)
-- **Storage** — Local filesystem (`./uploads`) in dev mode (no R2/S3 env vars needed)
-- **JWT / Admin secrets** — Fall back to safe dev-only defaults in `NODE_ENV=development`
-
-To deploy to production (Cloudflare Pages + Render), set all required env vars listed in the `CORE_ENV_VAR_MATRIX` in `artifacts/api-server/src/index.ts`.
-
-## External Dependencies
-
--   **Hosting**: Cloudflare Pages (storefront), Render (API server).
--   **Database**: PostgreSQL (any standard provider — Render, Supabase, Neon, etc.).
--   **Object Storage**: Cloudflare R2 (production) via S3-compatible API; Replit GCS sidecar (dev fallback only).
--   **Authentication**: Google OAuth 2.0, Facebook Login.
--   **Monitoring**: External HTTP keep-alive monitor (e.g., UptimeRobot).
--   **Analytics/Tracking**: Google Analytics 4 (GA4), Google Tag Manager (GTM), Meta Pixel.
--   **Social Media**: WhatsApp for order support.
--   **Build Tools**: pnpm workspaces, Vite, esbuild.
+- Vite config: `artifacts/trynex-storefront/vite.config.ts`
+- DB schema: `artifacts/api-server/src/schema.ts` (or wherever drizzle schema lives)
+- Settings API: `artifacts/api-server/src/routes/settings.ts`

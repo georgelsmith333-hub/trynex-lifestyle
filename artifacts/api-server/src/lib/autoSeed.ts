@@ -17,6 +17,9 @@ async function seedCoreBrandSettings(): Promise<void> {
   const defaults: Record<string, string> = {
     siteName: "TryNex Lifestyle",
     tagline: "You imagine, we craft",
+    exitIntentPromoEnabled: "true",
+    exitIntentPromoCode: "WELCOME",
+    exitIntentPromoDiscount: "10%",
   };
   try {
     for (const [key, def] of Object.entries(defaults)) {

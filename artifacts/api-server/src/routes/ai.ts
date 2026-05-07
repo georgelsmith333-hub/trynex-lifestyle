@@ -135,48 +135,69 @@ router.get("/ai/generate", async (req: Request, res: Response) => {
   const w = Math.min(1024, Math.max(256, parseInt(width, 10) || 512));
   const h = Math.min(1024, Math.max(256, parseInt(height, 10) || 512));
 
-  let pollinationsUrl: string;
+  // Build candidate URLs in priority order.
+  // For img2img we try: flux-kontext (best quality) → flux (reliable fallback).
+  // For text-to-image we use: flux (most reliable free model).
+  const candidateUrls: string[] = [];
   if (imageUrl && typeof imageUrl === "string") {
-    // img2img — flux-kontext guided editing
-    pollinationsUrl = [
-      `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`,
-      `?width=${w}&height=${h}&seed=${finalSeed}&nologo=true&model=kontext`,
-      `&image_url=${encodeURIComponent(imageUrl)}`,
-    ].join("");
+    candidateUrls.push(
+      [
+        `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`,
+        `?width=${w}&height=${h}&seed=${finalSeed}&nologo=true&model=kontext`,
+        `&image_url=${encodeURIComponent(imageUrl)}`,
+      ].join(""),
+      [
+        `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`,
+        `?width=${w}&height=${h}&seed=${finalSeed}&nologo=true&model=flux`,
+      ].join(""),
+    );
   } else {
-    // text-to-image — flux standard
-    pollinationsUrl = [
-      `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`,
-      `?width=${w}&height=${h}&seed=${finalSeed}&nologo=true&model=flux`,
-    ].join("");
+    candidateUrls.push(
+      [
+        `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`,
+        `?width=${w}&height=${h}&seed=${finalSeed}&nologo=true&model=flux`,
+      ].join(""),
+    );
   }
 
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 90_000);
-    const imgRes = await fetch(pollinationsUrl, {
-      signal: controller.signal,
-      headers: { "User-Agent": "TryNex-AI-Proxy/1.0" },
-    });
-    clearTimeout(timeout);
+  let lastError = "Unknown error";
+  for (const pollinationsUrl of candidateUrls) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 75_000);
+      const imgRes = await fetch(pollinationsUrl, {
+        signal: controller.signal,
+        headers: { "User-Agent": "TryNex-AI-Proxy/1.0" },
+      });
+      clearTimeout(timeout);
 
-    if (!imgRes.ok) {
-      console.error(`[ai/generate] Pollinations returned ${imgRes.status}`);
-      return res.status(502).json({ error: `AI service returned status ${imgRes.status}. Try again.` });
-    }
+      if (!imgRes.ok) {
+        lastError = `AI service returned ${imgRes.status}`;
+        console.warn(`[ai/generate] ${pollinationsUrl} → ${imgRes.status}, trying next…`);
+        continue;
+      }
 
-    const buf = await imgRes.arrayBuffer();
-    const mime = imgRes.headers.get("content-type") || "image/jpeg";
-    const b64 = Buffer.from(buf).toString("base64");
-    return res.json({ dataUrl: `data:${mime};base64,${b64}` });
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
-    console.error("[ai/generate] fetch error:", msg);
-    if (msg.includes("abort") || msg.includes("timeout")) {
-      return res.status(504).json({ error: "AI generation timed out (>90s). Try a simpler prompt." });
+      const buf = await imgRes.arrayBuffer();
+      if (buf.byteLength < 512) {
+        lastError = "AI returned an empty image";
+        console.warn("[ai/generate] Empty image response, trying next…");
+        continue;
+      }
+      const mime = imgRes.headers.get("content-type") || "image/jpeg";
+      const b64 = Buffer.from(buf).toString("base64");
+      return res.json({ dataUrl: `data:${mime};base64,${b64}` });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      lastError = msg;
+      console.warn("[ai/generate] fetch error:", msg, "— trying next candidate…");
+      if (msg.includes("abort") || msg.includes("timeout")) {
+        lastError = "AI generation timed out. Try a shorter/simpler prompt.";
+      }
     }
-    return res.status(502).json({ error: `Generation failed: ${msg}` });
   }
+
+  console.error("[ai/generate] All candidates failed. Last error:", lastError);
+  return res.status(502).json({ error: lastError.includes("timed out") ? lastError : "AI generation failed — the service may be busy. Please try again." });
 });
 
 export default router;

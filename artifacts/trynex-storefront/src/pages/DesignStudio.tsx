@@ -945,7 +945,9 @@ export default function DesignStudio() {
 
       flushSync(() => {
         commitLayers([...layersRef.current, ...layersToAdd]);
-        setSelectedLayerId(layer.id);
+        // Do NOT auto-select — placed image stays in "rest" state so print-zone
+        // border auto-hides and the client sees a clean design immediately.
+        // User deliberately taps the image on the canvas to enter edit mode.
         setActiveTab("layers");
       });
 
@@ -974,7 +976,7 @@ export default function DesignStudio() {
         };
       });
 
-      toast({ title: "✓ Image added to all products", description: "Design applied across all products. Switch products to preview." });
+      toast({ title: "✓ Design placed!", description: "Tap your design to move, resize or adjust it." });
     };
     reader.readAsDataURL(file);
   };
@@ -998,13 +1000,26 @@ export default function DesignStudio() {
     if (!selectedLayer || selectedLayer.type !== "image") return;
     setIsRemoving(true);
 
-    /* Helper — apply a new data-URL to the selected image layer */
+    /* Helper — apply a new data-URL to the selected image layer and propagate to all products */
+    const oldSrc = selectedLayer.src;
     const applyResult = async (dataUrl: string) => {
       const img = new Image();
       await new Promise<void>((res, rej) => { img.onload = () => res(); img.onerror = rej; img.src = dataUrl; });
       updateLayer(selectedLayer.id, l => l.type === "image"
         ? { ...l, src: dataUrl, naturalW: img.naturalWidth, naturalH: img.naturalHeight }
         : l, true);
+      // Propagate updated image to all other products that had the same original src
+      Object.keys(perProductLayersRef.current).forEach(prodId => {
+        if (prodId === selectedProduct.id) return;
+        const entry = perProductLayersRef.current[prodId];
+        if (!entry) return;
+        const updatedLayers = entry.layers.map(l =>
+          l.type === "image" && l.src === oldSrc
+            ? { ...l, src: dataUrl, naturalW: img.naturalWidth, naturalH: img.naturalHeight }
+            : l
+        );
+        perProductLayersRef.current[prodId] = { ...entry, layers: updatedLayers };
+      });
     };
 
     /* ── Step 1: Try server (remove.bg API) ── */
@@ -1180,11 +1195,12 @@ export default function DesignStudio() {
 
       flushSync(() => {
         commitLayers([...layersRef.current, layer]);
-        setSelectedLayerId(layer.id);
+        // Do NOT auto-select — let client see clean result without borders/handles.
+        // They tap the image on canvas to enter edit mode.
         setActiveTab("layers");
       });
       setAiHistory(h => [{ url: dataUrl, prompt }, ...h].slice(0, 8));
-      toast({ title: "✨ AI image added!", description: "Tip: use Remove Background for a clean cutout." });
+      toast({ title: "✨ AI design placed!", description: "Tap it on the canvas to adjust or resize." });
     } catch (err) {
       console.error("[ai-gen]", err);
       const msg = err instanceof Error ? err.message : String(err);
@@ -2204,7 +2220,7 @@ export default function DesignStudio() {
               </div>
             </div>
 
-            {/* Mockup area */}
+            {/* Mockup area — clicking the background outside the canvas deselects */}
             <div
               className="relative rounded-3xl overflow-hidden select-none"
               style={{
@@ -2216,6 +2232,12 @@ export default function DesignStudio() {
               onDrop={handleDrop}
               onDragOver={(e) => e.preventDefault()}
               onDragEnter={(e) => e.preventDefault()}
+              onClick={(e) => {
+                // Deselect when clicking the outer container padding/chrome (not the SVG/canvas)
+                if ((e.target as Element).closest("svg") === null) {
+                  setSelectedLayerId(null);
+                }
+              }}
             >
               <div
                 className="relative w-full"
@@ -2323,13 +2345,20 @@ export default function DesignStudio() {
                         const cssFilter = hasCssFilter
                           ? `brightness(${lx.brightness ?? 100}%) contrast(${lx.contrast ?? 100}%) saturate(${lx.saturation ?? 100}%)`
                           : undefined;
+                        // Build SVG transform: rotate + optional flip around image center
+                        const flipSX = lx.flipH ? -1 : 1;
+                        const flipSY = lx.flipV ? -1 : 1;
+                        const hasFlip = lx.flipH || lx.flipV;
+                        const imgTransform = hasFlip
+                          ? `rotate(${l.transform.rotation}, ${g.cx}, ${g.cy}) translate(${g.cx}, ${g.cy}) scale(${flipSX}, ${flipSY}) translate(${-g.cx}, ${-g.cy})`
+                          : `rotate(${l.transform.rotation}, ${g.cx}, ${g.cy})`;
                         return (
                           <image key={l.id}
                             data-layer-id={l.id}
                             href={l.src}
                             x={g.x} y={g.y} width={g.w} height={g.h}
                             opacity={l.transform.opacity}
-                            transform={`rotate(${l.transform.rotation}, ${g.cx}, ${g.cy})`}
+                            transform={imgTransform}
                             preserveAspectRatio="none"
                             style={{ cursor: l.locked ? "not-allowed" : "grab", filter: cssFilter }}
                           />
@@ -2392,18 +2421,20 @@ export default function DesignStudio() {
                   {selectedLayer && selGeom && (
                     <g pointerEvents="none">
                       <rect x={selGeom.x} y={selGeom.y} width={selGeom.w} height={selGeom.h}
-                        fill="none" stroke="#E85D04" strokeWidth="1.5" strokeDasharray="4 3"
-                        transform={`rotate(${selectedLayer.transform.rotation}, ${selGeom.cx}, ${selGeom.cy})`} />
+                        fill="none" stroke="#E85D04" strokeWidth="1" strokeDasharray="4 3"
+                        transform={`rotate(${selectedLayer.transform.rotation}, ${selGeom.cx}, ${selGeom.cy})`}
+                        vectorEffect="non-scaling-stroke" />
                     </g>
                   )}
                   {/* Corner resize handles — visible dot + transparent 44px hit area */}
                   {selectedLayer && rotatedCorners.map(h => (
                     <g key={h.key}>
-                      {/* Visible handle dot (no pointer events — hit area below handles it) */}
-                      <circle cx={h.x} cy={h.y} r={7}
-                        fill="white" stroke="#E85D04" strokeWidth="2"
-                        style={{ filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.2))" }}
+                      {/* Visible handle dot — smaller and minimal */}
+                      <circle cx={h.x} cy={h.y} r={5}
+                        fill="white" stroke="#E85D04" strokeWidth="1.5"
+                        style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.18))" }}
                         pointerEvents="none"
+                        vectorEffect="non-scaling-stroke"
                       />
                       {/* Transparent hit area — 30px radius on all devices for reliable finger taps */}
                       <circle cx={h.x} cy={h.y} r={30}
@@ -2432,18 +2463,18 @@ export default function DesignStudio() {
                         pointerEvents="all"
                         onPointerDown={e => handleEdgeResizeDown(e as unknown as React.PointerEvent<SVGCircleElement | SVGRectElement>, h.key)}
                       />
-                      {/* Pill-shaped visible indicator at the edge midpoint */}
+                      {/* Pill-shaped visible indicator at the edge midpoint — minimal */}
                       <rect
-                        x={h.key === "n" || h.key === "s" ? h.midX - 13 : h.midX - 5}
-                        y={h.key === "n" || h.key === "s" ? h.midY - 5 : h.midY - 13}
-                        width={h.key === "n" || h.key === "s" ? 26 : 10}
-                        height={h.key === "n" || h.key === "s" ? 10 : 26}
-                        rx={5}
+                        x={h.key === "n" || h.key === "s" ? h.midX - 10 : h.midX - 4}
+                        y={h.key === "n" || h.key === "s" ? h.midY - 4 : h.midY - 10}
+                        width={h.key === "n" || h.key === "s" ? 20 : 8}
+                        height={h.key === "n" || h.key === "s" ? 8 : 20}
+                        rx={4}
                         fill="white"
                         stroke="#E85D04"
-                        strokeWidth="2"
+                        strokeWidth="1.5"
                         vectorEffect="non-scaling-stroke"
-                        style={{ filter: "drop-shadow(0 1px 4px rgba(0,0,0,0.22))" }}
+                        style={{ filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.18))" }}
                         pointerEvents="none"
                       />
                     </g>
@@ -3096,6 +3127,39 @@ export default function DesignStudio() {
                         {selectedLayer.type === "image" && (
                           <div className="pt-2 border-t border-gray-100 space-y-3">
                             <div className="text-[11px] font-black uppercase tracking-widest text-gray-400">Image Adjustments</div>
+                            {/* Opacity */}
+                            <div>
+                              <div className="flex items-center justify-between mb-1">
+                                <label className="text-[11px] font-bold text-gray-500">Opacity</label>
+                                <span className="text-[11px] font-bold text-gray-600">{Math.round((selectedLayer.transform.opacity ?? 1) * 100)}%</span>
+                              </div>
+                              <input type="range" min="0" max="100" step="5"
+                                value={Math.round((selectedLayer.transform.opacity ?? 1) * 100)}
+                                onChange={e => updateLayer(selectedLayer.id, l => ({ ...l, transform: { ...l.transform, opacity: parseInt(e.target.value) / 100 } }), false)}
+                                onPointerUp={() => commitLayers(layers)}
+                                className="w-full h-1.5 rounded-full appearance-none bg-gray-100" style={{ accentColor: "#E85D04" }} />
+                            </div>
+                            {/* Flip buttons */}
+                            <div>
+                              <div className="text-[11px] font-bold text-gray-500 mb-1.5">Flip</div>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => updateLayer(selectedLayer.id, l => l.type === "image" ? { ...l, flipH: !(l as any).flipH } as any : l, true)}
+                                  className="flex-1 py-1.5 rounded-lg text-xs font-bold border transition-all"
+                                  style={{ background: (selectedLayer as any).flipH ? "#fff4ee" : "white", borderColor: (selectedLayer as any).flipH ? "#E85D04" : "#e5e7eb", color: (selectedLayer as any).flipH ? "#E85D04" : "#6b7280" }}
+                                >
+                                  ↔ Flip H
+                                </button>
+                                <button
+                                  onClick={() => updateLayer(selectedLayer.id, l => l.type === "image" ? { ...l, flipV: !(l as any).flipV } as any : l, true)}
+                                  className="flex-1 py-1.5 rounded-lg text-xs font-bold border transition-all"
+                                  style={{ background: (selectedLayer as any).flipV ? "#fff4ee" : "white", borderColor: (selectedLayer as any).flipV ? "#E85D04" : "#e5e7eb", color: (selectedLayer as any).flipV ? "#E85D04" : "#6b7280" }}
+                                >
+                                  ↕ Flip V
+                                </button>
+                              </div>
+                            </div>
+                            {/* Brightness */}
                             <div>
                               <div className="flex items-center justify-between mb-1">
                                 <label className="text-[11px] font-bold text-gray-500">Brightness</label>
@@ -3130,11 +3194,11 @@ export default function DesignStudio() {
                                 className="w-full h-1.5 rounded-full appearance-none bg-gray-100" style={{ accentColor: "#E85D04" }} />
                             </div>
                             <button
-                              onClick={() => updateLayer(selectedLayer.id, l => l.type === "image" ? { ...l, brightness: 100, contrast: 100, saturation: 100 } as any : l, true)}
+                              onClick={() => updateLayer(selectedLayer.id, l => l.type === "image" ? { ...l, brightness: 100, contrast: 100, saturation: 100, flipH: false, flipV: false, transform: { ...l.transform, opacity: 1 } } as any : l, true)}
                               className="w-full py-2 rounded-lg text-xs font-bold border"
                               style={{ background: "white", borderColor: "#e5e7eb", color: "#6b7280" }}
                             >
-                              Reset Adjustments
+                              Reset All Adjustments
                             </button>
                           </div>
                         )}

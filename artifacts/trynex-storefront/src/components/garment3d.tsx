@@ -682,6 +682,17 @@ export function PhotoMockupMesh({
     [planeW, planeH]
   );
 
+  // The back face plane is rotated [0, π, 0] which mirrors U horizontally.
+  // Clone the design texture and flip U so text/logos read correctly from the back camera.
+  const backTexMirrored = useMemo(() => {
+    if (!backTex) return null;
+    const t = backTex.clone();
+    t.repeat.set(-1, 1);
+    t.offset.set(1, 0);
+    t.needsUpdate = true;
+    return t;
+  }, [backTex]);
+
   // Shared physical material settings — subtle clearcoat gives the photo a
   // slight glossy sheen under the studio light rig, making it look tangible.
   const baseMat = (tex: THREE.Texture | null | undefined) => ({
@@ -714,10 +725,10 @@ export function PhotoMockupMesh({
       <mesh geometry={planeGeo} position={[0, 0, -0.006]} rotation={[0, Math.PI, 0]} castShadow receiveShadow>
         <meshPhysicalMaterial {...baseMat(backPhotoTex)} />
       </mesh>
-      {backTex && (
+      {backTexMirrored && (
         <mesh geometry={planeGeo} position={[0, 0, -0.012]} rotation={[0, Math.PI, 0]}>
           <meshStandardMaterial
-            map={backTex} transparent roughness={0.72} metalness={0}
+            map={backTexMirrored} transparent roughness={0.72} metalness={0}
             depthWrite={false} alphaTest={0.02} side={THREE.FrontSide}
           />
         </mesh>

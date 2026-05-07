@@ -15,6 +15,8 @@ export interface ComposerImageLayer {
   src: string;
   naturalW: number; naturalH: number;
   transform: ComposerTransform;
+  flipH?: boolean;
+  flipV?: boolean;
 }
 export interface ComposerTextLayer {
   type: "text";
@@ -219,7 +221,10 @@ export async function composeGarmentMockup(opts: {
         const img = await loadImage(layer.src, imageCache);
         const w = geom.w * s;
         const h = geom.h * s;
-        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+        const sx = layer.flipH ? -1 : 1;
+        const sy = layer.flipV ? -1 : 1;
+        if (sx !== 1 || sy !== 1) ctx.scale(sx, sy);
+        ctx.drawImage(img, sx * (-w / 2), sy * (-h / 2), sx * w, sy * h);
       } catch {}
     } else {
       const fs = Math.round(layer.fontSize * layer.transform.scale * s);
@@ -286,7 +291,10 @@ export async function composeDesignTexture(opts: {
         const img = await loadImage(layer.src, imageCache);
         const w = geom.w * s;
         const h = geom.h * s;
-        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+        const sx = layer.flipH ? -1 : 1;
+        const sy = layer.flipV ? -1 : 1;
+        if (sx !== 1 || sy !== 1) ctx.scale(sx, sy);
+        ctx.drawImage(img, sx * (-w / 2), sy * (-h / 2), sx * w, sy * h);
       } catch {}
     } else {
       const fs = Math.round(layer.fontSize * layer.transform.scale * s);
