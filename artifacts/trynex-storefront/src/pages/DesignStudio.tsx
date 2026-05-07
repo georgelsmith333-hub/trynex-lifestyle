@@ -813,9 +813,10 @@ export default function DesignStudio() {
   );
   const otherFaceCount = layers.length - currentFaceLayers.length;
 
-  // Always show print-zone outline when the toggle is on — users need to see the
-  // print boundary even when layers are present so they can position correctly.
-  const effectiveShowPrintZone = showPrintZone;
+  // Show print-zone outline only when a layer is selected (user is actively editing).
+  // When the user taps empty canvas and deselects, borders hide → clean "preview" view.
+  // When no layers exist yet, always show so the user knows where to upload.
+  const effectiveShowPrintZone = showPrintZone && (selectedLayerId !== null || currentFaceLayers.length === 0);
 
   /* ── Coord helpers ─────────────────────────────────── */
   const clientToSVG = useCallback((clientX: number, clientY: number) => {
@@ -1117,11 +1118,12 @@ export default function DesignStudio() {
     setAiError(null);
     try {
       const seed = Math.floor(Math.random() * 99999);
-      let pollinationsUrl: string;
+      let dataUrl: string;
 
       if (aiRefFile) {
-        // img2img — convert ref image to base64, upload to our server to get a
-        // public URL, then pass it to Pollinations kontext model for guided editing.
+        // img2img — upload reference image to get a public URL, then
+        // call our server-side proxy which forwards to Pollinations.
+        // Server-side fetch avoids all browser CORS restrictions.
         const base64 = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = () => resolve(reader.result as string);
@@ -1133,41 +1135,44 @@ export default function DesignStudio() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ image: base64 }),
         });
-        if (!uploadRes.ok) throw new Error("Reference upload failed");
+        if (!uploadRes.ok) {
+          const err = await uploadRes.json().catch(() => ({})) as { error?: string };
+          throw new Error(err.error || "Reference upload failed");
+        }
         const { url: refUrl } = await uploadRes.json() as { url: string };
-        const encodedPrompt = encodeURIComponent(prompt);
-        const encodedRef = encodeURIComponent(refUrl);
-        pollinationsUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=512&seed=${seed}&nologo=true&model=kontext&image_url=${encodedRef}`;
-      } else {
-        // text-to-image
-        const encodedPrompt = encodeURIComponent(
-          prompt + ", t-shirt print design, white background, high contrast, vector style, clean edges, no text unless requested"
+
+        // Use server proxy to avoid CORS: GET /api/ai/generate?prompt=...&imageUrl=...
+        const genRes = await fetch(
+          `/api/ai/generate?prompt=${encodeURIComponent(prompt)}&seed=${seed}&imageUrl=${encodeURIComponent(refUrl)}`
         );
-        pollinationsUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=512&seed=${seed}&nologo=true&model=flux`;
+        if (!genRes.ok) {
+          const err = await genRes.json().catch(() => ({})) as { error?: string };
+          throw new Error(err.error || `Generation failed (${genRes.status})`);
+        }
+        const { dataUrl: d } = await genRes.json() as { dataUrl: string };
+        dataUrl = d;
+      } else {
+        // text-to-image — route entirely through server proxy (zero CORS issues)
+        const fullPrompt = prompt + ", t-shirt print design, white background, high contrast, vector style, clean edges, no text unless requested";
+        const genRes = await fetch(
+          `/api/ai/generate?prompt=${encodeURIComponent(fullPrompt)}&seed=${seed}`
+        );
+        if (!genRes.ok) {
+          const err = await genRes.json().catch(() => ({})) as { error?: string };
+          throw new Error(err.error || `Generation failed (${genRes.status})`);
+        }
+        const { dataUrl: d } = await genRes.json() as { dataUrl: string };
+        dataUrl = d;
       }
 
-      // Fetch via img element to avoid CORS issues
+      // Load data URL to get natural dimensions for the layer
       const img = new Image();
-      img.crossOrigin = "anonymous";
-      await new Promise<void>((resolve, reject) => {
-        img.onload = () => resolve();
-        img.onerror = () => reject(new Error("Image generation failed"));
-        img.src = pollinationsUrl;
-      });
-
-      // Convert to data URL for layer system
-      const canvas = document.createElement("canvas");
-      canvas.width = img.naturalWidth || 512;
-      canvas.height = img.naturalHeight || 512;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) throw new Error("Canvas failed");
-      ctx.drawImage(img, 0, 0);
-      const dataUrl = canvas.toDataURL("image/png");
+      await new Promise<void>((res, rej) => { img.onload = () => res(); img.onerror = rej; img.src = dataUrl; });
 
       const layer: ImageLayer = {
         id: uid(), name: prompt.slice(0, 30),
         type: "image", src: dataUrl,
-        naturalW: canvas.width, naturalH: canvas.height,
+        naturalW: img.naturalWidth || 512, naturalH: img.naturalHeight || 512,
         visible: true, locked: false,
         transform: { x: 0, y: 0, scale: 0.85, rotation: 0, opacity: 1 },
         face: activeFaceRef.current,
@@ -1182,7 +1187,8 @@ export default function DesignStudio() {
       toast({ title: "✨ AI image added!", description: "Tip: use Remove Background for a clean cutout." });
     } catch (err) {
       console.error("[ai-gen]", err);
-      setAiError("Generation failed. Check your internet and try a simpler prompt.");
+      const msg = err instanceof Error ? err.message : String(err);
+      setAiError(msg.includes("timed out") ? msg : "Generation failed — the AI service may be busy. Try again in a moment.");
     } finally {
       setAiGenerating(false);
     }
@@ -2370,26 +2376,16 @@ export default function DesignStudio() {
                     })}
                   </g>
 
-                  {/* Always-visible print-zone boundary — rendered OUTSIDE the clip path
-                      so it stays visible at any zoom level, with or without layers.
-                      vectorEffect="non-scaling-stroke" keeps the line exactly 2 screen-px
-                      regardless of canvasZoom, so it never disappears or blows up. */}
-                  {showPrintZone && (
-                    <>
-                      {/* Soft glow halo */}
-                      <rect
-                        x={pz.x - 2} y={pz.y - 2} width={pz.w + 4} height={pz.h + 4} rx="7"
-                        fill="none" stroke="rgba(232,93,4,0.10)" strokeWidth="8"
-                        vectorEffect="non-scaling-stroke" pointerEvents="none"
-                      />
-                      {/* Crisp dashed outline */}
-                      <rect
-                        x={pz.x} y={pz.y} width={pz.w} height={pz.h} rx="4"
-                        fill="none" stroke="rgba(232,93,4,0.65)" strokeWidth="2"
-                        strokeDasharray="8 5" vectorEffect="non-scaling-stroke"
-                        pointerEvents="none"
-                      />
-                    </>
+                  {/* Minimal print-zone boundary — thin, subtle dashed line only.
+                      Auto-hides when no layer is selected so user sees a clean design.
+                      vectorEffect="non-scaling-stroke" keeps it 1 screen-px at any zoom. */}
+                  {effectiveShowPrintZone && (
+                    <rect
+                      x={pz.x} y={pz.y} width={pz.w} height={pz.h} rx="4"
+                      fill="none" stroke="rgba(232,93,4,0.40)" strokeWidth="1"
+                      strokeDasharray="6 4" vectorEffect="non-scaling-stroke"
+                      pointerEvents="none"
+                    />
                   )}
 
                   {/* Selection outline + handles */}
