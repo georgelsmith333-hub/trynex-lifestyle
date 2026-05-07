@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getListOrdersQueryKey } from "@workspace/api-client-react";
 import {
   RefreshCw, Package, Clock, CheckCircle2, XCircle, Truck,
-  Search, Eye, AlertTriangle, CreditCard, Check, X, Tag
+  Search, Eye, AlertTriangle, CreditCard, Check, X, Tag, ZoomIn
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -515,6 +515,59 @@ export default function AdminOrders() {
                     </div>
                   </div>
                 )}
+
+                {/* ─── Design Preview section ─── */}
+                {(() => {
+                  // Collect all studio snapshot images across all items in this order
+                  const studioSnapshots: Array<{ src: string; label: string }> = [];
+                  (selectedOrder.items ?? []).forEach((item: any) => {
+                    let isStudio = !!item.isStudio;
+                    if (!isStudio) {
+                      try { isStudio = !!JSON.parse(item.customNote ?? "{}").studioDesign; } catch {}
+                    }
+                    if (isStudio && item.imageUrl) {
+                      studioSnapshots.push({ src: item.imageUrl as string, label: item.productName as string });
+                    }
+                  });
+                  if (studioSnapshots.length === 0) return null;
+                  return (
+                    <div className="rounded-2xl overflow-hidden" style={{ border: '1.5px solid #e0d9ff', background: 'linear-gradient(135deg,#f5f3ff,#faf5ff)' }}>
+                      <div className="px-4 pt-3 pb-2 flex items-center gap-2">
+                        <ZoomIn className="w-3.5 h-3.5 text-purple-500" />
+                        <p className="text-xs font-black uppercase tracking-widest text-purple-700">Design Preview</p>
+                        <span className="ml-auto text-[10px] text-purple-500 font-semibold">{studioSnapshots.length} item{studioSnapshots.length > 1 ? 's' : ''}</span>
+                      </div>
+                      <div className={`grid gap-2 px-4 pb-4 ${studioSnapshots.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
+                        {studioSnapshots.map((snap, idx) => (
+                          <div key={idx} className="relative group rounded-xl overflow-hidden cursor-pointer"
+                            style={{ background: 'repeating-conic-gradient(#e5e7eb 0% 25%,white 0% 50%) 0 0/16px 16px' }}
+                            onClick={() => {
+                              const { items: pi } = buildOrderPreview(selectedOrder);
+                              openLightbox(pi, idx);
+                            }}
+                          >
+                            <img
+                              src={snap.src}
+                              alt={snap.label}
+                              className="w-full object-contain"
+                              style={{ maxHeight: studioSnapshots.length === 1 ? 260 : 160 }}
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                              style={{ background: 'rgba(79,52,183,0.18)' }}>
+                              <div className="bg-white/90 rounded-full p-2">
+                                <ZoomIn className="w-4 h-4 text-purple-700" />
+                              </div>
+                            </div>
+                            <div className="absolute bottom-0 left-0 right-0 px-2 py-1"
+                              style={{ background: 'rgba(0,0,0,0.45)' }}>
+                              <p className="text-[10px] font-bold text-white truncate">{snap.label}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* Customer */}
                 <div className="p-4 rounded-2xl" style={{ background: '#f9fafb', border: '1px solid #e5e7eb' }}>

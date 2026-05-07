@@ -1108,11 +1108,22 @@ export default function DesignStudio() {
         print sharper at large sizes. */
   const [isUpscaling, setIsUpscaling] = useState(false);
 
-  /* ── AI Image Generation (Pollinations.ai — free, no API key needed) ── */
+  /* ── AI Image Generation — free, no API key, multiple models ── */
   const [aiPrompt, setAiPrompt] = useState("");
   const [aiGenerating, setAiGenerating] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
-  const [aiHistory, setAiHistory] = useState<{ url: string; prompt: string }[]>([]);
+  const [aiHistory, setAiHistory] = useState<{ url: string; prompt: string; model: string }[]>([]);
+  const [aiModel, setAiModel] = useState("flux-realism");
+  const [aiModelUsed, setAiModelUsed] = useState<string | null>(null);
+
+  const AI_MODELS = [
+    { id: "flux-realism", label: "Flux Realism", desc: "Photorealistic, ultra-detailed" },
+    { id: "flux",         label: "Flux",         desc: "Balanced quality & speed" },
+    { id: "flux-kontext", label: "Flux Kontext", desc: "Best for image editing (img2img)" },
+    { id: "flux-3d",      label: "Flux 3D",      desc: "3D / product render style" },
+    { id: "any-dark",     label: "Dark Art",      desc: "Dark dramatic illustrations" },
+    { id: "turbo",        label: "Turbo ⚡",      desc: "Fastest — great for quick ideas" },
+  ] as const;
 
   /* Reference image for img2img editing */
   const [aiRefFile, setAiRefFile] = useState<File | null>(null);
@@ -1131,14 +1142,14 @@ export default function DesignStudio() {
     if (!prompt) return;
     setAiGenerating(true);
     setAiError(null);
+    setAiModelUsed(null);
     try {
-      const seed = Math.floor(Math.random() * 99999);
+      const seed = Math.floor(Math.random() * 999999);
       let dataUrl: string;
+      let usedModel = aiModel;
 
       if (aiRefFile) {
-        // img2img — upload reference image to get a public URL, then
-        // call our server-side proxy which forwards to Pollinations.
-        // Server-side fetch avoids all browser CORS restrictions.
+        // img2img — upload reference image, then generate via server proxy
         const base64 = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = () => resolve(reader.result as string);
@@ -1156,28 +1167,32 @@ export default function DesignStudio() {
         }
         const { url: refUrl } = await uploadRes.json() as { url: string };
 
-        // Use server proxy to avoid CORS: GET /api/ai/generate?prompt=...&imageUrl=...
-        const genRes = await fetch(
-          `/api/ai/generate?prompt=${encodeURIComponent(prompt)}&seed=${seed}&imageUrl=${encodeURIComponent(refUrl)}`
-        );
+        const editModel = aiModel === "flux-realism" ? "flux-kontext" : aiModel;
+        const params = new URLSearchParams({ prompt, seed: String(seed), model: editModel, imageUrl: refUrl, width: "1024", height: "1024" });
+        const genRes = await fetch(`/api/ai/generate?${params.toString()}`);
         if (!genRes.ok) {
           const err = await genRes.json().catch(() => ({})) as { error?: string };
           throw new Error(err.error || `Generation failed (${genRes.status})`);
         }
-        const { dataUrl: d } = await genRes.json() as { dataUrl: string };
-        dataUrl = d;
+        const result = await genRes.json() as { dataUrl: string; model?: string };
+        dataUrl = result.dataUrl;
+        usedModel = result.model ?? editModel;
       } else {
-        // text-to-image — route entirely through server proxy (zero CORS issues)
-        const fullPrompt = prompt + ", t-shirt print design, white background, high contrast, vector style, clean edges, no text unless requested";
-        const genRes = await fetch(
-          `/api/ai/generate?prompt=${encodeURIComponent(fullPrompt)}&seed=${seed}`
-        );
+        // text-to-image — design-optimized prompt enhancement
+        const isRealism = aiModel === "flux-realism";
+        const suffix = isRealism
+          ? ", product design artwork, high detail, clean composition"
+          : ", t-shirt print design, white background, high contrast, vector style, clean edges";
+        const fullPrompt = prompt + suffix;
+        const params = new URLSearchParams({ prompt: fullPrompt, seed: String(seed), model: aiModel, width: "1024", height: "1024" });
+        const genRes = await fetch(`/api/ai/generate?${params.toString()}`);
         if (!genRes.ok) {
           const err = await genRes.json().catch(() => ({})) as { error?: string };
           throw new Error(err.error || `Generation failed (${genRes.status})`);
         }
-        const { dataUrl: d } = await genRes.json() as { dataUrl: string };
-        dataUrl = d;
+        const result = await genRes.json() as { dataUrl: string; model?: string };
+        dataUrl = result.dataUrl;
+        usedModel = result.model ?? aiModel;
       }
 
       // Load data URL to get natural dimensions for the layer
@@ -1187,7 +1202,7 @@ export default function DesignStudio() {
       const layer: ImageLayer = {
         id: uid(), name: prompt.slice(0, 30),
         type: "image", src: dataUrl,
-        naturalW: img.naturalWidth || 512, naturalH: img.naturalHeight || 512,
+        naturalW: img.naturalWidth || 1024, naturalH: img.naturalHeight || 1024,
         visible: true, locked: false,
         transform: { x: 0, y: 0, scale: 0.85, rotation: 0, opacity: 1 },
         face: activeFaceRef.current,
@@ -1195,16 +1210,15 @@ export default function DesignStudio() {
 
       flushSync(() => {
         commitLayers([...layersRef.current, layer]);
-        // Do NOT auto-select — let client see clean result without borders/handles.
-        // They tap the image on canvas to enter edit mode.
         setActiveTab("layers");
       });
-      setAiHistory(h => [{ url: dataUrl, prompt }, ...h].slice(0, 8));
+      setAiModelUsed(usedModel);
+      setAiHistory(h => [{ url: dataUrl, prompt, model: usedModel }, ...h].slice(0, 12));
       toast({ title: "✨ AI design placed!", description: "Tap it on the canvas to adjust or resize." });
     } catch (err) {
       console.error("[ai-gen]", err);
       const msg = err instanceof Error ? err.message : String(err);
-      setAiError(msg.includes("timed out") ? msg : "Generation failed — the AI service may be busy. Try again in a moment.");
+      setAiError(msg.includes("timed out") ? msg : "Generation failed — try a different model or simpler prompt.");
     } finally {
       setAiGenerating(false);
     }
@@ -3211,14 +3225,39 @@ export default function DesignStudio() {
                 {activeTab === "ai" && (
                   <motion.div key="ai" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="p-4 space-y-3">
                     {/* Header */}
-                    <div className="flex items-start gap-2 p-3 rounded-xl"
-                      style={{ background: "linear-gradient(135deg,#fff4ee,#fde8d8)", border: "1px solid #fdd5b4" }}>
-                      <Wand2 className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" />
+                    <div className="p-3 rounded-xl"
+                      style={{ background: "linear-gradient(135deg,#3b0764,#6d28d9)", border: "none" }}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Sparkles className="w-4 h-4 text-purple-200 shrink-0" />
+                        <div className="text-xs font-black text-white">AI Image Studio</div>
+                        <span className="ml-auto text-[9px] font-bold text-purple-300 bg-purple-800/60 px-1.5 py-0.5 rounded-full">FREE · UNLIMITED</span>
+                      </div>
+                      <div className="text-[10px] text-purple-200 leading-tight mb-2">
+                        Generate any image, edit photos with AI commands, or create unique t-shirt designs.
+                      </div>
+                      {/* Model picker */}
                       <div>
-                        <div className="text-xs font-black text-orange-800">AI Image Generator</div>
-                        <div className="text-[10px] text-orange-700 leading-tight mt-0.5">
-                          Describe any image, or upload a photo and let AI edit it with your command. Free, no account needed.
+                        <p className="text-[9px] font-black uppercase tracking-widest text-purple-300 mb-1.5">AI Model</p>
+                        <div className="grid grid-cols-3 gap-1">
+                          {AI_MODELS.map(m => (
+                            <button
+                              key={m.id}
+                              onClick={() => setAiModel(m.id)}
+                              title={m.desc}
+                              className="px-2 py-1.5 rounded-lg text-[9px] font-black transition-all text-left leading-tight"
+                              style={{
+                                background: aiModel === m.id ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.06)",
+                                color: aiModel === m.id ? "white" : "rgba(196,181,253,0.8)",
+                                border: aiModel === m.id ? "1.5px solid rgba(255,255,255,0.3)" : "1.5px solid transparent",
+                              }}
+                            >
+                              {m.label}
+                            </button>
+                          ))}
                         </div>
+                        {aiModelUsed && (
+                          <p className="text-[9px] text-purple-300 mt-1">Last used: <strong className="text-purple-200">{AI_MODELS.find(m => m.id === aiModelUsed)?.label ?? aiModelUsed}</strong></p>
+                        )}
                       </div>
                     </div>
 

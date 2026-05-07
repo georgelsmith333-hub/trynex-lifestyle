@@ -4,6 +4,7 @@ import { useAdminLogout, useAdminMe } from "@workspace/api-client-react";
 import React, { useEffect, useState } from "react";
 import { Loader } from "@/components/ui/Loader";
 import { cn, getAuthHeaders } from "@/lib/utils";
+import { AdminAIAssistant } from "@/components/AdminAIAssistant";
 
 const MENU: { name: string; href: string; icon: React.ComponentType<{ className?: string }>; exact?: boolean }[] = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard, exact: true },
@@ -171,6 +172,9 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           {children}
         </main>
       </div>
+
+      {/* Floating AI Assistant — available on every admin page */}
+      <AdminAIAssistant />
     </div>
   );
 }

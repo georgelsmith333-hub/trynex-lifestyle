@@ -562,14 +562,15 @@ export function MugBody({
 
   return (
     <group>
-      {/* Outer body (base colour) */}
+      {/* Outer body — high-fidelity ceramic glaze: strong clearcoat, near-zero metalness */}
       <mesh geometry={bodyGeo} castShadow receiveShadow>
         <meshPhysicalMaterial
           color={garmentColor}
-          roughness={0.22}
-          metalness={0.02}
-          clearcoat={0.78}
-          clearcoatRoughness={0.12}
+          roughness={0.14}
+          metalness={0.0}
+          clearcoat={0.95}
+          clearcoatRoughness={0.06}
+          reflectivity={0.92}
           side={THREE.FrontSide}
         />
       </mesh>
@@ -609,36 +610,38 @@ export function MugBody({
         <meshStandardMaterial color="#efe8df" side={THREE.BackSide} roughness={0.55} />
       </mesh>
 
-      {/* Bottom disk */}
+      {/* Bottom disk — slightly more matte than body (unglazed foot ring) */}
       <mesh geometry={bottomGeo} position={[0, -H / 2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <meshPhysicalMaterial
           color={garmentColor}
-          roughness={0.38}
-          metalness={0.02}
-          clearcoat={0.35}
+          roughness={0.55}
+          metalness={0.0}
+          clearcoat={0.12}
         />
       </mesh>
 
-      {/* Rim torus — lies in XZ plane (rotated π/2 around X) at the top lip */}
+      {/* Rim torus — polished glazed lip */}
       <mesh geometry={rimGeo} position={[0, H / 2, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <meshPhysicalMaterial
           color={garmentColor}
-          roughness={0.30}
-          metalness={0.02}
-          clearcoat={0.55}
-          clearcoatRoughness={0.10}
+          roughness={0.10}
+          metalness={0.0}
+          clearcoat={1.0}
+          clearcoatRoughness={0.04}
+          reflectivity={1.0}
           side={THREE.DoubleSide}
         />
       </mesh>
 
-      {/* Handle — C-shape on the right (+X) side */}
+      {/* Handle — C-shape on the right (+X) side — ceramic glaze */}
       <mesh geometry={handleGeo} castShadow>
         <meshPhysicalMaterial
           color={garmentColor}
-          roughness={0.28}
-          metalness={0.02}
-          clearcoat={0.55}
-          clearcoatRoughness={0.20}
+          roughness={0.16}
+          metalness={0.0}
+          clearcoat={0.90}
+          clearcoatRoughness={0.08}
+          reflectivity={0.88}
         />
       </mesh>
     </group>
@@ -783,25 +786,26 @@ export function WaterBottleBody({
 
   return (
     <group scale={0.62}>
-      {/* ── Main body (base colour) ───────────────────── */}
+      {/* ── Main body — brushed stainless-steel tumbler look ── */}
       <mesh geometry={bodyGeo} castShadow receiveShadow>
         <meshPhysicalMaterial
           color={garmentColor}
-          roughness={0.25}
-          metalness={0.18}
-          clearcoat={0.80}
-          clearcoatRoughness={0.10}
+          roughness={0.28}
+          metalness={0.72}
+          clearcoat={0.60}
+          clearcoatRoughness={0.12}
+          reflectivity={0.85}
           side={THREE.FrontSide}
         />
       </mesh>
 
-      {/* ── Design wrap overlay (front-face only) ──────── */}
+      {/* ── Design wrap overlay ──────── */}
       {wrapTex && (
         <mesh geometry={bodyGeo} scale={[1.003, 1, 1.003]}>
           <meshStandardMaterial
             map={wrapTex}
             transparent
-            roughness={0.28}
+            roughness={0.30}
             metalness={0}
             depthWrite={false}
             alphaTest={0.015}
@@ -810,45 +814,45 @@ export function WaterBottleBody({
         </mesh>
       )}
 
-      {/* ── Base disk ─────────────────────────────────── */}
+      {/* ── Base disk — slightly matte bottom ring ─── */}
       <mesh geometry={baseDiskGeo} position={[0, -1.04, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <meshPhysicalMaterial
           color={garmentColor}
-          roughness={0.38}
-          metalness={0.12}
-          clearcoat={0.4}
+          roughness={0.50}
+          metalness={0.55}
+          clearcoat={0.25}
         />
       </mesh>
 
-      {/* ── Shoulder ─────────────────────────────────── */}
+      {/* ── Shoulder — polished taper ─── */}
       <mesh geometry={shoulderGeo} position={[0, 1.165, 0]} castShadow>
         <meshPhysicalMaterial
           color={garmentColor}
+          roughness={0.22}
+          metalness={0.75}
+          clearcoat={0.75}
+          clearcoatRoughness={0.08}
+        />
+      </mesh>
+
+      {/* ── Neck ─── */}
+      <mesh geometry={neckGeo} position={[0, 1.400, 0]} castShadow>
+        <meshPhysicalMaterial
+          color={garmentColor}
           roughness={0.25}
-          metalness={0.18}
-          clearcoat={0.80}
+          metalness={0.70}
+          clearcoat={0.65}
           clearcoatRoughness={0.10}
         />
       </mesh>
 
-      {/* ── Neck ─────────────────────────────────────── */}
-      <mesh geometry={neckGeo} position={[0, 1.400, 0]} castShadow>
-        <meshPhysicalMaterial
-          color={garmentColor}
-          roughness={0.28}
-          metalness={0.16}
-          clearcoat={0.65}
-          clearcoatRoughness={0.12}
-        />
-      </mesh>
-
-      {/* ── Lid (always dark/black like a real bottle cap) ─── */}
+      {/* ── Lid — matte black polypropylene ─── */}
       <mesh geometry={lidGeo} position={[0, 1.580, 0]} castShadow>
         <meshPhysicalMaterial
-          color="#1a1a1a"
-          roughness={0.50}
-          metalness={0.08}
-          clearcoat={0.20}
+          color="#1c1c1e"
+          roughness={0.60}
+          metalness={0.05}
+          clearcoat={0.15}
         />
       </mesh>
     </group>
@@ -1110,21 +1114,30 @@ export function ResettableOrbitControls(props: React.ComponentProps<typeof Orbit
 }
 
 /** Three-point lighting rig: key (warm) + fill (cool) + rim (cool back-light).
+ *  Enhanced for ceramics and metals — adds a top-down specular fill and
+ *  a faint purple-grey bounce that gives clearcoat surfaces more visual depth.
  *  Centralises lighting so studio & cart match exactly. */
 export function StudioLightRig({ rim = true }: { rim?: boolean }) {
   return (
     <>
-      <ambientLight intensity={0.55} />
+      {/* Ambient — raised slightly so dark garment colours aren't pitch-black */}
+      <ambientLight intensity={0.72} color={"#fff8f0"} />
+      {/* Key light — main warm directional, casts shadows */}
       <directionalLight
         position={[3, 4, 5]}
-        intensity={1.05}
+        intensity={1.15}
+        color={"#fff5e4"}
         castShadow
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
       />
-      <directionalLight position={[-4, 2, -3]} intensity={0.32} color={"#bcd6ff"} />
+      {/* Fill — cool side light for colour contrast */}
+      <directionalLight position={[-4, 2, -3]} intensity={0.38} color={"#bcd6ff"} />
+      {/* Top-down specular — gives clearcoat surfaces (mug, bottle) a glossy crown highlight */}
+      <directionalLight position={[0, 8, 1]} intensity={0.55} color={"#ffffff"} />
       {rim && (
-        <directionalLight position={[0, 3, -6]} intensity={0.55} color={"#ffe9c8"} />
+        /* Rim / back-light — warm orange that matches brand palette */
+        <directionalLight position={[0, 3, -6]} intensity={0.60} color={"#ffd6a0"} />
       )}
     </>
   );
