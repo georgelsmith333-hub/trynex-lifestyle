@@ -100,4 +100,83 @@ router.get("/ai/ref/:filename", (req: Request, res: Response) => {
   return res.sendFile(filePath);
 });
 
+/**
+ * GET /api/ai/generate
+ * Server-side proxy for Pollinations AI image generation.
+ * Fetching from the server avoids browser CORS restrictions entirely.
+ * Returns JSON: { dataUrl: "data:image/jpeg;base64,..." }
+ *
+ * Query params:
+ *   prompt    (required) — image description
+ *   seed      (optional) — numeric seed for reproducibility
+ *   width     (optional, default 512)
+ *   height    (optional, default 512)
+ *   imageUrl  (optional) — public URL of reference image for img2img editing
+ */
+router.get("/ai/generate", async (req: Request, res: Response) => {
+  const ip = req.ip ?? req.socket.remoteAddress ?? "unknown";
+  if (!checkRateLimit(ip)) {
+    return res.status(429).json({ error: "Too many requests — please wait a moment." });
+  }
+
+  const {
+    prompt,
+    seed,
+    width = "512",
+    height = "512",
+    imageUrl,
+  } = req.query as Record<string, string>;
+
+  if (!prompt || typeof prompt !== "string" || !prompt.trim()) {
+    return res.status(400).json({ error: "prompt is required" });
+  }
+
+  const finalSeed = seed || String(Math.floor(Math.random() * 99999));
+  const w = Math.min(1024, Math.max(256, parseInt(width, 10) || 512));
+  const h = Math.min(1024, Math.max(256, parseInt(height, 10) || 512));
+
+  let pollinationsUrl: string;
+  if (imageUrl && typeof imageUrl === "string") {
+    // img2img — flux-kontext guided editing
+    pollinationsUrl = [
+      `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`,
+      `?width=${w}&height=${h}&seed=${finalSeed}&nologo=true&model=kontext`,
+      `&image_url=${encodeURIComponent(imageUrl)}`,
+    ].join("");
+  } else {
+    // text-to-image — flux standard
+    pollinationsUrl = [
+      `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`,
+      `?width=${w}&height=${h}&seed=${finalSeed}&nologo=true&model=flux`,
+    ].join("");
+  }
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 90_000);
+    const imgRes = await fetch(pollinationsUrl, {
+      signal: controller.signal,
+      headers: { "User-Agent": "TryNex-AI-Proxy/1.0" },
+    });
+    clearTimeout(timeout);
+
+    if (!imgRes.ok) {
+      console.error(`[ai/generate] Pollinations returned ${imgRes.status}`);
+      return res.status(502).json({ error: `AI service returned status ${imgRes.status}. Try again.` });
+    }
+
+    const buf = await imgRes.arrayBuffer();
+    const mime = imgRes.headers.get("content-type") || "image/jpeg";
+    const b64 = Buffer.from(buf).toString("base64");
+    return res.json({ dataUrl: `data:${mime};base64,${b64}` });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error("[ai/generate] fetch error:", msg);
+    if (msg.includes("abort") || msg.includes("timeout")) {
+      return res.status(504).json({ error: "AI generation timed out (>90s). Try a simpler prompt." });
+    }
+    return res.status(502).json({ error: `Generation failed: ${msg}` });
+  }
+});
+
 export default router;
