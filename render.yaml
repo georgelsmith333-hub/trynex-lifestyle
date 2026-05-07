@@ -4,6 +4,7 @@ services:
     env: node
     region: singapore
     plan: free
+    autoDeploy: yes
     buildCommand: npm install -g pnpm@9 && pnpm install --no-frozen-lockfile && pnpm --filter @workspace/api-server run build
     startCommand: node --enable-source-maps artifacts/api-server/dist/index.mjs
     healthCheckPath: /api/healthz

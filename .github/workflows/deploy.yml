@@ -1,0 +1,123 @@
+name: Deploy TryNex Lifestyle
+
+# ── Triggers ─────────────────────────────────────────────────────────────────
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:   # manual trigger from the GitHub Actions UI
+
+# Cancel any in-progress run for the same branch so rapid pushes
+# don't stack up stale deployments.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+# ── Parallel deployment jobs ──────────────────────────────────────────────────
+#
+#   JOB 1  →  Cloudflare Pages  (React/Vite storefront)
+#   JOB 2  →  Render.com        (Node/Express API server)
+#
+#   Both jobs start simultaneously — no depends-on.
+#   Total deploy time ≈ max(CF Pages build time, Render build time).
+#
+# ── Required GitHub Secrets ───────────────────────────────────────────────────
+#   CLOUDFLARE_API_TOKEN    CF API token — scope: Cloudflare Pages:Edit
+#   CLOUDFLARE_ACCOUNT_ID   Found in CF Dashboard right-hand sidebar
+#   RENDER_DEPLOY_HOOK_URL  Render → Service → Settings → Deploy Hook (optional,
+#                           Render also auto-deploys from GitHub push)
+#
+# ── How to add secrets ────────────────────────────────────────────────────────
+#   GitHub repo → Settings → Secrets and variables → Actions → New repository secret
+# ─────────────────────────────────────────────────────────────────────────────
+
+jobs:
+
+  # ══════════════════════════════════════════════════════════════════════════
+  #  JOB 1 — Build & deploy frontend → Cloudflare Pages
+  # ══════════════════════════════════════════════════════════════════════════
+  deploy-frontend:
+    name: "☁️ Frontend → Cloudflare Pages"
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm 9
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install monorepo dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build storefront (production)
+        run: NODE_ENV=production pnpm --filter @workspace/trynex-storefront run build
+        env:
+          # The compiled JS uses this to build API request URLs.
+          # Falls back to https://trynex-api.onrender.com in utils.ts if not set.
+          VITE_API_BASE_URL: "https://trynex-api.onrender.com"
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: trynex-lifestyle-shop
+          directory: artifacts/trynex-storefront/dist
+          # Wrangler uses wrangler.toml [vars] to set TRYNEX_API_URL on the
+          # Pages Functions runtime — the /api proxy forwards to Render.
+          wranglerVersion: "3"
+          # Attaches CF Pages URL as a GitHub deployment environment
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deployment complete
+        run: echo "✅ Frontend live on Cloudflare Pages"
+
+  # ══════════════════════════════════════════════════════════════════════════
+  #  JOB 2 — Trigger backend redeploy → Render.com
+  #
+  #  Render auto-deploys from GitHub when the repo is connected
+  #  (set Auto-Deploy = Yes in Render service settings).
+  #  This job ALSO fires the deploy hook immediately so deployment
+  #  starts without waiting for Render's own GitHub polling.
+  # ══════════════════════════════════════════════════════════════════════════
+  deploy-backend:
+    name: "🚀 Backend → Render.com"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Trigger Render deploy hook
+        run: |
+          if [ -n "$RENDER_HOOK" ]; then
+            echo "Firing Render deploy hook…"
+            HTTP=$(curl -s -o /tmp/render.json -w "%{http_code}" \
+              -X POST "$RENDER_HOOK" \
+              -H "Accept: application/json")
+            echo "Render API response: HTTP $HTTP"
+            cat /tmp/render.json 2>/dev/null || true
+            if [ "$HTTP" -ge 400 ]; then
+              echo "❌ Render deploy hook failed — HTTP $HTTP"
+              exit 1
+            fi
+            echo "✅ Render deploy triggered (HTTP $HTTP)"
+          else
+            echo "ℹ️  RENDER_DEPLOY_HOOK_URL not configured."
+            echo "   Render will auto-deploy once it detects this push to main."
+            echo "   Add RENDER_DEPLOY_HOOK_URL secret for instant deploys."
+          fi
+        env:
+          RENDER_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+
+      - name: Monitor link
+        run: |
+          echo "Track Render build progress at:"
+          echo "  https://dashboard.render.com"
