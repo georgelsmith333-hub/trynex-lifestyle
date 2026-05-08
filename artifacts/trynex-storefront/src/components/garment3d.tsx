@@ -554,7 +554,7 @@ export function MugBody({
       wrapTex.wrapS = THREE.ClampToEdgeWrapping;
       wrapTex.wrapT = THREE.ClampToEdgeWrapping;
       wrapTex.repeat.set(0.5, 1);
-      wrapTex.offset.set(-0.05, 0.009);
+      wrapTex.offset.set(0.0, 0.0);
       wrapTex.flipY = true;
     }
     wrapTex.needsUpdate = true;

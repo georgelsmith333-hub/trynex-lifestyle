@@ -8,7 +8,7 @@ const router: IRouter = Router();
    Allows MAX_CALLS requests per IP per WINDOW_MS.
    Resets the window for each IP after WINDOW_MS elapses.
 ─────────────────────────────────────────────────────────── */
-const MAX_CALLS = 10;          // max remove-bg calls per IP per window
+const MAX_CALLS = 60;          // max remove-bg calls per IP per window (server API key calls only)
 const WINDOW_MS = 60 * 60 * 1000; // 1 hour
 const MAX_PAYLOAD_BYTES = 10 * 1024 * 1024; // 10 MB base64 image cap
 
@@ -43,15 +43,6 @@ router.get("/remove-bg/status", async (_req: Request, res: Response) => {
 
 router.post("/remove-bg", async (req: Request, res: Response) => {
   try {
-    // Rate limit — use req.ip (respects Express trust proxy setting for reverse proxies)
-    const ip = req.ip ?? req.socket.remoteAddress ?? "unknown";
-    if (!checkRateLimit(ip)) {
-      return res.status(429).json({
-        error: "rate_limited",
-        message: "Too many background removal requests. Please wait before trying again.",
-      });
-    }
-
     const { image } = req.body;
     if (!image || typeof image !== "string") {
       return res.status(400).json({ error: "image_required", message: "image field (base64 data URL) is required" });
@@ -65,18 +56,29 @@ router.post("/remove-bg", async (req: Request, res: Response) => {
       });
     }
 
-    const base64Data = image.replace(/^data:image\/[a-z]+;base64,/, "");
-    const mimeType = image.startsWith("data:image/png") ? "image/png" : "image/jpeg";
-
+    // Check API key FIRST — if absent, return 503 immediately so the client
+    // switches to the free in-browser WASM fallback without hitting the rate limiter.
     const [apiKeyRow] = await db.select().from(settingsTable).where(eq(settingsTable.key, "removeBgApiKey"));
     const apiKey = apiKeyRow?.value;
 
     if (!apiKey) {
       return res.status(503).json({
         error: "no_api_key",
-        message: "Background removal isn't configured — admin needs to add a remove.bg key.",
+        message: "Background removal isn't configured — switching to in-browser AI.",
       });
     }
+
+    // Rate limit only applies when an API key is present (server-side calls cost money)
+    const ip = req.ip ?? req.socket.remoteAddress ?? "unknown";
+    if (!checkRateLimit(ip)) {
+      return res.status(429).json({
+        error: "rate_limited",
+        message: "Too many background removal requests. Please wait before trying again.",
+      });
+    }
+
+    const base64Data = image.replace(/^data:image\/[a-z]+;base64,/, "");
+    const mimeType = image.startsWith("data:image/png") ? "image/png" : "image/jpeg";
 
     const buffer = Buffer.from(base64Data, "base64");
     const formData = new FormData();

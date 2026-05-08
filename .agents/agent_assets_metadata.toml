@@ -167,3 +167,9 @@ id = "I-7KaRrqrjrSNoCqlGWDP"
 uri = "file://trynex-tech-overview.md"
 type = "text"
 title = "TryNex Lifestyle — Tech Stack & Platform Overview"
+
+[[outputs]]
+id = "dnM5bgduA4C8jyrfwRv2O"
+uri = "file://TryNex-Issues-and-Fixes.md"
+type = "text"
+title = "TryNex — Complete Issue Audit & Fix Log"

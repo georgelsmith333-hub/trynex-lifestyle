@@ -368,7 +368,7 @@ export class ObjectStorageService {
       fs.writeFileSync(destPath, buf);
     }
 
-    return `/objects/${entityId}`;
+    return `/api/storage/objects/${entityId}`;
   }
 
   /* ── Legacy no-op stubs (kept for import compatibility) ── */
