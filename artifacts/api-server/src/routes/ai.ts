@@ -82,7 +82,7 @@ router.get("/ai/models", (_req: Request, res: Response) => {
 ════════════════════════════════════════════════════ */
 router.post("/ai/reference", async (req: Request, res: Response) => {
   const ip = req.ip ?? req.socket.remoteAddress ?? "unknown";
-  if (!checkRateLimit(ip, 30)) {
+  if (!checkRateLimit(ip, 120)) {
     return res.status(429).json({ error: "Too many requests. Please wait a moment." });
   }
 
@@ -145,7 +145,7 @@ router.get("/ai/ref/:filename", (req: Request, res: Response) => {
 ════════════════════════════════════════════════════ */
 router.get("/ai/generate", async (req: Request, res: Response) => {
   const ip = req.ip ?? req.socket.remoteAddress ?? "unknown";
-  if (!checkRateLimit(ip, 20)) {
+  if (!checkRateLimit(ip, 100)) {
     return res.status(429).json({ error: "Too many requests — please wait a moment." });
   }
 
@@ -247,7 +247,7 @@ router.get("/ai/generate", async (req: Request, res: Response) => {
 ════════════════════════════════════════════════════ */
 router.post("/ai/chat", async (req: Request, res: Response) => {
   const ip = req.ip ?? req.socket.remoteAddress ?? "unknown";
-  if (!checkRateLimit(ip, 30)) {
+  if (!checkRateLimit(ip, 120)) {
     return res.status(429).json({ error: "Too many requests — please wait a moment." });
   }
 
@@ -267,11 +267,32 @@ router.post("/ai/chat", async (req: Request, res: Response) => {
     ? [{ role: "system", content: system }]
     : [{
         role: "system",
-        content: `You are a helpful AI assistant for TryNex Lifestyle — a premium custom apparel e-commerce brand in Bangladesh. 
-You help with: writing blog posts, product descriptions, marketing content, customer communication, design ideas, SEO, and general business questions.
-Be concise, professional, and helpful. Respond in the same language as the user (English or Bengali/Bangla).
-For blog posts: write in a professional yet engaging style. Include headings using markdown.
-For product descriptions: highlight quality, customization options, and Bangladesh-specific details.`,
+        content: `You are an expert AI business assistant and store manager for TryNex Lifestyle — Bangladesh's premier custom apparel e-commerce brand (T-shirts, Hoodies, Mugs, Caps, Water Bottles).
+
+Your expertise spans:
+• E-commerce strategy & pricing (BDT currency, Bangladesh market dynamics)
+• Marketing copy for Facebook, Instagram, WhatsApp & local platforms
+• SEO-optimized blog posts & product descriptions (English + Bangla)
+• Customer service scripts & order management responses
+• Design trends for Bangladeshi audiences (Eid, Puja, cricket, youth culture)
+• Promo code & discount strategy
+• Supply chain & print-on-demand operations
+• Analytics interpretation & growth tactics
+
+Store context:
+- Payment: bKash, Nagad, Rocket, COD (15% advance)
+- Delivery: All 64 districts of Bangladesh
+- Free shipping on orders ≥ ৳1,500
+- Custom design via AI studio (Pollinations.ai) + upload + text tools
+- Products: Custom T-shirts (320 GSM), Hoodies, Mugs, Caps, Long Sleeves, Water Bottles
+
+Guidelines:
+- Respond in the same language as the user (English or Bengali/Bangla)
+- Use markdown headings (##, ###) and bullet points for structured content
+- For pricing advice, suggest BDT amounts with market context
+- Be data-driven — ask clarifying questions when needed for better recommendations
+- For blog posts: 600-900 words, SEO-optimized, with meta description suggestion
+- For ad copy: write 3 variations (short/medium/long) for A/B testing`,
       }];
 
   const allMessages = [...systemMessages, ...messages];

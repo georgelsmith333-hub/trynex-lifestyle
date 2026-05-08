@@ -497,15 +497,32 @@ router.post("/orders", async (req, res) => {
       return imgs.filter(s => typeof s === "string" && !s.startsWith("data:"));
     }
 
-    // Strip data-URLs from imageUrl — a base64 mockup thumbnail can be 50–200 KB.
-    // Only real object-storage paths (starting with / or http) are kept.
-    // The admin panel uses this URL for display; if it's absent the panel falls
-    // back gracefully to the product image or a placeholder.
-    function sanitizeImageUrl(url: string | null | undefined): string | null {
+    // Convert a URL to a storable path: real object-storage paths are kept as-is;
+    // data-URL thumbnails are saved to storage and replaced with the resulting path.
+    // Returns null only for genuinely absent/invalid URLs.
+    function sanitizeImageUrlSync(url: string | null | undefined): string | null {
       if (!url || typeof url !== "string") return null;
-      if (url.startsWith("data:")) return null;
+      if (url.startsWith("data:")) return null; // handled by async pass below
       return url;
     }
+
+    // Async pre-pass: for studio items whose imageUrl is a data-URL (canvas mockup
+    // thumbnail), upload the image to object storage so the admin panel can display it.
+    // Failures are non-fatal — imageUrl falls back to null gracefully.
+    const studioMockupUrls: (string | null)[] = await Promise.all(
+      studioItems.map(async (item: any) => {
+        const url: string | undefined = item.imageUrl;
+        if (!url || typeof url !== "string") return null;
+        if (!url.startsWith("data:")) return url; // already a real path
+        try {
+          const saved = await orderStorageService.saveMockupImage(url);
+          return saved;
+        } catch (err) {
+          logger.warn({ err }, "saveMockupImage failed — imageUrl will be null for this item");
+          return null;
+        }
+      })
+    );
 
     const catalogOrderItems = catalogItems.map((item: any) => {
       const product = productMap[item.productId];
@@ -520,29 +537,31 @@ router.post("/orders", async (req, res) => {
         price,
         customNote: item.customNote,
         customImages: sanitizeCustomImages(item.customImages),
-        imageUrl: sanitizeImageUrl(item.imageUrl),
+        imageUrl: sanitizeImageUrlSync(item.imageUrl),
         isStudio: false,
       };
     });
 
     // Studio items: price is derived server-side from settings; client price is ignored
-    const studioOrderItems = studioItems.map((item: any) => {
+    const studioOrderItems = studioItems.map((item: any, idx: number) => {
       let note: any = {};
       try { note = JSON.parse(item.customNote ?? "{}"); } catch (err) { logger.warn({ err }, "Failed to parse customNote"); }
       // Determine product type from the studio note to apply the correct price
       const isMug = (note.product ?? "").toLowerCase().includes("mug");
       const serverPrice = isMug ? studioMugPrice : studioTshirtPrice;
+      // Use the async-saved mockup URL (converts data-URL → object storage path)
+      const savedImageUrl = studioMockupUrls[idx] ?? null;
       return {
         productId: 0,
         productName: item.name || (isMug ? "Custom Studio Mug" : "Custom Studio T-Shirt"),
-        productImage: sanitizeImageUrl(item.imageUrl),
+        productImage: savedImageUrl,
         quantity: Math.max(1, Math.floor(Number(item.quantity))),
         size: item.size,
         color: item.color,
         price: serverPrice,
         customNote: item.customNote,
         customImages: sanitizeCustomImages(item.customImages),
-        imageUrl: sanitizeImageUrl(item.imageUrl),
+        imageUrl: savedImageUrl,
         isStudio: true,
       };
     });

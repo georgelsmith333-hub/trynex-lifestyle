@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { LayoutDashboard, Package, ShoppingCart, Settings, LogOut, Menu, X, FileText, Users, HardDrive, Sparkles, Star, Code2, BookOpen, Paintbrush, GitBranch, Gift, Layers, History, Shield, Search, Tag, Share2 } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, Settings, LogOut, Menu, X, FileText, Users, HardDrive, Sparkles, Star, Code2, BookOpen, Paintbrush, GitBranch, Gift, Layers, History, Shield, Search, Tag, Share2, Mail } from "lucide-react";
 import { useAdminLogout, useAdminMe } from "@workspace/api-client-react";
 import React, { useEffect, useState } from "react";
 import { Loader } from "@/components/ui/Loader";
@@ -24,6 +24,7 @@ const MENU: { name: string; href: string; icon: React.ComponentType<{ className?
   { name: "SEO / Search Console", href: "/admin/seo", icon: Search },
   { name: "Promo Codes", href: "/admin/promo-codes", icon: Tag },
   { name: "Referrals", href: "/admin/referrals", icon: Share2 },
+  { name: "Newsletter", href: "/admin/newsletter", icon: Mail },
   { name: "Activity Log", href: "/admin/logs", icon: History },
   { name: "Security", href: "/admin/security", icon: Shield },
   { name: "Settings", href: "/admin/settings", icon: Settings },

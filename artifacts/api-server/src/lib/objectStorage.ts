@@ -336,6 +336,41 @@ export class ObjectStorageService {
     return `/objects/orders/${orderNumber}/${itemIdx}/${safeFilename}`;
   }
 
+  /* ── Save a data-URL (base64) image to storage, return the object path ──
+   * Used to persist the studio mockup thumbnail so the admin order panel can
+   * display the customer's design composite without storing raw base64 in Postgres.
+   */
+  async saveMockupImage(dataUrl: string): Promise<string | null> {
+    if (!dataUrl || !dataUrl.startsWith("data:")) return null;
+    const match = dataUrl.match(/^data:image\/([a-z]+);base64,(.+)$/s);
+    if (!match) return null;
+    const [, rawExt, b64] = match;
+    const safeExt = ["png", "jpg", "jpeg", "webp"].includes(rawExt) ? rawExt : "png";
+    const buf = Buffer.from(b64, "base64");
+    if (buf.length === 0 || buf.length > 8 * 1024 * 1024) return null; // skip empty / > 8 MB
+
+    const { randomUUID: uuid } = await import("crypto");
+    const entityId = `mockup-${uuid()}.${safeExt}`;
+
+    if (BACKEND === "r2" || BACKEND === "s3") {
+      const { client, bucket } = ensureS3Client();
+      await client.send(
+        new PutObjectCommand({
+          Bucket: bucket,
+          Key: `uploads/${entityId}`,
+          Body: buf,
+          ContentType: `image/${safeExt}`,
+        })
+      );
+    } else {
+      // Local backend — write directly to the private uploads dir
+      const destPath = path.join(localUploadsDir(), entityId);
+      fs.writeFileSync(destPath, buf);
+    }
+
+    return `/objects/${entityId}`;
+  }
+
   /* ── Legacy no-op stubs (kept for import compatibility) ── */
   async searchPublicObject(_filePath: string): Promise<null> {
     return null;

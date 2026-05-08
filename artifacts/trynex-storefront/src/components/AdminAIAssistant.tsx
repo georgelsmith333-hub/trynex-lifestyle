@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bot, X, Send, Loader2, Copy, Check, ChevronDown, FileText, Package, MessageSquare, Sparkles, Trash2, RotateCcw } from "lucide-react";
+import { Bot, X, Send, Loader2, Copy, Check, ChevronDown, FileText, Package, MessageSquare, Sparkles, Trash2, TrendingUp, Tag, Mail, Users } from "lucide-react";
 import { getApiUrl } from "@/lib/utils";
 
 interface Message {
@@ -16,7 +16,7 @@ const PRESETS = [
     color: "#3b82f6",
     bg: "#eff6ff",
     border: "#bfdbfe",
-    prompt: "Write a compelling blog post for TryNex about custom printed t-shirts for Eid in Bangladesh. Include tips for choosing the right design, fabric quality, and why custom apparel makes great gifts. Use headings and make it SEO-friendly.",
+    prompt: "Write a compelling SEO-optimized blog post (700+ words) for TryNex Lifestyle about custom printed t-shirts for Eid in Bangladesh. Include: an engaging intro, tips for choosing the right design, fabric quality (320 GSM), why custom apparel makes great Eid gifts, and a clear call-to-action. Add a meta description suggestion at the end.",
   },
   {
     icon: Package,
@@ -24,7 +24,7 @@ const PRESETS = [
     color: "#7c3aed",
     bg: "#f5f3ff",
     border: "#ddd6fe",
-    prompt: "Write an engaging product description for our premium 320 GSM custom t-shirt. Highlight the quality, customization options (AI design, upload your own), quick 24-hour production, and delivery across all 64 districts of Bangladesh.",
+    prompt: "Write 3 product description variants (short, medium, long) for our premium 320 GSM custom t-shirt. Highlight: DTG/screen print quality, AI design studio, upload-your-own artwork, 24-hour production, free delivery above ৳1,500, and delivery across all 64 districts. Make each variant sound premium yet approachable for young Bangladeshis.",
   },
   {
     icon: MessageSquare,
@@ -32,7 +32,7 @@ const PRESETS = [
     color: "#E85D04",
     bg: "#fff7ed",
     border: "#fed7aa",
-    prompt: "Write 3 short Facebook ad copies for TryNex Lifestyle custom t-shirts targeting young Bangladeshis aged 18-35. Make them catchy, include a call-to-action, and mention free delivery on orders over ৳1500.",
+    prompt: "Write 3 Facebook/Instagram ad copy variations for TryNex Lifestyle custom t-shirts targeting Bangladeshis aged 18-35. Include: a short hook (15 words), 2-3 benefit bullets, a CTA, and mention free delivery on orders over ৳1,500. Make one playful, one aspirational, and one urgency-focused (limited offer).",
   },
   {
     icon: Sparkles,
@@ -40,7 +40,39 @@ const PRESETS = [
     color: "#059669",
     bg: "#ecfdf5",
     border: "#a7f3d0",
-    prompt: "Give me 10 creative t-shirt design ideas that would sell well in Bangladesh, considering local culture, festivals, cricket, music, and youth trends. For each, suggest colors and design style.",
+    prompt: "Give me 12 creative custom t-shirt & mug design ideas that will sell well in Bangladesh this season. Consider: Eid, Durga Puja, cricket world cup, Bengali new year (Pohela Boishakh), retro Dhaka, hip-hop Bangla, couple sets. For each: name, description, color palette suggestion, and target audience.",
+  },
+  {
+    icon: TrendingUp,
+    label: "Growth Strategy",
+    color: "#0ea5e9",
+    bg: "#f0f9ff",
+    border: "#bae6fd",
+    prompt: "Create a 30-day growth strategy for TryNex Lifestyle to increase sales by 40%. Include: daily social media posting schedule, Facebook group marketing, WhatsApp broadcast strategy, referral program tactics, influencer collaboration ideas for Bangladesh, and specific promo code strategies for different customer segments.",
+  },
+  {
+    icon: Tag,
+    label: "Promo Strategy",
+    color: "#d97706",
+    bg: "#fffbeb",
+    border: "#fde68a",
+    prompt: "Design a complete promotional calendar for TryNex Lifestyle for the next 3 months covering major Bangladeshi festivals and shopping occasions. For each promo: discount percentage, promo code, minimum order, target audience, ad copy headline, and duration. Include Eid, Puja, 21st February, Pohela Boishakh, and Valentine's Day.",
+  },
+  {
+    icon: Mail,
+    label: "Email Campaign",
+    color: "#8b5cf6",
+    bg: "#f5f3ff",
+    border: "#ddd6fe",
+    prompt: "Write a 5-email welcome sequence for TryNex Lifestyle newsletter subscribers. Email 1: Welcome + 10% off code. Email 2: How the Design Studio works. Email 3: Customer success story. Email 4: Design inspiration for next festival. Email 5: Referral program intro. Keep each under 200 words, warm and Bangladeshi-friendly tone.",
+  },
+  {
+    icon: Users,
+    label: "Customer Reply",
+    color: "#ef4444",
+    bg: "#fef2f2",
+    border: "#fecaca",
+    prompt: "Write 5 professional yet warm customer service response templates in English AND Bangla for: (1) delayed order apology, (2) design revision request, (3) refund/return inquiry, (4) product quality complaint, (5) thank you after delivery. Make them sound human and brand-consistent with TryNex's premium but accessible tone.",
   },
 ];
 
@@ -218,7 +250,7 @@ export function AdminAIAssistant() {
 
             {/* Quick presets */}
             {messages.length <= 1 && (
-              <div className="p-3 border-b border-gray-100 shrink-0">
+              <div className="p-3 border-b border-gray-100 shrink-0" style={{ maxHeight: 180, overflowY: "auto" }}>
                 <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Quick actions</p>
                 <div className="grid grid-cols-2 gap-1.5">
                   {PRESETS.map(p => {

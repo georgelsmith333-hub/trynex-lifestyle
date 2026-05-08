@@ -87,6 +87,7 @@ const AdminSecurity = lazy(() => import("./pages/admin/AdminSecurity"));
 const AdminSEO = lazy(() => import("./pages/admin/AdminSEO"));
 const AdminPromoCodes = lazy(() => import("./pages/admin/AdminPromoCodes"));
 const AdminReferrals = lazy(() => import("./pages/admin/AdminReferrals"));
+const AdminNewsletter = lazy(() => import("./pages/admin/AdminNewsletter"));
 const Hampers = lazy(() => import("./pages/Hampers"));
 const HamperDetail = lazy(() => import("./pages/HamperDetail"));
 const HamperBuilder = lazy(() => import("./pages/HamperBuilder"));
@@ -177,6 +178,7 @@ function Router() {
           <Route path="/admin/seo" component={AdminSEO} />
           <Route path="/admin/promo-codes" component={AdminPromoCodes} />
           <Route path="/admin/referrals" component={AdminReferrals} />
+          <Route path="/admin/newsletter" component={AdminNewsletter} />
 
           {/* Short-URL redirects for common aliases */}
           <Route path="/privacy"><Redirect to="/privacy-policy" /></Route>
