@@ -1,5 +1,5 @@
 import { AdminLayout } from "@/components/layout/AdminLayout";
-import { getAuthHeaders } from "@/lib/utils";
+import { getAuthHeaders, getApiUrl } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useRef } from "react";
 import {
@@ -20,7 +20,7 @@ export default function AdminBackup() {
   const handleExportCSV = async () => {
     setExportingCsv(true);
     try {
-      const res = await fetch(getExportOrdersCsvUrl(), {
+      const res = await fetch(getApiUrl(getExportOrdersCsvUrl()), {
         headers: { ...getAuthHeaders() },
       });
       if (!res.ok) throw new Error('Export failed');
@@ -42,7 +42,7 @@ export default function AdminBackup() {
   const handleExportBackup = async () => {
     setExporting(true);
     try {
-      const res = await fetch(getExportBackupUrl(), {
+      const res = await fetch(getApiUrl(getExportBackupUrl()), {
         headers: { ...getAuthHeaders() },
       });
       if (!res.ok) throw new Error('Backup failed');

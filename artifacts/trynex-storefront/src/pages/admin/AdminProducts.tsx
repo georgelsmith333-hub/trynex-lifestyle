@@ -208,9 +208,19 @@ export default function AdminProducts() {
     setIsAiGenerating(true);
     try {
       const prompt = `Write a concise, compelling 2-3 sentence product description for a Bangladesh e-commerce store called TryNex Lifestyle. Product: "${name}". Write in English, highlight quality and customizability. Be enthusiastic but professional. Output ONLY the description text, no labels.`;
-      const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
+      const res = await fetch(getApiUrl("/api/ai/chat"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "openai-large",
+          messages: [{ role: "user", content: prompt }],
+          system: "You write product descriptions. Output ONLY the description text, no labels, no markdown, no quotes.",
+        }),
+      });
       if (!res.ok) throw new Error("AI service unavailable");
-      const text = (await res.text()).trim().replace(/^["']|["']$/g, "");
+      const json = await res.json() as { content?: string; error?: string };
+      if (json.error) throw new Error(json.error);
+      const text = (json.content ?? "").trim().replace(/^["']|["']$/g, "");
       if (text && text.length > 10) {
         const textarea = document.querySelector('textarea[name="description"]') as HTMLTextAreaElement;
         if (textarea) {

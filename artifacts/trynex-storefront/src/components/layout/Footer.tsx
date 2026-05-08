@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { useToast } from "@/hooks/use-toast";
+import { getApiUrl } from "@/lib/utils";
 
 const PAYMENT_BADGES = [
   { name: "bKash", color: "#e2136e", bg: "#fde8f1" },
@@ -57,7 +58,7 @@ export function Footer() {
     if (!email || subscribing) return;
     setSubscribing(true);
     try {
-      const res = await fetch("/api/newsletter/subscribe", {
+      const res = await fetch(getApiUrl("/api/newsletter/subscribe"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim(), source: "footer" }),

@@ -3,8 +3,7 @@ import { useLocation } from "wouter";
 import { Shield, ShieldCheck, ShieldOff, KeyRound, Smartphone, Trash2, RefreshCw, Eye, EyeOff, CheckCircle, AlertCircle, LogOut, Monitor } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AdminLayout } from "@/components/layout/AdminLayout";
-
-const API_BASE = import.meta.env.VITE_API_URL || "/api";
+import { getApiUrl } from "@/lib/utils";
 
 function getToken() {
   return sessionStorage.getItem("trynex_admin_token") || "";
@@ -12,7 +11,7 @@ function getToken() {
 
 async function apiFetch(path: string, opts: RequestInit = {}) {
   const token = getToken();
-  const res = await fetch(`${API_BASE}${path}`, {
+  const res = await fetch(getApiUrl(path), {
     ...opts,
     credentials: "include",
     headers: {

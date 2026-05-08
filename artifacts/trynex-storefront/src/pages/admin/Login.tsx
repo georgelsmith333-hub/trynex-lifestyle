@@ -3,8 +3,7 @@ import { useLocation } from "wouter";
 import { Lock, Eye, EyeOff, ShieldCheck, Smartphone, ArrowLeft, KeyRound } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { nukeAndReload } from "@/lib/cache-recovery";
-
-const API_BASE = import.meta.env.VITE_API_URL || "/api";
+import { getApiUrl } from "@/lib/utils";
 
 type LoginStep = "password" | "totp" | "reset";
 
@@ -24,7 +23,7 @@ export default function AdminLogin() {
   const [isPending, setIsPending] = useState(false);
 
   async function apiPost(path: string, body: Record<string, unknown>) {
-    const res = await fetch(`${API_BASE}${path}`, {
+    const res = await fetch(getApiUrl(path), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
