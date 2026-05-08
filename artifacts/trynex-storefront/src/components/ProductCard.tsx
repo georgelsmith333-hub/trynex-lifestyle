@@ -368,11 +368,11 @@ import { Link, useLocation } from "wouter";
 
             {/* Color dots */}
             {product.colors && product.colors.length > 0 && (
-              <div className="flex items-center gap-1.5 mb-3 overflow-x-auto scroll-snap-x pb-0.5">
+              <div className="flex items-center gap-1.5 mb-3 overflow-x-auto snap-x snap-mandatory pb-0.5" style={{ scrollbarWidth: "none", msOverflowStyle: "none" } as React.CSSProperties}>
                 {product.colors.slice(0, 6).map((color, i) => (
                   <div
                     key={i}
-                    className="w-4 h-4 rounded-full shrink-0 transition-transform hover:scale-125 scroll-snap-item"
+                    className="w-4 h-4 rounded-full shrink-0 transition-transform hover:scale-125 snap-start"
                     style={{
                       background: COLOR_MAP[color] || '#ccc',
                       border: color === 'White' ? '1.5px solid #d1d5db' : '1.5px solid rgba(0,0,0,0.1)',

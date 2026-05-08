@@ -1156,7 +1156,7 @@ export default function DesignStudio() {
           reader.onerror = reject;
           reader.readAsDataURL(aiRefFile);
         });
-        const uploadRes = await fetch("/api/ai/reference", {
+        const uploadRes = await fetch(getApiUrl("/api/ai/reference"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ image: base64 }),
@@ -1169,7 +1169,7 @@ export default function DesignStudio() {
 
         const editModel = aiModel === "flux-realism" ? "flux-kontext" : aiModel;
         const params = new URLSearchParams({ prompt, seed: String(seed), model: editModel, imageUrl: refUrl, width: "1024", height: "1024" });
-        const genRes = await fetch(`/api/ai/generate?${params.toString()}`);
+        const genRes = await fetch(getApiUrl(`/api/ai/generate?${params.toString()}`));
         if (!genRes.ok) {
           const err = await genRes.json().catch(() => ({})) as { error?: string };
           throw new Error(err.error || `Generation failed (${genRes.status})`);
@@ -1185,7 +1185,7 @@ export default function DesignStudio() {
           : ", t-shirt print design, white background, high contrast, vector style, clean edges";
         const fullPrompt = prompt + suffix;
         const params = new URLSearchParams({ prompt: fullPrompt, seed: String(seed), model: aiModel, width: "1024", height: "1024" });
-        const genRes = await fetch(`/api/ai/generate?${params.toString()}`);
+        const genRes = await fetch(getApiUrl(`/api/ai/generate?${params.toString()}`));
         if (!genRes.ok) {
           const err = await genRes.json().catch(() => ({})) as { error?: string };
           throw new Error(err.error || `Generation failed (${genRes.status})`);
