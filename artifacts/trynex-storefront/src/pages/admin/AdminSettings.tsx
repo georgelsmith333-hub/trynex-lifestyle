@@ -209,7 +209,7 @@ export default function AdminSettings() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const siteSettings = useSiteSettings();
-  const { data: settings, isLoading } = useGetSettings({ request: { headers: getAuthHeaders() } });
+  const { data: settings, isLoading } = useGetSettings({ request: { headers: getAuthHeaders() }, query: { staleTime: 0, refetchOnMount: "always" } });
   const { mutateAsync: updateSettings, isPending } = useUpdateSettings({
     request: { headers: getAuthHeaders() }
   });

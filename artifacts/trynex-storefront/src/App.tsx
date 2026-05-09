@@ -103,12 +103,13 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
-      // 3 minutes default stale time — settings/products don't change every
-      // 30 s. Reduces redundant API calls without sacrificing freshness.
-      staleTime: 3 * 60 * 1000,
-      // Keep unused query data for 10 minutes so navigating back to a page
-      // shows instant cached content while revalidating in the background.
-      gcTime: 10 * 60 * 1000,
+      // 20 seconds stale time — admin changes reflect within ~20s on storefront
+      // without excessive API polling. Admin pages override this to 0 individually.
+      staleTime: 20 * 1000,
+      // Keep unused query data for 5 minutes so navigating back shows instant
+      // cached content while revalidating in the background.
+      gcTime: 5 * 60 * 1000,
+      refetchOnWindowFocus: true,
     }
   }
 });

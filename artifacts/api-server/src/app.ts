@@ -247,14 +247,20 @@ app.use("/api", (_req, res, next) => {
   }
 
   if (_req.method === "GET") {
-    if (
+    // Admin-authenticated requests must never be served from a cache.
+    const isAdminRequest = !!(_req.headers.authorization ?? "").match(/^Bearer\s+\S+/i);
+    if (isAdminRequest) {
+      res.setHeader("Cache-Control", "no-store");
+    } else if (
       url.includes("/products") ||
       url.includes("/categories") ||
       url.includes("/blog") ||
       url.includes("/testimonials") ||
       url.includes("/settings")
     ) {
-      res.setHeader("Cache-Control", "public, max-age=60, s-maxage=300, stale-while-revalidate=600");
+      // Short public cache (10s browser, 30s CDN) so storefront shoppers see
+      // near-real-time updates after admin makes a change.
+      res.setHeader("Cache-Control", "public, max-age=10, s-maxage=30, stale-while-revalidate=60");
     } else {
       res.setHeader("Cache-Control", "private, no-cache");
     }

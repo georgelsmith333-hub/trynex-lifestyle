@@ -65,8 +65,8 @@ export default function AdminProducts() {
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const imageFileInputRef = useRef<HTMLInputElement>(null);
 
-  const { data, isLoading } = useListProducts({ limit: 200 });
-  const { data: categoriesData } = useListCategories();
+  const { data, isLoading } = useListProducts({ limit: 200 }, { query: { staleTime: 0, refetchOnMount: "always" } });
+  const { data: categoriesData } = useListCategories({ query: { staleTime: 0, refetchOnMount: "always" } });
   const reqOpts = { request: { headers: getAuthHeaders() } };
   const { mutateAsync: createProduct, isPending: isCreating } = useCreateProduct(reqOpts);
   const { mutateAsync: updateProduct, isPending: isUpdating } = useUpdateProduct(reqOpts);

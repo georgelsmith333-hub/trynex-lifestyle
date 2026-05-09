@@ -39,7 +39,8 @@ function useBlogCategories() {
       if (!res.ok) throw new Error("Failed to load categories");
       return res.json();
     },
-    staleTime: 60_000,
+    staleTime: 0,
+    refetchOnMount: "always" as const,
   });
 }
 

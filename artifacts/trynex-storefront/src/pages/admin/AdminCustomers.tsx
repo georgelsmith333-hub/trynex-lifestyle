@@ -50,7 +50,7 @@ const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?:
 };
 
 export default function AdminCustomers() {
-  const authOpts = { request: { headers: getAuthHeaders() } };
+  const authOpts = { request: { headers: getAuthHeaders() }, query: { staleTime: 0, refetchOnMount: "always" as const } };
   const { data, isLoading, error } = useListAdminCustomers(authOpts);
   const { data: guestData, isLoading: guestsLoading } = useListAdminGuestCustomers(authOpts);
   const [search, setSearch] = useState("");

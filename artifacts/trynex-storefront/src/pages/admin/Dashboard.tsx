@@ -51,7 +51,7 @@ const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?:
 };
 
 export default function AdminDashboard() {
-  const { data: rawStats, isLoading, refetch, dataUpdatedAt } = useGetAdminStats({ request: { headers: getAuthHeaders() } });
+  const { data: rawStats, isLoading, refetch, dataUpdatedAt } = useGetAdminStats({ request: { headers: getAuthHeaders() }, query: { staleTime: 0, refetchOnMount: "always", refetchInterval: 60_000 } });
   const [showProdNotice, setShowProdNotice] = React.useState(
     () => localStorage.getItem("trynex_prod_notice_dismissed") !== "1"
   );
@@ -149,16 +149,17 @@ export default function AdminDashboard() {
         </button>
       </div>
 
-      {/* Production DB Notice */}
+      {/* Welcome tip — shown once */}
       {showProdNotice && (
-        <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 mb-6 text-sm">
-          <Info className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
-          <div className="flex-1 text-blue-800">
-            <span className="font-semibold">Production database is separate.</span> Your live site on{" "}
-            <span className="font-medium">trynexshop.com</span> uses the Render database and this admin panel edits that same live data.
-            If content looks missing, refresh the admin page and confirm you are logged into the production site.
+        <div className="flex items-start gap-3 rounded-2xl px-4 py-3 mb-6 text-sm"
+          style={{ background: "linear-gradient(135deg,#fff7ed,#fffbeb)", border: "1.5px solid #fde68a" }}>
+          <Info className="w-4 h-4 mt-0.5 shrink-0" style={{ color: "#d97706" }} />
+          <div className="flex-1" style={{ color: "#92400e" }}>
+            <span className="font-black">All changes here are live instantly.</span>{" "}
+            Products, orders, blog posts, promo codes and settings you edit in this panel update on{" "}
+            <span className="font-semibold">trynexshop.com</span> in real time. No need to redeploy or restart after making changes.
           </div>
-          <button onClick={dismissProdNotice} className="text-blue-400 hover:text-blue-600 mt-0.5 shrink-0">
+          <button onClick={dismissProdNotice} className="mt-0.5 shrink-0 hover:opacity-70" style={{ color: "#d97706" }}>
             <X className="w-4 h-4" />
           </button>
         </div>

@@ -57,6 +57,8 @@ export default function AdminPromoCodes() {
       if (!res.ok) throw new Error("Failed to load promo codes");
       return res.json();
     },
+    staleTime: 0,
+    refetchOnMount: "always",
   });
 
   const codes = data?.promoCodes ?? [];

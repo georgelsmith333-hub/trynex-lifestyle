@@ -39,7 +39,7 @@ export default function AdminCategories() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ id: number; name: string } | null>(null);
 
-  const { data, isLoading } = useListCategories();
+  const { data, isLoading } = useListCategories({ query: { staleTime: 0, refetchOnMount: "always" } });
   const reqOpts = { request: { headers: getAuthHeaders() } };
   const { mutateAsync: createCategory, isPending: isCreating } = useCreateCategory(reqOpts);
   const { mutateAsync: updateCategory, isPending: isUpdating } = useUpdateCategory(reqOpts);
