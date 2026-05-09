@@ -969,14 +969,19 @@ router.patch("/orders/:id/payment-status", requireAdmin, updatePaymentStatusHand
 router.put("/orders/:id/payment-info", async (req, res) => {
   try {
     const id = parseInt(req.params.id as string, 10);
-    const { lastFourDigits, promoCode } = req.body;
+    if (!Number.isFinite(id) || id <= 0) {
+      res.status(400).json({ error: "validation_error", message: "Invalid order id" });
+      return;
+    }
+    const rawLastFour = String(req.body?.lastFourDigits ?? "").replace(/\D/g, "").slice(0, 8);
+    const rawPromo = String(req.body?.promoCode ?? "").replace(/[^A-Z0-9_\-]/gi, "").toUpperCase().slice(0, 50);
     const notes = [
-      lastFourDigits ? `Payment last 4 digits: ${lastFourDigits}` : null,
-      promoCode ? `Promo code: ${promoCode}` : null,
+      rawLastFour ? `Payment last 4 digits: ${rawLastFour}` : null,
+      rawPromo ? `Promo code: ${rawPromo}` : null,
     ].filter(Boolean).join(" | ");
 
     const [order] = await db.update(ordersTable)
-      .set({ paymentStatus: "submitted", notes, updatedAt: new Date() })
+      .set({ paymentStatus: "submitted", ...(notes ? { notes } : {}), updatedAt: new Date() })
       .where(eq(ordersTable.id, id))
       .returning();
     if (!order) {

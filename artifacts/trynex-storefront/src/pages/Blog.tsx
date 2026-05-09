@@ -216,7 +216,7 @@ export default function Blog() {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [sortBy, setSortBy] = useState<"newest" | "views">("newest");
-  const { data, isLoading } = useBlogPosts(activeCategory, sortBy);
+  const { data, isLoading, isError } = useBlogPosts(activeCategory, sortBy);
   const { data: categoriesData } = useBlogCategories();
   const CATEGORIES = ["All", ...(categoriesData?.categories ?? ["General", "Fashion", "Tips", "News", "Lifestyle"])];
   const categoryCounts = categoriesData?.counts ?? {};
@@ -344,6 +344,12 @@ export default function Blog() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[1, 2, 3].map(i => <BlogCardSkeleton key={i} />)}
               </div>
+            </div>
+          ) : isError ? (
+            <div className="text-center py-20">
+              <BookOpen className="w-14 h-14 text-gray-200 mx-auto mb-4" />
+              <p className="text-gray-500 text-xl font-black mb-2">Could not load posts</p>
+              <p className="text-gray-400 text-sm">Please check your connection and try refreshing the page.</p>
             </div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-20">

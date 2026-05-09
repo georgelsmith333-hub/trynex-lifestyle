@@ -9,6 +9,10 @@ const router: IRouter = Router();
 router.get("/reviews/:productId", async (req, res) => {
   try {
     const productId = parseInt(req.params.productId, 10);
+    if (!Number.isFinite(productId) || productId <= 0) {
+      res.status(400).json({ error: "validation_error", message: "Invalid product id" });
+      return;
+    }
     const reviews = await db.select().from(reviewsTable)
       .where(and(eq(reviewsTable.productId, productId), eq(reviewsTable.approved, true)))
       .orderBy(desc(reviewsTable.createdAt));
@@ -97,6 +101,10 @@ router.get("/admin/reviews", requireAdmin, async (req, res) => {
 router.put("/admin/reviews/:id/approve", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id as string, 10);
+    if (!Number.isFinite(id) || id <= 0) {
+      res.status(400).json({ error: "validation_error", message: "Invalid review id" });
+      return;
+    }
     const [beforeSnap] = await db.select().from(reviewsTable).where(eq(reviewsTable.id, id));
     const [review] = await db.update(reviewsTable)
       .set({ approved: true })
@@ -126,6 +134,10 @@ router.put("/admin/reviews/:id/approve", requireAdmin, async (req, res) => {
 router.delete("/admin/reviews/:id", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id as string, 10);
+    if (!Number.isFinite(id) || id <= 0) {
+      res.status(400).json({ error: "validation_error", message: "Invalid review id" });
+      return;
+    }
     const [beforeSnap] = await db.select().from(reviewsTable).where(eq(reviewsTable.id, id));
     await db.delete(reviewsTable).where(eq(reviewsTable.id, id));
     if (beforeSnap) logActivity({ action: "delete", entity: "review", entityId: id, entityName: `Review by ${beforeSnap.customerName}`, before: beforeSnap as unknown as Record<string, unknown>, adminId: getAdminId(req) });

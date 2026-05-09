@@ -197,6 +197,23 @@ router.post("/promo-codes/validate", async (req, res) => {
 router.put("/promo-codes/:id/use", async (req, res) => {
   try {
     const id = parseInt(req.params.id as string, 10);
+    if (!Number.isFinite(id) || id <= 0) {
+      res.status(400).json({ error: "validation_error", message: "Invalid promo code id" });
+      return;
+    }
+    const [promo] = await db
+      .select({ id: promoCodesTable.id, active: promoCodesTable.active })
+      .from(promoCodesTable)
+      .where(eq(promoCodesTable.id, id))
+      .limit(1);
+    if (!promo) {
+      res.status(404).json({ error: "not_found", message: "Promo code not found" });
+      return;
+    }
+    if (!promo.active) {
+      res.status(400).json({ error: "validation_error", message: "Promo code is no longer active" });
+      return;
+    }
     await db.update(promoCodesTable)
       .set({ usedCount: sql`COALESCE(used_count, 0) + 1` })
       .where(eq(promoCodesTable.id, id));

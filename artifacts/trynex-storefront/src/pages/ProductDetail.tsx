@@ -56,6 +56,7 @@ function ReviewsSection({ productId, rating }: { productId: number; rating: numb
   const [reviews, setReviews] = useState<any[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [reviewsError, setReviewsError] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [submitName, setSubmitName] = useState("");
   const [submitEmail, setSubmitEmail] = useState("");
@@ -65,15 +66,26 @@ function ReviewsSection({ productId, rating }: { productId: number; rating: numb
   const { toast } = useToast();
 
   const fetchReviews = async () => {
+    setReviewsError(false);
     try {
       const res = await fetch(getApiUrl(`/api/reviews/${productId}`));
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setReviews(data.reviews || []);
       setStats(data.stats || null);
-    } catch {} finally { setLoading(false); }
+    } catch {
+      setReviewsError(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  useEffect(() => { fetchReviews(); }, [productId]);
+  useEffect(() => {
+    setLoading(true);
+    setReviews([]);
+    setStats(null);
+    fetchReviews();
+  }, [productId]);
 
   const handleSubmitReview = async () => {
     if (!submitName || !submitEmail || !submitRating) return;
@@ -95,6 +107,19 @@ function ReviewsSection({ productId, rating }: { productId: number; rating: numb
 
   const avg = stats?.average || rating;
   const total = stats?.total || 0;
+
+  if (loading) return (
+    <div className="flex items-center justify-center py-12">
+      <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+
+  if (reviewsError) return (
+    <div className="text-center py-10">
+      <p className="text-sm text-gray-500 mb-3">Could not load reviews. Please try again.</p>
+      <button onClick={fetchReviews} className="text-sm text-orange-600 font-semibold hover:underline">Retry</button>
+    </div>
+  );
 
   return (
     <motion.div key="reviews" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-5">

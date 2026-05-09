@@ -84,6 +84,10 @@ router.post("/admin/testimonials", requireAdmin, async (req, res) => {
 router.patch("/admin/testimonials/:id", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(String(req.params.id), 10);
+    if (!Number.isFinite(id) || id <= 0) {
+      res.status(400).json({ error: "validation_error", message: "Invalid testimonial id" });
+      return;
+    }
     const { name, role, location, stars, body, active, sortOrder } = req.body as TestimonialUpdate;
     const isPartial = name === undefined && body === undefined;
     if (!isPartial && (!name?.trim() || !body?.trim())) {
@@ -117,6 +121,10 @@ router.patch("/admin/testimonials/:id", requireAdmin, async (req, res) => {
 router.delete("/admin/testimonials/:id", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(String(req.params.id), 10);
+    if (!Number.isFinite(id) || id <= 0) {
+      res.status(400).json({ error: "validation_error", message: "Invalid testimonial id" });
+      return;
+    }
     await db.delete(testimonialsTable).where(eq(testimonialsTable.id, id));
     res.json({ success: true });
   } catch (err) {

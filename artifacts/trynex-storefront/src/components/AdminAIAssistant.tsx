@@ -92,6 +92,7 @@ export function AdminAIAssistant() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<HTMLTextAreaElement>(null);
   const cmdInputRef = useRef<HTMLTextAreaElement>(null);
+  const modelPickerRef = useRef<HTMLDivElement>(null);
 
   /* Init chat greeting */
   useEffect(() => {
@@ -106,6 +107,17 @@ export function AdminAIAssistant() {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, execResults]);
+
+  useEffect(() => {
+    if (!showModelPicker) return;
+    const handler = (e: MouseEvent) => {
+      if (modelPickerRef.current && !modelPickerRef.current.contains(e.target as Node)) {
+        setShowModelPicker(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [showModelPicker]);
 
   /* ── Chat send ──────────────────────────────────── */
   const sendMessage = useCallback(async (text?: string) => {
@@ -308,7 +320,7 @@ export function AdminAIAssistant() {
                     <button onClick={clearChat} className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/20 transition-colors" title="Clear chat">
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
-                    <div className="relative">
+                    <div className="relative" ref={modelPickerRef}>
                       <button
                         onClick={() => setShowModelPicker(p => !p)}
                         className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold text-white/90 hover:bg-white/20 transition-colors"
