@@ -253,6 +253,10 @@ router.patch("/promo-codes/:id", requireAdmin, async (req, res) => {
 router.delete("/promo-codes/:id", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id as string, 10);
+    if (!Number.isFinite(id) || id <= 0) {
+      res.status(400).json({ error: "validation_error", message: "Invalid promo code id" });
+      return;
+    }
     const [beforeSnap] = await db.select().from(promoCodesTable).where(eq(promoCodesTable.id, id));
     await db.delete(promoCodesTable).where(eq(promoCodesTable.id, id));
     if (beforeSnap) logActivity({ action: "delete", entity: "promo", entityId: id, entityName: beforeSnap.code, before: beforeSnap as unknown as Record<string, unknown>, adminId: getAdminId(req) });

@@ -119,6 +119,10 @@ router.patch("/referrals/:id", requireAdmin, async (req, res) => {
 router.delete("/referrals/:id", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id as string, 10);
+    if (!Number.isFinite(id) || id <= 0) {
+      res.status(400).json({ error: "validation_error", message: "Invalid referral id" });
+      return;
+    }
     await db.delete(referralsTable).where(eq(referralsTable.id, id));
     res.json({ success: true });
   } catch (err) {

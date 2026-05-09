@@ -389,6 +389,10 @@ router.post("/orders/track", async (req, res) => {
 router.get("/orders/:id", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id as string, 10);
+    if (!Number.isFinite(id) || id <= 0) {
+      res.status(400).json({ error: "validation_error", message: "Invalid order id" });
+      return;
+    }
     const [order] = await db.select().from(ordersTable).where(eq(ordersTable.id, id));
     if (!order) {
       res.status(404).json({ error: "not_found", message: "Order not found" });
@@ -918,6 +922,10 @@ async function sendStatusUpdateNotification(orderData: any, newStatus: string) {
 const updateOrderStatusHandler = async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id as string, 10);
+    if (!Number.isFinite(id) || id <= 0) {
+      res.status(400).json({ error: "validation_error", message: "Invalid order id" });
+      return;
+    }
     const { status } = req.body;
     if (!status) {
       res.status(400).json({ error: "validation_error", message: "status is required" });
@@ -945,6 +953,10 @@ router.patch("/orders/:id/status", requireAdmin, updateOrderStatusHandler);
 const updatePaymentStatusHandler = async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id as string, 10);
+    if (!Number.isFinite(id) || id <= 0) {
+      res.status(400).json({ error: "validation_error", message: "Invalid order id" });
+      return;
+    }
     const { paymentStatus } = req.body;
     if (!paymentStatus) {
       res.status(400).json({ error: "validation_error", message: "paymentStatus is required" });

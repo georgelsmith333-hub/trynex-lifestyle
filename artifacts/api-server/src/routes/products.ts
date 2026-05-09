@@ -37,7 +37,10 @@ router.get("/products", async (req, res) => {
     const offset = (pageNum - 1) * limitNum;
 
     const conditions: any[] = [];
-    if (categoryId) conditions.push(eq(productsTable.categoryId, parseInt(categoryId as string, 10)));
+    if (categoryId) {
+      const catId = parseInt(categoryId as string, 10);
+      if (Number.isFinite(catId)) conditions.push(eq(productsTable.categoryId, catId));
+    }
     if (search) {
       const pattern = `%${search}%`;
       conditions.push(
@@ -190,6 +193,10 @@ router.put("/products/:id", requireAdmin, async (req, res) => {
 router.delete("/products/:id", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id as string, 10);
+    if (!Number.isFinite(id) || id <= 0) {
+      res.status(400).json({ error: "validation_error", message: "Invalid product id" });
+      return;
+    }
     const [beforeSnapshot] = await db.select().from(productsTable).where(eq(productsTable.id, id));
     const [product] = await db.delete(productsTable).where(eq(productsTable.id, id)).returning();
     if (!product) {
@@ -269,6 +276,10 @@ router.post("/products/bulk", requireAdmin, async (req, res) => {
 router.patch("/admin/products/:id/featured", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(String(req.params.id), 10);
+    if (!Number.isFinite(id) || id <= 0) {
+      res.status(400).json({ error: "validation_error", message: "Invalid product id" });
+      return;
+    }
     const { featured } = req.body as { featured?: boolean };
     if (typeof featured !== "boolean") {
       res.status(400).json({ error: "validation_error", message: "featured must be a boolean" });
