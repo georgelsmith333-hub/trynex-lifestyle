@@ -944,20 +944,34 @@ router.post("/orders", async (req, res) => {
   }
 });
 
+const STATUS_EMOJIS: Record<string, string> = {
+  pending:    "⏳",
+  confirmed:  "✅",
+  processing: "⚙️",
+  ongoing:    "🔄",
+  shipped:    "🚚",
+  delivered:  "📦",
+  cancelled:  "❌",
+};
+
+const PAYMENT_EMOJIS: Record<string, string> = {
+  pending:   "⏳",
+  submitted: "📤",
+  verified:  "✅",
+  paid:      "💚",
+  cod:       "💵",
+  failed:    "❌",
+  refunded:  "↩️",
+  wrong:     "⚠️",
+  not_paid:  "🚫",
+};
+
 async function sendStatusUpdateNotification(orderData: any, newStatus: string) {
   const phone = process.env.CALLMEBOT_PHONE;
   const apiKey = process.env.CALLMEBOT_APIKEY;
   if (!phone || !apiKey) return;
 
-  const statusEmojis: Record<string, string> = {
-    processing: "⚙️",
-    confirmed: "✅",
-    shipped: "🚚",
-    delivered: "📦",
-    cancelled: "❌",
-  };
-
-  const emoji = statusEmojis[newStatus] || "📋";
+  const emoji = STATUS_EMOJIS[newStatus] || "📋";
   const message = [
     `${emoji} *Order Status Updated*`,
     `📝 #${orderData.orderNumber}`,
@@ -973,6 +987,75 @@ async function sendStatusUpdateNotification(orderData: any, newStatus: string) {
     );
   } catch (err) {
     logger.error({ err }, "Status update WhatsApp notification failed (non-blocking)");
+  }
+}
+
+async function sendTelegramStatusUpdate(orderData: any, newStatus: string) {
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!botToken || !chatId) return;
+
+  const emoji = STATUS_EMOJIS[newStatus] || "📋";
+  const statusLabel = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+
+  const message = [
+    `${emoji} <b>Order Status → ${statusLabel}</b>`,
+    ``,
+    `📝 <b>Order:</b> #${orderData.orderNumber}`,
+    `👤 <b>Customer:</b> ${orderData.customerName}`,
+    `📞 <b>Phone:</b> ${orderData.customerPhone}`,
+    `📍 <b>District:</b> ${orderData.shippingDistrict || 'N/A'}`,
+    `💰 <b>Total:</b> ৳${orderData.total}`,
+    `💳 <b>Payment:</b> ${(orderData.paymentMethod || 'COD').toUpperCase()}`,
+    ``,
+    `⏰ ${new Date().toLocaleString('en-BD', { timeZone: 'Asia/Dhaka' })}`,
+  ].join("\n");
+
+  try {
+    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: "HTML" }),
+      signal: AbortSignal.timeout(5000),
+    });
+  } catch (err) {
+    logger.error({ err }, "Telegram status update notification failed (non-blocking)");
+  }
+}
+
+async function sendTelegramPaymentStatusUpdate(orderData: any, newPaymentStatus: string) {
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!botToken || !chatId) return;
+
+  // Only notify for meaningful payment status changes
+  const notifyOn = ["submitted", "verified", "paid", "failed", "refunded", "wrong"];
+  if (!notifyOn.includes(newPaymentStatus)) return;
+
+  const emoji = PAYMENT_EMOJIS[newPaymentStatus] || "💳";
+  const statusLabel = newPaymentStatus.charAt(0).toUpperCase() + newPaymentStatus.slice(1);
+
+  const message = [
+    `${emoji} <b>Payment → ${statusLabel}</b>`,
+    ``,
+    `📝 <b>Order:</b> #${orderData.orderNumber}`,
+    `👤 <b>Customer:</b> ${orderData.customerName}`,
+    `📞 <b>Phone:</b> ${orderData.customerPhone}`,
+    `💰 <b>Total:</b> ৳${orderData.total}`,
+    `💳 <b>Method:</b> ${(orderData.paymentMethod || 'COD').toUpperCase()}`,
+    ``,
+    `⏰ ${new Date().toLocaleString('en-BD', { timeZone: 'Asia/Dhaka' })}`,
+  ].join("\n");
+
+  try {
+    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: "HTML" }),
+      signal: AbortSignal.timeout(5000),
+    });
+  } catch (err) {
+    logger.error({ err }, "Telegram payment status notification failed (non-blocking)");
   }
 }
 
@@ -999,6 +1082,7 @@ const updateOrderStatusHandler = async (req: Request, res: Response) => {
     res.json(mapped);
 
     sendStatusUpdateNotification(mapped, status).catch((err) => logger.warn({ err }, "sendStatusUpdateNotification failed (fire-and-forget)"));
+    sendTelegramStatusUpdate(mapped, status).catch((err) => logger.warn({ err }, "Telegram status update failed (fire-and-forget)"));
   } catch (err) {
     req.log.error({ err }, "Failed to update order status");
     res.status(500).json({ error: "internal_error", message: "Failed to update order status" });
@@ -1025,8 +1109,11 @@ const updatePaymentStatusHandler = async (req: Request, res: Response) => {
       res.status(404).json({ error: "not_found", message: "Order not found" });
       return;
     }
+    const mappedPayment = mapOrder(order);
     logActivity({ action: "update", entity: "order", entityId: id, entityName: order.orderNumber, before: (beforeSnap ?? null) as unknown as Record<string, unknown>, after: order as unknown as Record<string, unknown>, adminId: getAdminId(req) });
-    res.json(mapOrder(order));
+    res.json(mappedPayment);
+
+    sendTelegramPaymentStatusUpdate(mappedPayment, paymentStatus).catch((err) => logger.warn({ err }, "Telegram payment status update failed (fire-and-forget)"));
   } catch (err) {
     req.log.error({ err }, "Failed to update payment status");
     res.status(500).json({ error: "internal_error", message: "Failed to update payment status" });
