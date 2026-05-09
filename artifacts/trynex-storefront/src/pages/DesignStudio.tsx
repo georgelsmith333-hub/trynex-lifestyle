@@ -1325,19 +1325,6 @@ export default function DesignStudio() {
 
       setAiPhase("Placing on canvas…");
       setAiProgress(97);
-      // Load data URL to get natural dimensions for the layer
-      const img = new Image();
-      await new Promise<void>((res, rej) => { img.onload = () => res(); img.onerror = rej; img.src = dataUrl; });
-
-      const layer: ImageLayer = {
-        id: uid(), name: prompt.slice(0, 30),
-        type: "image", src: dataUrl,
-        naturalW: img.naturalWidth || 1024, naturalH: img.naturalHeight || 1024,
-        visible: true, locked: false,
-        transform: { x: 0, y: 0, scale: 0.85, rotation: 0, opacity: 1 },
-        face: activeFaceRef.current,
-      };
-
       setAiProgress(100);
       flushSync(() => {
         commitLayers([...layersRef.current, layer]);

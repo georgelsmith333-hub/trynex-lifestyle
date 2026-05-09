@@ -1,4 +1,4 @@
-modules = ["nodejs-24", "postgresql-16", "python-3.11"]
+modules = ["nodejs-24", "python-3.11", "postgresql-16"]
 
 [deployment]
 router = "application"
@@ -78,3 +78,8 @@ channel = "stable-25_05"
 ALLOWED_ORIGINS = "https://5dbc2c72-08b1-41e9-9ac4-3a850eaaa07c-00-1b9rag63a79s6.pike.replit.dev,http://localhost:5000,http://localhost:5173"
 NODE_ENV = "development"
 PORT = "8080"
+
+[userenv.development]
+JWT_SECRET = "dev_jwt_secret_trynex_2024_change_in_prod"
+ADMIN_JWT_SECRET = "dev_admin_jwt_secret_trynex_2024_change_in_prod"
+ADMIN_PASSWORD = "Admin@TryNex2024"

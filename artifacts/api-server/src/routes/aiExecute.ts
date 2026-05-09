@@ -146,36 +146,154 @@ Your site uses Vite + React — already a fast stack. Key optimizations:
 - "What keywords should I target?"`;
 }
 
-async function parseCommandWithAI(command: string): Promise<Record<string, unknown>> {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 20_000);
-  try {
-    const r = await fetch(POLLIN_TEXT_URL, {
-      method: "POST",
-      signal: controller.signal,
-      headers: { "Content-Type": "application/json", "User-Agent": "TryNex-Admin/2.0" },
-      body: JSON.stringify({
-        model: "openai-large",
-        messages: [
-          { role: "system", content: COMMAND_PARSER_SYSTEM },
-          { role: "user", content: command },
-        ],
-        stream: false,
-        private: true,
-        seed: Math.floor(Math.random() * 99999),
-      }),
-    });
-    clearTimeout(timeout);
-    if (!r.ok) throw new Error(`AI parse service returned ${r.status}`);
-    const data = await r.json() as { choices?: Array<{ message?: { content?: string } }> };
-    const raw = (data?.choices?.[0]?.message?.content ?? "").trim();
-    const jsonMatch = raw.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error("No JSON found in AI response");
-    return JSON.parse(jsonMatch[0]);
-  } catch (err) {
-    clearTimeout(timeout);
-    throw err;
+/* ─── Local keyword-based command parser (instant, no network) ─────────────
+ * Used as the primary fast path AND as fallback when the AI service is down.
+ * Returns null if the command is too ambiguous for rule-based parsing.
+ * ────────────────────────────────────────────────────────────────────────── */
+function parseCommandLocally(command: string): Record<string, unknown> | null {
+  const c = command.toLowerCase().trim();
+
+  // Extract price (BDT formats: ৳899, 899 taka, tk 500, 1200)
+  const priceMatch = c.match(/(?:৳|tk\.?\s*|taka\s*)?(\d[\d,]*(?:\.\d{1,2})?)\s*(?:taka|tk|bdt)?/i);
+  const price = priceMatch ? parseFloat(priceMatch[1].replace(/,/g, "")) : 0;
+
+  // Extract order ID (#145, order 145, order number 145)
+  const orderIdMatch = c.match(/(?:#|order\s*(?:number|id|#)?\s*)(\d+)/i);
+  const orderId = orderIdMatch ? parseInt(orderIdMatch[1], 10) : null;
+
+  // Extract quoted or trailing name (e.g. "Custom Hoodie", product called X)
+  const quotedName = c.match(/["']([^"']+)["']/)?.[1]
+    ?? c.match(/(?:called|named|product|item)\s+([a-z0-9 ]+?)(?:\s+(?:at|for|to|price|stock|promo|code)|$)/i)?.[1]?.trim();
+
+  // list / show products
+  if (/\b(list|show|get|display|what|how many)\b.*\bproduct/i.test(c)) {
+    const searchMatch = c.match(/(?:search|find|for|matching)\s+(.+)/i);
+    return { action: "list_products", search: searchMatch?.[1]?.trim() ?? "", limit: 20 };
   }
+
+  // create product
+  if (/\b(create|add|new)\b.*\bproduct\b/i.test(c)) {
+    if (!quotedName && !price) return null;
+    const catMatch = c.match(/(?:category|cat)\s*[:=]?\s*([a-z]+)/i);
+    return { action: "create_product", name: quotedName ?? "New Product", price, category: catMatch?.[1] ?? undefined };
+  }
+
+  // delete product
+  if (/\b(delete|remove)\b.*\bproduct\b/i.test(c)) {
+    if (!quotedName) return null;
+    return { action: "delete_product", name: quotedName };
+  }
+
+  // feature / unfeature product
+  if (/\b(feature|highlight|promote|make featured)\b/i.test(c) && !/unfeature|remove from featured/i.test(c)) {
+    if (!quotedName) return null;
+    return { action: "feature_product", name: quotedName, featured: true };
+  }
+  if (/\b(unfeature|remove from featured)\b/i.test(c)) {
+    if (!quotedName) return null;
+    return { action: "feature_product", name: quotedName, featured: false };
+  }
+
+  // update price
+  if (/\b(update|change|set)\b.*\bprice\b/i.test(c)) {
+    if (!quotedName || !price) return null;
+    return { action: "update_product_price", name: quotedName, price };
+  }
+
+  // update stock
+  if (/\b(update|change|set)\b.*\bstock\b|\binventory\b/i.test(c)) {
+    const stockMatch = c.match(/\b(\d+)\s*(?:units?|pcs?|pieces?|stock|qty|quantity)?/);
+    if (!quotedName || !stockMatch) return null;
+    return { action: "update_product_stock", name: quotedName, stock: parseInt(stockMatch[1], 10) };
+  }
+
+  // order status
+  if (orderId && /\b(ship|shipping|deliver|cancel|process|confirm|mark)\b/i.test(c)) {
+    let status = "processing";
+    if (/ship/i.test(c)) status = "shipped";
+    else if (/deliver/i.test(c)) status = "delivered";
+    else if (/cancel/i.test(c)) status = "cancelled";
+    else if (/confirm/i.test(c)) status = "confirmed";
+    return { action: "update_order_status", orderId, status };
+  }
+
+  // find order
+  if (/\b(find|search|show|get|look up)\b.*\border\b/i.test(c)) {
+    const nameMatch = c.match(/(?:by|customer|from|for)\s+([a-z][a-z ]+)/i);
+    return { action: "find_order", orderId: orderId ?? undefined, customerName: nameMatch?.[1]?.trim() };
+  }
+
+  // create promo code
+  if (/\b(create|add|new)\b.*\bpromo\b/i.test(c)) {
+    const codeMatch = c.match(/\b([A-Z0-9]{3,20})\b/);
+    const pctMatch = c.match(/(\d+)\s*%/);
+    const fixedMatch = c.match(/(?:৳|tk\.?\s*|taka\s*)(\d+)/i);
+    if (!codeMatch) return null;
+    return {
+      action: "create_promo_code",
+      code: codeMatch[1],
+      discountType: pctMatch ? "percentage" : "fixed",
+      discountValue: pctMatch ? parseInt(pctMatch[1]) : (fixedMatch ? parseInt(fixedMatch[1]) : 0),
+    };
+  }
+
+  // delete promo
+  if (/\b(delete|remove)\b.*\bpromo\b/i.test(c)) {
+    const codeMatch = c.match(/\b([A-Z0-9]{3,20})\b/);
+    if (!codeMatch) return null;
+    return { action: "delete_promo_code", code: codeMatch[1] };
+  }
+
+  // SEO advice
+  if (/\b(seo|rank|google|keyword|traffic|backlink|sitemap)\b/i.test(c)) {
+    return { action: "seo_advice", topic: c };
+  }
+
+  return null;
+}
+
+async function parseCommandWithAI(command: string): Promise<Record<string, unknown>> {
+  // Try local parser first (instant, no network dependency)
+  const local = parseCommandLocally(command);
+  if (local) return local;
+
+  // Fall back to AI parsing for complex/ambiguous commands
+  const modelsToTry = ["openai-large", "openai", "mistral-large"];
+  let lastError: Error = new Error("No models tried");
+
+  for (const model of modelsToTry) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15_000);
+    try {
+      const r = await fetch(POLLIN_TEXT_URL, {
+        method: "POST",
+        signal: controller.signal,
+        headers: { "Content-Type": "application/json", "User-Agent": "TryNex-Admin/2.0" },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: "system", content: COMMAND_PARSER_SYSTEM },
+            { role: "user", content: command },
+          ],
+          stream: false,
+          private: true,
+          seed: Math.floor(Math.random() * 99999),
+        }),
+      });
+      clearTimeout(timeout);
+      if (!r.ok) { lastError = new Error(`Model ${model} returned ${r.status}`); continue; }
+      const data = await r.json() as { choices?: Array<{ message?: { content?: string } }> };
+      const raw = (data?.choices?.[0]?.message?.content ?? "").trim();
+      const jsonMatch = raw.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) { lastError = new Error("No JSON found in AI response"); continue; }
+      return JSON.parse(jsonMatch[0]);
+    } catch (err) {
+      clearTimeout(timeout);
+      lastError = err instanceof Error ? err : new Error(String(err));
+      logger.warn({ err, model }, "[ai-execute] model failed, trying next");
+    }
+  }
+  throw lastError;
 }
 
 /* ═══════════════════════════════════════════════════════
