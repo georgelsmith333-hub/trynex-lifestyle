@@ -3794,11 +3794,12 @@ export default function DesignStudio() {
               className="fixed inset-x-3 bottom-0 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 z-50 flex flex-col"
               style={{
                 maxWidth: 680,
-                maxHeight: "min(90vh, 720px)",
+                height: "min(90vh, 720px)",
                 width: "100%",
                 background: "white",
                 borderRadius: "24px 24px 0 0",
                 boxShadow: "0 -8px 40px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.06)",
+                overflow: "hidden",
               }}
             >
               {/* Modal header */}
@@ -3849,7 +3850,7 @@ export default function DesignStudio() {
               </div>
 
               {/* Product grid */}
-              <div className="overflow-y-auto flex-1 px-5 pb-6">
+              <div className="overflow-y-auto flex-1 px-5 pb-6" style={{ minHeight: 0 }}>
                 {(() => {
                   const query = productSearch.trim().toLowerCase();
 
