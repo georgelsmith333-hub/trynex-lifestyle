@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
-import { Save, Store, Phone, Globe, CreditCard, Truck, BarChart3, Megaphone, Image, Search, KeyRound, Palette, Plus, Trash2, Zap, Tag, CheckCircle2, XCircle, RotateCcw } from "lucide-react";
+import { Save, Store, Phone, Globe, CreditCard, Truck, BarChart3, Megaphone, Image, Search, KeyRound, Palette, Plus, Trash2, Zap, Tag, CheckCircle2, XCircle, RotateCcw, Send } from "lucide-react";
 
 const inputClass = "w-full px-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-400 transition-all placeholder:text-gray-400";
 const inputStyle = { background: 'white', border: '1px solid #e5e7eb', color: '#111827' };
@@ -80,6 +80,104 @@ function StudioColorsManager({ value, onChange }: { value: string; onChange: (js
           <Plus className="w-4 h-4" /> Add
         </button>
       </div>
+    </div>
+  );
+}
+
+function TelegramSection() {
+  const { toast } = useToast();
+  const [setupInfo, setSetupInfo] = useState<any>(null);
+  const [loadingSetup, setLoadingSetup] = useState(false);
+  const [loadingTest, setLoadingTest] = useState(false);
+
+  const checkSetup = async () => {
+    setLoadingSetup(true);
+    try {
+      const res = await fetch(getApiUrl("/api/admin/telegram/setup"), { headers: getAuthHeaders() });
+      const data = await res.json();
+      setSetupInfo(data);
+      if (!data.ok) {
+        toast({ title: "Telegram Setup", description: data.message, variant: "destructive" });
+      }
+    } catch {
+      toast({ title: "Error", description: "Could not reach server.", variant: "destructive" });
+    } finally {
+      setLoadingSetup(false);
+    }
+  };
+
+  const sendTest = async () => {
+    setLoadingTest(true);
+    try {
+      const res = await fetch(getApiUrl("/api/admin/telegram/test"), { method: "POST", headers: getAuthHeaders() });
+      const data = await res.json();
+      if (data.ok) {
+        toast({ title: "✅ Test sent!", description: "Check your Telegram chat for the test message." });
+      } else {
+        toast({ title: "Telegram Error", description: data.message, variant: "destructive" });
+      }
+    } catch {
+      toast({ title: "Error", description: "Could not reach server.", variant: "destructive" });
+    } finally {
+      setLoadingTest(false);
+    }
+  };
+
+  return (
+    <div className="md:col-span-2 space-y-4">
+      <div className="rounded-xl p-4 space-y-2" style={{ background: '#f0f9ff', border: '1px solid #bae6fd' }}>
+        <p className="text-sm font-bold text-blue-800">How to set up Telegram notifications:</p>
+        <ol className="text-xs text-blue-700 space-y-1 list-decimal list-inside">
+          <li>Message <strong>@BotFather</strong> on Telegram → <code>/newbot</code> → copy your <strong>Bot Token</strong></li>
+          <li>Add <code>TELEGRAM_BOT_TOKEN</code> as a Replit secret (the bot token)</li>
+          <li>Send <strong>/start</strong> to your bot in Telegram, then click <strong>"Check Setup"</strong> below to find your Chat ID</li>
+          <li>Add <code>TELEGRAM_CHAT_ID</code> as a Replit secret (the number from step 3)</li>
+          <li>Click <strong>"Send Test Message"</strong> to confirm it works</li>
+        </ol>
+      </div>
+      <div className="flex flex-wrap gap-3">
+        <button
+          type="button"
+          onClick={checkSetup}
+          disabled={loadingSetup}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-50"
+          style={{ background: '#229ED9', color: 'white' }}
+        >
+          <Send className="w-4 h-4" />
+          {loadingSetup ? "Checking..." : "Check Setup"}
+        </button>
+        <button
+          type="button"
+          onClick={sendTest}
+          disabled={loadingTest}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-50"
+          style={{ background: 'linear-gradient(135deg,#E85D04,#FB8500)', color: 'white' }}
+        >
+          <CheckCircle2 className="w-4 h-4" />
+          {loadingTest ? "Sending..." : "Send Test Message"}
+        </button>
+      </div>
+      {setupInfo && (
+        <div className="rounded-xl p-4 text-xs space-y-2" style={{ background: '#f9fafb', border: '1px solid #e5e7eb' }}>
+          <p className="font-bold text-gray-700">{setupInfo.instructions || setupInfo.message}</p>
+          {setupInfo.current_chat_id && (
+            <p className="text-green-700 font-bold">✅ Chat ID configured: <code>{setupInfo.current_chat_id}</code></p>
+          )}
+          {setupInfo.recent_chats && setupInfo.recent_chats.length > 0 && (
+            <div>
+              <p className="font-bold text-gray-600 mb-1">Recent chats seen by your bot:</p>
+              <ul className="space-y-1">
+                {setupInfo.recent_chats.map((c: any) => (
+                  <li key={c.id} className="font-mono bg-white rounded-lg px-3 py-1.5 border border-gray-200">
+                    <span className="text-blue-600 font-bold">{c.id}</span>
+                    <span className="text-gray-400 ml-2">({c.title || 'unknown'}, {c.type})</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -649,6 +747,10 @@ export default function AdminSettings() {
               ✓ Canonical URLs prevent duplicate-content penalties
             </p>
           </div>
+        </SectionCard>
+
+        <SectionCard icon={Send} title="Telegram Order Notifications" iconColor="#229ED9">
+          <TelegramSection />
         </SectionCard>
 
         <SectionCard icon={BarChart3} title="Meta CAPI (Server-Side Events)" iconColor="#1877F2">

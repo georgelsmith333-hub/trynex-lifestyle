@@ -479,7 +479,7 @@ export function Navbar() {
                             {matchedProducts.map((p) => (
                               <Link
                                 key={`p-${p.id}`}
-                                href={`/products/${p.slug || p.id}`}
+                                href={`/product/${p.slug || p.id}`}
                                 onClick={() => { setDesktopSearchFocused(false); setSearchQuery(""); }}
                                 className="flex items-center gap-3 px-2.5 py-2 rounded-xl hover:bg-orange-50 transition-colors group"
                               >
@@ -840,7 +840,7 @@ export function Navbar() {
                         {matchedProducts.map((p) => (
                           <Link
                             key={`mp-${p.id}`}
-                            href={`/products/${p.slug || p.id}`}
+                            href={`/product/${p.slug || p.id}`}
                             onClick={() => { setSearchOpen(false); setSearchQuery(""); }}
                             className="flex items-center gap-3 px-2.5 py-2 rounded-xl hover:bg-orange-50 transition-colors"
                           >

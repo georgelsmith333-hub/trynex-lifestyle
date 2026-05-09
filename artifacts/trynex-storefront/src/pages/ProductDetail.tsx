@@ -601,7 +601,7 @@ export default function ProductDetail() {
       <SEOHead
         title={`${product.name} | TryNex Lifestyle`}
         description={product.description?.substring(0, 160) || `Buy ${product.name} from TryNex Lifestyle. Premium quality custom apparel in Bangladesh. Fast delivery to Dhaka and beyond.`}
-        canonical={`/products/${product.slug || product.id}`}
+        canonical={`/product/${product.slug || product.id}`}
         ogImage={product.imageUrl || undefined}
         ogType="product"
         keywords={`${product.name}, buy ${product.name} bangladesh, trynex ${product.name}, customized gift Bangladesh, কাস্টম গিফট বাংলাদেশ`}

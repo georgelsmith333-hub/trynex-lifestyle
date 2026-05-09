@@ -147,6 +147,51 @@ async function sendMetaCAPIEvent(event: {
   }
 }
 
+async function sendTelegramNotification(orderData: any) {
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!botToken || !chatId) return;
+
+  const itemsList = (orderData.items || [])
+    .slice(0, 5)
+    .map((i: any) => `  • ${i.productName || i.name} x${i.quantity}`)
+    .join("\n");
+  const moreItems = (orderData.items || []).length > 5 ? `\n  + ${(orderData.items || []).length - 5} more` : "";
+  const advance = Math.ceil((orderData.total || 0) * 0.15);
+
+  const message = [
+    `🛍️ <b>NEW ORDER #${orderData.orderNumber}</b>`,
+    ``,
+    `👤 <b>Customer:</b> ${orderData.customerName}`,
+    `📞 <b>Phone:</b> ${orderData.customerPhone}`,
+    `📧 <b>Email:</b> ${orderData.customerEmail || 'N/A'}`,
+    `📍 <b>District:</b> ${orderData.shippingDistrict || 'N/A'}${orderData.shippingCity ? ` (${orderData.shippingCity})` : ''}`,
+    `🏠 <b>Address:</b> ${orderData.shippingAddress}`,
+    ``,
+    `🛒 <b>Items:</b>`,
+    itemsList + moreItems,
+    ``,
+    `💰 <b>Total:</b> ৳${orderData.total}`,
+    `💳 <b>Payment:</b> ${(orderData.paymentMethod || 'COD').toUpperCase()}`,
+    `🏷️ <b>Advance (15%):</b> ৳${advance}`,
+    orderData.promoCode ? `🎟️ <b>Promo:</b> ${orderData.promoCode} (-৳${orderData.promoDiscount})` : '',
+    orderData.notes ? `📝 <b>Notes:</b> ${orderData.notes}` : '',
+    ``,
+    `⏰ ${new Date().toLocaleString('en-BD', { timeZone: 'Asia/Dhaka' })}`,
+  ].filter((s): s is string => typeof s === "string" && s.length >= 0).join("\n");
+
+  try {
+    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: "HTML" }),
+      signal: AbortSignal.timeout(5000),
+    });
+  } catch (err) {
+    logger.error({ err }, "Telegram notification failed (non-blocking)");
+  }
+}
+
 async function sendWhatsAppNotification(orderData: any) {
   const phone = process.env.CALLMEBOT_PHONE;
   const apiKey = process.env.CALLMEBOT_APIKEY;
@@ -851,6 +896,7 @@ router.post("/orders", async (req, res) => {
     res.status(201).json(mapped);
 
     sendWhatsAppNotification(mapped).catch((err) => logger.warn({ err }, "WhatsApp notification failed (fire-and-forget)"));
+    sendTelegramNotification(mapped).catch((err) => logger.warn({ err }, "Telegram notification failed (fire-and-forget)"));
     checkLowStock().catch((err) => logger.warn({ err }, "checkLowStock failed (fire-and-forget)"));
     sendMetaCAPIEvent({
       eventName: "Purchase",

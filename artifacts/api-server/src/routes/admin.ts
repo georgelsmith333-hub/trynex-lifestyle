@@ -887,4 +887,70 @@ router.delete("/admin/guest-customers/:id", requireAdmin, async (req, res) => {
   }
 });
 
+// ---------------------------------------------------------------------------
+// Telegram setup & test
+// ---------------------------------------------------------------------------
+router.get("/admin/telegram/setup", requireAdmin, async (req, res) => {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (!token) {
+    res.status(400).json({ error: "not_configured", message: "TELEGRAM_BOT_TOKEN secret is not set on the server." });
+    return;
+  }
+  try {
+    const r = await fetch(`https://api.telegram.org/bot${token}/getUpdates?limit=10&timeout=0`, { signal: AbortSignal.timeout(8000) });
+    const data: any = await r.json();
+    if (!data.ok) {
+      res.status(502).json({ error: "telegram_error", message: data.description || "Telegram API error" });
+      return;
+    }
+    const recentChats = [...new Map(
+      data.result
+        .filter((u: any) => u.message?.chat)
+        .map((u: any) => [u.message.chat.id, { id: u.message.chat.id, title: u.message.chat.title || u.message.chat.username || u.message.chat.first_name, type: u.message.chat.type }])
+    ).values()];
+    const chatIdConfigured = !!process.env.TELEGRAM_CHAT_ID;
+    res.json({
+      ok: true,
+      recent_chats: recentChats,
+      current_chat_id: chatIdConfigured ? process.env.TELEGRAM_CHAT_ID : null,
+      instructions: chatIdConfigured
+        ? "Bot is configured. Use the test endpoint to send a test message."
+        : "Send any message (e.g. /start) to your bot on Telegram, then copy the chat id from recent_chats and set it as the TELEGRAM_CHAT_ID secret.",
+    });
+  } catch (err) {
+    logger.error({ err }, "Telegram setup check failed");
+    res.status(502).json({ error: "telegram_error", message: "Could not reach Telegram API" });
+  }
+});
+
+router.post("/admin/telegram/test", requireAdmin, async (req, res) => {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!token || !chatId) {
+    res.status(400).json({ error: "not_configured", message: "TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID must both be set as server secrets." });
+    return;
+  }
+  try {
+    const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: `✅ <b>TryNex Telegram Test</b>\n\nBot is connected and working! 🎉\nYou will receive new order notifications here.\n\n⏰ ${new Date().toLocaleString('en-BD', { timeZone: 'Asia/Dhaka' })}`,
+        parse_mode: "HTML",
+      }),
+      signal: AbortSignal.timeout(8000),
+    });
+    const data: any = await r.json();
+    if (!data.ok) {
+      res.status(502).json({ error: "telegram_error", message: data.description || "Failed to send message" });
+      return;
+    }
+    res.json({ ok: true, message: "Test message sent successfully!" });
+  } catch (err) {
+    logger.error({ err }, "Telegram test failed");
+    res.status(502).json({ error: "telegram_error", message: "Could not reach Telegram API" });
+  }
+});
+
 export default router;
