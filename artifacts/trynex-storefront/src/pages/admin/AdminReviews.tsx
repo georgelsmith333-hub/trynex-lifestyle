@@ -13,7 +13,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function AdminReviews() {
-  const reqOpts = { request: { headers: getAuthHeaders() } };
+  const reqOpts = { request: { headers: getAuthHeaders() }, query: { staleTime: 0, refetchOnMount: "always" as const } };
   const queryClient = useQueryClient();
   const { data: reviewsData, isLoading: loading } = useListAdminReviews(reqOpts);
   const approveMutation = useApproveReview();

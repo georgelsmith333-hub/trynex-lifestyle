@@ -37,6 +37,8 @@ export default function AdminNewsletter() {
       if (!res.ok) throw new Error("Failed to load subscribers");
       return res.json();
     },
+    staleTime: 0,
+    refetchOnMount: "always",
   });
 
   const deleteMut = useMutation({

@@ -31,6 +31,8 @@ export default function AdminReferrals() {
       if (!res.ok) throw new Error("Failed to load referrals");
       return res.json();
     },
+    staleTime: 0,
+    refetchOnMount: "always",
   });
 
   const referrals = data?.referrals ?? [];
