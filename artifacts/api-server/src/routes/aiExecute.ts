@@ -7,7 +7,7 @@ import {
   promoCodesTable,
   categoriesTable,
 } from "@workspace/db";
-import { eq, ilike } from "drizzle-orm";
+import { eq, ilike, or, desc, sql } from "drizzle-orm";
 import { logActivity, getAdminId } from "../lib/activityLog";
 import { logger } from "../lib/logger";
 
@@ -20,13 +20,19 @@ Parse the natural language admin command into ONE of these JSON action objects.
 Return ONLY valid JSON — no markdown, no explanation, no code fences.
 
 Supported actions:
-1. { "action": "create_product", "name": string, "price": number, "category"?: string, "description"?: string }
-2. { "action": "update_order_status", "orderId": number, "status": "pending"|"processing"|"shipped"|"delivered"|"cancelled" }
-3. { "action": "create_promo_code", "code": string, "discountType": "percentage"|"fixed", "discountValue": number, "minOrder"?: number, "expiresAt"?: "YYYY-MM-DD"|null, "maxUses"?: number }
-4. { "action": "delete_promo_code", "code": string }
-5. { "action": "feature_product", "name": string, "featured": boolean }
-6. { "action": "update_product_price", "name": string, "price": number }
-7. { "action": "unknown", "reason": string }
+1.  { "action": "create_product", "name": string, "price": number, "category"?: string, "description"?: string }
+2.  { "action": "update_order_status", "orderId": number, "status": "pending"|"processing"|"shipped"|"delivered"|"cancelled" }
+3.  { "action": "create_promo_code", "code": string, "discountType": "percentage"|"fixed", "discountValue": number, "minOrder"?: number, "expiresAt"?: "YYYY-MM-DD"|null, "maxUses"?: number }
+4.  { "action": "delete_promo_code", "code": string }
+5.  { "action": "feature_product", "name": string, "featured": boolean }
+6.  { "action": "update_product_price", "name": string, "price": number }
+7.  { "action": "list_products", "search"?: string, "limit"?: number }
+8.  { "action": "delete_product", "name": string }
+9.  { "action": "find_order", "orderId"?: number, "customerName"?: string, "status"?: string }
+10. { "action": "update_product_description", "name": string, "description": string }
+11. { "action": "update_product_stock", "name": string, "stock": number }
+12. { "action": "seo_advice", "topic": string }
+13. { "action": "unknown", "reason": string }
 
 Rules:
 - BDT prices: extract number only (e.g. "৳899" → 899, "1200 taka" → 1200, "tk 500" → 500)
@@ -35,7 +41,110 @@ Rules:
 - "highlight"/"promote"/"make featured" → feature_product with featured: true
 - "unfeature"/"remove from featured" → feature_product with featured: false
 - orderId must be a plain number extracted from text like "order 145", "#145", "order number 145"
+- "show/list/get products" or "what products do we have" → list_products
+- "search products for X" → list_products with search=X
+- "delete/remove product X" → delete_product
+- "find order by customer X" → find_order with customerName
+- "update description of X" → update_product_description
+- "set stock/inventory of X to N" → update_product_stock
+- "how to rank on google" / "SEO tips" / "improve ranking" → seo_advice
 - Return ONLY a JSON object.`;
+
+function getSEOAdvice(topic: string): string {
+  const t = topic.toLowerCase();
+
+  if (t.includes("trynex") || t.includes("brand") || t.includes("name") || t.includes("search")) {
+    return `## Getting "TryNex" to Rank on Google
+
+**1. Google Search Console (Most Important)**
+- Go to [search.google.com/search-console](https://search.google.com/search-console) and add \`trynexshop.com\`
+- Verify ownership by adding the Google Site Verification meta tag in Admin → Settings → SEO
+- Submit your sitemap: \`https://trynexshop.com/sitemap.xml\`
+
+**2. Brand Name Signals**
+- Your site title already includes "TryNex Lifestyle" — good ✓
+- Ensure your Google Business Profile is set up at [business.google.com](https://business.google.com)
+- Get your brand mentioned on Bangladeshi fashion/lifestyle blogs
+
+**3. Backlinks (Most Effective)**
+- Register on local directories: Bikroy.com, Shajgoj, local BD directories
+- Ask happy customers to mention TryNex on social media
+- Post in Facebook groups: Custom T-shirts Bangladesh, Corporate Gifts BD
+
+**4. Content Strategy**
+- Publish 2 blog posts/week with "TryNex" in headings
+- Create a dedicated "About TryNex" page at \`/about\` with full brand story
+- Build social proof: Facebook page, Instagram with consistent branding
+
+**5. Technical**
+- Ensure \`https://trynexshop.com\` is live and fast
+- All pages have unique title tags with "TryNex" prefix
+- Mobile-friendly design ✓ (already done)
+
+Google typically takes **4–12 weeks** to index new brand searches after you've done the above steps.`;
+  }
+
+  if (t.includes("keyword") || t.includes("ranking") || t.includes("rank")) {
+    return `## Keyword Ranking Tips for TryNex
+
+**High-Priority Keywords to Target:**
+- "custom t-shirt Bangladesh" — high volume, commercial
+- "কাস্টম গিফট বাংলাদেশ" — Bangla searches growing fast
+- "custom hoodie Dhaka" — local intent = high conversion
+- "personalized mug Bangladesh" — gift searches spike Dec/Eid
+- "TryNex" — brand query (build with social + GSC)
+
+**On-Page SEO Actions:**
+- Each product page should have H1 with the keyword
+- Write 300+ word descriptions with target keyword 3-5×
+- Add FAQ sections on product pages (gets Google rich snippets)
+- Use alt text on all product images: e.g. "Custom White T-shirt Bangladesh"
+
+**Blog Keywords (Quick Wins):**
+- "how to design custom t-shirt in Bangladesh"
+- "best custom gift ideas Bangladesh 2025"
+- "corporate uniform Bangladesh"`;
+  }
+
+  if (t.includes("speed") || t.includes("performance") || t.includes("core web")) {
+    return `## Site Speed & Core Web Vitals
+
+Your site uses Vite + React — already a fast stack. Key optimizations:
+
+**Images**
+- Convert product photos to WebP format (50% smaller)
+- Add \`loading="lazy"\` to all below-fold images
+- Serve images from a CDN
+
+**JavaScript**
+- Code splitting is already handled by Vite ✓
+- Lazy-load the 3D Design Studio (already done ✓)
+
+**Measure**
+- Run PageSpeed Insights: \`pagespeed.web.dev\`
+- Target: LCP < 2.5s, FID < 100ms, CLS < 0.1
+
+**Hosting**
+- Ensure your deployed app is on a fast server close to Bangladesh
+- Enable Brotli compression on the server`;
+  }
+
+  return `## SEO Advice for TryNex Lifestyle
+
+**Top 5 Actions Right Now:**
+
+1. **Google Search Console** — Submit sitemap at \`https://trynexshop.com/sitemap.xml\` + verify ownership
+2. **Google Business Profile** — Set up at business.google.com for local Dhaka presence
+3. **Get backlinks** — List on Bangladeshi business directories (Bikroy, Yellow Pages BD)
+4. **Blog consistently** — 1-2 posts/week on custom apparel, gift ideas, BD fashion trends
+5. **Social signals** — Active Facebook + Instagram = faster Google trust
+
+**Ask more specific questions:**
+- "How to rank for 'custom t-shirt Bangladesh'?"
+- "How to fix site speed?"
+- "How to get TryNex to show in Google?"
+- "What keywords should I target?"`;
+}
 
 async function parseCommandWithAI(command: string): Promise<Record<string, unknown>> {
   const controller = new AbortController();
@@ -301,6 +410,170 @@ router.post("/admin/ai-execute", requireAdmin, async (req, res) => {
         });
       }
 
+      /* ─── List / Search Products ────────────── */
+      case "list_products": {
+        const search = String(parsed.search ?? "").trim();
+        const limit = Math.min(Number(parsed.limit ?? 20), 50);
+        const rows = search
+          ? await db.select({
+              id: productsTable.id, name: productsTable.name,
+              price: productsTable.price, stock: productsTable.stock,
+              featured: productsTable.featured,
+            }).from(productsTable)
+              .where(ilike(productsTable.name, `%${search}%`))
+              .orderBy(desc(productsTable.id)).limit(limit)
+          : await db.select({
+              id: productsTable.id, name: productsTable.name,
+              price: productsTable.price, stock: productsTable.stock,
+              featured: productsTable.featured,
+            }).from(productsTable)
+              .orderBy(desc(productsTable.id)).limit(limit);
+
+        if (!rows.length) {
+          return res.json({
+            success: true, action: "list_products",
+            description: search ? `No products found matching "${search}"` : "No products in the database yet.",
+            data: { products: [], count: 0 },
+          });
+        }
+        const lines = rows.map(p => `• **${p.name}** — ৳${p.price} | Stock: ${p.stock ?? "?"} | ${p.featured ? "⭐ Featured" : "not featured"}`).join("\n");
+        return res.json({
+          success: true, action: "list_products",
+          description: search
+            ? `Found **${rows.length}** product(s) matching "${search}":\n\n${lines}`
+            : `Showing **${rows.length}** products (latest first):\n\n${lines}`,
+          data: { products: rows, count: rows.length },
+        });
+      }
+
+      /* ─── Delete Product ─────────────────────── */
+      case "delete_product": {
+        const name = String(parsed.name ?? "").trim();
+        if (!name) return res.status(400).json({ error: "Could not extract product name from command." });
+        const existing = await db.select().from(productsTable)
+          .where(ilike(productsTable.name, `%${name}%`)).limit(1);
+        if (!existing.length) return res.status(404).json({ error: `No product matching "${name}" found.` });
+
+        await db.delete(productsTable).where(eq(productsTable.id, existing[0].id));
+        await logActivity({
+          adminId, action: "delete", entity: "product",
+          entityId: String(existing[0].id), entityName: existing[0].name,
+          before: existing[0] as unknown as Record<string, unknown>,
+        });
+        return res.json({
+          success: true, action: "delete_product",
+          description: `Deleted product **"${existing[0].name}"** (ID: ${existing[0].id})`,
+          data: { id: existing[0].id, name: existing[0].name },
+        });
+      }
+
+      /* ─── Find Order ─────────────────────────── */
+      case "find_order": {
+        const orderId = parsed.orderId ? Number(parsed.orderId) : null;
+        const customerName = String(parsed.customerName ?? "").trim();
+        const statusFilter = String(parsed.status ?? "").trim();
+
+        let rows: typeof ordersTable.$inferSelect[];
+        if (orderId) {
+          rows = await db.select().from(ordersTable).where(eq(ordersTable.id, orderId)).limit(1);
+        } else if (customerName) {
+          rows = await db.select().from(ordersTable)
+            .where(ilike(ordersTable.customerName, `%${customerName}%`))
+            .orderBy(desc(ordersTable.id)).limit(10);
+        } else if (statusFilter) {
+          rows = await db.select().from(ordersTable)
+            .where(eq(ordersTable.status as unknown as Parameters<typeof eq>[0], statusFilter))
+            .orderBy(desc(ordersTable.id)).limit(10);
+        } else {
+          rows = await db.select().from(ordersTable).orderBy(desc(ordersTable.id)).limit(5);
+        }
+
+        if (!rows.length) {
+          return res.json({
+            success: true, action: "find_order",
+            description: "No orders found matching your query.",
+            data: { orders: [] },
+          });
+        }
+        const lines = rows.map(o =>
+          `• Order **#${o.id}** — ${o.customerName ?? "Unknown"} | ৳${o.total ?? "?"} | **${o.status}** | ${new Date(o.createdAt!).toLocaleDateString("en-BD")}`
+        ).join("\n");
+        return res.json({
+          success: true, action: "find_order",
+          description: `Found **${rows.length}** order(s):\n\n${lines}`,
+          data: { orders: rows.map(o => ({ id: o.id, customerName: o.customerName, total: o.total, status: o.status, createdAt: o.createdAt })) },
+        });
+      }
+
+      /* ─── Update Product Description ─────────── */
+      case "update_product_description": {
+        const name = String(parsed.name ?? "").trim();
+        const description = String(parsed.description ?? "").trim();
+        if (!name) return res.status(400).json({ error: "Could not extract product name from command." });
+        if (!description) return res.status(400).json({ error: "Could not extract new description from command." });
+
+        const existing = await db.select().from(productsTable)
+          .where(ilike(productsTable.name, `%${name}%`)).limit(1);
+        if (!existing.length) return res.status(404).json({ error: `No product matching "${name}" found.` });
+
+        const [updated] = await db.update(productsTable)
+          .set({ description })
+          .where(eq(productsTable.id, existing[0].id))
+          .returning();
+        await logActivity({
+          adminId, action: "update", entity: "product",
+          entityId: String(updated.id), entityName: updated.name,
+          before: existing[0] as unknown as Record<string, unknown>,
+          after: updated as unknown as Record<string, unknown>,
+        });
+        return res.json({
+          success: true, action: "update_product_description",
+          description: `Updated description of **"${updated.name}"**`,
+          data: { id: updated.id, name: updated.name, description: updated.description },
+        });
+      }
+
+      /* ─── Update Product Stock ───────────────── */
+      case "update_product_stock": {
+        const name = String(parsed.name ?? "").trim();
+        const stock = Number(parsed.stock);
+        if (!name) return res.status(400).json({ error: "Could not extract product name from command." });
+        if (isNaN(stock) || stock < 0) return res.status(400).json({ error: "Could not extract a valid stock number from command." });
+
+        const existing = await db.select().from(productsTable)
+          .where(ilike(productsTable.name, `%${name}%`)).limit(1);
+        if (!existing.length) return res.status(404).json({ error: `No product matching "${name}" found.` });
+
+        const prevStock = existing[0].stock;
+        const [updated] = await db.update(productsTable)
+          .set({ stock })
+          .where(eq(productsTable.id, existing[0].id))
+          .returning();
+        await logActivity({
+          adminId, action: "update", entity: "product",
+          entityId: String(updated.id), entityName: updated.name,
+          before: existing[0] as unknown as Record<string, unknown>,
+          after: updated as unknown as Record<string, unknown>,
+        });
+        return res.json({
+          success: true, action: "update_product_stock",
+          description: `**"${updated.name}"** stock updated: ${prevStock ?? "?"} → **${stock}** units`,
+          data: { id: updated.id, name: updated.name, oldStock: prevStock, newStock: stock },
+          undoInfo: { type: "update_product_stock", productId: updated.id, productName: updated.name, previousStock: prevStock },
+        });
+      }
+
+      /* ─── SEO Advice ─────────────────────────── */
+      case "seo_advice": {
+        const topic = String(parsed.topic ?? "general SEO").trim();
+        const advice = getSEOAdvice(topic);
+        return res.json({
+          success: true, action: "seo_advice",
+          description: advice,
+          data: { topic },
+        });
+      }
+
       /* ─── Unknown ────────────────────────────── */
       case "unknown":
         return res.status(400).json({
@@ -313,6 +586,11 @@ router.post("/admin/ai-execute", requireAdmin, async (req, res) => {
             "Feature the product [name]",
             "Update price of [product name] to ৳[price]",
             "Delete promo code [CODE]",
+            "List all products",
+            "Search products for hoodie",
+            "Find order by customer Rahim",
+            "Set stock of Classic Tee to 100",
+            "How to rank on Google?",
           ],
         });
 
@@ -394,6 +672,13 @@ router.post("/admin/ai-undo", requireAdmin, async (req, res) => {
         const prevPrice = String(undoInfo.previousPrice);
         await db.update(productsTable).set({ price: prevPrice }).where(eq(productsTable.id, productId));
         return res.json({ success: true, description: `"${undoInfo.productName}" price reverted to ৳${prevPrice}` });
+      }
+
+      case "update_product_stock": {
+        const productId = Number(undoInfo.productId);
+        const prevStock = Number(undoInfo.previousStock ?? 0);
+        await db.update(productsTable).set({ stock: prevStock }).where(eq(productsTable.id, productId));
+        return res.json({ success: true, description: `"${undoInfo.productName}" stock reverted to ${prevStock} units` });
       }
 
       default:

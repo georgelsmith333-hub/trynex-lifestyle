@@ -49,12 +49,20 @@ const PRESETS = [
 
 /* ── Execute command examples ──────────────────────── */
 const COMMAND_EXAMPLES = [
+  { label: "List products", example: "List all products" },
+  { label: "Search products", example: "Search products for hoodie" },
   { label: "Create product", example: "Create a product called 'Eid Special Hoodie' priced at ৳1499 in the Hoodies category" },
+  { label: "Delete product", example: "Delete product named 'Old Test Product'" },
+  { label: "Update price", example: "Update price of 'Custom Mug' to ৳699" },
+  { label: "Update stock", example: "Set stock of 'Classic White Tee' to 150" },
+  { label: "Update description", example: "Update description of 'Custom Mug' to: Premium 11oz ceramic mug with vibrant sublimation printing. Perfect for gifts." },
   { label: "Update order", example: "Update order #145 to shipped" },
+  { label: "Find order", example: "Find order by customer Rahim" },
   { label: "Add promo code", example: "Create promo code EID25 for 25% off, min order ৳1000" },
-  { label: "Feature product", example: "Feature the product named 'Custom T-Shirt'" },
-  { label: "Change price", example: "Update price of 'Custom Mug' to ৳699" },
   { label: "Delete promo", example: "Delete promo code OLDCODE" },
+  { label: "Feature product", example: "Feature the product named 'Custom T-Shirt'" },
+  { label: "SEO advice", example: "How do I get TryNex to rank on Google?" },
+  { label: "Keyword tips", example: "What keywords should I target for ranking?" },
 ];
 
 const TEXT_MODELS = [

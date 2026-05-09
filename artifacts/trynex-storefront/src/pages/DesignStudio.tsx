@@ -1125,6 +1125,90 @@ export default function DesignStudio() {
     { id: "turbo",        label: "Turbo ⚡",      desc: "Fastest — great for quick ideas" },
   ] as const;
 
+  const AI_STYLE_CATEGORIES = [
+    {
+      label: "🇧🇩 Bangladeshi",
+      prompts: [
+        "Rickshaw art Bangladesh colorful folk pattern",
+        "Bengali tiger streetwear bold graphic",
+        "Dhaka city skyline geometric art",
+        "Muslin fabric pattern traditional Bangladesh",
+        "Sundarbans jungle wildlife illustration",
+        "Bangladesh flag creative minimal design",
+        "Pohela Boishakh new year celebration art",
+        "Royal Bengal tiger portrait watercolor",
+      ],
+    },
+    {
+      label: "🏙️ Streetwear",
+      prompts: [
+        "Skull with roses streetwear gothic",
+        "Graffiti wildstyle letter art",
+        "Skateboard culture bold graphic tee",
+        "Urban dragon tattoo flash style",
+        "Vintage varsity letterman graphic",
+        "Hip hop culture boom box retro",
+        "Spray paint drip street art",
+        "Y2K metallic cyber aesthetic logo",
+      ],
+    },
+    {
+      label: "🌿 Nature",
+      prompts: [
+        "Minimalist mountain ridge line art",
+        "Lotus flower mandala watercolor",
+        "Forest pine trees geometric low-poly",
+        "Ocean wave Japanese woodblock style",
+        "Tropical palm leaf botanical print",
+        "Sun moon celestial boho design",
+        "Wolf howling moon tattoo style",
+        "Butterfly garden delicate illustration",
+      ],
+    },
+    {
+      label: "🎨 Abstract",
+      prompts: [
+        "Geometric mandala sacred symmetry",
+        "Fluid paint pour abstract art",
+        "Vaporwave retro grid sunset",
+        "Glitch art digital corruption",
+        "Abstract brush stroke expressionist",
+        "Neon glow geometric pattern dark",
+        "Psychedelic spiral trippy art",
+        "Bauhaus color block minimal",
+      ],
+    },
+    {
+      label: "✨ Cute / Pop",
+      prompts: [
+        "Kawaii cat ramen bowl cute",
+        "Cartoon astronaut space adventure",
+        "Retro 80s cartoon robot pixel",
+        "Anime girl cherry blossom",
+        "Chibi bear with coffee mug",
+        "Cute monster happy colorful",
+        "Pop art comic book hero halftone",
+        "Pastel rainbow cloud dreamy",
+      ],
+    },
+    {
+      label: "🖤 Dark Art",
+      prompts: [
+        "Gothic skull floral dark Victorian",
+        "Dragon dark fantasy epic illustration",
+        "Dark angel fallen wings dramatic",
+        "Skeleton band rock music vintage",
+        "Occult mystical eye geometric",
+        "Black metal band logo style",
+        "Horror vintage movie poster",
+        "Dark forest creature lurking",
+      ],
+    },
+  ] as const;
+
+  const [aiStyleTab, setAiStyleTab] = useState(0);
+  const [aiNegativePrompt, setAiNegativePrompt] = useState("");
+
   /* Reference image for img2img editing */
   const [aiRefFile, setAiRefFile] = useState<File | null>(null);
   const [aiRefPreviewUrl, setAiRefPreviewUrl] = useState<string | null>(null);
@@ -1183,7 +1267,8 @@ export default function DesignStudio() {
         const suffix = isRealism
           ? ", product design artwork, high detail, clean composition"
           : ", t-shirt print design, white background, high contrast, vector style, clean edges";
-        const fullPrompt = prompt + suffix;
+        const negSuffix = aiNegativePrompt.trim() ? `, avoid: ${aiNegativePrompt.trim()}` : "";
+        const fullPrompt = prompt + suffix + negSuffix;
         const params = new URLSearchParams({ prompt: fullPrompt, seed: String(seed), model: aiModel, width: "1024", height: "1024" });
         const genRes = await fetch(getApiUrl(`/api/ai/generate?${params.toString()}`));
         if (!genRes.ok) {
@@ -3392,29 +3477,59 @@ export default function DesignStudio() {
                       />
                     </div>
 
-                    {/* Prompt suggestions */}
+                    {/* Style category prompt picker */}
                     {!aiRefFile && (
-                      <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5">Quick ideas</label>
-                        <div className="flex flex-wrap gap-1.5">
-                          {[
-                            "Vintage rose graphic",
-                            "Bengali tiger bold",
-                            "Minimalist mountain",
-                            "Geometric mandala",
-                            "Skull streetwear",
-                            "Dhaka city art",
-                            "Dragon logo",
-                            "Sun & moon boho",
-                          ].map(s => (
-                            <button key={s} onClick={() => { setAiPrompt(s); setAiError(null); }}
-                              className="px-2 py-1 rounded-lg text-[10px] font-bold border transition-all hover:border-orange-300 hover:bg-orange-50"
+                      <div className="space-y-2">
+                        <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400">Design styles</label>
+                        {/* Category tabs */}
+                        <div className="flex gap-1 overflow-x-auto pb-0.5 scrollbar-hide" style={{ scrollbarWidth: "none" }}>
+                          {AI_STYLE_CATEGORIES.map((cat, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => setAiStyleTab(idx)}
+                              className="shrink-0 px-2 py-1 rounded-lg text-[9px] font-black transition-all whitespace-nowrap"
+                              style={{
+                                background: aiStyleTab === idx ? "linear-gradient(135deg,#7c3aed,#a855f7)" : "white",
+                                color: aiStyleTab === idx ? "white" : "#6b7280",
+                                border: aiStyleTab === idx ? "none" : "1.5px solid #e5e7eb",
+                              }}
+                            >
+                              {cat.label}
+                            </button>
+                          ))}
+                        </div>
+                        {/* Prompts for selected category */}
+                        <div className="grid grid-cols-2 gap-1">
+                          {AI_STYLE_CATEGORIES[aiStyleTab].prompts.map(s => (
+                            <button key={s}
+                              onClick={() => { setAiPrompt(s); setAiError(null); }}
+                              className="px-2 py-1.5 rounded-lg text-[10px] font-bold border text-left transition-all hover:border-purple-300 hover:bg-purple-50 leading-tight"
                               style={{ background: "white", borderColor: "#e5e7eb", color: "#374151" }}>
                               {s}
                             </button>
                           ))}
                         </div>
                       </div>
+                    )}
+
+                    {/* Negative prompt (advanced) */}
+                    {!aiRefFile && (
+                      <details className="group">
+                        <summary className="text-[10px] font-black uppercase tracking-widest text-gray-400 cursor-pointer list-none flex items-center gap-1 select-none">
+                          <span className="text-gray-300 group-open:rotate-90 transition-transform inline-block">▶</span>
+                          Advanced options
+                        </summary>
+                        <div className="mt-2">
+                          <label className="block text-[10px] font-bold text-gray-500 mb-1">Negative prompt <span className="font-normal text-gray-400">(what to avoid)</span></label>
+                          <input
+                            value={aiNegativePrompt}
+                            onChange={e => setAiNegativePrompt(e.target.value)}
+                            placeholder='e.g. "blurry, text, watermark, ugly"'
+                            className="w-full px-2.5 py-1.5 rounded-lg text-xs border border-gray-200 focus:border-purple-400 outline-none"
+                            style={{ background: "#fafafa" }}
+                          />
+                        </div>
+                      </details>
                     )}
 
                     {/* Generate button */}
