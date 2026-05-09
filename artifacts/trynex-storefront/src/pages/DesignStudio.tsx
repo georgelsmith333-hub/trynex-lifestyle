@@ -1111,6 +1111,8 @@ export default function DesignStudio() {
   /* ── AI Image Generation — free, no API key, multiple models ── */
   const [aiPrompt, setAiPrompt] = useState("");
   const [aiGenerating, setAiGenerating] = useState(false);
+  const [aiPhase, setAiPhase] = useState<string | null>(null);
+  const [aiProgress, setAiProgress] = useState(0);
   const [aiError, setAiError] = useState<string | null>(null);
   const [aiHistory, setAiHistory] = useState<{ url: string; prompt: string; model: string }[]>([]);
   const [aiModel, setAiModel] = useState("flux-realism");
@@ -1227,6 +1229,8 @@ export default function DesignStudio() {
     setAiGenerating(true);
     setAiError(null);
     setAiModelUsed(null);
+    setAiPhase("Preparing your prompt…");
+    setAiProgress(5);
     try {
       const seed = Math.floor(Math.random() * 999999);
       let dataUrl: string;
@@ -1234,12 +1238,16 @@ export default function DesignStudio() {
 
       if (aiRefFile) {
         // img2img — upload reference image, then generate via server proxy
+        setAiPhase("Reading reference image…");
+        setAiProgress(15);
         const base64 = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = () => resolve(reader.result as string);
           reader.onerror = reject;
           reader.readAsDataURL(aiRefFile);
         });
+        setAiPhase("Uploading reference to TryNex AI…");
+        setAiProgress(30);
         const uploadRes = await fetch(getApiUrl("/api/ai/reference"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -1251,18 +1259,30 @@ export default function DesignStudio() {
         }
         const { url: refUrl } = await uploadRes.json() as { url: string };
 
+        setAiPhase("Sending to AI image engine…");
+        setAiProgress(45);
         const editModel = aiModel === "flux-realism" ? "flux-kontext" : aiModel;
         const params = new URLSearchParams({ prompt, seed: String(seed), model: editModel, imageUrl: refUrl, width: "1024", height: "1024" });
+        // Animate progress while waiting
+        const progressInterval = setInterval(() => {
+          setAiProgress(prev => prev < 85 ? prev + 2 : prev);
+          setAiPhase(p => p?.includes("engine") ? "Editing with AI (this can take 15-30s)…" : p);
+        }, 1200);
         const genRes = await fetch(getApiUrl(`/api/ai/generate?${params.toString()}`));
+        clearInterval(progressInterval);
         if (!genRes.ok) {
           const err = await genRes.json().catch(() => ({})) as { error?: string };
           throw new Error(err.error || `Generation failed (${genRes.status})`);
         }
+        setAiPhase("Finalizing image…");
+        setAiProgress(90);
         const result = await genRes.json() as { dataUrl: string; model?: string };
         dataUrl = result.dataUrl;
         usedModel = result.model ?? editModel;
       } else {
         // text-to-image — design-optimized prompt enhancement
+        setAiPhase("Enhancing your prompt for print design…");
+        setAiProgress(15);
         const isRealism = aiModel === "flux-realism";
         const suffix = isRealism
           ? ", product design artwork, high detail, clean composition"
@@ -1270,11 +1290,21 @@ export default function DesignStudio() {
         const negSuffix = aiNegativePrompt.trim() ? `, avoid: ${aiNegativePrompt.trim()}` : "";
         const fullPrompt = prompt + suffix + negSuffix;
         const params = new URLSearchParams({ prompt: fullPrompt, seed: String(seed), model: aiModel, width: "1024", height: "1024" });
+        setAiPhase("Connecting to TryNex AI engine…");
+        setAiProgress(30);
+        // Animate progress while waiting for the AI response
+        const progressInterval = setInterval(() => {
+          setAiProgress(prev => prev < 82 ? prev + 1.5 : prev);
+        }, 900);
+        setAiPhase(`Generating with ${AI_MODELS.find(m => m.id === aiModel)?.label ?? "TryNex AI"}…`);
         const genRes = await fetch(getApiUrl(`/api/ai/generate?${params.toString()}`));
+        clearInterval(progressInterval);
         if (!genRes.ok) {
           const err = await genRes.json().catch(() => ({})) as { error?: string };
           throw new Error(err.error || `Generation failed (${genRes.status})`);
         }
+        setAiPhase("Finalizing your design…");
+        setAiProgress(90);
         const result = await genRes.json() as { dataUrl: string; model?: string };
         dataUrl = result.dataUrl;
         usedModel = result.model ?? aiModel;
@@ -1293,6 +1323,22 @@ export default function DesignStudio() {
         face: activeFaceRef.current,
       };
 
+      setAiPhase("Placing on canvas…");
+      setAiProgress(97);
+      // Load data URL to get natural dimensions for the layer
+      const img = new Image();
+      await new Promise<void>((res, rej) => { img.onload = () => res(); img.onerror = rej; img.src = dataUrl; });
+
+      const layer: ImageLayer = {
+        id: uid(), name: prompt.slice(0, 30),
+        type: "image", src: dataUrl,
+        naturalW: img.naturalWidth || 1024, naturalH: img.naturalHeight || 1024,
+        visible: true, locked: false,
+        transform: { x: 0, y: 0, scale: 0.85, rotation: 0, opacity: 1 },
+        face: activeFaceRef.current,
+      };
+
+      setAiProgress(100);
       flushSync(() => {
         commitLayers([...layersRef.current, layer]);
         setActiveTab("layers");
@@ -1306,6 +1352,8 @@ export default function DesignStudio() {
       setAiError(msg.includes("timed out") ? msg : "Generation failed — try a different model or simpler prompt.");
     } finally {
       setAiGenerating(false);
+      setAiPhase(null);
+      setAiProgress(0);
     }
   };
 
@@ -3532,6 +3580,29 @@ export default function DesignStudio() {
                       </details>
                     )}
 
+                    {/* AI progress bar */}
+                    {aiGenerating && (
+                      <div className="rounded-xl p-3 space-y-1.5" style={{ background: "#f5f3ff", border: "1px solid #ede9fe" }}>
+                        <div className="flex items-center justify-between">
+                          <p className="text-[11px] font-bold text-purple-700 flex items-center gap-1.5">
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                            {aiPhase ?? "Working…"}
+                          </p>
+                          <span className="text-[10px] font-black text-purple-400">{Math.round(aiProgress)}%</span>
+                        </div>
+                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "#ddd6fe" }}>
+                          <div
+                            className="h-full rounded-full transition-all duration-700 ease-out"
+                            style={{
+                              width: `${aiProgress}%`,
+                              background: "linear-gradient(90deg,#7c3aed,#a855f7,#c084fc)",
+                            }}
+                          />
+                        </div>
+                        <p className="text-[10px] text-purple-400">AI generation usually takes 10–30 seconds</p>
+                      </div>
+                    )}
+
                     {/* Generate button */}
                     <button
                       onClick={handleGenerateAI}
@@ -3543,7 +3614,7 @@ export default function DesignStudio() {
                         boxShadow: "0 4px 14px rgba(124,58,237,0.35)" }}
                     >
                       {aiGenerating
-                        ? <><Loader2 className="w-4 h-4 animate-spin" /> {aiRefFile ? "Editing…" : "Generating…"} (10-30s)</>
+                        ? <><Loader2 className="w-4 h-4 animate-spin" /> {aiRefFile ? "Editing…" : "Generating…"}</>
                         : aiRefFile
                           ? <><Wand2 className="w-4 h-4" /> Edit with AI</>
                           : <><Wand2 className="w-4 h-4" /> Generate AI Image</>}

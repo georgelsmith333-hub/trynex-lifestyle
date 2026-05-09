@@ -2,6 +2,8 @@ import { Router, type Request, type Response } from "express";
 import path from "path";
 import fs from "fs";
 import { randomUUID } from "crypto";
+import { requireAdmin } from "../middlewares/adminAuth";
+import { ObjectStorageService } from "../lib/objectStorage";
 
 const router = Router();
 
@@ -236,6 +238,120 @@ router.get("/ai/generate", async (req: Request, res: Response) => {
 });
 
 /* ════════════════════════════════════════════════════
+   POST /api/storage/product-image
+   Upload a product image — tries Imgur first (if
+   IMGUR_CLIENT_ID is configured), then R2/S3, then local.
+   Returns { url } for direct use as product imageUrl.
+   Admin-only.
+════════════════════════════════════════════════════ */
+router.post("/storage/product-image", requireAdmin, async (req: Request, res: Response) => {
+  const { image } = req.body as { image?: string };
+  if (!image || typeof image !== "string") {
+    return res.status(400).json({ error: "image field (base64 data URL) is required" });
+  }
+
+  const dataUrlMatch = image.match(/^data:image\/([a-z]+);base64,(.+)$/s);
+  if (!dataUrlMatch) {
+    return res.status(400).json({ error: "image must be a base64 data URL (data:image/...;base64,...)" });
+  }
+  const [, rawExt, b64] = dataUrlMatch;
+  const safeExt = ["jpg", "jpeg", "png", "gif", "webp"].includes(rawExt) ? rawExt.replace("jpeg", "jpg") : "jpg";
+  const mimeType = `image/${rawExt === "jpg" ? "jpeg" : rawExt}`;
+
+  const buf = Buffer.from(b64, "base64");
+  if (buf.length === 0) return res.status(400).json({ error: "Empty image data." });
+  if (buf.length > 20 * 1024 * 1024) return res.status(413).json({ error: "Image must be under 20 MB." });
+
+  const imgurClientId = process.env.IMGUR_CLIENT_ID;
+  if (imgurClientId) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 30_000);
+      const imgurRes = await fetch("https://api.imgur.com/3/image", {
+        method: "POST",
+        signal: controller.signal,
+        headers: {
+          "Authorization": `Client-ID ${imgurClientId}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ image: b64, type: "base64", name: `product-${randomUUID()}.${safeExt}` }),
+      });
+      clearTimeout(timeout);
+      if (imgurRes.ok) {
+        const data = await imgurRes.json() as { data?: { link?: string }; success?: boolean };
+        if (data?.success && data?.data?.link) {
+          return res.json({ url: data.data.link, backend: "imgur" });
+        }
+      }
+    } catch (e) {
+      console.warn("[product-image] Imgur upload failed, falling back:", e instanceof Error ? e.message : e);
+    }
+  }
+
+  const svc = new ObjectStorageService();
+  const backend = svc.getBackendName();
+
+  if (backend === "r2" || backend === "s3") {
+    const entityId = `products/${randomUUID()}.${safeExt}`;
+    const { S3Client, PutObjectCommand } = await import("@aws-sdk/client-s3");
+    const r2AccountId = process.env.R2_ACCOUNT_ID;
+    const r2Key = process.env.R2_ACCESS_KEY_ID;
+    const r2Secret = process.env.R2_SECRET_ACCESS_KEY;
+    const r2Bucket = process.env.R2_BUCKET;
+    const r2PublicBase = process.env.R2_PUBLIC_BASE_URL;
+    const s3Key = process.env.S3_ACCESS_KEY_ID;
+    const s3Secret = process.env.S3_SECRET_ACCESS_KEY;
+    const s3Bucket = process.env.S3_BUCKET;
+    const s3PublicBase = process.env.S3_PUBLIC_BASE_URL;
+
+    if (backend === "r2" && r2AccountId && r2Key && r2Secret && r2Bucket) {
+      const client = new S3Client({
+        region: "auto",
+        endpoint: `https://${r2AccountId}.r2.cloudflarestorage.com`,
+        credentials: { accessKeyId: r2Key, secretAccessKey: r2Secret },
+        forcePathStyle: false,
+      });
+      await client.send(new PutObjectCommand({ Bucket: r2Bucket, Key: entityId, Body: buf, ContentType: mimeType }));
+      const publicUrl = r2PublicBase ? `${r2PublicBase.replace(/\/$/, "")}/${entityId}` : `https://${r2AccountId}.r2.cloudflarestorage.com/${r2Bucket}/${entityId}`;
+      return res.json({ url: publicUrl, backend: "r2" });
+    }
+    if (backend === "s3" && s3Key && s3Secret && s3Bucket) {
+      const s3Region = process.env.S3_REGION || "us-east-1";
+      const s3Endpoint = process.env.S3_ENDPOINT;
+      const client = new S3Client({
+        region: s3Region,
+        endpoint: s3Endpoint,
+        credentials: { accessKeyId: s3Key, secretAccessKey: s3Secret },
+        forcePathStyle: !!process.env.S3_FORCE_PATH_STYLE,
+      });
+      await client.send(new PutObjectCommand({ Bucket: s3Bucket, Key: entityId, Body: buf, ContentType: mimeType }));
+      const publicUrl = s3PublicBase ? `${s3PublicBase.replace(/\/$/, "")}/${entityId}` : `https://${s3Bucket}.s3.${s3Region}.amazonaws.com/${entityId}`;
+      return res.json({ url: publicUrl, backend: "s3" });
+    }
+  }
+
+  const localDir = path.join(getUploadsDir(), "products");
+  if (!fs.existsSync(localDir)) fs.mkdirSync(localDir, { recursive: true });
+  const filename = `product-${randomUUID()}.${safeExt}`;
+  const filePath = path.join(localDir, filename);
+  fs.writeFileSync(filePath, buf);
+  const baseUrl = getPublicBaseUrl();
+  return res.json({ url: `${baseUrl}/api/storage/product-images/${filename}`, backend: "local" });
+});
+
+router.get("/storage/product-images/:filename", (req: Request, res: Response) => {
+  const rawFilename = req.params.filename;
+  const filename = Array.isArray(rawFilename) ? rawFilename[0] : rawFilename;
+  if (!filename || !/^product-[a-zA-Z0-9_-]+\.[a-z]+$/.test(filename)) {
+    return res.status(400).json({ error: "Invalid filename." });
+  }
+  const filePath = path.join(getUploadsDir(), "products", filename);
+  if (!fs.existsSync(filePath)) return res.status(404).json({ error: "Not found." });
+  res.setHeader("Cache-Control", "public, max-age=86400");
+  return res.sendFile(filePath);
+});
+
+/* ════════════════════════════════════════════════════
    POST /api/ai/chat
    Free AI chat using Pollinations text API.
    No API key needed. OpenAI-compatible format.
@@ -244,6 +360,7 @@ router.get("/ai/generate", async (req: Request, res: Response) => {
      messages  (required) — array of { role, content }
      model     (optional, default: openai-large)
      system    (optional) — system prompt
+     stream    (optional, default: false)
 ════════════════════════════════════════════════════ */
 router.post("/ai/chat", async (req: Request, res: Response) => {
   const ip = req.ip ?? req.socket.remoteAddress ?? "unknown";
@@ -296,6 +413,78 @@ Guidelines:
       }];
 
   const allMessages = [...systemMessages, ...messages];
+  const wantsStream = req.body.stream === true;
+
+  if (wantsStream) {
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.setHeader("X-Accel-Buffering", "no");
+    res.flushHeaders();
+
+    const sendEvent = (data: object) => {
+      res.write(`data: ${JSON.stringify(data)}\n\n`);
+    };
+
+    const modelsToTry = [safeModel, ...TEXT_MODELS.filter(m => m.id !== safeModel).map(m => m.id)];
+    for (const modelId of modelsToTry) {
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 90_000);
+        const chatRes = await fetch(POLLIN_TEXT_URL, {
+          method: "POST",
+          signal: controller.signal,
+          headers: { "Content-Type": "application/json", "User-Agent": "TryNex-Admin/2.0" },
+          body: JSON.stringify({
+            model: modelId,
+            messages: allMessages,
+            stream: true,
+            seed: Math.floor(Math.random() * 99999),
+            private: true,
+          }),
+        });
+        clearTimeout(timeout);
+        if (!chatRes.ok || !chatRes.body) {
+          console.warn(`[ai/chat/stream] model=${modelId} → ${chatRes.status}, trying next`);
+          continue;
+        }
+        sendEvent({ type: "model", model: modelId });
+        const reader = chatRes.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop() ?? "";
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed || !trimmed.startsWith("data:")) continue;
+            const payload = trimmed.slice(5).trim();
+            if (payload === "[DONE]") { sendEvent({ type: "done" }); res.end(); return; }
+            try {
+              const parsed = JSON.parse(payload) as { choices?: Array<{ delta?: { content?: string }; finish_reason?: string }> };
+              const delta = parsed?.choices?.[0]?.delta?.content;
+              if (delta) sendEvent({ type: "delta", delta });
+              const finish = parsed?.choices?.[0]?.finish_reason;
+              if (finish === "stop") { sendEvent({ type: "done" }); res.end(); return; }
+            } catch { /* non-JSON line */ }
+          }
+        }
+        sendEvent({ type: "done" });
+        res.end();
+        return;
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        console.warn(`[ai/chat/stream] model=${modelId} error:`, msg, "— trying next");
+        continue;
+      }
+    }
+    sendEvent({ type: "error", error: "AI chat service is temporarily unavailable. Please try again." });
+    res.end();
+    return;
+  }
 
   try {
     const controller = new AbortController();
@@ -337,7 +526,6 @@ Guidelines:
     if (msg.includes("abort") || msg.includes("timeout")) {
       return res.status(504).json({ error: "AI chat timed out. Please try again." });
     }
-    // Auto-fallback to next model in chain
     const modelIdx = TEXT_MODELS.findIndex(m => m.id === safeModel);
     const fallbacks = TEXT_MODELS.slice(modelIdx + 1);
     for (const fb of fallbacks) {

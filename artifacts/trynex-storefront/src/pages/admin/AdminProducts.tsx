@@ -7,7 +7,7 @@ import {
 } from "@workspace/api-client-react";
 import { Loader } from "@/components/ui/Loader";
 import { getAuthHeaders, formatPrice, getApiUrl } from "@/lib/utils";
-import { Plus, Trash2, X, Package, Edit3, AlertTriangle, Search, Star, Upload, FileText, CheckCircle, Zap, Wand2, Loader2 } from "lucide-react";
+import { Plus, Trash2, X, Package, Edit3, AlertTriangle, Search, Star, Upload, FileText, CheckCircle, Zap, Wand2, Loader2, Link, ImageIcon, CloudUpload, Check } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -59,6 +59,12 @@ export default function AdminProducts() {
   const [deleteConfirm, setDeleteConfirm] = useState<{ id: number; name: string } | null>(null);
   const [showLowStock, setShowLowStock] = useState(filterLowStock);
 
+  /* ── Product image upload state ─────────────────── */
+  const [imgPickerMode, setImgPickerMode] = useState<"url" | "upload">("url");
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+  const imageFileInputRef = useRef<HTMLInputElement>(null);
+
   const { data, isLoading } = useListProducts({ limit: 200 });
   const { data: categoriesData } = useListCategories();
   const reqOpts = { request: { headers: getAuthHeaders() } };
@@ -66,7 +72,7 @@ export default function AdminProducts() {
   const { mutateAsync: updateProduct, isPending: isUpdating } = useUpdateProduct(reqOpts);
   const { mutateAsync: deleteProduct } = useDeleteProduct(reqOpts);
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<ProductForm>({
+  const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<ProductForm>({
     resolver: zodResolver(productSchema),
     defaultValues: { featured: false, customizable: true, stock: 0 }
   });
@@ -76,6 +82,8 @@ export default function AdminProducts() {
   const openAddModal = () => {
     setEditingProduct(null);
     setIsSpecialOffer(false);
+    setImagePreviewUrl(null);
+    setImgPickerMode("url");
     reset({ featured: false, customizable: true, stock: 0, categoryId: categories[0]?.id });
     setModalOpen(true);
   };
@@ -84,6 +92,8 @@ export default function AdminProducts() {
     setEditingProduct({ id: product.id, slug: product.slug } as EditingProduct);
     const tags: string[] = Array.isArray(product.tags) ? (product.tags as string[]) : [];
     setIsSpecialOffer(tags.includes("special-offer"));
+    setImagePreviewUrl(product.imageUrl || null);
+    setImgPickerMode("url");
     reset({
       name: product.name,
       slug: product.slug,
@@ -99,6 +109,44 @@ export default function AdminProducts() {
       customizable: product.customizable ?? true,
     });
     setModalOpen(true);
+  };
+
+  const handleImageFileUpload = async (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Invalid file", description: "Please choose a JPG, PNG, WebP or GIF image.", variant: "destructive" });
+      return;
+    }
+    if (file.size > 20 * 1024 * 1024) {
+      toast({ title: "File too large", description: "Maximum 20 MB. Please compress or resize the image first.", variant: "destructive" });
+      return;
+    }
+    setIsUploadingImage(true);
+    try {
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      const res = await fetch(getApiUrl("/api/storage/product-image"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+        body: JSON.stringify({ image: base64 }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({})) as { error?: string };
+        throw new Error(err.error || `Upload failed (${res.status})`);
+      }
+      const { url } = await res.json() as { url: string };
+      setValue("imageUrl", url);
+      setImagePreviewUrl(url);
+      toast({ title: "Image uploaded!", description: "Your product image is ready." });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Upload failed";
+      toast({ title: "Upload failed", description: msg, variant: "destructive" });
+    } finally {
+      setIsUploadingImage(false);
+    }
   };
 
   const onSubmit = async (formData: ProductForm) => {
@@ -584,9 +632,76 @@ export default function AdminProducts() {
                     <Label>Stock Quantity *</Label>
                     <input type="number" {...register("stock")} className={inputClass} style={inputStyle} placeholder="50" />
                   </div>
-                  <div>
-                    <Label>Image URL</Label>
-                    <input {...register("imageUrl")} className={inputClass} style={inputStyle} placeholder="https://..." />
+                  <div className="col-span-2">
+                    <Label>Product Image</Label>
+                    {/* Tab toggle */}
+                    <div className="flex items-center gap-1 p-0.5 rounded-xl mb-2 w-fit" style={{ background: "#f3f4f6" }}>
+                      <button type="button" onClick={() => setImgPickerMode("url")}
+                        className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold transition-all"
+                        style={{ background: imgPickerMode === "url" ? "white" : "transparent", color: imgPickerMode === "url" ? "#E85D04" : "#6b7280", boxShadow: imgPickerMode === "url" ? "0 1px 4px rgba(0,0,0,0.1)" : "none" }}>
+                        <Link className="w-3 h-3" /> URL
+                      </button>
+                      <button type="button" onClick={() => setImgPickerMode("upload")}
+                        className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold transition-all"
+                        style={{ background: imgPickerMode === "upload" ? "white" : "transparent", color: imgPickerMode === "upload" ? "#E85D04" : "#6b7280", boxShadow: imgPickerMode === "upload" ? "0 1px 4px rgba(0,0,0,0.1)" : "none" }}>
+                        <CloudUpload className="w-3 h-3" /> Upload
+                      </button>
+                    </div>
+
+                    {imgPickerMode === "url" ? (
+                      <input
+                        {...register("imageUrl")}
+                        className={inputClass}
+                        style={inputStyle}
+                        placeholder="https://..."
+                        onChange={e => {
+                          register("imageUrl").onChange(e);
+                          setImagePreviewUrl(e.target.value || null);
+                        }}
+                      />
+                    ) : (
+                      <div>
+                        <input
+                          ref={imageFileInputRef}
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={e => { const f = e.target.files?.[0]; if (f) handleImageFileUpload(f); }}
+                        />
+                        <button type="button"
+                          onClick={() => imageFileInputRef.current?.click()}
+                          disabled={isUploadingImage}
+                          onDragOver={e => { e.preventDefault(); }}
+                          onDrop={e => { e.preventDefault(); const f = e.dataTransfer.files?.[0]; if (f) handleImageFileUpload(f); }}
+                          className="w-full flex flex-col items-center justify-center gap-2 py-5 rounded-xl border-2 border-dashed transition-all disabled:opacity-60"
+                          style={{ borderColor: "#fdd5b4", background: "#fff7ed", color: "#E85D04" }}>
+                          {isUploadingImage
+                            ? <><Loader2 className="w-6 h-6 animate-spin" /><span className="text-xs font-bold">Uploading to cloud…</span></>
+                            : <><CloudUpload className="w-6 h-6" /><span className="text-xs font-bold">Click or drag & drop image</span><span className="text-[10px] text-orange-400">JPG, PNG, WebP, GIF · max 20 MB</span></>}
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Image preview */}
+                    {(imagePreviewUrl || watch("imageUrl")) && (
+                      <div className="mt-2 flex items-center gap-3 p-2 rounded-xl" style={{ background: "#f9fafb", border: "1px solid #f3f4f6" }}>
+                        <img
+                          src={imagePreviewUrl || watch("imageUrl") || ""}
+                          alt="Preview"
+                          className="w-14 h-14 rounded-lg object-cover flex-shrink-0"
+                          style={{ border: "1px solid #e5e7eb" }}
+                          onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[11px] font-bold text-gray-500 mb-0.5">Preview</p>
+                          <p className="text-[10px] text-gray-400 truncate">{imagePreviewUrl || watch("imageUrl")}</p>
+                        </div>
+                        <button type="button" onClick={() => { setValue("imageUrl", ""); setImagePreviewUrl(null); }}
+                          className="p-1 rounded-lg text-gray-400 hover:text-red-500 transition-colors">
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    )}
                   </div>
                   <div className="col-span-2">
                     <div className="flex items-center justify-between mb-1.5">

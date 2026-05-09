@@ -12,6 +12,7 @@ interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   error?: boolean;
+  streaming?: boolean;
 }
 
 interface ExecuteResult {
@@ -76,6 +77,47 @@ function uid() {
   return Math.random().toString(36).slice(2);
 }
 
+/* ── Markdown-ish formatter ────────────────────────── */
+function FormattedMessage({ content }: { content: string }) {
+  const lines = content.split("\n");
+  return (
+    <div className="space-y-1 text-[13px] leading-relaxed">
+      {lines.map((line, i) => {
+        if (line.startsWith("## ")) return <p key={i} className="font-black text-sm mt-2 mb-0.5">{line.slice(3)}</p>;
+        if (line.startsWith("### ")) return <p key={i} className="font-bold text-[13px] mt-1.5 mb-0.5">{line.slice(4)}</p>;
+        if (line.startsWith("**") && line.endsWith("**")) return <p key={i} className="font-bold">{line.slice(2, -2)}</p>;
+        if (line.startsWith("• ") || line.startsWith("- ")) return (
+          <div key={i} className="flex gap-2">
+            <span className="shrink-0 mt-1 w-1.5 h-1.5 rounded-full bg-current opacity-50 inline-block" />
+            <span>{line.slice(2)}</span>
+          </div>
+        );
+        if (/^\d+\. /.test(line)) return (
+          <div key={i} className="flex gap-2">
+            <span className="shrink-0 font-bold opacity-60 text-[11px] mt-0.5">{line.match(/^(\d+)\./)?.[1]}.</span>
+            <span>{line.replace(/^\d+\. /, "")}</span>
+          </div>
+        );
+        if (line.trim() === "") return <div key={i} className="h-1.5" />;
+        const bolded = line.replace(/\*\*(.+?)\*\*/g, (_, t) => `<strong>${t}</strong>`);
+        return <p key={i} dangerouslySetInnerHTML={{ __html: bolded }} />;
+      })}
+    </div>
+  );
+}
+
+/* ── Streaming dots indicator ──────────────────────── */
+function StreamingDots() {
+  return (
+    <span className="inline-flex items-center gap-0.5 ml-1 align-middle">
+      {[0, 1, 2].map(i => (
+        <span key={i} className="w-1 h-1 rounded-full bg-purple-400 animate-bounce"
+          style={{ animationDelay: `${i * 0.15}s`, animationDuration: "0.8s" }} />
+      ))}
+    </span>
+  );
+}
+
 /* ════════════════════════════════════════════════════
    Main Component
 ════════════════════════════════════════════════════ */
@@ -90,6 +132,7 @@ export function AdminAIAssistant() {
   const [model, setModel] = useState("openai-large");
   const [copied, setCopied] = useState<number | null>(null);
   const [showModelPicker, setShowModelPicker] = useState(false);
+  const [activeModelLabel, setActiveModelLabel] = useState<string | null>(null);
 
   /* Execute state */
   const [cmdInput, setCmdInput] = useState("");
@@ -101,13 +144,14 @@ export function AdminAIAssistant() {
   const chatInputRef = useRef<HTMLTextAreaElement>(null);
   const cmdInputRef = useRef<HTMLTextAreaElement>(null);
   const modelPickerRef = useRef<HTMLDivElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   /* Init chat greeting */
   useEffect(() => {
     if (open && messages.length === 0) {
       setMessages([{
         role: "assistant",
-        content: "Hi! I'm your AI assistant for TryNex. Switch to the **Execute** tab to run commands like creating products, updating orders, or managing promo codes. Or chat here to generate content!",
+        content: "Hi! I'm your AI assistant for TryNex. I stream responses in real-time so you see results instantly. Switch to **Execute** to run store commands like creating products, updating orders, or managing promo codes.",
       }]);
     }
   }, [open, messages.length]);
@@ -127,32 +171,107 @@ export function AdminAIAssistant() {
     return () => document.removeEventListener("mousedown", handler);
   }, [showModelPicker]);
 
-  /* ── Chat send ──────────────────────────────────── */
+  /* ── Streaming chat send ────────────────────────── */
   const sendMessage = useCallback(async (text?: string) => {
     const content = (text ?? chatInput).trim();
     if (!content || chatLoading) return;
     setChatInput("");
+
     const userMsg: ChatMessage = { role: "user", content };
     const nextMessages = [...messages, userMsg];
     setMessages(nextMessages);
     setChatLoading(true);
+    setActiveModelLabel(null);
+
+    const assistantMsgId = uid();
+    const streamingPlaceholder: ChatMessage = { role: "assistant", content: "", streaming: true };
+    setMessages(prev => [...prev, streamingPlaceholder]);
+
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     try {
       const res = await fetch(getApiUrl("/api/ai/chat"), {
         method: "POST",
+        signal: controller.signal,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model,
+          stream: true,
           messages: nextMessages.filter(m => !m.error).map(m => ({ role: m.role, content: m.content })),
         }),
       });
-      const data = await res.json() as { content?: string; error?: string };
-      if (!res.ok || data.error) throw new Error(data.error || "AI error");
-      setMessages(prev => [...prev, { role: "assistant", content: data.content! }]);
+
+      if (!res.ok || !res.body) {
+        const data = await res.json().catch(() => ({})) as { error?: string };
+        throw new Error(data.error || `HTTP ${res.status}`);
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let accumulated = "";
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith("data:")) continue;
+          const payload = trimmed.slice(5).trim();
+          try {
+            const parsed = JSON.parse(payload) as { type: string; delta?: string; model?: string; error?: string };
+            if (parsed.type === "model" && parsed.model) {
+              const label = TEXT_MODELS.find(m => m.id === parsed.model)?.label ?? parsed.model;
+              setActiveModelLabel(label);
+            } else if (parsed.type === "delta" && parsed.delta) {
+              accumulated += parsed.delta;
+              const snap = accumulated;
+              setMessages(prev => prev.map((m, idx) =>
+                idx === prev.length - 1 && m.streaming
+                  ? { ...m, content: snap }
+                  : m
+              ));
+            } else if (parsed.type === "done") {
+              break;
+            } else if (parsed.type === "error") {
+              throw new Error(parsed.error || "Stream error");
+            }
+          } catch { /* non-JSON */ }
+        }
+      }
+
+      setMessages(prev => prev.map((m, idx) =>
+        idx === prev.length - 1 && m.streaming
+          ? { ...m, content: accumulated || m.content, streaming: false }
+          : m
+      ));
     } catch (err) {
+      if ((err as Error).name === "AbortError") return;
       const msg = err instanceof Error ? err.message : "Something went wrong";
-      setMessages(prev => [...prev, { role: "assistant", content: `Sorry, I hit an error: ${msg}. Please try again.`, error: true }]);
+      setMessages(prev => {
+        const updated = [...prev];
+        const last = updated[updated.length - 1];
+        if (last?.streaming) {
+          updated[updated.length - 1] = {
+            ...last,
+            content: last.content || `Sorry, I hit an error: ${msg}. Please try again.`,
+            streaming: false,
+            error: !last.content,
+          };
+        } else {
+          updated.push({ role: "assistant", content: `Sorry, I hit an error: ${msg}. Please try again.`, error: true });
+        }
+        return updated;
+      });
     } finally {
       setChatLoading(false);
+      setActiveModelLabel(null);
+      void assistantMsgId;
       setTimeout(() => chatInputRef.current?.focus(), 50);
     }
   }, [chatInput, chatLoading, messages, model]);
@@ -248,7 +367,16 @@ export function AdminAIAssistant() {
   };
 
   const clearChat = () => {
+    abortRef.current?.abort();
     setMessages([{ role: "assistant", content: "Chat cleared! What would you like to create?" }]);
+  };
+
+  const stopStreaming = () => {
+    abortRef.current?.abort();
+    setChatLoading(false);
+    setMessages(prev => prev.map((m, idx) =>
+      idx === prev.length - 1 && m.streaming ? { ...m, streaming: false } : m
+    ));
   };
 
   const currentModelLabel = TEXT_MODELS.find(m => m.id === model)?.label ?? "GPT-4o";
@@ -287,9 +415,9 @@ export function AdminAIAssistant() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="fixed bottom-24 right-6 z-50 w-[420px] max-w-[calc(100vw-2rem)] flex flex-col rounded-2xl overflow-hidden"
+            className="fixed bottom-24 right-6 z-50 w-[440px] max-w-[calc(100vw-2rem)] flex flex-col rounded-2xl overflow-hidden"
             style={{
-              height: "min(600px, calc(100vh - 140px))",
+              height: "min(640px, calc(100vh - 140px))",
               background: "white",
               boxShadow: "0 24px 64px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.06)",
             }}
@@ -301,8 +429,12 @@ export function AdminAIAssistant() {
                 <Bot className="w-4 h-4 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-black text-white leading-none">AI Assistant</p>
-                <p className="text-[10px] text-purple-200 mt-0.5">Free · Unlimited · No API key</p>
+                <p className="text-sm font-black text-white leading-none">TryNex AI Assistant</p>
+                <p className="text-[10px] text-purple-200 mt-0.5">
+                  {chatLoading && activeModelLabel
+                    ? `Streaming via ${activeModelLabel}…`
+                    : "Free · Streaming · Real-time responses"}
+                </p>
               </div>
               {/* Tab toggle */}
               <div className="flex items-center gap-1 p-0.5 rounded-xl bg-white/15">
@@ -325,6 +457,11 @@ export function AdminAIAssistant() {
               <div className="flex items-center gap-1">
                 {tab === "chat" && (
                   <>
+                    {chatLoading && (
+                      <button onClick={stopStreaming} className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/20 transition-colors" title="Stop streaming">
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                     <button onClick={clearChat} className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/20 transition-colors" title="Clear chat">
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -385,7 +522,7 @@ export function AdminAIAssistant() {
                 <div className="flex-1 overflow-y-auto p-4 space-y-3">
                   {messages.map((msg, idx) => (
                     <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                      <div className="max-w-[85%] relative group">
+                      <div className="max-w-[88%] relative group">
                         <div className="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed"
                           style={
                             msg.role === "user"
@@ -394,9 +531,10 @@ export function AdminAIAssistant() {
                                 ? { background: "#fef2f2", color: "#991b1b", border: "1px solid #fecaca", borderBottomLeftRadius: 4 }
                                 : { background: "#f9fafb", color: "#111827", border: "1px solid #f3f4f6", borderBottomLeftRadius: 4 }
                           }>
-                          <FormattedMessage content={msg.content} />
+                          {msg.content ? <FormattedMessage content={msg.content} /> : null}
+                          {msg.streaming && <StreamingDots />}
                         </div>
-                        {msg.role === "assistant" && !msg.error && (
+                        {msg.role === "assistant" && !msg.error && !msg.streaming && msg.content && (
                           <button onClick={() => copyMessage(msg.content, idx)}
                             className="absolute -top-1 -right-1 p-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
                             style={{ background: "white", border: "1px solid #e5e7eb", color: copied === idx ? "#059669" : "#6b7280" }}
@@ -407,20 +545,6 @@ export function AdminAIAssistant() {
                       </div>
                     </div>
                   ))}
-                  {chatLoading && (
-                    <div className="flex justify-start">
-                      <div className="flex items-center gap-2 px-4 py-3 rounded-2xl rounded-bl-sm"
-                        style={{ background: "#f9fafb", border: "1px solid #f3f4f6" }}>
-                        <Loader2 className="w-3.5 h-3.5 animate-spin text-purple-500" />
-                        <div className="flex gap-1">
-                          {[0, 1, 2].map(i => (
-                            <div key={i} className="w-1.5 h-1.5 rounded-full bg-purple-400"
-                              style={{ animation: `bounce 1.2s ease-in-out ${i * 0.2}s infinite` }} />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  )}
                   <div ref={bottomRef} />
                 </div>
 
@@ -437,13 +561,16 @@ export function AdminAIAssistant() {
                       className="flex-1 bg-transparent text-sm resize-none outline-none text-gray-800 placeholder-gray-400"
                       style={{ maxHeight: 120 }}
                     />
-                    <button onClick={() => sendMessage()} disabled={!chatInput.trim() || chatLoading}
+                    <button onClick={() => chatLoading ? stopStreaming() : sendMessage()} disabled={!chatLoading && !chatInput.trim()}
                       className="w-8 h-8 rounded-xl flex items-center justify-center text-white transition-all disabled:opacity-40 shrink-0"
-                      style={{ background: "linear-gradient(135deg,#7c3aed,#a855f7)" }}>
-                      {chatLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                      style={{ background: chatLoading ? "#ef4444" : "linear-gradient(135deg,#7c3aed,#a855f7)" }}
+                      title={chatLoading ? "Stop" : "Send"}>
+                      {chatLoading
+                        ? <X className="w-3.5 h-3.5" />
+                        : <Send className="w-3.5 h-3.5" />}
                     </button>
                   </div>
-                  <p className="text-[9px] text-gray-400 text-center mt-1.5">Powered by Pollinations AI · Free & unlimited</p>
+                  <p className="text-[9px] text-gray-400 text-center mt-1.5">TryNex AI · Streams in real-time · Powered by Pollinations</p>
                 </div>
               </>
             )}
@@ -451,80 +578,73 @@ export function AdminAIAssistant() {
             {/* ── EXECUTE TAB ───────────────────────────── */}
             {tab === "execute" && (
               <>
-                {/* Command examples (shown when history is empty) */}
+                {/* Command examples */}
                 {execResults.length === 0 && (
                   <div className="p-3 border-b border-gray-100 shrink-0" style={{ maxHeight: 220, overflowY: "auto" }}>
                     <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Example commands</p>
-                    <div className="space-y-1.5">
-                      {COMMAND_EXAMPLES.map(ex => (
-                        <button key={ex.label} onClick={() => setCmdInput(ex.example)}
-                          className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-all hover:scale-[1.01]"
-                          style={{ background: "#f5f3ff", border: "1.5px solid #ddd6fe" }}>
-                          <ChevronRight className="w-3.5 h-3.5 shrink-0 text-purple-400" />
+                    <div className="space-y-1">
+                      {COMMAND_EXAMPLES.slice(0, 8).map(ex => (
+                        <button key={ex.label} onClick={() => executeCommand(ex.example)} disabled={cmdLoading}
+                          className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-left transition-all hover:bg-purple-50 disabled:opacity-50 group"
+                          style={{ border: "1px solid #f3f4f6" }}>
                           <div>
-                            <p className="text-[10px] font-black text-purple-700">{ex.label}</p>
-                            <p className="text-[10px] text-purple-500 leading-tight">{ex.example}</p>
+                            <p className="text-[11px] font-bold text-gray-700">{ex.label}</p>
+                            <p className="text-[10px] text-gray-400 truncate max-w-[280px]">{ex.example}</p>
                           </div>
+                          <ChevronRight className="w-3 h-3 text-gray-300 group-hover:text-purple-500 shrink-0" />
                         </button>
                       ))}
                     </div>
                   </div>
                 )}
 
-                {/* Execution history */}
-                <div className="flex-1 overflow-y-auto p-3 space-y-2">
-                  {execResults.length === 0 && (
-                    <div className="flex flex-col items-center justify-center h-full text-center gap-2 py-8">
-                      <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
-                        style={{ background: "linear-gradient(135deg,#f5f3ff,#ede9fe)" }}>
-                        <Zap className="w-6 h-6 text-purple-400" />
-                      </div>
-                      <p className="text-sm font-bold text-gray-700">AI Command Executor</p>
-                      <p className="text-xs text-gray-400 max-w-[260px]">Type a command below and the AI will understand it, execute it, and let you undo if needed.</p>
-                    </div>
-                  )}
-                  {execResults.map(result => (
-                    <div key={result.id} className="rounded-xl overflow-hidden"
-                      style={{ border: `1px solid ${result.undone ? "#d1fae5" : result.success ? "#e9d5ff" : result.error ? "#fecaca" : "#e5e7eb"}` }}>
-                      {/* Command label */}
-                      <div className="px-3 py-2" style={{ background: "#f9fafb", borderBottom: "1px solid #f3f4f6" }}>
-                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-0.5">Command</p>
-                        <p className="text-xs text-gray-700 font-medium leading-snug">{result.command}</p>
-                      </div>
-                      {/* Result */}
-                      <div className="px-3 py-2.5">
+                {/* Results */}
+                {execResults.length > 0 && (
+                  <div className="flex-1 overflow-y-auto p-3 space-y-2">
+                    {execResults.map(r => (
+                      <motion.div key={r.id}
+                        initial={{ opacity: 0, y: -8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="rounded-xl p-3"
+                        style={{
+                          background: r.description === "Processing…"
+                            ? "#fafafa"
+                            : r.success
+                              ? r.undone ? "#f0fdf4" : "#f5f3ff"
+                              : "#fef2f2",
+                          border: `1px solid ${r.description === "Processing…" ? "#e5e7eb" : r.success ? r.undone ? "#bbf7d0" : "#ddd6fe" : "#fecaca"}`,
+                        }}>
                         <div className="flex items-start gap-2">
-                          {result.undone
-                            ? <RotateCcw className="w-3.5 h-3.5 shrink-0 mt-0.5 text-green-500" />
-                            : result.success
-                              ? <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5 text-purple-500" />
-                              : result.description === "Processing…"
-                                ? <Loader2 className="w-3.5 h-3.5 shrink-0 mt-0.5 text-gray-400 animate-spin" />
-                                : <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-red-400" />
-                          }
-                          <p className="text-xs leading-snug flex-1"
-                            style={{ color: result.undone ? "#065f46" : result.success ? "#4c1d95" : result.description === "Processing…" ? "#9ca3af" : "#991b1b", whiteSpace: "pre-line" }}>
-                            {result.undone ? (result.undoneDescription ?? "Undone") : result.description}
-                          </p>
+                          {r.description === "Processing…"
+                            ? <Loader2 className="w-3.5 h-3.5 text-purple-400 animate-spin shrink-0 mt-0.5" />
+                            : r.success
+                              ? <CheckCircle2 className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${r.undone ? "text-green-500" : "text-purple-500"}`} />
+                              : <AlertCircle className="w-3.5 h-3.5 text-red-400 shrink-0 mt-0.5" />}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[10px] font-black uppercase tracking-wider text-gray-400 truncate">{r.command}</p>
+                            <p className="text-xs text-gray-700 mt-0.5 whitespace-pre-wrap">{r.undone ? r.undoneDescription || "Undone" : r.description}</p>
+                          </div>
                         </div>
-                        {/* Undo button */}
-                        {result.success && !result.undone && result.undoInfo && (
-                          <button onClick={() => undoAction(result)} disabled={undoingId === result.id}
-                            className="mt-2 flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all disabled:opacity-50"
-                            style={{ background: "#faf5ff", border: "1.5px solid #e9d5ff", color: "#7c3aed" }}>
-                            {undoingId === result.id
-                              ? <><Loader2 className="w-3 h-3 animate-spin" /> Undoing…</>
-                              : <><RotateCcw className="w-3 h-3" /> Undo this</>
-                            }
+                        {r.success && !r.undone && r.undoInfo && (
+                          <button
+                            onClick={() => undoAction(r)}
+                            disabled={!!undoingId}
+                            className="mt-2 flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all hover:bg-white disabled:opacity-50"
+                            style={{ color: "#7c3aed", border: "1px solid #ddd6fe" }}>
+                            {undoingId === r.id
+                              ? <><Loader2 className="w-2.5 h-2.5 animate-spin" /> Undoing…</>
+                              : <><RotateCcw className="w-2.5 h-2.5" /> Undo</>}
                           </button>
                         )}
-                      </div>
-                    </div>
-                  ))}
-                  <div ref={bottomRef} />
-                </div>
+                      </motion.div>
+                    ))}
+                    <div ref={bottomRef} />
+                  </div>
+                )}
 
-                {/* Command input */}
+                {execResults.length === 0 && <div className="flex-1" />}
+
+                {/* Input */}
                 <div className="p-3 border-t border-gray-100 shrink-0">
                   <div className="flex items-end gap-2 p-2 rounded-xl" style={{ background: "#f9fafb", border: "1px solid #e5e7eb" }}>
                     <textarea
@@ -532,11 +652,10 @@ export function AdminAIAssistant() {
                       value={cmdInput}
                       onChange={e => setCmdInput(e.target.value)}
                       onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); executeCommand(); } }}
-                      placeholder='e.g. "Update order #145 to shipped"'
+                      placeholder="Type a command in plain language…"
                       rows={2}
-                      disabled={cmdLoading}
-                      className="flex-1 bg-transparent text-sm resize-none outline-none text-gray-800 placeholder-gray-400 disabled:opacity-50"
-                      style={{ maxHeight: 120 }}
+                      className="flex-1 bg-transparent text-sm resize-none outline-none text-gray-800 placeholder-gray-400"
+                      style={{ maxHeight: 100 }}
                     />
                     <button onClick={() => executeCommand()} disabled={!cmdInput.trim() || cmdLoading}
                       className="w-8 h-8 rounded-xl flex items-center justify-center text-white transition-all disabled:opacity-40 shrink-0"
@@ -544,53 +663,13 @@ export function AdminAIAssistant() {
                       {cmdLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Zap className="w-3.5 h-3.5" />}
                     </button>
                   </div>
-                  <p className="text-[9px] text-gray-400 text-center mt-1.5">AI parses & executes · All actions are logged · Undo available</p>
+                  <p className="text-[9px] text-gray-400 text-center mt-1.5">Commands are executed against your live store database</p>
                 </div>
               </>
             )}
           </motion.div>
         )}
       </AnimatePresence>
-
-      <style>{`
-        @keyframes bounce {
-          0%, 80%, 100% { transform: translateY(0); }
-          40% { transform: translateY(-4px); }
-        }
-      `}</style>
     </>
   );
-}
-
-/* ── Markdown-ish formatter ────────────────────── */
-function FormattedMessage({ content }: { content: string }) {
-  const lines = content.split("\n");
-  return (
-    <div className="space-y-1">
-      {lines.map((line, i) => {
-        if (line.startsWith("## ")) return <p key={i} className="font-black text-sm mt-2">{line.slice(3)}</p>;
-        if (line.startsWith("# ")) return <p key={i} className="font-black text-base mt-2">{line.slice(2)}</p>;
-        if (line.startsWith("### ")) return <p key={i} className="font-bold text-sm mt-1.5">{line.slice(4)}</p>;
-        if (line.startsWith("- ") || line.startsWith("* "))
-          return <p key={i} className="flex gap-1.5"><span className="mt-1 shrink-0">•</span><span>{formatInline(line.slice(2))}</span></p>;
-        if (/^\d+\. /.test(line)) {
-          const num = line.match(/^(\d+)\. /)?.[1];
-          return <p key={i} className="flex gap-1.5"><span className="font-bold shrink-0">{num}.</span><span>{formatInline(line.replace(/^\d+\. /, ""))}</span></p>;
-        }
-        if (line.trim() === "") return <div key={i} className="h-1" />;
-        return <p key={i}>{formatInline(line)}</p>;
-      })}
-    </div>
-  );
-}
-
-function formatInline(text: string): React.ReactNode {
-  const parts = text.split(/(\*\*[^*]+\*\*|`[^`]+`)/g);
-  return parts.map((part, i) => {
-    if (part.startsWith("**") && part.endsWith("**"))
-      return <strong key={i}>{part.slice(2, -2)}</strong>;
-    if (part.startsWith("`") && part.endsWith("`"))
-      return <code key={i} className="px-1 py-0.5 rounded text-[11px] font-mono" style={{ background: "rgba(0,0,0,0.08)" }}>{part.slice(1, -1)}</code>;
-    return part;
-  });
 }
