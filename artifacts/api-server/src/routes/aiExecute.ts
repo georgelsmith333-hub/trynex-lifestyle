@@ -297,6 +297,297 @@ async function parseCommandWithAI(command: string): Promise<Record<string, unkno
 }
 
 /* ═══════════════════════════════════════════════════════
+   POST /api/admin/ai-preview
+   Parse a command and return a preview plan WITHOUT executing.
+   Used by the frontend to show the admin what will happen.
+═══════════════════════════════════════════════════════ */
+router.post("/admin/ai-preview", requireAdmin, async (req, res) => {
+  const { command } = req.body as { command?: string };
+  if (!command?.trim()) {
+    return res.status(400).json({ error: "command is required" });
+  }
+
+  let parsed: Record<string, unknown>;
+  try {
+    parsed = await parseCommandWithAI(command.trim());
+  } catch {
+    return res.status(502).json({ error: "Could not parse command" });
+  }
+
+  const action = parsed.action as string;
+
+  // Build a preview based on the action — do read-only DB queries to enrich
+  try {
+    switch (action) {
+      case "create_product": {
+        const name = String(parsed.name ?? "").trim();
+        const price = Number(parsed.price);
+        const catName = String(parsed.category ?? "").trim();
+        let catInfo = "";
+        if (catName) {
+          const cats = await db.select().from(categoriesTable)
+            .where(ilike(categoriesTable.name, `%${catName}%`)).limit(1);
+          if (cats[0]) catInfo = ` in "${cats[0].name}" category`;
+        }
+        return res.json({
+          action, parsedCommand: parsed,
+          preview: {
+            title: "Create New Product",
+            description: `Will create "${name || "new product"}" at ৳${price}${catInfo}`,
+            riskLevel: "low",
+            details: [
+              `Product name: "${name}"`,
+              `Price: ৳${price}`,
+              catName ? `Category: ${catName}` : "Category: uncategorized",
+              "Default stock: 50 units",
+              "Customizable: Yes",
+            ],
+            requiresConfirmation: false,
+          },
+        });
+      }
+
+      case "delete_product": {
+        const name = String(parsed.name ?? "").trim();
+        const existing = await db.select({ id: productsTable.id, name: productsTable.name, price: productsTable.price })
+          .from(productsTable).where(ilike(productsTable.name, `%${name}%`)).limit(1);
+        const found = existing[0];
+        return res.json({
+          action, parsedCommand: parsed,
+          preview: {
+            title: "Delete Product",
+            description: found ? `Will permanently delete "${found.name}" (৳${found.price})` : `No product matching "${name}" found`,
+            riskLevel: "high",
+            details: found ? [
+              `Product: "${found.name}" (ID: ${found.id})`,
+              `Price: ৳${found.price}`,
+              "This action cannot be undone automatically",
+              "All related order history references will remain",
+            ] : [`No product found matching "${name}"`],
+            requiresConfirmation: true,
+          },
+        });
+      }
+
+      case "update_product_price": {
+        const name = String(parsed.name ?? "").trim();
+        const price = Number(parsed.price);
+        const existing = await db.select({ id: productsTable.id, name: productsTable.name, price: productsTable.price })
+          .from(productsTable).where(ilike(productsTable.name, `%${name}%`)).limit(1);
+        const found = existing[0];
+        return res.json({
+          action, parsedCommand: parsed,
+          preview: {
+            title: "Update Product Price",
+            description: found ? `"${found.name}": ৳${found.price} → ৳${price}` : `Product "${name}" not found`,
+            riskLevel: "medium",
+            details: found ? [
+              `Product: "${found.name}"`,
+              `Current price: ৳${found.price}`,
+              `New price: ৳${price}`,
+              "Change takes effect immediately on storefront",
+            ] : [`No product matching "${name}" found`],
+            requiresConfirmation: false,
+          },
+        });
+      }
+
+      case "update_product_stock": {
+        const name = String(parsed.name ?? "").trim();
+        const stock = Number(parsed.stock);
+        const existing = await db.select({ id: productsTable.id, name: productsTable.name, stock: productsTable.stock })
+          .from(productsTable).where(ilike(productsTable.name, `%${name}%`)).limit(1);
+        const found = existing[0];
+        return res.json({
+          action, parsedCommand: parsed,
+          preview: {
+            title: "Update Stock",
+            description: found ? `"${found.name}": ${found.stock ?? "?"} → ${stock} units` : `Product "${name}" not found`,
+            riskLevel: "low",
+            details: found ? [
+              `Product: "${found.name}"`,
+              `Current stock: ${found.stock ?? "unknown"} units`,
+              `New stock: ${stock} units`,
+            ] : [`No product matching "${name}" found`],
+            requiresConfirmation: false,
+          },
+        });
+      }
+
+      case "feature_product": {
+        const name = String(parsed.name ?? "").trim();
+        const featured = Boolean(parsed.featured);
+        const existing = await db.select({ id: productsTable.id, name: productsTable.name, featured: productsTable.featured })
+          .from(productsTable).where(ilike(productsTable.name, `%${name}%`)).limit(1);
+        const found = existing[0];
+        return res.json({
+          action, parsedCommand: parsed,
+          preview: {
+            title: featured ? "Feature Product" : "Unfeature Product",
+            description: found ? `"${found.name}" will be ${featured ? "added to ⭐ featured" : "removed from featured"}` : `Product "${name}" not found`,
+            riskLevel: "low",
+            details: found ? [
+              `Product: "${found.name}"`,
+              `Current status: ${found.featured ? "⭐ Featured" : "Not featured"}`,
+              `New status: ${featured ? "⭐ Featured" : "Not featured"}`,
+              "Change appears on storefront immediately",
+            ] : [`No product matching "${name}" found`],
+            requiresConfirmation: false,
+          },
+        });
+      }
+
+      case "update_order_status": {
+        const orderId = Number(parsed.orderId);
+        const status = String(parsed.status ?? "");
+        const existing = await db.select({ id: ordersTable.id, orderNumber: ordersTable.orderNumber, status: ordersTable.status, customerName: ordersTable.customerName })
+          .from(ordersTable).where(eq(ordersTable.id, orderId)).limit(1);
+        const found = existing[0];
+        return res.json({
+          action, parsedCommand: parsed,
+          preview: {
+            title: "Update Order Status",
+            description: found ? `Order #${found.orderNumber} (${found.customerName}): ${found.status} → ${status}` : `Order #${orderId} not found`,
+            riskLevel: status === "cancelled" ? "high" : "medium",
+            details: found ? [
+              `Order: #${found.orderNumber}`,
+              `Customer: ${found.customerName}`,
+              `Current status: ${found.status}`,
+              `New status: ${status}`,
+              status === "cancelled" ? "⚠️ This will mark the order as cancelled" : "A Telegram notification will be sent",
+            ] : [`Order #${orderId} not found`],
+            requiresConfirmation: status === "cancelled",
+          },
+        });
+      }
+
+      case "create_promo_code": {
+        const code = String(parsed.code ?? "").toUpperCase();
+        const discountType = String(parsed.discountType ?? "percentage");
+        const discountValue = Number(parsed.discountValue);
+        const discountLabel = discountType === "percentage" ? `${discountValue}% off` : `৳${discountValue} off`;
+        return res.json({
+          action, parsedCommand: parsed,
+          preview: {
+            title: "Create Promo Code",
+            description: `Will create promo code "${code}" — ${discountLabel}`,
+            riskLevel: "low",
+            details: [
+              `Code: "${code}"`,
+              `Discount: ${discountLabel}`,
+              parsed.minOrder ? `Minimum order: ৳${parsed.minOrder}` : "No minimum order",
+              parsed.expiresAt ? `Expires: ${parsed.expiresAt}` : "No expiry date",
+              "Activates immediately for customer use",
+            ],
+            requiresConfirmation: false,
+          },
+        });
+      }
+
+      case "delete_promo_code": {
+        const code = String(parsed.code ?? "").toUpperCase();
+        const existing = await db.select({ id: promoCodesTable.id, code: promoCodesTable.code, usedCount: promoCodesTable.usedCount })
+          .from(promoCodesTable).where(eq(promoCodesTable.code, code)).limit(1);
+        const found = existing[0];
+        return res.json({
+          action, parsedCommand: parsed,
+          preview: {
+            title: "Delete Promo Code",
+            description: found ? `Will delete "${code}" (used ${found.usedCount ?? 0} times)` : `Promo code "${code}" not found`,
+            riskLevel: "medium",
+            details: found ? [
+              `Code: "${code}"`,
+              `Used ${found.usedCount ?? 0} times total`,
+              "Customers can no longer use this code",
+              "Existing orders with this code are unaffected",
+            ] : [`Promo code "${code}" not found`],
+            requiresConfirmation: false,
+          },
+        });
+      }
+
+      case "list_products": {
+        const search = String(parsed.search ?? "").trim();
+        const count = await db.select({ count: sql<number>`count(*)::int` }).from(productsTable);
+        return res.json({
+          action, parsedCommand: parsed,
+          preview: {
+            title: "List Products",
+            description: search ? `Search for products matching "${search}"` : `Show all products (${count[0]?.count ?? "?"} total)`,
+            riskLevel: "low",
+            details: [
+              search ? `Filter: "${search}"` : "No filter — shows all",
+              "Read-only operation, no changes made",
+              `Total products in store: ${count[0]?.count ?? "?"}`,
+            ],
+            requiresConfirmation: false,
+          },
+        });
+      }
+
+      case "find_order": {
+        return res.json({
+          action, parsedCommand: parsed,
+          preview: {
+            title: "Find Order",
+            description: parsed.orderId ? `Look up order #${parsed.orderId}` : `Search orders by customer "${parsed.customerName}"`,
+            riskLevel: "low",
+            details: ["Read-only operation, no changes made"],
+            requiresConfirmation: false,
+          },
+        });
+      }
+
+      case "update_product_description": {
+        const name = String(parsed.name ?? "").trim();
+        const desc = String(parsed.description ?? "").slice(0, 80);
+        return res.json({
+          action, parsedCommand: parsed,
+          preview: {
+            title: "Update Description",
+            description: `Will update description of "${name}"`,
+            riskLevel: "low",
+            details: [
+              `Product: "${name}"`,
+              `New description preview: "${desc}${desc.length >= 80 ? "…" : ""}"`,
+            ],
+            requiresConfirmation: false,
+          },
+        });
+      }
+
+      case "seo_advice": {
+        return res.json({
+          action, parsedCommand: parsed,
+          preview: {
+            title: "SEO Advice",
+            description: "Will provide SEO guidance for TryNex",
+            riskLevel: "low",
+            details: ["Read-only — provides strategic recommendations", "No database changes"],
+            requiresConfirmation: false,
+          },
+        });
+      }
+
+      default:
+        return res.json({
+          action: "unknown", parsedCommand: parsed,
+          preview: {
+            title: "Command Not Recognized",
+            description: "This command could not be understood",
+            riskLevel: "low",
+            details: ["Please rephrase or check the Help tab for examples"],
+            requiresConfirmation: false,
+          },
+        });
+    }
+  } catch (err) {
+    logger.error({ err }, "[ai-preview] failed");
+    return res.status(500).json({ error: "Preview failed", details: err instanceof Error ? err.message : "Internal error" });
+  }
+});
+
+/* ═══════════════════════════════════════════════════════
    POST /api/admin/ai-execute
    Execute a natural-language admin command
 ═══════════════════════════════════════════════════════ */

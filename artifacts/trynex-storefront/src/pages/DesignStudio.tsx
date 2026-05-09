@@ -1280,7 +1280,8 @@ export default function DesignStudio() {
         dataUrl = result.dataUrl;
         usedModel = result.model ?? editModel;
       } else {
-        // text-to-image — design-optimized prompt enhancement
+        // text-to-image — parallel generation: fire primary model + turbo simultaneously
+        // Whichever finishes first wins (turbo typically 3-8s, primary 15-30s)
         setAiPhase("Enhancing your prompt for print design…");
         setAiProgress(15);
         const isRealism = aiModel === "flux-realism";
@@ -1289,25 +1290,54 @@ export default function DesignStudio() {
           : ", t-shirt print design, white background, high contrast, vector style, clean edges";
         const negSuffix = aiNegativePrompt.trim() ? `, avoid: ${aiNegativePrompt.trim()}` : "";
         const fullPrompt = prompt + suffix + negSuffix;
-        const params = new URLSearchParams({ prompt: fullPrompt, seed: String(seed), model: aiModel, width: "1024", height: "1024" });
-        setAiPhase("Connecting to TryNex AI engine…");
-        setAiProgress(30);
-        // Animate progress while waiting for the AI response
+
+        setAiPhase("Launching parallel AI engines…");
+        setAiProgress(28);
+
+        const primaryCtrl = new AbortController();
+        const turboCtrl = new AbortController();
+        const primaryParams = new URLSearchParams({ prompt: fullPrompt, seed: String(seed), model: aiModel, width: "1024", height: "1024" });
+        const turboParams = new URLSearchParams({ prompt: fullPrompt, seed: String(seed), model: "turbo", width: "1024", height: "1024" });
+
+        // Animate progress while both models race
         const progressInterval = setInterval(() => {
-          setAiProgress(prev => prev < 82 ? prev + 1.5 : prev);
-        }, 900);
-        setAiPhase(`Generating with ${AI_MODELS.find(m => m.id === aiModel)?.label ?? "TryNex AI"}…`);
-        const genRes = await fetch(getApiUrl(`/api/ai/generate?${params.toString()}`));
-        clearInterval(progressInterval);
-        if (!genRes.ok) {
-          const err = await genRes.json().catch(() => ({})) as { error?: string };
-          throw new Error(err.error || `Generation failed (${genRes.status})`);
+          setAiProgress(prev => prev < 85 ? prev + 1.2 : prev);
+        }, 800);
+
+        const fetchModel = async (url: string, ctrl: AbortController, label: string) => {
+          setAiPhase(`Racing: ${label} vs Turbo ⚡…`);
+          const r = await fetch(getApiUrl(url), { signal: ctrl.signal });
+          if (!r.ok) {
+            const err = await r.json().catch(() => ({})) as { error?: string };
+            throw new Error(err.error || `${label} returned ${r.status}`);
+          }
+          const data = await r.json() as { dataUrl: string; model?: string };
+          if (!data.dataUrl) throw new Error(`${label} returned no image`);
+          return data;
+        };
+
+        // If selected model is already turbo, just run one request
+        let genResult: { dataUrl: string; model?: string };
+        if (aiModel === "turbo") {
+          genResult = await fetchModel(`/api/ai/generate?${primaryParams}`, primaryCtrl, "Turbo");
+        } else {
+          // Fire both simultaneously — cancel the loser when winner responds
+          try {
+            genResult = await Promise.any([
+              fetchModel(`/api/ai/generate?${primaryParams}`, primaryCtrl, AI_MODELS.find(m => m.id === aiModel)?.label ?? "Primary").then(r => { turboCtrl.abort(); return r; }),
+              fetchModel(`/api/ai/generate?${turboParams}`, turboCtrl, "Turbo").then(r => { primaryCtrl.abort(); return r; }),
+            ]);
+          } catch {
+            clearInterval(progressInterval);
+            throw new Error("All AI models failed — please try again in a moment.");
+          }
         }
+
+        clearInterval(progressInterval);
         setAiPhase("Finalizing your design…");
         setAiProgress(90);
-        const result = await genRes.json() as { dataUrl: string; model?: string };
-        dataUrl = result.dataUrl;
-        usedModel = result.model ?? aiModel;
+        dataUrl = genResult.dataUrl;
+        usedModel = genResult.model ?? aiModel;
       }
 
       // Load data URL to get natural dimensions for the layer

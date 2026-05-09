@@ -277,7 +277,7 @@ app.use("/api", router);
 import sitemapRouter from "./routes/sitemap";
 app.use("/", sitemapRouter);
 
-// Catch-all 404 for unmatched API routes
+// Catch-all 404 for unmatched API routes (Express 5 named wildcard syntax)
 app.use("/api/{*path}", (_req, res) => {
   res.status(404).json({ error: "not_found", message: "Route not found" });
 });
