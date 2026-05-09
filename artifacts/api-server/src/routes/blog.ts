@@ -293,8 +293,8 @@ function mapPost(p: any, trendingThreshold: number = DEFAULT_TRENDING_THRESHOLD)
 router.get("/blog", async (req, res) => {
   try {
     const { published, page = "1", limit = "12", category } = req.query;
-    const pageNum = parseInt(page as string, 10);
-    const limitNum = parseInt(limit as string, 10);
+    const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10) || 12));
     const offset = (pageNum - 1) * limitNum;
 
     const token = req.headers.authorization?.replace("Bearer ", "") ?? req.cookies?.admin_token;
@@ -491,6 +491,10 @@ router.put("/blog/:id", requireAdmin, async (req, res) => {
 router.delete("/blog/:id", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id as string, 10);
+    if (!Number.isFinite(id) || id <= 0) {
+      res.status(400).json({ error: "validation_error", message: "Invalid blog post id" });
+      return;
+    }
     const [beforeSnapshot] = await db.select().from(blogPostsTable).where(eq(blogPostsTable.id, id));
     const [post] = await db.delete(blogPostsTable).where(eq(blogPostsTable.id, id)).returning();
     if (!post) {

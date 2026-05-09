@@ -136,6 +136,16 @@ export default defineConfig({
         target: `http://localhost:${apiPort}`,
         changeOrigin: true,
         secure: false,
+        configure: (proxy) => {
+          proxy.on("proxyReq", (proxyReq) => {
+            // Strip Origin/Referer so the API server's CORS policy
+            // treats this as a same-origin server request, not a
+            // cross-origin browser request.  changeOrigin:true only
+            // rewrites Host, not Origin.
+            proxyReq.removeHeader("origin");
+            proxyReq.removeHeader("referer");
+          });
+        },
       },
     },
     fs: {

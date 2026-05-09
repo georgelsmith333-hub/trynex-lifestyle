@@ -32,8 +32,8 @@ function mapProduct(p: any, categoryName?: string | null) {
 router.get("/products", async (req, res) => {
   try {
     const { categoryId, search, featured, page = "1", limit = "12" } = req.query;
-    const pageNum = parseInt(page as string, 10);
-    const limitNum = parseInt(limit as string, 10);
+    const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10) || 12));
     const offset = (pageNum - 1) * limitNum;
 
     const conditions: any[] = [];
@@ -138,6 +138,10 @@ router.post("/products", requireAdmin, async (req, res) => {
 router.put("/products/:id", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id as string, 10);
+    if (!Number.isFinite(id) || id <= 0) {
+      res.status(400).json({ error: "validation_error", message: "Invalid product id" });
+      return;
+    }
     const { name, slug, description, price, discountPrice, categoryId, imageUrl, images, sizes, colors, stock, featured, customizable, tags } = req.body;
 
     const [existing] = await db.select().from(productsTable).where(eq(productsTable.id, id));

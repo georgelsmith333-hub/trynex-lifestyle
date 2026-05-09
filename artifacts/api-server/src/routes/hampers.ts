@@ -119,6 +119,10 @@ router.post("/admin/hampers", requireAdmin, async (req, res) => {
 router.put("/admin/hampers/:id", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(String(req.params.id), 10);
+    if (!Number.isFinite(id) || id <= 0) {
+      res.status(400).json({ error: "validation_error", message: "Invalid hamper id" });
+      return;
+    }
     const b = req.body || {};
     const updates: any = { updatedAt: new Date() };
     if (b.slug !== undefined) updates.slug = String(b.slug).trim().toLowerCase().replace(/[^a-z0-9-]/g, "-");
@@ -156,6 +160,10 @@ router.put("/admin/hampers/:id", requireAdmin, async (req, res) => {
 router.delete("/admin/hampers/:id", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(String(req.params.id), 10);
+    if (!Number.isFinite(id) || id <= 0) {
+      res.status(400).json({ error: "validation_error", message: "Invalid hamper id" });
+      return;
+    }
     const [beforeSnap] = await db.select().from(hamperPackagesTable).where(eq(hamperPackagesTable.id, id));
     await db.delete(hamperPackagesTable).where(eq(hamperPackagesTable.id, id));
     if (beforeSnap) logActivity({ action: "delete", entity: "hamper", entityId: id, entityName: beforeSnap.name, before: beforeSnap as unknown as Record<string, unknown>, adminId: getAdminId(req) });
