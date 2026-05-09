@@ -39,6 +39,7 @@ export default function AdminOrders() {
   const { toast } = useToast();
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [newOrderAlert, setNewOrderAlert] = useState(false);
   const [lastCount, setLastCount] = useState<number | null>(null);
@@ -47,8 +48,17 @@ export default function AdminOrders() {
   const openLightbox = (items: PreviewItem[], index: number) => setLightbox({ items, index });
   const closeLightbox = () => setLightbox(null);
 
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(search.trim()), 350);
+    return () => clearTimeout(t);
+  }, [search]);
+
   const { data, isLoading, refetch, dataUpdatedAt } = useListOrders(
-    { limit: 200, ...(statusFilter !== "all" ? { status: statusFilter } : {}) },
+    {
+      limit: 200,
+      ...(statusFilter !== "all" ? { status: statusFilter } : {}),
+      ...(debouncedSearch ? { search: debouncedSearch } : {}),
+    },
     {
       request: { headers: getAuthHeaders() },
       query: {
@@ -189,14 +199,7 @@ export default function AdminOrders() {
     return map[s] || Package;
   };
 
-  const filteredOrders = (data?.orders ?? []).filter(o => {
-    if (!search) return true;
-    const q = search.toLowerCase();
-    return o.orderNumber?.toLowerCase().includes(q) ||
-      o.customerName?.toLowerCase().includes(q) ||
-      o.customerPhone?.includes(q) ||
-      o.customerEmail?.toLowerCase().includes(q);
-  });
+  const filteredOrders = data?.orders ?? [];
 
   const lastRefresh = dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleTimeString('en-BD') : null;
 

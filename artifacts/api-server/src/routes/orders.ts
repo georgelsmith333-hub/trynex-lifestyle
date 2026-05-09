@@ -1,6 +1,6 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import { db, ordersTable, productsTable, settingsTable, promoCodesTable, referralsTable, hamperPackagesTable } from "@workspace/db";
-import { eq, and, desc, sql, inArray, lte } from "drizzle-orm";
+import { eq, and, desc, sql, inArray, lte, or, ilike } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { logActivity, getAdminId } from "../lib/activityLog";
 import { verifyCustomerToken, extractCustomerToken } from "../lib/customerAuth";
@@ -316,13 +316,24 @@ router.get("/orders/my", async (req, res) => {
 
 router.get("/orders", requireAdmin, async (req, res) => {
   try {
-    const { status, page = "1", limit = "20" } = req.query;
-    const pageNum = parseInt(page as string, 10);
-    const limitNum = parseInt(limit as string, 10);
+    const { status, search, page = "1", limit = "20" } = req.query;
+    const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
+    const limitNum = Math.min(200, Math.max(1, parseInt(limit as string, 10) || 20));
     const offset = (pageNum - 1) * limitNum;
 
     const conditions: any[] = [];
     if (status) conditions.push(eq(ordersTable.status, status as string));
+    if (search && typeof search === "string" && search.trim()) {
+      const q = `%${search.trim()}%`;
+      conditions.push(
+        or(
+          ilike(ordersTable.customerName, q),
+          ilike(ordersTable.customerPhone, q),
+          ilike(ordersTable.orderNumber, q),
+          ilike(ordersTable.customerEmail, q),
+        )!
+      );
+    }
     const where = conditions.length > 0 ? and(...conditions) : undefined;
 
     const [orders, countResult] = await Promise.all([
