@@ -11,7 +11,7 @@ function getToken() {
 
 async function apiFetch(path: string, opts: RequestInit = {}) {
   const token = getToken();
-  const res = await fetch(getApiUrl(path), {
+  const res = await fetch(getApiUrl("/api" + path), {
     ...opts,
     credentials: "include",
     headers: {

@@ -23,7 +23,7 @@ export default function AdminLogin() {
   const [isPending, setIsPending] = useState(false);
 
   async function apiPost(path: string, body: Record<string, unknown>) {
-    const res = await fetch(getApiUrl(path), {
+    const res = await fetch(getApiUrl("/api" + path), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
