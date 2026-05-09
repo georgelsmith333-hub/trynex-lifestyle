@@ -242,6 +242,10 @@ import { Link, useLocation } from "wouter";
                   decoding="async"
                   fetchPriority={index === 0 ? "high" : "auto"}
                   onLoad={() => setImgLoaded(true)}
+                  onError={e => {
+                    setImgLoaded(true);
+                    (e.currentTarget as HTMLImageElement).style.display = "none";
+                  }}
                   className="w-full h-full object-cover"
                   style={{
                     opacity: imgLoaded ? 1 : 0,
@@ -249,6 +253,12 @@ import { Link, useLocation } from "wouter";
                     transition: 'transform 0.6s cubic-bezier(0.22,1,0.36,1), opacity 0.25s ease',
                   }}
                 />
+                {/* Fallback shown when image URL is broken */}
+                {imgLoaded && (
+                  <div className="absolute inset-0 -z-10 flex items-center justify-center bg-gradient-to-br from-orange-50 to-amber-50">
+                    <ShoppingCart className="w-16 h-16 text-orange-200" aria-hidden="true" />
+                  </div>
+                )}
               </>
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-50 to-amber-50">
