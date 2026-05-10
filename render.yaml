@@ -2,7 +2,7 @@ services:
   - type: web
     name: trynex-api
     env: node
-    region: singapore
+    region: oregon
     plan: free
     autoDeploy: yes
     buildCommand: npm install -g pnpm@10 && pnpm install --no-frozen-lockfile && pnpm --filter @workspace/api-server run build
