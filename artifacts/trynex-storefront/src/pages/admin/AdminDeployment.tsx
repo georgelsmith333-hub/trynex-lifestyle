@@ -79,7 +79,13 @@ export default function AdminDeployment() {
     setLoading(false);
   };
 
-  useEffect(() => { fetchStatus(); }, []);
+  useEffect(() => {
+    void fetchStatus();
+    const onFocus = () => void fetchStatus();
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();

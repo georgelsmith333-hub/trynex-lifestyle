@@ -8,6 +8,7 @@ import { ObjectStorageService } from "../lib/objectStorage";
 const router: IRouter = Router();
 
 router.get("/healthz", (_req, res) => {
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
   const data = HealthCheckResponse.parse({ status: "ok" });
   res.json(data);
 });

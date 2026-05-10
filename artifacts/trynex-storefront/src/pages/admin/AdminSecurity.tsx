@@ -87,8 +87,11 @@ export default function AdminSecurity() {
   }
 
   useEffect(() => {
-    loadMe();
-    loadSessions();
+    void loadMe();
+    void loadSessions();
+    const onFocus = () => { void loadMe(); void loadSessions(); };
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
   }, []);
 
   async function startTotpSetup() {

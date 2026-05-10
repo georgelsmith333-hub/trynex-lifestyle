@@ -173,3 +173,9 @@ id = "dnM5bgduA4C8jyrfwRv2O"
 uri = "file://TryNex-Issues-and-Fixes.md"
 type = "text"
 title = "TryNex — Complete Issue Audit & Fix Log"
+
+[[outputs]]
+id = "pxLh4DUAdAgzd2D-0Veut"
+uri = "file://TRYNEX_AUDIT_REPORT.md"
+type = "text"
+title = "TryNex Full Audit & Fix Report"

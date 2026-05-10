@@ -191,7 +191,10 @@ export default function AdminActivityLog() {
   }, [page, search, filterAction, filterEntity, dateFrom, dateTo]);
 
   useEffect(() => {
-    fetchLogs();
+    void fetchLogs();
+    const onFocus = () => void fetchLogs();
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
   }, [fetchLogs]);
 
   const handleSearch = (e: React.FormEvent) => {

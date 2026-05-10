@@ -108,7 +108,7 @@ if (process.env.NODE_ENV === "production") {
   logger.info({ present, storageBackend }, "[env] All required env vars confirmed present");
 }
 
-const server = app.listen(port, async () => {
+const server = app.listen(port, "0.0.0.0", async () => {
   logger.info({ port }, "Server listening");
   logActiveStorageBackend(logger);
   await runMigrations();
