@@ -75,9 +75,9 @@ channel = "stable-25_05"
 [userenv]
 
 [userenv.shared]
-ALLOWED_ORIGINS = "https://5dbc2c72-08b1-41e9-9ac4-3a850eaaa07c-00-1b9rag63a79s6.pike.replit.dev,http://localhost:5000,http://localhost:5173"
 NODE_ENV = "development"
 PORT = "8080"
+ALLOWED_ORIGINS = "https://3f74ac2d-c29a-48ff-8e56-88d3db7ba78b-00-28bvgjyfwc5pl.pike.replit.dev,http://localhost:5000,http://localhost:5173"
 
 [userenv.development]
 JWT_SECRET = "dev_jwt_secret_trynex_2024_change_in_prod"
