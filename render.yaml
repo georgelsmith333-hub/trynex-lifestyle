@@ -5,19 +5,19 @@ services:
     region: singapore
     plan: free
     autoDeploy: yes
-    buildCommand: npm install -g pnpm@9 && pnpm install --no-frozen-lockfile && pnpm --filter @workspace/api-server run build
+    buildCommand: npm install -g pnpm@10 && pnpm install --no-frozen-lockfile && pnpm --filter @workspace/api-server run build
     startCommand: node --enable-source-maps artifacts/api-server/dist/index.mjs
     healthCheckPath: /api/healthz
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
-        generateValue: false
         value: "10000"
+      # --- Database (Neon PostgreSQL) ---
+      # Set DATABASE_URL in the Render dashboard → Environment tab.
+      # Format: postgresql://user:pass@host/dbname?sslmode=require
       - key: DATABASE_URL
-        fromDatabase:
-          name: trynex-db
-          property: connectionString
+        sync: false
       - key: SESSION_SECRET
         generateValue: true
       - key: ALLOWED_ORIGINS
@@ -34,6 +34,8 @@ services:
         sync: false
       - key: R2_SECRET_ACCESS_KEY
         sync: false
+      - key: R2_PUBLIC_BASE_URL
+        sync: false
       # --- Auth & Admin ---
       - key: ADMIN_PASSWORD
         sync: false
@@ -42,6 +44,8 @@ services:
       - key: JWT_SECRET
         sync: false
       # --- Telegram order notifications ---
+      # Create a bot via @BotFather, get the token.
+      # Get your chat ID by messaging @userinfobot.
       - key: TELEGRAM_BOT_TOKEN
         sync: false
       - key: TELEGRAM_CHAT_ID
@@ -60,11 +64,4 @@ services:
         sync: false
       # --- Public storefront URL (used in sitemap, SEO, Telegram messages) ---
       - key: API_PUBLIC_URL
-        sync: false
-
-databases:
-  - name: trynex-db
-    databaseName: trynex
-    user: trynex
-    region: singapore
-    plan: free
+        value: "https://trynex-api.onrender.com"
