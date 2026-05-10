@@ -7,7 +7,7 @@ import { logActivity, getAdminId } from "../lib/activityLog";
 
 const router: IRouter = Router();
 
-const SITE_URL = "https://trynexshop.com";
+const SITE_URL = process.env.API_PUBLIC_URL || "https://trynexshop.com";
 const SITEMAP_URL = `${SITE_URL}/sitemap.xml`;
 
 async function getSetting(key: string): Promise<string | null> {

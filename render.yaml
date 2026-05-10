@@ -49,6 +49,18 @@ services:
       # --- Background removal (Design Studio) ---
       - key: REMOVE_BG_API_KEY
         sync: false
+      # --- WhatsApp order notifications (CallMeBot) ---
+      # Free service: https://www.callmebot.com/blog/free-api-whatsapp-messages/
+      - key: CALLMEBOT_PHONE
+        sync: false
+      - key: CALLMEBOT_APIKEY
+        sync: false
+      # --- Google OAuth (customer login) ---
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      # --- Public storefront URL (used in sitemap, SEO, Telegram messages) ---
+      - key: API_PUBLIC_URL
+        sync: false
 
 databases:
   - name: trynex-db
