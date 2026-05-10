@@ -34,6 +34,21 @@ services:
         sync: false
       - key: R2_SECRET_ACCESS_KEY
         sync: false
+      # --- Auth & Admin ---
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_JWT_SECRET
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      # --- Telegram order notifications ---
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
+      # --- Background removal (Design Studio) ---
+      - key: REMOVE_BG_API_KEY
+        sync: false
 
 databases:
   - name: trynex-db
