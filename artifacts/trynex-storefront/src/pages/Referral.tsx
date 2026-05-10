@@ -182,8 +182,34 @@ export default function Referral() {
                   <button onClick={shareCode}
                     className="flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm text-white"
                     style={{ background: "linear-gradient(135deg, #E85D04, #FB8500)" }}>
-                    <Share2 className="w-4 h-4" /> Share
+                    <Share2 className="w-4 h-4" /> More Options
                   </button>
+                </div>
+
+                <div className="pt-1">
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 text-left">Direct Share</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => {
+                        const msg = encodeURIComponent(`🎁 TryNex Lifestyle থেকে কাস্টম টি-শার্ট, হুডি, মগ অর্ডার করুন!\n\n✅ আমার লিঙ্ক দিয়ে অর্ডার করলে আপনি পাবেন ১০% ছাড়!\n👉 ${shareUrl}`);
+                        window.open(`https://wa.me/?text=${msg}`, '_blank');
+                      }}
+                      className="flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm text-white"
+                      style={{ background: "#25D366" }}>
+                      <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current flex-shrink-0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.118 1.522 5.852L0 24l6.302-1.493A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.817 9.817 0 01-5.004-1.368l-.36-.214-3.732.883.936-3.628-.235-.373A9.817 9.817 0 012.182 12c0-5.42 4.399-9.818 9.818-9.818 5.42 0 9.818 4.399 9.818 9.818 0 5.42-4.398 9.818-9.818 9.818z"/></svg>
+                      WhatsApp
+                    </button>
+                    <button
+                      onClick={() => {
+                        const u = encodeURIComponent(shareUrl);
+                        window.open(`https://www.facebook.com/sharer/sharer.php?u=${u}`, '_blank', 'width=600,height=400');
+                      }}
+                      className="flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm text-white"
+                      style={{ background: "#1877F2" }}>
+                      <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current flex-shrink-0"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                      Facebook
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -195,7 +221,7 @@ export default function Referral() {
                   <div className="grid grid-cols-3 gap-3">
                     <div className="text-center p-3 rounded-xl bg-orange-50">
                       <p className="text-2xl font-black text-orange-600">{myReferral.totalUses || 0}</p>
-                      <p className="text-[10px] font-bold text-gray-500 uppercase mt-1">Referrals</p>
+                      <p className="text-[10px] font-bold text-gray-500 uppercase mt-1">Sales</p>
                     </div>
                     <div className="text-center p-3 rounded-xl bg-green-50">
                       <p className="text-2xl font-black text-green-600">{formatPrice(myReferral.totalEarnings || 0)}</p>
@@ -211,10 +237,148 @@ export default function Referral() {
                   </p>
                 </div>
               )}
+
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-lg overflow-hidden">
+                <div className="flex items-center justify-between px-5 py-4 border-b border-gray-50">
+                  <h3 className="font-bold text-gray-900 text-sm flex items-center gap-2">
+                    <ShoppingBag className="w-4 h-4 text-orange-500" /> QR Code
+                  </h3>
+                  <span className="text-[10px] text-gray-400 font-medium">Scan to visit your link</span>
+                </div>
+                <div className="p-4 flex flex-col sm:flex-row items-center gap-4">
+                  <img
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(shareUrl)}&color=E85D04&bgcolor=ffffff`}
+                    alt="Referral QR Code"
+                    className="w-28 h-28 rounded-xl border border-gray-100 shrink-0"
+                  />
+                  <div className="text-center sm:text-left">
+                    <p className="text-sm font-bold text-gray-900 mb-1">Share your QR code</p>
+                    <p className="text-xs text-gray-500 mb-3">People can scan this at events, markets, or print it on flyers to use your referral link</p>
+                    <a
+                      href={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(shareUrl)}&color=E85D04&bgcolor=ffffff`}
+                      download="trynex-referral-qr.png"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-orange-600 hover:underline"
+                    >
+                      Download QR <ArrowRight className="w-3 h-3" />
+                    </a>
+                  </div>
+                </div>
+              </div>
             </motion.div>
           )}
         </div>
       </section>
+
+      {referralCode && (
+        <>
+          <section className="py-6 sm:py-10 px-4 -mt-2">
+            <div className="max-w-lg mx-auto space-y-4">
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-lg overflow-hidden">
+                <div className="px-5 py-4 border-b border-gray-50">
+                  <h3 className="font-bold text-gray-900 text-sm flex items-center gap-2">
+                    <Copy className="w-4 h-4 text-orange-500" /> Ready-Made Messages
+                  </h3>
+                  <p className="text-xs text-gray-400 mt-0.5">Copy and paste to WhatsApp, Facebook, or anywhere you sell</p>
+                </div>
+                <div className="p-4 space-y-3">
+                  {[
+                    {
+                      lang: "বাংলা",
+                      flag: "🇧🇩",
+                      text: `🎁 TryNex Lifestyle থেকে কাস্টম টি-শার্ট, হুডি, মগ ও ক্যাপ অর্ডার করুন!\n\n✅ প্রিমিয়াম কোয়ালিটি\n✅ ২৪ ঘণ্টায় প্রোডাকশন\n✅ বাংলাদেশের ৬৪ জেলায় ডেলিভারি\n\n🔗 আমার লিঙ্ক দিয়ে অর্ডার করলে পাবেন ১০% ছাড়:\n${referralCode ? `${window.location.origin}?ref=${referralCode}` : ''}`,
+                    },
+                    {
+                      lang: "English",
+                      flag: "🇬🇧",
+                      text: `🎁 Get custom T-shirts, hoodies, mugs & caps from TryNex Lifestyle!\n\n✅ Premium quality\n✅ 24hr production\n✅ Delivery across Bangladesh\n\n🔗 Use my link and get 10% OFF your first order:\n${referralCode ? `${window.location.origin}?ref=${referralCode}` : ''}`,
+                    },
+                    {
+                      lang: "ফেসবুক পোস্ট",
+                      flag: "📘",
+                      text: `কাস্টম প্রিন্টেড টি-শার্ট বা হুডি চাই? 👕\n\nTryNex Lifestyle তোমার ডিজাইন প্রিন্ট করে দিচ্ছে মাত্র ২৪ ঘণ্টায়! বাংলাদেশের সেরা কাস্টম অ্যাপারেল ব্র্যান্ড 🔥\n\n👇 আমার লিঙ্ক দিয়ে অর্ডার করো, ১০% ছাড় পাবে!\n${referralCode ? `${window.location.origin}?ref=${referralCode}` : ''}\n\n#TryNex #CustomTshirt #Bangladesh #প্রিন্টেড_টিশার্ট`,
+                    },
+                  ].map(({ lang, flag, text }) => (
+                    <div key={lang} className="border border-gray-100 rounded-xl overflow-hidden">
+                      <div className="flex items-center justify-between px-3 py-2 bg-gray-50">
+                        <span className="text-xs font-bold text-gray-700">{flag} {lang}</span>
+                        <button
+                          onClick={async () => {
+                            await navigator.clipboard.writeText(text);
+                            toast({ title: "Message copied!", description: "Paste it anywhere to share." });
+                          }}
+                          className="flex items-center gap-1.5 text-[11px] font-bold text-orange-600 hover:text-orange-700 transition-colors"
+                        >
+                          <Copy className="w-3 h-3" /> Copy
+                        </button>
+                      </div>
+                      <p className="px-3 py-2.5 text-xs text-gray-600 whitespace-pre-wrap leading-relaxed">{text}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-lg p-5 flex flex-col sm:flex-row items-center gap-4">
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=${encodeURIComponent(`${window.location.origin}?ref=${referralCode}`)}&color=E85D04&bgcolor=ffffff`}
+                  alt="Referral QR Code"
+                  className="w-28 h-28 rounded-xl border border-gray-100 shrink-0"
+                />
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-1">Your QR Code</h4>
+                  <p className="text-xs text-gray-500 mb-3">Print on flyers, business cards, or display at events. Anyone who scans it goes straight to your referral link.</p>
+                  <a
+                    href={`https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(`${window.location.origin}?ref=${referralCode}`)}&color=E85D04&bgcolor=ffffff`}
+                    download="trynex-referral-qr.png"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-orange-50 text-orange-600 font-bold text-xs hover:bg-orange-100 transition-colors"
+                  >
+                    <ArrowRight className="w-3.5 h-3.5" /> Download QR (400×400)
+                  </a>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="py-6 sm:py-10 px-4 bg-gradient-to-br from-gray-900 to-gray-800">
+            <div className="max-w-3xl mx-auto">
+              <div className="text-center mb-6 sm:mb-8">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold mb-3"
+                  style={{ background: "rgba(232,93,4,0.2)", color: "#FB8500", border: "1px solid rgba(232,93,4,0.3)" }}>
+                  <ShoppingBag className="w-3.5 h-3.5" /> Reseller Program
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-black text-white mb-2">Sell TryNex,<br /><span style={{ color: "#FB8500" }}>Your Way</span></h2>
+                <p className="text-gray-400 text-sm max-w-lg mx-auto">
+                  Use your referral link through any channel — Facebook groups, WhatsApp broadcasts, Instagram, or your own online shop. You earn 10% on every sale automatically.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                {[
+                  { icon: "📱", title: "WhatsApp Broadcast", desc: "Send your referral link to your WhatsApp contacts. Set up a broadcast list and send the Bangla message template above." },
+                  { icon: "👥", title: "Facebook Groups", desc: "Post in local buy/sell groups, student groups, and office groups. Use the Facebook post template above — just copy and paste." },
+                  { icon: "🛒", title: "Your Own Shop", desc: "Sell custom products on your page or profile. Accept orders, place them on TryNex with your code, earn 10% every time." },
+                  { icon: "📣", title: "Instagram & TikTok", desc: "Create content showing the products, add your referral link in bio. Every customer who clicks and orders earns you 10%." },
+                  { icon: "🖨️", title: "Flyers & Prints", desc: "Download your QR code above and print it on flyers, posters, or cards. Hand them out physically in your area." },
+                  { icon: "💬", title: "Messenger & Telegram", desc: "Share in Messenger group chats or Telegram channels. The more people see your link, the more you earn." },
+                ].map(({ icon, title, desc }) => (
+                  <div key={title} className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all">
+                    <p className="text-2xl mb-2">{icon}</p>
+                    <h4 className="font-bold text-white text-sm mb-1">{title}</h4>
+                    <p className="text-gray-400 text-xs leading-relaxed">{desc}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 bg-orange-500/10 border border-orange-500/20 rounded-xl p-4 text-center">
+                <p className="text-white font-bold text-sm mb-1">Commission Calculator</p>
+                <p className="text-gray-400 text-xs">10 orders × ৳500 avg = <span className="text-orange-400 font-black text-base">৳500 earned</span> &nbsp;|&nbsp; 50 orders × ৳700 avg = <span className="text-orange-400 font-black text-base">৳3,500 earned</span></p>
+                <p className="text-gray-500 text-xs mt-1">No cap. No limit. Earn as much as you refer.</p>
+              </div>
+            </div>
+          </section>
+        </>
+      )}
 
       <section className="py-10 sm:py-14 px-4">
         <div className="max-w-3xl mx-auto">
