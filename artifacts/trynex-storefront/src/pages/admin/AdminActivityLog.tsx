@@ -269,6 +269,7 @@ export default function AdminActivityLog() {
             </p>
           </div>
           <button
+            type="button"
             onClick={fetchLogs}
             className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
           >
@@ -371,6 +372,7 @@ export default function AdminActivityLog() {
                     <div className="flex items-center gap-2 shrink-0">
                       {(log.before !== null || log.after !== null) && (
                         <button
+                          type="button"
                           onClick={() => setExpandedId(expandedId === log.id ? null : log.id)}
                           className="px-2.5 py-1 text-xs border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors"
                         >
@@ -379,6 +381,7 @@ export default function AdminActivityLog() {
                       )}
                       {canRollback(log) && (
                         <button
+                          type="button"
                           onClick={() => setRollbackId(log.id)}
                           disabled={rollingBack !== null}
                           className="flex items-center gap-1 px-2.5 py-1 text-xs bg-orange-50 text-orange-600 border border-orange-200 rounded-lg hover:bg-orange-100 transition-colors disabled:opacity-50"
@@ -404,12 +407,14 @@ export default function AdminActivityLog() {
                       </p>
                       <div className="flex items-center gap-2 shrink-0">
                         <button
+                          type="button"
                           onClick={() => setRollbackId(null)}
                           className="px-3 py-1 text-xs border border-gray-200 bg-white rounded-lg hover:bg-gray-50"
                         >
                           Cancel
                         </button>
                         <button
+                          type="button"
                           onClick={() => handleRollback(log)}
                           disabled={rollingBack === log.id}
                           className="flex items-center gap-1 px-3 py-1 text-xs bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50"
@@ -437,6 +442,7 @@ export default function AdminActivityLog() {
             </p>
             <div className="flex items-center gap-2">
               <button
+                type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page <= 1}
                 className="p-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-40"
@@ -447,6 +453,7 @@ export default function AdminActivityLog() {
                 Page {page} of {data.totalPages}
               </span>
               <button
+                type="button"
                 onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))}
                 disabled={page >= data.totalPages}
                 className="p-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-40"

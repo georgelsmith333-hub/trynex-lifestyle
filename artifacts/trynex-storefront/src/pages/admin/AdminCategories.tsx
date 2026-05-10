@@ -117,6 +117,7 @@ export default function AdminCategories() {
             <p className="text-sm text-gray-500 mt-1">Manage product categories shown in the storefront filters.</p>
           </div>
           <button
+            type="button"
             onClick={openAddModal}
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-white text-sm"
             style={{ background: 'linear-gradient(135deg, #E85D04, #FB8500)', boxShadow: '0 4px 16px rgba(232,93,4,0.3)' }}
@@ -155,6 +156,7 @@ export default function AdminCategories() {
                 )}
                 <div className="flex items-center gap-2 mt-4">
                   <button
+                    type="button"
                     onClick={() => openEditModal(cat)}
                     className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold text-gray-600 bg-gray-50 hover:bg-gray-100"
                   >
@@ -162,6 +164,7 @@ export default function AdminCategories() {
                   </button>
                   {(cat.productCount ?? 0) === 0 ? (
                     <button
+                      type="button"
                       onClick={() => setDeleteConfirm({ id: cat.id, name: cat.name })}
                       className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-red-500 bg-red-50 hover:bg-red-100"
                       aria-label="Delete category"
@@ -202,7 +205,7 @@ export default function AdminCategories() {
                 <h2 className="font-display font-black text-xl text-gray-900">
                   {editingId ? "Edit Category" : "Add Category"}
                 </h2>
-                <button onClick={() => setModalOpen(false)} className="p-1.5 text-gray-400 hover:text-gray-600">
+                <button type="button" onClick={() => setModalOpen(false)} className="p-1.5 text-gray-400 hover:text-gray-600">
                   <X className="w-4 h-4" />
                 </button>
               </div>

@@ -142,6 +142,7 @@ export default function AdminDashboard() {
           )}
         </div>
         <button
+          type="button"
           onClick={() => refetch()}
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all text-gray-600 bg-white border border-gray-200 hover:border-orange-300 hover:text-orange-600"
         >
@@ -159,7 +160,7 @@ export default function AdminDashboard() {
             Products, orders, blog posts, promo codes and settings you edit in this panel update on{" "}
             <span className="font-semibold">trynexshop.com</span> in real time. No need to redeploy or restart after making changes.
           </div>
-          <button onClick={dismissProdNotice} className="mt-0.5 shrink-0 hover:opacity-70" style={{ color: "#d97706" }}>
+          <button type="button" onClick={dismissProdNotice} className="mt-0.5 shrink-0 hover:opacity-70" style={{ color: "#d97706" }}>
             <X className="w-4 h-4" />
           </button>
         </div>

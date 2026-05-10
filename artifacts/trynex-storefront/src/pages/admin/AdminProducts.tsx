@@ -422,12 +422,14 @@ export default function AdminProducts() {
         </div>
         <div className="flex items-center gap-3 shrink-0">
           <button
+            type="button"
             onClick={() => { setBulkModalOpen(true); setBulkText(""); setBulkResult(null); }}
             className="flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-sm transition-all hover:scale-105 border border-orange-200 text-orange-600 bg-orange-50 hover:bg-orange-100"
           >
             <Upload className="w-4 h-4" /> Bulk Upload
           </button>
           <button
+            type="button"
             onClick={openAddModal}
             className="flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-white text-sm transition-all hover:scale-105"
             style={{ background: 'linear-gradient(135deg, #E85D04, #FB8500)', boxShadow: '0 6px 24px rgba(232,93,4,0.3)' }}
@@ -449,6 +451,7 @@ export default function AdminProducts() {
           />
         </div>
         <button
+          type="button"
           onClick={() => setShowLowStock(!showLowStock)}
           className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
             showLowStock
@@ -494,6 +497,7 @@ export default function AdminProducts() {
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-end p-3 gap-2"
                   style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.75), transparent)' }}>
                   <button
+                    type="button"
                     onClick={() => openEditModal(product)}
                     className="p-2.5 rounded-xl transition-all hover:scale-110 bg-white/20 border border-white/30 text-white"
                     title="Edit product"
@@ -501,6 +505,7 @@ export default function AdminProducts() {
                     <Edit3 className="w-4 h-4" />
                   </button>
                   <button
+                    type="button"
                     onClick={() => setDeleteConfirm({ id: product.id, name: product.name })}
                     className="p-2.5 rounded-xl transition-all hover:scale-110"
                     style={{ background: 'rgba(239,68,68,0.2)', border: '1px solid rgba(239,68,68,0.4)', color: '#fca5a5' }}
@@ -533,12 +538,14 @@ export default function AdminProducts() {
                 </div>
                 <div className="flex items-center gap-2 border-t border-gray-100 pt-3">
                   <button
+                    type="button"
                     onClick={() => openEditModal(product)}
                     className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold text-orange-600 bg-orange-50 hover:bg-orange-100 border border-orange-100 transition-all"
                   >
                     <Edit3 className="w-3.5 h-3.5" /> Edit
                   </button>
                   <button
+                    type="button"
                     onClick={() => setDeleteConfirm({ id: product.id, name: product.name })}
                     className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold text-red-500 bg-red-50 hover:bg-red-100 border border-red-100 transition-all"
                   >
@@ -589,6 +596,7 @@ export default function AdminProducts() {
                   )}
                 </div>
                 <button
+                  type="button"
                   onClick={() => { setModalOpen(false); setEditingProduct(null); }}
                   aria-label="Close modal"
                   className="p-2 text-gray-400 hover:text-gray-700 rounded-xl transition-colors hover:bg-gray-100"
@@ -788,6 +796,7 @@ export default function AdminProducts() {
                   <p className="text-xs text-gray-400 mt-0.5">Upload CSV file or paste data</p>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setBulkModalOpen(false)}
                   className="p-2 text-gray-400 hover:text-gray-700 rounded-xl transition-colors hover:bg-gray-100"
                 >
@@ -813,6 +822,7 @@ export default function AdminProducts() {
                     className="hidden"
                   />
                   <button
+                    type="button"
                     onClick={() => fileInputRef.current?.click()}
                     className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-all"
                   >
@@ -857,6 +867,7 @@ export default function AdminProducts() {
                 )}
 
                 <button
+                  type="button"
                   onClick={handleBulkUpload}
                   disabled={bulkUploading || !bulkText.trim()}
                   className="w-full py-4 rounded-xl font-bold text-white flex items-center justify-center gap-2 disabled:opacity-50 transition-all hover:scale-[1.02]"

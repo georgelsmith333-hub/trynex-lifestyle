@@ -492,7 +492,7 @@ export default function AdminOrders() {
                     {selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleString('en-BD') : ''}
                   </p>
                 </div>
-                <button onClick={() => setSelectedOrder(null)}
+                <button type="button" onClick={() => setSelectedOrder(null)}
                   className="p-2 text-gray-400 hover:text-gray-900 rounded-xl"
                   style={{ background: '#fff4ee' }}>
                   <X className="w-5 h-5" />

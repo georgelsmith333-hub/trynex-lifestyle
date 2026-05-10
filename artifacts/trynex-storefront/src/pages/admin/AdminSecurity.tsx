@@ -260,6 +260,7 @@ export default function AdminSecurity() {
 
           {!totpEnabled && totpStep === "idle" && (
             <button
+              type="button"
               onClick={startTotpSetup}
               disabled={isPending}
               className={btnPrimary}
@@ -296,6 +297,7 @@ export default function AdminSecurity() {
               </div>
               <div className="flex gap-3">
                 <button
+                  type="button"
                   onClick={confirmTotpEnable}
                   disabled={isPending || totpCode.replace(/\s/g, "").length < 6}
                   className={btnPrimary}
@@ -305,6 +307,7 @@ export default function AdminSecurity() {
                   {isPending ? "Verifying..." : "Activate 2FA"}
                 </button>
                 <button
+                  type="button"
                   onClick={() => { setTotpStep("idle"); setTotpCode(""); setQrDataUrl(""); setTotpSecret(""); }}
                   className="px-5 py-2.5 rounded-xl font-bold text-sm text-gray-600 border border-gray-200 hover:bg-gray-50 transition-all"
                 >
@@ -316,6 +319,7 @@ export default function AdminSecurity() {
 
           {totpEnabled && !showDisable && (
             <button
+              type="button"
               onClick={() => setShowDisable(true)}
               className={`${btnDanger} border-red-200 text-red-600 bg-red-50 hover:bg-red-100`}
             >
@@ -338,6 +342,7 @@ export default function AdminSecurity() {
               />
               <div className="flex gap-3">
                 <button
+                  type="button"
                   onClick={confirmTotpDisable}
                   disabled={isPending || disableCode.replace(/\s/g, "").length < 6}
                   className={`${btnDanger} border-red-300 bg-red-500 text-white hover:bg-red-600`}
@@ -345,6 +350,7 @@ export default function AdminSecurity() {
                   {isPending ? "Disabling..." : "Confirm Disable"}
                 </button>
                 <button
+                  type="button"
                   onClick={() => { setShowDisable(false); setDisableCode(""); }}
                   className="px-5 py-2.5 rounded-xl font-bold text-sm text-gray-600 border border-gray-200 hover:bg-gray-50 transition-all"
                 >
@@ -457,7 +463,7 @@ export default function AdminSecurity() {
                 <p className="text-sm text-gray-500">Revoke any session you don't recognise.</p>
               </div>
             </div>
-            <button onClick={loadSessions} className="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all">
+            <button type="button" onClick={loadSessions} className="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all">
               <RefreshCw className="w-4 h-4" />
             </button>
           </div>
@@ -479,6 +485,7 @@ export default function AdminSecurity() {
                     </div>
                   </div>
                   <button
+                    type="button"
                     onClick={() => revokeSession(s.id)}
                     className="p-2 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition-all"
                     title="Revoke session"

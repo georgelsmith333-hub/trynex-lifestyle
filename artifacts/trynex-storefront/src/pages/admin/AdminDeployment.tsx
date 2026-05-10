@@ -446,7 +446,7 @@ export default function AdminDeployment() {
                   </div>
                   <div>
                     <div className="text-[10px] font-bold text-green-700 uppercase tracking-wider">Commit</div>
-                    <button onClick={copySha} className="font-mono font-bold text-gray-900 inline-flex items-center gap-1 hover:text-orange-600">
+                    <button type="button" onClick={copySha} className="font-mono font-bold text-gray-900 inline-flex items-center gap-1 hover:text-orange-600">
                       {pushResult.shortSha}
                       {copied ? <Check className="w-3 h-3 text-green-600" /> : <Copy className="w-3 h-3 opacity-50" />}
                     </button>

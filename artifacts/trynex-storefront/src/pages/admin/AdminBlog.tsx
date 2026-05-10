@@ -383,12 +383,14 @@ export default function AdminBlog() {
             <option value="most-viewed">Most viewed</option>
           </select>
           <button
+            type="button"
             onClick={() => setIsCatManagerOpen(true)}
             className="flex items-center gap-2 px-4 py-3 rounded-xl font-bold text-sm transition-all hover:scale-105 bg-gray-50 border border-gray-200 text-gray-700"
           >
             <Tag className="w-4 h-4" /> Categories
           </button>
           <button
+            type="button"
             onClick={() => openEditor()}
             className="flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-white text-sm transition-all hover:scale-105"
             style={{ background: "linear-gradient(135deg, #E85D04, #FB8500)", boxShadow: "0 6px 24px rgba(232,93,4,0.3)" }}
@@ -408,6 +410,7 @@ export default function AdminBlog() {
           <p className="font-bold text-xl text-gray-400 mb-2">No blog posts yet</p>
           <p className="text-gray-400 text-sm mb-6">Create your first post to engage with customers</p>
           <button
+            type="button"
             onClick={() => openEditor()}
             className="px-6 py-3 rounded-xl font-bold text-white text-sm"
             style={{ background: "linear-gradient(135deg, #E85D04, #FB8500)" }}
@@ -471,12 +474,14 @@ export default function AdminBlog() {
                 </div>
                 <div className="flex items-center gap-2">
                   <button
+                    type="button"
                     onClick={() => openEditor(post)}
                     className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition-all hover:scale-105 bg-orange-50 border border-orange-200 text-orange-600"
                   >
                     <Edit2 className="w-3.5 h-3.5" /> Edit
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleTogglePublish(post)}
                     className="flex items-center justify-center w-10 h-10 rounded-xl transition-all hover:scale-105"
                     style={{
@@ -489,6 +494,7 @@ export default function AdminBlog() {
                     {post.published ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                   <button
+                    type="button"
                     onClick={() => setDeleteConfirm(post.id)}
                     className="flex items-center justify-center w-10 h-10 rounded-xl transition-all hover:scale-105"
                     style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.15)", color: "#ef4444" }}
@@ -776,12 +782,14 @@ export default function AdminBlog() {
               {/* Footer */}
               <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-100 bg-gray-50/50">
                 <button
+                  type="button"
                   onClick={closeEditor}
                   className="px-6 py-3 rounded-xl text-sm font-bold text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
+                  type="button"
                   onClick={handleSave}
                   disabled={isSaving}
                   className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white text-sm disabled:opacity-50 transition-all hover:scale-105"
@@ -826,7 +834,7 @@ export default function AdminBlog() {
                     <p className="text-xs text-gray-400">Drag to reorder · add or remove categories</p>
                   </div>
                 </div>
-                <button onClick={() => setIsCatManagerOpen(false)} className="p-2 rounded-xl text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors">
+                <button type="button" onClick={() => setIsCatManagerOpen(false)} className="p-2 rounded-xl text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -877,6 +885,7 @@ export default function AdminBlog() {
                           })()}
                         </div>
                         <button
+                          type="button"
                           onClick={async () => { await refetchCategories(); setCatDeleteConfirm(cat); setCatReassignTo(""); }}
                           disabled={deleteCategoryMutation.isPending}
                           className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors shrink-0"
@@ -899,6 +908,7 @@ export default function AdminBlog() {
                     maxLength={60}
                   />
                   <button
+                    type="button"
                     onClick={() => newCatName.trim() && addCategoryMutation.mutate(newCatName.trim())}
                     disabled={!newCatName.trim() || addCategoryMutation.isPending}
                     className="flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-bold text-white disabled:opacity-50 transition-all hover:scale-105"
@@ -964,7 +974,7 @@ export default function AdminBlog() {
                         </p>
                       )}
                     </div>
-                    <button onClick={() => setCatDeleteConfirm(null)} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors shrink-0">
+                    <button type="button" onClick={() => setCatDeleteConfirm(null)} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors shrink-0">
                       <X className="w-4 h-4" />
                     </button>
                   </div>
@@ -993,12 +1003,14 @@ export default function AdminBlog() {
                 )}
                 <div className="flex gap-3 px-6 pb-6">
                   <button
+                    type="button"
                     onClick={() => setCatDeleteConfirm(null)}
                     className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
                   >
                     Cancel
                   </button>
                   <button
+                    type="button"
                     onClick={() => {
                       if (catReassignTo && catReassignTo === catDeleteConfirm) return;
                       deleteCategoryMutation.mutate({ name: catDeleteConfirm, reassignTo: catReassignTo || undefined });
