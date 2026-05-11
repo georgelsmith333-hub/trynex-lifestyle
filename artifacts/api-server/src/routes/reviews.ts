@@ -3,6 +3,7 @@ import { db, reviewsTable, productsTable, ordersTable } from "@workspace/db";
 import { eq, and, desc, sql } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { logActivity, getAdminId } from "../lib/activityLog";
+import { tgSend } from "../lib/telegram";
 
 const router: IRouter = Router();
 
@@ -82,6 +83,11 @@ router.post("/reviews", async (req, res) => {
     }).returning();
 
     res.status(201).json({ ...review, message: "Review submitted! It will appear after approval." });
+
+    const stars = "⭐".repeat(rating);
+    tgSend(
+      `💬 <b>New Review Submitted</b>\n\n${stars}\n👤 ${customerName}\n📦 Product ID: ${productId}\n✍️ ${text || "(no text)"}\n\n⏳ Awaiting your approval in Admin → Reviews`
+    ).catch(() => {});
   } catch (err) {
     req.log.error({ err }, "Failed to create review");
     res.status(500).json({ error: "internal_error", message: "Failed to submit review" });

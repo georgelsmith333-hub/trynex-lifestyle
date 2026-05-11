@@ -3,6 +3,7 @@ import { db, newsletterSubscribersTable } from "@workspace/db";
 import { eq, sql } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { logger } from "../lib/logger";
+import { tgSend } from "../lib/telegram";
 
 const router: IRouter = Router();
 
@@ -62,6 +63,11 @@ router.post("/newsletter/subscribe", async (req, res) => {
     });
 
     res.json({ ok: true, message: "Subscribed! Watch your inbox for exclusive deals." });
+
+    const [countRow] = await db.select({ count: sql<number>`count(*)::int` }).from(newsletterSubscribersTable).catch(() => [{ count: 0 }]);
+    tgSend(
+      `📧 <b>New Newsletter Subscriber</b>\n\n📩 ${clean}\n📍 Source: ${source || "footer"}\n👥 Total Subscribers: ${countRow?.count ?? "?"}`
+    ).catch(() => {});
   } catch (err) {
     req.log.error({ err }, "[newsletter] subscribe error");
     res.status(500).json({ error: "internal", message: "Failed to subscribe. Please try again." });

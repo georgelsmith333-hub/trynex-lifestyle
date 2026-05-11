@@ -26,6 +26,7 @@ import newsletterRouter from "./newsletter";
 import aiRouter from "./ai";
 import aiExecuteRouter from "./aiExecute";
 import draftsRouter from "./drafts";
+import telegramWebhookRouter from "./telegramWebhook";
 
 const router: IRouter = Router();
 
@@ -56,5 +57,6 @@ router.use(newsletterRouter);
 router.use(aiRouter);
 router.use(aiExecuteRouter);
 router.use(draftsRouter);
+router.use(telegramWebhookRouter);
 
 export default router;

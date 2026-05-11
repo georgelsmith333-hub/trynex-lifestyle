@@ -1,9 +1,10 @@
 import { Router, type IRouter } from "express";
 import { logger } from "../lib/logger";
+import { tgSend } from "../lib/telegram";
 
 const router: IRouter = Router();
 
-router.post("/abandoned-cart", (req, res) => {
+router.post("/abandoned-cart", async (req, res) => {
   try {
     const { email, phone, items, total } = req.body ?? {};
 
@@ -48,6 +49,18 @@ router.post("/abandoned-cart", (req, res) => {
     );
 
     res.json({ success: true });
+
+    const itemsList = items.slice(0, 5)
+      .map((i: any) => `  • ${i.name || i.productName || "Item"} x${i.quantity ?? 1}`)
+      .join("\n");
+    const more = items.length > 5 ? `\n  + ${items.length - 5} more` : "";
+    const contactDisplay = typeof phone === "string" && phone.trim()
+      ? `📞 ${redactPhone(phone.trim())}`
+      : `📧 ${redactEmail((email as string).trim())}`;
+
+    tgSend(
+      `🛒 <b>Abandoned Cart Alert</b>\n\n${contactDisplay}\n💰 ৳${Math.round(totalNum).toLocaleString()}\n\n🛍️ Items:\n${itemsList}${more}\n\n💡 Consider a follow-up promo to recover this sale`
+    ).catch(() => {});
   } catch (err) {
     req.log.error({ err, route: "POST /abandoned-cart" }, "Failed to record abandoned cart");
     res.status(500).json({ error: "internal_error", message: "Failed to record abandoned cart" });

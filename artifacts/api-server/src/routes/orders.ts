@@ -8,6 +8,8 @@ import { logger } from "../lib/logger";
 import { getVirtualPromo, calcVirtualDiscount } from "../lib/spinPromos";
 import { ObjectStorageService } from "../lib/objectStorage";
 import { z } from "zod";
+import { tgSend } from "../lib/telegram";
+import { checkRevenueMilestone } from "../lib/scheduler";
 
 // ---------------------------------------------------------------------------
 // Zod schemas for order creation
@@ -231,22 +233,26 @@ async function sendWhatsAppNotification(orderData: any) {
 }
 
 async function checkLowStock() {
-  const phone = process.env.CALLMEBOT_PHONE;
-  const apiKey = process.env.CALLMEBOT_APIKEY;
-  if (!phone || !apiKey) return;
-
   try {
     const lowStock = await db.select({ id: productsTable.id, name: productsTable.name, stock: productsTable.stock })
       .from(productsTable).where(lte(productsTable.stock, 3));
 
     if (lowStock.length === 0) return;
 
-    const list = lowStock.map(p => `⚠️ ${p.name}: ${p.stock} left`).join("\n");
-    const message = `🚨 *Low Stock Alert*\n${list}`;
+    const list = lowStock.map(p => {
+      const dot = (p.stock ?? 0) === 0 ? "🔴 OUT" : (p.stock ?? 0) <= 1 ? "🔴" : "🟠";
+      return `${dot} ${p.name}: ${p.stock} left`;
+    }).join("\n");
 
-    await fetch(
-      `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(message)}&apikey=${apiKey}`
-    );
+    await tgSend(`🚨 <b>Low Stock Alert</b>\n\n${list}\n\n👉 Admin → Products to restock`);
+
+    const phone = process.env.CALLMEBOT_PHONE;
+    const apiKey = process.env.CALLMEBOT_APIKEY;
+    if (phone && apiKey) {
+      const waMsg = `🚨 *Low Stock Alert*\n${lowStock.map(p => `⚠️ ${p.name}: ${p.stock} left`).join("\n")}`;
+      await fetch(`https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(waMsg)}&apikey=${apiKey}`)
+        .catch(() => {});
+    }
   } catch (err) {
     logger.error({ err }, "Low stock notification failed (non-blocking)");
   }
@@ -898,6 +904,7 @@ router.post("/orders", async (req, res) => {
     sendWhatsAppNotification(mapped).catch((err) => logger.warn({ err }, "WhatsApp notification failed (fire-and-forget)"));
     sendTelegramNotification(mapped).catch((err) => logger.warn({ err }, "Telegram notification failed (fire-and-forget)"));
     checkLowStock().catch((err) => logger.warn({ err }, "checkLowStock failed (fire-and-forget)"));
+    checkRevenueMilestone().catch((err) => logger.warn({ err }, "checkRevenueMilestone failed (fire-and-forget)"));
     sendMetaCAPIEvent({
       eventName: "Purchase",
       orderId: mapped.orderNumber,

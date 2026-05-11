@@ -2,6 +2,7 @@ import app from "./app";
 import { logger } from "./lib/logger";
 import { runMigrations, autoSeedIfEmpty } from "./lib/autoSeed";
 import { logActiveStorageBackend, ObjectStorageService } from "./lib/objectStorage";
+import { startScheduler } from "./lib/scheduler";
 
 const rawPort = process.env["PORT"] || "8080";
 const port = Number(rawPort);
@@ -113,6 +114,7 @@ const server = app.listen(port, "0.0.0.0", async () => {
   logActiveStorageBackend(logger);
   await runMigrations();
   await autoSeedIfEmpty();
+  startScheduler();
 });
 
 // Graceful shutdown — give in-flight requests up to 10 s to drain before
