@@ -124,8 +124,11 @@ router.get("/sitemap.xml", async (_req, res) => {
 
     xml += `\n</urlset>\n`;
 
-    res.header("Content-Type", "application/xml");
-    res.header("Cache-Control", "public, max-age=3600");
+    res.header("Content-Type", "application/xml; charset=utf-8");
+    res.header("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.header("Pragma", "no-cache");
+    res.header("Expires", "0");
+    res.header("X-Robots-Tag", "index, follow");
     res.send(xml);
   } catch (err) {
     logger.error({ err }, "Sitemap generation failed");
@@ -148,8 +151,11 @@ router.get("/robots.txt", (_req, res) => {
     `Sitemap: ${SITE_URL}/sitemap.xml`,
   ].join("\n");
 
-  res.header("Content-Type", "text/plain");
-  res.header("Cache-Control", "public, max-age=86400");
+  res.header("Content-Type", "text/plain; charset=utf-8");
+  res.header("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.header("Pragma", "no-cache");
+  res.header("Expires", "0");
+  res.header("X-Robots-Tag", "index, follow");
   res.send(robotsTxt);
 });
 
