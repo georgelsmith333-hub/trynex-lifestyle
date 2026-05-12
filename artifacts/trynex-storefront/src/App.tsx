@@ -43,6 +43,9 @@ function useWarmUpApi() {
     timers.push(setTimeout(ping, 3000));
     // Retry at 8s — catches very slow cold starts / Render free-tier spin-up
     timers.push(setTimeout(ping, 8000));
+    // Extended retries for extreme cold starts (Render free tier can take 30-60s)
+    timers.push(setTimeout(ping, 15000));
+    timers.push(setTimeout(ping, 25000));
     return () => { timers.forEach(clearTimeout); };
   }, []);
 }
@@ -109,7 +112,7 @@ const queryClient = new QueryClient({
       // Keep unused query data for 5 minutes so navigating back shows instant
       // cached content while revalidating in the background.
       gcTime: 5 * 60 * 1000,
-      refetchOnWindowFocus: true,
+      refetchOnWindowFocus: false,
     }
   }
 });

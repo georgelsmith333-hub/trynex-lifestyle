@@ -62,8 +62,8 @@ export default function AdminOrders() {
     {
       request: { headers: getAuthHeaders() },
       query: {
-        refetchInterval: 3000,           // 3s polling for near-real-time updates across devices
-        refetchIntervalInBackground: true,
+        refetchInterval: 15000,           // 15s polling — near-real-time while 5× less Neon transfer than the old 3s
+        refetchIntervalInBackground: false,
         refetchOnWindowFocus: true,
         refetchOnReconnect: true,
         staleTime: 0,                    // never serve stale data — always show latest

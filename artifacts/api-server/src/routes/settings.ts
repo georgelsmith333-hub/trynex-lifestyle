@@ -7,6 +7,17 @@ import { testEmailConnection } from "../lib/email";
 
 const router: IRouter = Router();
 
+// ── In-process TTL cache for public settings (30 seconds) ────────────────────
+// /api/settings is called on EVERY page load (Navbar, Footer, SiteSettingsContext,
+// plus SEOHead on every route). Without a cache, every request hits Neon.
+// 30s TTL means admin changes propagate within ~30s, which is acceptable.
+const SETTINGS_TTL_MS = 30_000;
+let publicSettingsCache: { data: Record<string, unknown>; expiresAt: number } | null = null;
+
+function invalidatePublicSettingsCache() {
+  publicSettingsCache = null;
+}
+
 // Keys allowed to be written via PUT /settings (admin-only write)
 const SETTINGS_KEYS = [
   "siteName", "tagline", "phone", "email", "address",
@@ -202,10 +213,19 @@ async function getAdminSettings() {
 /** Public endpoint — NO secrets */
 router.get("/settings", async (req, res) => {
   try {
-    res.json(await getPublicSettings());
+    const now = Date.now();
+    if (!publicSettingsCache || now > publicSettingsCache.expiresAt) {
+      const data = await getPublicSettings();
+      publicSettingsCache = { data: data as unknown as Record<string, unknown>, expiresAt: now + SETTINGS_TTL_MS };
+    }
+    res.json(publicSettingsCache.data);
   } catch (err) {
     req.log.error({ err }, "Failed to get settings");
-    res.status(500).json({ error: "internal_error", message: "Failed to get settings" });
+    if (publicSettingsCache) {
+      res.json(publicSettingsCache.data);
+    } else {
+      res.status(500).json({ error: "internal_error", message: "Failed to get settings" });
+    }
   }
 });
 
@@ -244,7 +264,11 @@ router.put("/settings", requireAdmin, async (req, res) => {
       for (const k of Object.keys(afterMap)) before[k] = beforeMap[k] ?? null;
       logActivity({ action: "update", entity: "setting", entityId: 0, entityName: "Site Settings", before: before as unknown as Record<string, unknown>, after: afterMap as unknown as Record<string, unknown>, adminId: getAdminId(req) });
     }
-    res.json(await getPublicSettings());
+    // Bust the public settings cache so the next GET reflects these changes immediately.
+    invalidatePublicSettingsCache();
+    const fresh = await getPublicSettings();
+    publicSettingsCache = { data: fresh as unknown as Record<string, unknown>, expiresAt: Date.now() + SETTINGS_TTL_MS };
+    res.json(fresh);
   } catch (err) {
     req.log.error({ err }, "Failed to update settings");
     res.status(500).json({ error: "internal_error", message: "Failed to update settings" });

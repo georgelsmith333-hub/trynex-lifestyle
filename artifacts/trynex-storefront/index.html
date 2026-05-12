@@ -193,6 +193,20 @@
     </div>
     <script>
       (function () {
+        // Pre-warm the Render free-tier API server the instant this HTML is
+        // parsed — BEFORE React even starts loading. This gives Render a
+        // head-start on cold boot so API calls from React components don't
+        // have to wait the full 30-60s spin-up time.
+        try {
+          var _apiBase = (typeof __VITE_API_BASE__ !== 'undefined' && __VITE_API_BASE__)
+            ? __VITE_API_BASE__
+            : 'https://trynex-api.onrender.com';
+          fetch(_apiBase + '/api/healthz', { method: 'GET', cache: 'no-store', mode: 'no-cors' }).catch(function(){});
+        } catch (_) {}
+      })();
+    </script>
+    <script>
+      (function () {
         // Watchdog: if React hasn't replaced the splash after 10 seconds,
         // assume a stale Service Worker / chunk-load failure and recover.
         var stuckTimer = setTimeout(function () {
