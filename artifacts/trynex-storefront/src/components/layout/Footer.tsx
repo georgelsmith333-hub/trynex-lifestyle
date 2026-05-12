@@ -60,7 +60,7 @@ export function Footer() {
     try {
       const res = await fetch(getApiUrl("/api/newsletter/subscribe"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
         body: JSON.stringify({ email: email.trim(), source: "footer" }),
       });
       const data = await res.json().catch(() => ({}));

@@ -63,7 +63,7 @@ async function fetchTrack(body: TrackBody, signal?: AbortSignal): Promise<Record
   try {
     const res = await fetch(getApiUrl('/api/orders/track'), {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
       body: JSON.stringify(body),
       signal,
     });

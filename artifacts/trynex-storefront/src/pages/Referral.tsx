@@ -56,7 +56,7 @@ export default function Referral() {
     try {
       const res = await fetch(getApiUrl("/api/referrals"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
         body: JSON.stringify({ ownerName: name, ownerEmail: email, ownerPhone: phone || undefined }),
       });
       const data = await res.json();

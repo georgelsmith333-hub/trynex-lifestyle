@@ -208,7 +208,7 @@ export default function Account() {
     try {
       const resp = await fetch(getApiUrl("/api/auth/change-password"), {
         method: "PUT",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, "X-Requested-With": "XMLHttpRequest" },
         body: JSON.stringify({ currentPassword, newPassword }),
       });
       const data = await resp.json();

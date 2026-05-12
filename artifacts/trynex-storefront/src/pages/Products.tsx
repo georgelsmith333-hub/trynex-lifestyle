@@ -308,9 +308,9 @@ export default function Products() {
                   </span>
                 </div>
 
-                <div className="flex gap-8">
+                <div className="flex flex-col md:flex-row gap-4 md:gap-8">
                   {/* Sidebar */}
-                  <aside className={cn("md:w-56 shrink-0", mobileFiltersOpen ? "block" : "hidden md:block")}>
+                  <aside className={cn("w-full md:w-56 shrink-0", mobileFiltersOpen ? "block" : "hidden md:block")}>
                     <div className="sticky top-24">
                       <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
                         <p className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-4">Categories</p>

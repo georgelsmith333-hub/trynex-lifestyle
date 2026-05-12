@@ -116,7 +116,7 @@ export interface OrderEmailData {
   total: number | string;
   paymentMethod?: string;
   promoCode?: string | null;
-  promoDiscount?: string | null;
+  promoDiscount?: number | string | null;
   notes?: string | null;
 }
 
