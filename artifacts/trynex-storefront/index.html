@@ -137,6 +137,20 @@
       }
     }</script>
 
+    <!-- Google Analytics 4 — hardcoded so it fires before React mounts.
+         The dynamic loader in TrackingPixels.tsx also runs but this
+         guarantees the tag is present even if the API call is slow. -->
+    <script data-cfasync="false" async src="https://www.googletagmanager.com/gtag/js?id=G-TF8CJ1DL75"></script>
+    <script data-cfasync="false">
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-TF8CJ1DL75', {
+        send_page_view: true,
+        cookie_flags: 'SameSite=None;Secure'
+      });
+    </script>
+
     <!-- Google Sign-In -->
     <script src="https://accounts.google.com/gsi/client" data-cfasync="false" async defer></script>
   </head>
