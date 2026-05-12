@@ -311,7 +311,7 @@ export default function AdminSEO() {
                 step: 4,
                 title: "Enter the sitemap URL and submit",
                 desc: 'In the "Add a new sitemap" box enter:',
-                code: "sitemap.xml",
+                code: "https://trynexshop.com/sitemap.xml",
               },
               {
                 step: 5,
