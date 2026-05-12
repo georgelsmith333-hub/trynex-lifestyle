@@ -1,0 +1,288 @@
+2026-05-12T00:26:07.825089Z	Cloning repository...
+2026-05-12T00:26:17.425364Z	From https://github.com/georgelsmith333-hub/trynex-liestyle
+2026-05-12T00:26:17.425901Z	 * branch            e0816d36a351ceda93a25c4da61164102bce08f6 -> FETCH_HEAD
+2026-05-12T00:26:17.425983Z	
+2026-05-12T00:26:18.474002Z	HEAD is now at e0816d3 Add UptimeRobot webhook to notify about site status changes
+2026-05-12T00:26:18.474444Z	
+2026-05-12T00:26:18.52049Z	
+2026-05-12T00:26:18.520894Z	Using v2 root directory strategy
+2026-05-12T00:26:18.537228Z	Success: Finished cloning repository files
+2026-05-12T00:26:20.120116Z	Checking for configuration in a Wrangler configuration file (BETA)
+2026-05-12T00:26:20.120801Z	
+2026-05-12T00:26:20.120938Z	Found wrangler.toml file. Reading build configuration...
+2026-05-12T00:26:20.127319Z	pages_build_output_dir: artifacts/trynex-storefront/dist
+2026-05-12T00:26:20.127436Z	Build environment variables: 
+2026-05-12T00:26:20.127526Z	  - TRYNEX_API_URL: https://trynex-api.onrender.com
+2026-05-12T00:26:21.294072Z	Successfully read the Wrangler configuration file.
+2026-05-12T00:26:21.546318Z	Detected the following tools from environment: nodejs@20.20.0, pnpm@10.11.1
+2026-05-12T00:26:21.547439Z	Installing nodejs 20.20.0
+2026-05-12T00:26:22.387284Z	Trying to update node-build... ok
+2026-05-12T00:26:22.462766Z	To follow progress, use 'tail -f /tmp/node-build.20260512002622.804.log' or pass --verbose
+2026-05-12T00:26:22.516026Z	Downloading node-v20.20.0-linux-x64.tar.gz...
+2026-05-12T00:26:22.752585Z	-> https://nodejs.org/dist/v20.20.0/node-v20.20.0-linux-x64.tar.gz
+2026-05-12T00:26:25.239045Z	
+2026-05-12T00:26:25.239348Z	WARNING: node-v20.20.0-linux-x64 is in LTS Maintenance mode and nearing its end of life.
+2026-05-12T00:26:25.239427Z	It only receives *critical* security updates, *critical* bug fixes and documentation updates.
+2026-05-12T00:26:25.239488Z	
+2026-05-12T00:26:25.239561Z	Installing node-v20.20.0-linux-x64...
+2026-05-12T00:26:25.832621Z	Installed node-v20.20.0-linux-x64 to /opt/buildhome/.asdf/installs/nodejs/20.20.0
+2026-05-12T00:26:25.833081Z	
+2026-05-12T00:26:27.165554Z	
+2026-05-12T00:26:27.166037Z	changed 1 package in 580ms
+2026-05-12T00:26:27.175404Z	Reshimming asdf nodejs...
+2026-05-12T00:26:29.426611Z	Preparing pnpm@10.11.1 for immediate activation...
+2026-05-12T00:26:30.405718Z	Installing project dependencies: pnpm install
+2026-05-12T00:26:31.007807Z	Scope: all 10 workspace projects
+2026-05-12T00:26:31.097243Z	Lockfile is up to date, resolution step is skipped
+2026-05-12T00:26:31.258146Z	Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-05-12T00:26:31.405071Z	Packages: +1179
+2026-05-12T00:26:31.406303Z	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-05-12T00:26:32.258998Z	Progress: resolved 1179, reused 0, downloaded 27, added 0
+2026-05-12T00:26:33.258564Z	Progress: resolved 1179, reused 0, downloaded 91, added 0
+2026-05-12T00:26:34.259244Z	Progress: resolved 1179, reused 0, downloaded 184, added 19
+2026-05-12T00:26:35.260305Z	Progress: resolved 1179, reused 0, downloaded 336, added 92
+2026-05-12T00:26:36.261421Z	Progress: resolved 1179, reused 0, downloaded 527, added 415
+2026-05-12T00:26:37.279542Z	Progress: resolved 1179, reused 0, downloaded 576, added 435
+2026-05-12T00:26:38.282823Z	Progress: resolved 1179, reused 0, downloaded 706, added 617
+2026-05-12T00:26:39.283616Z	Progress: resolved 1179, reused 0, downloaded 737, added 678
+2026-05-12T00:26:40.283715Z	Progress: resolved 1179, reused 0, downloaded 969, added 868
+2026-05-12T00:26:41.284997Z	Progress: resolved 1179, reused 0, downloaded 1144, added 992
+2026-05-12T00:26:42.285317Z	Progress: resolved 1179, reused 0, downloaded 1178, added 1178
+2026-05-12T00:26:42.578319Z	Progress: resolved 1179, reused 0, downloaded 1179, added 1179, done
+2026-05-12T00:26:43.123207Z	.../esbuild@0.27.3/node_modules/esbuild postinstall$ node install.js
+2026-05-12T00:26:43.124548Z	.../esbuild@0.17.19/node_modules/esbuild postinstall$ node install.js
+2026-05-12T00:26:43.494046Z	.../esbuild@0.18.20/node_modules/esbuild postinstall$ node install.js
+2026-05-12T00:26:43.521192Z	.../esbuild@0.27.3/node_modules/esbuild postinstall: Done
+2026-05-12T00:26:43.527996Z	.../esbuild@0.25.12/node_modules/esbuild postinstall$ node install.js
+2026-05-12T00:26:43.588434Z	.../esbuild@0.17.19/node_modules/esbuild postinstall: Done
+2026-05-12T00:26:43.624254Z	.../esbuild@0.18.20/node_modules/esbuild postinstall: Done
+2026-05-12T00:26:43.647208Z	.../esbuild@0.25.12/node_modules/esbuild postinstall: Done
+2026-05-12T00:26:44.214925Z	
+2026-05-12T00:26:44.215438Z	devDependencies:
+2026-05-12T00:26:44.215557Z	+ pdfkit 0.18.0
+2026-05-12T00:26:44.215621Z	+ pg 8.20.0
+2026-05-12T00:26:44.215685Z	+ prettier 3.8.1
+2026-05-12T00:26:44.215738Z	+ typescript 5.9.3
+2026-05-12T00:26:44.215774Z	
+2026-05-12T00:26:44.216019Z	╭ Warning ─────────────────────────────────────────────────────────────────────╮
+2026-05-12T00:26:44.216515Z	│                                                                              │
+2026-05-12T00:26:44.21666Z	│   Ignored build scripts: protobufjs, sharp, workerd.                         │
+2026-05-12T00:26:44.216746Z	│   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+2026-05-12T00:26:44.216791Z	│   to run scripts.                                                            │
+2026-05-12T00:26:44.216824Z	│                                                                              │
+2026-05-12T00:26:44.21687Z	╰──────────────────────────────────────────────────────────────────────────────╯
+2026-05-12T00:26:44.216959Z	
+2026-05-12T00:26:44.561551Z	Done in 13.9s using pnpm v10.11.1
+2026-05-12T00:26:44.629217Z	Executing user command: corepack enable && pnpm install && pnpm --filter @workspace/trynex-storefront run build
+2026-05-12T00:26:45.370661Z	Scope: all 10 workspace projects
+2026-05-12T00:26:45.568906Z	Lockfile is up to date, resolution step is skipped
+2026-05-12T00:26:45.728359Z	Already up to date
+2026-05-12T00:26:46.984486Z	
+2026-05-12T00:26:46.984896Z	╭ Warning ─────────────────────────────────────────────────────────────────────╮
+2026-05-12T00:26:46.985745Z	│                                                                              │
+2026-05-12T00:26:46.985837Z	│   Ignored build scripts: protobufjs, sharp, workerd.                         │
+2026-05-12T00:26:46.986315Z	│   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+2026-05-12T00:26:46.986415Z	│   to run scripts.                                                            │
+2026-05-12T00:26:46.986652Z	│                                                                              │
+2026-05-12T00:26:46.986878Z	╰──────────────────────────────────────────────────────────────────────────────╯
+2026-05-12T00:26:46.98707Z	
+2026-05-12T00:26:47.175936Z	Done in 2.1s using pnpm v10.11.1
+2026-05-12T00:26:47.768303Z	
+2026-05-12T00:26:47.769226Z	> @workspace/trynex-storefront@0.0.0 build /opt/buildhome/repo/artifacts/trynex-storefront
+2026-05-12T00:26:47.769372Z	> vite build --config vite.config.ts
+2026-05-12T00:26:47.769441Z	
+2026-05-12T00:26:48.194706Z	[36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+2026-05-12T00:26:48.333906Z	transforming...
+2026-05-12T00:26:50.979385Z	[33msrc/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.[39m
+2026-05-12T00:27:06.88209Z	[32m✓[39m 3569 modules transformed.
+2026-05-12T00:27:07.568546Z	[33mGenerated an empty chunk: "vendor-react".[39m
+2026-05-12T00:27:08.532085Z	rendering chunks...
+2026-05-12T00:27:10.089326Z	computing gzip size...
+2026-05-12T00:27:11.441843Z	[2mdist/[22m[32mregisterSW.js                                     [39m[1m[2m     0.13 kB[22m[1m[22m
+2026-05-12T00:27:11.442437Z	[2mdist/[22m[32mindex.html                                        [39m[1m[2m    14.25 kB[22m[1m[22m[2m │ gzip:     4.82 kB[22m
+2026-05-12T00:27:11.442635Z	[2mdist/[22m[2massets/[22m[32mort.bundle.min-OfoG_cy9.mjs                [39m[1m[2m   399.90 kB[22m[1m[22m
+2026-05-12T00:27:11.442723Z	[2mdist/[22m[2massets/[22m[32mort.webgpu.bundle.min-CEayb2S6.mjs         [39m[1m[2m   399.92 kB[22m[1m[22m
+2026-05-12T00:27:11.442877Z	[2mdist/[22m[2massets/[22m[32mort-wasm-simd-threaded.jsep-D5Jk56-t.wasm  [39m[1m[2m23,914.39 kB[22m[1m[22m[2m │ gzip: 5,662.56 kB[22m
+2026-05-12T00:27:11.443109Z	[2mdist/[22m[2massets/[22m[35mindex-D_PttaPw.css                         [39m[1m[2m   197.14 kB[22m[1m[22m[2m │ gzip:    31.24 kB[22m
+2026-05-12T00:27:11.443187Z	[2mdist/[22m[2massets/[22m[36mvendor-react-l0sNRNKZ.js                   [39m[1m[2m     0.00 kB[22m[1m[22m[2m │ gzip:     0.02 kB[22m
+2026-05-12T00:27:11.443239Z	[2mdist/[22m[2massets/[22m[36mchevron-left-BatxBEQQ.js                   [39m[1m[2m     0.13 kB[22m[1m[22m[2m │ gzip:     0.14 kB[22m
+2026-05-12T00:27:11.443369Z	[2mdist/[22m[2massets/[22m[36mchevron-right-CxfUFMVK.js                  [39m[1m[2m     0.13 kB[22m[1m[22m[2m │ gzip:     0.14 kB[22m
+2026-05-12T00:27:11.443506Z	[2mdist/[22m[2massets/[22m[36mplus-CJG8TWsi.js                           [39m[1m[2m     0.15 kB[22m[1m[22m[2m │ gzip:     0.15 kB[22m
+2026-05-12T00:27:11.443726Z	[2mdist/[22m[2massets/[22m[36marrow-left-ZvgWPfHi.js                     [39m[1m[2m     0.17 kB[22m[1m[22m[2m │ gzip:     0.16 kB[22m
+2026-05-12T00:27:11.44458Z	[2mdist/[22m[2massets/[22m[36mcircle-check-DJmrZQug.js                   [39m[1m[2m     0.17 kB[22m[1m[22m[2m │ gzip:     0.16 kB[22m
+2026-05-12T00:27:11.444791Z	[2mdist/[22m[2massets/[22m[36mfacebook-Bki70Dvc.js                       [39m[1m[2m     0.18 kB[22m[1m[22m[2m │ gzip:     0.18 kB[22m
+2026-05-12T00:27:11.444997Z	[2mdist/[22m[2massets/[22m[36mcircle-check-big-CDzRhqdF.js               [39m[1m[2m     0.19 kB[22m[1m[22m[2m │ gzip:     0.18 kB[22m
+2026-05-12T00:27:11.445133Z	[2mdist/[22m[2massets/[22m[36msmartphone-Bl3jA0ld.js                     [39m[1m[2m     0.20 kB[22m[1m[22m[2m │ gzip:     0.18 kB[22m
+2026-05-12T00:27:11.445393Z	[2mdist/[22m[2massets/[22m[36minfo-CEfURl1g.js                           [39m[1m[2m     0.20 kB[22m[1m[22m[2m │ gzip:     0.17 kB[22m
+2026-05-12T00:27:11.445717Z	[2mdist/[22m[2massets/[22m[36mrotate-ccw-9sBD3Hwo.js                     [39m[1m[2m     0.20 kB[22m[1m[22m[2m │ gzip:     0.18 kB[22m
+2026-05-12T00:27:11.445911Z	[2mdist/[22m[2massets/[22m[36mlock-D8GGkRkY.js                           [39m[1m[2m     0.20 kB[22m[1m[22m[2m │ gzip:     0.19 kB[22m
+2026-05-12T00:27:11.446054Z	[2mdist/[22m[2massets/[22m[36mcircle-x-2WSrBfLZ.js                       [39m[1m[2m     0.20 kB[22m[1m[22m[2m │ gzip:     0.18 kB[22m
+2026-05-12T00:27:11.446188Z	[2mdist/[22m[2massets/[22m[36mmail-Bj0B2EE1.js                           [39m[1m[2m     0.21 kB[22m[1m[22m[2m │ gzip:     0.20 kB[22m
+2026-05-12T00:27:11.446379Z	[2mdist/[22m[2massets/[22m[36mupload-BTJjqRvg.js                         [39m[1m[2m     0.23 kB[22m[1m[22m[2m │ gzip:     0.19 kB[22m
+2026-05-12T00:27:11.446508Z	[2mdist/[22m[2massets/[22m[36mdownload-BXN3Ilte.js                       [39m[1m[2m     0.23 kB[22m[1m[22m[2m │ gzip:     0.19 kB[22m
+2026-05-12T00:27:11.446616Z	[2mdist/[22m[2massets/[22m[36mglobe-DTeKYIrp.js                          [39m[1m[2m     0.24 kB[22m[1m[22m[2m │ gzip:     0.19 kB[22m
+2026-05-12T00:27:11.446658Z	[2mdist/[22m[2massets/[22m[36mdatabase-D8a4iewI.js                       [39m[1m[2m     0.24 kB[22m[1m[22m[2m │ gzip:     0.20 kB[22m
+2026-05-12T00:27:11.446689Z	[2mdist/[22m[2massets/[22m[36mzoom-out-DmfJ106C.js                       [39m[1m[2m     0.25 kB[22m[1m[22m[2m │ gzip:     0.19 kB[22m
+2026-05-12T00:27:11.446718Z	[2mdist/[22m[2massets/[22m[36mcircle-alert-C8xBQ1P0.js                   [39m[1m[2m     0.25 kB[22m[1m[22m[2m │ gzip:     0.18 kB[22m
+2026-05-12T00:27:11.446746Z	[2mdist/[22m[2massets/[22m[36mchart-column-wXQ__FfU.js                   [39m[1m[2m     0.25 kB[22m[1m[22m[2m │ gzip:     0.19 kB[22m
+2026-05-12T00:27:11.446854Z	[2mdist/[22m[2massets/[22m[36meye-CAIAFJJP.js                            [39m[1m[2m     0.25 kB[22m[1m[22m[2m │ gzip:     0.20 kB[22m
+2026-05-12T00:27:11.4469Z	[2mdist/[22m[2massets/[22m[36mexternal-link-DgkMDyJA.js                  [39m[1m[2m     0.25 kB[22m[1m[22m[2m │ gzip:     0.20 kB[22m
+2026-05-12T00:27:11.44693Z	[2mdist/[22m[2massets/[22m[36mlink-RggkW1e3.js                           [39m[1m[2m     0.26 kB[22m[1m[22m[2m │ gzip:     0.19 kB[22m
+2026-05-12T00:27:11.447015Z	[2mdist/[22m[2massets/[22m[36mcalendar-CGJ0Uunf.js                       [39m[1m[2m     0.26 kB[22m[1m[22m[2m │ gzip:     0.20 kB[22m
+2026-05-12T00:27:11.447065Z	[2mdist/[22m[2massets/[22m[36mmonitor-DlEJuBKl.js                        [39m[1m[2m     0.26 kB[22m[1m[22m[2m │ gzip:     0.20 kB[22m
+2026-05-12T00:27:11.447102Z	[2mdist/[22m[2massets/[22m[36mtriangle-alert-_jRV2v5M.js                 [39m[1m[2m     0.27 kB[22m[1m[22m[2m │ gzip:     0.21 kB[22m
+2026-05-12T00:27:11.44713Z	[2mdist/[22m[2massets/[22m[36mshield-BHDUh9a7.js                         [39m[1m[2m     0.27 kB[22m[1m[22m[2m │ gzip:     0.22 kB[22m
+2026-05-12T00:27:11.447158Z	[2mdist/[22m[2massets/[22m[36mimage-CKhBKwzD.js                          [39m[1m[2m     0.27 kB[22m[1m[22m[2m │ gzip:     0.22 kB[22m
+2026-05-12T00:27:11.447191Z	[2mdist/[22m[2massets/[22m[36mpencil-B89Ae5NY.js                         [39m[1m[2m     0.28 kB[22m[1m[22m[2m │ gzip:     0.22 kB[22m
+2026-05-12T00:27:11.44722Z	[2mdist/[22m[2massets/[22m[36mpen-line-DbzObKJn.js                       [39m[1m[2m     0.28 kB[22m[1m[22m[2m │ gzip:     0.22 kB[22m
+2026-05-12T00:27:11.447247Z	[2mdist/[22m[2massets/[22m[36mbook-open-C5T8VrzI.js                      [39m[1m[2m     0.28 kB[22m[1m[22m[2m │ gzip:     0.20 kB[22m
+2026-05-12T00:27:11.447274Z	[2mdist/[22m[2massets/[22m[36mshirt-BmgY-Sh4.js                          [39m[1m[2m     0.29 kB[22m[1m[22m[2m │ gzip:     0.23 kB[22m
+2026-05-12T00:27:11.447502Z	[2mdist/[22m[2massets/[22m[36mwallet-DDcZuObN.js                         [39m[1m[2m     0.29 kB[22m[1m[22m[2m │ gzip:     0.21 kB[22m
+2026-05-12T00:27:11.447824Z	[2mdist/[22m[2massets/[22m[36msend-CzV7f-YH.js                           [39m[1m[2m     0.29 kB[22m[1m[22m[2m │ gzip:     0.23 kB[22m
+2026-05-12T00:27:11.448152Z	[2mdist/[22m[2massets/[22m[36mgrid-3x3-Ddz8texV.js                       [39m[1m[2m     0.30 kB[22m[1m[22m[2m │ gzip:     0.21 kB[22m
+2026-05-12T00:27:11.448221Z	[2mdist/[22m[2massets/[22m[36minstagram-CYK6k3pa.js                      [39m[1m[2m     0.30 kB[22m[1m[22m[2m │ gzip:     0.23 kB[22m
+2026-05-12T00:27:11.449567Z	[2mdist/[22m[2massets/[22m[36mzoom-in-SLFTkl6K.js                        [39m[1m[2m     0.30 kB[22m[1m[22m[2m │ gzip:     0.21 kB[22m
+2026-05-12T00:27:11.449649Z	[2mdist/[22m[2massets/[22m[36musers-hegROqZ5.js                          [39m[1m[2m     0.31 kB[22m[1m[22m[2m │ gzip:     0.22 kB[22m
+2026-05-12T00:27:11.449702Z	[2mdist/[22m[2massets/[22m[36mbox-CnfRmDEn.js                            [39m[1m[2m     0.31 kB[22m[1m[22m[2m │ gzip:     0.23 kB[22m
+2026-05-12T00:27:11.449762Z	[2mdist/[22m[2massets/[22m[36mbadge-check-KCyhhtUk.js                    [39m[1m[2m     0.31 kB[22m[1m[22m[2m │ gzip:     0.21 kB[22m
+2026-05-12T00:27:11.44981Z	[2mdist/[22m[2massets/[22m[36mshield-check-Doq3qtkq.js                   [39m[1m[2m     0.32 kB[22m[1m[22m[2m │ gzip:     0.25 kB[22m
+2026-05-12T00:27:11.449871Z	[2mdist/[22m[2massets/[22m[36mrefresh-cw-C7qphM4I.js                     [39m[1m[2m     0.32 kB[22m[1m[22m[2m │ gzip:     0.23 kB[22m
+2026-05-12T00:27:11.449937Z	[2mdist/[22m[2massets/[22m[36mphone-CxPtyiZM.js                          [39m[1m[2m     0.32 kB[22m[1m[22m[2m │ gzip:     0.23 kB[22m
+2026-05-12T00:27:11.450003Z	[2mdist/[22m[2massets/[22m[36msave-CriDbONy.js                           [39m[1m[2m     0.33 kB[22m[1m[22m[2m │ gzip:     0.23 kB[22m
+2026-05-12T00:27:11.450067Z	[2mdist/[22m[2massets/[22m[36mfile-text-wGEqN0_D.js                      [39m[1m[2m     0.33 kB[22m[1m[22m[2m │ gzip:     0.22 kB[22m
+2026-05-12T00:27:11.450124Z	[2mdist/[22m[2massets/[22m[36mmegaphone-CIu6jnmk.js                      [39m[1m[2m     0.35 kB[22m[1m[22m[2m │ gzip:     0.24 kB[22m
+2026-05-12T00:27:11.450666Z	[2mdist/[22m[2massets/[22m[36mkey-round-BSHlACtH.js                      [39m[1m[2m     0.35 kB[22m[1m[22m[2m │ gzip:     0.26 kB[22m
+2026-05-12T00:27:11.450793Z	[2mdist/[22m[2massets/[22m[36mshare-2-DS7O2sL0.js                        [39m[1m[2m     0.35 kB[22m[1m[22m[2m │ gzip:     0.23 kB[22m
+2026-05-12T00:27:11.45087Z	[2mdist/[22m[2massets/[22m[36mtoggle-right-D7-e9vk5.js                   [39m[1m[2m     0.35 kB[22m[1m[22m[2m │ gzip:     0.22 kB[22m
+2026-05-12T00:27:11.450945Z	[2mdist/[22m[2massets/[22m[36mruler-DYuBwVe0.js                          [39m[1m[2m     0.40 kB[22m[1m[22m[2m │ gzip:     0.25 kB[22m
+2026-05-12T00:27:11.45099Z	[2mdist/[22m[2massets/[22m[36mtruck-z_4StJZM.js                          [39m[1m[2m     0.40 kB[22m[1m[22m[2m │ gzip:     0.27 kB[22m
+2026-05-12T00:27:11.451026Z	[2mdist/[22m[2massets/[22m[36mlayers-Cj29KMke.js                         [39m[1m[2m     0.42 kB[22m[1m[22m[2m │ gzip:     0.24 kB[22m
+2026-05-12T00:27:11.451072Z	[2mdist/[22m[2massets/[22m[36meye-off-CKM4i3Gq.js                        [39m[1m[2m     0.43 kB[22m[1m[22m[2m │ gzip:     0.27 kB[22m
+2026-05-12T00:27:11.451151Z	[2mdist/[22m[2massets/[22m[36mpalette-BM8EJaQu.js                        [39m[1m[2m     0.51 kB[22m[1m[22m[2m │ gzip:     0.27 kB[22m
+2026-05-12T00:27:11.451201Z	[2mdist/[22m[2massets/[22m[36mpaintbrush-DQb-nEmk.js                     [39m[1m[2m     0.54 kB[22m[1m[22m[2m │ gzip:     0.33 kB[22m
+2026-05-12T00:27:11.451249Z	[2mdist/[22m[2massets/[22m[36mwand-sparkles-DjS4hyUb.js                  [39m[1m[2m     0.72 kB[22m[1m[22m[2m │ gzip:     0.39 kB[22m
+2026-05-12T00:27:11.451318Z	[2mdist/[22m[2massets/[22m[36mErrorBoundary-DyqZWf3A.js                  [39m[1m[2m     1.21 kB[22m[1m[22m[2m │ gzip:     0.63 kB[22m
+2026-05-12T00:27:11.451369Z	[2mdist/[22m[2massets/[22m[36mtrending-up-BfLwxH3_.js                    [39m[1m[2m     1.55 kB[22m[1m[22m[2m │ gzip:     0.72 kB[22m
+2026-05-12T00:27:11.451425Z	[2mdist/[22m[2massets/[22m[36mConfirmDialog-C-vJY4jm.js                  [39m[1m[2m     2.14 kB[22m[1m[22m[2m │ gzip:     0.95 kB[22m
+2026-05-12T00:27:11.45149Z	[2mdist/[22m[2massets/[22m[36mRecentlyViewed-V1U6tguw.js                 [39m[1m[2m     2.69 kB[22m[1m[22m[2m │ gzip:     1.24 kB[22m
+2026-05-12T00:27:11.45153Z	[2mdist/[22m[2massets/[22m[36mCartViewer3D-Bcyrbm24.js                   [39m[1m[2m     3.32 kB[22m[1m[22m[2m │ gzip:     1.51 kB[22m
+2026-05-12T00:27:11.451563Z	[2mdist/[22m[2massets/[22m[36mskeleton-D1qKZzWC.js                       [39m[1m[2m     3.93 kB[22m[1m[22m[2m │ gzip:     1.07 kB[22m
+2026-05-12T00:27:11.451598Z	[2mdist/[22m[2massets/[22m[36mProductViewer3D-EZ52FzUG.js                [39m[1m[2m     4.46 kB[22m[1m[22m[2m │ gzip:     1.85 kB[22m
+2026-05-12T00:27:11.451648Z	[2mdist/[22m[2massets/[22m[36mAdminReviews-BqSK-xhB.js                   [39m[1m[2m     5.07 kB[22m[1m[22m[2m │ gzip:     2.03 kB[22m
+2026-05-12T00:27:11.451702Z	[2mdist/[22m[2massets/[22m[36mnot-found-C6_SHhqv.js                      [39m[1m[2m     5.20 kB[22m[1m[22m[2m │ gzip:     1.97 kB[22m
+2026-05-12T00:27:11.451763Z	[2mdist/[22m[2massets/[22m[36mShippingPolicy-CfcH7jjN.js                 [39m[1m[2m     5.30 kB[22m[1m[22m[2m │ gzip:     1.88 kB[22m
+2026-05-12T00:27:11.451816Z	[2mdist/[22m[2massets/[22m[36mReturnPolicy-_uaOw39i.js                   [39m[1m[2m     5.38 kB[22m[1m[22m[2m │ gzip:     2.01 kB[22m
+2026-05-12T00:27:11.452142Z	[2mdist/[22m[2massets/[22m[36mPrivacyPolicy-D7nztxfi.js                  [39m[1m[2m     5.56 kB[22m[1m[22m[2m │ gzip:     1.97 kB[22m
+2026-05-12T00:27:11.452212Z	[2mdist/[22m[2massets/[22m[36mTermsOfService-CADFrDuj.js                 [39m[1m[2m     6.13 kB[22m[1m[22m[2m │ gzip:     2.09 kB[22m
+2026-05-12T00:27:11.452276Z	[2mdist/[22m[2massets/[22m[36mSizeGuide-BvZWAUVt.js                      [39m[1m[2m     6.31 kB[22m[1m[22m[2m │ gzip:     2.08 kB[22m
+2026-05-12T00:27:11.452351Z	[2mdist/[22m[2massets/[22m[36mAdminBackup-DqOLBrdQ.js                    [39m[1m[2m     7.41 kB[22m[1m[22m[2m │ gzip:     2.51 kB[22m
+2026-05-12T00:27:11.452394Z	[2mdist/[22m[2massets/[22m[36mLogin-CWylo6f4.js                          [39m[1m[2m     7.75 kB[22m[1m[22m[2m │ gzip:     3.04 kB[22m
+2026-05-12T00:27:11.452427Z	[2mdist/[22m[2massets/[22m[36mSalePage-DOggvIlv.js                       [39m[1m[2m     7.80 kB[22m[1m[22m[2m │ gzip:     2.83 kB[22m
+2026-05-12T00:27:11.45316Z	[2mdist/[22m[2massets/[22m[36mHampers-7GQO66lC.js                        [39m[1m[2m     7.82 kB[22m[1m[22m[2m │ gzip:     2.87 kB[22m
+2026-05-12T00:27:11.453377Z	[2mdist/[22m[2massets/[22m[36mAdminCategories-BqXtV4w_.js                [39m[1m[2m     8.09 kB[22m[1m[22m[2m │ gzip:     2.97 kB[22m
+2026-05-12T00:27:11.453548Z	[2mdist/[22m[2massets/[22m[36mHamperBuilder-BJZw461Z.js                  [39m[1m[2m     8.22 kB[22m[1m[22m[2m │ gzip:     3.04 kB[22m
+2026-05-12T00:27:11.453626Z	[2mdist/[22m[2massets/[22m[36mAdminReferrals-SO8oya4q.js                 [39m[1m[2m     8.28 kB[22m[1m[22m[2m │ gzip:     2.72 kB[22m
+2026-05-12T00:27:11.453863Z	[2mdist/[22m[2massets/[22m[36mWishlist-TNSTU2be.js                       [39m[1m[2m     8.86 kB[22m[1m[22m[2m │ gzip:     3.20 kB[22m
+2026-05-12T00:27:11.453931Z	[2mdist/[22m[2massets/[22m[36mAdminTechStack-BRBSgP4L.js                 [39m[1m[2m     9.51 kB[22m[1m[22m[2m │ gzip:     3.38 kB[22m
+2026-05-12T00:27:11.453981Z	[2mdist/[22m[2massets/[22m[36mHamperDetail-MUIt_8Gr.js                   [39m[1m[2m     9.72 kB[22m[1m[22m[2m │ gzip:     3.35 kB[22m
+2026-05-12T00:27:11.45415Z	[2mdist/[22m[2massets/[22m[36mFAQ-CQ-F9rLm.js                            [39m[1m[2m     9.87 kB[22m[1m[22m[2m │ gzip:     3.84 kB[22m
+2026-05-12T00:27:11.454229Z	[2mdist/[22m[2massets/[22m[36mAdminNewsletter-BtDE7PEB.js                [39m[1m[2m    10.51 kB[22m[1m[22m[2m │ gzip:     3.53 kB[22m
+2026-05-12T00:27:11.454273Z	[2mdist/[22m[2massets/[22m[36mAbout-C2352pkm.js                          [39m[1m[2m    11.29 kB[22m[1m[22m[2m │ gzip:     3.89 kB[22m
+2026-05-12T00:27:11.454313Z	[2mdist/[22m[2massets/[22m[36mAdminFacebookGuide-DYMKssQ-.js             [39m[1m[2m    11.42 kB[22m[1m[22m[2m │ gzip:     2.98 kB[22m
+2026-05-12T00:27:11.454344Z	[2mdist/[22m[2massets/[22m[36mFooter-KdKqTLlN.js                         [39m[1m[2m    11.45 kB[22m[1m[22m[2m │ gzip:     4.08 kB[22m
+2026-05-12T00:27:11.454373Z	[2mdist/[22m[2massets/[22m[36mLogin-DZl6ikrf.js                          [39m[1m[2m    11.80 kB[22m[1m[22m[2m │ gzip:     3.47 kB[22m
+2026-05-12T00:27:11.4544Z	[2mdist/[22m[2massets/[22m[36mAdminActivityLog-7fpauf4r.js               [39m[1m[2m    12.22 kB[22m[1m[22m[2m │ gzip:     3.88 kB[22m
+2026-05-12T00:27:11.454435Z	[2mdist/[22m[2massets/[22m[36mSignup-D5w7sXiZ.js                         [39m[1m[2m    12.46 kB[22m[1m[22m[2m │ gzip:     4.03 kB[22m
+2026-05-12T00:27:11.454773Z	[2mdist/[22m[2massets/[22m[36mAdminHampers-C_nx0pZH.js                   [39m[1m[2m    12.50 kB[22m[1m[22m[2m │ gzip:     3.55 kB[22m
+2026-05-12T00:27:11.455095Z	[2mdist/[22m[2massets/[22m[36mContact-BIvp_j_4.js                        [39m[1m[2m    12.53 kB[22m[1m[22m[2m │ gzip:     3.89 kB[22m
+2026-05-12T00:27:11.455165Z	[2mdist/[22m[2massets/[22m[36mAdminPromoCodes-D_4-dfiF.js                [39m[1m[2m    12.65 kB[22m[1m[22m[2m │ gzip:     3.60 kB[22m
+2026-05-12T00:27:11.455222Z	[2mdist/[22m[2massets/[22m[36mSeoGuide-BRV6ndX9.js                       [39m[1m[2m    13.15 kB[22m[1m[22m[2m │ gzip:     4.54 kB[22m
+2026-05-12T00:27:11.455524Z	[2mdist/[22m[2massets/[22m[36mZoomableImage-BU_-ob7X.js                  [39m[1m[2m    13.17 kB[22m[1m[22m[2m │ gzip:     4.20 kB[22m
+2026-05-12T00:27:11.455608Z	[2mdist/[22m[2massets/[22m[36mAdminSecurity-B3QUAGHO.js                  [39m[1m[2m    13.66 kB[22m[1m[22m[2m │ gzip:     4.33 kB[22m
+2026-05-12T00:27:11.455659Z	[2mdist/[22m[2massets/[22m[36mAdminSEO-BC8rAbnN.js                       [39m[1m[2m    13.90 kB[22m[1m[22m[2m │ gzip:     4.39 kB[22m
+2026-05-12T00:27:11.455726Z	[2mdist/[22m[2massets/[22m[36mDashboard-DdAh32jP.js                      [39m[1m[2m    14.26 kB[22m[1m[22m[2m │ gzip:     4.23 kB[22m
+2026-05-12T00:27:11.455778Z	[2mdist/[22m[2massets/[22m[36mmockups-BG7YY1eQ.js                        [39m[1m[2m    15.10 kB[22m[1m[22m[2m │ gzip:     4.73 kB[22m
+2026-05-12T00:27:11.455833Z	[2mdist/[22m[2massets/[22m[36mBlog-DAK2QqHO.js                           [39m[1m[2m    15.44 kB[22m[1m[22m[2m │ gzip:     4.67 kB[22m
+2026-05-12T00:27:11.455906Z	[2mdist/[22m[2massets/[22m[36mCart-L3KDFbuS.js                           [39m[1m[2m    17.94 kB[22m[1m[22m[2m │ gzip:     5.34 kB[22m
+2026-05-12T00:27:11.455954Z	[2mdist/[22m[2massets/[22m[36mTrackOrder-BDIOOtet.js                     [39m[1m[2m    17.98 kB[22m[1m[22m[2m │ gzip:     5.63 kB[22m
+2026-05-12T00:27:11.456003Z	[2mdist/[22m[2massets/[22m[36mAdminDeployment-DOOmNbTv.js                [39m[1m[2m    18.24 kB[22m[1m[22m[2m │ gzip:     5.21 kB[22m
+2026-05-12T00:27:11.456052Z	[2mdist/[22m[2massets/[22m[36mAdminCustomers-6acIlhoM.js                 [39m[1m[2m    18.49 kB[22m[1m[22m[2m │ gzip:     5.68 kB[22m
+2026-05-12T00:27:11.456129Z	[2mdist/[22m[2massets/[22m[36mProductCard-l2IBPQuw.js                    [39m[1m[2m    21.62 kB[22m[1m[22m[2m │ gzip:     6.47 kB[22m
+2026-05-12T00:27:11.456189Z	[2mdist/[22m[2massets/[22m[36mReferral-D4ATc_1L.js                       [39m[1m[2m    22.54 kB[22m[1m[22m[2m │ gzip:     6.96 kB[22m
+2026-05-12T00:27:11.456238Z	[2mdist/[22m[2massets/[22m[36mindex.esm-D-j3O7jN.js                      [39m[1m[2m    23.60 kB[22m[1m[22m[2m │ gzip:     8.88 kB[22m
+2026-05-12T00:27:11.456295Z	[2mdist/[22m[2massets/[22m[36mAdminFacebookImport-Chz8k19z.js            [39m[1m[2m    23.80 kB[22m[1m[22m[2m │ gzip:     6.23 kB[22m
+2026-05-12T00:27:11.456367Z	[2mdist/[22m[2massets/[22m[36mAccount-DFcRh0Ap.js                        [39m[1m[2m    25.00 kB[22m[1m[22m[2m │ gzip:     7.39 kB[22m
+2026-05-12T00:27:11.456483Z	[2mdist/[22m[2massets/[22m[36mProducts-BKc2dBdL.js                       [39m[1m[2m    25.46 kB[22m[1m[22m[2m │ gzip:     7.64 kB[22m
+2026-05-12T00:27:11.456543Z	[2mdist/[22m[2massets/[22m[36mAdminProducts-DjU2kZp4.js                  [39m[1m[2m    28.22 kB[22m[1m[22m[2m │ gzip:     8.41 kB[22m
+2026-05-12T00:27:11.456623Z	[2mdist/[22m[2massets/[22m[36mAdminDesigner-fCB2Jcfg.js                  [39m[1m[2m    28.50 kB[22m[1m[22m[2m │ gzip:     7.65 kB[22m
+2026-05-12T00:27:11.456687Z	[2mdist/[22m[2massets/[22m[36mAdminOrders-Be3pIJfT.js                    [39m[1m[2m    29.79 kB[22m[1m[22m[2m │ gzip:     8.69 kB[22m
+2026-05-12T00:27:11.456743Z	[2mdist/[22m[2massets/[22m[36mAdminSettings-BXPF6qtS.js                  [39m[1m[2m    35.00 kB[22m[1m[22m[2m │ gzip:     9.84 kB[22m
+2026-05-12T00:27:11.456795Z	[2mdist/[22m[2massets/[22m[36mvendor-query-gWqFwPLb.js                   [39m[1m[2m    35.30 kB[22m[1m[22m[2m │ gzip:    10.44 kB[22m
+2026-05-12T00:27:11.456856Z	[2mdist/[22m[2massets/[22m[36mAdminBlog-SJLHbZVH.js                      [39m[1m[2m    39.07 kB[22m[1m[22m[2m │ gzip:    10.84 kB[22m
+2026-05-12T00:27:11.456908Z	[2mdist/[22m[2massets/[22m[36mBlogPost-Bi88JoM4.js                       [39m[1m[2m    41.86 kB[22m[1m[22m[2m │ gzip:    15.13 kB[22m
+2026-05-12T00:27:11.456955Z	[2mdist/[22m[2massets/[22m[36mAdminLayout-CZRfLIP_.js                    [39m[1m[2m    43.64 kB[22m[1m[22m[2m │ gzip:    13.29 kB[22m
+2026-05-12T00:27:11.456996Z	[2mdist/[22m[2massets/[22m[36mSEOHead-vaGlTfPi.js                        [39m[1m[2m    46.28 kB[22m[1m[22m[2m │ gzip:    11.52 kB[22m
+2026-05-12T00:27:11.457036Z	[2mdist/[22m[2massets/[22m[36mzod-BAuE7cop.js                            [39m[1m[2m    54.83 kB[22m[1m[22m[2m │ gzip:    12.84 kB[22m
+2026-05-12T00:27:11.457079Z	[2mdist/[22m[2massets/[22m[36mProductDetail-BXrsc0Jd.js                  [39m[1m[2m    56.11 kB[22m[1m[22m[2m │ gzip:    16.39 kB[22m
+2026-05-12T00:27:11.457132Z	[2mdist/[22m[2massets/[22m[36mCheckout-CHQkqVjk.js                       [39m[1m[2m    73.48 kB[22m[1m[22m[2m │ gzip:    21.95 kB[22m
+2026-05-12T00:27:11.457187Z	[2mdist/[22m[2massets/[22m[36mHome-DWC8hTmO.js                           [39m[1m[2m    74.31 kB[22m[1m[22m[2m │ gzip:    20.69 kB[22m
+2026-05-12T00:27:11.457236Z	[2mdist/[22m[2massets/[22m[36mvendor-radix-C5CePHnU.js                   [39m[1m[2m    81.03 kB[22m[1m[22m[2m │ gzip:    28.00 kB[22m
+2026-05-12T00:27:11.457289Z	[2mdist/[22m[2massets/[22m[36mindex-C4ptT4xl.js                          [39m[1m[2m    82.18 kB[22m[1m[22m[2m │ gzip:    22.32 kB[22m
+2026-05-12T00:27:11.457444Z	[2mdist/[22m[2massets/[22m[36mjszip.min-CIenl3C8.js                      [39m[1m[2m    97.15 kB[22m[1m[22m[2m │ gzip:    30.10 kB[22m
+2026-05-12T00:27:11.457531Z	[2mdist/[22m[2massets/[22m[36mvendor-motion-DYRPPXJb.js                  [39m[1m[2m   140.96 kB[22m[1m[22m[2m │ gzip:    47.05 kB[22m
+2026-05-12T00:27:11.457644Z	[2mdist/[22m[2massets/[22m[36mDesignStudio-DGFfbPwO.js                   [39m[1m[2m   142.84 kB[22m[1m[22m[2m │ gzip:    39.43 kB[22m
+2026-05-12T00:27:11.457704Z	[2mdist/[22m[2massets/[22m[36mindex-4-9yigoP.js                          [39m[1m[2m   336.78 kB[22m[1m[22m[2m │ gzip:   105.46 kB[22m
+2026-05-12T00:27:11.457831Z	[2mdist/[22m[2massets/[22m[36mvendor-editor-BGHwxv6r.js                  [39m[1m[2m   372.62 kB[22m[1m[22m[2m │ gzip:   118.47 kB[22m
+2026-05-12T00:27:11.457921Z	[2mdist/[22m[2massets/[22m[36mort.bundle.min-DAXuwjBG.js                 [39m[1m[2m   395.51 kB[22m[1m[22m[2m │ gzip:   108.23 kB[22m
+2026-05-12T00:27:11.457964Z	[2mdist/[22m[2massets/[22m[36mort.webgpu.bundle.min-CElWvg4j.js          [39m[1m[2m   395.53 kB[22m[1m[22m[2m │ gzip:   108.23 kB[22m
+2026-05-12T00:27:11.458001Z	[2mdist/[22m[2massets/[22m[36mvendor-charts-D5ozUqp6.js                  [39m[1m[2m   420.99 kB[22m[1m[22m[2m │ gzip:   113.56 kB[22m
+2026-05-12T00:27:11.458036Z	[2mdist/[22m[2massets/[22m[36mgarment3d-vKueNUYg.js                      [39m[1m[33m 1,051.21 kB[39m[22m[2m │ gzip:   290.29 kB[22m
+2026-05-12T00:27:11.458074Z	[32m✓ built in 23.18s[39m
+2026-05-12T00:27:11.458154Z	[33m
+2026-05-12T00:27:11.458329Z	(!) Some chunks are larger than 500 kB after minification. Consider:
+2026-05-12T00:27:11.458465Z	- Using dynamic import() to code-split the application
+2026-05-12T00:27:11.458561Z	- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+2026-05-12T00:27:11.458619Z	- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+2026-05-12T00:27:11.458685Z	
+2026-05-12T00:27:11.458743Z	PWA v1.2.0
+2026-05-12T00:27:11.458794Z	Building src/sw.ts service worker ("es" format)...
+2026-05-12T00:27:12.067072Z	[36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+2026-05-12T00:27:12.082886Z	transforming...
+2026-05-12T00:27:12.310324Z	[32m✓[39m 82 modules transformed.
+2026-05-12T00:27:12.336397Z	rendering chunks...
+2026-05-12T00:27:12.337815Z	computing gzip size...
+2026-05-12T00:27:12.339255Z	[2mdist/[22m[36msw.mjs  [39m[1m[2m26.96 kB[22m[1m[22m[2m │ gzip: 8.74 kB[22m
+2026-05-12T00:27:12.339457Z	[32m✓ built in 264ms[39m
+2026-05-12T00:27:12.485768Z	
+2026-05-12T00:27:12.486126Z	PWA v1.2.0
+2026-05-12T00:27:12.4862Z	mode      injectManifest
+2026-05-12T00:27:12.48643Z	format:   es
+2026-05-12T00:27:12.486635Z	precache  159 entries (17993.24 KiB)
+2026-05-12T00:27:12.48679Z	files generated
+2026-05-12T00:27:12.487007Z	  dist/sw.js
+2026-05-12T00:27:12.740003Z	Finished
+2026-05-12T00:27:13.538988Z	Checking for configuration in a Wrangler configuration file (BETA)
+2026-05-12T00:27:13.53946Z	
+2026-05-12T00:27:13.539687Z	Found wrangler.toml file. Reading build configuration...
+2026-05-12T00:27:13.546253Z	pages_build_output_dir: artifacts/trynex-storefront/dist
+2026-05-12T00:27:13.546451Z	Build environment variables: 
+2026-05-12T00:27:13.546558Z	  - TRYNEX_API_URL: https://trynex-api.onrender.com
+2026-05-12T00:27:14.67677Z	Successfully read the Wrangler configuration file.
+2026-05-12T00:27:14.678631Z	Found Functions directory at /functions. Uploading.
+2026-05-12T00:27:14.772593Z	 ⛅️ wrangler 3.101.0
+2026-05-12T00:27:14.77335Z	-------------------
+2026-05-12T00:27:16.309279Z	✨ Compiled Worker successfully
+2026-05-12T00:27:17.360679Z	Validating asset output directory
+2026-05-12T00:27:20.44016Z	Deploying your site to Cloudflare's global network...
+2026-05-12T00:27:22.026084Z	Parsed 0 valid redirect rules.
+2026-05-12T00:27:22.026524Z	Found invalid redirect lines:
+2026-05-12T00:27:22.026608Z	  - #11: /*        /index.html        200
+2026-05-12T00:27:22.026661Z	    Infinite loop detected in this rule and has been ignored. This will cause a redirect to strip `.html` or `/index` and end up triggering this rule again. Please fix or remove this rule to silence this warning.
+2026-05-12T00:27:22.026739Z	Parsed 5 valid header rules.
+2026-05-12T00:27:24.073116Z	Uploading... (194/195)
+2026-05-12T00:27:24.703285Z	Uploading... (195/195)
+2026-05-12T00:27:24.703737Z	✨ Success! Uploaded 1 files (194 already uploaded) (1.38 sec)
+2026-05-12T00:27:24.70387Z	
+2026-05-12T00:27:25.370259Z	✨ Upload complete!
+2026-05-12T00:27:29.744747Z	Success: Assets published!
+2026-05-12T00:27:32.127916Z	Success: Your site was deployed!

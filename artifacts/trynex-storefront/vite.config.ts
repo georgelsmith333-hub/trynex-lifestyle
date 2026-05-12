@@ -64,6 +64,10 @@ const cfDisableRocketLoader = {
       const html = await fs.readFile(outFile, "utf8");
       const patched = addCfAsyncFalse(html);
       if (patched !== html) await fs.writeFile(outFile, patched, "utf8");
+      // Cloudflare Pages serves dist/404.html for all unmatched routes —
+      // this is the correct SPA fallback (the "/* /index.html 200" _redirects
+      // rule was silently ignored due to an infinite-loop detection).
+      await fs.writeFile(path.resolve(import.meta.dirname, "dist/404.html"), patched, "utf8");
     } catch {
       // dist/index.html doesn't exist (e.g. dev mode) — nothing to do.
     }

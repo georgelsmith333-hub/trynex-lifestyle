@@ -5,7 +5,8 @@
 # sitemap.xml and robots.txt are static files served directly from /public.
 # Do NOT add proxy rules for these paths.
 
-# SPA fallback — every non-file path is served by index.html so client-side
-# routing works on hard refresh. Cloudflare Pages also does this natively for
-# sites without a _redirects file, but this rule makes it explicit.
-/*        /index.html        200
+# SPA fallback is handled by dist/404.html (copied from index.html at build time).
+# Cloudflare Pages automatically serves 404.html for all unmatched routes,
+# which gives client-side routing the correct entry point on hard refresh.
+# The old "/* /index.html 200" rule caused an infinite-loop warning and was
+# silently ignored by CF Pages — so it has been removed.
