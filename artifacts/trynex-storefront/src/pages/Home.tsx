@@ -653,10 +653,10 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <SEOHead
-        title="TryNex Lifestyle | Premium Custom Apparel Bangladesh | কাস্টম গিফট বাংলাদেশ"
-        description="TryNex Lifestyle — Bangladesh's #1 premium custom apparel brand. কাস্টম গিফট বাংলাদেশ — custom T-shirts, Hoodies, Mugs, Caps. Fast delivery to Dhaka & across all 64 districts. You imagine, we craft."
+        title="Premium Custom Apparel Bangladesh"
+        description="TryNex Lifestyle is Bangladesh's premium custom apparel brand for custom T-shirts, hoodies, mugs, caps, and gift items with fast delivery nationwide."
         canonical="/"
-        keywords="custom t-shirt bangladesh, কাস্টম গিফট বাংলাদেশ, customized gift Bangladesh, gift hamper Dhaka, custom hoodie bd, premium apparel bangladesh, trynex lifestyle, custom printing dhaka"
+        keywords="custom t-shirt bangladesh, premium apparel bangladesh, custom hoodie bd, custom mug bd, custom cap bangladesh, gift hamper dhaka"
         jsonLd={[
           {
             "@context": "https://schema.org",
