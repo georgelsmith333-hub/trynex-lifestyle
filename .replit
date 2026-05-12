@@ -29,7 +29,7 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "(PORT=8080 pnpm --filter @workspace/api-server run dev &) && PORT=5000 API_PORT=8080 pnpm --filter @workspace/trynex-storefront run dev"
+args = "cd /home/runner/workspace && pnpm --filter @workspace/api-server run dev & PORT=5000 pnpm --filter @workspace/trynex-storefront run dev"
 waitForPort = 5000
 
 [agent]
@@ -44,10 +44,6 @@ timeoutMs = 20000
 [[ports]]
 localPort = 5000
 externalPort = 80
-
-[[ports]]
-localPort = 5001
-externalPort = 3002
 
 [[ports]]
 localPort = 8080
@@ -77,7 +73,7 @@ channel = "stable-25_05"
 [userenv.shared]
 NODE_ENV = "development"
 PORT = "8080"
-ALLOWED_ORIGINS = "https://3f74ac2d-c29a-48ff-8e56-88d3db7ba78b-00-28bvgjyfwc5pl.pike.replit.dev,http://localhost:5000,http://localhost:5173"
+ALLOWED_ORIGINS = "https://0c3e4d60-db68-473f-97ef-83cbb4ad0a3f-00-v398x6fiwuwd.sisko.replit.dev,http://localhost:5000,http://localhost:5173,http://localhost:8080"
 
 [userenv.development]
 JWT_SECRET = "dev_jwt_secret_trynex_2024_change_in_prod"
