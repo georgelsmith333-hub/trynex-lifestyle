@@ -3,6 +3,7 @@ import { db, settingsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { logActivity, getAdminId } from "../lib/activityLog";
+import { testEmailConnection } from "../lib/email";
 
 const router: IRouter = Router();
 
@@ -331,6 +332,21 @@ router.patch("/admin/designer-settings", requireAdmin, async (req, res) => {
   } catch (err) {
     req.log.error({ err }, "Failed to update designer settings");
     res.status(500).json({ error: "internal_error", message: "Failed to update designer settings" });
+  }
+});
+
+/** Admin: test SMTP email connection */
+router.post("/admin/test-email", requireAdmin, async (req, res) => {
+  try {
+    const result = await testEmailConnection();
+    if (result.ok) {
+      res.json({ success: true, message: "SMTP connection verified successfully" });
+    } else {
+      res.status(400).json({ success: false, error: result.error });
+    }
+  } catch (err) {
+    req.log.error({ err }, "Email connection test failed");
+    res.status(500).json({ success: false, error: "Internal error testing email" });
   }
 });
 

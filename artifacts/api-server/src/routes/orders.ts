@@ -10,6 +10,7 @@ import { ObjectStorageService } from "../lib/objectStorage";
 import { z } from "zod";
 import { tgSend } from "../lib/telegram";
 import { checkRevenueMilestone } from "../lib/scheduler";
+import { sendOrderConfirmationEmail, sendStatusUpdateEmail } from "../lib/email";
 
 // ---------------------------------------------------------------------------
 // Zod schemas for order creation
@@ -903,6 +904,7 @@ router.post("/orders", async (req, res) => {
 
     sendWhatsAppNotification(mapped).catch((err) => logger.warn({ err }, "WhatsApp notification failed (fire-and-forget)"));
     sendTelegramNotification(mapped).catch((err) => logger.warn({ err }, "Telegram notification failed (fire-and-forget)"));
+    sendOrderConfirmationEmail(mapped).catch((err) => logger.warn({ err }, "Order confirmation email failed (fire-and-forget)"));
     checkLowStock().catch((err) => logger.warn({ err }, "checkLowStock failed (fire-and-forget)"));
     checkRevenueMilestone().catch((err) => logger.warn({ err }, "checkRevenueMilestone failed (fire-and-forget)"));
     sendMetaCAPIEvent({
@@ -1090,6 +1092,7 @@ const updateOrderStatusHandler = async (req: Request, res: Response) => {
 
     sendStatusUpdateNotification(mapped, status).catch((err) => logger.warn({ err }, "sendStatusUpdateNotification failed (fire-and-forget)"));
     sendTelegramStatusUpdate(mapped, status).catch((err) => logger.warn({ err }, "Telegram status update failed (fire-and-forget)"));
+    sendStatusUpdateEmail(mapped, status).catch((err) => logger.warn({ err }, "Status update email failed (fire-and-forget)"));
   } catch (err) {
     req.log.error({ err }, "Failed to update order status");
     res.status(500).json({ error: "internal_error", message: "Failed to update order status" });
