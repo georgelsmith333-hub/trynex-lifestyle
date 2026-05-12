@@ -46,6 +46,7 @@ router.get("/sitemap.xml", async (_req, res) => {
 
     const staticPages = [
       { loc: "/", priority: "1.0", changefreq: "daily" },
+      { loc: "/index.html", priority: "0.9", changefreq: "daily" },
       { loc: "/products", priority: "0.9", changefreq: "daily" },
       { loc: "/blog", priority: "0.7", changefreq: "weekly" },
       { loc: "/sale", priority: "0.8", changefreq: "daily" },
