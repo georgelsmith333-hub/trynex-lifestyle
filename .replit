@@ -46,6 +46,10 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
+localPort = 5001
+externalPort = 3003
+
+[[ports]]
 localPort = 8080
 externalPort = 8080
 
@@ -73,7 +77,13 @@ channel = "stable-25_05"
 [userenv.shared]
 NODE_ENV = "development"
 PORT = "8080"
-ALLOWED_ORIGINS = "https://0c3e4d60-db68-473f-97ef-83cbb4ad0a3f-00-v398x6fiwuwd.sisko.replit.dev,http://localhost:5000,http://localhost:5173,http://localhost:8080"
+R2_ACCOUNT_ID = "060a0f28c7f62affa5ac09be3b1dd1a9"
+R2_BUCKET = "trynex"
+R2_PUBLIC_BASE_URL = "https://pub-0ef16878c2c34942b4c318420d1db86d.r2.dev"
+R2_ENDPOINT = "https://060a0f28c7f62affa5ac09be3b1dd1a9.r2.cloudflarestorage.com"
+ALLOWED_ORIGINS = "https://trynexshop.com,https://www.trynexshop.com,https://trynex-storefront.onrender.com,https://trynex-lifestyle-shop.pages.dev,https://0c3e4d60-db68-473f-97ef-83cbb4ad0a3f-00-v398x6fiwuwd.sisko.replit.dev,http://localhost:5000,http://localhost:5173"
+API_BASE_URL = "https://trynex-api.onrender.com"
+API_PORT = "8080"
 
 [userenv.development]
 JWT_SECRET = "dev_jwt_secret_trynex_2024_change_in_prod"
