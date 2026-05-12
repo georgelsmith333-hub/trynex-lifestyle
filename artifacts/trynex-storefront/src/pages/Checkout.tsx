@@ -263,7 +263,7 @@ export default function Checkout() {
         const emailForSelfCheck = watch("customerEmail") || undefined;
         fetch(getApiUrl("/api/promo-codes/validate"), {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
           body: JSON.stringify({ code: refCode, orderTotal: liveTotal, customerEmail: emailForSelfCheck }),
         })
           .then(r => r.json())
@@ -296,7 +296,7 @@ export default function Checkout() {
       const customerEmailVal = watch("customerEmail") || undefined;
       const res = await fetch(getApiUrl("/api/promo-codes/validate"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
         body: JSON.stringify({ code: promoInput.trim(), orderTotal: liveTotal, customerEmail: customerEmailVal }),
       });
       const data = await res.json();
@@ -467,7 +467,7 @@ export default function Checkout() {
       if (isReferralCode && promoApplied) {
         fetch(getApiUrl(`/api/referrals/${promoApplied}/use`), {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
           body: JSON.stringify({ orderTotal: serverTotal }),
         }).catch(() => {});
         localStorage.removeItem("trynex_ref_code");
@@ -571,7 +571,7 @@ export default function Checkout() {
     try {
       await fetch(getApiUrl(`/api/orders/${(createdOrder as Record<string, unknown>)?.id}/payment-info`), {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
         body: JSON.stringify({ lastFourDigits: lastFour, promoCode: promoApplied || undefined })
       });
       setStep('success');

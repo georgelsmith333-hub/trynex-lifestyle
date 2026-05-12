@@ -42,7 +42,11 @@ async function apiPost(url: string, body: Record<string, unknown>, extraHeaders?
   const resp = await fetch(url, {
     method: "POST",
     credentials: "include",
-    headers: { "Content-Type": "application/json", ...extraHeaders },
+    headers: {
+      "Content-Type": "application/json",
+      "X-Requested-With": "XMLHttpRequest",
+      ...extraHeaders,
+    },
     body: JSON.stringify(body),
   });
   const data = await safeJsonParse(resp);

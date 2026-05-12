@@ -52,8 +52,22 @@
     <link rel="dns-prefetch" href="https://connect.facebook.net" />
 
 
-    <!-- Google Fonts (subset to weights actually used; display=swap to avoid CLS) -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;600;700&family=Nunito:wght@400;700;800;900&family=Barlow+Condensed:wght@400;700;800;900&family=Permanent+Marker&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Space+Grotesk:wght@400;700&family=Bebas+Neue&family=Pacifico&display=swap" rel="stylesheet" />
+    <!-- Google Fonts — non-blocking load. Outfit + Plus Jakarta Sans load first
+         (used on every page). Design-Studio fonts load in the background so they
+         are ready by the time the user opens the studio. -->
+    <link rel="preload" as="style"
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;600;700&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;600;700&display=swap" />
+    </noscript>
+    <!-- Design Studio / decorative fonts — load after page is interactive -->
+    <link rel="preload" as="style"
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Barlow+Condensed:wght@400;700;800;900&family=Permanent+Marker&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Space+Grotesk:wght@400;700&family=Bebas+Neue&family=Pacifico&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Barlow+Condensed:wght@400;700;800;900&family=Permanent+Marker&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Space+Grotesk:wght@400;700&family=Bebas+Neue&family=Pacifico&display=swap" />
+    </noscript>
 
     <!-- Structured Data: Organization -->
     <script type="application/ld+json">{
