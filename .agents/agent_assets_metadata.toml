@@ -179,3 +179,9 @@ id = "pxLh4DUAdAgzd2D-0Veut"
 uri = "file://TRYNEX_AUDIT_REPORT.md"
 type = "text"
 title = "TryNex Full Audit & Fix Report"
+
+[[outputs]]
+id = "5RD377T3lw4t8QeX5qH4v"
+uri = "file://exports/trynex-phase2-report.pdf"
+type = "pdf"
+title = "TryNex Phase 2 — Production Hardening Report"

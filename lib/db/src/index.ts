@@ -25,7 +25,7 @@ function getCandidateUrls(): string[] {
     process.env.DATABASE_URL_MAIN,
     process.env.DATABASE_URL_TRYNEX_DB,
     process.env.DATABASE_FAILOVER,
-  ].filter((url): url is string => Boolean(url) && url.trim().length > 0);
+  ].filter((url): url is string => typeof url === "string" && url.trim().length > 0);
 
   // Preserve insertion order, deduplicate
   return [...new Set(candidates)];
