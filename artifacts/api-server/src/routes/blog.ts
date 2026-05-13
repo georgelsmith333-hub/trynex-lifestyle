@@ -10,7 +10,7 @@ import { redisCacheGet, redisCacheSet, redisCacheDel } from "../lib/redis";
 const BLOG_CATS_KEY = "trynex:blog:categories";
 const BLOG_CATS_TTL = 120; // 2 min — changes only when admin adds/removes categories
 
-const DEFAULT_BLOG_CATEGORIES = ["General", "Fashion", "Tips", "News", "Lifestyle"];
+const DEFAULT_BLOG_CATEGORIES = ["Lifestyle", "Business", "Design Tips", "Custom Apparel", "Gift Ideas"];
 
 // ---------------------------------------------------------------------------
 // Zod schemas for blog mutation endpoints
@@ -81,7 +81,7 @@ router.get("/blog/categories", async (req, res) => {
       return;
     }
 
-    const [categories, countRows] = await Promise.all([
+    const [configuredCategories, countRows] = await Promise.all([
       getBlogCategories(),
       db
         .select({ category: blogPostsTable.category, count: sql<number>`count(*)` })
@@ -92,15 +92,26 @@ router.get("/blog/categories", async (req, res) => {
 
     const counts: Record<string, number> = {};
     let total = 0;
+    const dbCategories: string[] = [];
     for (const row of countRows) {
       const cat = row.category ?? "General";
       const n = Number(row.count ?? 0);
       counts[cat] = (counts[cat] ?? 0) + n;
       total += n;
+      if (!dbCategories.includes(cat)) dbCategories.push(cat);
     }
     counts["All"] = total;
 
-    const payload = { categories, counts };
+    // Merge: configured list first (preserves admin-defined order), then any
+    // DB categories that aren't already in the configured list (so seeded /
+    // imported posts never become invisible in the filter).
+    const seen = new Set(configuredCategories.map(c => c.toLowerCase()));
+    const mergedCategories = [
+      ...configuredCategories,
+      ...dbCategories.filter(c => !seen.has(c.toLowerCase())),
+    ];
+
+    const payload = { categories: mergedCategories, counts };
     await redisCacheSet(BLOG_CATS_KEY, payload, BLOG_CATS_TTL);
     res.set("X-Cache-Status", "MISS");
     res.json(payload);
@@ -334,11 +345,13 @@ router.get("/blog", async (req, res) => {
       getTrendingThreshold(),
     ]);
 
+    const total = Number(countResult[0]?.count ?? 0);
     res.json({
       posts: posts.map(p => mapPost(p, threshold)),
-      total: Number(countResult[0]?.count ?? 0),
+      total,
       page: pageNum,
       limit: limitNum,
+      totalPages: Math.ceil(total / limitNum),
     });
   } catch (err) {
     req.log.error({ err }, "Failed to list blog posts");

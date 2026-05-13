@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { db, productsTable, categoriesTable } from "@workspace/db";
-import { eq, ilike, or, and, sql, desc } from "drizzle-orm";
+import { eq, ilike, or, and, sql, desc, asc } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { logActivity, getAdminId } from "../lib/activityLog";
 import { redisCacheGet, redisCacheSet, redisCacheDel } from "../lib/redis";
@@ -14,11 +14,26 @@ const PROD_TTL_S = 60;
 function productCacheKey(params: Record<string, string | undefined>): string | null {
   // Never cache search queries — they are unique per user input
   if (params.search) return null;
-  const cat = params.categoryId ?? "all";
+  const cat  = params.categoryId ?? "all";
   const feat = params.featured ?? "false";
-  const pg  = params.page ?? "1";
-  const lim = params.limit ?? "12";
-  return `trynex:products:${cat}:${feat}:pg${pg}:lim${lim}`;
+  const pg   = params.page ?? "1";
+  const lim  = params.limit ?? "12";
+  const srt  = params.sort ?? "newest";
+  return `trynex:products:${cat}:${feat}:${srt}:pg${pg}:lim${lim}`;
+}
+
+// Map sort param to Drizzle orderBy expression
+function buildProductOrder(sort: string | undefined) {
+  switch (sort) {
+    case "price_asc":    return [asc(productsTable.price),     desc(productsTable.createdAt)];
+    case "price_desc":   return [desc(productsTable.price),    desc(productsTable.createdAt)];
+    case "name_asc":     return [asc(productsTable.name),      desc(productsTable.createdAt)];
+    case "name_desc":    return [desc(productsTable.name),     desc(productsTable.createdAt)];
+    case "oldest":       return [asc(productsTable.createdAt)];
+    case "featured":     return [desc(productsTable.featured), desc(productsTable.createdAt)];
+    case "newest":
+    default:             return [desc(productsTable.createdAt)];
+  }
 }
 
 // Invalidate all product list cache entries when any product is mutated.
@@ -62,7 +77,7 @@ function mapProduct(p: any, categoryName?: string | null) {
 
 router.get("/products", async (req, res) => {
   try {
-    const { categoryId, search, featured, page = "1", limit = "12" } = req.query;
+    const { categoryId, search, featured, page = "1", limit = "12", sort } = req.query;
     const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
     const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10) || 12));
     const offset = (pageNum - 1) * limitNum;
@@ -74,6 +89,7 @@ router.get("/products", async (req, res) => {
       featured: featured as string | undefined,
       page: page as string,
       limit: limit as string,
+      sort: sort as string | undefined,
     });
     if (cacheKey) {
       const cached = await redisCacheGet<Record<string, unknown>>(cacheKey);
@@ -103,8 +119,9 @@ router.get("/products", async (req, res) => {
 
     const where = conditions.length > 0 ? and(...conditions) : undefined;
 
+    const orderBy = buildProductOrder(sort as string | undefined);
     const [products, countResult] = await Promise.all([
-      db.select().from(productsTable).where(where).orderBy(desc(productsTable.createdAt)).limit(limitNum).offset(offset),
+      db.select().from(productsTable).where(where).orderBy(...orderBy).limit(limitNum).offset(offset),
       db.select({ count: sql<number>`count(*)` }).from(productsTable).where(where),
     ]);
 
