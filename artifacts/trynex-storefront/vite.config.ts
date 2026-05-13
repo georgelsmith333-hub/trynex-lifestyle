@@ -121,11 +121,20 @@ export default defineConfig({
             "@radix-ui/react-toast",
             "@radix-ui/react-popover",
           ],
+          // Tiptap only loaded by admin blog editor — keep it out of the
+          // storefront bundle so customers never download it.
           "vendor-editor": [
             "@tiptap/react",
             "@tiptap/starter-kit",
           ],
           "vendor-charts": ["recharts"],
+          // Three.js + React Three Fiber/Drei only needed in DesignStudio.
+          // Splitting them keeps the storefront critical path bundle lean.
+          "vendor-3d": [
+            "three",
+            "@react-three/fiber",
+            "@react-three/drei",
+          ],
         },
       },
     },

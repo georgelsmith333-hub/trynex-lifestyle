@@ -50,11 +50,14 @@ function useWarmUpApi() {
   }, []);
 }
 
-const Home = lazy(() => import("./pages/Home"));
-const Products = lazy(() => import("./pages/Products"));
-const ProductDetail = lazy(() => import("./pages/ProductDetail"));
-const Cart = lazy(() => import("./pages/Cart"));
-const Checkout = lazy(() => import("./pages/Checkout"));
+// Top-5 most-visited routes loaded eagerly so navigation never triggers
+// the Suspense fallback (= no white flash / full-page spinner on these paths).
+import Home from "./pages/Home";
+import Products from "./pages/Products";
+import ProductDetail from "./pages/ProductDetail";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+
 const TrackOrder = lazy(() => import("./pages/TrackOrder"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
@@ -122,6 +125,11 @@ function Router() {
   // Key on full location path so transitions fire on all route changes.
 
   return (
+    // Suspense sits OUTSIDE AnimatePresence so:
+    //   - eager routes (Home/Products/…) never trigger it at all
+    //   - lazy routes show the spinner *before* the fade animation starts,
+    //     preventing the double-render flash (spinner → animation → content)
+    <Suspense fallback={<Loader />}>
     <AnimatePresence initial={false}>
       <motion.div
         key={location}
@@ -131,7 +139,6 @@ function Router() {
         transition={{ duration: 0.12, ease: "easeInOut" }}
         style={{ minHeight: "100vh" }}
       >
-        <Suspense fallback={<Loader />}>
         <Switch>
           <Route path="/" component={Home} />
           <Route path="/products" component={Products} />
@@ -195,9 +202,9 @@ function Router() {
 
           <Route component={NotFound} />
         </Switch>
-        </Suspense>
       </motion.div>
     </AnimatePresence>
+    </Suspense>
   );
 }
 

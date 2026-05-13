@@ -24,7 +24,7 @@
 // Bumped on every meaningful change to client caching behaviour. Compared
 // against localStorage["trynex_build"]. When it differs from the stored
 // value the user is auto-recovered.
-const CURRENT_BUILD = "2026.05.12-csrf-fix-font-perf-nav-flash";
+const CURRENT_BUILD = "2026.05.13-redis-eager-routes-chunk-split";
 const STORAGE_KEY = "trynex_build";
 const RECENT_NUKE_KEY = "trynex_last_nuke";
 const RECENT_NUKE_WINDOW_MS = 60_000;

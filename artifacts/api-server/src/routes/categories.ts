@@ -3,11 +3,19 @@ import { db, categoriesTable, productsTable } from "@workspace/db";
 import { eq, sql } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { logActivity, getAdminId } from "../lib/activityLog";
+import { redisCacheGet, redisCacheSet, redisCacheDel } from "../lib/redis";
 
 const router: IRouter = Router();
 
+// ── Redis cache key / TTL ─────────────────────────────────────────────────────
+// Categories are near-static (change only via admin). 5-minute TTL is safe.
+const CATS_CACHE_KEY = "trynex:categories";
+const CATS_TTL_S = 300;
+
 router.get("/categories", async (req, res) => {
   try {
+    const cached = await redisCacheGet<{ categories: unknown[] }>(CATS_CACHE_KEY);
+    if (cached) { res.json(cached); return; }
     const rows = await db.select().from(categoriesTable).orderBy(categoriesTable.name);
     const categories = rows.map(c => ({
       id: c.id,
@@ -17,7 +25,9 @@ router.get("/categories", async (req, res) => {
       imageUrl: c.imageUrl,
       productCount: c.productCount ?? 0,
     }));
-    res.json({ categories });
+    const payload = { categories };
+    await redisCacheSet(CATS_CACHE_KEY, payload, CATS_TTL_S);
+    res.json(payload);
   } catch (err) {
     req.log.error({ err }, "Failed to list categories");
     res.status(500).json({ error: "internal_error", message: "Failed to list categories" });
@@ -44,6 +54,7 @@ router.post("/categories", requireAdmin, async (req, res) => {
     }
     const [category] = await db.insert(categoriesTable).values({ name, slug, description, imageUrl }).returning();
     logActivity({ action: "create", entity: "category", entityId: category.id, entityName: category.name, after: category as unknown as Record<string, unknown>, adminId: getAdminId(req) });
+    await redisCacheDel(CATS_CACHE_KEY);
     res.status(201).json(mapCategory(category));
   } catch (err) {
     req.log.error({ err }, "Failed to create category");
@@ -75,6 +86,7 @@ router.put("/categories/:id", requireAdmin, async (req, res) => {
       return;
     }
     logActivity({ action: "update", entity: "category", entityId: id, entityName: category.name, before: (beforeSnapshot ?? null) as unknown as Record<string, unknown>, after: category as unknown as Record<string, unknown>, adminId: getAdminId(req) });
+    await redisCacheDel(CATS_CACHE_KEY);
     res.json(mapCategory(category));
   } catch (err) {
     req.log.error({ err }, "Failed to update category");
@@ -108,6 +120,7 @@ router.delete("/categories/:id", requireAdmin, async (req, res) => {
       return;
     }
     logActivity({ action: "delete", entity: "category", entityId: id, entityName: category.name, before: (beforeSnap ?? category) as unknown as Record<string, unknown>, adminId: getAdminId(req) });
+    await redisCacheDel(CATS_CACHE_KEY);
     res.status(204).send();
   } catch (err) {
     req.log.error({ err }, "Failed to delete category");

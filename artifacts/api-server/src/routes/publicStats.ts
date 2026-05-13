@@ -2,15 +2,15 @@ import { Router, type IRouter } from "express";
 import { db, ordersTable } from "@workspace/db";
 import { sql, desc, gte } from "drizzle-orm";
 import { logger } from "../lib/logger";
+import { redisCacheGet, redisCacheSet } from "../lib/redis";
 
 const router: IRouter = Router();
 
-// ── In-process TTL cache (60 seconds) ────────────────────────────────────────
-// public-stats hits the DB 3 times per request. Every page-load on the
-// storefront calls this endpoint. Without a cache, even modest traffic
-// causes significant Neon transfer waste.
-const TTL_MS = 60_000;
-let statsCache: { data: Record<string, unknown>; expiresAt: number } | null = null;
+// ── Redis-backed cache (60 seconds TTL) ──────────────────────────────────────
+// public-stats hits the DB 3× per request. Redis survives Render restarts;
+// the in-process fallback inside redis.ts covers dev / Redis-not-configured.
+const STATS_CACHE_KEY = "trynex:public-stats";
+const STATS_TTL_S = 60;
 
 async function fetchStats() {
   const now = new Date();
@@ -50,19 +50,16 @@ async function fetchStats() {
 
 router.get("/public-stats", async (_req, res) => {
   try {
-    const now = Date.now();
-    if (!statsCache || now > statsCache.expiresAt) {
-      const data = await fetchStats();
-      statsCache = { data, expiresAt: now + TTL_MS };
-    }
-    res.json(statsCache.data);
+    const cached = await redisCacheGet<Record<string, unknown>>(STATS_CACHE_KEY);
+    if (cached) { res.json(cached); return; }
+    const data = await fetchStats();
+    await redisCacheSet(STATS_CACHE_KEY, data, STATS_TTL_S);
+    res.json(data);
   } catch (err) {
     logger.warn({ err }, "Failed to get public stats");
-    if (statsCache) {
-      res.json(statsCache.data);
-    } else {
-      res.json({ todayOrders: 0, totalOrders: 0, minutesSinceLastOrder: null });
-    }
+    const stale = await redisCacheGet<Record<string, unknown>>(STATS_CACHE_KEY).catch(() => null);
+    if (stale) { res.json(stale); return; }
+    res.json({ todayOrders: 0, totalOrders: 0, minutesSinceLastOrder: null });
   }
 });
 
