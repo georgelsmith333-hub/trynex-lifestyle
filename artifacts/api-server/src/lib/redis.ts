@@ -31,18 +31,30 @@ interface RedisClient {
 
 // ── Client initialisation ──────────────────────────────────────────────────
 
-let _redis: RedisClient | null = null;
+// null  = not yet attempted
+// false = permanently disabled (bad config or connection failed — stop retrying)
+// RedisClient = connected and verified
+let _redis: RedisClient | null | false = null;
 
-/** True once we've confirmed Redis is reachable (used for startup log). */
-let _verified = false;
+/** Known placeholder / example URLs that must not be dialled. */
+const PLACEHOLDER_RX = /xyz-1234|example|localhost|127\.0\.0\.1|placeholder/i;
 
 async function getClient(): Promise<RedisClient | null> {
+  if (_redis === false) return null;   // permanently disabled — never retry
   if (_redis) return _redis;
 
-  const url   = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const url   = (process.env.UPSTASH_REDIS_REST_URL  ?? "").trim();
+  const token = (process.env.UPSTASH_REDIS_REST_TOKEN ?? "").trim();
 
   if (!url || !token) {
+    _redis = false;
+    logger.info("[redis] UPSTASH_REDIS_REST_URL/TOKEN not set — using in-process cache");
+    return null;
+  }
+
+  if (PLACEHOLDER_RX.test(url)) {
+    _redis = false;
+    logger.warn(`[redis] UPSTASH_REDIS_REST_URL looks like a placeholder ("${url}") — using in-process cache. Set the real URL from console.upstash.com.`);
     return null;
   }
 
@@ -50,17 +62,15 @@ async function getClient(): Promise<RedisClient | null> {
     const { Redis } = await import("@upstash/redis");
     const client = new Redis({ url, token });
 
-    // Verify connectivity once on first use.
-    if (!_verified) {
-      await client.set("_trynex_health", "1", { ex: 10 });
-      _verified = true;
-      logger.info("[redis] Upstash Redis connected — distributed cache active");
-    }
+    // Verify connectivity once — a live SET proves the credentials work.
+    await client.set("_trynex_health", "1", { ex: 10 });
+    logger.info("[redis] Upstash Redis connected — distributed cache active (MISS→HIT enabled)");
 
     _redis = client as unknown as RedisClient;
     return _redis;
   } catch (err) {
-    logger.warn({ err }, "[redis] Failed to connect to Upstash Redis — falling back to in-process cache");
+    _redis = false;   // stop retrying — avoid 4s DNS timeout on every request
+    logger.warn({ err }, "[redis] Failed to connect to Upstash Redis — falling back to in-process cache (permanent for this process lifetime)");
     return null;
   }
 }
