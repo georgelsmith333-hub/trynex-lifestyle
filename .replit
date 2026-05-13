@@ -81,7 +81,7 @@ R2_ACCOUNT_ID = "060a0f28c7f62affa5ac09be3b1dd1a9"
 R2_BUCKET = "trynex"
 R2_PUBLIC_BASE_URL = "https://pub-0ef16878c2c34942b4c318420d1db86d.r2.dev"
 R2_ENDPOINT = "https://060a0f28c7f62affa5ac09be3b1dd1a9.r2.cloudflarestorage.com"
-ALLOWED_ORIGINS = "https://trynexshop.com,https://www.trynexshop.com,https://trynex-storefront.onrender.com,https://trynex-lifestyle-shop.pages.dev,https://344f4ea7-099f-437a-aa39-b4e0b5636299-00-ix4jmbog06ds.sisko.replit.dev,http://localhost:5000,http://localhost:5173,http://localhost:8080"
+ALLOWED_ORIGINS = "https://trynexshop.com,https://www.trynexshop.com,https://trynex-storefront.onrender.com,https://trynex-lifestyle-shop.pages.dev,https://15249df4-2f66-4b96-82df-df08a8d9a973-00-1chirm4spsdjp.sisko.replit.dev,http://localhost:5000,http://localhost:5173,http://localhost:8080"
 API_BASE_URL = "https://trynex-api.onrender.com"
 API_PORT = "8080"
 
