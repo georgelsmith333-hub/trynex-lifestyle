@@ -1,4 +1,4 @@
-name = "api"
+name = "trynex-api-worker"
 main = "src/index.ts"
 compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
@@ -12,3 +12,12 @@ bucket_name = "trynex"
 
 [vars]
 NODE_ENV = "production"
+ALLOWED_ORIGINS = "https://trynexshop.com,https://www.trynexshop.com,https://trynex-lifestyle-shop.pages.dev"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Secrets — set via CI or: wrangler secret put <NAME>
+# Never store real values here.
+#   DATABASE_URL, JWT_SECRET, ADMIN_JWT_SECRET, ADMIN_PASSWORD,
+#   ADMIN_SECRET_PASSWORD, ADMIN_SALT, CUSTOMER_SALT,
+#   TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, GOOGLE_CLIENT_ID
+# ─────────────────────────────────────────────────────────────────────────────

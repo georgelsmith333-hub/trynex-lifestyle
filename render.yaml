@@ -13,55 +13,88 @@ services:
         value: production
       - key: PORT
         value: "10000"
-      # --- Database (Neon PostgreSQL) ---
-      # Set DATABASE_URL in the Render dashboard → Environment tab.
-      # Format: postgresql://user:pass@host/dbname?sslmode=require
+
+      # ── Database (Neon PostgreSQL — primary) ──────────────────────────────
+      # Set in Render dashboard → Environment tab. Never commit real values.
       - key: DATABASE_URL
+        sync: false          # Neon primary: ep-proud-hill-am7gl9jg-pooler
+      - key: DATABASE_URL_MAIN
+        sync: false          # Neon primary alias (same as DATABASE_URL)
+      - key: DATABASE_URL_TRYNEX_DB
+        sync: false          # Neon secondary: ep-small-cake-a4wtsash-pooler
+      - key: DATABASE_FAILOVER
+        sync: false          # Neon failover:  ep-crimson-dawn-apycvzvv
+
+      # ── Auth & Admin ──────────────────────────────────────────────────────
+      - key: JWT_SECRET
+        sync: false
+      - key: ADMIN_JWT_SECRET
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_SECRET_PASSWORD
         sync: false
       - key: SESSION_SECRET
         generateValue: true
+
+      # ── CORS ─────────────────────────────────────────────────────────────
       - key: ALLOWED_ORIGINS
-        sync: false
-      # --- Object storage (Cloudflare R2) ---
-      # Customer-uploaded design files live here. Set the secret values
-      # (R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY) in the Render dashboard
-      # so they never enter source control.
+        value: "https://trynexshop.com,https://www.trynexshop.com,https://trynex-lifestyle-shop.pages.dev,https://trynex-storefront.onrender.com"
+
+      # ── Object storage (Cloudflare R2) ────────────────────────────────────
       - key: R2_ACCOUNT_ID
-        sync: false
+        value: "060a0f28c7f62affa5ac09be3b1dd1a9"
       - key: R2_BUCKET
-        sync: false
+        value: "trynex"
+      - key: R2_PUBLIC_BASE_URL
+        value: "https://pub-0ef16878c2c34942b4c318420d1db86d.r2.dev"
+      - key: R2_ENDPOINT
+        value: "https://060a0f28c7f62affa5ac09be3b1dd1a9.r2.cloudflarestorage.com"
       - key: R2_ACCESS_KEY_ID
         sync: false
       - key: R2_SECRET_ACCESS_KEY
         sync: false
-      - key: R2_PUBLIC_BASE_URL
+
+      # ── Upstash Redis (distributed cache) ────────────────────────────────
+      - key: UPSTASH_REDIS_REST_URL
         sync: false
-      # --- Auth & Admin ---
-      - key: ADMIN_PASSWORD
+      - key: UPSTASH_REDIS_REST_TOKEN
         sync: false
-      - key: ADMIN_JWT_SECRET
-        sync: false
-      - key: JWT_SECRET
-        sync: false
-      # --- Telegram order notifications ---
-      # Create a bot via @BotFather, get the token.
-      # Get your chat ID by messaging @userinfobot.
+
+      # ── Public API URL ────────────────────────────────────────────────────
+      - key: API_BASE_URL
+        value: "https://trynex-api.onrender.com"
+      - key: API_PUBLIC_URL
+        value: "https://trynex-api.onrender.com"
+
+      # ── Telegram order notifications ──────────────────────────────────────
       - key: TELEGRAM_BOT_TOKEN
         sync: false
       - key: TELEGRAM_CHAT_ID
         sync: false
-      # --- Background removal (Design Studio) ---
+
+      # ── Background removal (Design Studio) ───────────────────────────────
       - key: REMOVE_BG_API_KEY
         sync: false
-      # --- WhatsApp order notifications (CallMeBot) ---
-      # Free service: https://www.callmebot.com/blog/free-api-whatsapp-messages/
+
+      # ── WhatsApp order notifications (CallMeBot) ──────────────────────────
       - key: CALLMEBOT_PHONE
         sync: false
       - key: CALLMEBOT_APIKEY
         sync: false
-      # --- Google OAuth (customer login) ---
+
+      # ── Google OAuth (customer login) ─────────────────────────────────────
       - key: GOOGLE_CLIENT_ID
         sync: false
-      # --- Public storefront URL (used in sitemap, SEO, Telegram messages) ---
-      - key: API_PUBLIC_URL
-        value: "https://trynex-api.onrender.com"
+
+      # ── Email (SMTP via Nodemailer) ───────────────────────────────────────
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
