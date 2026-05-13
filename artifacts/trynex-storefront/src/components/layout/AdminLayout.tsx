@@ -3,7 +3,7 @@ import {
   LayoutDashboard, Package, ShoppingCart, Settings, LogOut, Menu, X,
   FileText, Users, HardDrive, Sparkles, Star, Code2, BookOpen, Paintbrush,
   GitBranch, Gift, Layers, History, Shield, Search, Tag, Share2, Mail,
-  ChevronRight,
+  ChevronRight, DatabaseZap,
 } from "lucide-react";
 import { useAdminLogout, useAdminMe } from "@workspace/api-client-react";
 import React, { useEffect, useState } from "react";
@@ -61,6 +61,7 @@ const MENU_GROUPS: MenuGroup[] = [
       { name: "Backup", href: "/admin/backup", icon: HardDrive },
       { name: "Activity Log", href: "/admin/logs", icon: History },
       { name: "Security", href: "/admin/security", icon: Shield },
+      { name: "DB Cluster", href: "/admin/db-cluster", icon: DatabaseZap },
       { name: "Deployment", href: "/admin/deployment", icon: GitBranch },
       { name: "Tech Stack", href: "/admin/tech-stack", icon: Code2 },
       { name: "FB Import Guide", href: "/admin/facebook-guide", icon: BookOpen },

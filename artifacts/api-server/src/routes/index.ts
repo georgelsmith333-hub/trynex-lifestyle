@@ -28,6 +28,7 @@ import aiExecuteRouter from "./aiExecute";
 import draftsRouter from "./drafts";
 import telegramWebhookRouter from "./telegramWebhook";
 import uptimeRobotRouter from "./uptimeRobot";
+import dbClusterRouter from "./dbCluster";
 
 const router: IRouter = Router();
 
@@ -60,5 +61,6 @@ router.use(aiExecuteRouter);
 router.use(draftsRouter);
 router.use(telegramWebhookRouter);
 router.use(uptimeRobotRouter);
+router.use(dbClusterRouter);
 
 export default router;

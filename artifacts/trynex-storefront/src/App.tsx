@@ -110,7 +110,8 @@ const AdminSecurity        = lazyWithRetry(() => import("./pages/admin/AdminSecu
 const AdminSEO             = lazyWithRetry(() => import("./pages/admin/AdminSEO"));
 const AdminPromoCodes      = lazyWithRetry(() => import("./pages/admin/AdminPromoCodes"));
 const AdminReferrals       = lazyWithRetry(() => import("./pages/admin/AdminReferrals"));
-const AdminNewsletter      = lazyWithRetry(() => import("./pages/admin/AdminNewsletter"));
+const AdminNewsletter         = lazyWithRetry(() => import("./pages/admin/AdminNewsletter"));
+const AdminDatabaseCluster    = lazyWithRetry(() => import("./pages/admin/AdminDatabaseCluster"));
 
 const Hampers        = lazyWithRetry(() => import("./pages/Hampers"));
 const HamperDetail   = lazyWithRetry(() => import("./pages/HamperDetail"));
@@ -209,6 +210,7 @@ function Router() {
                   <Route path="/admin/promo-codes" component={AdminPromoCodes} />
                   <Route path="/admin/referrals" component={AdminReferrals} />
                   <Route path="/admin/newsletter" component={AdminNewsletter} />
+                  <Route path="/admin/db-cluster" component={AdminDatabaseCluster} />
                 </Switch>
               </ErrorBoundary>
             </Route>
