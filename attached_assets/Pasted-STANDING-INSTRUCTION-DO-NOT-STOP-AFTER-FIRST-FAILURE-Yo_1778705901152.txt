@@ -1,0 +1,119 @@
+STANDING INSTRUCTION — DO NOT STOP AFTER FIRST FAILURE
+
+You are working on TryNex production stabilization. Before ending any session, you MUST follow this continuation protocol.
+
+PRIMARY GOAL:
+Make the production site stable, fast, responsive, and deployable without white screens, 403/502 domain errors, CI/CD failures, Redis/cache bugs, or Neon overuse.
+
+DO NOT give up if one method fails.
+
+FAILURE HANDLING RULES:
+1. If a fix fails, diagnose the exact error.
+2. Try a safer alternative.
+3. If that fails, isolate the broken part.
+4. If still failing, rollback only the broken change.
+5. Continue with the next highest-priority safe task.
+6. Never leave the app in a broken state.
+7. Never say “done” unless tests pass or remaining failures are clearly documented.
+8. Never repeatedly retry the same failing command without changing the approach.
+9. Never expose secrets in reports, logs, commits, screenshots, or markdown files.
+10. Always mask secrets like `ghp_****`, `cfat_****`, `rnd_****`, `postgresql://****`.
+
+BEFORE CHECKOUT / SESSION END, ALWAYS RUN:
+
+- git status
+- npm/pnpm install check
+- TypeScript check
+- production build
+- API health check
+- frontend homepage check
+- key route checks
+- Redis/cache check
+- admin route/login check if possible
+- GitHub workflow status if available
+
+REQUIRED PRIORITY ORDER:
+
+1. Fix production domain issues:
+   - trynexshop.com 403
+   - www.trynexshop.com 502
+   - Cloudflare DNS/Page/Worker conflicts
+   - SPA fallback routing
+   - GitHub Actions failing checks
+
+2. Fix frontend white screen:
+   - route transition blank pages
+   - lazy chunk failures
+   - Suspense/AnimatePresence issues
+   - service worker stale cache
+   - error boundaries
+   - loading skeletons
+
+3. Fix deployment pipeline:
+   - Cloudflare Pages vs Workers conflict
+   - duplicate workflows
+   - wrong build outputs
+   - wrong secrets/env vars
+   - failing CI checks
+
+4. Harden Redis/cache:
+   - namespace keys
+   - invalidation
+   - stale data protection
+   - X-Cache headers
+   - fallback if Redis fails
+
+5. Reduce Neon usage:
+   - indexes
+   - pagination
+   - smaller payloads
+   - no SELECT *
+   - no nonstop polling
+   - no unnecessary DB reads
+   - cache-first APIs
+
+6. Harden admin panel:
+   - error boundaries
+   - loading states
+   - mobile layout
+   - mutation recovery
+   - stale data fixes
+
+7. Only after stability:
+   - queue system
+   - multi-Neon routing
+   - analytics DB
+   - advanced failover
+
+IMPORTANT:
+Do NOT randomly shard databases. Only use extra Neon DBs where safe:
+- analytics/logs can move separately
+- product catalog only if routing is clean
+- orders/users/auth must remain consistent
+- failover DB is emergency backup, not normal random routing
+
+IF BLOCKED:
+Create a file:
+`AUDIT_CONTINUATION_REPORT.md`
+
+Include:
+1. What was attempted
+2. What failed
+3. Exact error
+4. Files touched
+5. What was rolled back
+6. What is still pending
+7. Next safest action
+8. Commands already run
+9. Current git status
+10. Whether production is safe
+
+FINAL SESSION RULE:
+Before ending, provide:
+- files changed
+- tests passed
+- tests failed
+- deployment status
+- production status
+- remaining tasks
+- next recommended command

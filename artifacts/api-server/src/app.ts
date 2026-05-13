@@ -72,6 +72,16 @@ const allowedOrigins: string[] = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim()).filter(Boolean)
   : DEFAULT_DEV_ORIGINS;
 
+// Automatically include the Replit preview domain so the Replit iframe works
+// in both dev and deployed environments without hardcoding instance-specific URLs.
+const replitDomain = process.env.REPLIT_DEV_DOMAIN || process.env.REPLIT_DOMAINS;
+if (replitDomain) {
+  const replitOrigin = `https://${replitDomain.split(",")[0].trim()}`;
+  if (!allowedOrigins.includes(replitOrigin)) {
+    allowedOrigins.push(replitOrigin);
+  }
+}
+
 if (process.env.NODE_ENV === "production" && !process.env.ALLOWED_ORIGINS) {
   logger.error(
     "ALLOWED_ORIGINS env var is not set in production. Refusing to start with a permissive CORS fallback.",

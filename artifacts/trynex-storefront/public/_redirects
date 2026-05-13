@@ -1,12 +1,11 @@
-# /api/* is handled by functions/api/[[route]].js (Cloudflare Pages Function).
-# That file proxies all API calls to https://trynex-api.onrender.com — no
-# redirect rule is needed here and _redirects cannot proxy to absolute URLs anyway.
-
-# sitemap.xml and robots.txt are static files served directly from /public.
-# Do NOT add proxy rules for these paths.
-
-# SPA fallback is handled by dist/404.html (copied from index.html at build time).
-# Cloudflare Pages automatically serves 404.html for all unmatched routes,
-# which gives client-side routing the correct entry point on hard refresh.
-# The old "/* /index.html 200" rule caused an infinite-loop warning and was
-# silently ignored by CF Pages — so it has been removed.
+# Cloudflare Pages SPA fallback.
+# All routes not matching a static file are served dist/404.html (which is a
+# copy of index.html built at deploy time). This lets client-side routing
+# (wouter) handle the URL after the JS boots.
+#
+# NOTE: "/* /index.html 200" is intentionally NOT used here — Cloudflare Pages
+# silently ignores it when 404.html exists and triggers an infinite-loop
+# detection warning. The 404.html approach is the correct CF Pages SPA pattern.
+#
+# For Render static sites or other hosts that don't use 404.html, uncomment:
+# /* /index.html 200

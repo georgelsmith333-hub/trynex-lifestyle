@@ -1,72 +1,59 @@
-# TryNex Lifestyle
+# TryNex Lifestyle — Replit Project
 
-Bangladesh e-commerce platform for premium custom apparel — T-shirts, Hoodies, Mugs, Caps. Features a Design Studio with AI generation, 3D mockup preview, background removal, and full admin panel.
+## Overview
+Full-stack e-commerce platform for TryNex Lifestyle, a Bangladesh-based custom apparel and lifestyle brand. Features a 3D Design Studio for real-time product customisation.
 
-## Run & Operate
+## Tech Stack
+- **Frontend:** React 19 + Vite 7 + TypeScript + Tailwind CSS v4 + Framer Motion + wouter
+- **3D Engine:** Three.js + React Three Fiber + Drei
+- **Backend:** Express 5 + TypeScript (Node 24)
+- **Database:** PostgreSQL via Drizzle ORM (Replit PostgreSQL primary, Neon failovers)
+- **Cache:** Upstash Redis REST (in-process Map fallback)
+- **Storage:** Cloudflare R2 (S3-compatible)
+- **Monorepo:** pnpm workspaces
 
-```bash
-# Start everything (frontend + API + DB)
-bash start.sh          # or use the "Start application" workflow in Replit
-
-# TypeScript check
-cd artifacts/trynex-storefront && pnpm tsc --noEmit
-cd artifacts/api-server && pnpm tsc --noEmit
-
-# Push to GitHub (run after agent auto-commits)
-bash push-to-github.sh
+## Project Structure
+```
+artifacts/
+  trynex-storefront/   # React storefront + admin panel (port 5000)
+  api-server/          # Express API (port 8080)
+  api-worker/          # Cloudflare Worker alternative (Hono)
+  mockup-sandbox/      # Isolated UI dev environment (port 8081)
+lib/
+  db/                  # Drizzle schema, migrations, multi-URL failover client
+  api-spec/            # OpenAPI spec + generated types
+  api-zod/             # Generated Zod validators
+  api-client-react/    # TanStack Query hooks
+scripts/               # Seed, PDF, CI helpers
 ```
 
-Required env vars: `DATABASE_URL` (PostgreSQL), `ADMIN_PASSWORD`, `GITHUB_PERSONAL_ACCESS_TOKEN`
-Optional: `REMOVE_BG_API_KEY`, `GOOGLE_CLIENT_ID`, `REPLIT_DEV_DOMAIN` (auto-set by Replit)
+## Running the App
+The `Start application` workflow starts both services:
+- API server: `PORT=8080 pnpm --filter @workspace/api-server run dev`
+- Storefront: `PORT=5000 pnpm --filter @workspace/trynex-storefront run dev`
 
-## Stack
+Vite proxies all `/api/*` requests to `localhost:8080`, so no CORS issues in development.
 
-- **Frontend**: React 18 + Vite 5, Tailwind CSS, Framer Motion, Three.js/R3F (3D), Wouter routing
-- **Backend**: Node.js + Express, Drizzle ORM, PostgreSQL (Neon)
-- **Monorepo**: pnpm workspaces (`artifacts/trynex-storefront`, `artifacts/api-server`, `artifacts/api-client-react`)
-- **AI**: Pollinations.ai (free, no key) for image generation; remove.bg for background removal
+## Key Environment Variables
+Set in Replit secrets (not env vars) for security:
+- `JWT_SECRET` / `ADMIN_JWT_SECRET` — token signing
+- `ADMIN_PASSWORD` / `ADMIN_SECRET_PASSWORD` — admin panel access
+- `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` — Cloudflare R2 storage
+- `DATABASE_URL_MAIN` / `DATABASE_URL_TRYNEX_DB` / `DATABASE_FAILOVER` — Neon DBs
+- `UPSTASH_REDIS_REST_TOKEN` — Redis cache
+- `CLOUDFLARE_API_TOKEN` / `RENDER_API_KEY` / `GITHUB_TOKEN` — deployment
 
-## Where things live
+## Database Strategy
+- **Primary:** Replit PostgreSQL (DATABASE_URL — auto-provisioned)
+- **Failover chain:** DATABASE_URL_MAIN → DATABASE_URL_TRYNEX_DB → DATABASE_FAILOVER
+- All 12 migrations run automatically at startup via `runMigrations()`
+- Never shard transactional data (orders/users/products all on primary)
 
-- `artifacts/trynex-storefront/src/pages/DesignStudio.tsx` — main studio (layers, AI, bg-removal, flip/opacity)
-- `artifacts/trynex-storefront/src/pages/design-studio/` — composer, mockups, garment 3D
-- `artifacts/trynex-storefront/src/pages/admin/` — all admin panel pages
-- `artifacts/api-server/src/routes/` — all API routes (settings, AI, orders, bg-removal)
-- `artifacts/api-server/src/lib/autoSeed.ts` — DB seeding / default promo codes
-- `artifacts/trynex-storefront/index.html` — entry point with boot splash & watchdog
+## Admin Panel
+Visit `/admin/login` — use the ADMIN_PASSWORD secret to log in.
 
-## Architecture decisions
-
-- **Monorepo with shared API client**: `api-client-react` package auto-generated from server types, giving type-safe hooks across the stack
-- **Pollinations.ai proxy**: All AI generation goes server-side (`/api/ai/generate`) to avoid CORS and enable fallback logic (flux-kontext → flux)
-- **Per-product design layers**: DesignStudio keeps a `perProductLayersRef` map so each garment type has independent layers; uploads propagate to all products
-- **Composer dual-use**: `composer.ts` is shared between the realtime 3D texture and the cart snapshot — supports opacity, rotation, flipH, flipV
-- **Boot splash watchdog**: `index.html` has a self-healing mechanism — if React doesn't mount in 18s, it unregisters SWs + reloads with cache-buster
-
-## Product
-
-- Custom apparel Design Studio: upload, AI art generation (Pollinations free), text, background removal, 3D preview, flip/opacity controls
-- Full e-commerce: products, categories, cart, checkout (bKash/Nagad/COD), order tracking
-- Admin panel: products (AI description writer), orders, settings (all 6 garment type prices + color palettes), promo codes, blog, SEO, analytics
-- Bangladesh-specific: BDT currency, 64-district delivery, bKash/Nagad/Rocket payment fields
-
-## User preferences
-
-- No auto-select after image upload or AI generation (borders stay hidden until user taps)
-- Print zone border minimal (1.5px dashed, 50% opacity), hidden when layers exist and none selected
-- Images uploaded as reference for AI editing go through server proxy to avoid CORS
-- TypeScript strict mode; no `any` unless unavoidable
-- Push to GitHub after every verified batch of changes (use `bash push-to-github.sh`)
-
-## Gotchas
-
-- `REPLIT_DEV_DOMAIN` must be set (auto-set by Replit) for AI reference image URLs to be reachable by Pollinations
-- Admin token stored in `sessionStorage` (not localStorage) — won't persist across browser restarts by design
-- The `pnpm tsc --noEmit` check must pass before any GitHub push
-- After agent task ends, platform auto-commits; run `bash push-to-github.sh` to sync to GitHub
-
-## Pointers
-
-- Vite config: `artifacts/trynex-storefront/vite.config.ts`
-- DB schema: `artifacts/api-server/src/schema.ts` (or wherever drizzle schema lives)
-- Settings API: `artifacts/api-server/src/routes/settings.ts`
+## User Preferences
+- Keep the pnpm monorepo structure intact
+- Never expose secrets in code or env var files
+- Use TypeScript strict mode throughout
+- Follow existing file structure conventions

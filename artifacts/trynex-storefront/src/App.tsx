@@ -1,4 +1,4 @@
-import { useEffect, lazy, Suspense } from "react";
+import { useEffect, lazy, Suspense, type ComponentType, type LazyExoticComponent } from "react";
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { AnimatePresence, motion } from "framer-motion";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -27,93 +27,107 @@ import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 import { useUtmCapture } from "@/hooks/useUtm";
 import { Loader } from "@/components/ui/Loader";
 import { AppErrorBoundary } from "@/components/AppErrorBoundary";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { getApiUrl } from "@/lib/utils";
 
-// Warm up the Render free-tier API on app mount so checkout doesn't pay
-// the 30-50s cold-start penalty when the visitor finally clicks "Place Order".
-// Fire-and-forget; the response is ignored. Implemented as a hook below.
+// Warm up the API on mount so the first real request is fast.
 function useWarmUpApi() {
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
     const ping = () =>
       fetch(getApiUrl("/api/healthz"), { method: "GET", cache: "no-store" }).catch(() => {});
-    // Immediate first ping on mount
     ping();
-    // Retry at 3s — catches dynos still booting
     timers.push(setTimeout(ping, 3000));
-    // Retry at 8s — catches very slow cold starts / Render free-tier spin-up
     timers.push(setTimeout(ping, 8000));
-    // Extended retries for extreme cold starts (Render free tier can take 30-60s)
     timers.push(setTimeout(ping, 15000));
     timers.push(setTimeout(ping, 25000));
     return () => { timers.forEach(clearTimeout); };
   }, []);
 }
 
-// Top-5 most-visited routes loaded eagerly so navigation never triggers
-// the Suspense fallback (= no white flash / full-page spinner on these paths).
+/**
+ * lazyWithRetry — wraps lazy() with a single automatic retry on chunk load
+ * failure (network blip, stale deploy). Prevents a hard crash when the
+ * dynamic import transiently fails.
+ */
+function lazyWithRetry<T extends ComponentType<any>>(
+  factory: () => Promise<{ default: T }>
+): LazyExoticComponent<T> {
+  return lazy(() =>
+    factory().catch((err) => {
+      const msg = err?.message || "";
+      if (/chunk|module|fetch|dynamically imported/i.test(msg)) {
+        // One automatic retry after a short pause
+        return new Promise<{ default: T }>((resolve, reject) =>
+          setTimeout(() => factory().then(resolve).catch(reject), 800)
+        );
+      }
+      throw err;
+    })
+  );
+}
+
+// Top-5 most-visited routes loaded eagerly — navigation to these never
+// triggers Suspense, so there's zero spinner flash on the most common paths.
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 
-const TrackOrder = lazy(() => import("./pages/TrackOrder"));
-const Blog = lazy(() => import("./pages/Blog"));
-const BlogPost = lazy(() => import("./pages/BlogPost"));
-const Wishlist = lazy(() => import("./pages/Wishlist"));
-const ShippingPolicy = lazy(() => import("./pages/ShippingPolicy"));
-const ReturnPolicy = lazy(() => import("./pages/ReturnPolicy"));
-const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
-const TermsOfService = lazy(() => import("./pages/TermsOfService"));
-const Login = lazy(() => import("./pages/Login"));
-const Signup = lazy(() => import("./pages/Signup"));
-const Account = lazy(() => import("./pages/Account"));
-const NotFound = lazy(() => import("./pages/not-found"));
-const SeoGuide = lazy(() => import("./pages/SeoGuide").then(m => ({ default: m.SeoGuide })));
+const TrackOrder     = lazyWithRetry(() => import("./pages/TrackOrder"));
+const Blog           = lazyWithRetry(() => import("./pages/Blog"));
+const BlogPost       = lazyWithRetry(() => import("./pages/BlogPost"));
+const Wishlist       = lazyWithRetry(() => import("./pages/Wishlist"));
+const ShippingPolicy = lazyWithRetry(() => import("./pages/ShippingPolicy"));
+const ReturnPolicy   = lazyWithRetry(() => import("./pages/ReturnPolicy"));
+const PrivacyPolicy  = lazyWithRetry(() => import("./pages/PrivacyPolicy"));
+const TermsOfService = lazyWithRetry(() => import("./pages/TermsOfService"));
+const Login          = lazyWithRetry(() => import("./pages/Login"));
+const Signup         = lazyWithRetry(() => import("./pages/Signup"));
+const Account        = lazyWithRetry(() => import("./pages/Account"));
+const NotFound       = lazyWithRetry(() => import("./pages/not-found"));
+const SeoGuide       = lazyWithRetry(() => import("./pages/SeoGuide").then(m => ({ default: m.SeoGuide })));
 
-const AdminLogin = lazy(() => import("./pages/admin/Login"));
-const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
-const AdminProducts = lazy(() => import("./pages/admin/AdminProducts"));
-const AdminCategories = lazy(() => import("./pages/admin/AdminCategories"));
-const AdminOrders = lazy(() => import("./pages/admin/AdminOrders"));
-const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
-const AdminBlog = lazy(() => import("./pages/admin/AdminBlog"));
-const AdminCustomers = lazy(() => import("./pages/admin/AdminCustomers"));
-const AdminBackup = lazy(() => import("./pages/admin/AdminBackup"));
-const AdminFacebookImport = lazy(() => import("./pages/admin/AdminFacebookImport"));
-const AdminReviews = lazy(() => import("./pages/admin/AdminReviews"));
-const AdminTechStack = lazy(() => import("./pages/admin/AdminTechStack"));
-const AdminDesigner = lazy(() => import("./pages/admin/AdminDesigner"));
-const AdminFacebookGuide = lazy(() => import("./pages/admin/AdminFacebookGuide"));
-const AdminDeployment = lazy(() => import("./pages/admin/AdminDeployment"));
-const AdminHampers = lazy(() => import("./pages/admin/AdminHampers"));
-const AdminActivityLog = lazy(() => import("./pages/admin/AdminActivityLog"));
-const AdminSecurity = lazy(() => import("./pages/admin/AdminSecurity"));
-const AdminSEO = lazy(() => import("./pages/admin/AdminSEO"));
-const AdminPromoCodes = lazy(() => import("./pages/admin/AdminPromoCodes"));
-const AdminReferrals = lazy(() => import("./pages/admin/AdminReferrals"));
-const AdminNewsletter = lazy(() => import("./pages/admin/AdminNewsletter"));
-const Hampers = lazy(() => import("./pages/Hampers"));
-const HamperDetail = lazy(() => import("./pages/HamperDetail"));
-const HamperBuilder = lazy(() => import("./pages/HamperBuilder"));
-const Referral = lazy(() => import("./pages/Referral"));
-const DesignStudio = lazy(() => import("./pages/DesignStudio"));
-const SalePage = lazy(() => import("./pages/SalePage"));
-const FAQ = lazy(() => import("./pages/FAQ"));
-const About = lazy(() => import("./pages/About"));
-const Contact = lazy(() => import("./pages/Contact"));
-const SizeGuide = lazy(() => import("./pages/SizeGuide"));
+const AdminLogin           = lazyWithRetry(() => import("./pages/admin/Login"));
+const AdminDashboard       = lazyWithRetry(() => import("./pages/admin/Dashboard"));
+const AdminProducts        = lazyWithRetry(() => import("./pages/admin/AdminProducts"));
+const AdminCategories      = lazyWithRetry(() => import("./pages/admin/AdminCategories"));
+const AdminOrders          = lazyWithRetry(() => import("./pages/admin/AdminOrders"));
+const AdminSettings        = lazyWithRetry(() => import("./pages/admin/AdminSettings"));
+const AdminBlog            = lazyWithRetry(() => import("./pages/admin/AdminBlog"));
+const AdminCustomers       = lazyWithRetry(() => import("./pages/admin/AdminCustomers"));
+const AdminBackup          = lazyWithRetry(() => import("./pages/admin/AdminBackup"));
+const AdminFacebookImport  = lazyWithRetry(() => import("./pages/admin/AdminFacebookImport"));
+const AdminReviews         = lazyWithRetry(() => import("./pages/admin/AdminReviews"));
+const AdminTechStack       = lazyWithRetry(() => import("./pages/admin/AdminTechStack"));
+const AdminDesigner        = lazyWithRetry(() => import("./pages/admin/AdminDesigner"));
+const AdminFacebookGuide   = lazyWithRetry(() => import("./pages/admin/AdminFacebookGuide"));
+const AdminDeployment      = lazyWithRetry(() => import("./pages/admin/AdminDeployment"));
+const AdminHampers         = lazyWithRetry(() => import("./pages/admin/AdminHampers"));
+const AdminActivityLog     = lazyWithRetry(() => import("./pages/admin/AdminActivityLog"));
+const AdminSecurity        = lazyWithRetry(() => import("./pages/admin/AdminSecurity"));
+const AdminSEO             = lazyWithRetry(() => import("./pages/admin/AdminSEO"));
+const AdminPromoCodes      = lazyWithRetry(() => import("./pages/admin/AdminPromoCodes"));
+const AdminReferrals       = lazyWithRetry(() => import("./pages/admin/AdminReferrals"));
+const AdminNewsletter      = lazyWithRetry(() => import("./pages/admin/AdminNewsletter"));
+
+const Hampers        = lazyWithRetry(() => import("./pages/Hampers"));
+const HamperDetail   = lazyWithRetry(() => import("./pages/HamperDetail"));
+const HamperBuilder  = lazyWithRetry(() => import("./pages/HamperBuilder"));
+const Referral       = lazyWithRetry(() => import("./pages/Referral"));
+const DesignStudio   = lazyWithRetry(() => import("./pages/DesignStudio"));
+const SalePage       = lazyWithRetry(() => import("./pages/SalePage"));
+const FAQ            = lazyWithRetry(() => import("./pages/FAQ"));
+const About          = lazyWithRetry(() => import("./pages/About"));
+const Contact        = lazyWithRetry(() => import("./pages/Contact"));
+const SizeGuide      = lazyWithRetry(() => import("./pages/SizeGuide"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
-      // 20 seconds stale time — admin changes reflect within ~20s on storefront
-      // without excessive API polling. Admin pages override this to 0 individually.
       staleTime: 20 * 1000,
-      // Keep unused query data for 5 minutes so navigating back shows instant
-      // cached content while revalidating in the background.
       gcTime: 5 * 60 * 1000,
       refetchOnWindowFocus: false,
     }
@@ -122,15 +136,13 @@ const queryClient = new QueryClient({
 
 function Router() {
   const [location] = useLocation();
-  // Key on full location path so transitions fire on all route changes.
 
   return (
-    // Suspense sits OUTSIDE AnimatePresence so:
-    //   - eager routes (Home/Products/…) never trigger it at all
-    //   - lazy routes show the spinner *before* the fade animation starts,
-    //     preventing the double-render flash (spinner → animation → content)
-    <Suspense fallback={<Loader />}>
-    <AnimatePresence initial={false}>
+    // mode="wait" — old route fully exits before new route mounts, eliminating
+    // the double-render overlap that caused the blank flash between pages.
+    // Suspense is placed INSIDE each motion.div so each route manages its own
+    // loading state independently without blocking the exit animation.
+    <AnimatePresence mode="wait" initial={false}>
       <motion.div
         key={location}
         initial={{ opacity: 0 }}
@@ -139,72 +151,81 @@ function Router() {
         transition={{ duration: 0.12, ease: "easeInOut" }}
         style={{ minHeight: "100vh" }}
       >
-        <Switch>
-          <Route path="/" component={Home} />
-          <Route path="/products" component={Products} />
-          <Route path="/shop" component={Products} />
-          <Route path="/product/:id" component={ProductDetail} />
-          <Route path="/cart" component={Cart} />
-          <Route path="/checkout" component={Checkout} />
-          <Route path="/track" component={TrackOrder} />
-          <Route path="/blog" component={Blog} />
-          <Route path="/blog/:slug" component={BlogPost} />
-          <Route path="/wishlist" component={Wishlist} />
-          <Route path="/shipping-policy" component={ShippingPolicy} />
-          <Route path="/return-policy" component={ReturnPolicy} />
-          <Route path="/privacy-policy" component={PrivacyPolicy} />
-          <Route path="/terms-of-service" component={TermsOfService} />
-          <Route path="/referral" component={Referral} />
-          <Route path="/design-studio" component={DesignStudio} />
-          <Route path="/hampers" component={Hampers} />
-          <Route path="/hampers/build" component={HamperBuilder} />
-          <Route path="/hampers/:slug" component={HamperDetail} />
-          <Route path="/sale" component={SalePage} />
-          <Route path="/faq" component={FAQ} />
-          <Route path="/about" component={About} />
-          <Route path="/contact" component={Contact} />
-          <Route path="/size-guide" component={SizeGuide} />
-          <Route path="/seo-guide" component={SeoGuide} />
-          <Route path="/login" component={Login} />
-          <Route path="/signup" component={Signup} />
-          <Route path="/account" component={Account} />
+        <Suspense fallback={<Loader />}>
+          <Switch>
+            <Route path="/" component={Home} />
+            <Route path="/products" component={Products} />
+            <Route path="/shop" component={Products} />
+            <Route path="/product/:id" component={ProductDetail} />
+            <Route path="/cart" component={Cart} />
+            <Route path="/checkout" component={Checkout} />
+            <Route path="/track" component={TrackOrder} />
+            <Route path="/blog" component={Blog} />
+            <Route path="/blog/:slug" component={BlogPost} />
+            <Route path="/wishlist" component={Wishlist} />
+            <Route path="/shipping-policy" component={ShippingPolicy} />
+            <Route path="/return-policy" component={ReturnPolicy} />
+            <Route path="/privacy-policy" component={PrivacyPolicy} />
+            <Route path="/terms-of-service" component={TermsOfService} />
+            <Route path="/referral" component={Referral} />
+            <Route path="/design-studio" component={DesignStudio} />
+            <Route path="/hampers" component={Hampers} />
+            <Route path="/hampers/build" component={HamperBuilder} />
+            <Route path="/hampers/:slug" component={HamperDetail} />
+            <Route path="/sale" component={SalePage} />
+            <Route path="/faq" component={FAQ} />
+            <Route path="/about" component={About} />
+            <Route path="/contact" component={Contact} />
+            <Route path="/size-guide" component={SizeGuide} />
+            <Route path="/seo-guide" component={SeoGuide} />
+            <Route path="/login" component={Login} />
+            <Route path="/signup" component={Signup} />
+            <Route path="/account" component={Account} />
 
-          <Route path="/admin/login" component={AdminLogin} />
-          <Route path="/admin" component={AdminDashboard} />
-          <Route path="/admin/products" component={AdminProducts} />
-          <Route path="/admin/categories" component={AdminCategories} />
-          <Route path="/admin/orders" component={AdminOrders} />
-          <Route path="/admin/blog" component={AdminBlog} />
-          <Route path="/admin/customers" component={AdminCustomers} />
-          <Route path="/admin/backup" component={AdminBackup} />
-          <Route path="/admin/settings" component={AdminSettings} />
-          <Route path="/admin/facebook-import" component={AdminFacebookImport} />
-          <Route path="/admin/reviews" component={AdminReviews} />
-          <Route path="/admin/tech-stack" component={AdminTechStack} />
-          <Route path="/admin/facebook-guide" component={AdminFacebookGuide} />
-          <Route path="/admin/designer" component={AdminDesigner} />
-          <Route path="/admin/deployment" component={AdminDeployment} />
-          <Route path="/admin/hampers" component={AdminHampers} />
-          <Route path="/admin/logs" component={AdminActivityLog} />
-          <Route path="/admin/security" component={AdminSecurity} />
-          <Route path="/admin/seo" component={AdminSEO} />
-          <Route path="/admin/promo-codes" component={AdminPromoCodes} />
-          <Route path="/admin/referrals" component={AdminReferrals} />
-          <Route path="/admin/newsletter" component={AdminNewsletter} />
+            {/* Admin — wrapped in its own ErrorBoundary so a broken admin
+                page can never crash the storefront */}
+            <Route path="/admin/login" component={AdminLogin} />
+            <Route path="/admin">
+              <ErrorBoundary section="admin panel">
+                <Switch>
+                  <Route path="/admin" component={AdminDashboard} />
+                  <Route path="/admin/products" component={AdminProducts} />
+                  <Route path="/admin/categories" component={AdminCategories} />
+                  <Route path="/admin/orders" component={AdminOrders} />
+                  <Route path="/admin/blog" component={AdminBlog} />
+                  <Route path="/admin/customers" component={AdminCustomers} />
+                  <Route path="/admin/backup" component={AdminBackup} />
+                  <Route path="/admin/settings" component={AdminSettings} />
+                  <Route path="/admin/facebook-import" component={AdminFacebookImport} />
+                  <Route path="/admin/reviews" component={AdminReviews} />
+                  <Route path="/admin/tech-stack" component={AdminTechStack} />
+                  <Route path="/admin/facebook-guide" component={AdminFacebookGuide} />
+                  <Route path="/admin/designer" component={AdminDesigner} />
+                  <Route path="/admin/deployment" component={AdminDeployment} />
+                  <Route path="/admin/hampers" component={AdminHampers} />
+                  <Route path="/admin/logs" component={AdminActivityLog} />
+                  <Route path="/admin/security" component={AdminSecurity} />
+                  <Route path="/admin/seo" component={AdminSEO} />
+                  <Route path="/admin/promo-codes" component={AdminPromoCodes} />
+                  <Route path="/admin/referrals" component={AdminReferrals} />
+                  <Route path="/admin/newsletter" component={AdminNewsletter} />
+                </Switch>
+              </ErrorBoundary>
+            </Route>
 
-          {/* Short-URL redirects for common aliases */}
-          <Route path="/privacy"><Redirect to="/privacy-policy" /></Route>
-          <Route path="/terms"><Redirect to="/terms-of-service" /></Route>
-          <Route path="/shipping"><Redirect to="/shipping-policy" /></Route>
-          <Route path="/returns"><Redirect to="/return-policy" /></Route>
-          <Route path="/refund"><Redirect to="/return-policy" /></Route>
-          <Route path="/customize"><Redirect to="/design-studio" /></Route>
+            {/* Short-URL redirects */}
+            <Route path="/privacy"><Redirect to="/privacy-policy" /></Route>
+            <Route path="/terms"><Redirect to="/terms-of-service" /></Route>
+            <Route path="/shipping"><Redirect to="/shipping-policy" /></Route>
+            <Route path="/returns"><Redirect to="/return-policy" /></Route>
+            <Route path="/refund"><Redirect to="/return-policy" /></Route>
+            <Route path="/customize"><Redirect to="/design-studio" /></Route>
 
-          <Route component={NotFound} />
-        </Switch>
+            <Route component={NotFound} />
+          </Switch>
+        </Suspense>
       </motion.div>
     </AnimatePresence>
-    </Suspense>
   );
 }
 
