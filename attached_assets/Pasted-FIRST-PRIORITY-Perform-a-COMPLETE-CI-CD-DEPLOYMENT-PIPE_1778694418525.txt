@@ -1,0 +1,159 @@
+FIRST PRIORITY:
+Perform a COMPLETE CI/CD + DEPLOYMENT PIPELINE AUDIT before any further optimization work.
+
+GitHub Actions currently show:
+- Workers Builds failing
+- Frontend Deploy → Cloudflare Pages failing
+- Cloudflare Pages deploy itself succeeds
+- Render backend deploy succeeds
+
+This means the deployment pipeline is partially broken or misconfigured.
+
+========================================
+FIRST TASK — FULL DEPLOYMENT AUDIT
+========================================
+
+Deeply inspect:
+
+- GitHub Actions workflows
+- Cloudflare Pages configuration
+- Cloudflare Workers configuration
+- Wrangler config
+- Vite build config
+- package.json scripts
+- build output directories
+- Node.js versions
+- TypeScript CI behavior
+- environment variable handling
+- Pages vs Workers conflicts
+- duplicate deploy workflows
+- Pages artifact generation
+- npm/pnpm lock consistency
+- build cache behavior
+- frontend static output behavior
+- monorepo build structure
+- Render deployment workflow
+- GitHub secrets usage
+- branch deployment rules
+
+========================================
+GOALS
+========================================
+
+Find root causes of:
+
+- failing GitHub checks
+- Workers Builds failure
+- Frontend deploy failure
+- false-negative deployments
+- partial deployment success
+- CI inconsistencies
+- environment mismatches
+- build artifact mismatches
+- TypeScript CI-only failures
+- Vite build inconsistencies
+- Cloudflare Pages workflow conflicts
+
+========================================
+VERIFY
+========================================
+
+1. Does the project actually need:
+- Cloudflare Workers
+OR
+- only Cloudflare Pages?
+
+2. Are duplicate deployment systems running simultaneously?
+
+3. Is Wrangler incorrectly configured?
+
+4. Are multiple Cloudflare projects conflicting?
+
+5. Is build output path correct?
+
+6. Are GitHub Actions outdated or duplicated?
+
+7. Are Pages deploys succeeding while CI reports failure incorrectly?
+
+8. Are environment variables missing inside GitHub Actions?
+
+9. Are Node/npm versions mismatched between:
+- Replit
+- GitHub Actions
+- Cloudflare
+- Render
+
+10. Are TypeScript checks stricter in CI than local?
+
+========================================
+IMPORTANT
+========================================
+
+DO NOT immediately rewrite deployment architecture.
+
+FIRST:
+- audit
+- inspect
+- verify
+- explain root causes
+
+THEN:
+implement ONLY safe fixes.
+
+========================================
+AFTER AUDIT
+========================================
+
+Fix:
+- broken workflows
+- failing checks
+- duplicate deployments
+- Wrangler conflicts
+- Pages config conflicts
+- CI mismatches
+- env variable issues
+- build inconsistencies
+
+BUT:
+DO NOT break currently working deployments.
+
+========================================
+THEN CONTINUE
+========================================
+
+After deployment pipeline becomes stable:
+
+Continue with the FULL PHASE 2 PRODUCTION HARDENING plan:
+
+- DB indexing
+- frontend hardening
+- admin hardening
+- blog optimization
+- image optimization
+- monitoring
+- mobile UX hardening
+- cache hardening
+- production diagnostics
+- security verification
+
+========================================
+REQUIRED FINAL REPORT
+========================================
+
+Generate:
+
+1. deployment architecture map
+2. root cause of failing checks
+3. exact workflows fixed
+4. exact files changed
+5. Cloudflare setup explanation
+6. Pages vs Workers explanation
+7. GitHub Actions explanation
+8. Render deployment explanation
+9. CI/CD stability assessment
+10. production deployment readiness score
+11. future deployment recommendations
+12. rollback safety analysis
+13. remaining risks
+
+Act like a senior DevOps + SaaS infrastructure engineer debugging a production ecommerce deployment pipeline.
