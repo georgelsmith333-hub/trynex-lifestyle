@@ -84,17 +84,7 @@ R2_ENDPOINT = "https://060a0f28c7f62affa5ac09be3b1dd1a9.r2.cloudflarestorage.com
 ALLOWED_ORIGINS = "https://trynexshop.com,https://www.trynexshop.com,https://trynex-storefront.onrender.com,https://trynex-lifestyle-shop.pages.dev,https://15249df4-2f66-4b96-82df-df08a8d9a973-00-1chirm4spsdjp.sisko.replit.dev,http://localhost:5000,http://localhost:5173,http://localhost:8080"
 API_BASE_URL = "https://trynex-api.onrender.com"
 API_PORT = "8080"
-R2_ACCESS_KEY_ID = "1eed0f615268db06e18c86ca116dbc10"
-R2_SECRET_ACCESS_KEY = "b3de5639e9d121c03fb4cf0e59b5c1bfb037c2ae54c51faa1a892c0376a19692"
-CLOUDFLARE_API_TOKEN = "cfat_EQ3bHcZg3zSK8hPY81QqacWoeqrqBhtrH61rKmjn88b736f8"
 CLOUDFLARE_ACCOUNT_ID = "060a0f28c7f62affa5ac09be3b1dd1a9"
-RENDER_API_KEY = "rnd_15grmSJp8sg3uaOqNyC4Nu5ZecYX"
-DATABASE_URL_MAIN = "postgresql://neondb_owner:npg_BvS2fTaM1uyx@ep-proud-hill-am7gl9jg-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
-DATABASE_URL_TRYNEX_DB = "postgresql://neondb_owner:npg_er92JMuaxYcf@ep-small-cake-a4wtsash-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
-DATABASE_FAILOVER = "postgresql://neondb_owner:npg_2AEqmS1yudDM@ep-crimson-dawn-apycvzvv.c-7.us-east-1.aws.neon.tech/neondb?sslmode=require"
-DATABASE_PRODUCTS = "postgresql://neondb_owner:npg_IRndG9r2YFLw@ep-crimson-mud-ap5qu789.c-7.us-east-1.aws.neon.tech/neondb?sslmode=require"
-DATABASE_ANALYTICS = "postgresql://neondb_owner:npg_EsLa30qDTSbf@ep-cool-mountain-apc65mnx-pooler.c-7.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
-DATABASE_SUPABASE_BACKUP_API_KEY = "sb_publishable_sNseFFWtUyHsO_3LOqt3NQ_Z0mG8a0z"
 
 [userenv.development]
 JWT_SECRET = "dev_jwt_secret_trynex_2024_change_in_prod"
