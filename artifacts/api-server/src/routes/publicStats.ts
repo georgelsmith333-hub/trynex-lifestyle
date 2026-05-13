@@ -51,14 +51,23 @@ async function fetchStats() {
 router.get("/public-stats", async (_req, res) => {
   try {
     const cached = await redisCacheGet<Record<string, unknown>>(STATS_CACHE_KEY);
-    if (cached) { res.json(cached); return; }
+    if (cached) {
+      res.set("X-Cache-Status", "HIT");
+      res.json(cached);
+      return;
+    }
     const data = await fetchStats();
     await redisCacheSet(STATS_CACHE_KEY, data, STATS_TTL_S);
+    res.set("X-Cache-Status", "MISS");
     res.json(data);
   } catch (err) {
     logger.warn({ err }, "Failed to get public stats");
     const stale = await redisCacheGet<Record<string, unknown>>(STATS_CACHE_KEY).catch(() => null);
-    if (stale) { res.json(stale); return; }
+    if (stale) {
+      res.set("X-Cache-Status", "STALE");
+      res.json(stale);
+      return;
+    }
     res.json({ todayOrders: 0, totalOrders: 0, minutesSinceLastOrder: null });
   }
 });

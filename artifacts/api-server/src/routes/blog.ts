@@ -4,6 +4,11 @@ import { eq, desc, and, sql } from "drizzle-orm";
 import { requireAdmin, validateToken } from "../middlewares/adminAuth";
 import { logActivity, getAdminId } from "../lib/activityLog";
 import { z } from "zod";
+import { redisCacheGet, redisCacheSet, redisCacheDel } from "../lib/redis";
+
+// ── Blog cache keys ───────────────────────────────────────────────────────────
+const BLOG_CATS_KEY = "trynex:blog:categories";
+const BLOG_CATS_TTL = 120; // 2 min — changes only when admin adds/removes categories
 
 const DEFAULT_BLOG_CATEGORIES = ["General", "Fashion", "Tips", "News", "Lifestyle"];
 
@@ -69,6 +74,13 @@ async function saveBlogCategories(categories: string[]): Promise<void> {
 // GET /blog/categories — public, returns the configured list with published post counts
 router.get("/blog/categories", async (req, res) => {
   try {
+    const cached = await redisCacheGet<Record<string, unknown>>(BLOG_CATS_KEY);
+    if (cached) {
+      res.set("X-Cache-Status", "HIT");
+      res.json(cached);
+      return;
+    }
+
     const [categories, countRows] = await Promise.all([
       getBlogCategories(),
       db
@@ -88,7 +100,10 @@ router.get("/blog/categories", async (req, res) => {
     }
     counts["All"] = total;
 
-    res.json({ categories, counts });
+    const payload = { categories, counts };
+    await redisCacheSet(BLOG_CATS_KEY, payload, BLOG_CATS_TTL);
+    res.set("X-Cache-Status", "MISS");
+    res.json(payload);
   } catch (err) {
     req.log.error({ err }, "Failed to get blog categories");
     res.status(500).json({ error: "internal_error", message: "Failed to get blog categories" });
@@ -114,6 +129,7 @@ router.post("/blog/categories", requireAdmin, async (req, res) => {
     }
     const updated = [...categories, name];
     await saveBlogCategories(updated);
+    await redisCacheDel(BLOG_CATS_KEY);
     res.status(201).json({ categories: updated });
   } catch (err) {
     req.log.error({ err }, "Failed to add blog category");
@@ -159,6 +175,7 @@ router.delete("/blog/categories/:name", requireAdmin, async (req, res) => {
     }
 
     await saveBlogCategories(updated);
+    await redisCacheDel(BLOG_CATS_KEY);
     res.json({ categories: updated, affectedCount });
   } catch (err) {
     req.log.error({ err }, "Failed to delete blog category");
@@ -194,6 +211,7 @@ router.put("/blog/categories", requireAdmin, async (req, res) => {
       return;
     }
     await saveBlogCategories(categories);
+    await redisCacheDel(BLOG_CATS_KEY);
     res.json({ categories });
   } catch (err) {
     req.log.error({ err }, "Failed to update blog categories");

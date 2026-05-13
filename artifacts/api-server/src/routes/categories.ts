@@ -15,8 +15,22 @@ const CATS_TTL_S = 300;
 router.get("/categories", async (req, res) => {
   try {
     const cached = await redisCacheGet<{ categories: unknown[] }>(CATS_CACHE_KEY);
-    if (cached) { res.json(cached); return; }
-    const rows = await db.select().from(categoriesTable).orderBy(categoriesTable.name);
+    if (cached) {
+      res.set("X-Cache-Status", "HIT");
+      res.json(cached);
+      return;
+    }
+    const rows = await db
+      .select({
+        id: categoriesTable.id,
+        name: categoriesTable.name,
+        slug: categoriesTable.slug,
+        description: categoriesTable.description,
+        imageUrl: categoriesTable.imageUrl,
+        productCount: categoriesTable.productCount,
+      })
+      .from(categoriesTable)
+      .orderBy(categoriesTable.name);
     const categories = rows.map(c => ({
       id: c.id,
       name: c.name,
@@ -27,6 +41,7 @@ router.get("/categories", async (req, res) => {
     }));
     const payload = { categories };
     await redisCacheSet(CATS_CACHE_KEY, payload, CATS_TTL_S);
+    res.set("X-Cache-Status", "MISS");
     res.json(payload);
   } catch (err) {
     req.log.error({ err }, "Failed to list categories");

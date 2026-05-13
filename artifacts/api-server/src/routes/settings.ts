@@ -215,15 +215,24 @@ async function getAdminSettings() {
 router.get("/settings", async (req, res) => {
   try {
     const cached = await redisCacheGet<Record<string, unknown>>(SETTINGS_CACHE_KEY);
-    if (cached) { res.json(cached); return; }
+    if (cached) {
+      res.set("X-Cache-Status", "HIT");
+      res.json(cached);
+      return;
+    }
     const data = await getPublicSettings();
     await redisCacheSet(SETTINGS_CACHE_KEY, data, SETTINGS_TTL_S);
+    res.set("X-Cache-Status", "MISS");
     res.json(data);
   } catch (err) {
     req.log.error({ err }, "Failed to get settings");
     // Best-effort: try cache even if it's stale
     const stale = await redisCacheGet<Record<string, unknown>>(SETTINGS_CACHE_KEY).catch(() => null);
-    if (stale) { res.json(stale); return; }
+    if (stale) {
+      res.set("X-Cache-Status", "STALE");
+      res.json(stale);
+      return;
+    }
     res.status(500).json({ error: "internal_error", message: "Failed to get settings" });
   }
 });
@@ -351,6 +360,8 @@ router.patch("/admin/designer-settings", requireAdmin, async (req, res) => {
         });
       }
     }
+    // Bust public settings cache so the next GET /settings reflects changes immediately
+    await invalidatePublicSettingsCache();
     res.json({ success: true });
   } catch (err) {
     req.log.error({ err }, "Failed to update designer settings");

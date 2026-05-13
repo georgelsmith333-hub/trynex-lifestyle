@@ -3,8 +3,39 @@ import { db, productsTable, categoriesTable } from "@workspace/db";
 import { eq, ilike, or, and, sql, desc } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { logActivity, getAdminId } from "../lib/activityLog";
+import { redisCacheGet, redisCacheSet, redisCacheDel } from "../lib/redis";
 
 const router: IRouter = Router();
+
+// ── Product list cache ────────────────────────────────────────────────────────
+// Cache simple (no-search) paginated product listings for 60 s.
+// Key encodes all filter dimensions so different queries don't collide.
+const PROD_TTL_S = 60;
+function productCacheKey(params: Record<string, string | undefined>): string | null {
+  // Never cache search queries — they are unique per user input
+  if (params.search) return null;
+  const cat = params.categoryId ?? "all";
+  const feat = params.featured ?? "false";
+  const pg  = params.page ?? "1";
+  const lim = params.limit ?? "12";
+  return `trynex:products:${cat}:${feat}:pg${pg}:lim${lim}`;
+}
+
+// Invalidate all product list cache entries when any product is mutated.
+async function invalidateProductCache(): Promise<void> {
+  // We use a wildcard pattern to bust all cached slices.
+  // The redis helper doesn't expose SCAN, so we bust common keys eagerly.
+  const bases = ["all", "1", "2", "3", "4", "5"].flatMap(cat =>
+    ["false", "true"].flatMap(feat =>
+      ["1", "2", "3"].flatMap(pg =>
+        ["12", "24", "48", "100"].map(lim =>
+          `trynex:products:${cat}:${feat}:pg${pg}:lim${lim}`
+        )
+      )
+    )
+  );
+  await Promise.allSettled(bases.map(k => redisCacheDel(k)));
+}
 
 function mapProduct(p: any, categoryName?: string | null) {
   return {
@@ -35,6 +66,23 @@ router.get("/products", async (req, res) => {
     const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
     const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10) || 12));
     const offset = (pageNum - 1) * limitNum;
+
+    // Check cache for non-search requests
+    const cacheKey = productCacheKey({
+      categoryId: categoryId as string | undefined,
+      search: search as string | undefined,
+      featured: featured as string | undefined,
+      page: page as string,
+      limit: limit as string,
+    });
+    if (cacheKey) {
+      const cached = await redisCacheGet<Record<string, unknown>>(cacheKey);
+      if (cached) {
+        res.set("X-Cache-Status", "HIT");
+        res.json(cached);
+        return;
+      }
+    }
 
     const conditions: any[] = [];
     if (categoryId) {
@@ -68,13 +116,19 @@ router.get("/products", async (req, res) => {
       : [];
     const catMap = Object.fromEntries(categories.map(c => [c.id, c.name]));
 
-    res.json({
+    const payload = {
       products: products.map(p => mapProduct(p, p.categoryId ? catMap[p.categoryId] : null)),
       total,
       page: pageNum,
       limit: limitNum,
       totalPages: Math.ceil(total / limitNum),
-    });
+    };
+
+    if (cacheKey) {
+      await redisCacheSet(cacheKey, payload, PROD_TTL_S);
+      res.set("X-Cache-Status", "MISS");
+    }
+    res.json(payload);
   } catch (err) {
     req.log.error({ err }, "Failed to list products");
     res.status(500).json({ error: "internal_error", message: "Failed to list products" });
@@ -131,6 +185,7 @@ router.post("/products", requireAdmin, async (req, res) => {
     }
 
     logActivity({ action: "create", entity: "product", entityId: product.id, entityName: product.name, after: product as unknown as Record<string, unknown>, adminId: getAdminId(req) });
+    await invalidateProductCache();
     res.status(201).json(mapProduct(product));
   } catch (err) {
     req.log.error({ err }, "Failed to create product");
@@ -183,6 +238,7 @@ router.put("/products/:id", requireAdmin, async (req, res) => {
     }
 
     logActivity({ action: "update", entity: "product", entityId: id, entityName: product.name, before: existing as unknown as Record<string, unknown>, after: product as unknown as Record<string, unknown>, adminId: getAdminId(req) });
+    await invalidateProductCache();
     res.json(mapProduct(product));
   } catch (err) {
     req.log.error({ err }, "Failed to update product");
@@ -207,6 +263,7 @@ router.delete("/products/:id", requireAdmin, async (req, res) => {
       await db.execute(sql`UPDATE categories SET product_count = GREATEST(product_count - 1, 0) WHERE id = ${product.categoryId}`);
     }
     logActivity({ action: "delete", entity: "product", entityId: id, entityName: product.name, before: (beforeSnapshot ?? product) as unknown as Record<string, unknown>, adminId: getAdminId(req) });
+    await invalidateProductCache();
     res.status(204).send();
   } catch (err) {
     req.log.error({ err }, "Failed to delete product");
@@ -265,6 +322,7 @@ router.post("/products/bulk", requireAdmin, async (req, res) => {
       }
     }
 
+    await invalidateProductCache();
     res.status(201).json(results);
   } catch (err) {
     req.log.error({ err }, "Failed to bulk create products");
@@ -293,6 +351,7 @@ router.patch("/admin/products/:id/featured", requireAdmin, async (req, res) => {
       res.status(404).json({ error: "not_found", message: "Product not found" });
       return;
     }
+    await invalidateProductCache();
     res.json({ id: updated.id, featured: updated.featured });
   } catch (err) {
     req.log.error({ err }, "Failed to toggle product featured flag");
