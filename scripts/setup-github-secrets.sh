@@ -11,9 +11,9 @@
 #   - All secret values set as local env vars before running this script
 #
 # Usage:
-#   export CLOUDFLARE_ACCOUNT_ID=060a0f28c7f62affa5ac09be3b1dd1a9
-#   export CLOUDFLARE_API_TOKEN=cfat_EQ3bHcZg3zSK8hPY81QqacWoeqrqBhtrH61rKmjn88b736f8
-#   export DATABASE_URL_MAIN="postgresql://neondb_owner:..."
+#   export CLOUDFLARE_ACCOUNT_ID=<your-cf-account-id>
+#   export CLOUDFLARE_API_TOKEN=<your-cf-api-token>
+#   export DATABASE_URL_MAIN="postgresql://..."
 #   # ... set all vars below ...
 #   bash scripts/setup-github-secrets.sh
 # ─────────────────────────────────────────────────────────────────────────────
@@ -64,5 +64,5 @@ set_secret WORKER_DATABASE_URL      # Same as DATABASE_URL_MAIN for CF Worker
 echo ""
 echo "✅ Done. Verify at: https://github.com/$REPO/settings/secrets/actions"
 echo ""
-echo "ℹ️  CLOUDFLARE_ACCOUNT_ID = 060a0f28c7f62affa5ac09be3b1dd1a9"
+echo "ℹ️  Find CLOUDFLARE_ACCOUNT_ID in your Cloudflare dashboard → right sidebar"
 echo "ℹ️  Get RENDER_DEPLOY_HOOK_URL from: Render dashboard → trynex-api → Settings → Deploy Hooks"
