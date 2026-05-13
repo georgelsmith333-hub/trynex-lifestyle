@@ -86,5 +86,7 @@ API_BASE_URL = "https://trynex-api.onrender.com"
 API_PORT = "8080"
 CLOUDFLARE_ACCOUNT_ID = "060a0f28c7f62affa5ac09be3b1dd1a9"
 UPSTASH_REDIS_REST_URL = "https://positive-oyster-122365.upstash.io"
+GOOGLE_CLIENT_ID = "66391492938-39sou5jlsoheuctgsan3jtpt8t5hnoc8.apps.googleusercontent.com"
+CORS_ORIGIN = "https://trynexshop.com"
 
 [userenv.development]
