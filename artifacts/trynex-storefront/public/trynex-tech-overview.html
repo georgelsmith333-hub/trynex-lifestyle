@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TryNex Lifestyle — Tech Stack & Platform Overview</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a2e; background: #fff; font-size: 13px; line-height: 1.6; }
+    .cover { background: linear-gradient(135deg, #E85D04 0%, #FB8500 50%, #FFB703 100%); color: white; padding: 60px 50px; min-height: 220px; position: relative; }
+    .cover h1 { font-size: 36px; font-weight: 900; letter-spacing: -1px; margin-bottom: 6px; }
+    .cover .subtitle { font-size: 16px; opacity: 0.9; margin-bottom: 20px; }
+    .cover .meta { font-size: 12px; opacity: 0.75; }
+    .cover .logo { position: absolute; top: 40px; right: 50px; width: 64px; height: 64px; background: white; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
+    .body { padding: 30px 50px; }
+    h2 { font-size: 17px; font-weight: 800; color: #E85D04; border-bottom: 3px solid #E85D04; padding-bottom: 6px; margin: 28px 0 14px; letter-spacing: 0.5px; text-transform: uppercase; }
+    h3 { font-size: 13px; font-weight: 700; color: #374151; margin: 14px 0 6px; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .card { background: #f8f9fa; border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px 16px; }
+    .card .label { font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .card .value { font-size: 13px; font-weight: 600; color: #111827; }
+    .card .detail { font-size: 11px; color: #6b7280; margin-top: 2px; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; margin: 2px 2px 2px 0; }
+    .badge-orange { background: #FEF3C7; color: #D97706; }
+    .badge-blue { background: #DBEAFE; color: #1D4ED8; }
+    .badge-green { background: #D1FAE5; color: #065F46; }
+    .badge-purple { background: #EDE9FE; color: #6D28D9; }
+    .badge-red { background: #FEE2E2; color: #B91C1C; }
+    .badge-gray { background: #F3F4F6; color: #374151; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12px; }
+    th { background: #1a1a2e; color: white; padding: 8px 12px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+    td { padding: 8px 12px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+    tr:nth-child(even) td { background: #f9fafb; }
+    .url { font-family: monospace; font-size: 11px; color: #E85D04; background: #fff8f0; padding: 2px 6px; border-radius: 4px; border: 1px solid #fde8cc; }
+    .warning { background: #FEF3C7; border: 1px solid #FCD34D; border-radius: 8px; padding: 10px 14px; margin: 10px 0; font-size: 12px; }
+    .warning strong { color: #92400E; }
+    .tip { background: #D1FAE5; border: 1px solid #6EE7B7; border-radius: 8px; padding: 10px 14px; margin: 10px 0; font-size: 12px; }
+    .tip strong { color: #065F46; }
+    ul { padding-left: 18px; }
+    li { margin: 3px 0; }
+    .page-break { page-break-before: always; }
+    .footer { margin-top: 40px; padding-top: 16px; border-top: 2px solid #e5e7eb; font-size: 11px; color: #9ca3af; text-align: center; }
+    .highlight { color: #E85D04; font-weight: 700; }
+    .mono { font-family: monospace; font-size: 11px; background: #f3f4f6; padding: 1px 5px; border-radius: 3px; }
+    code { font-family: 'Courier New', monospace; font-size: 11px; background: #1e1e2e; color: #a6e22e; padding: 8px 12px; border-radius: 6px; display: block; margin: 6px 0; white-space: pre-wrap; }
+  </style>
+  </head>
+  <body>
+
+  <div class="cover">
+    <div class="logo">T</div>
+    <h1>TryNex Lifestyle</h1>
+    <div class="subtitle">Platform Architecture & Tech Stack Overview</div>
+    <div class="meta">Generated: 02 May 2026 &nbsp;|&nbsp; Bangladesh E-Commerce Platform &nbsp;|&nbsp; trynexshop.com</div>
+  </div>
+
+  <div class="body">
+
+  <h2>🏗️ System Architecture</h2>
+  <p style="margin-bottom:12px">TryNex is a <strong>full-stack monorepo</strong> with a React storefront, Express API, PostgreSQL database, and a cloud-first deployment on Render. Everything lives in one pnpm workspace for easy coordination.</p>
+
+  <div class="grid3">
+    <div class="card">
+      <div class="label">Frontend</div>
+      <div class="value">React 19 + Vite 7</div>
+      <div class="detail">TypeScript · Tailwind CSS v4 · Framer Motion · Radix UI · wouter routing</div>
+    </div>
+    <div class="card">
+      <div class="label">Backend</div>
+      <div class="value">Express 5 · Node.js</div>
+      <div class="detail">TypeScript · 18+ route modules · JWT auth · Rate limiting · CORS protection</div>
+    </div>
+    <div class="card">
+      <div class="label">Database</div>
+      <div class="value">PostgreSQL + Drizzle ORM</div>
+      <div class="detail">Non-destructive migrations · Auto-seeding · Type-safe queries · 12 tables</div>
+    </div>
+    <div class="card">
+      <div class="label">3D Engine</div>
+      <div class="value">React Three Fiber + Three.js</div>
+      <div class="detail">GLB models · PBR materials · Real-time texture compositing · WebGL2</div>
+    </div>
+    <div class="card">
+      <div class="label">Storage</div>
+      <div class="value">Cloudflare R2</div>
+      <div class="detail">S3-compatible object storage · Design assets · Order files · Image uploads</div>
+    </div>
+    <div class="card">
+      <div class="label">Deployment</div>
+      <div class="value">Render.com</div>
+      <div class="detail">Auto-deploy from GitHub main · PostgreSQL managed DB · Free tier (1 region)</div>
+    </div>
+  </div>
+
+  <h2>📦 Tech Stack Detail</h2>
+  <table>
+  <tr><th>Layer</th><th>Technology</th><th>Version</th><th>Purpose</th></tr>
+  <tr><td><strong>Package Manager</strong></td><td>pnpm workspace</td><td>latest</td><td>Monorepo — storefront, API server, mockup sandbox, shared DB lib</td></tr>
+  <tr><td><strong>Storefront</strong></td><td>React + Vite</td><td>19 / 7</td><td>SPA with HMR, code splitting, PWA manifest</td></tr>
+  <tr><td><strong>Styling</strong></td><td>Tailwind CSS v4</td><td>4.x</td><td>Utility-first CSS with custom orange brand theme</td></tr>
+  <tr><td><strong>Animations</strong></td><td>Framer Motion</td><td>11+</td><td>Page transitions, staggered cards, entrance effects</td></tr>
+  <tr><td><strong>3D Rendering</strong></td><td>React Three Fiber / Three.js / Drei</td><td>latest</td><td>Design Studio 3D preview (mug, shirt, hoodie, cap, bottle)</td></tr>
+  <tr><td><strong>HTTP Client</strong></td><td>TanStack Query v5</td><td>5.x</td><td>Server state, caching (3min stale / 10min gc), background refetch</td></tr>
+  <tr><td><strong>Routing</strong></td><td>wouter</td><td>3+</td><td>Lightweight client-side routing</td></tr>
+  <tr><td><strong>API Server</strong></td><td>Express 5</td><td>5.x</td><td>REST API, file upload (multer), rate limiting, JWT</td></tr>
+  <tr><td><strong>ORM</strong></td><td>Drizzle ORM</td><td>latest</td><td>Type-safe PostgreSQL access, non-destructive migrations</td></tr>
+  <tr><td><strong>Auth</strong></td><td>JWT (admin) + Google/Facebook OAuth</td><td>—</td><td>Admin panel: JWT in sessionStorage + HttpOnly cookie (dual auth)</td></tr>
+  <tr><td><strong>Rich Text</strong></td><td>Tiptap</td><td>2+</td><td>Blog post editor in admin panel (WYSIWYG)</td></tr>
+  <tr><td><strong>Build (API)</strong></td><td>esbuild (custom build.mjs)</td><td>—</td><td>Bundles API to dist/index.mjs — 3.1MB output</td></tr>
+  <tr><td><strong>Dev Tooling</strong></td><td>TypeScript, ESLint, Vite HMR</td><td>5+</td><td>Type safety across all packages</td></tr>
+  </table>
+
+  <h2>🗄️ Database Schema</h2>
+  <div class="grid2">
+    <div>
+      <h3>Core Tables</h3>
+      <table>
+      <tr><th>Table</th><th>Key Fields</th></tr>
+      <tr><td>admins</td><td>id, passwordHash, createdAt</td></tr>
+      <tr><td>settings</td><td>key, value (site-wide config)</td></tr>
+      <tr><td>categories</td><td>id, name, slug, imageUrl</td></tr>
+      <tr><td>products</td><td>id, name, price, discountPrice, imageUrl, categoryId, isCustomizable</td></tr>
+      <tr><td>orders</td><td>id, trackingNumber, status, items, total, customer, paymentMethod</td></tr>
+      <tr><td>customers</td><td>id, name, email, phone, totalOrders, totalSpent</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>Feature Tables</h3>
+      <table>
+      <tr><th>Table</th><th>Key Fields</th></tr>
+      <tr><td>blog_posts</td><td>id, title, content (HTML), slug, published</td></tr>
+      <tr><td>testimonials</td><td>id, name, text, rating, approved</td></tr>
+      <tr><td>promo_codes</td><td>code, discountType, discountValue, usageLimit, expiresAt</td></tr>
+      <tr><td>reviews</td><td>productId, rating, comment, verified (email matches order)</td></tr>
+      <tr><td>referrals</td><td>code, referrerId, reward, used</td></tr>
+      <tr><td>hamper_packages</td><td>id, name, items, totalPrice, imageUrl</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <h2>🎨 Design Studio Features</h2>
+  <p style="margin-bottom:10px">The Design Studio (<span class="mono">/design-studio</span>) is the core customisation tool. Built entirely in React with canvas-based design composition.</p>
+  <div class="grid2">
+    <div>
+      <h3>Products Supported</h3>
+      <ul>
+        <li>👕 Unisex T-Shirt (white/black) — 230GSM Cotton</li>
+        <li>🧥 Unisex Hoodie (white/black) — 320GSM Fleece</li>
+        <li>👔 Long Sleeve (white/black) — 240GSM Cotton</li>
+        <li>🧢 Structured Cap — Cotton Twill</li>
+        <li>☕ Coffee Mug — 11oz Ceramic (Left/Right/Full Wrap)</li>
+        <li>🥤 Water Bottle — 600ml Stainless Steel</li>
+      </ul>
+      <h3 style="margin-top:12px">Design Zones</h3>
+      <ul>
+        <li>T-Shirt/Hoodie: Front · Back · L.Sleeve · R.Sleeve · Neck Label</li>
+        <li>Mug: Left Side · Right Side · Full Wrap (360°)</li>
+        <li>Bottle/Cap: Front face print zone</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Editor Capabilities</h3>
+      <ul>
+        <li>Image upload (JPG/PNG/WebP, max 10MB)</li>
+        <li>AI Art generation with reference image upload</li>
+        <li>Text layers: font, size, color, bold/italic</li>
+        <li>Text styling: stroke, shadow, letter spacing</li>
+        <li>Image adjustments: brightness/contrast/saturation</li>
+        <li>Layer management: order, visibility, lock</li>
+        <li>Alignment tools: Center H/V/Both in print zone</li>
+        <li>Undo/Redo history stack</li>
+        <li>Draft auto-save to localStorage</li>
+        <li>Quick product switch tabs (T-Shirt/Mug/Bottle)</li>
+        <li>Per-product isolated layer persistence</li>
+        <li>3D realtime preview (WebGL2)</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>🛒 E-Commerce Features</h2>
+  <div class="grid3">
+    <div class="card">
+      <div class="label">Payments</div>
+      <div class="value">COD · bKash · Nagad</div>
+      <div class="detail">Rocket · Card · Free shipping ৳1500+</div>
+    </div>
+    <div class="card">
+      <div class="label">Currency</div>
+      <div class="value">Bangladeshi Taka (৳)</div>
+      <div class="detail">BDT pricing throughout. All prices in integer taka.</div>
+    </div>
+    <div class="card">
+      <div class="label">Shipping</div>
+      <div class="value">COD Available</div>
+      <div class="detail">Free shipping above ৳1,500. Configurable via admin settings.</div>
+    </div>
+    <div class="card">
+      <div class="label">Order Tracking</div>
+      <div class="value">Unique Tracking IDs</div>
+      <div class="detail">Customers track via /track-order page. Status: Pending → Processing → Shipped → Delivered</div>
+    </div>
+    <div class="card">
+      <div class="label">Promotions</div>
+      <div class="value">Promo Codes</div>
+      <div class="detail">Flat/percentage discounts, usage limits, expiry dates, referral system</div>
+    </div>
+    <div class="card">
+      <div class="label">Social Proof</div>
+      <div class="value">Reviews + Testimonials</div>
+      <div class="detail">Verified purchase flag on reviews (email matches order). Admin-approved testimonials.</div>
+    </div>
+  </div>
+
+  <h2>🔒 Security Architecture</h2>
+  <table>
+  <tr><th>Feature</th><th>Implementation</th></tr>
+  <tr><td>Admin Authentication</td><td>JWT stored in <span class="mono">sessionStorage</span> (clears on tab close) + HttpOnly Secure cookie (dual defence). Primary password (DB-hashed) + secret bypass (env var).</td></tr>
+  <tr><td>CSRF Protection</td><td>Cookie-only admin mutations require CSRF token verification</td></tr>
+  <tr><td>Rate Limiting</td><td>All critical endpoints: auth, admin login, orders, reviews, promo codes, order tracking, public reads</td></tr>
+  <tr><td>CORS</td><td>Whitelist via <span class="mono">ALLOWED_ORIGINS</span> env var. Production refuses to start without it.</td></tr>
+  <tr><td>Input Validation</td><td>Zod schema validation on all API request bodies</td></tr>
+  <tr><td>SQL Safety</td><td>Drizzle ORM parameterised queries — no raw SQL string interpolation</td></tr>
+  <tr><td>File Uploads</td><td>Type + size validation on all uploads (max 10MB, image types only)</td></tr>
+  </table>
+
+  <div class="page-break"></div>
+
+  <h2>🌐 Key URLs & Endpoints</h2>
+  <div class="grid2">
+    <div>
+      <h3>Public Pages</h3>
+      <table>
+      <tr><th>URL</th><th>Page</th></tr>
+      <tr><td><span class="url">/</span></td><td>Home / Landing</td></tr>
+      <tr><td><span class="url">/shop</span></td><td>Product Catalogue</td></tr>
+      <tr><td><span class="url">/product/:id</span></td><td>Product Detail Page</td></tr>
+      <tr><td><span class="url">/design-studio</span></td><td>Custom Design Studio</td></tr>
+      <tr><td><span class="url">/cart</span></td><td>Shopping Cart</td></tr>
+      <tr><td><span class="url">/checkout</span></td><td>Order Checkout</td></tr>
+      <tr><td><span class="url">/track-order</span></td><td>Order Tracking</td></tr>
+      <tr><td><span class="url">/blog</span></td><td>Blog Listing</td></tr>
+      <tr><td><span class="url">/gift-hampers</span></td><td>Gift Hampers</td></tr>
+      <tr><td><span class="url">/contact</span></td><td>Contact Page</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>Admin Panel</h3>
+      <table>
+      <tr><th>URL</th><th>Section</th></tr>
+      <tr><td><span class="url">/admin</span></td><td>Dashboard (stats, recent orders)</td></tr>
+      <tr><td><span class="url">/admin/products</span></td><td>Product Management (CRUD)</td></tr>
+      <tr><td><span class="url">/admin/orders</span></td><td>Order Management + Status Update</td></tr>
+      <tr><td><span class="url">/admin/customers</span></td><td>Customer List</td></tr>
+      <tr><td><span class="url">/admin/blog</span></td><td>Blog Post Editor (Tiptap WYSIWYG)</td></tr>
+      <tr><td><span class="url">/admin/settings</span></td><td>Site Settings (logo, banners, SEO)</td></tr>
+      <tr><td><span class="url">/admin/promo</span></td><td>Promo Code Management</td></tr>
+      <tr><td><span class="url">/admin/deployment</span></td><td>GitHub Push + Deploy Status</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h3>Key API Endpoints</h3>
+  <table>
+  <tr><th>Method</th><th>Endpoint</th><th>Purpose</th></tr>
+  <tr><td>GET</td><td><span class="url">/api/products</span></td><td>All products (cached)</td></tr>
+  <tr><td>GET</td><td><span class="url">/api/orders/:tracking</span></td><td>Track order by tracking number</td></tr>
+  <tr><td>POST</td><td><span class="url">/api/orders</span></td><td>Place new order</td></tr>
+  <tr><td>POST</td><td><span class="url">/api/admin/login</span></td><td>Admin authentication → JWT</td></tr>
+  <tr><td>POST</td><td><span class="url">/api/admin/deployment/push</span></td><td>Git commit + push to GitHub</td></tr>
+  <tr><td>POST</td><td><span class="url">/api/ai/generate</span></td><td>AI image generation for Design Studio</td></tr>
+  <tr><td>POST</td><td><span class="url">/api/remove-bg/process</span></td><td>Background removal for uploaded images</td></tr>
+  <tr><td>GET</td><td><span class="url">/sitemap.xml</span></td><td>Dynamic XML sitemap for SEO</td></tr>
+  <tr><td>GET</td><td><span class="url">/api/settings</span></td><td>Site-wide settings (logo, banners, SEO keys)</td></tr>
+  </table>
+
+  <h2>☁️ Deployment & Environment Variables</h2>
+  <div class="warning"><strong>⚠️ Required env vars for production (Render.com):</strong></div>
+  <table>
+  <tr><th>Variable</th><th>Required</th><th>Purpose</th></tr>
+  <tr><td><span class="mono">DATABASE_URL</span></td><td>✅ Yes</td><td>PostgreSQL connection string (Render managed DB)</td></tr>
+  <tr><td><span class="mono">JWT_SECRET</span></td><td>✅ Yes</td><td>Customer JWT signing secret</td></tr>
+  <tr><td><span class="mono">ADMIN_JWT_SECRET</span></td><td>✅ Yes</td><td>Admin JWT signing (MUST differ from JWT_SECRET)</td></tr>
+  <tr><td><span class="mono">ADMIN_PASSWORD</span></td><td>✅ Yes</td><td>Admin login password (hashed on first run)</td></tr>
+  <tr><td><span class="mono">ALLOWED_ORIGINS</span></td><td>✅ Yes</td><td>Comma-separated allowed CORS origins</td></tr>
+  <tr><td><span class="mono">R2_ACCOUNT_ID</span></td><td>✅ Yes</td><td>Cloudflare R2 account ID</td></tr>
+  <tr><td><span class="mono">R2_ACCESS_KEY_ID</span></td><td>✅ Yes</td><td>R2 access key</td></tr>
+  <tr><td><span class="mono">R2_SECRET_ACCESS_KEY</span></td><td>✅ Yes</td><td>R2 secret key</td></tr>
+  <tr><td><span class="mono">R2_BUCKET</span></td><td>✅ Yes</td><td>R2 bucket name</td></tr>
+  <tr><td><span class="mono">R2_PUBLIC_BASE_URL</span></td><td>✅ Yes</td><td>Public CDN URL for R2 assets</td></tr>
+  <tr><td><span class="mono">GOOGLE_CLIENT_ID</span></td><td>Optional</td><td>Google One-Tap sign-in</td></tr>
+  <tr><td><span class="mono">ADMIN_SECRET_PASSWORD</span></td><td>Optional</td><td>Emergency bypass password (skips rehash)</td></tr>
+  </table>
+
+  <h2>📊 SEO & Performance</h2>
+  <div class="grid2">
+    <div>
+      <h3>SEO Features</h3>
+      <ul>
+        <li>Canonical domain: <span class="mono">https://trynexshop.com</span></li>
+        <li>Auto-generated canonical URLs on every page</li>
+        <li>hreflang tags (en-BD + x-default)</li>
+        <li>JSON-LD structured data (Product, Blog, FAQ, BreadcrumbList)</li>
+        <li>Dynamic sitemap.xml + robots.txt</li>
+        <li>Google Search Console verification (DB-driven, no redeploy needed)</li>
+        <li>Open Graph + Twitter Card meta tags</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Performance Optimisations</h3>
+      <ul>
+        <li>React Query: 3min stale / 10min garbage collect</li>
+        <li>Code splitting via Vite dynamic imports</li>
+        <li>API preconnect hints in HTML head</li>
+        <li>Image preloading for LCP elements</li>
+        <li>GPU effects gated to large screens (mobile-safe)</li>
+        <li>Cart: split contexts + debounced localStorage writes</li>
+        <li>3D viewer: lazy-loaded via React.lazy + Suspense</li>
+        <li>PWA manifest for installability</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>🔧 Post-Deployment Checklist</h2>
+  <div class="tip"><strong>✅ After every Render deployment:</strong></div>
+  <ol style="padding-left:20px;margin:10px 0">
+    <li style="margin:6px 0">Submit <span class="mono">https://trynexshop.com/sitemap.xml</span> in Google Search Console (Sitemaps section)</li>
+    <li style="margin:6px 0">Submit sitemap in Bing Webmaster Tools</li>
+    <li style="margin:6px 0">Verify all Render env vars are set (see table above)</li>
+    <li style="margin:6px 0">Test admin login at <span class="mono">/admin</span></li>
+    <li style="margin:6px 0">Place a test order to verify checkout and order tracking</li>
+    <li style="margin:6px 0">Test Design Studio: upload image, switch products, add to cart</li>
+  </ol>
+
+  <h2>🚨 Things to Keep in Mind</h2>
+  <ul style="margin-top:10px">
+    <li style="margin:6px 0"><strong>Never auto-seed:</strong> <span class="mono">autoSeedIfEmpty()</span> only runs on empty DBs — existing data is never overwritten</li>
+    <li style="margin:6px 0"><strong>Admin token security:</strong> Uses <span class="mono">sessionStorage</span> (not localStorage) — auto-clears when browser tab is closed</li>
+    <li style="margin:6px 0"><strong>Migrations are safe:</strong> Always <span class="mono">CREATE TABLE IF NOT EXISTS</span> and <span class="mono">ADD COLUMN IF NOT EXISTS</span></li>
+    <li style="margin:6px 0"><strong>Render free tier:</strong> Server sleeps after 15 min inactivity — first request may take 30s to wake</li>
+    <li style="margin:6px 0"><strong>R2 storage:</strong> Design images and order assets stored in Cloudflare R2, not on the server filesystem</li>
+    <li style="margin:6px 0"><strong>GitHub PAT:</strong> The admin → Deployment → Push to GitHub uses a PAT stored in the Replit environment, not in code</li>
+    <li style="margin:6px 0"><strong>Flash sale timer:</strong> Runs on BST (UTC+6) boundaries — midnight and noon reset the countdown automatically</li>
+  </ul>
+
+  <div class="footer">
+    TryNex Lifestyle &nbsp;·&nbsp; trynexshop.com &nbsp;·&nbsp; Generated 02/05/2026 &nbsp;·&nbsp; Confidential — Internal Use Only
+  </div>
+
+  </div>
+  </body>
+  </html>

@@ -25,10 +25,11 @@ export default defineConfig({
       workspace: apiClientReactSrc,
       target: "generated",
       client: "react-query",
-      mode: "split",
+      mode: "single",
       baseUrl: "/api",
       clean: true,
       prettier: true,
+      indexFiles: false,
       override: {
         fetch: {
           includeHttpResponseReturnType: false,
@@ -51,10 +52,10 @@ export default defineConfig({
       workspace: apiZodSrc,
       client: "zod",
       target: "generated",
-      schemas: { path: "generated/types", type: "typescript" },
       mode: "split",
       clean: true,
       prettier: true,
+      indexFiles: false,
       override: {
         zod: {
           coerce: {

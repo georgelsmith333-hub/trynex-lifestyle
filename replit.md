@@ -1,45 +1,59 @@
-# [Project name]
+# TryNex Lifestyle — Replit Project
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+## Overview
+Full-stack e-commerce platform for TryNex Lifestyle, a Bangladesh-based custom apparel and lifestyle brand. Features a 3D Design Studio for real-time product customisation.
 
-## Run & Operate
+## Tech Stack
+- **Frontend:** React 19 + Vite 7 + TypeScript + Tailwind CSS v4 + Framer Motion + wouter
+- **3D Engine:** Three.js + React Three Fiber + Drei
+- **Backend:** Express 5 + TypeScript (Node 24)
+- **Database:** PostgreSQL via Drizzle ORM (Replit PostgreSQL primary, Neon failovers)
+- **Cache:** Upstash Redis REST (in-process Map fallback)
+- **Storage:** Cloudflare R2 (S3-compatible)
+- **Monorepo:** pnpm workspaces
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+## Project Structure
+```
+artifacts/
+  trynex-storefront/   # React storefront + admin panel (port 5000)
+  api-server/          # Express API (port 8080)
+  api-worker/          # Cloudflare Worker alternative (Hono)
+  mockup-sandbox/      # Isolated UI dev environment (port 8081)
+lib/
+  db/                  # Drizzle schema, migrations, multi-URL failover client
+  api-spec/            # OpenAPI spec + generated types
+  api-zod/             # Generated Zod validators
+  api-client-react/    # TanStack Query hooks
+scripts/               # Seed, PDF, CI helpers
+```
 
-## Stack
+## Running the App
+The `Start application` workflow starts both services:
+- API server: `PORT=8080 pnpm --filter @workspace/api-server run dev`
+- Storefront: `PORT=5000 pnpm --filter @workspace/trynex-storefront run dev`
 
-- pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+Vite proxies all `/api/*` requests to `localhost:8080`, so no CORS issues in development.
 
-## Where things live
+## Key Environment Variables
+Set in Replit secrets (not env vars) for security:
+- `JWT_SECRET` / `ADMIN_JWT_SECRET` — token signing
+- `ADMIN_PASSWORD` / `ADMIN_SECRET_PASSWORD` — admin panel access
+- `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` — Cloudflare R2 storage
+- `DATABASE_URL_MAIN` / `DATABASE_URL_TRYNEX_DB` / `DATABASE_FAILOVER` — Neon DBs
+- `UPSTASH_REDIS_REST_TOKEN` — Redis cache
+- `CLOUDFLARE_API_TOKEN` / `RENDER_API_KEY` / `GITHUB_TOKEN` — deployment
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+## Database Strategy
+- **Primary:** Replit PostgreSQL (DATABASE_URL — auto-provisioned)
+- **Failover chain:** DATABASE_URL_MAIN → DATABASE_URL_TRYNEX_DB → DATABASE_FAILOVER
+- All 12 migrations run automatically at startup via `runMigrations()`
+- Never shard transactional data (orders/users/products all on primary)
 
-## Architecture decisions
+## Admin Panel
+Visit `/admin/login` — use the ADMIN_PASSWORD secret to log in.
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
-
-## Product
-
-_Describe the high-level user-facing capabilities of this app once they exist._
-
-## User preferences
-
-_Populate as you build — explicit user instructions worth remembering across sessions._
-
-## Gotchas
-
-_Populate as you build — sharp edges, "always run X before Y" rules._
-
-## Pointers
-
-- See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
+## User Preferences
+- Keep the pnpm monorepo structure intact
+- Never expose secrets in code or env var files
+- Use TypeScript strict mode throughout
+- Follow existing file structure conventions

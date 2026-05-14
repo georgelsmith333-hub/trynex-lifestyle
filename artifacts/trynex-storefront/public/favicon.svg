@@ -1,0 +1,22 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg-brand" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#E85D04"/>
+      <stop offset="100%" stop-color="#FB8500"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="0" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="55%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Brand orange background -->
+  <rect width="512" height="512" rx="118" fill="url(#bg-brand)"/>
+  <!-- Subtle top shine -->
+  <rect width="512" height="320" rx="118" fill="url(#shine)"/>
+
+  <!-- White T crossbar -->
+  <rect x="94" y="152" width="324" height="76" rx="38" fill="#ffffff"/>
+  <!-- T stem -->
+  <rect x="218" y="152" width="76" height="258" rx="38" fill="#ffffff"/>
+</svg>
