@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "RFtPJdjLDAP6rYhjR1jEb"
+uri = "file://exports/TryNex-Production-Report.pdf"
+type = "pdf"
+title = "TryNex Lifestyle — Production Status Report"

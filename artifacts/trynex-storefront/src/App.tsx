@@ -157,6 +157,7 @@ function Router() {
             <Route path="/products" component={Products} />
             <Route path="/shop" component={Products} />
             <Route path="/product/:id" component={ProductDetail} />
+            <Route path="/products/:id" component={ProductDetail} />
             <Route path="/cart" component={Cart} />
             <Route path="/checkout" component={Checkout} />
             <Route path="/track" component={TrackOrder} />
