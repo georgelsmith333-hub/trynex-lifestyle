@@ -517,13 +517,22 @@ router.post("/orders", async (req, res) => {
     const hamperItems = items.filter((i: any) => isHamperItem(i));
 
     // Fetch studio prices from server-side settings (never trust client price)
+    // Defaults must match buildSettings() in settings.ts
     let studioTshirtPrice = 1099;
     let studioMugPrice = 799;
+    let studioHoodiePrice = 1699;
+    let studioLongsleevePrice = 1299;
+    let studioCapPrice = 699;
+    let studioWaterbottlePrice = 899;
     try {
       const allSettings = await db.select().from(settingsTable);
       const settingsMap = Object.fromEntries(allSettings.map((s: any) => [s.key, s.value]));
-      if (settingsMap.studioTshirtPrice) studioTshirtPrice = parseFloat(settingsMap.studioTshirtPrice) || 1099;
-      if (settingsMap.studioMugPrice) studioMugPrice = parseFloat(settingsMap.studioMugPrice) || 799;
+      if (settingsMap["studioTshirtPrice"] != null) studioTshirtPrice = parseFloat(settingsMap["studioTshirtPrice"]) || 1099;
+      if (settingsMap["studioMugPrice"] != null) studioMugPrice = parseFloat(settingsMap["studioMugPrice"]) || 799;
+      if (settingsMap["studioHoodiePrice"] != null) studioHoodiePrice = parseFloat(settingsMap["studioHoodiePrice"]) || 1699;
+      if (settingsMap["studioLongsleevePrice"] != null) studioLongsleevePrice = parseFloat(settingsMap["studioLongsleevePrice"]) || 1299;
+      if (settingsMap["studioCapPrice"] != null) studioCapPrice = parseFloat(settingsMap["studioCapPrice"]) || 699;
+      if (settingsMap["studioWaterbottlePrice"] != null) studioWaterbottlePrice = parseFloat(settingsMap["studioWaterbottlePrice"]) || 899;
     } catch (err) {
       logger.warn({ err, route: "POST /orders" }, "Failed to load studio prices from settings; using defaults");
     }
@@ -614,13 +623,27 @@ router.post("/orders", async (req, res) => {
       let note: any = {};
       try { note = JSON.parse(item.customNote ?? "{}"); } catch (err) { logger.warn({ err }, "Failed to parse customNote"); }
       // Determine product type from the studio note to apply the correct price
-      const isMug = (note.product ?? "").toLowerCase().includes("mug");
-      const serverPrice = isMug ? studioMugPrice : studioTshirtPrice;
+      const productType = (note.product ?? "").toLowerCase();
+      let serverPrice: number;
+      let defaultName: string;
+      if (productType.includes("mug")) {
+        serverPrice = studioMugPrice; defaultName = "Custom Studio Mug";
+      } else if (productType.includes("hoodie")) {
+        serverPrice = studioHoodiePrice; defaultName = "Custom Studio Hoodie";
+      } else if (productType.includes("longsleeve") || productType.includes("long sleeve") || productType.includes("long-sleeve")) {
+        serverPrice = studioLongsleevePrice; defaultName = "Custom Studio Long-Sleeve";
+      } else if (productType.includes("cap") || productType.includes("hat")) {
+        serverPrice = studioCapPrice; defaultName = "Custom Studio Cap";
+      } else if (productType.includes("bottle") || productType.includes("waterbottle")) {
+        serverPrice = studioWaterbottlePrice; defaultName = "Custom Studio Water Bottle";
+      } else {
+        serverPrice = studioTshirtPrice; defaultName = "Custom Studio T-Shirt";
+      }
       // Use the async-saved mockup URL (converts data-URL → object storage path)
       const savedImageUrl = studioMockupUrls[idx] ?? null;
       return {
         productId: 0,
-        productName: item.name || (isMug ? "Custom Studio Mug" : "Custom Studio T-Shirt"),
+        productName: item.name || defaultName,
         productImage: savedImageUrl,
         quantity: Math.max(1, Math.floor(Number(item.quantity))),
         size: item.size,
@@ -749,16 +772,18 @@ router.post("/orders", async (req, res) => {
 
     const subtotal = orderItems.reduce((sum: number, item: any) => sum + item.price * item.quantity, 0);
 
-    // Shipping config is admin-controlled. 0/blank ⇒ feature disabled (no charge / no threshold).
-    let freeThreshold = 0;
-    let shipCost = 0;
+    // Shipping config is admin-controlled via the settings table.
+    // Defaults match the buildSettings() function in settings.ts so that
+    // orders placed before the admin customises these values are still correct.
+    let freeThreshold = 1500; // ৳1,500 free-shipping threshold (default)
+    let shipCost = 100;       // ৳100 flat shipping fee (default)
     try {
       const settings = await db.select().from(settingsTable);
       const settingsMap = Object.fromEntries(settings.map(s => [s.key, s.value]));
-      if (settingsMap.freeShippingThreshold) freeThreshold = Number(settingsMap.freeShippingThreshold) || 0;
-      if (settingsMap.shippingCost) shipCost = Number(settingsMap.shippingCost) || 0;
+      if (settingsMap["freeShippingThreshold"] != null) freeThreshold = Number(settingsMap["freeShippingThreshold"]) || 1500;
+      if (settingsMap["shippingCost"] != null) shipCost = Number(settingsMap["shippingCost"]) || 100;
     } catch (err) {
-      logger.warn({ err, route: "POST /orders" }, "Failed to load shipping settings — defaulting to no charge");
+      logger.warn({ err, route: "POST /orders" }, "Failed to load shipping settings — using defaults (৳100 / ৳1500 threshold)");
     }
     const shippingCost = freeThreshold > 0 && subtotal >= freeThreshold ? 0 : shipCost;
 
