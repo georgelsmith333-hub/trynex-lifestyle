@@ -6,3 +6,63 @@ id = "RFtPJdjLDAP6rYhjR1jEb"
 uri = "file://exports/TryNex-Production-Report.pdf"
 type = "pdf"
 title = "TryNex Lifestyle — Production Status Report"
+
+[[outputs]]
+id = "qdtPrtZiI2uysmEU4Hl7B"
+uri = "file://exports/01_FINAL_INFRASTRUCTURE_MAP.pdf"
+type = "pdf"
+title = "Report 01 — Final Infrastructure Map"
+
+[[outputs]]
+id = "p4BxXTzl1moyACWDEQVv9"
+uri = "file://exports/02_FINAL_PRODUCTION_VERIFICATION.pdf"
+type = "pdf"
+title = "Report 02 — Production Verification"
+
+[[outputs]]
+id = "gQryDvBE2eo2N29Wqq86c"
+uri = "file://exports/03_CACHE_ARCHITECTURE_REPORT.pdf"
+type = "pdf"
+title = "Report 03 — Cache Architecture"
+
+[[outputs]]
+id = "Nf9ybOKl1tXQmc6bRWA_N"
+uri = "file://exports/04_DATABASE_HEALTH_REPORT.pdf"
+type = "pdf"
+title = "Report 04 — Database Health"
+
+[[outputs]]
+id = "KFfBaPOYZPHgFaGgTyFsV"
+uri = "file://exports/05_SECURITY_AUDIT_REPORT.pdf"
+type = "pdf"
+title = "Report 05 — Security Audit"
+
+[[outputs]]
+id = "qzzTRO_EKbRhgdmy83fop"
+uri = "file://exports/06_PERFORMANCE_AUDIT_REPORT.pdf"
+type = "pdf"
+title = "Report 06 — Performance Audit"
+
+[[outputs]]
+id = "G0JVNbRYp4Q05oWboyk71"
+uri = "file://exports/07_DEPLOYMENT_PIPELINE_REPORT.pdf"
+type = "pdf"
+title = "Report 07 — Deployment Pipeline"
+
+[[outputs]]
+id = "IqwjTYJh0P7NUR43Ye4aG"
+uri = "file://exports/08_ADMIN_PANEL_STATUS_REPORT.pdf"
+type = "pdf"
+title = "Report 08 — Admin Panel Status"
+
+[[outputs]]
+id = "VOsXNfVEE6tCswwqjrqxT"
+uri = "file://exports/09_BUYER_EXPERIENCE_REPORT.pdf"
+type = "pdf"
+title = "Report 09 — Buyer Experience"
+
+[[outputs]]
+id = "07uPA3G0CJTqA7VYY-Lv1"
+uri = "file://exports/10_FINAL_PRODUCTION_READINESS_REPORT.pdf"
+type = "pdf"
+title = "Report 10 — Final Production Readiness"
