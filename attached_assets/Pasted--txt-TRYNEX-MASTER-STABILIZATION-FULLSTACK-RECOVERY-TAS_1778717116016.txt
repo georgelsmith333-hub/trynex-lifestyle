@@ -1,0 +1,386 @@
+```txt
+TRYNEX MASTER STABILIZATION + FULLSTACK RECOVERY TASK
+=====================================================
+
+You are the PRIMARY senior full-stack production engineer for TryNex.
+
+Repository:
+https://github.com/georgelsmith333-hub/trynex-liestyle
+
+MAIN PRODUCTION DOMAIN:
+https://trynexshop.com
+
+CANONICAL DOMAIN:
+https://trynexshop.com
+
+SECONDARY DOMAIN:
+https://www.trynexshop.com
+MUST redirect → https://trynexshop.com
+
+=====================================================
+CRITICAL CONTEXT
+=====================================================
+
+The project currently has:
+- Cloudflare Pages frontend
+- Render backend API
+- Neon PostgreSQL
+- Upstash Redis
+- Cloudflare R2
+- GitHub Actions
+- React + Vite storefront/admin
+- Wouter routing
+- Service worker/PWA
+- Redis cache layer
+- multiple Cloudflare Pages projects
+- multiple Workers
+
+Current problems:
+1. Admin panel routes broken
+2. Clicking admin sidebar pages opens storefront 404
+3. White-screen transitions occasionally happen
+4. Cloudflare Pages/Workers confusion exists
+5. Duplicate Pages projects exist
+6. GitHub checks partially failing
+7. Need production-grade stabilization
+8. Need Neon transfer optimization
+9. Need full buyer/admin QA
+10. Need safer deployment architecture
+
+=====================================================
+VERY IMPORTANT RULES
+=====================================================
+
+1. DO NOT expose secrets in logs/reports/screenshots/files.
+2. DO NOT hardcode passwords/tokens.
+3. DO NOT break working backend logic.
+4. DO NOT randomly shard databases.
+5. DO NOT repeatedly retry failed methods blindly.
+6. ALWAYS rollback only broken changes if needed.
+7. ALWAYS verify after every fix.
+8. NEVER mark complete until buyer + admin flows work.
+
+=====================================================
+PHASE 1 — FIX ADMIN PANEL COMPLETELY
+=====================================================
+
+URGENT.
+
+Observed:
+- /admin loads
+- clicking Orders/Products/Categories/Settings redirects to storefront 404
+- admin sidebar links broken
+
+Fix:
+artifacts/trynex-storefront/src/App.tsx
+
+Inside nested admin <Switch>:
+MOVE:
+<Route path="/admin" component={AdminDashboard} />
+TO THE VERY BOTTOM.
+
+ALL specific routes must come first:
+- /admin/orders
+- /admin/products
+- /admin/categories
+- /admin/blog
+- /admin/customers
+- /admin/backup
+- /admin/settings
+- /admin/facebook-import
+- /admin/reviews
+- /admin/tech-stack
+- /admin/facebook-guide
+- /admin/designer
+- /admin/deployment
+- /admin/hampers
+- /admin/logs
+- /admin/security
+- /admin/seo
+- /admin/promo-codes
+- /admin/referrals
+- /admin/newsletter
+- /admin/db-cluster
+
+Then:
+- /admin → dashboard route LAST.
+
+Also:
+1. Verify AdminLayout links match routes exactly.
+2. Verify mobile sidebar links work.
+3. Verify direct browser loads work:
+   /admin/orders
+   /admin/products
+   /admin/settings
+   etc.
+4. No storefront 404 should appear inside admin.
+
+If Wouter route matching still fails:
+- create dedicated AdminRouter
+- use exact matching safely
+- isolate admin routes from storefront routes
+
+=====================================================
+PHASE 2 — FIX CLOUDFLARE DEPLOYMENT ARCHITECTURE
+=====================================================
+
+Current Pages projects:
+- trynex-lifestyle-shop
+- trynex-liestyle
+
+Production project MUST be:
+trynex-lifestyle-shop
+
+Tasks:
+1. Verify workflow deploys ONLY production frontend correctly.
+2. Remove confusion between duplicate projects.
+3. Verify:
+   trynexshop.com
+   www.trynexshop.com
+   are attached ONLY to trynex-lifestyle-shop.
+4. Remove production custom domains from trynex-liestyle.
+5. Audit Workers routes:
+   no Worker should intercept:
+   trynexshop.com/*
+   www.trynexshop.com/*
+   unless explicitly needed.
+6. www must redirect → root domain.
+7. Fix GitHub Actions duplicate/failing checks.
+8. Worker deployment must NOT block frontend deploy.
+9. Cloudflare Pages must remain primary frontend.
+
+=====================================================
+PHASE 3 — BUYER EXPERIENCE FULL QA
+=====================================================
+
+Perform full buyer-side testing:
+
+Test:
+- homepage
+- products page
+- product detail
+- category filter
+- search
+- cart
+- checkout
+- guest checkout
+- account creation
+- blog
+- footer links
+- refresh on every route
+- direct URL open
+- mobile navigation
+- desktop navigation
+
+Fix:
+- white screens
+- blank pages
+- route crashes
+- stale service worker assets
+- chunk load failures
+- hydration mismatch
+- layout flashes
+- mobile overflow
+- broken transitions
+- loading animation issues
+- console errors
+- excessive React Query refetches
+
+Add:
+- route-level error boundaries
+- chunk retry recovery
+- skeleton loaders
+- graceful API failure UI
+
+=====================================================
+PHASE 4 — ADMIN PANEL FULL QA
+=====================================================
+
+Test ALL admin pages:
+- dashboard
+- orders
+- products
+- categories
+- settings
+- blog
+- deployment
+- db cluster
+- customers
+- logs
+- newsletter
+- security
+- referrals
+- promo codes
+- tech stack
+
+Fix:
+- stale data
+- failed mutations
+- mobile issues
+- table overflow
+- missing loading states
+- broken refresh
+- unhandled API errors
+
+=====================================================
+PHASE 5 — REDIS + CACHE HARDENING
+=====================================================
+
+Verify:
+- Redis connected
+- MISS→HIT works
+- cache invalidation works
+- no stale categories/products/settings
+- cache namespace prefixes exist
+- Redis failure fallback works
+- no duplicate cache keys
+- deployment stale cache prevention
+
+Fix:
+- stale categories
+- stale products
+- stale settings
+- stale blog
+- cacheDelPattern misuse
+- unbounded search cache
+- missing X-Cache headers
+
+=====================================================
+PHASE 6 — NEON + DATABASE STABILIZATION
+=====================================================
+
+DO NOT randomly shard production DBs.
+
+Safe structure:
+MAIN DB:
+- users
+- auth
+- sessions
+- orders
+- products
+- settings
+
+ANALYTICS DB:
+- logs/events only
+
+FAILOVER DB:
+- emergency backup only
+
+Tasks:
+1. Audit query-heavy endpoints.
+2. Add missing indexes.
+3. Reduce SELECT * usage.
+4. Reduce polling.
+5. Reduce transfer-heavy responses.
+6. Verify connection pooling.
+7. Verify migrations consistency.
+8. Verify failover DB schema.
+9. Verify no unsafe multi-write logic.
+
+=====================================================
+PHASE 7 — CI/CD + DEPLOYMENT STABILITY
+=====================================================
+
+Audit:
+.github/workflows/deploy.yml
+
+Fix:
+- failing Workers builds
+- duplicate checks
+- wrong Pages deploy target
+- wrong build output
+- Node/pnpm mismatch
+- workflow conflicts
+- secret handling
+- deployment race conditions
+
+Ensure:
+- frontend deploy succeeds
+- backend deploy succeeds
+- Pages deploy succeeds
+- no unnecessary Worker deploy blocking
+
+=====================================================
+PHASE 8 — PERFORMANCE + RELIABILITY
+=====================================================
+
+Optimize:
+- bundle splitting
+- route chunking
+- lazy loading
+- Suspense boundaries
+- service worker caching
+- image loading
+- API waterfalls
+- mobile rendering
+- first paint
+- LCP/FCP
+- route transitions
+
+Prevent:
+- Render cold starts causing broken UX
+- duplicate React Query requests
+- memory leaks
+- polling abuse
+
+=====================================================
+PHASE 9 — FINAL VERIFICATION
+=====================================================
+
+Run ALL:
+
+git status
+git log --oneline -5
+
+pnpm install --frozen-lockfile
+pnpm run typecheck
+pnpm run build
+
+curl -I https://trynexshop.com
+curl -I https://www.trynexshop.com
+
+curl -s https://trynex-api.onrender.com/api/healthz
+
+curl -I https://trynex-api.onrender.com/api/products
+curl -I https://trynex-api.onrender.com/api/categories
+curl -I https://trynex-api.onrender.com/api/settings
+curl -I https://trynex-api.onrender.com/api/blog
+
+Verify:
+- no admin routing failures
+- no storefront 404 inside admin
+- no blank screens
+- no fatal console errors
+- buyer flow works
+- admin flow works
+- build succeeds
+- deploy succeeds
+
+=====================================================
+REQUIRED FINAL REPORT
+=====================================================
+
+Provide:
+1. files changed
+2. admin routing result
+3. buyer QA result
+4. admin QA result
+5. Cloudflare/domain result
+6. Redis/cache result
+7. Neon/database result
+8. CI/CD result
+9. performance result
+10. remaining manual actions
+11. tests passed
+12. tests failed
+13. production readiness score
+
+DO NOT MARK COMPLETE UNTIL:
+- admin pages work
+- storefront works
+- domain works
+- buyer flow works
+- no storefront 404 inside admin
+- builds pass
+- deploys pass
+```

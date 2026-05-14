@@ -27,7 +27,6 @@ import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 import { useUtmCapture } from "@/hooks/useUtm";
 import { Loader } from "@/components/ui/Loader";
 import { AppErrorBoundary } from "@/components/AppErrorBoundary";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { getApiUrl } from "@/lib/utils";
 
 // Warm up the API on mount so the first real request is fast.
@@ -183,37 +182,38 @@ function Router() {
             <Route path="/signup" component={Signup} />
             <Route path="/account" component={Account} />
 
-            {/* Admin — wrapped in its own ErrorBoundary so a broken admin
-                page can never crash the storefront */}
-            <Route path="/admin/login" component={AdminLogin} />
-            <Route path="/admin">
-              <ErrorBoundary section="admin panel">
-                <Switch>
-                  <Route path="/admin" component={AdminDashboard} />
-                  <Route path="/admin/products" component={AdminProducts} />
-                  <Route path="/admin/categories" component={AdminCategories} />
-                  <Route path="/admin/orders" component={AdminOrders} />
-                  <Route path="/admin/blog" component={AdminBlog} />
-                  <Route path="/admin/customers" component={AdminCustomers} />
-                  <Route path="/admin/backup" component={AdminBackup} />
-                  <Route path="/admin/settings" component={AdminSettings} />
-                  <Route path="/admin/facebook-import" component={AdminFacebookImport} />
-                  <Route path="/admin/reviews" component={AdminReviews} />
-                  <Route path="/admin/tech-stack" component={AdminTechStack} />
-                  <Route path="/admin/facebook-guide" component={AdminFacebookGuide} />
-                  <Route path="/admin/designer" component={AdminDesigner} />
-                  <Route path="/admin/deployment" component={AdminDeployment} />
-                  <Route path="/admin/hampers" component={AdminHampers} />
-                  <Route path="/admin/logs" component={AdminActivityLog} />
-                  <Route path="/admin/security" component={AdminSecurity} />
-                  <Route path="/admin/seo" component={AdminSEO} />
-                  <Route path="/admin/promo-codes" component={AdminPromoCodes} />
-                  <Route path="/admin/referrals" component={AdminReferrals} />
-                  <Route path="/admin/newsletter" component={AdminNewsletter} />
-                  <Route path="/admin/db-cluster" component={AdminDatabaseCluster} />
-                </Switch>
-              </ErrorBoundary>
-            </Route>
+            {/* ── Admin panel ──────────────────────────────────────────────
+                All admin routes are listed FLAT in the outer Switch so that
+                Wouter v3 resolves them with unambiguous exact-prefix matching.
+                Specific sub-routes must come BEFORE the bare /admin route so
+                the Switch stops at the right entry.
+                Each component is already wrapped in AdminLayout which handles
+                auth-redirect internally. AppErrorBoundary at the top catches
+                any render error that escapes AdminLayout.
+            ─────────────────────────────────────────────────────────────── */}
+            <Route path="/admin/login"         component={AdminLogin} />
+            <Route path="/admin/products"      component={AdminProducts} />
+            <Route path="/admin/categories"    component={AdminCategories} />
+            <Route path="/admin/orders"        component={AdminOrders} />
+            <Route path="/admin/blog"          component={AdminBlog} />
+            <Route path="/admin/customers"     component={AdminCustomers} />
+            <Route path="/admin/backup"        component={AdminBackup} />
+            <Route path="/admin/settings"      component={AdminSettings} />
+            <Route path="/admin/facebook-import" component={AdminFacebookImport} />
+            <Route path="/admin/reviews"       component={AdminReviews} />
+            <Route path="/admin/tech-stack"    component={AdminTechStack} />
+            <Route path="/admin/facebook-guide" component={AdminFacebookGuide} />
+            <Route path="/admin/designer"      component={AdminDesigner} />
+            <Route path="/admin/deployment"    component={AdminDeployment} />
+            <Route path="/admin/hampers"       component={AdminHampers} />
+            <Route path="/admin/logs"          component={AdminActivityLog} />
+            <Route path="/admin/security"      component={AdminSecurity} />
+            <Route path="/admin/seo"           component={AdminSEO} />
+            <Route path="/admin/promo-codes"   component={AdminPromoCodes} />
+            <Route path="/admin/referrals"     component={AdminReferrals} />
+            <Route path="/admin/newsletter"    component={AdminNewsletter} />
+            <Route path="/admin/db-cluster"    component={AdminDatabaseCluster} />
+            <Route path="/admin"               component={AdminDashboard} />
 
             {/* Short-URL redirects */}
             <Route path="/privacy"><Redirect to="/privacy-policy" /></Route>

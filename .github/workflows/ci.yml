@@ -1,10 +1,11 @@
 name: CI
 
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
+# CI runs on PRs only. Push to main is handled entirely by deploy.yml,
+# which already includes typecheck as a required first step — running
+# both on push would double the CI cost with identical checks.
 
 jobs:
   typecheck-and-build:

@@ -15,6 +15,9 @@ concurrency:
 #   CLOUDFLARE_ACCOUNT_ID     CF account ID (same as R2_ACCOUNT_ID)
 #   RENDER_DEPLOY_HOOK_URL    Render → Service → Settings → Deploy Hook
 #   DATABASE_URL_MAIN         Primary Neon connection string
+#   JWT_SECRET                Customer JWT signing secret
+#   ADMIN_JWT_SECRET          Admin JWT signing secret
+#   ADMIN_PASSWORD            Admin panel password
 # ─────────────────────────────────────────────────────────────────────────────
 
 jobs:
@@ -55,6 +58,7 @@ jobs:
 
   # ════════════════════════════════════════════════════════════════════════════
   #  JOB 1 — Build + deploy storefront → Cloudflare Pages
+  #  TARGET PROJECT: trynex-lifestyle-shop (production)
   # ════════════════════════════════════════════════════════════════════════════
   deploy-frontend:
     name: "☁️ Frontend → Cloudflare Pages"
@@ -84,7 +88,7 @@ jobs:
         env:
           VITE_API_BASE_URL: "https://trynex-api.onrender.com"
 
-      - name: Deploy to Cloudflare Pages
+      - name: Deploy to Cloudflare Pages (trynex-lifestyle-shop)
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -94,17 +98,18 @@ jobs:
           wranglerVersion: "3"
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: echo "✅ Frontend deployed to Cloudflare Pages"
+      - run: echo "✅ Frontend deployed to Cloudflare Pages (trynex-lifestyle-shop)"
 
   # ════════════════════════════════════════════════════════════════════════════
   #  JOB 2 — Build + deploy API Worker → Cloudflare Workers
-  #  The Worker is the edge API layer used by the CF Pages Functions proxy.
+  #  Non-blocking: worker failures do NOT prevent frontend or backend deploys.
   # ════════════════════════════════════════════════════════════════════════════
   deploy-worker:
     name: "⚡ API Worker → Cloudflare Workers"
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: [typecheck]
+    continue-on-error: true
 
     steps:
       - uses: actions/checkout@v4
@@ -137,13 +142,13 @@ jobs:
             local key="$1" val="$2"
             if [ -n "$val" ]; then
               echo "$val" | pnpm exec wrangler secret put "$key" 2>/dev/null \
-                && echo "  ✅ $key set" || echo "  ⚠️  $key failed"
+                && echo "  ✅ $key set" || echo "  ⚠️  $key failed (non-fatal)"
             else
               echo "  ℹ️  $key not in CI secrets — skipping"
             fi
           }
-          set_secret DATABASE_URL  "$DATABASE_URL_MAIN"
-          set_secret JWT_SECRET    "$JWT_SECRET"
+          set_secret DATABASE_URL     "$DATABASE_URL_MAIN"
+          set_secret JWT_SECRET       "$JWT_SECRET"
           set_secret ADMIN_JWT_SECRET "$ADMIN_JWT_SECRET"
           set_secret ADMIN_PASSWORD   "$ADMIN_PASSWORD"
 
@@ -187,7 +192,8 @@ jobs:
           RENDER_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
 
   # ════════════════════════════════════════════════════════════════════════════
-  #  JOB 4 — Post-deploy smoke test (runs after all deploys)
+  #  JOB 4 — Post-deploy smoke test (runs after frontend + backend)
+  #  Worker is excluded from required deps — it is non-blocking.
   # ════════════════════════════════════════════════════════════════════════════
   smoke-test:
     name: "🔥 Smoke Test"
@@ -218,3 +224,9 @@ jobs:
             "https://trynex-api.onrender.com/api/products?limit=1")
           echo "Products endpoint: HTTP $HTTP"
           [ "$HTTP" = "200" ] && echo "✅ Products OK" || echo "⚠️  Products returned $HTTP"
+
+      - name: Health check — trynexshop.com
+        run: |
+          HTTP=$(curl -s -o /dev/null -w "%{http_code}" -L "https://trynexshop.com")
+          echo "trynexshop.com: HTTP $HTTP"
+          [ "$HTTP" = "200" ] && echo "✅ Frontend OK" || echo "⚠️  Frontend returned $HTTP"

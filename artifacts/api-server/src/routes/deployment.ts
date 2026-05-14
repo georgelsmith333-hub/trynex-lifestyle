@@ -341,8 +341,8 @@ router.post("/admin/deployment/render-api", requireAdmin, async (req, res) => {
       return;
     }
 
-    const data = await deployRes.json().catch(() => ({}));
-    const deploy = data.deploy || data;
+    const data: any = await deployRes.json().catch(() => ({}));
+    const deploy: any = data.deploy || data;
     const triggeredAt = new Date().toISOString();
     req.log.info({ deployId: deploy.id, triggeredAt }, "Render deploy triggered via API");
 
@@ -378,7 +378,7 @@ router.get("/admin/deployment/live-status", requireAdmin, async (req, res) => {
           signal: AbortSignal.timeout(8000),
         }).then(async r => {
           if (!r.ok) throw new Error(`HTTP ${r.status}`);
-          const items: any[] = await r.json();
+          const items: any[] = (await r.json()) as any[];
           return {
             source: "render",
             deploys: items.map((item: any) => {
@@ -403,8 +403,8 @@ router.get("/admin/deployment/live-status", requireAdmin, async (req, res) => {
           signal: AbortSignal.timeout(8000),
         }).then(async r => {
           if (!r.ok) throw new Error(`HTTP ${r.status}`);
-          const d = await r.json();
-          const svc = d.service || d;
+          const d: any = await r.json();
+          const svc: any = d.service || d;
           return {
             source: "render_service",
             name: svc.name,
@@ -427,10 +427,10 @@ router.get("/admin/deployment/live-status", requireAdmin, async (req, res) => {
           signal: AbortSignal.timeout(8000),
         }).then(async r => {
           if (!r.ok) {
-            const errBody = await r.json().catch(() => ({}));
+            const errBody: any = await r.json().catch(() => ({}));
             throw new Error(errBody.message || `HTTP ${r.status}`);
           }
-          const commits: any[] = await r.json();
+          const commits: any[] = (await r.json()) as any[];
           return {
             source: "github",
             commits: commits.map((c: any) => ({
@@ -451,7 +451,7 @@ router.get("/admin/deployment/live-status", requireAdmin, async (req, res) => {
           headers: { "Authorization": `Bearer ${CLOUDFLARE_API_TOKEN}` },
           signal: AbortSignal.timeout(8000),
         }).then(async r => {
-          const d = await r.json();
+          const d: any = await r.json();
           if (!d.success) return { source: "cloudflare", projects: [], error: d.errors?.[0]?.message || "Auth error" };
           return {
             source: "cloudflare",
@@ -563,8 +563,8 @@ router.post("/admin/deployment/deploy-all", requireAdmin, async (req, res) => {
         const errBody = await deployRes.text().catch(() => "");
         steps.push({ step: "render_deploy", status: "error", detail: `Render API HTTP ${deployRes.status}: ${errBody.slice(0, 150)}` });
       } else {
-        const data = await deployRes.json().catch(() => ({}));
-        const d = data.deploy || data;
+        const data: any = await deployRes.json().catch(() => ({}));
+        const d: any = data.deploy || data;
         steps.push({ step: "render_deploy", status: "ok", detail: `Deploy triggered: ${d.id || "?"} (status: ${d.status || "pending"})` });
       }
     } catch (e: any) {
