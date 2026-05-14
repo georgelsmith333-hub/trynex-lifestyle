@@ -1,0 +1,374 @@
+Use this as the **next master Replit development prompt**.
+This is now for **finishing, polishing, hardening, documenting, and scaling professionally** — not emergency fixing anymore.
+
+```txt id="g7j4f9"
+TRYNEX FINAL DEVELOPMENT + HARDENING PHASE
+==========================================
+
+You are now the PRIMARY senior production engineer for TryNex Lifestyle.
+
+The platform is already production-ready and operational.
+
+DO NOT rebuild the architecture.
+DO NOT introduce risky infrastructure rewrites.
+DO NOT randomly shard databases.
+DO NOT create unnecessary Workers or duplicate services.
+
+The goal now is:
+- hardening
+- polish
+- observability
+- scaling readiness
+- production cleanup
+- admin perfection
+- buyer UX perfection
+- documentation
+- deployment normalization
+- future enterprise readiness
+
+========================================================
+CURRENT VERIFIED PRODUCTION ARCHITECTURE
+========================================================
+
+Cloudflare DNS/CDN
+↓
+Cloudflare Pages
+(project: trynex-lifestyle-shop)
+↓
+Render API
+(trynex-api.onrender.com)
+↓
+Replit PostgreSQL PRIMARY
+↓
+Upstash Redis cache
+↓
+Cloudflare R2 storage
+
+Neon databases are FAILOVER/BACKUP ONLY.
+
+========================================================
+PRIMARY RULES
+========================================================
+
+1. NEVER expose secrets/tokens in reports.
+2. NEVER commit secrets into repo.
+3. NEVER break live production.
+4. NEVER remove working systems without documentation.
+5. ALWAYS create backups before risky changes.
+6. ALWAYS verify typecheck + build after changes.
+7. ALWAYS generate detailed production reports after major phases.
+
+========================================================
+PHASE 1 — COMPLETE FULL SYSTEM AUDIT AGAIN
+========================================================
+
+Re-verify EVERYTHING:
+
+Frontend:
+- homepage
+- products
+- categories
+- product detail
+- cart
+- checkout
+- design studio
+- hampers
+- blog
+- referral system
+- authentication
+- mobile UX
+- responsive layouts
+- route transitions
+- white screen risks
+- hydration mismatches
+- chunk loading
+- service worker
+
+Admin:
+- all admin routes
+- sidebar navigation
+- direct reloads
+- API failures
+- loading states
+- mutation handling
+- mobile responsiveness
+- route-level error boundaries
+- admin session persistence
+
+Backend:
+- all API endpoints
+- Redis cache
+- DB health
+- failover chain
+- R2 uploads
+- rate limits
+- security middleware
+- logging
+- deployment health
+
+========================================================
+PHASE 2 — PERFORMANCE HARDENING
+========================================================
+
+Optimize:
+- bundle size
+- chunk splitting
+- lazy loading
+- route transitions
+- React Query usage
+- cache invalidation
+- image optimization
+- LCP/FCP/CLS
+- hydration stability
+- loading skeletons
+- admin loading UX
+- mobile rendering
+- CPU-heavy rerenders
+- memory leaks
+- excessive polling
+- API waterfalls
+
+Ensure:
+- no white flashes
+- no blank screens
+- no infinite loading
+- no stale chunks
+- no stale SW cache
+- no broken direct route loads
+
+========================================================
+PHASE 3 — REDIS + CACHE HARDENING
+========================================================
+
+Verify:
+- MISS→HIT working
+- namespace prefixes
+- cache invalidation
+- no stale products/categories/settings
+- no stale admin state
+- deployment-safe cache busting
+- fallback mode works
+
+Audit:
+- products cache
+- blog cache
+- categories cache
+- settings cache
+- public-stats cache
+
+Add:
+- X-Cache headers
+- Redis diagnostics panel
+- cache metrics in admin
+
+========================================================
+PHASE 4 — DATABASE HARDENING
+========================================================
+
+Current state:
+Replit PostgreSQL = PRIMARY ACTIVE DB
+Neon = FAILOVER/BACKUP ONLY
+
+DO NOT shard production.
+
+Tasks:
+- verify indexes
+- optimize heavy queries
+- verify migrations
+- reduce polling load
+- verify failover logic
+- add DB diagnostics
+- verify backup consistency
+- verify connection pooling
+
+========================================================
+PHASE 5 — OBSERVABILITY + MONITORING
+========================================================
+
+Implement professionally:
+- Sentry frontend
+- Sentry backend
+- uptime monitoring
+- Redis health monitoring
+- DB health monitoring
+- deployment diagnostics
+- production error logging
+- API latency metrics
+- admin diagnostics page
+
+Recommended:
+- UptimeRobot
+- Sentry
+- structured logs
+- deployment monitoring
+
+========================================================
+PHASE 6 — SECURITY HARDENING
+========================================================
+
+Audit:
+- env validation
+- auth flows
+- JWT handling
+- session expiry
+- CSRF
+- rate limiting
+- admin protection
+- XSS/CSP
+- upload validation
+- API abuse protection
+
+Document ALL secrets needing rotation:
+- GitHub PAT
+- Cloudflare tokens
+- Render token
+- Redis token
+- DB passwords
+- R2 keys
+
+========================================================
+PHASE 7 — DEPLOYMENT + CI/CD CLEANUP
+========================================================
+
+Audit:
+.github/workflows/
+
+Ensure:
+- no duplicate deploy races
+- no stale Pages deploys
+- no stale Workers
+- no failing checks
+- Render deploy healthy
+- Pages deploy healthy
+- workflow permissions correct
+
+Normalize:
+- PR flow
+- protected branches
+- production deploy flow
+- rollback strategy
+
+========================================================
+PHASE 8 — BUYER EXPERIENCE POLISH
+========================================================
+
+Improve:
+- smooth animations
+- loading transitions
+- mobile UX
+- search UX
+- product filtering UX
+- checkout UX
+- trust indicators
+- SEO metadata
+- structured data
+- accessibility
+- responsive consistency
+- image quality
+- perceived performance
+
+========================================================
+PHASE 9 — ADMIN EXPERIENCE POLISH
+========================================================
+
+Improve:
+- admin dashboard UX
+- analytics
+- cache monitoring
+- deployment status panel
+- DB health panel
+- activity logs
+- responsive admin
+- loading skeletons
+- better tables
+- better filtering/search
+- error handling
+- notifications
+
+========================================================
+PHASE 10 — FINAL DOCUMENTATION
+========================================================
+
+After EVERY major phase generate professional PDF reports.
+
+Required reports:
+
+1. FINAL_INFRASTRUCTURE_MAP.pdf
+2. FINAL_PRODUCTION_VERIFICATION.pdf
+3. CACHE_ARCHITECTURE_REPORT.pdf
+4. DATABASE_HEALTH_REPORT.pdf
+5. SECURITY_AUDIT_REPORT.pdf
+6. PERFORMANCE_AUDIT_REPORT.pdf
+7. DEPLOYMENT_PIPELINE_REPORT.pdf
+8. ADMIN_PANEL_STATUS_REPORT.pdf
+9. BUYER_EXPERIENCE_REPORT.pdf
+10. FINAL_PRODUCTION_READINESS_REPORT.pdf
+
+========================================================
+PDF REPORT REQUIREMENTS
+========================================================
+
+Reports must look professional and enterprise-grade.
+
+Include:
+- architecture diagrams
+- route maps
+- cache flow diagrams
+- deployment flow
+- API summaries
+- DB topology
+- security checklist
+- production metrics
+- screenshots
+- verification tables
+- readiness scorecards
+- remaining risks
+- action items
+- timestamps
+- environment summary
+
+The PDF should visually resemble:
+- enterprise infrastructure audits
+- SaaS technical documentation
+- production readiness assessments
+
+========================================================
+FINAL VERIFICATION REQUIRED
+========================================================
+
+Run after all work:
+
+git status
+git log --oneline -10
+
+pnpm install --frozen-lockfile
+pnpm run typecheck
+pnpm run build
+
+Verify:
+- production healthy
+- admin healthy
+- buyer flow healthy
+- deploy healthy
+- Redis healthy
+- DB healthy
+- no admin routing bugs
+- no white screens
+- no deployment conflicts
+
+========================================================
+DO NOT MARK COMPLETE UNTIL:
+========================================================
+
+- storefront fully stable
+- admin fully stable
+- deploys successful
+- cache stable
+- no route failures
+- no stale SW issues
+- no mobile layout breaks
+- no admin redirect issues
+- architecture fully documented
+- production reports generated
+- PDFs exported professionally
+```
