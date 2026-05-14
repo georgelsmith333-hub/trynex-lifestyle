@@ -1,0 +1,399 @@
+TRYNEX FINAL HARDENING + PRODUCTION CLEANUP MASTER TASK
+=======================================================
+
+You are now the PRIMARY senior production engineer for TryNex.
+
+The emergency recovery phase is OVER.
+The site is already live and mostly stable.
+
+Current verified architecture:
+
+Cloudflare DNS/CDN
+↓
+Cloudflare Pages
+(project: trynex-lifestyle-shop)
+↓
+Render API
+(trynex-api.onrender.com)
+↓
+Replit PostgreSQL PRIMARY
+↓
+Upstash Redis cache
+↓
+Cloudflare R2 storage
+
+Neon databases are FAILOVER/BACKUP only.
+NO production multi-DB sharding is currently active.
+
+=======================================================
+PRIMARY GOAL
+=======================================================
+
+Finalize, harden, clean, document, and stabilize production.
+
+DO NOT rebuild infrastructure.
+DO NOT add random new systems.
+DO NOT add more Workers.
+DO NOT shard databases.
+DO NOT introduce risky architectural changes.
+
+This phase is:
+- production cleanup
+- deployment normalization
+- observability
+- uptime hardening
+- cache hardening
+- admin stability
+- buyer experience refinement
+- documentation
+- future scalability preparation
+
+=======================================================
+PHASE 1 — VERIFY CURRENT LIVE STATE
+=======================================================
+
+Re-run complete production verification.
+
+Run:
+
+curl -I https://trynexshop.com
+curl -I https://www.trynexshop.com
+
+curl -s https://trynex-api.onrender.com/api/healthz
+
+curl -I https://trynex-api.onrender.com/api/products
+curl -I https://trynex-api.onrender.com/api/categories
+curl -I https://trynex-api.onrender.com/api/settings
+curl -I https://trynex-api.onrender.com/api/blog
+
+Verify:
+- homepage works
+- admin works
+- buyer flow works
+- no white screens
+- no storefront 404 inside admin
+- Redis cache active
+- Render API healthy
+- Replit Primary DB active
+- R2 images loading
+- Cloudflare Pages healthy
+
+=======================================================
+PHASE 2 — PUSH ALL PENDING COMMITS
+=======================================================
+
+IMPORTANT.
+
+Replit is ahead of GitHub by multiple commits.
+
+Push ALL pending production fixes safely:
+- admin routing fix
+- deployment system
+- DB cluster panel
+- Redis/R2 config
+- cache fixes
+- CI/CD fixes
+
+If token expired:
+- document exact token scopes needed
+- verify workflow scope
+- verify repo permissions
+
+Ensure:
+- GitHub main branch updated
+- Render auto-deploy triggers
+- Cloudflare Pages deploy triggers
+
+=======================================================
+PHASE 3 — DOMAIN + CLOUDFLARE CLEANUP
+=======================================================
+
+Production frontend MUST be:
+Cloudflare Pages project:
+trynex-lifestyle-shop
+
+Tasks:
+1. Verify canonical domain:
+   https://trynexshop.com
+
+2. Verify:
+   https://www.trynexshop.com
+   redirects → apex domain.
+
+3. Audit ALL Cloudflare Workers routes.
+4. Remove ANY Worker route intercepting:
+   trynexshop.com/*
+   www.trynexshop.com/*
+
+5. Verify duplicate Pages project:
+   trynex-liestyle
+   is NOT controlling production domains.
+
+6. Verify SSL/HSTS/security headers.
+
+=======================================================
+PHASE 4 — ADMIN PANEL HARDENING
+=======================================================
+
+Verify ALL admin routes:
+
+/admin
+/admin/orders
+/admin/products
+/admin/categories
+/admin/settings
+/admin/blog
+/admin/customers
+/admin/deployment
+/admin/db-cluster
+/admin/tech-stack
+/admin/security
+/admin/logs
+/admin/newsletter
+/admin/referrals
+/admin/promo-codes
+
+Requirements:
+- no storefront 404
+- no white screens
+- no route crashes
+- mobile responsive
+- sidebar works
+- direct route loads work
+- refresh/reload works
+- API errors handled gracefully
+- loading states visible
+- no stale cached admin state
+
+Add:
+- route-level admin error boundaries
+- graceful mutation failures
+- admin loading skeletons if missing
+
+=======================================================
+PHASE 5 — BUYER EXPERIENCE HARDENING
+=======================================================
+
+Test:
+- homepage
+- products
+- categories
+- product detail
+- cart
+- checkout
+- guest checkout
+- blog
+- mobile nav
+- search
+- filters
+- direct URL reloads
+
+Fix:
+- white flashes
+- hydration mismatch
+- stale SW chunks
+- route chunk crashes
+- loading flickers
+- layout shifts
+- mobile overflow
+- animation jank
+- excessive React Query refetching
+
+Optimize:
+- route chunking
+- suspense boundaries
+- image loading
+- CLS/LCP/FCP
+- lazy loading
+- cache headers
+
+=======================================================
+PHASE 6 — REDIS + CACHE HARDENING
+=======================================================
+
+Verify:
+- MISS→HIT works
+- Redis connected
+- fallback works
+- cache invalidation works
+- no stale categories/products/settings
+- no duplicate cache keys
+- namespace prefixes exist
+- deployment cache busting safe
+
+Audit:
+- products cache
+- categories cache
+- blog cache
+- settings cache
+- public-stats cache
+
+Prevent:
+- stale admin state
+- stale storefront categories
+- stale product lists
+- stale blog pages
+
+=======================================================
+PHASE 7 — DATABASE + FAILOVER HARDENING
+=======================================================
+
+Current architecture:
+Replit PostgreSQL = PRIMARY ACTIVE DB.
+
+Neon DBs = FAILOVER/BACKUP ONLY.
+
+DO NOT shard production.
+
+Tasks:
+1. Verify active DB connections.
+2. Verify failover chain.
+3. Verify migrations consistency.
+4. Verify indexes exist.
+5. Verify no suspended critical node.
+6. Verify backup strategy.
+7. Verify DB cluster admin panel accuracy.
+
+Optimize:
+- heavy queries
+- polling
+- SELECT *
+- connection pooling
+- slow joins
+
+=======================================================
+PHASE 8 — OBSERVABILITY + UPTIME
+=======================================================
+
+Implement/verify:
+- uptime monitoring
+- health monitoring
+- API health endpoints
+- Redis health checks
+- DB health checks
+- deployment health checks
+- error logging
+- frontend error tracking
+- production diagnostics
+
+Recommended:
+- UptimeRobot
+- Sentry
+- structured logs
+- deployment status dashboard
+
+=======================================================
+PHASE 9 — SECURITY + SECRET CLEANUP
+=======================================================
+
+IMPORTANT:
+User exposed secrets/tokens during emergency debugging.
+
+Tasks:
+1. Document ALL secrets requiring rotation:
+   - GitHub PATs
+   - Cloudflare API token
+   - Render API key
+   - Neon passwords
+   - Redis token
+   - R2 keys
+
+2. Verify:
+- no secrets committed to repo
+- no secrets in logs
+- no secrets in screenshots
+- no secrets in frontend bundle
+- .env ignored correctly
+
+3. Add:
+- safer env validation
+- startup validation
+- missing-secret warnings
+
+=======================================================
+PHASE 10 — CI/CD NORMALIZATION
+=======================================================
+
+Audit:
+.github/workflows/
+
+Ensure:
+- deploy.yml healthy
+- ci.yml healthy
+- no duplicate deploy races
+- no broken workflow checks
+- Render deploy succeeds
+- Pages deploy succeeds
+- workflow permissions correct
+
+Fix:
+- stale workflows
+- duplicated checks
+- wrong Pages target
+- wrong Worker deploys
+- workflow permission failures
+
+=======================================================
+PHASE 11 — FINAL DOCUMENTATION
+=======================================================
+
+Create/update:
+
+1. FINAL_INFRASTRUCTURE_MAP.md
+2. FINAL_PRODUCTION_VERIFICATION.md
+3. FINAL_CLEANUP_STATUS.md
+4. DEPLOYMENT_GUIDE.md
+5. FAILOVER_GUIDE.md
+6. CACHE_ARCHITECTURE.md
+7. SECURITY_ROTATION_CHECKLIST.md
+
+=======================================================
+FINAL VERIFICATION
+=======================================================
+
+Run:
+git status
+git log --oneline -10
+
+pnpm install --frozen-lockfile
+pnpm run typecheck
+pnpm run build
+
+Verify:
+- production healthy
+- admin healthy
+- buyer flow healthy
+- deploy healthy
+- Redis healthy
+- DB healthy
+- no storefront 404 in admin
+- no white screens
+- no deployment conflicts
+
+=======================================================
+FINAL REPORT REQUIRED
+=======================================================
+
+Provide:
+1. What is LIVE
+2. What is PRIMARY
+3. What is FAILOVER only
+4. What is CLEANED
+5. What still needs manual dashboard action
+6. Remaining risks
+7. Security cleanup status
+8. CI/CD status
+9. Redis/cache status
+10. DB/failover status
+11. Buyer UX status
+12. Admin UX status
+13. Production readiness score
+
+DO NOT MARK COMPLETE UNTIL:
+- admin works perfectly
+- storefront works perfectly
+- deploys succeed
+- cache works
+- no admin routing issues remain
+- no duplicate Cloudflare conflicts remain
+- architecture fully documented
