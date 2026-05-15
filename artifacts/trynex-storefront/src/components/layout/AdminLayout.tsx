@@ -3,13 +3,15 @@ import {
   LayoutDashboard, Package, ShoppingCart, Settings, LogOut, Menu, X,
   FileText, Users, HardDrive, Sparkles, Star, Code2, BookOpen, Paintbrush,
   GitBranch, Gift, Layers, History, Shield, Search, Tag, Share2, Mail,
-  ChevronRight, DatabaseZap,
+  ChevronRight, DatabaseZap, Bell,
 } from "lucide-react";
 import { useAdminLogout, useAdminMe } from "@workspace/api-client-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Loader } from "@/components/ui/Loader";
 import { cn, getAuthHeaders } from "@/lib/utils";
 import { AdminAIAssistant } from "@/components/AdminAIAssistant";
+import { useAdminStream, type AdminStreamEvent } from "@/hooks/useAdminStream";
+import { NotificationStack, type OrderNotification } from "@/components/OrderNotificationToast";
 
 interface MenuItem {
   name: string;
@@ -69,15 +71,68 @@ const MENU_GROUPS: MenuGroup[] = [
   },
 ];
 
+const MAX_TOASTS = 5;
+
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const [location, setLocation] = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [notifications, setNotifications] = useState<OrderNotification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [bellPulse, setBellPulse] = useState(false);
+  const idCounter = useRef(0);
 
   const token = sessionStorage.getItem('trynex_admin_token');
   const authOpts = { request: { headers: getAuthHeaders() } };
 
   const { data, isPending, isFetching, isError } = useAdminMe(authOpts);
   const { mutateAsync: logout } = useAdminLogout(authOpts);
+
+  const handleStreamEvent = useCallback((event: AdminStreamEvent) => {
+    if (event.type === "ping") return;
+
+    idCounter.current += 1;
+    const id = `notif-${Date.now()}-${idCounter.current}`;
+
+    const notif: OrderNotification = {
+      id,
+      type: event.type as OrderNotification["type"],
+      createdAt: Date.now(),
+      ...(event.type === "new_order" && {
+        orderNumber: event.payload.orderNumber,
+        customerName: event.payload.customerName,
+        shippingDistrict: event.payload.shippingDistrict,
+        total: event.payload.total,
+        paymentMethod: event.payload.paymentMethod,
+        itemCount: event.payload.itemCount,
+      }),
+      ...(event.type === "order_status_changed" && {
+        orderNumber: event.payload.orderNumber,
+        status: event.payload.status,
+      }),
+      ...(event.type === "low_stock" && {
+        productName: event.payload.productName,
+        stock: event.payload.stock,
+      }),
+    };
+
+    setNotifications(prev => [notif, ...prev].slice(0, MAX_TOASTS));
+    setUnreadCount(c => c + 1);
+    setBellPulse(true);
+    setTimeout(() => setBellPulse(false), 2000);
+  }, []);
+
+  useAdminStream({
+    onEvent: handleStreamEvent,
+    enabled: !!token,
+  });
+
+  const dismissNotification = useCallback((id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  }, []);
+
+  const clearUnread = useCallback(() => {
+    setUnreadCount(0);
+  }, []);
 
   useEffect(() => {
     if (!token) {
@@ -251,15 +306,62 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             )}
           </div>
 
-          {/* Admin avatar */}
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black text-white shrink-0"
-              style={{ background: 'linear-gradient(135deg, #E85D04, #FB8500)' }}>
-              A
-            </div>
-            <div className="hidden sm:block">
-              <p className="text-xs font-black text-gray-800 leading-none">Admin</p>
-              <p className="text-[10px] text-gray-400 font-medium mt-0.5">TryNex Panel</p>
+          {/* Right section: notification bell + admin avatar */}
+          <div className="flex items-center gap-3">
+            {/* Notification Bell */}
+            <button
+              onClick={clearUnread}
+              className="relative p-2 rounded-xl transition-all duration-200"
+              title="Live order notifications"
+              style={{
+                background: bellPulse ? 'rgba(232,93,4,0.1)' : 'transparent',
+                color: bellPulse ? '#E85D04' : '#9ca3af',
+              }}
+              onMouseEnter={e => {
+                if (!bellPulse) {
+                  e.currentTarget.style.background = 'rgba(0,0,0,0.05)';
+                  e.currentTarget.style.color = '#374151';
+                }
+              }}
+              onMouseLeave={e => {
+                if (!bellPulse) {
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.color = '#9ca3af';
+                }
+              }}
+            >
+              <Bell
+                className="w-5 h-5"
+                style={{
+                  animation: bellPulse ? 'bell-ring 0.5s ease-in-out' : 'none',
+                }}
+              />
+              {unreadCount > 0 && (
+                <span
+                  className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full flex items-center justify-center text-[10px] font-black text-white px-1"
+                  style={{ background: '#E85D04', lineHeight: 1 }}
+                >
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
+              {/* Live indicator dot */}
+              <span
+                className="absolute bottom-1 right-1 w-1.5 h-1.5 rounded-full"
+                style={{ background: '#22c55e', boxShadow: '0 0 0 2px white' }}
+                title="Connected — live notifications active"
+              />
+            </button>
+
+            {/* Admin avatar */}
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black text-white shrink-0"
+                style={{ background: 'linear-gradient(135deg, #E85D04, #FB8500)' }}>
+                A
+              </div>
+              <div className="hidden sm:block">
+                <p className="text-xs font-black text-gray-800 leading-none">Admin</p>
+                <p className="text-[10px] text-gray-400 font-medium mt-0.5">TryNex Panel</p>
+              </div>
             </div>
           </div>
         </header>
@@ -272,6 +374,22 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
 
       {/* Floating AI Assistant — available on every admin page */}
       <AdminAIAssistant />
+
+      {/* Real-time order notification toasts */}
+      <NotificationStack notifications={notifications} onDismiss={dismissNotification} />
+
+      {/* Bell ring keyframe */}
+      <style>{`
+        @keyframes bell-ring {
+          0%   { transform: rotate(0deg); }
+          15%  { transform: rotate(15deg); }
+          30%  { transform: rotate(-12deg); }
+          45%  { transform: rotate(10deg); }
+          60%  { transform: rotate(-8deg); }
+          75%  { transform: rotate(5deg); }
+          100% { transform: rotate(0deg); }
+        }
+      `}</style>
     </div>
   );
 }

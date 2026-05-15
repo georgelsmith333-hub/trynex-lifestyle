@@ -11,6 +11,7 @@ import { z } from "zod";
 import { tgSend } from "../lib/telegram";
 import { checkRevenueMilestone } from "../lib/scheduler";
 import { sendOrderConfirmationEmail, sendStatusUpdateEmail } from "../lib/email";
+import { adminBus } from "../lib/eventBus";
 
 // ---------------------------------------------------------------------------
 // Zod schemas for order creation
@@ -927,6 +928,19 @@ router.post("/orders", async (req, res) => {
     const mapped = mapOrder(order);
     res.status(201).json(mapped);
 
+    adminBus.broadcast({
+      type: "new_order",
+      payload: {
+        orderNumber: mapped.orderNumber,
+        customerName: mapped.customerName,
+        customerPhone: mapped.customerPhone,
+        shippingDistrict: mapped.shippingDistrict ?? null,
+        total: Number(mapped.total),
+        paymentMethod: mapped.paymentMethod ?? "cod",
+        itemCount: Array.isArray(mapped.items) ? mapped.items.length : 0,
+        createdAt: mapped.createdAt ?? new Date().toISOString(),
+      },
+    });
     sendWhatsAppNotification(mapped).catch((err) => logger.warn({ err }, "WhatsApp notification failed (fire-and-forget)"));
     sendTelegramNotification(mapped).catch((err) => logger.warn({ err }, "Telegram notification failed (fire-and-forget)"));
     sendOrderConfirmationEmail(mapped).catch((err) => logger.warn({ err }, "Order confirmation email failed (fire-and-forget)"));
@@ -1115,6 +1129,14 @@ const updateOrderStatusHandler = async (req: Request, res: Response) => {
     logActivity({ action: "update", entity: "order", entityId: id, entityName: order.orderNumber, before: (beforeSnap ?? null) as unknown as Record<string, unknown>, after: order as unknown as Record<string, unknown>, adminId: getAdminId(req) });
     res.json(mapped);
 
+    adminBus.broadcast({
+      type: "order_status_changed",
+      payload: {
+        orderNumber: order.orderNumber,
+        status,
+        previousStatus: beforeSnap?.status ?? "unknown",
+      },
+    });
     sendStatusUpdateNotification(mapped, status).catch((err) => logger.warn({ err }, "sendStatusUpdateNotification failed (fire-and-forget)"));
     sendTelegramStatusUpdate(mapped, status).catch((err) => logger.warn({ err }, "Telegram status update failed (fire-and-forget)"));
     sendStatusUpdateEmail(mapped, status).catch((err) => logger.warn({ err }, "Status update email failed (fire-and-forget)"));
