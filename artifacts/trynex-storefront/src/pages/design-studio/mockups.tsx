@@ -176,7 +176,7 @@ export const PRODUCTS: DesignProduct[] = [
     printZone: CAP_PZ,
     frontSrc: "/mockups/white-cap-front.png" },
   { id: "white-waterbottle", name: "Water Bottle",     icon: "🥤", category: "waterbottle", garmentColor: "#F4F3F1",
-    description: "600ml Stainless", viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
+    description: "600ml Aluminium", viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: WATERBOTTLE_PZ,
     frontSrc: WATERBOTTLE_MOCKUP_URL },
 ];

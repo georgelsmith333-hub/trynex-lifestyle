@@ -1,122 +1,185 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
-  <rect width="1000" height="1000" fill="#f4f3f1"/>
+  <rect width="1000" height="1000" fill="#f8f8f8"/>
 
   <defs>
+    <!-- Glossy white body gradient -->
     <linearGradient id="bodyG" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%"   stop-color="#a8a8a8"/>
-      <stop offset="8%"   stop-color="#c8c8c8"/>
-      <stop offset="22%"  stop-color="#ebebeb"/>
-      <stop offset="38%"  stop-color="#f8f8f8"/>
-      <stop offset="52%"  stop-color="#f5f5f5"/>
-      <stop offset="68%"  stop-color="#e2e2e2"/>
-      <stop offset="85%"  stop-color="#cccccc"/>
-      <stop offset="100%" stop-color="#a0a0a0"/>
-    </linearGradient>
-    <linearGradient id="capG" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%"   stop-color="#323232"/>
-      <stop offset="30%"  stop-color="#5a5a5a"/>
-      <stop offset="52%"  stop-color="#767676"/>
-      <stop offset="72%"  stop-color="#525252"/>
-      <stop offset="100%" stop-color="#282828"/>
-    </linearGradient>
-    <linearGradient id="neckG" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%"   stop-color="#b0b0b0"/>
-      <stop offset="48%"  stop-color="#dcdcdc"/>
-      <stop offset="100%" stop-color="#a4a4a4"/>
+      <stop offset="5%"   stop-color="#cccccc"/>
+      <stop offset="14%"  stop-color="#e8e8e8"/>
+      <stop offset="26%"  stop-color="#f6f6f6"/>
+      <stop offset="42%"  stop-color="#ffffff"/>
+      <stop offset="56%"  stop-color="#fafafa"/>
+      <stop offset="70%"  stop-color="#eeeeee"/>
+      <stop offset="84%"  stop-color="#d8d8d8"/>
+      <stop offset="94%"  stop-color="#c4c4c4"/>
+      <stop offset="100%" stop-color="#b0b0b0"/>
     </linearGradient>
-    <linearGradient id="rimG" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%"   stop-color="#949494"/>
-      <stop offset="46%"  stop-color="#cccccc"/>
-      <stop offset="100%" stop-color="#848484"/>
+    <!-- Shoulder / neck gradient (same white tones) -->
+    <linearGradient id="neckG" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#b8b8b8"/>
+      <stop offset="42%"  stop-color="#eeeeee"/>
+      <stop offset="58%"  stop-color="#f8f8f8"/>
+      <stop offset="100%" stop-color="#b4b4b4"/>
     </linearGradient>
-    <linearGradient id="hlG" x1="0%" y1="0%" x2="100%" y2="0%">
+    <!-- Cap gradient (matte black) -->
+    <linearGradient id="capG" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#111111"/>
+      <stop offset="28%"  stop-color="#323232"/>
+      <stop offset="52%"  stop-color="#424242"/>
+      <stop offset="74%"  stop-color="#282828"/>
+      <stop offset="100%" stop-color="#0e0e0e"/>
+    </linearGradient>
+    <!-- Cap loop gradient (slightly lighter black) -->
+    <linearGradient id="loopG" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#1e1e1e"/>
+      <stop offset="50%"  stop-color="#3e3e3e"/>
+      <stop offset="100%" stop-color="#181818"/>
+    </linearGradient>
+    <!-- Carabiner silver gradient -->
+    <linearGradient id="carabG" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#7a7a7a"/>
+      <stop offset="22%"  stop-color="#b8b8b8"/>
+      <stop offset="42%"  stop-color="#e8e8e8"/>
+      <stop offset="58%"  stop-color="#f4f4f4"/>
+      <stop offset="76%"  stop-color="#d0d0d0"/>
+      <stop offset="100%" stop-color="#888888"/>
+    </linearGradient>
+    <!-- Carabiner inner highlight gradient -->
+    <linearGradient id="carabHlG" x1="0%" y1="100%" x2="100%" y2="0%">
       <stop offset="0%"   stop-color="rgba(255,255,255,0)"/>
-      <stop offset="28%"  stop-color="rgba(255,255,255,0.46)"/>
-      <stop offset="40%"  stop-color="rgba(255,255,255,0.62)"/>
-      <stop offset="54%"  stop-color="rgba(255,255,255,0.06)"/>
+      <stop offset="50%"  stop-color="rgba(255,255,255,0.40)"/>
       <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
     </linearGradient>
+    <!-- Body highlight (left specular) -->
+    <linearGradient id="hlG" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="rgba(255,255,255,0)"/>
+      <stop offset="22%"  stop-color="rgba(255,255,255,0.42)"/>
+      <stop offset="34%"  stop-color="rgba(255,255,255,0.65)"/>
+      <stop offset="52%"  stop-color="rgba(255,255,255,0.05)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </linearGradient>
+    <!-- Edge darkening -->
     <linearGradient id="edgeG" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%"   stop-color="rgba(0,0,0,0.10)"/>
-      <stop offset="12%"  stop-color="rgba(0,0,0,0)"/>
-      <stop offset="88%"  stop-color="rgba(0,0,0,0)"/>
-      <stop offset="100%" stop-color="rgba(0,0,0,0.13)"/>
+      <stop offset="0%"   stop-color="rgba(0,0,0,0.13)"/>
+      <stop offset="11%"  stop-color="rgba(0,0,0,0)"/>
+      <stop offset="89%"  stop-color="rgba(0,0,0,0)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0.16)"/>
     </linearGradient>
-    <filter id="ds" x="-18%" y="-6%" width="136%" height="118%">
-      <feDropShadow dx="5" dy="10" stdDeviation="16" flood-color="rgba(0,0,0,0.20)"/>
+    <!-- Base gradient -->
+    <linearGradient id="baseG" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#aaaaaa"/>
+      <stop offset="48%"  stop-color="#d4d4d4"/>
+      <stop offset="100%" stop-color="#a6a6a6"/>
+    </linearGradient>
+    <!-- Drop shadow filter -->
+    <filter id="ds" x="-22%" y="-5%" width="144%" height="122%">
+      <feDropShadow dx="5" dy="12" stdDeviation="20" flood-color="rgba(0,0,0,0.20)"/>
     </filter>
-    <linearGradient id="bottomG" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%"   stop-color="#b0b0b0"/>
-      <stop offset="50%"  stop-color="#d8d8d8"/>
-      <stop offset="100%" stop-color="#a8a8a8"/>
-    </linearGradient>
+    <!-- Carabiner shadow -->
+    <filter id="cs" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="2" dy="5" stdDeviation="7" flood-color="rgba(0,0,0,0.28)"/>
+    </filter>
   </defs>
 
   <!-- Floor shadow -->
-  <ellipse cx="500" cy="908" rx="182" ry="20" fill="rgba(0,0,0,0.09)"/>
+  <ellipse cx="510" cy="918" rx="185" ry="19" fill="rgba(0,0,0,0.08)"/>
 
+  <!-- ═══ BOTTLE BODY (with drop shadow) ═══════════════════ -->
   <g filter="url(#ds)">
-    <!-- ── BODY ─────────────────────────────────────── -->
-    <!-- Slightly tapered: narrower at top, slightly wider at base -->
-    <path d="M 340,248 C 338,248 322,860 322,860 Q 324,886 500,892 Q 676,886 678,860 C 678,860 662,248 660,248 Z"
+    <!-- ── Main cylindrical body (very slight taper, nearly straight) ── -->
+    <path d="M 328,255 L 672,255 L 676,898 Q 510,916 344,898 Z"
           fill="url(#bodyG)"/>
 
-    <!-- ── SHOULDER ─────────────────────────────────── -->
-    <path d="M 432,178 L 568,178 L 660,248 L 340,248 Z" fill="url(#neckG)"/>
+    <!-- ── Shoulder taper (from neck width to body width) ── -->
+    <path d="M 438,178 L 572,178 L 672,255 L 328,255 Z"
+          fill="url(#neckG)"/>
 
-    <!-- ── NECK ─────────────────────────────────────── -->
-    <rect x="436" y="106" width="128" height="76" rx="5" fill="url(#neckG)"/>
+    <!-- ── Neck (short narrow cylinder) ── -->
+    <rect x="438" y="112" width="134" height="70" rx="4" fill="url(#neckG)"/>
+    <!-- Screw thread grooves -->
+    <line x1="438" y1="132" x2="572" y2="132" stroke="rgba(0,0,0,0.07)" stroke-width="3.5"/>
+    <line x1="438" y1="143" x2="572" y2="143" stroke="rgba(0,0,0,0.07)" stroke-width="3.5"/>
+    <line x1="438" y1="154" x2="572" y2="154" stroke="rgba(0,0,0,0.07)" stroke-width="3.5"/>
+    <line x1="438" y1="165" x2="572" y2="165" stroke="rgba(0,0,0,0.06)" stroke-width="2.5"/>
 
-    <!-- Neck screw thread groove -->
-    <rect x="436" y="142" width="128" height="3" rx="1.5" fill="rgba(0,0,0,0.08)"/>
-    <rect x="436" y="150" width="128" height="3" rx="1.5" fill="rgba(0,0,0,0.08)"/>
-    <rect x="436" y="158" width="128" height="3" rx="1.5" fill="rgba(0,0,0,0.08)"/>
-
-    <!-- ── CAP BODY ─────────────────────────────────── -->
-    <rect x="424" y="65" width="152" height="46" rx="10" fill="url(#capG)"/>
-
+    <!-- ── Cap body (matte black, taller cylinder) ── -->
+    <rect x="424" y="48" width="156" height="68" rx="12" fill="url(#capG)"/>
     <!-- Cap grip ridges -->
-    <rect x="424" y="70"  width="152" height="4" rx="2" fill="rgba(255,255,255,0.10)"/>
-    <rect x="424" y="77"  width="152" height="4" rx="2" fill="rgba(255,255,255,0.10)"/>
-    <rect x="424" y="84"  width="152" height="4" rx="2" fill="rgba(255,255,255,0.10)"/>
-    <rect x="424" y="91"  width="152" height="4" rx="2" fill="rgba(255,255,255,0.10)"/>
-    <rect x="424" y="98"  width="152" height="4" rx="2" fill="rgba(255,255,255,0.10)"/>
-    <rect x="424" y="105" width="152" height="3" rx="1.5" fill="rgba(255,255,255,0.08)"/>
+    <line x1="424" y1="63"  x2="580" y2="63"  stroke="rgba(255,255,255,0.12)" stroke-width="3"/>
+    <line x1="424" y1="72"  x2="580" y2="72"  stroke="rgba(255,255,255,0.12)" stroke-width="3"/>
+    <line x1="424" y1="81"  x2="580" y2="81"  stroke="rgba(255,255,255,0.12)" stroke-width="3"/>
+    <line x1="424" y1="90"  x2="580" y2="90"  stroke="rgba(255,255,255,0.10)" stroke-width="2.5"/>
+    <line x1="424" y1="99"  x2="580" y2="99"  stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+    <line x1="424" y1="107" x2="580" y2="107" stroke="rgba(255,255,255,0.07)" stroke-width="2"/>
 
-    <!-- ── CAP TOP ───────────────────────────────────── -->
-    <rect x="448" y="48" width="104" height="22" rx="8" fill="#484848"/>
-    <rect x="460" y="52" width="80"  height="12" rx="5" fill="#545454"/>
+    <!-- ── Cap loop / ring (the black rectangular loop at top of cap) ── -->
+    <!-- Outer ring shape -->
+    <rect x="480" y="18" width="50" height="34" rx="16" fill="url(#loopG)"/>
+    <!-- Inner hole (the opening in the ring) -->
+    <ellipse cx="505" cy="35" rx="14" ry="9" fill="#e0e0e0"/>
 
-    <!-- ── RIM BAND at body top ──────────────────────── -->
-    <rect x="337" y="243" width="326" height="12" rx="4" fill="url(#rimG)"/>
-
-    <!-- ── BASE DISK ─────────────────────────────────── -->
-    <ellipse cx="500" cy="886" rx="180" ry="15" fill="#b8b8b8"/>
-    <ellipse cx="500" cy="882" rx="174" ry="10" fill="#cacaca"/>
-    <ellipse cx="500" cy="879" rx="168" ry="7"  fill="#d6d6d6"/>
+    <!-- ── Rim band where cap meets neck ── -->
+    <rect x="425" y="112" width="154" height="8" rx="3" fill="#1e1e1e"/>
   </g>
 
-  <!-- ── HIGHLIGHT (no drop-shadow to keep it crisp) ── -->
-  <path d="M 340,248 C 338,248 322,860 322,860 Q 324,886 500,892 Q 676,886 678,860 C 678,860 662,248 660,248 Z"
+  <!-- ═══ CARABINER (drawn above body, own shadow) ══════════════ -->
+  <g filter="url(#cs)">
+    <!-- Main carabiner ring — thick-stroked oval, silver, tilted slightly -->
+    <!-- The carabiner is attached through the cap loop, D-side extends upper-left -->
+    <g transform="translate(398, 52) rotate(-5)">
+      <!-- Outer oval ring with silver gradient stroke -->
+      <ellipse cx="0" cy="0" rx="74" ry="46"
+        fill="none"
+        stroke="url(#carabG)"
+        stroke-width="18"
+        stroke-linecap="round"/>
+      <!-- Inner surface sheen -->
+      <ellipse cx="0" cy="0" rx="74" ry="46"
+        fill="none"
+        stroke="url(#carabHlG)"
+        stroke-width="8"/>
+      <!-- Top edge highlight line -->
+      <ellipse cx="0" cy="0" rx="74" ry="46"
+        fill="none"
+        stroke="rgba(255,255,255,0.50)"
+        stroke-width="3.5"
+        stroke-dasharray="220 10"
+        stroke-dashoffset="0"
+        opacity="0.7"/>
+    </g>
+
+    <!-- Gate piece (the small opening/clip on the right side of carabiner) -->
+    <!-- Positioned where carabiner meets cap loop -->
+    <rect x="466" y="40" width="6" height="22" rx="3"
+      fill="#c0c0c0" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+
+    <!-- Carabiner spine (flat bar at the bottom of the D, right side) -->
+    <rect x="462" y="22" width="10" height="28" rx="4" fill="#d8d8d8"/>
+    <rect x="463" y="23" width="5"  height="26" rx="2" fill="rgba(255,255,255,0.45)"/>
+  </g>
+
+  <!-- ═══ BODY OVERLAYS (highlight + edge, no shadow) ══════════ -->
+  <!-- Main body highlight (left specular streak) -->
+  <path d="M 328,255 L 344,898 Q 510,916 676,898 L 672,255 Z"
         fill="url(#hlG)"/>
-  <path d="M 432,178 L 568,178 L 660,248 L 340,248 Z" fill="url(#hlG)"/>
-
-  <!-- Edge darkening (gives the cylinder illusion) -->
-  <path d="M 340,248 C 338,248 322,860 322,860 Q 324,886 500,892 Q 676,886 678,860 C 678,860 662,248 660,248 Z"
+  <!-- Edge darkening (cylinder illusion) -->
+  <path d="M 328,255 L 344,898 Q 510,916 676,898 L 672,255 Z"
         fill="url(#edgeG)"/>
+  <!-- Shoulder highlight -->
+  <path d="M 438,178 L 572,178 L 672,255 L 328,255 Z"
+        fill="url(#hlG)"/>
+  <!-- Left specular bright streak -->
+  <line x1="406" y1="258" x2="395" y2="888"
+        stroke="rgba(255,255,255,0.60)" stroke-width="26"
+        stroke-linecap="round" opacity="0.26"/>
+  <!-- Right subtle specular -->
+  <line x1="604" y1="258" x2="612" y2="888"
+        stroke="rgba(255,255,255,0.32)" stroke-width="12"
+        stroke-linecap="round" opacity="0.20"/>
 
-  <!-- Left specular streak -->
-  <line x1="412" y1="252" x2="400" y2="870"
-        stroke="rgba(255,255,255,0.52)" stroke-width="26"
-        stroke-linecap="round" opacity="0.32"/>
-
-  <!-- Horizontal separation lines (premium detail) -->
-  <path d="M 334,360 L 666,360" stroke="rgba(200,200,200,0.55)" stroke-width="2"/>
-  <path d="M 328,540 L 672,540" stroke="rgba(200,200,200,0.55)" stroke-width="2"/>
-  <path d="M 324,720 L 676,720" stroke="rgba(200,200,200,0.55)" stroke-width="2"/>
-
-  <!-- Subtle right-side specular -->
-  <line x1="580" y1="252" x2="590" y2="870"
-        stroke="rgba(255,255,255,0.28)" stroke-width="12"
-        stroke-linecap="round" opacity="0.25"/>
+  <!-- ═══ BASE DISK (elliptical bottom) ════════════════════════ -->
+  <ellipse cx="510" cy="904" rx="170" ry="14" fill="url(#baseG)"/>
+  <ellipse cx="510" cy="900" rx="162" ry="9"  fill="#d2d2d2"/>
+  <ellipse cx="510" cy="897" rx="154" ry="6"  fill="#dcdcdc"/>
 </svg>
