@@ -14,6 +14,7 @@ import {
   HoodieBody,
   CapBody,
   MugBody,
+  WaterBottleBody,
   useUrlTexture,
   ResettableOrbitControls,
   ViewerLoadingOverlay,
@@ -25,16 +26,17 @@ import {
   VIEWER_FRAMING_BACK,
 } from "./garment3d";
 
-type GarmentCategory = "tshirt" | "longsleeve" | "hoodie" | "mug" | "cap";
+type GarmentCategory = "tshirt" | "longsleeve" | "hoodie" | "mug" | "cap" | "waterbottle";
 
 /** Static garment cutout PNG used by the WebGL-less fallback,
  *  layered under the user's design for a faithful 2D mockup. */
 const FALLBACK_GARMENT_BY_CATEGORY: Record<GarmentCategory, string> = {
-  tshirt:     "/mockups/white-tshirt-front.png",
-  longsleeve: "/mockups/white-longsleeve-front.png",
-  hoodie:     "/mockups/white-hoodie-front.png",
-  cap:        "/mockups/white-cap-front.png",
-  mug:        "/mockups/white-mug-front.png",
+  tshirt:      "/mockups/white-tshirt-front.png",
+  longsleeve:  "/mockups/white-longsleeve-front.png",
+  hoodie:      "/mockups/white-hoodie-front.png",
+  cap:         "/mockups/white-cap-front.png",
+  mug:         "/mockups/white-mug-front.png",
+  waterbottle: "/mockups/white-waterbottle-blank.png",
 };
 
 /**
@@ -55,7 +57,7 @@ function CameraController({
   const INTRO_TICKS = 80;
   const f = VIEWER_FRAMING[category];
   const b = VIEWER_FRAMING_BACK[category] || {};
-  const noBackFace = category === "mug" || category === "cap";
+  const noBackFace = category === "mug" || category === "cap" || category === "waterbottle";
 
   useFrame(({ camera }) => {
     tickRef.current++;
@@ -111,15 +113,17 @@ export default function CartViewer3D({
   frontTexUrl,
   backTexUrl,
 }: CartViewer3DProps) {
-  const isMug = category === "mug";
+  const isMug         = category === "mug";
+  const isWaterBottle = category === "waterbottle";
   // Garments with front and back faces — toggle visible for all, even without back design
   const hasFrontBack = category === "tshirt" || category === "longsleeve" || category === "hoodie";
   const [face, setFace] = useState<"front" | "back">("front");
 
-  const frontTex = useUrlTexture(frontTexUrl);
-  const backTex  = useUrlTexture(backTexUrl);
-  // Mug: design texture (transparent bg); garmentColor applied via material base
-  const mugTex = useUrlTexture(isMug ? frontTexUrl : undefined);
+  const frontTex      = useUrlTexture(frontTexUrl);
+  const backTex       = useUrlTexture(backTexUrl);
+  // Mug / water bottle: design wrap texture (transparent bg)
+  const mugTex        = useUrlTexture(isMug ? frontTexUrl : undefined);
+  const bottleTex     = useUrlTexture(isWaterBottle ? frontTexUrl : undefined);
 
   // WebGL2 capability check — gracefully degrade to 2D mockup if unsupported
   const supports3D = useMemo(() => hasWebGL2(), []);
@@ -190,6 +194,9 @@ export default function CartViewer3D({
 
           {category === "mug" && (
             <MugBody wrapTex={mugTex} garmentColor={garmentColor} />
+          )}
+          {category === "waterbottle" && (
+            <WaterBottleBody wrapTex={bottleTex} garmentColor={garmentColor} />
           )}
           {category === "tshirt" && (
             <RealisticShirt frontTex={frontTex} backTex={backTex} garmentColor={garmentColor} />

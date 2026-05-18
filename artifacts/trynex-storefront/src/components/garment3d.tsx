@@ -759,6 +759,20 @@ export function WaterBottleBody({
     () => new THREE.CylinderGeometry(0.360, 0.440, 2.08, 80, 1, true),
     []
   );
+
+  // Set up UV mapping so the design (centered at u=0.5 in a 1024-wide texture)
+  // aligns with the front face of the cylinder (geo u=0 → +Z front).
+  // offset=0.5: geo_u=0 → tex_u=0+0.5=0.5 → canvas center ✓
+  useEffect(() => {
+    if (!wrapTex) return;
+    wrapTex.wrapS = THREE.RepeatWrapping;
+    wrapTex.wrapT = THREE.ClampToEdgeWrapping;
+    wrapTex.repeat.set(1, 1);
+    wrapTex.offset.set(0.5, 0);
+    wrapTex.flipY = true;
+    wrapTex.needsUpdate = true;
+  }, [wrapTex]);
+
   // Shoulder taper (body → neck transition)
   const shoulderGeo = useMemo(
     () => new THREE.CylinderGeometry(0.222, 0.360, 0.25, 64, 1, false),

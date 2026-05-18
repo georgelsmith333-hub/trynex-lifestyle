@@ -31,6 +31,7 @@ import type { DesignProduct } from "./mockups";
 import {
   RealisticShirt,
   PhotoMockupMesh,
+  WaterBottleBody,
   ResettableOrbitControls,
   ViewerLoadingOverlay,
   NoWebGLFallback,
@@ -291,14 +292,11 @@ export default function ProductViewer3D({
             />
           )}
 
-          {/* ── WATER BOTTLE — photorealistic product photo + design overlay ── */}
+          {/* ── WATER BOTTLE — procedural 3D cylinder with design wrap ── */}
           {product.category === "waterbottle" && (
-            <PhotoMockupMesh
-              frontPhotoSrc="/mockups/white-waterbottle-front.png"
-              frontTex={bottleFrontTex}
-              activeFace={activeFace}
-              planeW={2.0}
-              planeH={2.8}
+            <WaterBottleBody
+              wrapTex={bottleFrontTex}
+              garmentColor={garmentColor}
             />
           )}
 
