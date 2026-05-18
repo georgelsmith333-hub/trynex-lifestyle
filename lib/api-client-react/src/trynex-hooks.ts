@@ -86,6 +86,8 @@ export interface OrderItem {
   size?: string;
   color?: string;
   imageUrl?: string;
+  customNote?: string | null;
+  customImages?: string[] | null;
 }
 
 export enum CreateOrderRequestPaymentMethod {
@@ -146,14 +148,17 @@ export interface CreateOrderRequest {
   shippingAddress: string;
   shippingCity?: string;
   shippingDistrict?: string;
-  paymentMethod: CreateOrderRequestPaymentMethod;
+  paymentMethod: CreateOrderRequestPaymentMethod | string;
   items: OrderItem[];
-  subtotal: string;
-  shippingCost: string;
-  total: string;
+  subtotal?: string;
+  shippingCost?: string;
+  total?: string;
   notes?: string;
   promoCode?: string;
   promoDiscount?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
 }
 
 export interface CreateProductRequest {

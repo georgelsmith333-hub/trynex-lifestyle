@@ -7,9 +7,9 @@ import { useState, useEffect, useMemo } from "react";
 import { composeGarmentMockup } from "@/pages/design-studio/composer";
 import type { ComposerPrintZone } from "@/pages/design-studio/composer";
 
-export type GarmentCategory = "tshirt" | "longsleeve" | "hoodie" | "mug" | "cap";
+export type GarmentCategory = "tshirt" | "longsleeve" | "hoodie" | "mug" | "cap" | "waterbottle";
 
-const GARMENT_CATEGORIES = new Set<GarmentCategory>(["tshirt", "longsleeve", "hoodie", "mug", "cap"]);
+const GARMENT_CATEGORIES = new Set<GarmentCategory>(["tshirt", "longsleeve", "hoodie", "mug", "cap", "waterbottle"]);
 function toCategory(v: unknown): GarmentCategory {
   return GARMENT_CATEGORIES.has(v as GarmentCategory) ? (v as GarmentCategory) : "tshirt";
 }

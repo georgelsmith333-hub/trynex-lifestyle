@@ -119,6 +119,9 @@ export type OrderInputItemsItem = {
   price?: number;
   size?: string;
   color?: string;
+  imageUrl?: string | null;
+  customNote?: string | null;
+  customImages?: string[] | null;
 };
 
 export interface OrderInput {
@@ -132,6 +135,9 @@ export interface OrderInput {
   items: OrderInputItemsItem[];
   promoCode?: string;
   notes?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
 }
 
 export interface BlogPost {

@@ -1476,8 +1476,17 @@ components:
               price: { type: number }
               size: { type: string }
               color: { type: string }
+              imageUrl: { type: string, nullable: true }
+              customNote: { type: string, nullable: true }
+              customImages:
+                type: array
+                nullable: true
+                items: { type: string }
         promoCode: { type: string }
         notes: { type: string }
+        utmSource: { type: string }
+        utmMedium: { type: string }
+        utmCampaign: { type: string }
       required: [customerName, customerEmail, customerPhone, shippingAddress, paymentMethod, items]
 
     BlogPost:

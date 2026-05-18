@@ -85,7 +85,7 @@ export const SLEEVE_PZ: PrintZone           = { x: 175, y: 175, w: 650, h: 650 }
 /** Neck label — wider than tall (1299×945px real-world ratio). */
 export const NECK_LABEL_PZ: PrintZone       = { x: 150, y: 265, w: 700, h: 470 };
 
-export const WATERBOTTLE_MOCKUP_URL = "/mockups/white-waterbottle-blank.png";
+export const WATERBOTTLE_MOCKUP_URL = "/mockups/white-waterbottle-front.svg";
 
 /* ── Zone configuration ─────────────────────────────────── */
 export interface ApparelZone {
@@ -198,7 +198,7 @@ export const BASE_BY_CATEGORY: Record<DesignProduct["category"], { front: string
   hoodie:      { front: "/mockups/white-hoodie-front-cutout.png",     back: "/mockups/white-hoodie-back-cutout.png" },
   mug:         { front: "/mockups/white-mug-front-cutout.png",        back: "/mockups/white-mug-front-cutout.png" },
   cap:         undefined,
-  waterbottle: undefined,
+  waterbottle: { front: "/mockups/white-waterbottle-front.svg" },
 };
 
 let _filterUid = 0;
@@ -227,6 +227,7 @@ export function GarmentSVG({
   mugMode?: "side1" | "side2" | "wrap";
 }) {
   const isMug = product.category === "mug";
+  const isWaterBottle = product.category === "waterbottle";
 
   const base = BASE_BY_CATEGORY[product.category];
   const useBase = !!base;
@@ -258,13 +259,29 @@ export function GarmentSVG({
     <>
       {applyTint && (
         <defs>
-          <filter id={filterId} x="0" y="0" width="1" height="1" colorInterpolationFilters="sRGB">
-            <feColorMatrix in="SourceGraphic" type="saturate" values="0" result="gray" />
-            <feFlood floodColor={tintHex} result="flood" />
-            <feComposite in="flood" in2="SourceAlpha" operator="in" result="tinted" />
-            <feBlend in="tinted" in2="gray" mode="multiply" result="blended" />
-            <feComposite in="blended" in2="SourceGraphic" operator="in" />
-          </filter>
+          {isWaterBottle ? (
+            /* Water bottle SVG is opaque — use a multiply blend so the metallic
+               gradients show through the colour tint, giving a realistic painted-
+               metal effect without clipping to a non-existent alpha channel. */
+            <filter id={filterId} x="0" y="0" width="1" height="1" colorInterpolationFilters="sRGB">
+              <feColorMatrix in="SourceGraphic" type="saturate" values="0" result="gray" />
+              <feFlood floodColor={tintHex} result="flood" />
+              <feBlend in="flood" in2="gray" mode="multiply" result="blended" />
+              <feComponentTransfer in="blended">
+                <feFuncA type="linear" slope="1" />
+              </feComponentTransfer>
+            </filter>
+          ) : (
+            /* Standard transparent-PNG tint: desaturate → flood colour → mask to
+               original alpha → multiply with grey → restore original alpha. */
+            <filter id={filterId} x="0" y="0" width="1" height="1" colorInterpolationFilters="sRGB">
+              <feColorMatrix in="SourceGraphic" type="saturate" values="0" result="gray" />
+              <feFlood floodColor={tintHex} result="flood" />
+              <feComposite in="flood" in2="SourceAlpha" operator="in" result="tinted" />
+              <feBlend in="tinted" in2="gray" mode="multiply" result="blended" />
+              <feComposite in="blended" in2="SourceGraphic" operator="in" />
+            </filter>
+          )}
         </defs>
       )}
 
