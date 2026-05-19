@@ -19,5 +19,3 @@
 /index.html
   Cache-Control: no-cache, no-store, must-revalidate
 
-/404.html
-  Cache-Control: no-cache, no-store, must-revalidate
