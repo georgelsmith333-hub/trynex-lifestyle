@@ -28,7 +28,10 @@ async function getOrderMessages(orderId: number) {
 router.get("/admin/orders/:id/messages", requireAdmin, async (req, res) => {
   try {
     const orderId = Number(req.params.id);
-    if (!orderId) return res.status(400).json({ error: "Invalid order id" });
+    if (!orderId) {
+      res.status(400).json({ error: "Invalid order id" });
+      return;
+    }
 
     const messages = await getOrderMessages(orderId);
 
@@ -48,19 +51,27 @@ router.get("/admin/orders/:id/messages", requireAdmin, async (req, res) => {
 router.post("/admin/orders/:id/messages", requireAdmin, messageLimiter, async (req, res) => {
   try {
     const orderId = Number(req.params.id);
-    if (!orderId) return res.status(400).json({ error: "Invalid order id" });
+    if (!orderId) {
+      res.status(400).json({ error: "Invalid order id" });
+      return;
+    }
 
     const { message, attachmentUrl } = req.body ?? {};
     if (!message || typeof message !== "string" || message.trim().length === 0) {
-      return res.status(400).json({ error: "Message is required" });
+      res.status(400).json({ error: "Message is required" });
+      return;
     }
     if (message.length > 2000) {
-      return res.status(400).json({ error: "Message too long (max 2000 chars)" });
+      res.status(400).json({ error: "Message too long (max 2000 chars)" });
+      return;
     }
 
     const orderCheck = await db.execute(sql`SELECT id FROM orders WHERE id = ${orderId}`);
     const orderRows = (orderCheck as any).rows ?? orderCheck ?? [];
-    if (orderRows.length === 0) return res.status(404).json({ error: "Order not found" });
+    if (orderRows.length === 0) {
+      res.status(404).json({ error: "Order not found" });
+      return;
+    }
 
     const inserted = await db.execute(
       sql`INSERT INTO order_messages (order_id, sender_type, sender_name, message, attachment_url, read_by_admin)
@@ -89,18 +100,25 @@ router.get("/orders/:id/messages", messageLimiter, async (req, res) => {
     }
 
     const orderId = Number(req.params.id);
-    if (!orderId) return res.status(400).json({ error: "Invalid order id" });
+    if (!orderId) {
+      res.status(400).json({ error: "Invalid order id" });
+      return;
+    }
 
     const orderRes = await db.execute(
       sql`SELECT id, customer_email FROM orders WHERE id = ${orderId}`
     );
     const order = ((orderRes as any).rows ?? orderRes ?? [])[0];
-    if (!order) return res.status(404).json({ error: "Order not found" });
+    if (!order) {
+      res.status(404).json({ error: "Order not found" });
+      return;
+    }
 
     const { trackEmail } = req.query;
     const effectiveEmail = customerEmail ?? (trackEmail as string | undefined);
     if (!effectiveEmail || order.customer_email !== effectiveEmail) {
-      return res.status(403).json({ error: "Not authorised to view this order" });
+      res.status(403).json({ error: "Not authorised to view this order" });
+      return;
     }
 
     const messages = await getOrderMessages(orderId);
@@ -132,26 +150,38 @@ router.post("/orders/:id/messages", messageLimiter, async (req, res) => {
     }
 
     const orderId = Number(req.params.id);
-    if (!orderId) return res.status(400).json({ error: "Invalid order id" });
+    if (!orderId) {
+      res.status(400).json({ error: "Invalid order id" });
+      return;
+    }
 
     const { message, trackEmail, senderName } = req.body ?? {};
     if (!message || typeof message !== "string" || message.trim().length === 0) {
-      return res.status(400).json({ error: "Message is required" });
+      res.status(400).json({ error: "Message is required" });
+      return;
     }
     if (message.length > 2000) {
-      return res.status(400).json({ error: "Message too long (max 2000 chars)" });
+      res.status(400).json({ error: "Message too long (max 2000 chars)" });
+      return;
     }
 
     const effectiveEmail = customerEmail ?? trackEmail;
-    if (!effectiveEmail) return res.status(403).json({ error: "Not authorised" });
+    if (!effectiveEmail) {
+      res.status(403).json({ error: "Not authorised" });
+      return;
+    }
 
     const orderRes = await db.execute(
       sql`SELECT id, customer_email, customer_name FROM orders WHERE id = ${orderId}`
     );
     const order = ((orderRes as any).rows ?? orderRes ?? [])[0];
-    if (!order) return res.status(404).json({ error: "Order not found" });
+    if (!order) {
+      res.status(404).json({ error: "Order not found" });
+      return;
+    }
     if (order.customer_email !== effectiveEmail) {
-      return res.status(403).json({ error: "Not authorised to reply to this order" });
+      res.status(403).json({ error: "Not authorised to reply to this order" });
+      return;
     }
 
     const displayName = customerName ?? senderName ?? order.customer_name ?? "Customer";

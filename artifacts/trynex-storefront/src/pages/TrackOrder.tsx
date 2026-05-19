@@ -6,7 +6,8 @@ import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { OrderSkeleton } from "@/components/ui/skeleton";
 import {
   Search, Clock, CheckCircle2, Truck, MapPin,
-  XCircle, AlertTriangle, RefreshCw, Box, Star, Loader2, Gift, Heart, Package
+  XCircle, AlertTriangle, RefreshCw, Box, Star, Loader2, Gift, Heart, Package,
+  MessageSquare, Send
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatPrice, cn, getApiUrl } from "@/lib/utils";
@@ -93,6 +94,64 @@ export default function TrackOrder() {
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const didAutoTrack = useRef(false);
   const identifierRef = useRef("");
+
+  /* ── Customer messaging ──────────────────────────────────── */
+  const [orderMessages, setOrderMessages] = useState<any[]>([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [isSendingMsg, setIsSendingMsg] = useState(false);
+  const [isLoadingMsgs, setIsLoadingMsgs] = useState(false);
+  const [showMsgPanel, setShowMsgPanel] = useState(false);
+  const msgsEndRef = useRef<HTMLDivElement>(null);
+
+  const effectiveEmail = identifierRef.current.includes("@")
+    ? identifierRef.current
+    : null;
+
+  const loadMessages = useCallback(async (orderId: number, email: string) => {
+    setIsLoadingMsgs(true);
+    try {
+      const r = await fetch(
+        getApiUrl(`/api/orders/${orderId}/messages?trackEmail=${encodeURIComponent(email)}`),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (r.ok) {
+        const d = await r.json() as { messages: any[] };
+        setOrderMessages(d.messages ?? []);
+      }
+    } catch {}
+    setIsLoadingMsgs(false);
+  }, []);
+
+  useEffect(() => {
+    const orderId = liveOrderData?.id as number | undefined;
+    if (orderId && effectiveEmail) {
+      loadMessages(orderId, effectiveEmail);
+    }
+  }, [liveOrderData?.id, effectiveEmail, loadMessages]);
+
+  useEffect(() => {
+    if (showMsgPanel && msgsEndRef.current) {
+      msgsEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [orderMessages, showMsgPanel]);
+
+  const handleSendMsg = async () => {
+    const orderId = liveOrderData?.id as number | undefined;
+    if (!orderId || !effectiveEmail || !newMessage.trim() || isSendingMsg) return;
+    setIsSendingMsg(true);
+    try {
+      const r = await fetch(getApiUrl(`/api/orders/${orderId}/messages`), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: newMessage.trim(), trackEmail: effectiveEmail }),
+      });
+      if (r.ok) {
+        setNewMessage("");
+        await loadMessages(orderId, effectiveEmail);
+      }
+    } catch {}
+    setIsSendingMsg(false);
+  };
 
   // Auto-track when redirected from order completion (URL has ?order=&phone= or ?order=&email=)
   useEffect(() => {
@@ -555,6 +614,88 @@ export default function TrackOrder() {
                     </div>
                   </div>
                 </div>
+
+                {/* ── Customer ↔ Admin Messaging ── */}
+                {effectiveEmail && (
+                  <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
+                    <button
+                      type="button"
+                      onClick={() => setShowMsgPanel(v => !v)}
+                      className="w-full flex items-center justify-between px-4 py-3.5 font-bold text-sm"
+                      style={{ background: '#f9fafb', color: '#374151' }}
+                    >
+                      <span className="flex items-center gap-2">
+                        <MessageSquare className="w-4 h-4 text-orange-500" />
+                        Messages from TryNex
+                        {orderMessages.length > 0 && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-orange-100 text-orange-600">
+                            {orderMessages.length}
+                          </span>
+                        )}
+                      </span>
+                      <span className="text-xs text-gray-400">{showMsgPanel ? "▲" : "▼"}</span>
+                    </button>
+                    {showMsgPanel && (
+                      <div className="p-3 space-y-2">
+                        {isLoadingMsgs ? (
+                          <div className="flex items-center justify-center py-6 gap-2 text-gray-400 text-sm">
+                            <Loader2 className="w-4 h-4 animate-spin" /> Loading messages…
+                          </div>
+                        ) : orderMessages.length === 0 ? (
+                          <p className="text-xs text-gray-400 text-center py-5">No messages yet. Send us a message below.</p>
+                        ) : (
+                          <div className="max-h-52 overflow-y-auto space-y-2 pr-1">
+                            {orderMessages.map((msg: any) => {
+                              const isAdmin = msg.sender_type === "admin";
+                              return (
+                                <div key={msg.id} className={`flex ${isAdmin ? "justify-start" : "justify-end"}`}>
+                                  <div
+                                    className="max-w-[85%] rounded-xl px-3 py-2 text-sm"
+                                    style={{
+                                      background: isAdmin ? '#fff7ed' : '#E85D04',
+                                      color: isAdmin ? '#111827' : 'white',
+                                      border: isAdmin ? '1px solid #fed7aa' : 'none',
+                                    }}
+                                  >
+                                    {isAdmin && (
+                                      <p className="text-[10px] font-bold mb-0.5 text-orange-600">{msg.sender_name || "TryNex Team"}</p>
+                                    )}
+                                    <p className="leading-snug">{msg.message}</p>
+                                    <p className="text-[10px] opacity-60 mt-0.5">
+                                      {new Date(msg.created_at).toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
+                                    </p>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                            <div ref={msgsEndRef} />
+                          </div>
+                        )}
+                        <div className="flex gap-2 pt-1">
+                          <textarea
+                            value={newMessage}
+                            onChange={e => setNewMessage(e.target.value)}
+                            onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSendMsg(); } }}
+                            placeholder="Send a message to TryNex…"
+                            rows={2}
+                            maxLength={2000}
+                            className="flex-1 resize-none text-sm px-3 py-2 rounded-xl focus:outline-none focus:ring-1 focus:ring-orange-400"
+                            style={{ background: 'white', border: '1px solid #e5e7eb', color: '#111827' }}
+                          />
+                          <button
+                            type="button"
+                            onClick={handleSendMsg}
+                            disabled={isSendingMsg || !newMessage.trim()}
+                            className="px-3 py-2 rounded-xl font-black text-xs text-white transition-all disabled:opacity-50"
+                            style={{ background: '#E85D04' }}
+                          >
+                            {isSendingMsg ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {TRYNEX_NUMBER && (
                   <div className="p-5 rounded-2xl text-center"

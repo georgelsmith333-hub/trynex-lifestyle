@@ -525,6 +525,11 @@ export default function ProductDetail() {
 
   const handleAddToCart = () => {
     if (product.stock < 1) return;
+    // Block if selected color is marked out of stock
+    if (selectedColor) {
+      const variant = (product.colorVariants ?? []).find((v: any) => v.name === selectedColor);
+      if (variant && variant.inStock === false) return;
+    }
     const itemPrice = product.discountPrice || product.price;
     addToCart({
       productId: product.id,
