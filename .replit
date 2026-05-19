@@ -85,8 +85,9 @@ UPSTASH_REDIS_REST_URL = "https://positive-oyster-122365.upstash.io"
 CORS_ORIGIN = "https://trynexshop.com"
 RENDER_API_KEY = "rnd_15grmSJp8sg3uaOqNyC4Nu5ZecYX"
 CLOUDFLARE_API_TOKEN = "cfat_mH8AnyN8NTTGGLSpRyumvuwSv7DpYAao0fOJBo5ze6e0b961"
-
-[userenv.development]
+ADMIN_PASSWORD = "TryNex@Admin2025!"
+GITHUB_TOKEN = "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"
+UPSTASH_REDIS_REST_TOKEN = "dcde976c-4aab-4e85-83a3-33b4b7b442e3"
 DATABASE_URL_MAIN = "postgresql://neondb_owner:npg_BvS2fTaM1uyx@ep-proud-hill-am7gl9jg-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 DATABASE_URL_TRYNEX_DB = "postgresql://neondb_owner:npg_er92JMuaxYcf@ep-small-cake-a4wtsash-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 DATABASE_PRODUCTS = "postgresql://neondb_owner:npg_IRndG9r2YFLw@ep-crimson-mud-ap5qu789.c-7.us-east-1.aws.neon.tech/neondb?sslmode=require"
@@ -95,12 +96,12 @@ DATABASE_FAILOVER = "postgresql://neondb_owner:npg_2AEqmS1yudDM@ep-crimson-dawn-
 DATABASE_SUPABASE_BACKUP_API_KEY = "sb_publishable_sNseFFWtUyHsO_3LOqt3NQ_Z0mG8a0z"
 R2_ACCESS_KEY_ID = "1eed0f615268db06e18c86ca116dbc10"
 R2_SECRET_ACCESS_KEY = "b3de5639e9d121c03fb4cf0e59b5c1bfb037c2ae54c51faa1a892c0376a19692"
-GITHUB_TOKEN = "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"
-UPSTASH_REDIS_REST_TOKEN = "gQAAAAAAAd39AAIgcDE0ODk1NDE2NTVjNDU0NGE3OTQxNzA2MWJkZGExMjQ0Yg"
+ADMIN_SALT = "trynex_salt_2024"
+
+[userenv.development]
 ADMIN_RESET_KEY = "f662b6eb55ab188559bbf0829fbfe6b33bc03b20b173fe1e432210d3458558c6"
 ADMIN_SECRET_PASSWORD = "TrynexTravel@Admins@Galaxy"
 GOOGLE_CLIENT_ID = "66391492938-39sou5jlsoheuctgsan3jtpt8t5hnoc8.apps.googleusercontent.com"
 JWT_SECRET = "9612655fd9cdbfa90e458662a1edef84153c26b27b6d824e6a6dab6c0e84f40fe8f6ee8d237b4bff4bb5ec9941a08558"
 ADMIN_JWT_SECRET = "ea98159ea0a2449f77779d092009c452ec22fd586be57345f11de87c9b60c86c4715f9716644c5cce678232092371b2b"
-ADMIN_PASSWORD = "TryNex@Admin2025!"
 VITE_API_BASE_URL = ""
