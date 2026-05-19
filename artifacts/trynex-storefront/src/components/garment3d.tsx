@@ -742,14 +742,17 @@ export function PhotoMockupMesh({
 
 /* ─────────────────────── WATER BOTTLE / SPORT CARABINER ────── */
 /**
+<<<<<<< HEAD
  * Procedural sport carabiner bottle — no GLB file required.
  * Profile: nearly-straight cylindrical body + short shoulder taper + short neck
  *          + tall black screw cap with a ring loop + silver carabiner D-ring.
  * Matches the white aluminium sport bottle with carabiner clip product.
+=======
  * Procedural geometry — no GLB required.
  * Shape: straight aluminium cylinder + short shoulder taper + threaded neck +
  * black screw cap + chrome carabiner clip ring.
  * UVs wrap around the cylinder side; offset=0.5 centres the design on the front.
+>>>>>>> df5c679 (Update water bottle design to use a realistic 3D model and photo)
  */
 export function WaterBottleBody({
   wrapTex,
@@ -758,6 +761,7 @@ export function WaterBottleBody({
   wrapTex?: THREE.Texture | null;
   garmentColor: string;
 }) {
+<<<<<<< HEAD
   // Main printable body — nearly straight (very slight taper), open-ended for UV wrapping
   const bodyGeo = useMemo(
     () => new THREE.CylinderGeometry(0.335, 0.352, 2.10, 80, 1, true),
@@ -765,6 +769,7 @@ export function WaterBottleBody({
   );
 
   // UV: design canvas centre → front of cylinder
+=======
   // ── Main printable body: straight cylinder (open-ended for UV wrap) ──
   // Uniform radius 0.38 — no taper — matches the real bottle silhouette.
   const bodyGeo = useMemo(
@@ -773,6 +778,7 @@ export function WaterBottleBody({
   );
 
   // UV offset=0.5 → canvas centre aligns with the +Z front face.
+>>>>>>> df5c679 (Update water bottle design to use a realistic 3D model and photo)
   useEffect(() => {
     if (!wrapTex) return;
     wrapTex.wrapS  = THREE.RepeatWrapping;
@@ -783,6 +789,7 @@ export function WaterBottleBody({
     wrapTex.needsUpdate = true;
   }, [wrapTex]);
 
+<<<<<<< HEAD
   // Short steep shoulder taper (body → neck)
   const shoulderGeo = useMemo(
     () => new THREE.CylinderGeometry(0.196, 0.335, 0.17, 64, 1, false),
@@ -840,6 +847,7 @@ export function WaterBottleBody({
           clearcoat={0.92}
           clearcoatRoughness={0.05}
           reflectivity={0.92}
+=======
   // ── Body top disk (closed at top of cylinder) ──
   const bodyTopGeo  = useMemo(() => new THREE.CircleGeometry(0.38, 64), []);
   // ── Body bottom disk ──
@@ -895,6 +903,7 @@ export function WaterBottleBody({
           clearcoat={1.0}
           clearcoatRoughness={0.04}
           reflectivity={0.7}
+>>>>>>> df5c679 (Update water bottle design to use a realistic 3D model and photo)
           side={THREE.FrontSide}
         />
       </mesh>
@@ -905,8 +914,11 @@ export function WaterBottleBody({
           <meshStandardMaterial
             map={wrapTex}
             transparent
+<<<<<<< HEAD
             roughness={0.28}
+=======
             roughness={0.08}
+>>>>>>> df5c679 (Update water bottle design to use a realistic 3D model and photo)
             metalness={0}
             depthWrite={false}
             alphaTest={0.015}
@@ -915,6 +927,7 @@ export function WaterBottleBody({
         </mesh>
       )}
 
+<<<<<<< HEAD
       {/* ── Base disk ── */}
       <mesh geometry={baseDiskGeo} position={[0, -1.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <meshPhysicalMaterial
@@ -922,6 +935,7 @@ export function WaterBottleBody({
           roughness={0.18}
           metalness={0.55}
           clearcoat={0.75}
+=======
       {/* ── Bottom cap disk ── */}
       <mesh geometry={bodyBotGeo} position={[0, -1.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <meshPhysicalMaterial
@@ -929,27 +943,32 @@ export function WaterBottleBody({
           roughness={0.25}
           metalness={0.0}
           clearcoat={0.5}
+>>>>>>> df5c679 (Update water bottle design to use a realistic 3D model and photo)
         />
       </mesh>
 
       {/* ── Shoulder taper ── */}
+<<<<<<< HEAD
       <mesh geometry={shoulderGeo} position={[0, 1.135, 0]} castShadow>
         <meshPhysicalMaterial
           color={garmentColor}
           roughness={0.09}
           metalness={0.60}
           clearcoat={0.92}
+=======
       <mesh geometry={shoulderGeo} position={[0, 1.16, 0]} castShadow>
         <meshPhysicalMaterial
           color={garmentColor}
           roughness={0.06}
           metalness={0.0}
           clearcoat={1.0}
+>>>>>>> df5c679 (Update water bottle design to use a realistic 3D model and photo)
           clearcoatRoughness={0.04}
         />
       </mesh>
 
       {/* ── Neck ── */}
+<<<<<<< HEAD
       <mesh geometry={neckGeo} position={[0, 1.305, 0]} castShadow>
         <meshPhysicalMaterial
           color={garmentColor}
@@ -967,6 +986,7 @@ export function WaterBottleBody({
           roughness={0.58}
           metalness={0.04}
           clearcoat={0.18}
+=======
       <mesh geometry={neckGeo} position={[0, 1.35, 0]} castShadow>
         <meshPhysicalMaterial
           color={garmentColor}
@@ -984,10 +1004,12 @@ export function WaterBottleBody({
           metalness={0.0}
           clearcoat={0.45}
           clearcoatRoughness={0.25}
+>>>>>>> df5c679 (Update water bottle design to use a realistic 3D model and photo)
         />
       </mesh>
 
       {/* ── Cap top disk ── */}
+<<<<<<< HEAD
       <mesh geometry={capTopGeo} position={[0, capTopY, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <meshPhysicalMaterial
           color="#1a1a1a"
@@ -1013,6 +1035,7 @@ export function WaterBottleBody({
         position={[carabX, carabY, 0.02]}
         rotation={[Math.PI / 2, 0, Math.PI * 0.08]}
         scale={[1.0, 1.55, 1.0]}
+=======
       <mesh geometry={capTopGeo} position={[0, 1.65, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <meshPhysicalMaterial
           color="#0f0f0f"
@@ -1043,18 +1066,22 @@ export function WaterBottleBody({
         geometry={carabinerBarGeo}
         position={[0, 1.71, -0.145]}
         rotation={[0, 0, 0]}
+>>>>>>> df5c679 (Update water bottle design to use a realistic 3D model and photo)
         castShadow
       >
         <meshPhysicalMaterial
           color="#c8c8c8"
+<<<<<<< HEAD
           roughness={0.22}
           metalness={0.82}
           clearcoat={0.65}
           clearcoatRoughness={0.08}
           reflectivity={0.88}
+=======
           roughness={0.12}
           metalness={0.90}
           clearcoat={0.8}
+>>>>>>> df5c679 (Update water bottle design to use a realistic 3D model and photo)
         />
       </mesh>
     </group>
