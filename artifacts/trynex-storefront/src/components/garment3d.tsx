@@ -742,10 +742,10 @@ export function PhotoMockupMesh({
 
 /* ─────────────────────── WATER BOTTLE / TUMBLER ────── */
 /**
- * Procedural tumbler shape — no GLB file required.
- * Profile: tapered cylindrical body + shoulder taper + narrow neck + lid + base disk.
- * The design wrap texture sits on the main body cylinder whose side UVs wrap
- * naturally around the circumference (identical offset=0.25 trick as MugBody).
+ * Procedural geometry — no GLB required.
+ * Shape: straight aluminium cylinder + short shoulder taper + threaded neck +
+ * black screw cap + chrome carabiner clip ring.
+ * UVs wrap around the cylinder side; offset=0.5 centres the design on the front.
  */
 export function WaterBottleBody({
   wrapTex,
@@ -754,72 +754,90 @@ export function WaterBottleBody({
   wrapTex?: THREE.Texture | null;
   garmentColor: string;
 }) {
-  // Main printable body — open-ended cylinder so UVs wrap the side only
+  // ── Main printable body: straight cylinder (open-ended for UV wrap) ──
+  // Uniform radius 0.38 — no taper — matches the real bottle silhouette.
   const bodyGeo = useMemo(
-    () => new THREE.CylinderGeometry(0.360, 0.440, 2.08, 80, 1, true),
+    () => new THREE.CylinderGeometry(0.38, 0.38, 2.10, 80, 1, true),
     []
   );
 
-  // Set up UV mapping so the design (centered at u=0.5 in a 1024-wide texture)
-  // aligns with the front face of the cylinder (geo u=0 → +Z front).
-  // offset=0.5: geo_u=0 → tex_u=0+0.5=0.5 → canvas center ✓
+  // UV offset=0.5 → canvas centre aligns with the +Z front face.
   useEffect(() => {
     if (!wrapTex) return;
-    wrapTex.wrapS = THREE.RepeatWrapping;
-    wrapTex.wrapT = THREE.ClampToEdgeWrapping;
+    wrapTex.wrapS  = THREE.RepeatWrapping;
+    wrapTex.wrapT  = THREE.ClampToEdgeWrapping;
     wrapTex.repeat.set(1, 1);
     wrapTex.offset.set(0.5, 0);
-    wrapTex.flipY = true;
+    wrapTex.flipY  = true;
     wrapTex.needsUpdate = true;
   }, [wrapTex]);
 
-  // Shoulder taper (body → neck transition)
-  const shoulderGeo = useMemo(
-    () => new THREE.CylinderGeometry(0.222, 0.360, 0.25, 64, 1, false),
-    []
-  );
-  // Narrow neck
-  const neckGeo = useMemo(
-    () => new THREE.CylinderGeometry(0.210, 0.210, 0.22, 48, 1, false),
-    []
-  );
-  // Screw-top lid (slightly flared)
-  const lidGeo = useMemo(
-    () => new THREE.CylinderGeometry(0.258, 0.240, 0.14, 48, 1, false),
-    []
-  );
-  // Flat base disk
-  const baseDiskGeo = useMemo(() => new THREE.CircleGeometry(0.440, 64), []);
+  // ── Body top disk (closed at top of cylinder) ──
+  const bodyTopGeo  = useMemo(() => new THREE.CircleGeometry(0.38, 64), []);
+  // ── Body bottom disk ──
+  const bodyBotGeo  = useMemo(() => new THREE.CircleGeometry(0.38, 64), []);
 
-  // Y positions (body centre at 0, half-height = 1.04):
-  //   body:     y ∈ [-1.04, +1.04]
-  //   shoulder: height 0.25 → y ∈ [+1.04, +1.29] → centre = +1.165
-  //   neck:     height 0.22 → y ∈ [+1.29, +1.51] → centre = +1.400
-  //   lid:      height 0.14 → y ∈ [+1.51, +1.65] → centre = +1.580
-  //   base disk: y = -1.04
+  // ── Shoulder taper: wide body → narrow neck ──
+  const shoulderGeo = useMemo(
+    () => new THREE.CylinderGeometry(0.20, 0.38, 0.22, 64, 1, false),
+    []
+  );
+
+  // ── Neck thread section ──
+  const neckGeo = useMemo(
+    () => new THREE.CylinderGeometry(0.19, 0.20, 0.16, 48, 1, false),
+    []
+  );
+
+  // ── Black screw cap (cylinder) ──
+  const capGeo = useMemo(
+    () => new THREE.CylinderGeometry(0.215, 0.215, 0.22, 48, 1, false),
+    []
+  );
+  // Cap top disk
+  const capTopGeo = useMemo(() => new THREE.CircleGeometry(0.215, 48), []);
+
+  // ── Carabiner ring loop — open torus at the cap top ──
+  const carabinerRingGeo = useMemo(
+    () => new THREE.TorusGeometry(0.145, 0.022, 16, 40, Math.PI * 1.72),
+    []
+  );
+  // Straight carabiner bar (closes the loop at the bottom)
+  const carabinerBarGeo  = useMemo(
+    () => new THREE.CylinderGeometry(0.018, 0.018, 0.29, 12, 1, false),
+    []
+  );
+
+  // ── Y-axis layout (body centre = 0, half-height = 1.05):
+  //   body:       [-1.05, +1.05]
+  //   shoulder:   h=0.22  → centre = 1.05 + 0.11 = 1.16
+  //   neck:       h=0.16  → centre = 1.27 + 0.08 = 1.35
+  //   cap:        h=0.22  → centre = 1.43 + 0.11 = 1.54
+  //   cap top:    y = 1.65
+  //   carabiner:  y = 1.78
 
   return (
-    <group scale={0.62}>
-      {/* ── Main body — brushed stainless-steel tumbler look ── */}
+    <group scale={0.60}>
+      {/* ── Main glossy body (sublimation-coated aluminium) ── */}
       <mesh geometry={bodyGeo} castShadow receiveShadow>
         <meshPhysicalMaterial
           color={garmentColor}
-          roughness={0.28}
-          metalness={0.72}
-          clearcoat={0.60}
-          clearcoatRoughness={0.12}
-          reflectivity={0.85}
+          roughness={0.06}
+          metalness={0.0}
+          clearcoat={1.0}
+          clearcoatRoughness={0.04}
+          reflectivity={0.7}
           side={THREE.FrontSide}
         />
       </mesh>
 
-      {/* ── Design wrap overlay ──────── */}
+      {/* ── Design wrap overlay ── */}
       {wrapTex && (
         <mesh geometry={bodyGeo} scale={[1.003, 1, 1.003]}>
           <meshStandardMaterial
             map={wrapTex}
             transparent
-            roughness={0.30}
+            roughness={0.08}
             metalness={0}
             depthWrite={false}
             alphaTest={0.015}
@@ -828,45 +846,86 @@ export function WaterBottleBody({
         </mesh>
       )}
 
-      {/* ── Base disk — slightly matte bottom ring ─── */}
-      <mesh geometry={baseDiskGeo} position={[0, -1.04, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <meshPhysicalMaterial
-          color={garmentColor}
-          roughness={0.50}
-          metalness={0.55}
-          clearcoat={0.25}
-        />
-      </mesh>
-
-      {/* ── Shoulder — polished taper ─── */}
-      <mesh geometry={shoulderGeo} position={[0, 1.165, 0]} castShadow>
-        <meshPhysicalMaterial
-          color={garmentColor}
-          roughness={0.22}
-          metalness={0.75}
-          clearcoat={0.75}
-          clearcoatRoughness={0.08}
-        />
-      </mesh>
-
-      {/* ── Neck ─── */}
-      <mesh geometry={neckGeo} position={[0, 1.400, 0]} castShadow>
+      {/* ── Bottom cap disk ── */}
+      <mesh geometry={bodyBotGeo} position={[0, -1.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <meshPhysicalMaterial
           color={garmentColor}
           roughness={0.25}
-          metalness={0.70}
-          clearcoat={0.65}
-          clearcoatRoughness={0.10}
+          metalness={0.0}
+          clearcoat={0.5}
         />
       </mesh>
 
-      {/* ── Lid — matte black polypropylene ─── */}
-      <mesh geometry={lidGeo} position={[0, 1.580, 0]} castShadow>
+      {/* ── Shoulder taper ── */}
+      <mesh geometry={shoulderGeo} position={[0, 1.16, 0]} castShadow>
         <meshPhysicalMaterial
-          color="#1c1c1e"
-          roughness={0.60}
-          metalness={0.05}
-          clearcoat={0.15}
+          color={garmentColor}
+          roughness={0.06}
+          metalness={0.0}
+          clearcoat={1.0}
+          clearcoatRoughness={0.04}
+        />
+      </mesh>
+
+      {/* ── Neck ── */}
+      <mesh geometry={neckGeo} position={[0, 1.35, 0]} castShadow>
+        <meshPhysicalMaterial
+          color={garmentColor}
+          roughness={0.10}
+          metalness={0.0}
+          clearcoat={0.8}
+        />
+      </mesh>
+
+      {/* ── Black screw cap ── */}
+      <mesh geometry={capGeo} position={[0, 1.54, 0]} castShadow>
+        <meshPhysicalMaterial
+          color="#0f0f0f"
+          roughness={0.40}
+          metalness={0.0}
+          clearcoat={0.45}
+          clearcoatRoughness={0.25}
+        />
+      </mesh>
+
+      {/* ── Cap top disk ── */}
+      <mesh geometry={capTopGeo} position={[0, 1.65, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <meshPhysicalMaterial
+          color="#0f0f0f"
+          roughness={0.50}
+          metalness={0.0}
+        />
+      </mesh>
+
+      {/* ── Chrome carabiner ring — open torus, slightly tilted ── */}
+      <mesh
+        geometry={carabinerRingGeo}
+        position={[0, 1.80, 0]}
+        rotation={[Math.PI / 2, 0, 0.18]}
+        castShadow
+      >
+        <meshPhysicalMaterial
+          color="#d4d4d4"
+          roughness={0.08}
+          metalness={0.95}
+          clearcoat={0.9}
+          clearcoatRoughness={0.04}
+          reflectivity={1.0}
+        />
+      </mesh>
+
+      {/* ── Carabiner straight closing bar ── */}
+      <mesh
+        geometry={carabinerBarGeo}
+        position={[0, 1.71, -0.145]}
+        rotation={[0, 0, 0]}
+        castShadow
+      >
+        <meshPhysicalMaterial
+          color="#c8c8c8"
+          roughness={0.12}
+          metalness={0.90}
+          clearcoat={0.8}
         />
       </mesh>
     </group>
