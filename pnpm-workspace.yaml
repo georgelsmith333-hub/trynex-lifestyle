@@ -1,5 +1,7 @@
 packages:
-  - artifacts/*
+  - artifacts/trynex-storefront
+  - artifacts/api-server
+  - artifacts/mockup-sandbox
   - lib/*
   - scripts
 

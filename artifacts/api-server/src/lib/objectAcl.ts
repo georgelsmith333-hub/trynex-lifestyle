@@ -1,6 +1,11 @@
-import { File } from "@google-cloud/storage";
-
 const ACL_POLICY_METADATA_KEY = "custom:aclPolicy";
+
+interface File {
+  name: string;
+  exists(): Promise<[boolean]>;
+  setMetadata(meta: { metadata: Record<string, string> }): Promise<void>;
+  getMetadata(): Promise<[{ metadata?: Record<string, string> }]>;
+}
 
 // Can be flexibly defined according to the use case.
 //
