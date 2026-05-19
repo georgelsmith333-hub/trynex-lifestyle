@@ -56,3 +56,7 @@ screenshots/
 
 # Lib package build artifacts (generated; rebuild before typecheck)
 lib/*/dist/
+attached_assets/
+exports/trynex-secrets.csv
+.env
+.env*
