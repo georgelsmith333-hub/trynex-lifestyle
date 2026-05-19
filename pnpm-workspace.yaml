@@ -1,3 +1,4 @@
+# autoInstallPeers:true must match .npmrc auto-install-peers=true to fix ERR_PNPM_LOCKFILE_CONFIG_MISMATCH
 packages:
   - artifacts/trynex-storefront
   - artifacts/api-server
