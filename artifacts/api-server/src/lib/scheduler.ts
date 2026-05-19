@@ -184,6 +184,30 @@ export async function checkRevenueMilestone(): Promise<void> {
   }
 }
 
+// ── Keep-Alive Ping ──────────────────────────────────────────────────────────
+// Render free-tier services sleep after ~15 minutes of inactivity.
+// We self-ping the healthz endpoint every 14 minutes to prevent cold starts.
+let lastPingMs = 0;
+const PING_INTERVAL_MS = 14 * 60 * 1000;
+
+async function keepAlive(): Promise<void> {
+  const now = Date.now();
+  if (now - lastPingMs < PING_INTERVAL_MS) return;
+  lastPingMs = now;
+
+  const base =
+    process.env.API_PUBLIC_URL ||
+    process.env.API_BASE_URL ||
+    "https://trynex-api.onrender.com";
+
+  try {
+    const res = await fetch(`${base}/api/healthz`, { signal: AbortSignal.timeout(8_000) });
+    logger.info({ status: res.status }, "[scheduler] Keep-alive ping sent");
+  } catch (err) {
+    logger.warn({ err }, "[scheduler] Keep-alive ping failed (non-critical)");
+  }
+}
+
 // ── Main Scheduler ───────────────────────────────────────────────────────────
 export function startScheduler(): void {
   logger.info("[scheduler] Starting in-process scheduler");
@@ -193,11 +217,12 @@ export function startScheduler(): void {
     const h = bst.getUTCHours();
     const m = bst.getUTCMinutes();
 
+    await keepAlive().catch(() => {});
     if (h === 9 && m < 2) await sendDailySummary().catch(() => {});
     if ((h === 10 || h === 20) && m < 2) await checkAndAlertLowStock().catch(() => {});
     if (m < 2 && h % 2 === 0) await checkStalePendingOrders().catch(() => {});
   }, 60_000);
 
   tick.unref();
-  logger.info("[scheduler] Scheduler active (daily@9am, low-stock@10am&8pm, pending@every2h BST)");
+  logger.info("[scheduler] Scheduler active (daily@9am, low-stock@10am&8pm, pending@every2h BST, keep-alive@14min)");
 }
