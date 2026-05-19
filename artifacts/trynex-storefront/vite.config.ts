@@ -64,10 +64,11 @@ const cfDisableRocketLoader = {
       const html = await fs.readFile(outFile, "utf8");
       const patched = addCfAsyncFalse(html);
       if (patched !== html) await fs.writeFile(outFile, patched, "utf8");
-      // Cloudflare Pages serves dist/404.html for all unmatched routes —
-      // this is the correct SPA fallback (the "/* /index.html 200" _redirects
-      // rule was silently ignored due to an infinite-loop detection).
-      await fs.writeFile(path.resolve(import.meta.dirname, "dist/404.html"), patched, "utf8");
+      // NOTE: Do NOT write dist/404.html here. When 404.html coexists with the
+      // "/* /index.html 200" rule in _redirects, Cloudflare Pages silently
+      // ignores the _redirects rule and falls back to 404.html — returning
+      // HTTP 404 for all non-root routes. Removing 404.html forces CF Pages
+      // to honour the _redirects rule and return HTTP 200 for every route.
     } catch {
       // dist/index.html doesn't exist (e.g. dev mode) — nothing to do.
     }
