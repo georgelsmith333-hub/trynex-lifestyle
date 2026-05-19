@@ -1,11 +1,6 @@
 # Cloudflare Pages SPA fallback.
-# All routes not matching a static file are served dist/404.html (which is a
-# copy of index.html built at deploy time). This lets client-side routing
-# (wouter) handle the URL after the JS boots.
-#
-# NOTE: "/* /index.html 200" is intentionally NOT used here — Cloudflare Pages
-# silently ignores it when 404.html exists and triggers an infinite-loop
-# detection warning. The 404.html approach is the correct CF Pages SPA pattern.
-#
-# For Render static sites or other hosts that don't use 404.html, uncomment:
-# /* /index.html 200
+# All non-static routes are rewritten to /index.html with HTTP 200,
+# which lets wouter handle client-side routing correctly.
+# This also fixes the HTTP 404 status code that the 404.html fallback
+# returns for direct URL access and hard-refreshes.
+/* /index.html 200
