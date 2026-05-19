@@ -145,15 +145,28 @@ async function ensureAdminExists(): Promise<void> {
     await db.insert(adminTable).values({ username: "admin", passwordHash: hash });
     return;
   }
-  // Auto-migrate SHA-256 hashes to argon2id when ADMIN_PASSWORD is the canonical one
+
   const admin = existing[0];
   if (!isArgon2Hash(admin.passwordHash)) {
-    // Only auto-upgrade if the stored SHA-256 matches current ADMIN_PASSWORD
+    // Legacy SHA-256 hash: only auto-upgrade if it matches current ADMIN_PASSWORD.
     const legacyMatch = hashPasswordSha256(ADMIN_PASSWORD, LEGACY_SALT) === admin.passwordHash;
     if (legacyMatch) {
       const newHash = await hashPasswordArgon2(ADMIN_PASSWORD);
       await db.update(adminTable).set({ passwordHash: newHash }).where(eq(adminTable.username, "admin"));
     }
+    // If SHA-256 doesn't match, the password was changed via the admin panel —
+    // leave it alone; the operator knows their own password.
+    return;
+  }
+
+  // Argon2 hash stored: verify it still matches ADMIN_PASSWORD. If the env var
+  // was changed (e.g. new deployment secret) re-hash and sync the DB so the
+  // operator can always log in with the current env var password.
+  const currentPasswordMatchesDb = await verifyPasswordArgon2(admin.passwordHash, ADMIN_PASSWORD);
+  if (!currentPasswordMatchesDb) {
+    const newHash = await hashPasswordArgon2(ADMIN_PASSWORD);
+    await db.update(adminTable).set({ passwordHash: newHash }).where(eq(adminTable.username, "admin"));
+    logger.info("Admin password re-synced from ADMIN_PASSWORD env var");
   }
 }
 

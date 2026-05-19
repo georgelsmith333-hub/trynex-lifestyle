@@ -1,4 +1,5 @@
 import { Router, type IRouter, type Request, type Response } from "express";
+import { createHash } from "crypto";
 import { db, ordersTable, productsTable, settingsTable, promoCodesTable, referralsTable, hamperPackagesTable } from "@workspace/db";
 import { eq, and, desc, sql, inArray, lte, or, ilike } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
@@ -104,10 +105,8 @@ async function sendMetaCAPIEvent(event: {
     const pixelId = pixelRow?.value?.trim();
     if (!capiToken || !pixelId) return;
 
-    const sha256 = (input: string): string => {
-      const { createHash } = require("crypto");
-      return createHash("sha256").update(input).digest("hex");
-    };
+    const sha256 = (input: string): string =>
+      createHash("sha256").update(input).digest("hex");
 
     const hashedEmail = event.email
       ? sha256(event.email.toLowerCase().trim())
