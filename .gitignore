@@ -60,3 +60,11 @@ exports/trynex-secrets.csv
 .env
 .env*
 attached_assets/
+
+# Security — private keys & secrets
+*.pem
+*.key
+*.secret
+*.p8
+*.p12
+*.pfx

@@ -15,5 +15,25 @@
     "prettier": "^3.8.1",
     "typescript": "~5.9.2"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "pnpm": {
+    "overrides": {
+      "google-auth-library": "9.14.0",
+      "@radix-ui/number": "1.1.0",
+      "detect-gpu": "5.0.61",
+      "react-fast-compare": "3.2.1",
+      "@noble/ciphers": "1.2.1",
+      "colorette": "2.0.19",
+      "source-map": "0.7.4",
+      "is-promise": "2.2.2",
+      "pathe": "1.1.2",
+      "brace-expansion": "2.0.1",
+      "react-transition-group": "4.4.2",
+      "es-object-atoms": "1.1.0",
+      "@nodelib/fs.walk": "1.2.4",
+      "caniuse-lite": "1.0.30001611",
+      "lodash.isplainobject": "4.0.4",
+      "resolve-pkg-maps": "1.0.0"
+    }
+  }
 }
