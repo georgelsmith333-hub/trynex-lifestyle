@@ -13,7 +13,7 @@
 # Usage:
 #   export CLOUDFLARE_ACCOUNT_ID=<your-cf-account-id>
 #   export CLOUDFLARE_API_TOKEN=<your-cf-api-token>
-#   export DATABASE_URL_MAIN="postgresql://..."
+#   export DATABASE_URL_MAIN="REDACTED_SECRET"
 #   # ... set all vars below ...
 #   bash scripts/setup-github-secrets.sh
 # ─────────────────────────────────────────────────────────────────────────────

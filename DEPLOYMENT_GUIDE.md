@@ -27,7 +27,7 @@ The Render PostgreSQL database expires after 90 days. Replace it with Neon (free
 2. Click **Environment** tab
 3. Find or add `DATABASE_URL` and set it to your Neon connection string:
    ```
-   postgresql://neondb_owner:<password>@ep-proud-hill-am7gl9jg-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require
+   REDACTED_SECRET
    ```
 4. Click **Save Changes** — Render will auto-redeploy
 5. After redeploy, verify: `curl https://trynex-api.onrender.com/api/auth/health`

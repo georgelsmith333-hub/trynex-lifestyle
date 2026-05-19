@@ -96,7 +96,7 @@ const NODE_DEFS = [
 /* ── Helper: extract safe host label from a connection string ────────────────── */
 function maskUrl(url: string): string {
   try {
-    // postgresql://user:pass@HOST/db?...  →  HOST
+    // REDACTED_SECRET  →  HOST
     const after = url.split("@")[1] ?? "";
     const host = after.split("/")[0].split("?")[0];
     return host || "unknown";

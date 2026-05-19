@@ -1392,12 +1392,12 @@ export default function DesignStudio() {
       const h = Math.round(img.naturalHeight * scale);
 
       // Two-pass bicubic-ish upscale via intermediate canvas (browser implementation
-      // varies, but enabling imageSmoothingQuality:"high" gives bicubic on most engines)
+      // varies, but enabling imageSmoothinREDACTED_SECRET:"high" gives bicubic on most engines)
       const c1 = document.createElement("canvas");
       c1.width = w; c1.height = h;
       const ctx1 = c1.getContext("2d")!;
       ctx1.imageSmoothingEnabled = true;
-      ctx1.imageSmoothingQuality = "high";
+      ctx1.imageSmoothinREDACTED_SECRET = "high";
       ctx1.drawImage(img, 0, 0, w, h);
 
       // Unsharp mask: blur copy, subtract from original to find edges, add back to sharpen
