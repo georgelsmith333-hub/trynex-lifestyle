@@ -1589,6 +1589,27 @@ export default function DesignStudio() {
     }
   );
 
+  /* ── Single-click/tap layer selection ──────────────────
+   * filterTaps:true means onDragStart only fires on real drags.
+   * This onClick fires for pure taps/clicks so users can select
+   * a layer immediately without needing to start dragging.
+   */
+  const handleCanvasClick = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
+    const target = e.target as Element;
+    const layerId =
+      target.getAttribute?.("data-layer-id") ??
+      target.closest?.("[data-layer-id]")?.getAttribute("data-layer-id");
+    if (layerId) {
+      const layer = layersRef.current.find(l => l.id === layerId);
+      if (!layer || layer.locked) return;
+      setSelectedLayerId(layerId);
+      selectedLayerIdRef.current = layerId;
+    } else {
+      setSelectedLayerId(null);
+      selectedLayerIdRef.current = null;
+    }
+  }, []);
+
   /* ── Keyboard shortcuts: undo/redo, delete ─────────── */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -2486,6 +2507,7 @@ export default function DesignStudio() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.18, ease: "easeInOut" }}
                   {...(bindCanvasGestures() as Record<string, unknown>)}
+                  onClick={handleCanvasClick}
                 >
                   {isFlatZone && activeZoneConfig
                     ? <FlatZoneSVG zone={activeZoneConfig} showPrintZone={effectiveShowPrintZone} garmentPhotoSrc={displayProduct.frontSrc} />

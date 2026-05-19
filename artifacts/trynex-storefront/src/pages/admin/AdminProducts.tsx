@@ -7,7 +7,7 @@ import {
 } from "@workspace/api-client-react";
 import { Loader } from "@/components/ui/Loader";
 import { getAuthHeaders, formatPrice, getApiUrl } from "@/lib/utils";
-import { Plus, Trash2, X, Package, Edit3, AlertTriangle, Search, Star, Upload, FileText, CheckCircle, Zap, Wand2, Loader2, Link, ImageIcon, CloudUpload, Check } from "lucide-react";
+import { Plus, Trash2, X, Package, Edit3, AlertTriangle, Search, Star, Upload, FileText, CheckCircle, Zap, Wand2, Loader2, Link, ImageIcon, CloudUpload, Check, ToggleLeft, ToggleRight } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -58,6 +58,7 @@ export default function AdminProducts() {
   const [isSpecialOffer, setIsSpecialOffer] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<{ id: number; name: string } | null>(null);
   const [showLowStock, setShowLowStock] = useState(filterLowStock);
+  const [colorVariants, setColorVariants] = useState<Array<{ name: string; inStock: boolean }>>([]);
 
   /* ── Product image upload state ─────────────────── */
   const [imgPickerMode, setImgPickerMode] = useState<"url" | "upload">("url");
@@ -79,11 +80,21 @@ export default function AdminProducts() {
 
   const categories: Category[] = categoriesData?.categories ?? [];
 
+  const watchedColors = watch("colors") ?? "";
+  useEffect(() => {
+    const parsed = watchedColors.split(',').map(s => s.trim()).filter(Boolean);
+    setColorVariants(prev => {
+      const prevMap = new Map(prev.map(v => [v.name, v.inStock]));
+      return parsed.map(name => ({ name, inStock: prevMap.has(name) ? prevMap.get(name)! : true }));
+    });
+  }, [watchedColors]);
+
   const openAddModal = () => {
     setEditingProduct(null);
     setIsSpecialOffer(false);
     setImagePreviewUrl(null);
     setImgPickerMode("url");
+    setColorVariants([]);
     reset({ featured: false, customizable: true, stock: 0, categoryId: categories[0]?.id });
     setModalOpen(true);
   };
@@ -94,6 +105,10 @@ export default function AdminProducts() {
     setIsSpecialOffer(tags.includes("special-offer"));
     setImagePreviewUrl(product.imageUrl || null);
     setImgPickerMode("url");
+    const existingVariants = Array.isArray((product as any).colorVariants)
+      ? (product as any).colorVariants
+      : (product.colors || []).map((c: string) => ({ name: c, inStock: true }));
+    setColorVariants(existingVariants);
     reset({
       name: product.name,
       slug: product.slug,
@@ -186,10 +201,11 @@ export default function AdminProducts() {
           imageUrl: payload.imageUrl,
           sizes: payload.sizes,
           colors: payload.colors,
+          colorVariants,
           featured: payload.featured,
           customizable: payload.customizable,
           tags: payload.tags,
-        } as UpdateProductRequest & { tags?: string[] };
+        } as UpdateProductRequest & { tags?: string[]; colorVariants?: typeof colorVariants };
         await updateProduct({ id: editingProduct.id, data: updatePayload });
         toast({ title: "✓ Product updated successfully!" });
       } else {
@@ -204,10 +220,11 @@ export default function AdminProducts() {
           imageUrl: payload.imageUrl,
           sizes: payload.sizes,
           colors: payload.colors,
+          colorVariants,
           featured: payload.featured,
           customizable: payload.customizable,
           tags: payload.tags,
-        } as CreateProductRequest & { tags?: string[] };
+        } as CreateProductRequest & { tags?: string[]; colorVariants?: typeof colorVariants };
         await createProduct({ data: createPayload });
         toast({ title: "✓ Product added successfully!" });
       }
@@ -734,6 +751,33 @@ export default function AdminProducts() {
                   <div>
                     <Label>Colors (comma separated)</Label>
                     <input {...register("colors")} className={inputClass} style={inputStyle} placeholder="Black, White, Grey" />
+                    {colorVariants.length > 0 && (
+                      <div className="mt-2 p-3 rounded-xl space-y-1.5" style={{ background: '#f9fafb', border: '1px solid #e5e7eb' }}>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Per-Color Stock Availability</p>
+                        {colorVariants.map(v => (
+                          <div key={v.name} className="flex items-center justify-between gap-2">
+                            <span className="text-sm font-semibold text-gray-700">{v.name}</span>
+                            <button
+                              type="button"
+                              onClick={() => setColorVariants(prev =>
+                                prev.map(x => x.name === v.name ? { ...x, inStock: !x.inStock } : x)
+                              )}
+                              className="flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-lg transition-all"
+                              style={{
+                                background: v.inStock ? '#dcfce7' : '#fee2e2',
+                                color: v.inStock ? '#16a34a' : '#dc2626',
+                                border: `1px solid ${v.inStock ? '#86efac' : '#fca5a5'}`,
+                              }}
+                            >
+                              {v.inStock
+                                ? <><ToggleRight className="w-3.5 h-3.5" /> In Stock</>
+                                : <><ToggleLeft className="w-3.5 h-3.5" /> Out of Stock</>
+                              }
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   <div className="flex items-center gap-3">
                     <input type="checkbox" {...register("featured")} id="featured" className="w-4 h-4 rounded accent-orange-500" />

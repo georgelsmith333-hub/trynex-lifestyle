@@ -1037,38 +1037,53 @@ export default function ProductDetail() {
                       : <>Choose a color <span className="font-normal text-gray-400">(optional)</span></>}
                   </p>
                   <div className="flex flex-wrap gap-3">
-                    {product.colors.map((color: string, colorIdx: number) => (
-                      <button
-                        key={color}
-                        onClick={() => {
-                          const isDeselect = color === selectedColor;
-                          setSelectedColor(isDeselect ? "" : color);
-                          const allImages = [product.imageUrl, ...(product.images || [])].filter(Boolean) as string[];
-                          if (!isDeselect && allImages.length > 1 && colorIdx < allImages.length) {
-                            setActiveImage(allImages[colorIdx]);
-                          } else if (isDeselect) {
-                            setActiveImage("");
-                          }
-                        }}
-                        title={color}
-                        className="relative"
-                      >
-                        <div
-                          className="w-9 h-9 rounded-xl transition-all hover:scale-110"
-                          style={{
-                            background: COLOR_MAP[color] || '#aaa',
-                            border: selectedColor === color
-                              ? '3px solid #E85D04'
-                              : color === 'White' ? '2px solid #d1d5db' : '2px solid transparent',
-                            boxShadow: selectedColor === color ? '0 0 0 2px white, 0 0 0 4px #E85D04' : '0 2px 6px rgba(0,0,0,0.15)',
+                    {product.colors.map((color: string, colorIdx: number) => {
+                      const variantMeta = (product.colorVariants ?? []).find((v: any) => v.name === color);
+                      const isOutOfStock = variantMeta ? variantMeta.inStock === false : false;
+                      return (
+                        <button
+                          key={color}
+                          onClick={() => {
+                            if (isOutOfStock) return;
+                            const isDeselect = color === selectedColor;
+                            setSelectedColor(isDeselect ? "" : color);
+                            const allImages = [product.imageUrl, ...(product.images || [])].filter(Boolean) as string[];
+                            if (!isDeselect && allImages.length > 1 && colorIdx < allImages.length) {
+                              setActiveImage(allImages[colorIdx]);
+                            } else if (isDeselect) {
+                              setActiveImage("");
+                            }
                           }}
-                        />
-                        {selectedColor === color && (
-                          <Check className="absolute inset-0 m-auto w-4 h-4 text-white drop-shadow" />
-                        )}
-                      </button>
-                    ))}
+                          title={isOutOfStock ? `${color} — Out of stock` : color}
+                          className="relative"
+                          disabled={isOutOfStock}
+                          style={{ opacity: isOutOfStock ? 0.45 : 1 }}
+                        >
+                          <div
+                            className="w-9 h-9 rounded-xl transition-all hover:scale-110"
+                            style={{
+                              background: COLOR_MAP[color] || '#aaa',
+                              border: selectedColor === color
+                                ? '3px solid #E85D04'
+                                : color === 'White' ? '2px solid #d1d5db' : '2px solid transparent',
+                              boxShadow: selectedColor === color ? '0 0 0 2px white, 0 0 0 4px #E85D04' : '0 2px 6px rgba(0,0,0,0.15)',
+                            }}
+                          />
+                          {isOutOfStock && (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="w-7 h-0.5 bg-red-400 rotate-45 rounded-full" />
+                            </div>
+                          )}
+                          {selectedColor === color && !isOutOfStock && (
+                            <Check className="absolute inset-0 m-auto w-4 h-4 text-white drop-shadow" />
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
+                  {product.colors.some((c: string) => (product.colorVariants ?? []).find((v: any) => v.name === c)?.inStock === false) && (
+                    <p className="text-xs text-gray-400 mt-1.5">Crossed-out colors are currently out of stock.</p>
+                  )}
                 </div>
               )}
 

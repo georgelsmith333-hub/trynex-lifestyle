@@ -29,6 +29,7 @@ import draftsRouter from "./drafts";
 import telegramWebhookRouter from "./telegramWebhook";
 import uptimeRobotRouter from "./uptimeRobot";
 import dbClusterRouter from "./dbCluster";
+import orderMessagesRouter from "./orderMessages";
 
 const router: IRouter = Router();
 
@@ -62,5 +63,6 @@ router.use(draftsRouter);
 router.use(telegramWebhookRouter);
 router.use(uptimeRobotRouter);
 router.use(dbClusterRouter);
+router.use(orderMessagesRouter);
 
 export default router;

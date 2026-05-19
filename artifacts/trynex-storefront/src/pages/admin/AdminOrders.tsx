@@ -9,9 +9,10 @@ import { useToast } from "@/hooks/use-toast";
 import { getListOrdersQueryKey } from "@workspace/api-client-react";
 import {
   RefreshCw, Package, Clock, CheckCircle2, XCircle, Truck,
-  Search, Eye, AlertTriangle, CreditCard, Check, X, Tag, ZoomIn
+  Search, Eye, AlertTriangle, CreditCard, Check, X, Tag, ZoomIn,
+  MessageSquare, Send, ChevronDown, ChevronUp
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const STATUS_OPTIONS = ["all", "pending", "processing", "shipped", "ongoing", "delivered", "cancelled"] as const;
@@ -47,6 +48,13 @@ export default function AdminOrders() {
   const [lightbox, setLightbox] = useState<{ items: PreviewItem[]; index: number } | null>(null);
   const openLightbox = (items: PreviewItem[], index: number) => setLightbox({ items, index });
   const closeLightbox = () => setLightbox(null);
+
+  const [orderMessages, setOrderMessages] = useState<any[]>([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
+  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const [showMessages, setShowMessages] = useState(true);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search.trim()), 350);
@@ -233,6 +241,43 @@ export default function AdminOrders() {
   const { items: previewItems, mainIdx: mainPreviewIdx, customIdx: customImageIdx } = buildOrderPreview(selectedOrder);
 
   useEffect(() => { setLightbox(null); }, [selectedOrder?.id]);
+
+  useEffect(() => {
+    if (!selectedOrder?.id) { setOrderMessages([]); return; }
+    setIsLoadingMessages(true);
+    fetch(getApiUrl(`/api/admin/orders/${selectedOrder.id}/messages`), { headers: getAuthHeaders() })
+      .then(r => r.ok ? r.json() : { messages: [] })
+      .then(d => setOrderMessages(d.messages ?? []))
+      .catch(() => setOrderMessages([]))
+      .finally(() => setIsLoadingMessages(false));
+  }, [selectedOrder?.id]);
+
+  useEffect(() => {
+    if (showMessages && messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [orderMessages, showMessages]);
+
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || !selectedOrder?.id || isSendingMessage) return;
+    setIsSendingMessage(true);
+    try {
+      const res = await fetch(getApiUrl(`/api/admin/orders/${selectedOrder.id}/messages`), {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+        body: JSON.stringify({ message: newMessage.trim() }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      const data = await res.json();
+      setOrderMessages(prev => [...prev, data.message]);
+      setNewMessage("");
+      toast({ title: "Message sent" });
+    } catch {
+      toast({ title: "Failed to send message", variant: "destructive" });
+    } finally {
+      setIsSendingMessage(false);
+    }
+  };
 
   return (
     <AdminLayout>
@@ -907,6 +952,83 @@ export default function AdminOrders() {
                     <span className="font-bold">Total</span>
                     <span className="font-black text-primary text-xl">{formatPrice(selectedOrder.total)}</span>
                   </div>
+                </div>
+
+                {/* Order Messages */}
+                <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowMessages(v => !v)}
+                    className="w-full flex items-center justify-between px-4 py-3 font-black text-xs uppercase tracking-widest"
+                    style={{ background: '#f9fafb', color: '#374151' }}
+                  >
+                    <span className="flex items-center gap-2">
+                      <MessageSquare className="w-3.5 h-3.5 text-orange-500" />
+                      Customer Messages
+                      {orderMessages.length > 0 && (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-orange-100 text-orange-600">
+                          {orderMessages.length}
+                        </span>
+                      )}
+                    </span>
+                    {showMessages ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </button>
+                  {showMessages && (
+                    <div className="p-3 space-y-2">
+                      {isLoadingMessages ? (
+                        <p className="text-xs text-gray-400 text-center py-4">Loading messages…</p>
+                      ) : orderMessages.length === 0 ? (
+                        <p className="text-xs text-gray-400 text-center py-4">No messages yet. Send one below.</p>
+                      ) : (
+                        <div className="max-h-48 overflow-y-auto space-y-2 pr-1">
+                          {orderMessages.map((msg: any) => {
+                            const isAdmin = msg.sender_type === "admin";
+                            return (
+                              <div key={msg.id} className={`flex ${isAdmin ? "justify-end" : "justify-start"}`}>
+                                <div
+                                  className="max-w-[85%] rounded-xl px-3 py-2 text-sm"
+                                  style={{
+                                    background: isAdmin ? '#E85D04' : '#f3f4f6',
+                                    color: isAdmin ? 'white' : '#111827',
+                                  }}
+                                >
+                                  {!isAdmin && (
+                                    <p className="text-[10px] font-bold mb-0.5 opacity-70">{msg.sender_name || "Customer"}</p>
+                                  )}
+                                  <p className="leading-snug">{msg.message}</p>
+                                  <p className="text-[10px] opacity-60 mt-0.5 text-right">
+                                    {new Date(msg.created_at).toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
+                                  </p>
+                                </div>
+                              </div>
+                            );
+                          })}
+                          <div ref={messagesEndRef} />
+                        </div>
+                      )}
+                      <div className="flex gap-2 pt-1">
+                        <textarea
+                          value={newMessage}
+                          onChange={e => setNewMessage(e.target.value)}
+                          onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }}
+                          placeholder="Type a message to the customer…"
+                          rows={2}
+                          maxLength={2000}
+                          className="flex-1 resize-none text-sm px-3 py-2 rounded-xl focus:outline-none focus:ring-1 focus:ring-orange-400"
+                          style={{ background: 'white', border: '1px solid #e5e7eb', color: '#111827' }}
+                        />
+                        <button
+                          type="button"
+                          onClick={handleSendMessage}
+                          disabled={isSendingMessage || !newMessage.trim()}
+                          className="px-3 py-2 rounded-xl font-black text-xs text-white transition-all disabled:opacity-50"
+                          style={{ background: '#E85D04' }}
+                        >
+                          <Send className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Order Status */}

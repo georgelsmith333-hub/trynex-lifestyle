@@ -183,7 +183,7 @@ router.get("/products/:id", async (req, res) => {
 
 router.post("/products", requireAdmin, async (req, res) => {
   try {
-    const { name, slug, description, price, discountPrice, categoryId, imageUrl, images, sizes, colors, stock, featured, customizable, tags } = req.body;
+    const { name, slug, description, price, discountPrice, categoryId, imageUrl, images, sizes, colors, colorVariants, stock, featured, customizable, tags } = req.body;
     if (!name || !slug || price === undefined || stock === undefined) {
       res.status(400).json({ error: "validation_error", message: "name, slug, price, stock are required" });
       return;
@@ -194,6 +194,7 @@ router.post("/products", requireAdmin, async (req, res) => {
       discountPrice: discountPrice?.toString(),
       categoryId,
       imageUrl, images, sizes, colors,
+      colorVariants: colorVariants ?? [],
       stock, featured, customizable, tags,
     }).returning();
 
@@ -217,7 +218,7 @@ router.put("/products/:id", requireAdmin, async (req, res) => {
       res.status(400).json({ error: "validation_error", message: "Invalid product id" });
       return;
     }
-    const { name, slug, description, price, discountPrice, categoryId, imageUrl, images, sizes, colors, stock, featured, customizable, tags } = req.body;
+    const { name, slug, description, price, discountPrice, categoryId, imageUrl, images, sizes, colors, colorVariants, stock, featured, customizable, tags } = req.body;
 
     const [existing] = await db.select().from(productsTable).where(eq(productsTable.id, id));
     if (!existing) {
@@ -237,6 +238,7 @@ router.put("/products/:id", requireAdmin, async (req, res) => {
     if (images !== undefined) updateData.images = images;
     if (sizes !== undefined) updateData.sizes = sizes;
     if (colors !== undefined) updateData.colors = colors;
+    if (colorVariants !== undefined) updateData.colorVariants = colorVariants;
     if (stock !== undefined) updateData.stock = stock;
     if (featured !== undefined) updateData.featured = featured;
     if (customizable !== undefined) updateData.customizable = customizable;

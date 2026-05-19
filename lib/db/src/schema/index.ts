@@ -57,6 +57,7 @@ export const productsTable = pgTable("products", {
   reviewCount: integer("review_count").default(0),
   customizable: boolean("customizable").default(false),
   tags: jsonb("tags").default([]),
+  colorVariants: jsonb("color_variants").default([]),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -266,3 +267,18 @@ export const designDraftsTable = pgTable("design_drafts", {
 
 export type DesignDraft = typeof designDraftsTable.$inferSelect;
 export type InsertDesignDraft = typeof designDraftsTable.$inferInsert;
+
+export const orderMessagesTable = pgTable("order_messages", {
+  id: serial("id").primaryKey(),
+  orderId: integer("order_id").notNull(),
+  senderType: text("sender_type").notNull(),
+  senderName: text("sender_name"),
+  message: text("message").notNull(),
+  attachmentUrl: text("attachment_url"),
+  readByAdmin: boolean("read_by_admin").notNull().default(false),
+  readByCustomer: boolean("read_by_customer").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type OrderMessage = typeof orderMessagesTable.$inferSelect;
+export type InsertOrderMessage = typeof orderMessagesTable.$inferInsert;

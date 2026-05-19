@@ -1,0 +1,173 @@
+import { Router } from "express";
+import { db } from "@workspace/db";
+import { sql } from "drizzle-orm";
+import { requireAdmin } from "../middlewares/adminAuth";
+import { verifyCustomerToken, extractCustomerToken } from "../lib/customerAuth";
+import { logger } from "../lib/logger";
+import rateLimit from "express-rate-limit";
+
+const router = Router();
+
+const messageLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+async function getOrderMessages(orderId: number) {
+  const res = await db.execute(
+    sql`SELECT id, order_id, sender_type, sender_name, message, attachment_url,
+               read_by_admin, read_by_customer, created_at
+        FROM order_messages WHERE order_id = ${orderId} ORDER BY created_at ASC`
+  );
+  return (res as any).rows ?? res ?? [];
+}
+
+/* ── Admin: list messages for an order ──────────────────────── */
+router.get("/admin/orders/:id/messages", requireAdmin, async (req, res) => {
+  try {
+    const orderId = Number(req.params.id);
+    if (!orderId) return res.status(400).json({ error: "Invalid order id" });
+
+    const messages = await getOrderMessages(orderId);
+
+    await db.execute(
+      sql`UPDATE order_messages SET read_by_admin = true
+          WHERE order_id = ${orderId} AND read_by_admin = false`
+    );
+
+    res.json({ messages });
+  } catch (err) {
+    logger.error({ err }, "Failed to list order messages (admin)");
+    res.status(500).json({ error: "Failed to load messages" });
+  }
+});
+
+/* ── Admin: send a message ───────────────────────────────────── */
+router.post("/admin/orders/:id/messages", requireAdmin, messageLimiter, async (req, res) => {
+  try {
+    const orderId = Number(req.params.id);
+    if (!orderId) return res.status(400).json({ error: "Invalid order id" });
+
+    const { message, attachmentUrl } = req.body ?? {};
+    if (!message || typeof message !== "string" || message.trim().length === 0) {
+      return res.status(400).json({ error: "Message is required" });
+    }
+    if (message.length > 2000) {
+      return res.status(400).json({ error: "Message too long (max 2000 chars)" });
+    }
+
+    const orderCheck = await db.execute(sql`SELECT id FROM orders WHERE id = ${orderId}`);
+    const orderRows = (orderCheck as any).rows ?? orderCheck ?? [];
+    if (orderRows.length === 0) return res.status(404).json({ error: "Order not found" });
+
+    const inserted = await db.execute(
+      sql`INSERT INTO order_messages (order_id, sender_type, sender_name, message, attachment_url, read_by_admin)
+          VALUES (${orderId}, 'admin', 'TryNex Team', ${message.trim()}, ${attachmentUrl ?? null}, true)
+          RETURNING *`
+    );
+    const row = ((inserted as any).rows ?? inserted ?? [])[0];
+
+    res.json({ message: row });
+  } catch (err) {
+    logger.error({ err }, "Failed to post admin order message");
+    res.status(500).json({ error: "Failed to send message" });
+  }
+});
+
+/* ── Customer: get messages for their own order ─────────────── */
+router.get("/orders/:id/messages", messageLimiter, async (req, res) => {
+  try {
+    const token = extractCustomerToken(req);
+    let customerEmail: string | null = null;
+    if (token) {
+      try {
+        const decoded = verifyCustomerToken(token);
+        customerEmail = (decoded as any)?.email ?? null;
+      } catch {}
+    }
+
+    const orderId = Number(req.params.id);
+    if (!orderId) return res.status(400).json({ error: "Invalid order id" });
+
+    const orderRes = await db.execute(
+      sql`SELECT id, customer_email FROM orders WHERE id = ${orderId}`
+    );
+    const order = ((orderRes as any).rows ?? orderRes ?? [])[0];
+    if (!order) return res.status(404).json({ error: "Order not found" });
+
+    const { trackEmail } = req.query;
+    const effectiveEmail = customerEmail ?? (trackEmail as string | undefined);
+    if (!effectiveEmail || order.customer_email !== effectiveEmail) {
+      return res.status(403).json({ error: "Not authorised to view this order" });
+    }
+
+    const messages = await getOrderMessages(orderId);
+
+    await db.execute(
+      sql`UPDATE order_messages SET read_by_customer = true
+          WHERE order_id = ${orderId} AND read_by_customer = false`
+    );
+
+    res.json({ messages });
+  } catch (err) {
+    logger.error({ err }, "Failed to list order messages (customer)");
+    res.status(500).json({ error: "Failed to load messages" });
+  }
+});
+
+/* ── Customer: reply to a message ───────────────────────────── */
+router.post("/orders/:id/messages", messageLimiter, async (req, res) => {
+  try {
+    const token = extractCustomerToken(req);
+    let customerEmail: string | null = null;
+    let customerName: string | null = null;
+    if (token) {
+      try {
+        const decoded = verifyCustomerToken(token) as any;
+        customerEmail = decoded?.email ?? null;
+        customerName = decoded?.name ?? null;
+      } catch {}
+    }
+
+    const orderId = Number(req.params.id);
+    if (!orderId) return res.status(400).json({ error: "Invalid order id" });
+
+    const { message, trackEmail, senderName } = req.body ?? {};
+    if (!message || typeof message !== "string" || message.trim().length === 0) {
+      return res.status(400).json({ error: "Message is required" });
+    }
+    if (message.length > 2000) {
+      return res.status(400).json({ error: "Message too long (max 2000 chars)" });
+    }
+
+    const effectiveEmail = customerEmail ?? trackEmail;
+    if (!effectiveEmail) return res.status(403).json({ error: "Not authorised" });
+
+    const orderRes = await db.execute(
+      sql`SELECT id, customer_email, customer_name FROM orders WHERE id = ${orderId}`
+    );
+    const order = ((orderRes as any).rows ?? orderRes ?? [])[0];
+    if (!order) return res.status(404).json({ error: "Order not found" });
+    if (order.customer_email !== effectiveEmail) {
+      return res.status(403).json({ error: "Not authorised to reply to this order" });
+    }
+
+    const displayName = customerName ?? senderName ?? order.customer_name ?? "Customer";
+
+    const inserted = await db.execute(
+      sql`INSERT INTO order_messages (order_id, sender_type, sender_name, message, read_by_customer)
+          VALUES (${orderId}, 'customer', ${displayName}, ${message.trim()}, true)
+          RETURNING *`
+    );
+    const row = ((inserted as any).rows ?? inserted ?? [])[0];
+
+    res.json({ message: row });
+  } catch (err) {
+    logger.error({ err }, "Failed to post customer order message");
+    res.status(500).json({ error: "Failed to send message" });
+  }
+});
+
+export default router;
