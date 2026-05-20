@@ -1,6 +1,7 @@
 # Cloudflare Pages SPA fallback.
-# All non-static routes are rewritten to /index.html with HTTP 200,
-# which lets wouter handle client-side routing correctly.
-# This also fixes the HTTP 404 status code that the 404.html fallback
-# returns for direct URL access and hard-refreshes.
-/* /index.html 200
+# Static assets are served directly; all other routes fall through to index.html
+# so that client-side routing (wouter) handles them correctly.
+# The absence of dist/404.html ensures Cloudflare honours this rule with HTTP 200.
+/assets/*  /assets/:splat  200
+/api/*     /api/:splat     200
+/*         /index.html     200
