@@ -1,7 +1,6 @@
 # Cloudflare Pages SPA fallback.
-# Static assets are served directly; all other routes fall through to index.html
-# so that client-side routing (wouter) handles them correctly.
-# The absence of dist/404.html ensures Cloudflare honours this rule with HTTP 200.
-/assets/*  /assets/:splat  200
-/api/*     /api/:splat     200
-/*         /index.html     200
+# CF Pages serves static files from dist/ directly (before consulting _redirects).
+# CF Pages Functions (functions/api/[[route]].js) handle /api/* — no rule needed.
+# The single rule below rewrites every unmatched path to index.html with HTTP 200
+# so wouter handles client-side routing and direct URL refreshes work correctly.
+/*    /index.html    200
