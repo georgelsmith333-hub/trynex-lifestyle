@@ -1589,25 +1589,46 @@ export default function DesignStudio() {
     }
   );
 
-  /* ── Single-click/tap layer selection ──────────────────
-   * filterTaps:true means onDragStart only fires on real drags.
-   * This onClick fires for pure taps/clicks so users can select
-   * a layer immediately without needing to start dragging.
+  /* ── Immediate pointer-down layer selection ─────────────────
+   * Fires before the gesture library's drag-threshold window so the
+   * bounding box + handles appear the instant the user touches/clicks
+   * a layer — no drag required.  We do NOT call stopPropagation() so
+   * the gesture library still receives the event for drag/pinch.
+   *
+   * Deselection (tap on empty canvas) is handled by handleCanvasClick
+   * below (after pointer-up) to avoid false deselects during gestures.
+   */
+  const handleSvgPointerDown = useCallback((e: React.PointerEvent<SVGSVGElement>) => {
+    const target = e.target as Element;
+    // Handle elements (resize/delete circles) have no data-layer-id — skip.
+    const layerId =
+      target.getAttribute?.("data-layer-id") ??
+      target.closest?.("[data-layer-id]")?.getAttribute("data-layer-id");
+    if (!layerId) return;
+    const layer = layersRef.current.find(l => l.id === layerId);
+    if (!layer || layer.locked) return;
+    setSelectedLayerId(layerId);
+    selectedLayerIdRef.current = layerId;
+  }, []);
+
+  /* ── Click/tap on empty canvas deselects ────────────────────
+   * filterTaps:true on the gesture means onDragStart only fires on
+   * real drags. This onClick handles deselection for pure taps on
+   * the canvas background.  Layer selection is already handled above
+   * on pointer-down (instant feedback), so we only need to deselect
+   * here when the user taps empty space.
    */
   const handleCanvasClick = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
     const target = e.target as Element;
     const layerId =
       target.getAttribute?.("data-layer-id") ??
       target.closest?.("[data-layer-id]")?.getAttribute("data-layer-id");
-    if (layerId) {
-      const layer = layersRef.current.find(l => l.id === layerId);
-      if (!layer || layer.locked) return;
-      setSelectedLayerId(layerId);
-      selectedLayerIdRef.current = layerId;
-    } else {
+    if (!layerId) {
+      // Tapped empty canvas — deselect
       setSelectedLayerId(null);
       selectedLayerIdRef.current = null;
     }
+    // Layer selection was already done on pointer-down — no need to repeat.
   }, []);
 
   /* ── Keyboard shortcuts: undo/redo, delete ─────────── */
@@ -2507,6 +2528,7 @@ export default function DesignStudio() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.18, ease: "easeInOut" }}
                   {...(bindCanvasGestures() as Record<string, unknown>)}
+                  onPointerDown={handleSvgPointerDown}
                   onClick={handleCanvasClick}
                 >
                   {isFlatZone && activeZoneConfig
