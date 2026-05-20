@@ -77,6 +77,11 @@ export class AppErrorBoundary extends Component<Props, State> {
               ? "Your browser cached an old version of the app. Tap Refresh to load the latest one."
               : "A temporary error occurred. You can go back to the home page or refresh the app."}
         </p>
+        {!isChunkError && this.state.error && (
+          <p className="text-[10px] text-gray-400 font-mono bg-gray-100 rounded px-3 py-2 max-w-sm mb-4 text-left break-all">
+            {this.state.error.message}
+          </p>
+        )}
         <div className="flex flex-col sm:flex-row gap-3">
           {!isChunkError && (
             <button
