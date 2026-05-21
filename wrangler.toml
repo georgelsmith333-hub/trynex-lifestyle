@@ -1,10 +1,7 @@
 name = "trynex-lifestyle-shop"
 compatibility_date = "2026-05-21"
 pages_build_output_dir = "artifacts/trynex-storefront/dist"
-<<<<<<< HEAD
 
 [vars]
 TRYNEX_API_URL = "https://trynex-api.onrender.com"
 API_ORIGIN = "https://trynex-api.onrender.com"
-=======
->>>>>>> b8fe564 (Git commit prior to merge)
