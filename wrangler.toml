@@ -1,8 +1,3 @@
 name = "trynex-lifestyle-shop"
+compatibility_date = "2026-05-21"
 pages_build_output_dir = "artifacts/trynex-storefront/dist"
-
-# Runtime env vars for Cloudflare Pages Functions (functions/api/[[route]].js).
-# The proxy function reads TRYNEX_API_URL and forwards all /api/* requests there.
-# This points to the Render.com API server.
-[vars]
-TRYNEX_API_URL = "https://trynex-api.onrender.com"
