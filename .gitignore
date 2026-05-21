@@ -48,6 +48,9 @@ Thumbs.db
 .cache/
 .local/
 
+# pnpm store (local cache — never commit)
+.pnpm-store/
+
 # Generated PDFs & screenshots (excluded from git)
 docs/TryNex-Lifestyle-Overview.pdf
 trynex-site-overview.pdf
