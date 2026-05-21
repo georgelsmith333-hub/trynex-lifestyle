@@ -191,3 +191,9 @@ id = "_jcKbqv3_R2GguzkzWMxD"
 uri = "file://docs/TRYNEX_FINAL_FEATURE_VERIFICATION_REPORT.pdf"
 type = "pdf"
 title = "TRYNEX_FINAL_FEATURE_VERIFICATION_REPORT.pdf"
+
+[[outputs]]
+id = "nU-3QMQxzO_4jfo_XsZt1"
+uri = "file://TRYNEX_FINAL_POLISH_AND_VERIFICATION_REPORT.pdf"
+type = "pdf"
+title = "TryNex Lifestyle — Final Polish & Verification Report"

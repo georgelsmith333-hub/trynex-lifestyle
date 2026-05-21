@@ -1,6 +1,6 @@
 # Cloudflare Pages SPA fallback.
-# All non-static routes are rewritten to /index.html with HTTP 200,
-# which lets wouter handle client-side routing correctly.
-# This also fixes the HTTP 404 status code that the 404.html fallback
-# returns for direct URL access and hard-refreshes.
-/* /index.html 200
+# CF Pages serves static files from dist/ directly (before consulting _redirects).
+# CF Pages Functions (functions/api/[[route]].js) handle /api/* — no rule needed.
+# The single rule below rewrites every unmatched path to index.html with HTTP 200
+# so wouter handles client-side routing and direct URL refreshes work correctly.
+/*    /index.html    200

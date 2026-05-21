@@ -90,7 +90,7 @@ function useTypewriter(phrases: string[], opts?: {
 // Multi-product grid shown in the hero right column
 const HERO_PRODUCT_GRID = [
   {
-    src: "/mockups/white-hoodie-front-cutout.png",
+    src: "/mockups/black-hoodie-front.png",
     label: "Custom Hoodie",
     badge: "Best Seller",
     badgeColor: "#E85D04",
@@ -99,7 +99,7 @@ const HERO_PRODUCT_GRID = [
     rotate: "-2deg",
   },
   {
-    src: "/mockups/white-mug-front-cutout.png",
+    src: "/mockups/black-mug-front.png",
     label: "Custom Mug",
     badge: "Fan Fav",
     badgeColor: "#0EA5E9",
@@ -108,7 +108,7 @@ const HERO_PRODUCT_GRID = [
     rotate: "2deg",
   },
   {
-    src: "/mockups/white-tshirt-front-cutout.png",
+    src: "/mockups/black-tshirt-front.png",
     label: "Custom T-Shirt",
     badge: "Top Pick",
     badgeColor: "#10B981",
@@ -117,7 +117,7 @@ const HERO_PRODUCT_GRID = [
     rotate: "-1deg",
   },
   {
-    src: "/mockups/white-cap-front.png",
+    src: "/mockups/black-cap-front.png",
     label: "Custom Cap",
     badge: "Trending",
     badgeColor: "#7C3AED",

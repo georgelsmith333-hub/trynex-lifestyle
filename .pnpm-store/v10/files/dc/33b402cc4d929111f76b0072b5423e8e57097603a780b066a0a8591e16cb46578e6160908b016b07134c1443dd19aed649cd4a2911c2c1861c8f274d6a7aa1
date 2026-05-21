@@ -1,0 +1,1 @@
+{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../src/isLastDayOfMonth/index.ts"],"names":[],"mappings":"AAGA,OAAO,KAAK,EAAE,cAAc,EAAE,OAAO,EAAE,MAAM,aAAa,CAAC;AAE3D,MAAM,WAAW,uBAAwB,SAAQ,cAAc,CAAC,IAAI,CAAC;CAAG;AAExE;;;;;;;;;;;;;;;;;GAiBG;AACH,wBAAgB,gBAAgB,CAC9B,IAAI,EAAE,OAAO,CAAC,IAAI,CAAC,GAAG,EAAE,EACxB,OAAO,CAAC,EAAE,uBAAuB,GAAG,SAAS,GAC5C,OAAO,CAGT"}
