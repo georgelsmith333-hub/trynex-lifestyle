@@ -787,14 +787,14 @@ export const useDeleteGuestCustomer = (opts?: ReqOpts) => {
 
 // ─── Backup Hooks ─────────────────────────────────────────────────────────────
 
-export const getExportBackupUrl = () => `/api/backup/export`;
-export const getExportOrdersCsvUrl = () => `/api/backup/orders-csv`;
+export const getExportBackupUrl = () => `/api/admin/backup/export`;
+export const getExportOrdersCsvUrl = () => `/api/admin/export/orders-csv`;
 
 export const useImportBackup = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (body: { version: string; data: Record<string, unknown> }) =>
-      customFetch<{ success: boolean; imported: Record<string, number> }>("/api/backup/import", {
+      customFetch<{ success: boolean; imported: Record<string, number> }>("/api/admin/backup/import", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),

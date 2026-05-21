@@ -403,6 +403,56 @@ router.get("/admin/telegram/webhook/info", requireAdmin, async (req, res) => {
   }
 });
 
+// ── Admin: Setup status (what AdminSettings calls) ───────────────────────────
+
+router.get("/admin/telegram/setup", requireAdmin, async (_req, res) => {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const configured = Boolean(token);
+  if (!configured) {
+    res.json({ configured: false, botUsername: null, webhook: null });
+    return;
+  }
+  try {
+    const r = await fetch(`https://api.telegram.org/bot${token}/getWebhookInfo`, { signal: AbortSignal.timeout(8000) });
+    const data: any = await r.json();
+    res.json({
+      configured: true,
+      botUsername: process.env.TELEGRAM_BOT_USERNAME || null,
+      webhook: data.ok ? data.result : null,
+    });
+  } catch {
+    res.json({ configured: true, botUsername: process.env.TELEGRAM_BOT_USERNAME || null, webhook: null });
+  }
+});
+
+// ── Admin: Test — send a message to the admin Telegram chat ──────────────────
+
+router.post("/admin/telegram/test", requireAdmin, async (_req, res) => {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!token) {
+    res.status(400).json({ ok: false, error: "not_configured", message: "TELEGRAM_BOT_TOKEN is not set" });
+    return;
+  }
+  if (!chatId) {
+    res.status(400).json({ ok: false, error: "no_chat_id", message: "TELEGRAM_CHAT_ID is not set — send any message to your bot first" });
+    return;
+  }
+  try {
+    const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chatId, text: "✅ TryNex admin bot is connected and working!", parse_mode: "HTML" }),
+      signal: AbortSignal.timeout(8000),
+    });
+    const data: any = await r.json();
+    if (!data.ok) { res.status(502).json({ ok: false, error: "telegram_error", message: data.description }); return; }
+    res.json({ ok: true, message: "Test message sent successfully!" });
+  } catch {
+    res.status(502).json({ ok: false, error: "network_error", message: "Could not reach Telegram API" });
+  }
+});
+
 // ── Admin: Delete webhook (revert to polling) ────────────────────────────────
 
 router.delete("/admin/telegram/webhook", requireAdmin, async (req, res) => {

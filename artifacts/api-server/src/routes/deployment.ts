@@ -107,6 +107,30 @@ router.get("/admin/deployment/status", requireAdmin, async (req, res) => {
 });
 
 // ---------------------------------------------------------------------------
+// GET /api/admin/deployment/config  — read current config (alias for status)
+// ---------------------------------------------------------------------------
+router.get("/admin/deployment/config", requireAdmin, async (_req, res) => {
+  try {
+    const s = await readSettings(Object.values(KEYS));
+    res.json({
+      configured: Boolean(s[KEYS.owner] && s[KEYS.repo] && s[KEYS.token]),
+      owner: s[KEYS.owner] || "",
+      repo: s[KEYS.repo] || "",
+      branch: s[KEYS.branch] || "main",
+      authorName: s[KEYS.authorName] || "TryNex Admin",
+      authorEmail: s[KEYS.authorEmail] || "admin@trynex.local",
+      tokenMasked: s[KEYS.token] ? `••••${s[KEYS.token].slice(-4)}` : "",
+      renderDeployHookSet: Boolean(s[KEYS.renderDeployHook]),
+      renderServiceId: s[KEYS.renderServiceId] || "",
+      cloudflarePagesHookSet: Boolean(s[KEYS.cloudflarePagesHook]),
+    });
+  } catch (err) {
+    _req.log?.error({ err }, "GET /api/admin/deployment/config failed");
+    res.status(500).json({ error: "internal_error" });
+  }
+});
+
+// ---------------------------------------------------------------------------
 // PUT /api/admin/deployment/config
 // ---------------------------------------------------------------------------
 router.put("/admin/deployment/config", requireAdmin, async (req, res) => {

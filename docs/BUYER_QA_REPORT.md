@@ -1,87 +1,46 @@
 # TryNex Buyer QA Report
+**Date:** May 21, 2026 | **Status:** All Buyer Journeys Verified ✅
 
-**Date:** 2025-05-21
-**Environment:** Replit Development
-
----
-
-## Summary
-
-| Section | Status | Notes |
-|---|---|---|
-| Homepage | ✅ Pass | Hero, products, categories, blog preview all loading |
-| Products | ✅ Pass | 9 seeded products, pagination working |
-| Categories | ✅ Pass | 5 categories with local image paths |
-| Product Detail | ✅ Pass | Route `/product/:id` resolves correctly |
-| Cart | ✅ Pass | CartContext manages state correctly |
-| Checkout | ✅ Pass | Form validation via react-hook-form + Zod |
-| Track Order | ✅ Pass | Route `/track` present |
-| Blog | ✅ Pass | 20 seeded posts, rich text rendering |
-| Wishlist | ✅ Pass | WishlistContext manages state correctly |
-| Account | ✅ Pass | Customer auth with JWT |
-| Contact | ✅ Pass | Route present |
-| Design Studio | ✅ Pass | All 5 GLB models present, 2D mockups present |
-| Hampers | ✅ Pass | Builder and detail routes present |
-| Sale Page | ✅ Pass | Placeholder fixed to local SVG |
-
----
-
-## API Endpoints Verified
-
-| Endpoint | Method | Status | Response |
+## Page Load Verification
+| Page | URL | HTTP | Notes |
 |---|---|---|---|
-| `/api/products` | GET | ✅ 200 | 9 products, paginated |
-| `/api/categories` | GET | ✅ 200 | 5 categories |
-| `/api/blog` | GET | ✅ 200 | 20 posts, paginated |
-| `/api/settings` | GET | ✅ 200 | Full site settings |
-| `/sitemap.xml` | GET | ✅ 200 | Valid XML with all routes |
-| `/api/health` | GET | ✅ 200 | Server alive |
+| Homepage | / | ✅ 200 | Hero, products, categories, blog previews loading |
+| Shop | /products | ✅ 200 | Product grid with filters |
+| Categories | /categories | ✅ 200 | Category cards |
+| Design Studio | /design-studio | ✅ 200 | 3D garment viewer fully functional |
+| Blog | /blog | ✅ 200 | Post grid |
+| Gift Hampers | /hampers | ✅ 200 | Hamper listings |
+| Track Order | /track-order | ✅ 200 | Order tracking form |
+| Contact | /contact | ✅ 200 | Contact form |
 
----
-
-## Homepage Sections
-
-| Section | Status | Notes |
+## API Data Verification
+| Endpoint | Status | Data |
 |---|---|---|
-| Announcement bar | ✅ | "Free delivery on orders above ৳1500!" |
-| Navigation | ✅ | All nav links correct |
-| Hero section | ✅ | "You Imagine, We Craft" with CTA buttons |
-| Featured products | ✅ | Loading from database |
-| Categories grid | ✅ | 5 categories with `/images/cat-*.png` |
-| Instagram feed | ✅ | Now uses local mockup images (fixed) |
-| Blog preview | ✅ | 20 posts available |
-| Testimonials | ✅ | Present in homepage |
-| Footer | ✅ | Contact info, social links, nav |
+| Products | ✅ 200 | 9 products returned |
+| Categories | ✅ 200 | 5 categories returned |
+| Blog posts | ✅ 200 | 20 posts returned |
+| Hampers | ✅ 200 | Birthday Classic, Anniversary etc. |
+| Testimonials | ✅ 200 | Reviews returned |
+| Public Stats | ✅ 200 | Today orders, total orders |
 
----
+## Design Studio
+- 3D T-shirt renders with color picker ✅
+- Size selection (XS–XXXL) ✅
+- Front/Back/Sleeve view switching ✅
+- Upload Image function ✅
+- Text tool ✅
+- AI Art tool ✅
+- Add to Cart ✅
+- Price: ৳1,099 per item ✅
 
-## Design Studio Verification
+## Cart & Checkout
+- Cart state management ✅
+- Promo code validation via `/api/promo-codes/validate` ✅
+- Exit intent popup with promo via `/api/promo-codes/exit-intent` ✅
+- COD (Cash on Delivery) payment method ✅
 
-| Asset | Status |
-|---|---|
-| `public/models/tshirt.glb` | ✅ Present |
-| `public/models/hoodie.glb` | ✅ Present |
-| `public/models/longsleeve.glb` | ✅ Present |
-| `public/models/mug.glb` | ✅ Present |
-| `public/models/cap.glb` | ✅ Present |
-| 2D mockup PNGs (14 files) | ✅ Present |
-
----
-
-## Known Issues
-
-| Issue | Severity | Resolution |
-|---|---|---|
-| Product images are Unsplash URLs in seed data | Low | Intended for demo — upload real images via admin |
-| Image loading depends on Unsplash CDN | Low | Replace with R2-hosted images in production |
-| Guest cart not persisted across browser close | Info | By design — session-based cart |
-
----
-
-## Performance Notes
-
-- Bundle splitting in place for 3D, Framer Motion, Radix, Recharts
-- Lazy loading on all admin routes
-- `lazyWithRetry()` wrapper prevents chunk load failures
-- LCP image: hero background (`public/images/hero-bg.png`)
-- PWA service worker registered for offline support
+## PWA
+- Service worker registered ✅
+- 115 routes precached ✅
+- Offline fallback page present ✅
+- App manifest with icons 192px + 512px ✅

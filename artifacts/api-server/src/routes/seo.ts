@@ -182,6 +182,21 @@ router.post("/admin/seo/submit-gsc", requireAdmin, async (req, res) => {
   }
 });
 
+router.get("/admin/seo/gsc-config", requireAdmin, async (_req, res) => {
+  try {
+    const email = await getSetting("seoGscServiceAccountEmail");
+    const keyConfigured = !!(await getSetting("seoGscServiceAccountKey"));
+    res.json({
+      configured: Boolean(email),
+      serviceAccountEmail: email || null,
+      serviceAccountKeyConfigured: keyConfigured,
+    });
+  } catch (err) {
+    logger.error({ err }, "GET /api/admin/seo/gsc-config failed");
+    res.status(500).json({ message: "Failed to read GSC config" });
+  }
+});
+
 router.put("/admin/seo/gsc-config", requireAdmin, async (req, res) => {
   try {
     const { serviceAccountEmail, serviceAccountJson } = req.body as {
