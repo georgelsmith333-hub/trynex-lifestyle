@@ -39,3 +39,22 @@ export function getApiBaseUrl(): string {
 export function getApiUrl(path: string): string {
   return `${getApiBaseUrl()}${path}`;
 }
+
+/**
+ * Resolves any image URL to a renderable src value.
+ *
+ * Rules (in priority order):
+ *  1. Already an absolute external URL (https://…) → use as-is.
+ *  2. A relative storage path (/api/storage/… or /uploads/…) → prepend API base in production.
+ *  3. A relative public path (/images/…, /mockups/…, /products/…) → use as-is (Vite serves it).
+ *  4. Empty/null/undefined → return the local placeholder SVG.
+ */
+export function resolveImageUrl(url: string | null | undefined): string {
+  const PLACEHOLDER = "/images/product-placeholder.svg";
+  if (!url || url.trim() === "") return PLACEHOLDER;
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  if (url.startsWith("/api/storage/") || url.startsWith("/uploads/")) {
+    return `${getApiBaseUrl()}${url}`;
+  }
+  return url;
+}

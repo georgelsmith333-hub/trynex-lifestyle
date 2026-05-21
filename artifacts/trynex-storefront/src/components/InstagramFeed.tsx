@@ -9,12 +9,12 @@ interface InstaPost {
 }
 
 const PLACEHOLDER_FEED: InstaPost[] = [
-  { imageUrl: "https://placehold.co/400x400/E85D04/white?text=Follow+Us", link: "#" },
-  { imageUrl: "https://placehold.co/400x400/FB8500/white?text=New+Drop", link: "#" },
-  { imageUrl: "https://placehold.co/400x400/1C1917/white?text=Custom+Tees", link: "#" },
-  { imageUrl: "https://placehold.co/400x400/292524/white?text=Hoodies", link: "#" },
-  { imageUrl: "https://placehold.co/400x400/E85D04/white?text=Premium", link: "#" },
-  { imageUrl: "https://placehold.co/400x400/FB8500/white?text=Order+Now", link: "#" },
+  { imageUrl: "/mockups/white-tshirt-front.png", link: "#" },
+  { imageUrl: "/mockups/white-hoodie-front.png", link: "#" },
+  { imageUrl: "/mockups/black-tshirt-front.png", link: "#" },
+  { imageUrl: "/mockups/black-hoodie-front.png", link: "#" },
+  { imageUrl: "/mockups/white-mug-front.png", link: "#" },
+  { imageUrl: "/mockups/black-cap-front.png", link: "#" },
 ];
 
 export function InstagramFeed() {

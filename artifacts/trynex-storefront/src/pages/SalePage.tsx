@@ -69,7 +69,7 @@ function ProductCard({ product }: { product: any }) {
       >
         <div className="relative overflow-hidden aspect-square bg-gray-50">
           <img
-            src={product.imageUrl || product.images?.[0] || "https://placehold.co/400x400?text=Product"}
+            src={product.imageUrl || product.images?.[0] || "/images/product-placeholder.svg"}
             alt={product.name}
             className="w-full h-full object-cover"
           />

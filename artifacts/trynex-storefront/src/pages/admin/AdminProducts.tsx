@@ -496,7 +496,7 @@ export default function AdminProducts() {
               {/* Image */}
               <div className="aspect-square relative overflow-hidden bg-gray-50">
                 <img
-                  src={product.imageUrl || `https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300&fit=crop`}
+                  src={product.imageUrl || `/images/product-placeholder.svg`}
                   alt={product.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />

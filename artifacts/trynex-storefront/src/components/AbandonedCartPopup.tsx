@@ -187,7 +187,7 @@ export function AbandonedCartPopup() {
                 {items.slice(0, 4).map((item, i) => (
                   <div key={i} className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-gray-200 shadow-sm">
                     <img src={item.imageUrl} alt="" className="w-full h-full object-cover"
-                      onError={e => { (e.target as HTMLImageElement).src = "https://placehold.co/40x40?text=?"; }} />
+                      onError={e => { (e.target as HTMLImageElement).src = "/images/product-placeholder.svg"; }} />
                   </div>
                 ))}
                 {items.length > 4 && (

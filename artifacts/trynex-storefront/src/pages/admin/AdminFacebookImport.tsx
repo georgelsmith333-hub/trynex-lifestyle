@@ -411,7 +411,7 @@ export default function AdminFacebookImport() {
                         <div className="relative aspect-video bg-gray-100 overflow-hidden">
                           {(post.images || []).length > 0 ? (
                             <img src={(post.images || [])[0]} alt="" className="w-full h-full object-cover"
-                              onError={e => { (e.target as HTMLImageElement).src = "https://placehold.co/400x300?text=No+Image"; }} />
+                              onError={e => { (e.target as HTMLImageElement).src = "/images/product-placeholder.svg"; }} />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
                               <ImageIcon className="w-10 h-10 text-gray-300" />
@@ -525,7 +525,7 @@ export default function AdminFacebookImport() {
                           className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all ${selectedImageIdx === idx ? "border-orange-500 ring-2 ring-orange-200" : "border-gray-200 hover:border-gray-300"}`}
                         >
                           <img src={img} alt="" className="w-full h-full object-cover"
-                            onError={e => { (e.target as HTMLImageElement).src = "https://placehold.co/64x64?text=?"; }} />
+                            onError={e => { (e.target as HTMLImageElement).src = "/images/product-placeholder.svg"; }} />
                         </button>
                       ))}
                     </div>
