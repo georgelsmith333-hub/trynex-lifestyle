@@ -86,6 +86,7 @@ CLOUDFLARE_ACCOUNT_ID = "060a0f28c7f62affa5ac09be3b1dd1a9"
 UPSTASH_REDIS_REST_URL = "https://positive-oyster-122365.upstash.io"
 CORS_ORIGIN = "https://trynexshop.com"
 ALLOWED_ORIGINS = "https://trynexshop.com,https://31fc7a81-f4d0-4738-938e-7f3870bed233-00-2867xp8sdaohx.pike.replit.dev"
+TELEGRAM_BOT_USERNAME = "Trynex_Bot"
 
 [userenv.development]
 GOOGLE_CLIENT_ID = "66391492938-39sou5jlsoheuctgsan3jtpt8t5hnoc8.apps.googleusercontent.com"
