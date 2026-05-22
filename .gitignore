@@ -1,7 +1,18 @@
+# Secrets
 .env
 production.env
 *.env
-.DS_Store
+.env.local
+.env.*.local
+
+# Dependencies
 node_modules/
 dist/
 build/
+.next/
+out/
+
+# Misc
+.DS_Store
+*.log
+.replit
