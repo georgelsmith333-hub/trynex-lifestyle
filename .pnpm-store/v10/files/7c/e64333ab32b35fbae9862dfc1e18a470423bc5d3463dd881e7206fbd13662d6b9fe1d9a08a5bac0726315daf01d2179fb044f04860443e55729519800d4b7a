@@ -1,0 +1,1 @@
+{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../src/isToday/index.ts"],"names":[],"mappings":"AAGA,OAAO,KAAK,EAAE,cAAc,EAAE,OAAO,EAAE,MAAM,aAAa,CAAC;AAE3D;;GAEG;AACH,MAAM,WAAW,cAAe,SAAQ,cAAc,CAAC,IAAI,CAAC;CAAG;AAE/D;;;;;;;;;;;;;;;;;;GAkBG;AACH,wBAAgB,OAAO,CACrB,IAAI,EAAE,OAAO,CAAC,IAAI,CAAC,GAAG,EAAE,EACxB,OAAO,CAAC,EAAE,cAAc,GAAG,SAAS,GACnC,OAAO,CAKT"}

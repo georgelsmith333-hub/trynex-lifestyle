@@ -1,0 +1,1 @@
+{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../src/transpose/index.ts"],"names":[],"mappings":"AACA,OAAO,KAAK,EAAE,SAAS,EAAE,sBAAsB,EAAE,MAAM,aAAa,CAAC;AAErE;;;;;;;;;;;;;;;;;;;;;;;;;;;GA2BG;AACH,wBAAgB,SAAS,CAAC,SAAS,SAAS,IAAI,EAAE,UAAU,SAAS,IAAI,EACvE,IAAI,EAAE,SAAS,EACf,WAAW,EACP,UAAU,GACV,sBAAsB,CAAC,UAAU,CAAC,GAClC,SAAS,CAAC,UAAU,CAAC,GACxB,UAAU,CAYZ"}

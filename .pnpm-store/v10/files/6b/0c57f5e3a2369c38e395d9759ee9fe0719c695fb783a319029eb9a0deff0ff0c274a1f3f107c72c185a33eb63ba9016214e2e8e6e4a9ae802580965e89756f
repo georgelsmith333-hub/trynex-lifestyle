@@ -1,0 +1,10 @@
+import type { Locale } from "./types.ts";
+/**
+ * @category Locales
+ * @summary Gujarati locale (India).
+ * @language Gujarati
+ * @iso-639-2 guj
+ * @author Manaday Mavani [@ManadayM](https://github.com/manadaym)
+ */
+export declare const gu: Locale;
+//# sourceMappingURL=index.d.ts.map
