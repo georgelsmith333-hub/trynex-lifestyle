@@ -285,7 +285,20 @@ router.post("/telegram/webhook", async (req, res) => {
     if (!chatId) return;
 
     if (!isAdminChat(chatId)) {
-      await tgReply(chatId, "⛔ Unauthorized. This bot only responds to the TryNex admin.");
+      const configuredId = process.env.TELEGRAM_CHAT_ID;
+      if (!configuredId) {
+        await tgReply(chatId,
+          `🔧 <b>TryNex Bot — Setup Required</b>\n\n` +
+          `Your Telegram Chat ID is: <code>${chatId}</code>\n\n` +
+          `To activate admin commands:\n` +
+          `1. Copy the chat ID above\n` +
+          `2. Add it as the <b>TELEGRAM_CHAT_ID</b> secret in Replit\n` +
+          `3. Restart the API server\n\n` +
+          `Then message /help to get started.`
+        );
+      } else {
+        await tgReply(chatId, "⛔ Unauthorized. This bot only responds to the TryNex admin.");
+      }
       return;
     }
 

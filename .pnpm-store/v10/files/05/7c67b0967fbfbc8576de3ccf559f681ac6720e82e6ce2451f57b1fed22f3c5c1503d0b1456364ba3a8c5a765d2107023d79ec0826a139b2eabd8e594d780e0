@@ -1,0 +1,22 @@
+"use strict";
+
+var _index = require("../../eachDayOfInterval.cjs");
+var _nodeAssert = require("./node:assert"); // This is basic DST test for eachDayOfInterval
+
+if (process.env.TZ !== "Asia/Damascus")
+  throw new Error("The test must be run with TZ=Asia/Damascus");
+
+if (parseInt(process.version.match(/^v(\d+)\./)?.[1] || "0") < 10)
+  throw new Error("The test must be run on Node.js version >= 10");
+
+_nodeAssert.default.deepStrictEqual(
+  (0, _index.eachDayOfInterval)({
+    start: new Date(2020, 2, 26),
+    end: new Date(2020, 2, 28),
+  }).map((d) => d.toString()),
+  [
+    "Thu Mar 26 2020 00:00:00 GMT+0200 (GMT+03:00)",
+    "Fri Mar 27 2020 01:00:00 GMT+0300 (GMT+03:00)",
+    "Sat Mar 28 2020 00:00:00 GMT+0300 (GMT+03:00)",
+  ],
+);

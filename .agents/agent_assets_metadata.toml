@@ -64,7 +64,7 @@ title = "generated_image"
 id = "8PXTogbCaQrx0SHOYT8LR"
 uri = "file://artifacts/trynex-storefront/public/mockups/white-cap-front.png"
 type = "image"
-title = "generated_image"
+title = "white cap front cutout"
 
 [[generated]]
 id = "Kc12qYOCQ3GI43np0ddB8"
@@ -137,6 +137,60 @@ id = "JxljXXSmyGK4tKKnhk9za"
 uri = "file://attached_assets/generated_images/trynex-opengraph.png"
 type = "image"
 title = "generated_image"
+
+[[generated]]
+id = "jqiEVRLXNcoiXto_5sqEF"
+uri = "file://artifacts/trynex-storefront/public/mockups/white-tshirt-front-cutout.png"
+type = "image"
+title = "white tshirt front cutout"
+
+[[generated]]
+id = "6WUjHJxNry30rEcVAlCa5"
+uri = "file://artifacts/trynex-storefront/public/mockups/white-hoodie-front-cutout.png"
+type = "image"
+title = "white hoodie front cutout"
+
+[[generated]]
+id = "9oIZLGJjFtXXcyOybk_TV"
+uri = "file://artifacts/trynex-storefront/public/mockups/white-mug-front-cutout.png"
+type = "image"
+title = "white mug front cutout"
+
+[[generated]]
+id = "9R2Jz8V4hi0Q848UPnZUE"
+uri = "file://artifacts/trynex-storefront/public/images/cat-tshirt.png"
+type = "image"
+title = "category tshirt banner"
+
+[[generated]]
+id = "-ZnCi-ZOpDVWXzJ2NZHcn"
+uri = "file://artifacts/trynex-storefront/public/images/cat-hoodie.png"
+type = "image"
+title = "category hoodie banner"
+
+[[generated]]
+id = "Q4sBTBnaQmfrU4BiL-Yie"
+uri = "file://artifacts/trynex-storefront/public/images/cat-mug.png"
+type = "image"
+title = "category mug banner"
+
+[[generated]]
+id = "G0FSPrMbt4s5rARnrPRNI"
+uri = "file://artifacts/trynex-storefront/public/images/cat-cap.png"
+type = "image"
+title = "category cap banner"
+
+[[generated]]
+id = "Q95BkkXHDFF-n2785aDJT"
+uri = "file://artifacts/trynex-storefront/public/images/hero-bg.png"
+type = "image"
+title = "hero background gradient"
+
+[[generated]]
+id = "_6Xwyv5N9pOqfVC9am-yP"
+uri = "file://artifacts/trynex-storefront/public/images/pattern.png"
+type = "image"
+title = "background pattern texture"
 
 [[outputs]]
 id = "tCytvaUKpj7oEILkFIdkO"

@@ -1,0 +1,1 @@
+{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../src/isWednesday/index.ts"],"names":[],"mappings":"AACA,OAAO,KAAK,EAAE,cAAc,EAAE,OAAO,EAAE,MAAM,aAAa,CAAC;AAE3D;;GAEG;AACH,MAAM,WAAW,kBAAmB,SAAQ,cAAc,CAAC,IAAI,CAAC;CAAG;AAEnE;;;;;;;;;;;;;;;;;GAiBG;AACH,wBAAgB,WAAW,CACzB,IAAI,EAAE,OAAO,CAAC,IAAI,CAAC,GAAG,EAAE,EACxB,OAAO,CAAC,EAAE,kBAAkB,GAAG,SAAS,GACvC,OAAO,CAET"}

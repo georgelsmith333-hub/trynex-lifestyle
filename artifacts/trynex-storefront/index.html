@@ -51,6 +51,12 @@
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
     <link rel="dns-prefetch" href="https://connect.facebook.net" />
 
+    <!-- Hero product images — preload so they paint on first frame, not after JS boots -->
+    <link rel="preload" as="image" href="/mockups/white-hoodie-front-cutout.png" fetchpriority="high" />
+    <link rel="preload" as="image" href="/mockups/white-tshirt-front-cutout.png" fetchpriority="high" />
+    <link rel="preload" as="image" href="/mockups/white-mug-front-cutout.png" fetchpriority="high" />
+    <link rel="preload" as="image" href="/mockups/white-cap-front.png" fetchpriority="high" />
+
 
     <!-- Google Fonts — non-blocking load. Outfit + Plus Jakarta Sans load first
          (used on every page). Design-Studio fonts load in the background so they

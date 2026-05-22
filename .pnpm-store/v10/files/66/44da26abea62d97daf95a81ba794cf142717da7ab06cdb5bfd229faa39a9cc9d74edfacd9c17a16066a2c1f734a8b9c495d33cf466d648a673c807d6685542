@@ -1,0 +1,6 @@
+// This file is generated automatically by `scripts/build/fp.ts`. Please, don't change it.
+
+import { isDate as fn } from "../isDate.js";
+import { convertToFP } from "./_lib/convertToFP.js";
+
+export const isDate = convertToFP(fn, 1);
