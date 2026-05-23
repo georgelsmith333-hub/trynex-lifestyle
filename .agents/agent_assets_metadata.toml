@@ -4,7 +4,7 @@ uploads = []
 id = "xorItRTHgW9UjfYGepohl"
 uri = "file://artifacts/trynex-storefront/public/mockups/white-tshirt-front.png"
 type = "image"
-title = "generated_image"
+title = "white tshirt front flat"
 
 [[generated]]
 id = "1BrHJrORrBE8t-oZnasLB"
@@ -16,7 +16,7 @@ title = "generated_image"
 id = "MjE1OhH7RjIxoILAOlF2P"
 uri = "file://artifacts/trynex-storefront/public/mockups/black-tshirt-front.png"
 type = "image"
-title = "generated_image"
+title = "black tshirt front flat"
 
 [[generated]]
 id = "UhgpVk02nAKORvVRa2JZz"
@@ -40,7 +40,7 @@ title = "generated_image"
 id = "uNldbLHqm98kN8CnAQeBv"
 uri = "file://artifacts/trynex-storefront/public/mockups/white-hoodie-front.png"
 type = "image"
-title = "generated_image"
+title = "white hoodie front flat"
 
 [[generated]]
 id = "Ci0dVnm0ZJG0ldL0vjx0L"
@@ -52,7 +52,7 @@ title = "generated_image"
 id = "3a7X1VjvTAdzRh5qyfmSB"
 uri = "file://artifacts/trynex-storefront/public/mockups/black-hoodie-front.png"
 type = "image"
-title = "generated_image"
+title = "black hoodie front flat"
 
 [[generated]]
 id = "5bX7fmFqI6o5VjU9w139j"
@@ -70,19 +70,19 @@ title = "white cap front cutout"
 id = "Kc12qYOCQ3GI43np0ddB8"
 uri = "file://artifacts/trynex-storefront/public/mockups/black-cap-front.png"
 type = "image"
-title = "generated_image"
+title = "black cap front view"
 
 [[generated]]
 id = "RuzDEeaSbv68EZe0NnfyB"
 uri = "file://artifacts/trynex-storefront/public/mockups/white-mug-front.png"
 type = "image"
-title = "generated_image"
+title = "white mug front view"
 
 [[generated]]
 id = "4sIYB-YBUeYjXik3REAIf"
 uri = "file://artifacts/trynex-storefront/public/mockups/black-mug-front.png"
 type = "image"
-title = "generated_image"
+title = "black mug front view"
 
 [[generated]]
 id = "E0pwlnBu2WC7VNaEc95gi"
@@ -130,7 +130,7 @@ title = "generated_image"
 id = "y_9J6QlwlqtHgJD-f8tGN"
 uri = "file://artifacts/trynex-storefront/public/mockups/white-waterbottle-blank.png"
 type = "image"
-title = "blank white water bottle product photo"
+title = "white water bottle front"
 
 [[generated]]
 id = "JxljXXSmyGK4tKKnhk9za"
@@ -148,7 +148,7 @@ title = "white tshirt front cutout"
 id = "6WUjHJxNry30rEcVAlCa5"
 uri = "file://artifacts/trynex-storefront/public/mockups/white-hoodie-front-cutout.png"
 type = "image"
-title = "white hoodie front cutout"
+title = "white hoodie cutout transparent"
 
 [[generated]]
 id = "9oIZLGJjFtXXcyOybk_TV"
@@ -191,6 +191,12 @@ id = "_6Xwyv5N9pOqfVC9am-yP"
 uri = "file://artifacts/trynex-storefront/public/images/pattern.png"
 type = "image"
 title = "background pattern texture"
+
+[[generated]]
+id = "Xa-uUBNL8PHXjj3Tb0sd_"
+uri = "file://artifacts/trynex-storefront/public/mockups/white-waterbottle-cutout.png"
+type = "image"
+title = "white water bottle cutout"
 
 [[outputs]]
 id = "tCytvaUKpj7oEILkFIdkO"
