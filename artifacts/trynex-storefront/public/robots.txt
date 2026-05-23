@@ -8,4 +8,17 @@ Disallow: /account
 Disallow: /login
 Disallow: /signup
 
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /checkout
+Disallow: /account
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
 Sitemap: https://trynexshop.com/sitemap.xml

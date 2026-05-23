@@ -3,7 +3,7 @@ import { AdminLayout } from "@/components/layout/AdminLayout";
 import { getApiUrl, getAuthHeaders } from "@/lib/utils";
 import {
   Search, ExternalLink, CheckCircle2, AlertCircle, Loader2,
-  Send, RefreshCw, Trash2, Eye, EyeOff, MapPin, Clock,
+  Send, RefreshCw, Trash2, Eye, EyeOff, MapPin, Clock, ShieldCheck,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -300,7 +300,7 @@ export default function AdminSEO() {
               {
                 step: 2,
                 title: "Select the trynexshop.com property",
-                desc: "If it is not listed, click Add Property and verify ownership using the HTML tag method (paste the verification meta tag in Settings → SEO → Google Site Verification).",
+                desc: "If it is not listed, click Add Property → Domain. Verify using DNS TXT record (best with Cloudflare) or HTML file method — see the verification guide card below.",
               },
               {
                 step: 3,
@@ -345,6 +345,55 @@ export default function AdminSEO() {
                 </div>
               </div>
             ))}
+          </div>
+        </motion.div>
+
+        {/* GSC HTML-file / DNS verification guide */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.12 }}
+          className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+        >
+          <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+            <ShieldCheck className="w-5 h-5 text-emerald-500 shrink-0" />
+            <div>
+              <h2 className="font-bold text-gray-900">Verify Ownership — Two Methods</h2>
+              <p className="text-xs text-gray-500 mt-0.5">Choose one. DNS TXT is the most reliable with Cloudflare.</p>
+            </div>
+          </div>
+          <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+
+            {/* Method A — DNS TXT */}
+            <div className="rounded-xl border border-emerald-100 bg-emerald-50 p-4 space-y-2">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-[10px] font-black tracking-widest px-2 py-0.5 rounded-full bg-emerald-600 text-white">RECOMMENDED</span>
+                <span className="font-bold text-gray-900 text-sm">DNS TXT Record</span>
+              </div>
+              <ol className="text-sm text-emerald-900 space-y-1 list-decimal list-inside">
+                <li>In GSC, choose <strong>Domain property</strong> → copy the TXT record value.</li>
+                <li>Open <a href="https://dash.cloudflare.com" target="_blank" rel="noopener noreferrer" className="underline font-semibold">Cloudflare dashboard</a> → DNS → Add record.</li>
+                <li>Type: <code className="bg-white px-1 rounded text-xs">TXT</code>, Name: <code className="bg-white px-1 rounded text-xs">@</code>, Content: paste the value.</li>
+                <li>Click Save. Google verifies within minutes (no Bot Fight Mode issue).</li>
+              </ol>
+            </div>
+
+            {/* Method B — HTML file via CF Pages Function */}
+            <div className="rounded-xl border border-blue-100 bg-blue-50 p-4 space-y-2">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-[10px] font-black tracking-widest px-2 py-0.5 rounded-full bg-blue-600 text-white">ALTERNATIVE</span>
+                <span className="font-bold text-gray-900 text-sm">HTML File (CF Pages Env Var)</span>
+              </div>
+              <ol className="text-sm text-blue-900 space-y-1 list-decimal list-inside">
+                <li>In GSC choose <strong>URL Prefix</strong> → HTML file method → note the filename, e.g. <code className="bg-white px-1 rounded text-xs">google1234abcd.html</code>.</li>
+                <li>The verification code shown is the <em>content</em> of that file (starts with <code className="bg-white px-1 rounded text-xs">google-site-verification: …</code>).</li>
+                <li>Open <a href="https://dash.cloudflare.com" target="_blank" rel="noopener noreferrer" className="underline font-semibold">CF Pages dashboard</a> → your project → Settings → Environment variables → Add variable.</li>
+                <li>Name: <code className="bg-white px-1 rounded text-xs">GOOGLE_SITE_VERIFICATION</code>, Value: the code from step 2.</li>
+                <li>Redeploy the Pages project. The Cloudflare Pages Function serves any <code className="bg-white px-1 rounded text-xs">/google*.html</code> URL automatically.</li>
+                <li>Disable <strong>Bot Fight Mode</strong> temporarily in CF Security → Bots so Googlebot can reach the file, then re-enable after verification.</li>
+              </ol>
+            </div>
+
           </div>
         </motion.div>
 

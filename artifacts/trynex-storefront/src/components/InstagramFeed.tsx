@@ -9,12 +9,12 @@ interface InstaPost {
 }
 
 const PLACEHOLDER_FEED: InstaPost[] = [
-  { imageUrl: "/mockups/white-tshirt-front.png", link: "#" },
-  { imageUrl: "/mockups/white-hoodie-front.png", link: "#" },
-  { imageUrl: "/mockups/black-tshirt-front.png", link: "#" },
-  { imageUrl: "/mockups/black-hoodie-front.png", link: "#" },
-  { imageUrl: "/mockups/white-mug-front.png", link: "#" },
-  { imageUrl: "/mockups/black-cap-front.png", link: "#" },
+  { imageUrl: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&q=80", link: "#" },
+  { imageUrl: "https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=400&q=80", link: "#" },
+  { imageUrl: "https://images.unsplash.com/photo-1503341338985-95e740a8ee8a?w=400&q=80", link: "#" },
+  { imageUrl: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=400&q=80", link: "#" },
+  { imageUrl: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400&q=80", link: "#" },
+  { imageUrl: "https://images.unsplash.com/photo-1533827432537-70133748f5c8?w=400&q=80", link: "#" },
 ];
 
 export function InstagramFeed() {
