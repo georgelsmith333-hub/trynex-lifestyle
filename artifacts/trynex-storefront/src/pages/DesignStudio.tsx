@@ -217,7 +217,7 @@ const DRAFT_STORAGE_KEY = "trynex-design-draft-v1";
 const DRAFT_VERSION = 2;
 
 /** The 3 most popular products shown as quick-switch tabs. */
-const QUICK_PRODUCT_IDS = ["tshirt", "mug", "waterbottle"] as const;
+const QUICK_PRODUCT_IDS = ["tshirt", "hoodie", "longsleeve", "mug"] as const;
 
 /** Map legacy colour-prefixed product IDs (e.g. "white-tshirt") to new simple IDs. */
 const LEGACY_ID_MAP: Record<string, string> = {
@@ -2251,11 +2251,17 @@ export default function DesignStudio() {
                 {QUICK_PRODUCT_IDS.map(pid => {
                   const prod = PRODUCTS.find(p => p.id === pid)!;
                   const isActive = selectedProduct.id === pid && !linkedStoreProduct;
+                  const label =
+                    pid === "mug" ? "Mug" :
+                    pid === "hoodie" ? "Hoodie" :
+                    pid === "longsleeve" ? "Long Sleeve" :
+                    pid === "waterbottle" ? "Bottle" :
+                    "T-Shirt";
                   return (
                     <button
                       key={pid}
                       onClick={() => handleQuickProductSwitch(prod)}
-                      className="flex-1 flex flex-col items-center gap-0.5 py-2 rounded-xl text-[10px] font-bold transition-all"
+                      className="flex-1 flex flex-col items-center gap-0.5 py-1.5 rounded-xl text-[9px] font-bold transition-all"
                       style={{
                         background: isActive ? "linear-gradient(135deg,#E85D04,#FB8500)" : "white",
                         color: isActive ? "white" : "#374151",
@@ -2264,10 +2270,20 @@ export default function DesignStudio() {
                       }}
                       title={prod.name}
                     >
-                      <span className="text-lg leading-none">{prod.icon}</span>
-                      <span className="mt-0.5 leading-tight">
-                        {pid === "mug" ? "Mug" : pid === "waterbottle" ? "Bottle" : prod.name.split(" ")[0]}
-                      </span>
+                      <div
+                        className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center"
+                        style={{
+                          background: isActive ? "rgba(255,255,255,0.18)" : "#f3f4f6",
+                        }}
+                      >
+                        <img
+                          src={prod.frontSrc}
+                          alt={prod.name}
+                          className="w-full h-full object-contain p-0.5"
+                          style={{ filter: isActive ? "brightness(0) invert(1)" : "none" }}
+                        />
+                      </div>
+                      <span className="mt-0.5 leading-tight text-center">{label}</span>
                     </button>
                   );
                 })}

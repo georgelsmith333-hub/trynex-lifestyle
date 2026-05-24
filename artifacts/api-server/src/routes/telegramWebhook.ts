@@ -5,6 +5,32 @@ import { requireAdmin } from "../middlewares/adminAuth";
 import { logger } from "../lib/logger";
 import { tgReply, getWebhookSecret } from "../lib/telegram";
 
+async function answerCallbackQuery(callbackQueryId: string, text?: string): Promise<void> {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (!token) return;
+  try {
+    await fetch(`https://api.telegram.org/bot${token}/answerCallbackQuery`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ callback_query_id: callbackQueryId, text: text ?? "", show_alert: false }),
+      signal: AbortSignal.timeout(5000),
+    });
+  } catch {}
+}
+
+async function editMessageReplyMarkup(chatId: number | string, messageId: number): Promise<void> {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (!token) return;
+  try {
+    await fetch(`https://api.telegram.org/bot${token}/editMessageReplyMarkup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: String(chatId), message_id: messageId, reply_markup: JSON.stringify({ inline_keyboard: [] }) }),
+      signal: AbortSignal.timeout(5000),
+    });
+  } catch {}
+}
+
 const router = Router();
 const BST_OFFSET_MS = 6 * 60 * 60 * 1000;
 
@@ -31,13 +57,15 @@ async function cmdHelp(): Promise<string> {
     `📦 <b>Orders</b>`,
     `/orders — Today's orders`,
     `/pending — All pending orders`,
-    `/order TN250511xxxx — Order details`,
+    `/order TN250511xxxx — Full order details`,
+    `/invoice TN250511xxxx — Printable invoice`,
+    `/customer TN250511xxxx — Customer info + message templates`,
     `/ship TN250511xxxx — Mark as Shipped`,
     `/deliver TN250511xxxx — Mark as Delivered`,
     `/cancel TN250511xxxx — Cancel order`,
     ``,
     `📊 <b>Analytics</b>`,
-    `/stats — Today's revenue & counts`,
+    `/stats — Today's revenue &amp; counts`,
     `/revenue — Last 7 &amp; 30 day revenue`,
     `/stock — Low stock products`,
     `/subscribers — Newsletter count`,
@@ -46,6 +74,8 @@ async function cmdHelp(): Promise<string> {
     `/promo CODE 20 — Create 20% off promo`,
     `/deploy — Trigger Render redeploy`,
     `/help — Show this message`,
+    ``,
+    `💡 <i>New orders also have tap-to-act buttons (Ship/Deliver/Cancel/Invoice)</i>`,
   ].join("\n");
 }
 
@@ -224,6 +254,107 @@ async function cmdSubscribers(): Promise<string> {
   return `📧 <b>Newsletter</b>\n\nTotal Subscribers: <b>${row.count}</b>\n\n👉 Admin → Newsletter to manage`;
 }
 
+async function cmdInvoice(orderNumber: string): Promise<string> {
+  if (!orderNumber) return "❌ Usage: /invoice TN250511xxxx";
+  const [o] = await db.select().from(ordersTable)
+    .where(eq(ordersTable.orderNumber, orderNumber.toUpperCase().trim()));
+  if (!o) return `❌ Order <code>${orderNumber.toUpperCase()}</code> not found.`;
+
+  const items = (o.items as any[]) || [];
+  const itemsText = items.map((item: any, idx: number) => {
+    const name = item.productName || item.name || "Item";
+    const variants = [item.size, item.color].filter(Boolean).join(", ");
+    const unitPrice = parseFloat(String(item.price || item.unitPrice || 0));
+    const qty = parseInt(String(item.quantity || 1));
+    return `  ${idx + 1}. ${name}${variants ? ` (${variants})` : ""} × ${qty} = ৳${(unitPrice * qty).toLocaleString()}`;
+  }).join("\n");
+
+  const subtotal = parseFloat(String(o.subtotal || o.total || 0));
+  const shipping = parseFloat(String(o.shippingCost || 0));
+  const discount = parseFloat(String(o.promoDiscount || 0));
+  const total = parseFloat(String(o.total || 0));
+  const advance = Math.ceil(total * 0.15);
+  const due = total - advance;
+
+  const dateStr = new Date(o.createdAt).toLocaleDateString("en-BD", {
+    timeZone: "Asia/Dhaka", day: "numeric", month: "short", year: "numeric",
+  });
+
+  const statusEmoji: Record<string, string> = { pending: "⏳", processing: "⚙️", shipped: "🚚", delivered: "✅", cancelled: "❌" };
+  const sEmoji = statusEmoji[o.status || "pending"] ?? "📋";
+
+  const lines = [
+    `📄 <b>INVOICE — TryNex Lifestyle</b>`,
+    `━━━━━━━━━━━━━━━━━━━━`,
+    `📝 Order: <code>#${o.orderNumber}</code>`,
+    `📅 Date: ${dateStr}`,
+    `${sEmoji} Status: <b>${(o.status || "pending").toUpperCase()}</b>`,
+    ``,
+    `👤 <b>Bill To:</b>`,
+    `  ${o.customerName}`,
+    `  📞 ${o.customerPhone}`,
+    ...(o.customerEmail ? [`  📧 ${o.customerEmail}`] : []),
+    `  📍 ${[o.shippingDistrict, o.shippingCity].filter(Boolean).join(", ")}`,
+    `  🏠 ${o.shippingAddress}`,
+    ``,
+    `🛒 <b>Items:</b>`,
+    itemsText || "  (no items)",
+    ``,
+    `━━━━━━━━━━━━━━━━━━━━`,
+    ...(subtotal > 0 && subtotal !== total ? [`  Subtotal:  ৳${subtotal.toLocaleString()}`] : []),
+    ...(shipping > 0 ? [`  Shipping:  ৳${shipping.toLocaleString()}`] : []),
+    ...(discount > 0 ? [`  Discount:  -৳${discount.toLocaleString()}${o.promoCode ? ` (${o.promoCode})` : ""}`] : []),
+    `  <b>TOTAL:     ৳${total.toLocaleString()}</b>`,
+    `━━━━━━━━━━━━━━━━━━━━`,
+    `💳 Payment: ${(o.paymentMethod || "COD").toUpperCase()}`,
+    `💚 Pay Status: <b>${(o.paymentStatus || "not_paid").toUpperCase()}</b>`,
+    ...(o.paymentMethod !== "cod" ? [
+      `🏷️ Advance (15%): ৳${advance.toLocaleString()}`,
+      `💸 Balance Due:   ৳${due.toLocaleString()}`,
+    ] : []),
+    ``,
+    `🏪 TryNex Lifestyle | trynexshop.com`,
+    `📱 WhatsApp/Call: 01903426915`,
+    ...(o.notes ? [``, `📝 Notes: ${o.notes}`] : []),
+  ];
+  return lines.join("\n");
+}
+
+async function cmdCustomer(orderNumber: string): Promise<string> {
+  if (!orderNumber) return "❌ Usage: /customer TN250511xxxx";
+  const [o] = await db.select().from(ordersTable)
+    .where(eq(ordersTable.orderNumber, orderNumber.toUpperCase().trim()));
+  if (!o) return `❌ Order <code>${orderNumber.toUpperCase()}</code> not found.`;
+
+  const items = (o.items as any[]) || [];
+  const itemSummary = items.slice(0, 2).map((i: any) => `${i.productName || i.name || "Item"} x${i.quantity || 1}`).join(", ");
+  const total = parseFloat(String(o.total || 0));
+
+  const lines = [
+    `👤 <b>Customer — #${o.orderNumber}</b>`,
+    ``,
+    `<b>Name:</b> ${o.customerName}`,
+    `<b>Phone:</b> <code>${o.customerPhone}</code>`,
+    ...(o.customerEmail ? [`<b>Email:</b> ${o.customerEmail}`] : []),
+    `<b>District:</b> ${o.shippingDistrict || "N/A"}${o.shippingCity ? ` / ${o.shippingCity}` : ""}`,
+    `<b>Address:</b> ${o.shippingAddress}`,
+    ``,
+    `💰 Total: ৳${total.toLocaleString()} | Status: <b>${o.status}</b>`,
+    ``,
+    `📋 <b>Message Templates (copy &amp; paste):</b>`,
+    ``,
+    `<i>✅ Order Confirmed:</i>`,
+    `"আপনার অর্ডার <b>#${o.orderNumber}</b> কনফার্ম হয়েছে! ${itemSummary}। ২-৩ কার্যদিবসের মধ্যে ডেলিভারি হবে। ধন্যবাদ! — TryNex Lifestyle"`,
+    ``,
+    `<i>🚚 Shipped:</i>`,
+    `"আপনার অর্ডার <b>#${o.orderNumber}</b> পাঠানো হয়েছে! ২-৩ দিনের মধ্যে পৌঁছে যাবে। কোনো প্রশ্ন থাকলে জানান। — TryNex Lifestyle"`,
+    ``,
+    `<i>✅ Delivered:</i>`,
+    `"আপনার অর্ডার <b>#${o.orderNumber}</b> ডেলিভার হয়েছে! ধন্যবাদ TryNex Lifestyle-এ অর্ডার করার জন্য। রিভিউ দিলে আমরা খুশি হব ⭐ — TryNex"`,
+  ];
+  return lines.join("\n");
+}
+
 async function cmdCreatePromo(code: string, discountStr: string): Promise<string> {
   if (!code || !discountStr) return "❌ Usage: /promo CODE PERCENT\nExample: /promo SAVE20 20";
   const discount = parseFloat(discountStr);
@@ -277,6 +408,54 @@ router.post("/telegram/webhook", async (req, res) => {
 
   try {
     const update = req.body as any;
+
+    // ── Handle inline keyboard callback queries ─────────────────────────────
+    if (update?.callback_query) {
+      const cq = update.callback_query;
+      const cbChatId: number = cq.message?.chat?.id;
+      const cbMsgId: number  = cq.message?.message_id;
+      const data: string     = cq.data || "";
+      const cbQueryId: string = cq.id;
+
+      if (!cbChatId || !isAdminChat(cbChatId)) {
+        await answerCallbackQuery(cbQueryId, "⛔ Unauthorized");
+        return;
+      }
+
+      const [action, orderNum] = data.split(":");
+      let cbReply = "";
+
+      if (action === "ship") {
+        cbReply = orderNum ? await cmdSetStatus(orderNum, "shipped") : "❌ No order number";
+        await answerCallbackQuery(cbQueryId, "🚚 Marked as Shipped!");
+      } else if (action === "deliver") {
+        cbReply = orderNum ? await cmdSetStatus(orderNum, "delivered") : "❌ No order number";
+        await answerCallbackQuery(cbQueryId, "✅ Marked as Delivered!");
+      } else if (action === "cancel") {
+        cbReply = orderNum ? await cmdSetStatus(orderNum, "cancelled") : "❌ No order number";
+        await answerCallbackQuery(cbQueryId, "❌ Order Cancelled");
+      } else if (action === "invoice") {
+        cbReply = orderNum ? await cmdInvoice(orderNum) : "❌ No order number";
+        await answerCallbackQuery(cbQueryId, "📄 Invoice");
+      } else if (action === "customer") {
+        cbReply = orderNum ? await cmdCustomer(orderNum) : "❌ No order number";
+        await answerCallbackQuery(cbQueryId, "👤 Customer Info");
+      } else {
+        await answerCallbackQuery(cbQueryId, "❓ Unknown action");
+        return;
+      }
+
+      if (cbReply) {
+        await tgReply(cbChatId, cbReply).catch(() => {});
+        // Remove buttons from original message after action (avoids re-tapping)
+        if (action === "ship" || action === "deliver" || action === "cancel") {
+          await editMessageReplyMarkup(cbChatId, cbMsgId).catch(() => {});
+        }
+      }
+      return;
+    }
+
+    // ── Handle regular text messages ────────────────────────────────────────
     const message = update?.message || update?.edited_message;
     if (!message?.text) return;
 
@@ -321,6 +500,12 @@ router.post("/telegram/webhook", async (req, res) => {
         break;
       case "/order":
         reply = args[0] ? await cmdOrderDetail(args[0]) : "❌ Usage: /order TN250511xxxx";
+        break;
+      case "/invoice":
+        reply = await cmdInvoice(args[0] || "");
+        break;
+      case "/customer":
+        reply = await cmdCustomer(args[0] || "");
         break;
       case "/ship":
         reply = args[0] ? await cmdSetStatus(args[0], "shipped") : "❌ Usage: /ship TN250511xxxx";
@@ -384,7 +569,7 @@ router.post("/admin/telegram/webhook/register", requireAdmin, async (req, res) =
       body: JSON.stringify({
         url: webhookUrl,
         secret_token: secret,
-        allowed_updates: ["message", "edited_message"],
+        allowed_updates: ["message", "edited_message", "callback_query"],
         drop_pending_updates: true,
         max_connections: 10,
       }),

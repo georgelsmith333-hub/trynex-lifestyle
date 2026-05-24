@@ -182,11 +182,31 @@ async function sendTelegramNotification(orderData: any) {
     `⏰ ${new Date().toLocaleString('en-BD', { timeZone: 'Asia/Dhaka' })}`,
   ].filter((s): s is string => typeof s === "string" && s.length >= 0).join("\n");
 
+  const orderNum = orderData.orderNumber;
+  const inlineKeyboard = {
+    inline_keyboard: [
+      [
+        { text: "🚚 Ship", callback_data: `ship:${orderNum}` },
+        { text: "✅ Deliver", callback_data: `deliver:${orderNum}` },
+      ],
+      [
+        { text: "❌ Cancel", callback_data: `cancel:${orderNum}` },
+        { text: "📄 Invoice", callback_data: `invoice:${orderNum}` },
+        { text: "👤 Customer", callback_data: `customer:${orderNum}` },
+      ],
+    ],
+  };
+
   try {
     await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: "HTML" }),
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message,
+        parse_mode: "HTML",
+        reply_markup: JSON.stringify(inlineKeyboard),
+      }),
       signal: AbortSignal.timeout(5000),
     });
   } catch (err) {

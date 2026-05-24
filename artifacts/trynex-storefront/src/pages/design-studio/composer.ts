@@ -239,6 +239,32 @@ export async function composeGarmentMockup(opts: {
 
   ctx.restore();
 
+  // 4. Realistic print blending — re-composite garment shadows over the design
+  //    so the print looks like it's embedded in the fabric rather than pasted on top.
+  //    Only applies if there are visible layers (no point blending an empty design).
+  if (layers.some(l => l.visible)) {
+    try {
+      const garmentImg2 = await loadImage(garmentSrc, imageCache);
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(printZone.x * s, printZone.y * s, printZone.w * s, printZone.h * s);
+      ctx.clip();
+      // Multiply the garment image back over the print zone at low opacity.
+      // This causes garment creases and shadows to blend into the design, giving
+      // it a "screen-printed" / DTG look instead of a flat sticker overlay.
+      ctx.globalCompositeOperation = "multiply";
+      ctx.globalAlpha = 0.22;
+      ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
+      // Add a subtle screen highlight for fabric micro-texture shimmer
+      ctx.globalCompositeOperation = "screen";
+      ctx.globalAlpha = 0.06;
+      ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
+      ctx.restore();
+    } catch {
+      // No-op — blending is a visual enhancement, not critical
+    }
+  }
+
   return canvas;
 }
 
