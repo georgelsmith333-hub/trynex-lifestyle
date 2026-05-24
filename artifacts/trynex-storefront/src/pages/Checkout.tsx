@@ -1,6 +1,7 @@
 import { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
 import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
 import { SEOHead } from "@/components/SEOHead";
 import { useCart } from "@/context/CartContext";
 import { useCreateOrder, type CreateOrderRequest } from "@workspace/api-client-react";
@@ -1472,6 +1473,7 @@ export default function Checkout() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

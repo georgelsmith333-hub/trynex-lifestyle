@@ -263,7 +263,7 @@ export default function Account() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3 sm:gap-4">
                     {customer.avatar ? (
-                      <img src={customer.avatar} alt={customer.name} className="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-white/50 shadow-lg object-cover" />
+                      <img src={customer.avatar} alt={customer.name} className="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-white/50 shadow-lg object-cover" onError={e => { e.currentTarget.style.display = "none"; }} />
                     ) : (
                       <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/20 flex items-center justify-center border-2 border-white/50">
                         <User className="w-7 h-7 text-white" />
@@ -742,7 +742,7 @@ export default function Account() {
                           >
                             <div className="aspect-square bg-gray-100 overflow-hidden">
                               {product.imageUrl ? (
-                                <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onError={e => { e.currentTarget.style.display = "none"; }} />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center text-gray-300">
                                   <Package className="w-8 h-8" />

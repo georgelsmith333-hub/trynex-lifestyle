@@ -91,6 +91,7 @@ export function StickyAddToCart({
             className="w-11 h-11 rounded-lg object-cover border border-gray-200 shrink-0"
             loading="lazy"
             decoding="async"
+            onError={e => { e.currentTarget.style.display = "none"; }}
           />
         ) : (
           <div className="w-11 h-11 rounded-lg bg-gray-100 shrink-0 flex items-center justify-center">

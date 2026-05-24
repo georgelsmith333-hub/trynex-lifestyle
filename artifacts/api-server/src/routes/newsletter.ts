@@ -74,6 +74,57 @@ router.post("/newsletter/subscribe", async (req, res) => {
   }
 });
 
+/* ── POST /api/contact — public contact form ─────────────────────────────
+ * Accepts name, email, phone, subject, message and sends a Telegram
+ * notification to the admin. Also subscribes the email to newsletter.
+ * ─────────────────────────────────────────────────────────────────────────── */
+const contactRateMap = new Map<string, number>();
+router.post("/contact", async (req, res) => {
+  try {
+    const { name, email, phone, subject, message } = req.body as {
+      name?: string; email?: string; phone?: string; subject?: string; message?: string;
+    };
+    if (!name?.trim() || !message?.trim()) {
+      res.status(400).json({ error: "validation_error", message: "Name and message are required." });
+      return;
+    }
+    const rawIp = (req.headers["x-forwarded-for"]?.toString().split(",")[0] || req.ip || "").trim();
+    const now = Date.now();
+    const last = contactRateMap.get(rawIp) || 0;
+    if (now - last < 60_000) {
+      res.status(429).json({ error: "rate_limited", message: "Please wait a minute before sending another message." });
+      return;
+    }
+    contactRateMap.set(rawIp, now);
+
+    // Subscribe email to newsletter if valid
+    if (email && email.includes("@")) {
+      const clean = email.trim().toLowerCase().slice(0, 254);
+      db.insert(newsletterSubscribersTable).values({ email: clean, source: "contact_form", ip: rawIp.slice(0, 64) || null })
+        .onConflictDoNothing().catch(() => {});
+    }
+
+    // Send Telegram notification to admin
+    const lines = [
+      `📬 <b>New Contact Form Submission</b>`,
+      ``,
+      `👤 <b>Name:</b> ${(name || "").trim()}`,
+      email ? `📧 <b>Email:</b> ${email.trim()}` : null,
+      phone ? `📞 <b>Phone:</b> ${phone.trim()}` : null,
+      subject ? `📌 <b>Subject:</b> ${subject.trim()}` : null,
+      ``,
+      `💬 <b>Message:</b>`,
+      (message || "").trim().slice(0, 800),
+    ].filter(l => l !== null).join("\n");
+    tgSend(lines).catch(() => {});
+
+    res.json({ ok: true, message: "Your message has been sent! We'll get back to you within 24 hours." });
+  } catch (err) {
+    req.log.error({ err }, "[contact] submit error");
+    res.status(500).json({ error: "internal", message: "Failed to send message. Please try WhatsApp instead." });
+  }
+});
+
 /* ── GET /api/newsletter/subscribers — admin only ──────────────────────────
  * Returns all subscribers with a `duplicateIp` flag for subscribers whose IP
  * address matches multiple other subscribers (possible bot/spam accounts).

@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { SEOHead } from "@/components/SEOHead";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { useToast } from "@/hooks/use-toast";
+import { getApiUrl } from "@/lib/utils";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -26,14 +27,28 @@ export default function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim() || !form.message.trim()) {
-      toast({ title: "Please fill required fields", variant: "destructive" });
+      toast({ title: "Please fill required fields", description: "Name and message are required.", variant: "destructive" });
       return;
     }
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1200));
-    setLoading(false);
-    setSubmitted(true);
-    toast({ title: "Message sent!", description: "We'll get back to you within 24 hours." });
+    try {
+      const res = await fetch(getApiUrl("/api/contact"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        toast({ title: "Could not send message", description: data?.message || "Please try WhatsApp instead.", variant: "destructive" });
+        return;
+      }
+      setSubmitted(true);
+      toast({ title: "✓ Message sent!", description: "We'll get back to you within 24 hours." });
+    } catch {
+      toast({ title: "Network error", description: "Please try WhatsApp or call us directly.", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const phone = settings.phone || "+880 1XXX-XXXXXX";

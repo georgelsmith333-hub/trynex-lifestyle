@@ -52,7 +52,7 @@ const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?:
 };
 
 export default function AdminDashboard() {
-  const { data: rawStats, isLoading, refetch, dataUpdatedAt } = useGetAdminStats({ request: { headers: getAuthHeaders() }, query: { staleTime: 0, refetchOnMount: "always", refetchInterval: 60_000 } });
+  const { data: rawStats, isLoading, refetch, dataUpdatedAt } = useGetAdminStats({ request: { headers: getAuthHeaders() }, query: { staleTime: 0, refetchOnMount: "always", refetchInterval: 15_000 } });
   const [showProdNotice, setShowProdNotice] = React.useState(
     () => localStorage.getItem("trynex_prod_notice_dismissed") !== "1"
   );

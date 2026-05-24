@@ -94,7 +94,7 @@ function useTypewriter(phrases: string[], opts?: {
 // Multi-product grid shown in the hero right column
 const HERO_PRODUCT_GRID = [
   {
-    src: tshirtSrc,
+    src: "/mockups/white-hoodie-front.png",
     label: "Custom Hoodie",
     badge: "Best Seller",
     badgeColor: "#E85D04",
@@ -477,6 +477,7 @@ export function TypewriterHero() {
                   loading="eager"
                   fetchPriority="high"
                   decoding="async"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).src = tshirtSrc; }}
                   className="w-full h-28 md:h-32 lg:h-44 object-contain select-none pointer-events-none px-3 lg:px-4 pt-5 lg:pt-6 pb-1 lg:pb-2"
                   draggable={false}
                   style={{ transform: `rotate(${p.rotate})` }}
@@ -525,6 +526,7 @@ export function TypewriterHero() {
                   alt={p.label}
                   loading="lazy"
                   decoding="async"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).src = tshirtSrc; }}
                   className="w-full h-28 md:h-32 lg:h-44 object-contain select-none pointer-events-none px-3 lg:px-4 pt-5 lg:pt-6 pb-1 lg:pb-2"
                   draggable={false}
                   style={{ transform: `rotate(${p.rotate})` }}

@@ -146,7 +146,8 @@ export default function Hampers() {
                               width={600} height={450}
                               loading="lazy"
                               decoding="async"
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              onError={e => { const el = e.currentTarget; el.style.display = "none"; const p = el.parentElement; if (p) { p.style.display = "flex"; p.style.alignItems = "center"; p.style.justifyContent = "center"; } }} />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
                               <Gift className="w-16 h-16 text-orange-300" />

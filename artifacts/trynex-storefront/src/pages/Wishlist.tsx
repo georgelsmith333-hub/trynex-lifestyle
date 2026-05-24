@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SEOHead } from "@/components/SEOHead";
+import { RecentlyViewed } from "@/components/RecentlyViewed";
 import { useWishlist } from "@/context/WishlistContext";
 import { useCartActions } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
@@ -214,6 +215,7 @@ export default function Wishlist() {
           </div>
 
           {items.length === 0 ? (
+            <>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -238,6 +240,10 @@ export default function Wishlist() {
                 Discover Products <ArrowRight className="w-4 h-4" />
               </Link>
             </motion.div>
+            <div className="mt-10">
+              <RecentlyViewed />
+            </div>
+            </>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               <AnimatePresence mode="popLayout">
@@ -250,9 +256,9 @@ export default function Wishlist() {
                     exit={{ opacity: 0, scale: 0.9 }}
                     className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 group"
                   >
-                    <div className="relative aspect-[4/3] overflow-hidden bg-gray-50">
+                    <div className="relative aspect-[4/5] overflow-hidden bg-gray-50">
                       {item.imageUrl ? (
-                        <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" width="300" height="300" />
+                        <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" width="300" height="300" onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/images/product-placeholder.svg"; }} />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-4xl">🛍️</div>
                       )}

@@ -6,6 +6,9 @@ import { useListProducts } from "@workspace/api-client-react";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { formatPrice } from "@/lib/utils";
 import { trackViewContent } from "@/lib/tracking";
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
+import { SEOHead } from "@/components/SEOHead";
 
 function SaleCountdown({ endTime }: { endTime: string }) {
   const [left, setLeft] = useState({ h: 0, m: 0, s: 0, expired: false });
@@ -72,6 +75,7 @@ function ProductCard({ product }: { product: any }) {
             src={product.imageUrl || product.images?.[0] || "/images/product-placeholder.svg"}
             alt={product.name}
             className="w-full h-full object-cover"
+            onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/images/product-placeholder.svg"; }}
           />
           {hasDiscount && (
             <div className="absolute top-3 left-3">
@@ -142,7 +146,14 @@ export default function SalePage() {
   const hasCountdown = flashSaleEnabled && !!flashSaleEndTime && !isNaN(new Date(flashSaleEndTime).getTime());
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <SEOHead
+        title={salePageTitle || "Mega Sale — Up to 50% Off"}
+        description={salePageSubtitle || "Bangladesh's best custom apparel at unbeatable prices. Limited time sale."}
+        canonical="/sale"
+      />
+      <Navbar />
+      <main className="flex-1 pt-header">
       <div
         className="relative overflow-hidden text-white py-20 px-4"
         style={{ background: "linear-gradient(135deg, #c44b02 0%, #E85D04 45%, #FB8500 100%)" }}
@@ -238,6 +249,8 @@ export default function SalePage() {
           <span className="flex items-center gap-2"><Star className="w-4 h-4 text-yellow-500" /> Premium 230-320GSM fabric</span>
         </div>
       </div>
+      </main>
+      <Footer />
     </div>
   );
 }

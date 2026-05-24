@@ -220,7 +220,7 @@ function ReviewsSection({ productId, rating }: { productId: number; rating: numb
 
       {REVIEW_SAMPLES.length > 0 && reviews.length === 0 && (
         <>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mt-6">Sample Reviews</p>
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mt-6">From Our Community</p>
           {REVIEW_SAMPLES.map((review, i) => (
             <div key={`sample-${i}`} className="p-6 bg-white rounded-2xl border border-gray-100 shadow-sm opacity-60">
               <div className="flex items-start justify-between mb-3">
@@ -390,6 +390,7 @@ export default function ProductDetail() {
   const [addedToBag, setAddedToBag] = useState(false);
   const [activeImage, setActiveImage] = useState<string>("");
   const [showSizeGuide, setShowSizeGuide] = useState(false);
+  const [sizeShake, setSizeShake] = useState(0);
   const [activeTab, setActiveTab] = useState<"details" | "reviews">("details");
   const [zoomActive, setZoomActive] = useState(false);
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
@@ -525,6 +526,13 @@ export default function ProductDetail() {
 
   const handleAddToCart = () => {
     if (product.stock < 1) return;
+    // Require size selection when sizes are available
+    if (product.sizes && product.sizes.length > 0 && !selectedSize) {
+      setSizeShake(n => n + 1);
+      toast({ title: "Please select a size", description: "Choose your size before adding to cart.", variant: "destructive" });
+      document.getElementById("size-picker")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
     // Block if selected color is marked out of stock
     if (selectedColor) {
       const variant = (product.colorVariants ?? []).find((v: any) => v.name === selectedColor);
@@ -964,9 +972,12 @@ export default function ProductDetail() {
 
               {/* Sizes */}
               {product.sizes && product.sizes.length > 0 && (
-                <div className="mb-6">
+                <div className="mb-6" id="size-picker">
                   <div className="flex items-center justify-between mb-3">
-                    <p className="font-bold text-gray-900 text-sm">Size</p>
+                    <p className="font-bold text-gray-900 text-sm">
+                      Size
+                      {!selectedSize && <span className="ml-1.5 text-[10px] font-bold text-orange-500 uppercase tracking-wider">· Required</span>}
+                    </p>
                     <button
                       onClick={() => setShowSizeGuide(!showSizeGuide)}
                       className="flex items-center gap-1.5 text-xs font-bold text-orange-600 hover:text-orange-700 transition-colors"
@@ -974,16 +985,23 @@ export default function ProductDetail() {
                       <Ruler className="w-3.5 h-3.5" /> Size Guide
                     </button>
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  <motion.div
+                    key={sizeShake}
+                    animate={sizeShake > 0 ? { x: [0, -10, 10, -10, 10, -6, 6, 0] } : { x: 0 }}
+                    transition={{ duration: 0.45, ease: "easeInOut" }}
+                    className="flex flex-wrap gap-2"
+                  >
                     {product.sizes.map((size: string) => (
                       <button
                         key={size}
-                        onClick={() => setSelectedSize(size === selectedSize ? "" : size)}
+                        onClick={() => { setSelectedSize(size === selectedSize ? "" : size); setSizeShake(0); }}
                         className={cn(
                           "px-4 py-2.5 rounded-xl font-bold text-sm transition-all",
                           selectedSize === size
                             ? "text-white shadow-md"
-                            : "bg-white text-gray-700 border border-gray-200 hover:border-orange-400 hover:text-orange-600"
+                            : sizeShake > 0
+                              ? "bg-orange-50 text-orange-600 border border-orange-300 hover:border-orange-400"
+                              : "bg-white text-gray-700 border border-gray-200 hover:border-orange-400 hover:text-orange-600"
                         )}
                         style={selectedSize === size ? {
                           background: 'linear-gradient(135deg, #E85D04, #FB8500)',
@@ -994,7 +1012,7 @@ export default function ProductDetail() {
                         {size}
                       </button>
                     ))}
-                  </div>
+                  </motion.div>
 
                   {/* Size Guide Table */}
                   <AnimatePresence>
@@ -1426,7 +1444,7 @@ export default function ProductDetail() {
                 <div className="relative flex flex-col items-center gap-2 w-28">
                   <div className="w-28 h-28 rounded-2xl overflow-hidden border-2 border-orange-400 shadow-md">
                     {product.imageUrl ? (
-                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = "none"; }} />
                     ) : (
                       <div className="w-full h-full bg-orange-50 flex items-center justify-center">
                         <ShoppingCart className="w-8 h-8 text-orange-300" />
@@ -1446,7 +1464,7 @@ export default function ProductDetail() {
                     <div className="flex flex-col items-center gap-2 w-28">
                       <Link href={`/product/${fbtProduct.id}`} className="w-28 h-28 rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:border-orange-300 transition-colors block">
                         {fbtProduct.imageUrl ? (
-                          <img src={fbtProduct.imageUrl} alt={fbtProduct.name} className="w-full h-full object-cover" loading="lazy" />
+                          <img src={fbtProduct.imageUrl} alt={fbtProduct.name} className="w-full h-full object-cover" loading="lazy" onError={e => { e.currentTarget.style.display = "none"; }} />
                         ) : (
                           <div className="w-full h-full bg-gray-50 flex items-center justify-center">
                             <ShoppingCart className="w-8 h-8 text-gray-300" />

@@ -2,6 +2,7 @@ import { Link, useLocation } from "wouter";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SEOHead } from "@/components/SEOHead";
+import { RecentlyViewed } from "@/components/RecentlyViewed";
 import { useCartState, useCartActions, type CartItem } from "@/context/CartContext";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { formatPrice } from "@/lib/utils";
@@ -37,7 +38,7 @@ const HamperCartLine = memo(function HamperCartLine({ item, onChangeQuantity, on
         <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden shrink-0 flex items-center justify-center"
           style={{ background: 'linear-gradient(135deg, #E85D04, #FB8500)' }}>
           {item.imageUrl
-            ? <img src={item.imageUrl} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" width={112} height={112} />
+            ? <img src={item.imageUrl} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" width={112} height={112} onError={e => { e.currentTarget.style.display = "none"; }} />
             : <Gift className="w-10 h-10 text-white" />}
         </div>
         <div className="flex-1 flex flex-col justify-between min-w-0">
@@ -294,6 +295,7 @@ export default function Cart() {
           </div>
 
           {items.length === 0 ? (
+            <>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -327,6 +329,10 @@ export default function Cart() {
                 Browse Collection <ArrowRight className="w-5 h-5" />
               </Link>
             </motion.div>
+            <div className="mt-10">
+              <RecentlyViewed />
+            </div>
+            </>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
               <div className="lg:col-span-7 space-y-4">

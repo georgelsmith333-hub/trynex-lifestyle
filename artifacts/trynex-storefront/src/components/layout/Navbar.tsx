@@ -484,7 +484,7 @@ export function Navbar() {
                                 className="flex items-center gap-3 px-2.5 py-2 rounded-xl hover:bg-orange-50 transition-colors group"
                               >
                                 {p.imageUrl ? (
-                                  <img src={p.imageUrl} alt="" className="w-9 h-9 rounded-lg object-cover bg-gray-100 shrink-0" />
+                                  <img src={p.imageUrl} alt="" className="w-9 h-9 rounded-lg object-cover bg-gray-100 shrink-0" onError={e => { e.currentTarget.style.display = "none"; }} />
                                 ) : (
                                   <div className="w-9 h-9 rounded-lg bg-gray-100 shrink-0" />
                                 )}

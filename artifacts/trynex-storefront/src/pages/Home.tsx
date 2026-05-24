@@ -91,11 +91,11 @@ const STATS = [
 ];
 
 const CATEGORIES = [
-  { name: "T-Shirts", icon: "tshirt", desc: "Premium custom tees", count: "Starting ৳599", color: "#fff4ee", accent: "var(--color-primary)" },
-  { name: "Hoodies", icon: "hoodie", desc: "320GSM premium fleece", count: "Starting ৳1,299", color: "#ecfeff", accent: "#0891b2" },
-  { name: "Caps", icon: "cap", desc: "Embroidered & printed", count: "Starting ৳499", color: "#f0fdf4", accent: "#16a34a" },
-  { name: "Mugs", icon: "mug", desc: "Ceramic & sublimation", count: "Starting ৳399", color: "#fdf4ff", accent: "#9333ea" },
-  { name: "Custom", icon: "custom", desc: "Anything you imagine", count: "Get a quote", color: "#fffbeb", accent: "#d97706" },
+  { name: "T-Shirts", icon: "tshirt", desc: "Premium custom tees", count: "Starting ৳599", color: "#fff4ee", accent: "var(--color-primary)", href: "/products?search=t-shirt" },
+  { name: "Hoodies", icon: "hoodie", desc: "320GSM premium fleece", count: "Starting ৳1,299", color: "#ecfeff", accent: "#0891b2", href: "/products?search=hoodie" },
+  { name: "Caps", icon: "cap", desc: "Embroidered & printed", count: "Starting ৳499", color: "#f0fdf4", accent: "#16a34a", href: "/products?search=cap" },
+  { name: "Mugs", icon: "mug", desc: "Ceramic & sublimation", count: "Starting ৳399", color: "#fdf4ff", accent: "#9333ea", href: "/products?search=mug" },
+  { name: "Custom", icon: "custom", desc: "Anything you imagine", count: "Get a quote", color: "#fffbeb", accent: "#d97706", href: "/design-studio" },
 ];
 
 
@@ -875,7 +875,7 @@ export default function Home() {
                   whileHover={{ y: -8, scale: 1.03 }}
                   style={{ transformOrigin: 'center bottom' }}
                 >
-                  <Link href="/products"
+                  <Link href={cat.href}
                     className="flex flex-col items-center p-6 rounded-2xl text-center transition-all cursor-pointer group border relative overflow-hidden"
                     style={{
                       background: cat.color,

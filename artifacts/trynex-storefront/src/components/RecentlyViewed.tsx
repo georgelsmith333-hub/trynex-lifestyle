@@ -41,6 +41,7 @@ export function RecentlyViewed() {
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       loading="lazy"
                       decoding="async"
+                      onError={e => { e.currentTarget.style.display = "none"; }}
                     />
                   </div>
                   <div className="p-3 sm:p-4">

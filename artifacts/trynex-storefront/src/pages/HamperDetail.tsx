@@ -176,6 +176,7 @@ export default function HamperDetail() {
                     height={800}
                     fetchPriority="high"
                     decoding="async"
+                    onError={e => { const el = e.currentTarget; el.style.display = "none"; const p = el.parentElement; if (p) { p.style.display = "flex"; p.style.alignItems = "center"; p.style.justifyContent = "center"; } }}
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">

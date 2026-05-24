@@ -55,7 +55,7 @@ export function InstagramFeed() {
               whileHover={{ scale: 1.05 }}
               className="relative aspect-square rounded-2xl overflow-hidden group"
             >
-              <img src={post.imageUrl} alt="" className="w-full h-full object-cover" />
+              <img src={post.imageUrl} alt="" className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = "none"; }} />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                 <ExternalLink className="w-6 h-6 text-white" />
               </div>

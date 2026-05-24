@@ -73,6 +73,7 @@ function HeroPost({ post }: { post: BlogPost }) {
               src={post.imageUrl}
               alt={post.title}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              onError={e => { const el = e.currentTarget; el.style.display = "none"; const p = el.parentElement; if (p) { p.style.background = "linear-gradient(135deg,#1a1a2e,#0f3460)"; } }}
             />
           ) : (
             <div className="w-full h-full" style={{ background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)" }} />
@@ -150,6 +151,7 @@ function PostCard({ post, idx }: { post: BlogPost; idx: number }) {
                 src={post.imageUrl}
                 alt={post.title}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                onError={e => { const el = e.currentTarget; el.style.display = "none"; const p = el.parentElement; if (p) { p.style.background = "linear-gradient(135deg,#f9fafb,#f3f4f6)"; p.style.display = "flex"; p.style.alignItems = "center"; p.style.justifyContent = "center"; } }}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center"
