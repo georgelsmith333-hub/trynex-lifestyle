@@ -26,17 +26,24 @@ import {
   VIEWER_FRAMING_BACK,
 } from "./garment3d";
 
+const tshirtSrc      = "/mockups/white-tshirt-front-cutout.png";
+const longsleeveSrc  = "/mockups/white-longsleeve-front-cutout.png";
+const hoodieSrc      = "/mockups/white-hoodie-front-cutout.png";
+const capSrc         = "/mockups/white-cap-front.png";
+const mugSrc         = "/mockups/white-mug-front-cutout.png";
+const waterBottleSrc = "/mockups/white-waterbottle-cutout.png";
+
 type GarmentCategory = "tshirt" | "longsleeve" | "hoodie" | "mug" | "cap" | "waterbottle";
 
 /** Static garment cutout PNG used by the WebGL-less fallback,
  *  layered under the user's design for a faithful 2D mockup. */
 const FALLBACK_GARMENT_BY_CATEGORY: Record<GarmentCategory, string> = {
-  tshirt:      "/mockups/white-tshirt-front.png",
-  longsleeve:  "/mockups/white-longsleeve-front.png",
-  hoodie:      "/mockups/white-hoodie-front.png",
-  cap:         "/mockups/white-cap-front.png",
-  mug:         "/mockups/white-mug-front.png",
-  waterbottle: "/mockups/white-waterbottle-blank.png",
+  tshirt:      tshirtSrc,
+  longsleeve:  longsleeveSrc,
+  hoodie:      hoodieSrc,
+  cap:         capSrc,
+  mug:         mugSrc,
+  waterbottle: waterBottleSrc,
 };
 
 /**

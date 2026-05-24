@@ -3,18 +3,23 @@ import { Instagram, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 
+const tshirtSrc = "/mockups/white-tshirt-front.png";
+const hoodieSrc = "/mockups/white-hoodie-front.png";
+const mugSrc    = "/mockups/white-mug-front.png";
+const capSrc    = "/mockups/white-cap-front.png";
+
 interface InstaPost {
   imageUrl: string;
   link: string;
 }
 
 const PLACEHOLDER_FEED: InstaPost[] = [
-  { imageUrl: "/mockups/white-tshirt-front.png", link: "#" },
-  { imageUrl: "/mockups/white-hoodie-front.png", link: "#" },
-  { imageUrl: "/mockups/black-tshirt-front.png", link: "#" },
-  { imageUrl: "/mockups/black-hoodie-front.png", link: "#" },
-  { imageUrl: "/mockups/white-mug-front.png", link: "#" },
-  { imageUrl: "/mockups/black-cap-front.png", link: "#" },
+  { imageUrl: tshirtSrc, link: "#" },
+  { imageUrl: hoodieSrc, link: "#" },
+  { imageUrl: tshirtSrc, link: "#" },
+  { imageUrl: hoodieSrc, link: "#" },
+  { imageUrl: mugSrc, link: "#" },
+  { imageUrl: capSrc, link: "#" },
 ];
 
 export function InstagramFeed() {

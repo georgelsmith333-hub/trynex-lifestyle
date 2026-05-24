@@ -1,0 +1,10 @@
+import type { Locale } from "./types.ts";
+/**
+ * @category Locales
+ * @summary English locale (United Kingdom).
+ * @language English
+ * @iso-639-2 eng
+ * @author Alex [@glintik](https://github.com/glintik)
+ */
+export declare const enGB: Locale;
+//# sourceMappingURL=index.d.ts.map

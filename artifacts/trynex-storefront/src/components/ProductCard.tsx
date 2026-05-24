@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
   import { ShoppingCart, Star, Heart, Check, Eye, ArrowRight, MessageCircle, Flame, Loader2 } from "lucide-react";
-  import { formatPrice } from "@/lib/utils";
+import { formatPrice, resolveImageUrl } from "@/lib/utils";
   import type { Product } from "@workspace/api-client-react";
   import { motion, AnimatePresence } from "framer-motion";
   import { useCartActions } from "@/context/CartContext";
@@ -103,7 +103,7 @@ import { Link, useLocation } from "wouter";
           price: discountPrice || price,
           originalPrice: price,
           quantity: 1,
-          imageUrl: product.imageUrl ?? undefined,
+          imageUrl: resolveImageUrl(product.imageUrl),
         });
         toast({
           title: "✓ Added to bag",
@@ -130,7 +130,7 @@ import { Link, useLocation } from "wouter";
         name: product.name,
         price: price,
         discountPrice: discountPrice ?? undefined,
-        imageUrl: product.imageUrl ?? undefined,
+        imageUrl: resolveImageUrl(product.imageUrl),
       });
     };
 
@@ -171,7 +171,7 @@ import { Link, useLocation } from "wouter";
 
       // Preload images so the gallery doesn't show a blank gray box.
       const urls: string[] = [];
-      if (product.imageUrl) urls.push(product.imageUrl);
+      if (product.imageUrl) urls.push(resolveImageUrl(product.imageUrl));
       const extra = (product as unknown as { images?: string[] | null }).images;
       if (Array.isArray(extra)) urls.push(...extra.slice(0, 2));
       urls.forEach(u => { try { const img = new Image(); img.src = u; } catch {} });
@@ -228,13 +228,13 @@ import { Link, useLocation } from "wouter";
 
           {/* Image */}
           <div className="relative aspect-[4/5] overflow-hidden" style={{ background: '#f9f5f2', aspectRatio: '4/5' }}>
-            {product.imageUrl ? (
+            {resolveImageUrl(product.imageUrl) ? (
               <>
                 {!imgLoaded && (
                   <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-gray-100 to-gray-200" aria-hidden="true" />
                 )}
                 <img
-                  src={product.imageUrl}
+                  src={resolveImageUrl(product.imageUrl)}
                   alt={product.name}
                   width={400}
                   height={500}

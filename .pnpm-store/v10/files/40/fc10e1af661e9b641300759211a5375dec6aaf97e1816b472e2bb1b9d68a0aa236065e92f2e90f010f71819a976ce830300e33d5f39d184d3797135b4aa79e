@@ -1,0 +1,1 @@
+{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../src/intervalToDuration/index.ts"],"names":[],"mappings":"AAQA,OAAO,KAAK,EAAE,cAAc,EAAE,QAAQ,EAAE,QAAQ,EAAE,MAAM,aAAa,CAAC;AAEtE;;GAEG;AACH,MAAM,WAAW,yBAA0B,SAAQ,cAAc,CAAC,IAAI,CAAC;CAAG;AAE1E;;;;;;;;;;;;;;;;;;;;GAoBG;AACH,wBAAgB,kBAAkB,CAChC,QAAQ,EAAE,QAAQ,EAClB,OAAO,CAAC,EAAE,yBAAyB,GAAG,SAAS,GAC9C,QAAQ,CA4BV"}

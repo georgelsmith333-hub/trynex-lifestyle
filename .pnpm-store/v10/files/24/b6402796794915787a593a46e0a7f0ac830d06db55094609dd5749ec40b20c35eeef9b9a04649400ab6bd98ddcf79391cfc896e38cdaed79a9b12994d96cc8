@@ -1,0 +1,48 @@
+"use strict";
+
+var _index = require("../../parseISO.cjs");
+var _nodeAssert = require("./node:assert"); // This is basic DST test for parseISO
+
+if (process.env.TZ !== "America/Sao_Paulo")
+  throw new Error("The test must be run with TZ=America/Sao_Paulo");
+
+if (parseInt(process.version.match(/^v(\d+)\./)?.[1] || "0") < 10)
+  throw new Error("The test must be run on Node.js version >= 10");
+
+// Test DST start edge
+_nodeAssert.default.strictEqual(
+  (0, _index.parseISO)("2018-11-03").getDate(),
+  3,
+);
+_nodeAssert.default.strictEqual(
+  (0, _index.parseISO)("2018-11-04").getDate(),
+  4,
+); // DST start
+_nodeAssert.default.strictEqual(
+  (0, _index.parseISO)("2018-11-05").getDate(),
+  5,
+);
+
+// Test DST end edge
+_nodeAssert.default.strictEqual(
+  (0, _index.parseISO)("2019-02-15").getDate(),
+  15,
+);
+_nodeAssert.default.strictEqual(
+  (0, _index.parseISO)("2019-02-16").getDate(),
+  16,
+); // DST end
+_nodeAssert.default.strictEqual(
+  (0, _index.parseISO)("2019-02-17").getDate(),
+  17,
+);
+
+// Test creation of nonexistent time
+_nodeAssert.default.strictEqual(
+  (0, _index.parseISO)("2018-11-04T00:00").toString(),
+  "Sun Nov 04 2018 01:00:00 GMT-0200 (Brasilia Summer Time)",
+);
+_nodeAssert.default.strictEqual(
+  (0, _index.parseISO)("2018-11-04T00:30").toString(),
+  "Sun Nov 04 2018 01:30:00 GMT-0200 (Brasilia Summer Time)",
+);

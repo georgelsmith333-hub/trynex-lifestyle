@@ -1,0 +1,20 @@
+[plugin:vite:import-analysis] Failed to resolve import "@assets/Screenshot_20260522-071217_1779430748122.jpg" from "src/components/home/TypewriterHero.tsx". Does the file exist?
+/home/runner/workspace/artifacts/trynex-storefront/src/components/home/TypewriterHero.tsx:2:22
+3  |  var _s = $RefreshSig$(), _s2 = $RefreshSig$(), _s3 = $RefreshSig$();
+4  |  import { useEffect, useMemo, useRef, useState } from "react";
+5  |  import hoodieSrc from "@assets/Screenshot_20260522-071217_1779430748122.jpg";
+   |                         ^
+6  |  import mugSrc from "@assets/Screenshot_20260522-071205_1779430748156.jpg";
+7  |  import tshirtSrc from "@assets/Screenshot_20260522-071202_1779430748182.jpg";
+    at TransformPluginContext._formatLog (file:///home/runner/workspace/node_modules/.pnpm/vite@7.3.3_@types+node@25.9.1_jiti@2.7.0_lightningcss@1.32.0_terser@5.47.1_tsx@4.22.3_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:29019:43)
+    at TransformPluginContext.error (file:///home/runner/workspace/node_modules/.pnpm/vite@7.3.3_@types+node@25.9.1_jiti@2.7.0_lightningcss@1.32.0_terser@5.47.1_tsx@4.22.3_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:29016:14)
+    at normalizeUrl (file:///home/runner/workspace/node_modules/.pnpm/vite@7.3.3_@types+node@25.9.1_jiti@2.7.0_lightningcss@1.32.0_terser@5.47.1_tsx@4.22.3_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:27139:18)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///home/runner/workspace/node_modules/.pnpm/vite@7.3.3_@types+node@25.9.1_jiti@2.7.0_lightningcss@1.32.0_terser@5.47.1_tsx@4.22.3_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:27197:32
+    at async Promise.all (index 2)
+    at async TransformPluginContext.transform (file:///home/runner/workspace/node_modules/.pnpm/vite@7.3.3_@types+node@25.9.1_jiti@2.7.0_lightningcss@1.32.0_terser@5.47.1_tsx@4.22.3_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:27165:4)
+    at async EnvironmentPluginContainer.transform (file:///home/runner/workspace/node_modules/.pnpm/vite@7.3.3_@types+node@25.9.1_jiti@2.7.0_lightningcss@1.32.0_terser@5.47.1_tsx@4.22.3_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:28817:14)
+    at async loadAndTransform (file:///home/runner/workspace/node_modules/.pnpm/vite@7.3.3_@types+node@25.9.1_jiti@2.7.0_lightningcss@1.32.0_terser@5.47.1_tsx@4.22.3_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:22686:26)
+    at async viteTransformMiddleware (file:///home/runner/workspace/node_modules/.pnpm/vite@7.3.3_@types+node@25.9.1_jiti@2.7.0_lightningcss@1.32.0_terser@5.47.1_tsx@4.22.3_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:24562:20)
+Click outside, press Esc key, or fix the code to dismiss.
+You can also disable this overlay by setting server.hmr.overlay to false in vite.config.ts.

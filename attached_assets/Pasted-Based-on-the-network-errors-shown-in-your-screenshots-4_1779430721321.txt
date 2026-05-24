@@ -1,0 +1,156 @@
+Based on the network errors shown in your screenshots (404s on `/products/…` and `/categories/…` images, 403s, missing fonts, and CORS errors), it’s clear that broken image URLs and R2 public-paths are the root cause of the remaining failures. It also looks like fonts and some JS/JSON files are loading fine, so the service worker and API are working as expected.
+
+To address everything we’ve discussed—fixing images, stabilizing caching with Upstash, ensuring proper environment variables, and finishing the final tasks—here’s an updated, all‑in‑one Replit agent prompt. This assumes you’ve already added your keys to Replit Secrets and Render environment variables:
+
+```
+You are the lead senior full‑stack developer for TryNex.
+
+GOAL:
+Finalize all production stabilization tasks. Resolve remaining image/R2 issues, implement Upstash Redis caching, confirm environment setup, and generate the final production report.
+
+====================================================
+PHASE A — PREP AND ENVIRONMENT
+====================================================
+
+1. Create a fresh working branch in Replit:
+```
+
+git rebase --abort || true
+git merge --abort || true
+git checkout -b trynex-final-fixes-$(date +%Y%m%d-%H%M%S)
+
+```
+
+2. **Ensure environment variables** (no secrets in code):
+- In Replit Secrets: `GITHUB_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`, `RENDER_API_KEY`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `DATABASE_URL`, `DATABASE_PRODUCTS`, `DATABASE_ANALYTICS`, `DATABASE_FAILOVER`, `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_ENDPOINT`, `R2_BUCKET`, `R2_PUBLIC_BASE_URL`, `JWT_SECRET`, `ADMIN_JWT_SECRET`, `ADMIN_PASSWORD`, `ADMIN_RESET_KEY`, `NODE_ENV`, `PORT`, `ALLOWED_ORIGINS`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`.
+- Do **not** store these in `.replit` or commit them; use Replit Secrets.
+
+====================================================
+PHASE B — IMAGE AND R2 FIXES
+====================================================
+
+1. **Identify broken image patterns**: 
+- Use the errors in your screenshots as a starting point. They show 404/403 on paths like:
+  - `/products/<uuid>.png`
+  - `/categories/<slug>.png`
+  - `/images/mockups/<uuid>.png`
+- These likely correspond to images that were never uploaded to R2 or have been removed. Find the code that sets these URLs (usually `imageUrl` fields from the API) and apply a universal fallback.
+
+2. **Implement `resolveImageUrl`**:
+- Create a helper function in your frontend to normalise all incoming image paths:
+  - If the value is empty/null: return `/images/placeholder-product.svg`.
+  - If it starts with `http://` or `https://`: return as is.
+  - If it starts with `/`: return as is.
+  - If it starts with `public/`: strip `public/` to become `/…`.
+  - If it starts with `mockups/`: return `/mockups/...`.
+  - If it starts with `images/`: return `/images/...`.
+  - If it starts with `products/`: return `/products/...`.
+  - If it starts with `uploads/` and `R2_PUBLIC_BASE_URL` is set: return `R2_PUBLIC_BASE_URL + "/" + value`.
+  - Otherwise: return `/images/placeholder-product.svg`.
+- Use this helper whenever you render an image for products, categories, blog posts, etc.
+
+3. **Fallback assets**: 
+- Ensure the following exist in `artifacts/trynex-storefront/public`:
+  - `images/placeholder-product.svg`
+  - `images/placeholder-category.svg`
+  - `images/placeholder-blog.svg`
+  - `mockups/placeholder-mockup.svg`
+- If missing, create simple SVGs as placeholders.
+
+4. **R2 cleanup and correct path usage**: 
+- Store images in structured folders (e.g., `/products/`, `/categories/`) and update the API to return correct paths.
+- For missing images, either re-upload them to R2 or use your placeholder logic.
+
+====================================================
+PHASE C — UPSTASH REDIS CACHING
+====================================================
+
+1. **Install necessary packages** in your API/worker:
+```
+
+pnpm add hono drizzle-orm @neondatabase/serverless zod jose @upstash/redis @upstash/ratelimit
+
+````
+
+2. **Configure Redis**:
+- Use `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` from Replit Secrets to create a Redis client.
+- Apply caching rules:
+  - Product list: TTL 60s
+  - Product detail: TTL 120s
+  - Settings: TTL 30s
+  - Categories: TTL 300s
+  - Blog posts: TTL 300s
+- Use `@upstash/ratelimit` for rate-limiting user requests.
+
+3. **Graceful fallback**:
+- If the Redis token or URL is invalid or Redis fails, wrap the cache calls in try/catch and fall back to direct DB queries without breaking the app.
+
+====================================================
+PHASE D — SERVICE WORKER AND CACHE
+====================================================
+
+1. **Bump cache version** in your service worker (increment version number).
+2. **Avoid caching broken image responses**: when a fetch fails (404/403), do not cache the error.
+3. **Add chunk/error recovery**:
+```js
+self.addEventListener('unhandledrejection', (event) => {
+  if (/Loading chunk/.test(event.reason)) {
+    caches.keys().then((names) => names.forEach((name) => caches.delete(name)));
+    self.skipWaiting();
+    clients.matchAll({ type: 'window' }).then((clients) => clients.forEach((client) => client.navigate(client.url)));
+  }
+});
+````
+
+4. **Skip waiting** and claim clients if needed:
+
+   ```js
+   self.skipWaiting();
+   clients.claim();
+   ```
+
+====================================================
+PHASE E — ADMIN & BUYER QA CHECKS
+=================================
+
+1. **Admin**: ensure every admin route loads without 404/403, and links match the full route (e.g., `/admin/products`).
+2. **Buyer**: verify:
+
+   * Homepage images show up properly (no blanks).
+   * Product detail pages load images.
+   * Category pages show images.
+   * Cart, checkout, and blog pages work normally.
+
+====================================================
+PHASE F — REPORT & FINISH
+=========================
+
+1. Run:
+
+   ```
+   corepack enable || true
+   corepack prepare pnpm@10.11.1 --activate || true
+   pnpm install --no-frozen-lockfile --config.verify-store-integrity=false --config.strict-store-pkg-content-check=false
+   pnpm --filter @workspace/trynex-storefront run build
+   pnpm --filter @workspace/api-server run build
+   pnpm run typecheck || true
+   ```
+2. Create:
+
+   * `docs/PROJECT_AUDIT.md`
+   * `docs/BUYER_QA_REPORT.md`
+   * `docs/ADMIN_QA_REPORT.md`
+   * `docs/TryNex-Final-Production-Overview.md`
+   * `docs/TryNex-Final-Production-Overview.pdf`
+3. Commit and push:
+
+   ```bash
+   git add .
+   git commit -m "final fixes: image resolution, R2, Upstash, service worker, QA, report"
+   git pull origin main --rebase --autostash
+   git push origin main
+   ```
+
+   If your push is blocked due to secret-scanning, review the file indicated by GitHub and remove the secret before retrying.
+
+Complete these phases in order. Once everything is addressed, you should have a stable site, working cache, correct image paths, and final documentation ready.

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Link, useLocation } from "wouter";
 import { type Product } from "@workspace/api-client-react";
-import { formatPrice, cn } from "@/lib/utils";
+import { formatPrice, cn, resolveImageUrl } from "@/lib/utils";
 import { useCartActions } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useToast } from "@/hooks/use-toast";
@@ -75,7 +75,7 @@ export function QuickViewModal({ product, open, onClose }: QuickViewModalProps) 
         price: discountPrice || price,
         originalPrice: price,
         quantity,
-        imageUrl: product.imageUrl ?? undefined,
+        imageUrl: resolveImageUrl(product.imageUrl),
         size: selectedSize || undefined,
         color: selectedColor || undefined,
       } as any);
@@ -140,9 +140,9 @@ export function QuickViewModal({ product, open, onClose }: QuickViewModalProps) 
 
               <div className="flex flex-col sm:flex-row">
                 <div className="sm:w-5/12 aspect-square relative bg-gray-50 shrink-0">
-                  {product.imageUrl ? (
+                  {resolveImageUrl(product.imageUrl) ? (
                     <img
-                      src={product.imageUrl}
+                      src={resolveImageUrl(product.imageUrl)}
                       alt={product.name}
                       className="w-full h-full object-cover"
                       loading="eager"
@@ -181,7 +181,7 @@ export function QuickViewModal({ product, open, onClose }: QuickViewModalProps) 
                       {product.customizable ? "✨ Customizable" : "Ready Made"}
                     </span>
                     <button
-                      onClick={() => toggleWishlist({ id: product.id, name: product.name, price, discountPrice: discountPrice ?? undefined, imageUrl: product.imageUrl ?? undefined })}
+                      onClick={() => toggleWishlist({ id: product.id, name: product.name, price, discountPrice: discountPrice ?? undefined, imageUrl: resolveImageUrl(product.imageUrl) })}
                       className="p-2 rounded-xl shrink-0 transition-all"
                       style={{ background: wishlisted ? '#fff1f0' : '#f9fafb', border: `1px solid ${wishlisted ? '#fecaca' : '#e5e7eb'}` }}
                       aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}

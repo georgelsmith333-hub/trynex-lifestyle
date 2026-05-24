@@ -217,7 +217,17 @@ const DRAFT_STORAGE_KEY = "trynex-design-draft-v1";
 const DRAFT_VERSION = 2;
 
 /** The 3 most popular products shown as quick-switch tabs. */
-const QUICK_PRODUCT_IDS = ["white-tshirt", "white-mug", "white-waterbottle"] as const;
+const QUICK_PRODUCT_IDS = ["tshirt", "mug", "waterbottle"] as const;
+
+/** Map legacy colour-prefixed product IDs (e.g. "white-tshirt") to new simple IDs. */
+const LEGACY_ID_MAP: Record<string, string> = {
+  "white-tshirt": "tshirt", "black-tshirt": "tshirt",
+  "white-hoodie": "hoodie", "black-hoodie": "hoodie",
+  "white-longsleeve": "longsleeve", "black-longsleeve": "longsleeve",
+  "white-mug": "mug", "black-mug": "mug",
+  "white-cap": "cap", "black-cap": "cap",
+  "white-waterbottle": "waterbottle",
+};
 type SaveStatus = "idle" | "saving" | "saved";
 interface DraftPayload {
   version: number;
@@ -281,7 +291,7 @@ export default function DesignStudio() {
 
   const [selectedProduct, setSelectedProduct] = useState<DesignProduct>(PRODUCTS[0]);
   const [selectedColor, setSelectedColor] = useState<{ name: string; hex: string }>(
-    { name: PRODUCTS[0].name, hex: PRODUCTS[0].garmentColor }
+    PRODUCTS[0].colors[0]
   );
   const [activeTab, setActiveTab] = useState<RightTab>("upload");
 
@@ -433,7 +443,8 @@ export default function DesignStudio() {
     }
     if (data && data.version === DRAFT_VERSION) {
       if (typeof data.productId === "string") {
-        const p = PRODUCTS.find(x => x.id === data.productId);
+        const resolvedId = LEGACY_ID_MAP[data.productId] ?? data.productId;
+        const p = PRODUCTS.find(x => x.id === resolvedId);
         if (p) setSelectedProduct(p);
       }
       if (data.color && typeof (data.color as any).hex === "string" && typeof (data.color as any).name === "string") {
@@ -526,10 +537,11 @@ export default function DesignStudio() {
         const sp = new URLSearchParams(window.location.search);
         const urlProduct = sp.get("product");
         if (urlProduct) {
-          const found = PRODUCTS.find(p => p.id === urlProduct || p.category === urlProduct);
+          const resolvedUrl = LEGACY_ID_MAP[urlProduct] ?? urlProduct;
+          const found = PRODUCTS.find(p => p.id === resolvedUrl || p.category === resolvedUrl);
           if (found) {
             setSelectedProduct(found);
-            setSelectedColor({ name: found.name, hex: found.garmentColor });
+            setSelectedColor(found.colors[0]);
           }
         }
         const urlStoreProductId = sp.get("storeProductId");
@@ -569,7 +581,8 @@ export default function DesignStudio() {
         const garmentColor = detectColorFromProduct(found);
         const price = parseFloat(String(found.discountPrice || found.price)) || 0;
         setSelectedProduct(template);
-        setSelectedColor({ name: found.name, hex: garmentColor });
+        const colorMatch = template.colors.find(c => c.hex.toLowerCase() === garmentColor.toLowerCase()) ?? { name: "White", hex: garmentColor };
+        setSelectedColor(colorMatch);
         setLinkedStoreProduct({ id: found.id, name: found.name, price, imageUrl: found.imageUrl ?? undefined });
         toast({
           title: `Designing: ${found.name}`,
@@ -705,11 +718,12 @@ export default function DesignStudio() {
     const newStack = saved?.stack ?? [[]];
     const newHistIdx = saved?.index ?? 0;
     historyRef.current = { stack: newStack, index: newHistIdx };
+    const matchingColor = prod.colors.find(c => c.hex.toLowerCase() === selectedColor.hex.toLowerCase()) ?? prod.colors[0];
     flushSync(() => {
       setLayers(newLayers);
       setSelectedLayerId(null);
       setSelectedProduct(prod);
-      setSelectedColor({ name: prod.name, hex: prod.garmentColor });
+      setSelectedColor(matchingColor);
       setLinkedStoreProduct(null);
       setQuantity(1);
       setActiveFace("front");
@@ -775,10 +789,9 @@ export default function DesignStudio() {
   const effectiveSupports3D = supports3D && !isFlatZone;
 
   /* ── Cap dark-color mockup override ─────────────────
-     The cap has no transparent-bg cutout PNG, so the
-     multiply-tint approach can't be used. Instead, we
-     swap the product's frontSrc to the black-cap PNG
-     when a dark color is selected. */
+     Cap images are full-photo (no transparent cutout), so SVG
+     tinting can't be applied. Swap frontSrc to the black photo
+     directly when a dark colour is selected. */
   const displayProduct = useMemo(() => {
     if (selectedProduct.category === "cap") {
       const h = selectedColor.hex.replace("#", "");
@@ -1897,36 +1910,20 @@ export default function DesignStudio() {
     }
   }, [layers, selectedProduct, displayProduct, selectedColor, selectedSize, quantity, isMug, isCap, isWaterBottle, isZoneTabs, studioPrice, pz, addToCart, toast, navigate, settings, linkedStoreProduct]);
 
-  /* ── Studio color palette — per product category ───── */
+  /* ── Studio color palette — driven by the selected product's colors array.
+     Admin overrides (settings.studioTshirtColors / studioMugColors) are still
+     respected when set, so shop owners can customise available colours. */
   const parseColors = (raw: string) => {
     try { const arr = JSON.parse(raw); if (Array.isArray(arr)) return arr as { name: string; hex: string }[]; } catch {}
     return null;
   };
-  const DEFAULT_TSHIRT_COLORS: { name: string; hex: string }[] = [
-    { name: "White", hex: "#F8F7F4" }, { name: "Black", hex: "#1a1a1a" },
-    { name: "Navy", hex: "#1e3a5f" }, { name: "Maroon", hex: "#7f1d1d" },
-    { name: "Olive", hex: "#4a5240" }, { name: "Sky Blue", hex: "#0ea5e9" },
-    { name: "Grey", hex: "#6b7280" }, { name: "Red", hex: "#dc2626" },
-    { name: "Orange", hex: "#E85D04" }, { name: "Yellow", hex: "#eab308" },
-    { name: "Green", hex: "#16a34a" }, { name: "Purple", hex: "#7c3aed" },
-  ];
-  const DEFAULT_MUG_COLORS: { name: string; hex: string }[] = [
-    { name: "White", hex: "#F5F5F5" }, { name: "Black", hex: "#1C1917" },
-  ];
-  const DEFAULT_CAP_COLORS: { name: string; hex: string }[] = [
-    { name: "White", hex: "#F5F2EC" }, { name: "Black", hex: "#1a1a1a" },
-  ];
-  const DEFAULT_WATERBOTTLE_COLORS: { name: string; hex: string }[] = [
-    { name: "White", hex: "#F4F3F1" }, { name: "Black", hex: "#1C1917" },
-    { name: "Navy", hex: "#1e3a5f" }, { name: "Forest", hex: "#166534" },
-    { name: "Sky Blue", hex: "#0ea5e9" }, { name: "Red", hex: "#dc2626" },
-    { name: "Pink", hex: "#f472b6" }, { name: "Teal", hex: "#0f766e" },
-  ];
-  const studioColors = isMug
-    ? (parseColors(settings.studioMugColors) ?? DEFAULT_MUG_COLORS)
-    : isCap ? DEFAULT_CAP_COLORS
-    : isWaterBottle ? DEFAULT_WATERBOTTLE_COLORS
-    : (parseColors(settings.studioTshirtColors) ?? DEFAULT_TSHIRT_COLORS);
+  const studioColors = (() => {
+    const adminOverride = isMug
+      ? parseColors(settings.studioMugColors)
+      : (!isCap && !isWaterBottle) ? parseColors(settings.studioTshirtColors)
+      : null;
+    return adminOverride ?? selectedProduct.colors;
+  })();
 
   /* ── Selected layer: corner handles for resize ─────── */
   const handleResizeDown = useCallback((e: React.PointerEvent<SVGCircleElement | SVGRectElement>) => {
@@ -2269,7 +2266,7 @@ export default function DesignStudio() {
                     >
                       <span className="text-lg leading-none">{prod.icon}</span>
                       <span className="mt-0.5 leading-tight">
-                        {pid === "white-mug" ? "Mug" : pid === "white-waterbottle" ? "Bottle" : prod.name.split(" ")[0]}
+                        {pid === "mug" ? "Mug" : pid === "waterbottle" ? "Bottle" : prod.name.split(" ")[0]}
                       </span>
                     </button>
                   );
@@ -4019,11 +4016,12 @@ export default function DesignStudio() {
                               const newStack = saved?.stack ?? [[]];
                               const newHistIdx = saved?.index ?? 0;
                               historyRef.current = { stack: newStack, index: newHistIdx };
+                              const nextColor = prod.colors.find(c => c.hex.toLowerCase() === selectedColor.hex.toLowerCase()) ?? prod.colors[0];
                               flushSync(() => {
                                 setLayers(newLayers);
                                 setSelectedLayerId(null);
                                 setSelectedProduct(prod);
-                                setSelectedColor({ name: prod.name, hex: prod.garmentColor });
+                                setSelectedColor(nextColor);
                                 setLinkedStoreProduct(null);
                                 setQuantity(1);
                                 setActiveFace("front");
@@ -4068,7 +4066,27 @@ export default function DesignStudio() {
                             {/* Info */}
                             <div className="px-3 py-2.5">
                               <div className="text-xs font-black text-gray-800 leading-tight truncate">{prod.name}</div>
-                              <div className="text-[10px] text-gray-400 font-semibold mt-0.5">{prod.description}</div>
+                              <div className="text-[10px] text-gray-400 font-semibold mt-0.5 mb-1.5">{prod.description}</div>
+                              {prod.colors.length > 1 && (
+                                <div className="flex items-center gap-1 flex-wrap">
+                                  {prod.colors.slice(0, 6).map(c => (
+                                    <div
+                                      key={c.hex}
+                                      className="w-3 h-3 rounded-full"
+                                      style={{
+                                        background: c.hex,
+                                        border: (c.hex === "#F8F7F4" || c.hex === "#F5F5F3" || c.hex === "#F2EFE9" || c.hex === "#F5F5F5" || c.hex === "#F5F2EC" || c.hex === "#F4F3F1")
+                                          ? "1px solid #d1d5db"
+                                          : "1px solid transparent",
+                                      }}
+                                      title={c.name}
+                                    />
+                                  ))}
+                                  {prod.colors.length > 6 && (
+                                    <span className="text-[9px] text-gray-400 font-bold">+{prod.colors.length - 6}</span>
+                                  )}
+                                </div>
+                              )}
                             </div>
                           </button>
                         );

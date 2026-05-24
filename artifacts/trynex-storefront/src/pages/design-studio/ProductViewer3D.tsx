@@ -244,8 +244,8 @@ export default function ProductViewer3D({
           {/* ── MUG — photorealistic product photo + design overlay ── */}
           {product.category === "mug" && (
             <PhotoMockupMesh
-              frontPhotoSrc="/mockups/white-mug-front-cutout.png"
-              backPhotoSrc="/mockups/white-mug-front-cutout.png"
+              frontPhotoSrc={product.frontSrc}
+              backPhotoSrc={product.backSrc ?? product.frontSrc}
               frontTex={mugFrontTex}
               backTex={mugBackTex}
               activeFace={activeFace}

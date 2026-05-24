@@ -5,18 +5,32 @@
 ════════════════════════════════════════════════════════ */
 import { useMemo } from "react";
 
+const tshirtFront       = "/mockups/white-tshirt-front.png";
+const tshirtBack        = "/mockups/white-tshirt-back.png";
+const tshirtFrontDark   = "/mockups/black-tshirt-front.png";
+const tshirtBackDark    = "/mockups/black-tshirt-back.png";
+const longsleeveFront   = "/mockups/white-longsleeve-front.png";
+const longsleeveBack    = "/mockups/white-longsleeve-back.png";
+const hoodieFront       = "/mockups/white-hoodie-front.png";
+const hoodieBack        = "/mockups/white-hoodie-back.png";
+const hoodieFrontDark   = "/mockups/black-hoodie-front.png";
+const hoodieBackDark    = "/mockups/black-hoodie-back.png";
+const mugFront          = "/mockups/white-mug-front.png";
+const mugFrontDark      = "/mockups/black-mug-front.png";
+const capFront          = "/mockups/white-cap-front.png";
+const capFrontDark      = "/mockups/black-cap-front.png";
+const waterBottleFront  = "/mockups/white-waterbottle-front.png";
+
+/** A single available garment colour (name + hex). */
+export interface ProductColor { name: string; hex: string }
+
 export type ProductType =
-  | "white-tshirt"
-  | "black-tshirt"
-  | "white-mug"
-  | "black-mug"
-  | "white-hoodie"
-  | "black-hoodie"
-  | "white-cap"
-  | "black-cap"
-  | "white-longsleeve"
-  | "black-longsleeve"
-  | "white-waterbottle";
+  | "tshirt"
+  | "mug"
+  | "hoodie"
+  | "cap"
+  | "longsleeve"
+  | "waterbottle";
 
 /** All possible design zones — front/back are garment views; sleeve/neck are flat templates. */
 export type Face =
@@ -34,6 +48,8 @@ export interface DesignProduct {
   icon: string;
   category: "tshirt" | "mug" | "hoodie" | "cap" | "longsleeve" | "waterbottle";
   garmentColor: string;
+  /** Available garment colours for this product type. */
+  colors: ProductColor[];
   description: string;
   badge?: string;
   viewBox: string;
@@ -87,7 +103,7 @@ export const SLEEVE_PZ: PrintZone           = { x: 175, y: 175, w: 650, h: 650 }
 /** Neck label — wider than tall (1299×945px real-world ratio). */
 export const NECK_LABEL_PZ: PrintZone       = { x: 150, y: 265, w: 700, h: 470 };
 
-export const WATERBOTTLE_MOCKUP_URL = "/mockups/white-waterbottle-cutout.png";
+export const WATERBOTTLE_MOCKUP_URL = waterBottleFront;
 
 /* ── Zone configuration ─────────────────────────────────── */
 export interface ApparelZone {
@@ -145,42 +161,81 @@ const ASPECT = 1;
 const BASE = 1000;
 
 export const PRODUCTS: DesignProduct[] = [
-  { id: "white-tshirt",     name: "Unisex T-Shirt",    icon: "👕", category: "tshirt",     garmentColor: "#F5F5F3",
-    description: "230GSM Cotton",   badge: "Best Seller", viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
+  {
+    id: "tshirt", name: "Unisex T-Shirt", icon: "👕", category: "tshirt",
+    garmentColor: "#F5F5F3",
+    colors: [
+      { name: "White",    hex: "#F8F7F4" }, { name: "Black",    hex: "#1a1a1a" },
+      { name: "Navy",     hex: "#1e3a5f" }, { name: "Maroon",   hex: "#7f1d1d" },
+      { name: "Olive",    hex: "#4a5240" }, { name: "Sky Blue", hex: "#0ea5e9" },
+      { name: "Grey",     hex: "#6b7280" }, { name: "Red",      hex: "#dc2626" },
+    ],
+    description: "230GSM Cotton", badge: "Best Seller",
+    viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: TSHIRT_PZ, printZoneBack: TSHIRT_BACK_PZ,
-    frontSrc: "/mockups/white-tshirt-front.png", backSrc: "/mockups/white-tshirt-back.png" },
-  { id: "black-tshirt",     name: "Unisex T-Shirt (Black)", icon: "👕", category: "tshirt", garmentColor: "#1a1a1a",
-    description: "230GSM Cotton",  viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
-    printZone: TSHIRT_PZ, printZoneBack: TSHIRT_BACK_PZ,
-    frontSrc: "/mockups/black-tshirt-front.png", backSrc: "/mockups/black-tshirt-back.png" },
-  { id: "white-hoodie",     name: "Unisex Hoodie",     icon: "🧥", category: "hoodie",     garmentColor: "#F2EFE9",
-    description: "320GSM Fleece",   badge: "New", viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
-    printZone: HOODIE_PZ, printZoneBack: HOODIE_BACK_PZ,
-    frontSrc: "/mockups/white-hoodie-front.png", backSrc: "/mockups/white-hoodie-back.png" },
-  { id: "black-hoodie",     name: "Unisex Hoodie (Black)", icon: "🧥", category: "hoodie",  garmentColor: "#1a1a1a",
-    description: "320GSM Fleece",  viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
-    printZone: HOODIE_PZ, printZoneBack: HOODIE_BACK_PZ,
-    frontSrc: "/mockups/black-hoodie-front.png", backSrc: "/mockups/black-hoodie-back.png" },
-  { id: "white-longsleeve", name: "Unisex Long Sleeve", icon: "👔", category: "longsleeve", garmentColor: "#F5F5F3",
-    description: "240GSM Cotton",   viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
+    frontSrc: tshirtFront, backSrc: tshirtBack,
+  },
+  {
+    id: "longsleeve", name: "Unisex Long Sleeve", icon: "👔", category: "longsleeve",
+    garmentColor: "#F5F5F3",
+    colors: [
+      { name: "White",  hex: "#F5F5F3" }, { name: "Black",  hex: "#1a1a1a" },
+      { name: "Navy",   hex: "#1e3a5f" }, { name: "Maroon", hex: "#7f1d1d" },
+      { name: "Olive",  hex: "#4a5240" }, { name: "Grey",   hex: "#6b7280" },
+    ],
+    description: "240GSM Cotton",
+    viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: LONGSLEEVE_PZ, printZoneBack: LONGSLEEVE_BACK_PZ,
-    frontSrc: "/mockups/white-longsleeve-front.png", backSrc: "/mockups/white-longsleeve-back.png" },
-  { id: "black-longsleeve", name: "Long Sleeve (Black)", icon: "👔", category: "longsleeve", garmentColor: "#1a1a1a",
-    description: "240GSM Cotton",  viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
-    printZone: LONGSLEEVE_PZ, printZoneBack: LONGSLEEVE_BACK_PZ,
-    frontSrc: "/mockups/white-longsleeve-front-cutout.png", backSrc: "/mockups/white-longsleeve-back-cutout.png" },
-  { id: "white-mug",        name: "Coffee Mug",        icon: "☕", category: "mug",        garmentColor: "#F5F5F5",
-    description: "11oz Ceramic",   badge: "Popular", viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
+    frontSrc: longsleeveFront, backSrc: longsleeveBack,
+  },
+  {
+    id: "hoodie", name: "Unisex Hoodie", icon: "🧥", category: "hoodie",
+    garmentColor: "#F2EFE9",
+    colors: [
+      { name: "White", hex: "#F2EFE9" }, { name: "Black", hex: "#1a1a1a" },
+      { name: "Navy",  hex: "#1e3a5f" }, { name: "Grey",  hex: "#6b7280" },
+    ],
+    description: "320GSM Fleece", badge: "New",
+    viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
+    printZone: HOODIE_PZ, printZoneBack: HOODIE_BACK_PZ,
+    frontSrc: hoodieFront, backSrc: hoodieBack,
+  },
+  {
+    id: "mug", name: "Coffee Mug", icon: "☕", category: "mug",
+    garmentColor: "#F5F5F5",
+    colors: [
+      { name: "White", hex: "#F5F5F5" }, { name: "Black", hex: "#1C1917" },
+    ],
+    description: "11oz Ceramic", badge: "Popular",
+    viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: MUG_SIDE_PZ,
-    frontSrc: "/mockups/white-mug-front.png" },
-  { id: "white-cap",        name: "Structured Cap",    icon: "🧢", category: "cap",        garmentColor: "#F5F2EC",
-    description: "Cotton Twill",    viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
+    frontSrc: mugFront,
+  },
+  {
+    id: "cap", name: "Structured Cap", icon: "🧢", category: "cap",
+    garmentColor: "#F5F2EC",
+    colors: [
+      { name: "White", hex: "#F5F2EC" }, { name: "Black", hex: "#1a1a1a" },
+    ],
+    description: "Cotton Twill",
+    viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: CAP_PZ,
-    frontSrc: "/mockups/white-cap-front.png" },
-  { id: "white-waterbottle", name: "Water Bottle",     icon: "🥤", category: "waterbottle", garmentColor: "#F4F3F1",
-    description: "600ml Aluminium", viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
+    frontSrc: capFront,
+  },
+  {
+    id: "waterbottle", name: "Water Bottle", icon: "🥤", category: "waterbottle",
+    garmentColor: "#F4F3F1",
+    colors: [
+      { name: "White",    hex: "#F4F3F1" }, { name: "Black",    hex: "#1C1917" },
+      { name: "Navy",     hex: "#1e3a5f" }, { name: "Forest",   hex: "#166534" },
+      { name: "Sky Blue", hex: "#0ea5e9" }, { name: "Red",      hex: "#dc2626" },
+      { name: "Pink",     hex: "#f472b6" }, { name: "Teal",     hex: "#0f766e" },
+    ],
+    description: "600ml Aluminium",
+    viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: WATERBOTTLE_PZ,
-    frontSrc: WATERBOTTLE_MOCKUP_URL },
+    frontSrc: WATERBOTTLE_MOCKUP_URL,
+  },
 ];
 
 /* ═══════════════════════════════════════════════════════
@@ -194,13 +249,16 @@ export const PRODUCTS: DesignProduct[] = [
      as seen from outside.
 ════════════════════════════════════════════════════════ */
 
-export const BASE_BY_CATEGORY: Record<DesignProduct["category"], { front: string; back?: string } | undefined> = {
-  tshirt:      { front: "/mockups/white-tshirt-front-cutout.png",     back: "/mockups/white-tshirt-back-cutout.png" },
-  longsleeve:  { front: "/mockups/white-longsleeve-front-cutout.png", back: "/mockups/white-longsleeve-back-cutout.png" },
-  hoodie:      { front: "/mockups/white-hoodie-front-cutout.png",     back: "/mockups/white-hoodie-back-cutout.png" },
-  mug:         { front: "/mockups/white-mug-front-cutout.png",        back: "/mockups/white-mug-front-cutout.png" },
-  cap:         undefined,
-  waterbottle: { front: "/mockups/white-waterbottle-cutout.png" },
+export const BASE_BY_CATEGORY: Record<
+  DesignProduct["category"],
+  { front: string; back?: string; darkFront?: string; darkBack?: string } | undefined
+> = {
+  tshirt:      { front: tshirtFront, back: tshirtBack, darkFront: tshirtFrontDark, darkBack: tshirtBackDark },
+  longsleeve:  { front: longsleeveFront, back: longsleeveBack },
+  hoodie:      { front: hoodieFront, back: hoodieBack, darkFront: hoodieFrontDark, darkBack: hoodieBackDark },
+  mug:         { front: mugFront, back: mugFront, darkFront: mugFrontDark, darkBack: mugFrontDark },
+  cap:         { front: capFront, darkFront: capFrontDark },
+  waterbottle: { front: waterBottleFront },
 };
 
 let _filterUid = 0;
@@ -231,11 +289,22 @@ export function GarmentSVG({
   const isMug = product.category === "mug";
 
   const base = BASE_BY_CATEGORY[product.category];
-  const useBase = !!base;
+  const tintHex = color || product.garmentColor;
+  const isDark = !!tintHex && !isLightTint(tintHex);
 
-  const src = useBase
-    ? (face === "back" && base!.back ? base!.back : base!.front)
-    : (face === "back" && product.backSrc ? product.backSrc : product.frontSrc);
+  // Pick the best available source image:
+  // • If dark color selected AND real dark photo exists → use that (no SVG tint needed)
+  // • Otherwise use white/light base photo (SVG tint applied for dark colours)
+  const src = (() => {
+    if (base) {
+      if (isDark) {
+        if (face === "back" && base.darkBack) return base.darkBack;
+        if (face !== "back" && base.darkFront) return base.darkFront;
+      }
+      return (face === "back" && base.back) ? base.back : base.front;
+    }
+    return (face === "back" && product.backSrc) ? product.backSrc : product.frontSrc;
+  })();
 
   const pz = (() => {
     if (!isMug) {
@@ -245,8 +314,11 @@ export function GarmentSVG({
     return MUG_SIDE_PZ;
   })();
 
-  const tintHex = color || product.garmentColor;
-  const applyTint = useBase && !!tintHex && !isLightTint(tintHex);
+  const useBase = !!base;
+  // Apply SVG tint only when we're using a light base image but need a dark colour
+  // (i.e. no real dark photo available for this category/face)
+  const hasRealDarkImage = isDark && base && (face === "back" ? !!base.darkBack : !!base.darkFront);
+  const applyTint = useBase && isDark && !hasRealDarkImage;
   const filterId = useMemo(() => nextFilterId(), [product.id, face, tintHex]);
 
   const isMugRightSide = isMug && (face === "back" || mugMode === "side2");

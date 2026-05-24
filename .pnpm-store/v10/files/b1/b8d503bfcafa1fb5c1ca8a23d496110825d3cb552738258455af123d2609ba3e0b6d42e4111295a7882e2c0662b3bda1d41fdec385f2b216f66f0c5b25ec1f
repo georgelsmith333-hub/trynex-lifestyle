@@ -1,0 +1,10 @@
+import type { Locale } from "./types.ts";
+/**
+ * @category Locales
+ * @summary Khmer locale (Cambodian).
+ * @language Khmer
+ * @iso-639-2 khm
+ * @author Seanghay Yath [@seanghay](https://github.com/seanghay)
+ */
+export declare const km: Locale;
+//# sourceMappingURL=index.d.ts.map

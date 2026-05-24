@@ -50,11 +50,15 @@ export function getApiUrl(path: string): string {
  *  4. Empty/null/undefined → return the local placeholder SVG.
  */
 export function resolveImageUrl(url: string | null | undefined): string {
-  const PLACEHOLDER = "/images/product-placeholder.svg";
+  const PLACEHOLDER = "/images/placeholder-product.svg";
   if (!url || url.trim() === "") return PLACEHOLDER;
-  if (url.startsWith("http://") || url.startsWith("https://")) return url;
-  if (url.startsWith("/api/storage/") || url.startsWith("/uploads/")) {
-    return `${getApiBaseUrl()}${url}`;
-  }
-  return url;
+  const value = url.trim();
+  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+  if (value.startsWith("/")) return value;
+  if (value.startsWith("public/")) return `/${value.slice("public/".length)}`;
+  if (value.startsWith("mockups/")) return `/${value}`;
+  if (value.startsWith("images/")) return `/${value}`;
+  if (value.startsWith("products/")) return `/${value}`;
+  if (value.startsWith("uploads/")) return `${getApiBaseUrl()}/${value}`;
+  return PLACEHOLDER;
 }
