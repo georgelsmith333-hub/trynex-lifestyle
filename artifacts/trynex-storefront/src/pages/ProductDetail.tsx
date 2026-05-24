@@ -123,7 +123,7 @@ function ReviewsSection({ productId, rating }: { productId: number; rating: numb
 
   return (
     <motion.div key="reviews" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-5">
-      <div className="flex items-center gap-8 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm mb-6">
+      <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 p-5 sm:p-6 bg-white rounded-2xl border border-gray-100 shadow-sm mb-6">
         <div className="text-center">
           <div className="text-5xl font-black text-gray-900">{avg}</div>
           <div className="flex justify-center mt-2">

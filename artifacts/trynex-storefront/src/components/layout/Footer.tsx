@@ -120,7 +120,7 @@ export function Footer() {
                 You're subscribed! Watch your inbox for great deals.
               </div>
             ) : (
-              <form onSubmit={handleNewsletter} className="flex gap-2 max-w-sm mx-auto">
+              <form onSubmit={handleNewsletter} className="flex flex-col sm:flex-row gap-2 max-w-sm mx-auto">
                 <input
                   type="email"
                   placeholder="your@email.com"

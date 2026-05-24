@@ -45,7 +45,7 @@ type CheckoutFormData = z.infer<typeof checkoutSchema>;
 
 const DISTRICTS = getAllDistricts();
 
-const inputClass = "w-full px-4 py-3.5 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-400 transition-all placeholder:text-gray-400";
+const inputClass = "w-full px-4 py-3.5 rounded-xl text-base sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-400 transition-all placeholder:text-gray-400";
 const inputStyle = { background: 'white', border: '1px solid #e5e7eb', color: '#111827' };
 
 type CheckoutStep = 'form' | 'gateway' | 'success';
@@ -1331,8 +1331,8 @@ export default function Checkout() {
               </form>
             </div>
 
-            <div className="lg:col-span-5">
-              <div className="sticky top-28 rounded-3xl p-7" style={{ background: 'white', border: '1px solid #e5e7eb' }}>
+            <div className="lg:col-span-5 order-first lg:order-last">
+              <div className="sticky top-28 rounded-3xl p-5 sm:p-7" style={{ background: 'white', border: '1px solid #e5e7eb' }}>
                 <h3 className="text-lg font-black font-display mb-6 text-gray-800">Order Summary</h3>
 
                 <div className="space-y-3 max-h-[280px] overflow-y-auto pr-1 mb-6 hide-scrollbar">

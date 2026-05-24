@@ -1,13 +1,24 @@
 import crypto from "node:crypto";
 import { logger } from "./logger";
 
+/** Runtime override for TELEGRAM_CHAT_ID — set when admin registers via bot or DB settings. */
+let _chatIdOverride: string | null = null;
+
+export function setChatIdOverride(id: string | null) {
+  if (id) _chatIdOverride = id;
+}
+
+export function getEffectiveChatId(): string | null {
+  return process.env.TELEGRAM_CHAT_ID || _chatIdOverride || null;
+}
+
 export function tgIsConfigured(): boolean {
-  return !!(process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID);
+  return !!(process.env.TELEGRAM_BOT_TOKEN && getEffectiveChatId());
 }
 
 export async function tgSend(text: string, parseMode: "HTML" | "Markdown" = "HTML"): Promise<boolean> {
   const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
+  const chatId = getEffectiveChatId();
   if (!token || !chatId) return false;
   try {
     const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {

@@ -67,7 +67,7 @@ channel = "stable-25_05"
 [userenv]
 
 [userenv.shared]
-NODE_ENV = "development"
+NODE_ENV = "production"
 R2_ACCOUNT_ID = "060a0f28c7f62affa5ac09be3b1dd1a9"
 R2_BUCKET = "trynex"
 R2_PUBLIC_BASE_URL = "https://pub-0ef16878c2c34942b4c318420d1db86d.r2.dev"

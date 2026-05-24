@@ -310,8 +310,20 @@ export default function Products() {
 
                 <div className="flex flex-col md:flex-row gap-4 md:gap-8">
                   {/* Sidebar */}
-                  <aside className={cn("w-full md:w-56 shrink-0", mobileFiltersOpen ? "block" : "hidden md:block")}>
-                    <div className="sticky top-24">
+                  {/* Mobile filter overlay backdrop */}
+                  {mobileFiltersOpen && (
+                    <div
+                      className="fixed inset-0 bg-black/40 z-30 md:hidden"
+                      onClick={() => setMobileFiltersOpen(false)}
+                    />
+                  )}
+                  <aside className={cn(
+                    "md:w-56 md:block shrink-0",
+                    mobileFiltersOpen
+                      ? "fixed inset-y-0 left-0 w-72 max-w-[80vw] z-40 overflow-y-auto bg-white shadow-2xl md:relative md:inset-auto md:shadow-none md:overflow-visible"
+                      : "hidden md:block"
+                  )}>
+                    <div className="sticky top-24 pt-4 md:pt-0">
                       <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
                         <p className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-4">Categories</p>
                         <div className="space-y-1">

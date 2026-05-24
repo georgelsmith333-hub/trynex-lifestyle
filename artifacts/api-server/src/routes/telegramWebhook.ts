@@ -3,7 +3,7 @@ import { db, ordersTable, productsTable, promoCodesTable, settingsTable, newslet
 import { eq, and, desc, gte, lte, sql } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { logger } from "../lib/logger";
-import { tgReply, getWebhookSecret } from "../lib/telegram";
+import { tgReply, getWebhookSecret, setChatIdOverride, getEffectiveChatId } from "../lib/telegram";
 
 async function answerCallbackQuery(callbackQueryId: string, text?: string): Promise<void> {
   const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -45,7 +45,38 @@ function startOfDayUTC(): Date {
 }
 
 function isAdminChat(chatId: number | string): boolean {
-  return String(chatId) === String(process.env.TELEGRAM_CHAT_ID || "");
+  const effective = getEffectiveChatId();
+  return !!effective && String(chatId) === String(effective);
+}
+
+/** Persist admin chat ID to the settings table and apply it immediately at runtime. */
+async function saveAdminChatId(chatId: number | string): Promise<void> {
+  try {
+    const id = String(chatId);
+    await db.insert(settingsTable)
+      .values({ key: "telegram_chat_id", value: id, updatedAt: new Date() })
+      .onConflictDoUpdate({ target: settingsTable.key, set: { value: id, updatedAt: new Date() } });
+    setChatIdOverride(id);
+    logger.info({ chatId: id }, "[telegram] Admin chat ID saved to settings");
+  } catch (err) {
+    logger.warn({ err }, "[telegram] Failed to persist admin chat ID");
+  }
+}
+
+/** Load saved admin chat ID from settings table at startup (called from index.ts). */
+export async function loadSavedChatId(): Promise<void> {
+  try {
+    const [row] = await db.select({ value: settingsTable.value })
+      .from(settingsTable)
+      .where(eq(settingsTable.key, "telegram_chat_id"))
+      .limit(1);
+    if (row?.value) {
+      setChatIdOverride(row.value);
+      logger.info({ chatId: row.value }, "[telegram] Loaded saved admin chat ID from DB");
+    }
+  } catch (err) {
+    logger.warn({ err }, "[telegram] Could not load saved chat ID from DB");
+  }
 }
 
 // ── Command Handlers ─────────────────────────────────────────────────────────
@@ -464,21 +495,20 @@ router.post("/telegram/webhook", async (req, res) => {
     if (!chatId) return;
 
     if (!isAdminChat(chatId)) {
-      const configuredId = process.env.TELEGRAM_CHAT_ID;
+      const configuredId = getEffectiveChatId();
       if (!configuredId) {
+        // First person to message — auto-register as admin
+        await saveAdminChatId(chatId);
         await tgReply(chatId,
-          `🔧 <b>TryNex Bot — Setup Required</b>\n\n` +
-          `Your Telegram Chat ID is: <code>${chatId}</code>\n\n` +
-          `To activate admin commands:\n` +
-          `1. Copy the chat ID above\n` +
-          `2. Add it as the <b>TELEGRAM_CHAT_ID</b> secret in Replit\n` +
-          `3. Restart the API server\n\n` +
-          `Then message /help to get started.`
+          `✅ <b>TryNex Admin Bot — Registered!</b>\n\n` +
+          `Your chat (<code>${chatId}</code>) is now set as the admin chat.\n\n` +
+          `Order notifications will arrive here. Send /help to see all commands.`
         );
+        // Fall through to process the /start command normally
       } else {
         await tgReply(chatId, "⛔ Unauthorized. This bot only responds to the TryNex admin.");
+        return;
       }
-      return;
     }
 
     const parts = text.split(/\s+/);
@@ -606,8 +636,9 @@ router.get("/admin/telegram/webhook/info", requireAdmin, async (req, res) => {
 router.get("/admin/telegram/setup", requireAdmin, async (_req, res) => {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const configured = Boolean(token);
+  const effectiveChatId = getEffectiveChatId();
   if (!configured) {
-    res.json({ configured: false, botUsername: null, webhook: null });
+    res.json({ configured: false, botUsername: null, webhook: null, current_chat_id: null });
     return;
   }
   try {
@@ -617,9 +648,29 @@ router.get("/admin/telegram/setup", requireAdmin, async (_req, res) => {
       configured: true,
       botUsername: process.env.TELEGRAM_BOT_USERNAME || null,
       webhook: data.ok ? data.result : null,
+      current_chat_id: effectiveChatId || null,
+      chat_id_source: process.env.TELEGRAM_CHAT_ID ? "env" : effectiveChatId ? "db" : "not_set",
+      instructions: effectiveChatId
+        ? `✅ Bot configured. Notifications go to chat ${effectiveChatId}.`
+        : `⚠️ Send any message to @${process.env.TELEGRAM_BOT_USERNAME || 'your bot'} — it will auto-register as admin chat.`,
     });
   } catch {
-    res.json({ configured: true, botUsername: process.env.TELEGRAM_BOT_USERNAME || null, webhook: null });
+    res.json({ configured: true, botUsername: process.env.TELEGRAM_BOT_USERNAME || null, webhook: null, current_chat_id: effectiveChatId, chat_id_source: process.env.TELEGRAM_CHAT_ID ? "env" : effectiveChatId ? "db" : "not_set" });
+  }
+});
+
+// ── Admin: Register a specific chat ID as admin ────────────────────────────────
+router.post("/admin/telegram/register-chat", requireAdmin, async (req, res) => {
+  const { chatId } = req.body;
+  if (!chatId) {
+    res.status(400).json({ ok: false, message: "chatId is required" });
+    return;
+  }
+  try {
+    await saveAdminChatId(String(chatId));
+    res.json({ ok: true, message: `Chat ID ${chatId} registered as admin chat.` });
+  } catch (err) {
+    res.status(500).json({ ok: false, message: "Failed to save chat ID" });
   }
 });
 
@@ -627,13 +678,13 @@ router.get("/admin/telegram/setup", requireAdmin, async (_req, res) => {
 
 router.post("/admin/telegram/test", requireAdmin, async (_req, res) => {
   const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
+  const chatId = getEffectiveChatId();
   if (!token) {
     res.status(400).json({ ok: false, error: "not_configured", message: "TELEGRAM_BOT_TOKEN is not set" });
     return;
   }
   if (!chatId) {
-    res.status(400).json({ ok: false, error: "no_chat_id", message: "TELEGRAM_CHAT_ID is not set — send any message to your bot first" });
+    res.status(400).json({ ok: false, error: "no_chat_id", message: "TELEGRAM_CHAT_ID is not configured — message your bot once to auto-register" });
     return;
   }
   try {

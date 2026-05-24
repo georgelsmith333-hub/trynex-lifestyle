@@ -89,6 +89,8 @@ function TelegramSection() {
   const [setupInfo, setSetupInfo] = useState<any>(null);
   const [loadingSetup, setLoadingSetup] = useState(false);
   const [loadingTest, setLoadingTest] = useState(false);
+  const [manualChatId, setManualChatId] = useState("");
+  const [registering, setRegistering] = useState(false);
 
   const checkSetup = async () => {
     setLoadingSetup(true);
@@ -96,9 +98,6 @@ function TelegramSection() {
       const res = await fetch(getApiUrl("/api/admin/telegram/setup"), { headers: getAuthHeaders() });
       const data = await res.json();
       setSetupInfo(data);
-      if (!data.ok) {
-        toast({ title: "Telegram Setup", description: data.message, variant: "destructive" });
-      }
     } catch {
       toast({ title: "Error", description: "Could not reach server.", variant: "destructive" });
     } finally {
@@ -114,7 +113,7 @@ function TelegramSection() {
       if (data.ok) {
         toast({ title: "✅ Test sent!", description: "Check your Telegram chat for the test message." });
       } else {
-        toast({ title: "Telegram Error", description: data.message, variant: "destructive" });
+        toast({ title: "Telegram Error", description: data.message || "Check setup first.", variant: "destructive" });
       }
     } catch {
       toast({ title: "Error", description: "Could not reach server.", variant: "destructive" });
@@ -123,18 +122,87 @@ function TelegramSection() {
     }
   };
 
+  const registerChat = async () => {
+    if (!manualChatId.trim()) return;
+    setRegistering(true);
+    try {
+      const res = await fetch(getApiUrl("/api/admin/telegram/register-chat"), {
+        method: "POST",
+        headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
+        body: JSON.stringify({ chatId: manualChatId.trim() }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        toast({ title: "✅ Chat registered!", description: `Notifications will now go to chat ${manualChatId}.` });
+        setManualChatId("");
+        await checkSetup();
+      } else {
+        toast({ title: "Error", description: data.message, variant: "destructive" });
+      }
+    } catch {
+      toast({ title: "Error", description: "Could not register chat ID.", variant: "destructive" });
+    } finally {
+      setRegistering(false);
+    }
+  };
+
   return (
     <div className="md:col-span-2 space-y-4">
+      {/* Status badge */}
+      {setupInfo && (
+        <div className="rounded-xl p-3 flex items-center gap-3"
+          style={{
+            background: setupInfo.current_chat_id ? 'rgba(34,197,94,0.08)' : 'rgba(234,179,8,0.08)',
+            border: `1px solid ${setupInfo.current_chat_id ? 'rgba(34,197,94,0.25)' : 'rgba(234,179,8,0.25)'}`,
+          }}>
+          {setupInfo.current_chat_id
+            ? <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
+            : <Send className="w-5 h-5 text-amber-500 shrink-0" />
+          }
+          <div>
+            <p className="text-sm font-bold" style={{ color: setupInfo.current_chat_id ? '#16a34a' : '#92400e' }}>
+              {setupInfo.instructions || setupInfo.message}
+            </p>
+            {setupInfo.current_chat_id && (
+              <p className="text-xs text-gray-500 mt-0.5">
+                Chat ID: <code className="font-mono bg-gray-100 px-1 rounded">{setupInfo.current_chat_id}</code>
+                {setupInfo.chat_id_source === 'db' && <span className="ml-1 text-blue-600">(saved in DB)</span>}
+                {setupInfo.chat_id_source === 'env' && <span className="ml-1 text-green-600">(from env secret)</span>}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="rounded-xl p-4 space-y-2" style={{ background: '#f0f9ff', border: '1px solid #bae6fd' }}>
-        <p className="text-sm font-bold text-blue-800">How to set up Telegram notifications:</p>
-        <ol className="text-xs text-blue-700 space-y-1 list-decimal list-inside">
-          <li>Message <strong>@BotFather</strong> on Telegram → <code>/newbot</code> → copy your <strong>Bot Token</strong></li>
-          <li>Add <code>TELEGRAM_BOT_TOKEN</code> as a Replit secret (the bot token)</li>
-          <li>Send <strong>/start</strong> to your bot in Telegram, then click <strong>"Check Setup"</strong> below to find your Chat ID</li>
-          <li>Add <code>TELEGRAM_CHAT_ID</code> as a Replit secret (the number from step 3)</li>
-          <li>Click <strong>"Send Test Message"</strong> to confirm it works</li>
+        <p className="text-sm font-bold text-blue-800">How to activate order notifications:</p>
+        <ol className="text-xs text-blue-700 space-y-1.5 list-decimal list-inside">
+          <li>Open Telegram and search for <strong>@{setupInfo?.botUsername || 'Trynex_Bot'}</strong></li>
+          <li>Send any message (e.g. <code>/start</code>) — the bot auto-registers your chat</li>
+          <li>Click <strong>"Check Setup"</strong> below to confirm, then <strong>"Send Test"</strong></li>
         </ol>
+        <p className="text-xs text-blue-600 mt-1">Or paste your chat ID manually below if you know it.</p>
       </div>
+
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={manualChatId}
+          onChange={e => setManualChatId(e.target.value)}
+          placeholder="Paste chat ID manually (e.g. 123456789)"
+          className="flex-1 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400"
+        />
+        <button
+          type="button"
+          onClick={registerChat}
+          disabled={registering || !manualChatId.trim()}
+          className="px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-40"
+          style={{ background: '#229ED9' }}
+        >
+          {registering ? "Saving..." : "Save"}
+        </button>
+      </div>
+
       <div className="flex flex-wrap gap-3">
         <button
           type="button"
@@ -157,27 +225,6 @@ function TelegramSection() {
           {loadingTest ? "Sending..." : "Send Test Message"}
         </button>
       </div>
-      {setupInfo && (
-        <div className="rounded-xl p-4 text-xs space-y-2" style={{ background: '#f9fafb', border: '1px solid #e5e7eb' }}>
-          <p className="font-bold text-gray-700">{setupInfo.instructions || setupInfo.message}</p>
-          {setupInfo.current_chat_id && (
-            <p className="text-green-700 font-bold">✅ Chat ID configured: <code>{setupInfo.current_chat_id}</code></p>
-          )}
-          {setupInfo.recent_chats && setupInfo.recent_chats.length > 0 && (
-            <div>
-              <p className="font-bold text-gray-600 mb-1">Recent chats seen by your bot:</p>
-              <ul className="space-y-1">
-                {setupInfo.recent_chats.map((c: any) => (
-                  <li key={c.id} className="font-mono bg-white rounded-lg px-3 py-1.5 border border-gray-200">
-                    <span className="text-blue-600 font-bold">{c.id}</span>
-                    <span className="text-gray-400 ml-2">({c.title || 'unknown'}, {c.type})</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 }

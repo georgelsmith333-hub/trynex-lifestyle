@@ -9,7 +9,7 @@ import { logger } from "../lib/logger";
 import { getVirtualPromo, calcVirtualDiscount } from "../lib/spinPromos";
 import { ObjectStorageService } from "../lib/objectStorage";
 import { z } from "zod";
-import { tgSend } from "../lib/telegram";
+import { tgSend, getEffectiveChatId } from "../lib/telegram";
 import { checkRevenueMilestone } from "../lib/scheduler";
 import { sendOrderConfirmationEmail, sendStatusUpdateEmail } from "../lib/email";
 
@@ -151,7 +151,7 @@ async function sendMetaCAPIEvent(event: {
 
 async function sendTelegramNotification(orderData: any) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
+  const chatId = getEffectiveChatId();
   if (!botToken || !chatId) return;
 
   const itemsList = (orderData.items || [])
@@ -1045,7 +1045,7 @@ async function sendStatusUpdateNotification(orderData: any, newStatus: string) {
 
 async function sendTelegramStatusUpdate(orderData: any, newStatus: string) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
+  const chatId = getEffectiveChatId();
   if (!botToken || !chatId) return;
 
   const emoji = STATUS_EMOJIS[newStatus] || "📋";
@@ -1078,7 +1078,7 @@ async function sendTelegramStatusUpdate(orderData: any, newStatus: string) {
 
 async function sendTelegramPaymentStatusUpdate(orderData: any, newPaymentStatus: string) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
+  const chatId = getEffectiveChatId();
   if (!botToken || !chatId) return;
 
   // Only notify for meaningful payment status changes

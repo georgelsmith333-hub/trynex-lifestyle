@@ -665,7 +665,7 @@ export function Navbar() {
             transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
             className="md:hidden overflow-hidden bg-white border-t border-gray-100"
           >
-            <div className="px-5 py-5 space-y-1">
+            <div className="px-5 py-5 space-y-1 max-h-[85dvh] overflow-y-auto">
               {/* Mobile search */}
               <form onSubmit={handleSearch} className="flex items-center gap-2 mb-3">
                 <div className="flex-1 flex items-center gap-2 px-3 py-2.5 rounded-2xl border border-gray-200 bg-gray-50">

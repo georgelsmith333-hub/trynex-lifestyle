@@ -3,6 +3,7 @@ import { logger } from "./lib/logger";
 import { runMigrations, autoSeedIfEmpty } from "./lib/autoSeed";
 import { logActiveStorageBackend, ObjectStorageService } from "./lib/objectStorage";
 import { startScheduler } from "./lib/scheduler";
+import { loadSavedChatId } from "./routes/telegramWebhook";
 
 const rawPort = process.env["PORT"] || "8080";
 const port = Number(rawPort);
@@ -114,6 +115,7 @@ const server = app.listen(port, "0.0.0.0", async () => {
   logActiveStorageBackend(logger);
   await runMigrations();
   await autoSeedIfEmpty();
+  await loadSavedChatId();
   startScheduler();
 });
 

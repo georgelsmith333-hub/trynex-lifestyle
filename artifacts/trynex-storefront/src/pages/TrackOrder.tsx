@@ -13,7 +13,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { formatPrice, cn, getApiUrl } from "@/lib/utils";
 import { ItemPreviewThumb, PreviewLightbox, type PreviewItem } from "@/components/ZoomableImage";
 
-const inputClass = "w-full px-4 py-3.5 rounded-xl text-sm font-medium focus:outline-none focus:ring-1 focus:ring-primary transition-all placeholder:text-gray-400";
+const inputClass = "w-full px-4 py-3.5 rounded-xl text-base sm:text-sm font-medium focus:outline-none focus:ring-1 focus:ring-primary transition-all placeholder:text-gray-400";
 const inputStyle = { background: 'white', border: '1px solid #e5e7eb', color: '#111827' };
 
 const PAYMENT_STATUSES: Record<string, { label: string; color: string; bg: string; border: string; icon: typeof XCircle; desc: string }> = {
@@ -428,16 +428,17 @@ export default function TrackOrder() {
                           </div>
                         </div>
 
-                        {/* Progress Steps */}
+                        {/* Progress Steps — responsive: compact on mobile, full on sm+ */}
                         <div className="relative">
-                          <div className="absolute top-5 left-5 right-5 h-0.5 rounded-full" style={{ background: '#e5e7eb' }} />
+                          {/* Track line */}
+                          <div className="absolute top-3.5 sm:top-5 left-3.5 sm:left-5 right-3.5 sm:right-5 h-0.5 rounded-full" style={{ background: '#e5e7eb' }} />
                           {stepIdx > 0 && (
                             <div
-                              className="absolute top-5 left-5 h-0.5 rounded-full transition-all duration-1000"
+                              className="absolute top-3.5 sm:top-5 left-3.5 sm:left-5 h-0.5 rounded-full transition-all duration-1000"
                               style={{
                                 background: 'linear-gradient(90deg, #E85D04, #FB8500)',
-                                width: `${(stepIdx / (ORDER_STEPS.length - 1)) * (100 - 12)}%`,
-                                maxWidth: 'calc(100% - 40px)'
+                                width: `${(stepIdx / (ORDER_STEPS.length - 1)) * (100 - 10)}%`,
+                                maxWidth: 'calc(100% - 28px)',
                               }}
                             />
                           )}
@@ -446,23 +447,31 @@ export default function TrackOrder() {
                               const isActive = stepIdx >= i;
                               const isCurrent = stepIdx === i;
                               const Icon = step.icon;
+                              const shortLabels: Record<string, string> = {
+                                'Order Placed': 'Placed',
+                                'Processing': 'Prep',
+                                'Shipped': 'Shipped',
+                                'On the Way': 'Transit',
+                                'Delivered': 'Done',
+                              };
                               return (
-                                <div key={step.key} className="flex flex-col items-center gap-2 z-10">
+                                <div key={step.key} className="flex flex-col items-center gap-1 sm:gap-2 z-10" title={step.label}>
                                   <motion.div
-                                    animate={isCurrent ? { scale: [1, 1.15, 1] } : {}}
+                                    animate={isCurrent ? { scale: [1, 1.12, 1] } : {}}
                                     transition={{ repeat: Infinity, duration: 2 }}
-                                    className="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-500"
+                                    className="w-7 h-7 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border-2 transition-all duration-500"
                                     style={{
                                       background: isActive ? (stepIdx === 4 && i === 4 ? '#22c55e' : 'hsl(var(--primary))') : 'white',
                                       borderColor: isActive ? (stepIdx === 4 && i === 4 ? '#22c55e' : 'hsl(var(--primary))') : '#e5e7eb',
                                       color: isActive ? 'white' : '#d1d5db',
-                                      boxShadow: isCurrent ? (stepIdx === 4 ? '0 0 20px rgba(34,197,94,0.5)' : '0 0 20px rgba(255,107,43,0.5)') : undefined
+                                      boxShadow: isCurrent ? (stepIdx === 4 ? '0 0 16px rgba(34,197,94,0.5)' : '0 0 16px rgba(255,107,43,0.5)') : undefined
                                     }}
                                   >
-                                    <Icon className="w-4 h-4" />
+                                    <Icon className="w-3 h-3 sm:w-4 sm:h-4" />
                                   </motion.div>
-                                  <span className={cn("text-[10px] font-black text-center", isActive ? "text-gray-700" : "text-gray-300")}>
-                                    {step.label}
+                                  <span className={cn("text-[8px] sm:text-[10px] font-black text-center leading-tight max-w-[40px] sm:max-w-none", isActive ? "text-gray-700" : "text-gray-300")}>
+                                    <span className="hidden sm:inline">{step.label}</span>
+                                    <span className="sm:hidden">{shortLabels[step.label] ?? step.label}</span>
                                   </span>
                                 </div>
                               );
@@ -650,11 +659,13 @@ export default function TrackOrder() {
                               return (
                                 <div key={msg.id} className={`flex ${isAdmin ? "justify-start" : "justify-end"}`}>
                                   <div
-                                    className="max-w-[85%] rounded-xl px-3 py-2 text-sm"
+                                    className="max-w-[85%] rounded-xl px-3 py-2 text-sm break-words overflow-wrap-anywhere"
                                     style={{
                                       background: isAdmin ? '#fff7ed' : '#E85D04',
                                       color: isAdmin ? '#111827' : 'white',
                                       border: isAdmin ? '1px solid #fed7aa' : 'none',
+                                      wordBreak: 'break-word',
+                                      overflowWrap: 'anywhere',
                                     }}
                                   >
                                     {isAdmin && (

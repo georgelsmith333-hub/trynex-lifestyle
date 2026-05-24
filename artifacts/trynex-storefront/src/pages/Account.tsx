@@ -286,7 +286,8 @@ export default function Account() {
                 </div>
               </div>
 
-              <div className="flex border-b border-gray-100 overflow-x-auto">
+              <div className="relative">
+                <div className="flex border-b border-gray-100 overflow-x-auto no-scrollbar">
                 {tabs.map(({ id, label, icon: Icon }) => (
                   <button
                     key={id}
@@ -301,6 +302,10 @@ export default function Account() {
                     {label}
                   </button>
                 ))}
+                </div>
+                {/* Fade indicator — scroll hint on mobile */}
+                <div className="absolute right-0 top-0 h-full w-8 pointer-events-none"
+                  style={{ background: 'linear-gradient(to left, white 30%, transparent)' }} />
               </div>
 
               <div className="p-5 sm:p-6">
@@ -372,7 +377,7 @@ export default function Account() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <Link
                         href="/track"
                         className="flex items-center gap-2 p-3 sm:p-4 rounded-xl bg-orange-50 border border-orange-100 hover:bg-orange-100 transition-all group"

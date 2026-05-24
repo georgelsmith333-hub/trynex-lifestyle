@@ -130,8 +130,8 @@ const CatalogCartLine = memo(function CatalogCartLine({ item, onChangeQuantity, 
       className="rounded-2xl overflow-hidden"
       style={{ background: 'white', border: '1px solid #e5e7eb', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
     >
-      <div className="flex gap-5 p-4">
-        <CartItemThumbnail item={item} size={112} />
+      <div className="flex gap-3 sm:gap-5 p-3 sm:p-4">
+        <CartItemThumbnail item={item} size={96} />
         <div className="flex-1 flex flex-col justify-between min-w-0">
           <div className="flex justify-between items-start gap-3">
             <div className="min-w-0">
