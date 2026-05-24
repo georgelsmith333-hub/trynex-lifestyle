@@ -238,7 +238,7 @@ export default function ProductViewer3D({
       >
         <Suspense fallback={null}>
           <StudioLightRig rim />
-          <Environment preset="city" />
+          <Environment preset="studio" />
           <CameraRig activeFace={activeFace} category={product.category} />
 
           {/* ── MUG — photorealistic product photo + design overlay ── */}
@@ -302,10 +302,11 @@ export default function ProductViewer3D({
 
           <ContactShadows
             position={[0, VIEWER_FRAMING[product.category].shadowY, 0]}
-            opacity={VIEWER_DEFAULTS.shadowOpacity}
-            blur={VIEWER_DEFAULTS.shadowBlur}
-            scale={VIEWER_DEFAULTS.shadowScale}
-            far={VIEWER_DEFAULTS.shadowFar}
+            opacity={0.55}
+            blur={2.8}
+            scale={8}
+            far={6}
+            color="#1a0a00"
           />
 
           <ResettableOrbitControls

@@ -286,29 +286,36 @@ export function RealisticShirt({
       <mesh geometry={baseGeo} castShadow receiveShadow>
         <meshPhysicalMaterial
           color={garmentColor}
-          roughness={0.88}
-          metalness={0.02}
+          roughness={0.85}
+          metalness={0.0}
           normalMap={FABRIC_MAPS?.normal ?? null}
-          normalScale={new THREE.Vector2(0.18, 0.18)}
+          normalScale={new THREE.Vector2(0.32, 0.32)}
           roughnessMap={FABRIC_MAPS?.rough ?? null}
-          sheen={0.3}
-          sheenRoughness={0.8}
+          sheen={0.55}
+          sheenRoughness={0.75}
           sheenColor={garmentColor}
+          envMapIntensity={0.55}
         />
       </mesh>
       {frontTex && frontGeo && (
         <mesh geometry={frontGeo} scale={1.003}>
           <meshStandardMaterial
-            map={frontTex} transparent roughness={0.65} metalness={0}
+            map={frontTex} transparent roughness={0.72} metalness={0}
+            normalMap={FABRIC_MAPS?.normal ?? null}
+            normalScale={new THREE.Vector2(0.12, 0.12)}
             depthWrite={false} alphaTest={0.02} side={THREE.FrontSide}
+            envMapIntensity={0.3}
           />
         </mesh>
       )}
       {backTex && backGeo && (
         <mesh geometry={backGeo} scale={1.003}>
           <meshStandardMaterial
-            map={backTex} transparent roughness={0.65} metalness={0}
+            map={backTex} transparent roughness={0.72} metalness={0}
+            normalMap={FABRIC_MAPS?.normal ?? null}
+            normalScale={new THREE.Vector2(0.12, 0.12)}
             depthWrite={false} alphaTest={0.02} side={THREE.FrontSide}
+            envMapIntensity={0.3}
           />
         </mesh>
       )}
@@ -362,13 +369,14 @@ function GarmentGLB({
           <meshPhysicalMaterial
             color={garmentColor}
             roughness={roughness}
-            metalness={0.01}
+            metalness={0.0}
             normalMap={FABRIC_MAPS?.normal ?? null}
-            normalScale={new THREE.Vector2(0.18, 0.18)}
+            normalScale={new THREE.Vector2(0.32, 0.32)}
             roughnessMap={FABRIC_MAPS?.rough ?? null}
-            sheen={0.3}
-            sheenRoughness={0.85}
+            sheen={0.55}
+            sheenRoughness={0.75}
             sheenColor={garmentColor}
+            envMapIntensity={0.55}
           />
         </mesh>
       ))}
@@ -376,7 +384,10 @@ function GarmentGLB({
         <mesh geometry={frontGeo} scale={1.003}>
           <meshStandardMaterial
             map={frontTex} transparent roughness={roughness - 0.14}
+            normalMap={FABRIC_MAPS?.normal ?? null}
+            normalScale={new THREE.Vector2(0.12, 0.12)}
             depthWrite={false} alphaTest={0.02} side={THREE.FrontSide}
+            envMapIntensity={0.3}
           />
         </mesh>
       )}
@@ -384,7 +395,10 @@ function GarmentGLB({
         <mesh geometry={backGeo} scale={1.003}>
           <meshStandardMaterial
             map={backTex} transparent roughness={roughness - 0.14}
+            normalMap={FABRIC_MAPS?.normal ?? null}
+            normalScale={new THREE.Vector2(0.12, 0.12)}
             depthWrite={false} alphaTest={0.02} side={THREE.FrontSide}
+            envMapIntensity={0.3}
           />
         </mesh>
       )}
@@ -698,12 +712,14 @@ export function PhotoMockupMesh({
 
   // Shared physical material settings — subtle clearcoat gives the photo a
   // slight glossy sheen under the studio light rig, making it look tangible.
+  // anisotropy and envMapIntensity help the studio HDRI reflect properly on fabric.
   const baseMat = (tex: THREE.Texture | null | undefined) => ({
     map: tex ?? undefined,
-    roughness: 0.78 as number,
-    metalness: 0.03 as number,
-    clearcoat: 0.18 as number,
-    clearcoatRoughness: 0.35 as number,
+    roughness: 0.72 as number,
+    metalness: 0.0 as number,
+    clearcoat: 0.12 as number,
+    clearcoatRoughness: 0.45 as number,
+    envMapIntensity: 0.65 as number,
     transparent: true as const,
     alphaTest: 0.01,
     side: THREE.FrontSide,
@@ -1186,31 +1202,34 @@ export function ResettableOrbitControls(props: React.ComponentProps<typeof Orbit
   return <OrbitControls ref={ref} {...props} />;
 }
 
-/** Three-point lighting rig: key (warm) + fill (cool) + rim (cool back-light).
- *  Enhanced for ceramics and metals — adds a top-down specular fill and
- *  a faint purple-grey bounce that gives clearcoat surfaces more visual depth.
+/** Studio-quality five-point lighting rig: key + fill + top + rim + front-kick.
+ *  Designed to match a professional print-on-demand product photography studio
+ *  (Teespring / Printful style): soft, even, with subtle warm-cool contrast.
  *  Centralises lighting so studio & cart match exactly. */
 export function StudioLightRig({ rim = true }: { rim?: boolean }) {
   return (
     <>
-      {/* Ambient — raised slightly so dark garment colours aren't pitch-black */}
-      <ambientLight intensity={0.72} color={"#fff8f0"} />
-      {/* Key light — main warm directional, casts shadows */}
+      {/* Ambient — soft neutral fill so dark colours stay readable */}
+      <ambientLight intensity={0.82} color={"#f8f5f0"} />
+      {/* Key light — large soft box from upper-left front (main shadow-caster) */}
       <directionalLight
-        position={[3, 4, 5]}
-        intensity={1.15}
-        color={"#fff5e4"}
+        position={[2.5, 5, 6]}
+        intensity={1.25}
+        color={"#fffaf2"}
         castShadow
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
+        shadow-bias={-0.0004}
       />
-      {/* Fill — cool side light for colour contrast */}
-      <directionalLight position={[-4, 2, -3]} intensity={0.38} color={"#bcd6ff"} />
-      {/* Top-down specular — gives clearcoat surfaces (mug, bottle) a glossy crown highlight */}
-      <directionalLight position={[0, 8, 1]} intensity={0.55} color={"#ffffff"} />
+      {/* Front-kick — soft frontal fill to brighten the chest/print area */}
+      <directionalLight position={[0, 1, 7]} intensity={0.45} color={"#ffffff"} />
+      {/* Fill — cool blue-grey from the right to separate from background */}
+      <directionalLight position={[-5, 2, -2]} intensity={0.32} color={"#c8dcff"} />
+      {/* Top specular — overhead softbox for clearcoat surfaces (mug, bottle cap) */}
+      <directionalLight position={[0, 9, 2]} intensity={0.60} color={"#ffffff"} />
       {rim && (
-        /* Rim / back-light — warm orange that matches brand palette */
-        <directionalLight position={[0, 3, -6]} intensity={0.60} color={"#ffd6a0"} />
+        /* Rim / back-light — warm brand-orange edge separation */
+        <directionalLight position={[0.5, 4, -7]} intensity={0.55} color={"#ffe0b0"} />
       )}
     </>
   );

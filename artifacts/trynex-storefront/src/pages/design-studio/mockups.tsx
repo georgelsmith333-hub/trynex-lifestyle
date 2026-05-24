@@ -345,6 +345,23 @@ export function GarmentSVG({
         </defs>
       )}
 
+      {/* Garment curvature vignette — applied to all products.
+          A subtle radial gradient darkens the edges of the product photo to simulate
+          the fabric wrapping around the body in 3D (Teespring / Printful style). */}
+      <defs>
+        <radialGradient id={`vign-${filterId}`} cx="50%" cy="48%" r="62%" gradientUnits="userSpaceOnUse"
+          x1="0" y1="0" x2="1000" y2="1000">
+          <stop offset="0%"   stopColor="rgba(0,0,0,0)" />
+          <stop offset="68%"  stopColor="rgba(0,0,0,0)" />
+          <stop offset="100%" stopColor="rgba(0,0,0,0.13)" />
+        </radialGradient>
+        {/* Subtle top-shoulder highlight to simulate 3D volume */}
+        <radialGradient id={`hi-${filterId}`} cx="50%" cy="22%" r="35%" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"   stopColor="rgba(255,255,255,0.07)" />
+          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+        </radialGradient>
+      </defs>
+
       {isMugRightSide ? (
         <g transform="translate(1000,0) scale(-1,1)">
           <image
@@ -364,6 +381,12 @@ export function GarmentSVG({
           style={{ pointerEvents: "none" }}
         />
       )}
+
+      {/* Curvature shadow overlay — positioned after the image so it draws on top */}
+      <rect x={0} y={0} width={1000} height={1000}
+        fill={`url(#vign-${filterId})`} style={{ pointerEvents: "none" }} />
+      <rect x={0} y={0} width={1000} height={1000}
+        fill={`url(#hi-${filterId})`} style={{ pointerEvents: "none" }} />
 
       {showPrintZone && (
         <g style={{ pointerEvents: "none" }}>

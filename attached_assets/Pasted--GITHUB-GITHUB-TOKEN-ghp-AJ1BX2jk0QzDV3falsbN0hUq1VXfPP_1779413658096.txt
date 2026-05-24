@@ -1,0 +1,51 @@
+# ==================== GITHUB ====================
+GITHUB_TOKEN=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
+
+# ==================== CLOUDFLARE ====================
+CLOUDFLARE_ACCOUNT_ID=060a0f28c7f62affa5ac09be3b1dd1a9
+CLOUDFLARE_API_TOKEN=cfat_b1W5YYHBB4dN8IFhNclt2DybPzkzpEGaNsSiLGeEa0d43049
+
+# ==================== RENDER ====================
+RENDER_API_KEY=rnd_15grmSJp8sg3uaOqNyC4Nu5ZecYX
+
+# ==================== UPSTASH REDIS ====================
+UPSTASH_REDIS_REST_URL=https://positive-oyster-122365.upstash.io
+UPSTASH_REDIS_REST_TOKEN=gQAAAAAAAd39AAIgcDE0ODk1NDE2NTVjNDU0NGE3OTQxNzA2MWJkZGExMjQ0Yg
+
+# ==================== NEON DATABASES ====================
+DATABASE_USERS=postgresql://neondb_owner:npg_BvS2fTaM1uyx@ep-proud-hill-am7gl9jg-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+
+DATABASE_PRODUCTS=postgresql://neondb_owner:npg_IRndG9r2YFLw@ep-crimson-mud-ap5qu789.c-7.us-east-1.aws.neon.tech/neondb?sslmode=require
+
+DATABASE_ANALYTICS=postgresql://neondb_owner:npg_EsLa30qDTSbf@ep-cool-mountain-apc65mnx-pooler.c-7.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+
+DATABASE_FAILOVER=postgresql://neondb_owner:npg_2AEqmS1yudDM@ep-crimson-dawn-apycvzvv.c-7.us-east-1.aws.neon.tech/neondb?sslmode=require
+
+# ==================== SUPABASE BACKUP ====================
+DATABASE_SUPABASE_BACKUP_API_KEY=sb_publishable_sNseFFWtUyHsO_3LOqt3NQ_Z0mG8a0z
+
+# ==================== CLOUDLARE R2 ====================
+R2_ACCESS_KEY_ID=1eed0f615268db06e18c86ca116dbc10
+R2_ACCOUNT_ID=060a0f28c7f62affa5ac09be3b1dd1a9
+R2_SECRET_ACCESS_KEY=b3de5639e9d121c03fb4cf0e59b5c1bfb037c2ae54c51faa1a892c0376a19692
+R2_ENDPOINT=https://060a0f28c7f62affa5ac09be3b1dd1a9.r2.cloudflarestorage.com
+R2_BUCKET=trynex
+R2_PUBLIC_BASE_URL=https://pub-0ef16878c2c34942b4c318420d1db86d.r2.dev
+
+# ==================== TELEGRAM BOT ====================
+TELEGRAM_BOT_TOKEN=8485895861:AAH-7LRgwo1mrG-SC4cVodfwPPZW_MzS374
+TELEGRAM_BOT_USERNAME=Trynex_Bot
+
+# ==================== ENVIRONMENT ====================
+NODE_ENV=production
+
+
+
+
+
+Set TELEGRAM_CHAT_ID — send any message to @Trynex_Bot on Telegram, the bot will show you the chat ID, then add it as an env var to enable the test-message feature
+Configure Google Search Console in Admin → SEO → GSC Config (optional — only needed for sitemap submission)...
+
+
+ Ive done trynexbot messafes already and tokens also shared to you so the 2bd google console also but its noy crawling yet im too worried so can u do all work behalf of me then let me know what to share with you or what uve already shared u if u can do using thise then do or ask me if your needs anything to build everything in search console + for search console + also i saw the first hero sectiins shows items name like mugs t shirts caps and those was logo but now missing + full cuatomize page all mockups missing and lots of things like that pending.??
+
