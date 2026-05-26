@@ -1,10 +1,11 @@
-# Environment Variables & Secrets
+# Secrets - NEVER commit these
 .env
 production.env
-*.env
-.env*
-.env.local
+*.env.local
 .env.*.local
+
+# Allow example file
+!.env.example
 
 # Dependencies
 node_modules/
@@ -13,8 +14,8 @@ build/
 .next/
 out/
 
-# Replit & System
+# Replit
 .replit
 .repl*
-.DS_Store
 *.log
+.DS_Store
