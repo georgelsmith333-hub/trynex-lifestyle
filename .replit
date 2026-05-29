@@ -29,7 +29,7 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node proxy-8084.mjs & pnpm --filter @workspace/api-server run dev & PORT=5000 API_PORT=8080 pnpm --filter @workspace/trynex-storefront run dev"
+args = "node proxy-8084.mjs & pnpm --filter @workspace/api-server run dev & PORT=5000 API_PORT=8080 NODE_ENV=development pnpm --filter @workspace/trynex-storefront run dev"
 waitForPort = 5000
 
 [agent]
@@ -44,10 +44,6 @@ timeoutMs = 20000
 [[ports]]
 localPort = 5000
 externalPort = 80
-
-[[ports]]
-localPort = 5001
-externalPort = 3002
 
 [[ports]]
 localPort = 8080
@@ -76,12 +72,11 @@ R2_ACCOUNT_ID = "060a0f28c7f62affa5ac09be3b1dd1a9"
 R2_BUCKET = "trynex"
 R2_PUBLIC_BASE_URL = "https://pub-0ef16878c2c34942b4c318420d1db86d.r2.dev"
 R2_ENDPOINT = "https://060a0f28c7f62affa5ac09be3b1dd1a9.r2.cloudflarestorage.com"
-API_BASE_URL = "https://31fc7a81-f4d0-4738-938e-7f3870bed233-00-2867xp8sdaohx.pike.replit.dev"
 API_PORT = "8080"
 CLOUDFLARE_ACCOUNT_ID = "060a0f28c7f62affa5ac09be3b1dd1a9"
 UPSTASH_REDIS_REST_URL = "https://positive-oyster-122365.upstash.io"
 CORS_ORIGIN = "https://trynexshop.com"
-ALLOWED_ORIGINS = "https://trynexshop.com"
+ALLOWED_ORIGINS = "https://trynexshop.com,https://*.replit.dev,https://*.pike.replit.dev"
 TELEGRAM_BOT_USERNAME = "Trynex_Bot"
 R2_ACCESS_KEY_ID = "1eed0f615268db06e18c86ca116dbc10"
 R2_SECRET_ACCESS_KEY = "b3de5639e9d121c03fb4cf0e59b5c1bfb037c2ae54c51faa1a892c0376a19692"
