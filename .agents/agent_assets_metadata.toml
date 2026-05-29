@@ -251,3 +251,9 @@ id = "_jcKbqv3_R2GguzkzWMxD"
 uri = "file://docs/TRYNEX_FINAL_FEATURE_VERIFICATION_REPORT.pdf"
 type = "pdf"
 title = "TRYNEX_FINAL_FEATURE_VERIFICATION_REPORT.pdf"
+
+[[outputs]]
+id = "HwWzGJj4KkA-359u0uVpm"
+uri = "file://docs/TryNex-Full-Technical-Documentation.pdf"
+type = "pdf"
+title = "TryNex Lifestyle — Full A-to-Z Technical Documentation"

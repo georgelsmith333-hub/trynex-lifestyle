@@ -216,6 +216,53 @@ const DRAFT_STORAGE_KEY = "trynex-design-draft-v1";
 // to a unified 1000x1000 space (photographic mockups). Old drafts are dropped.
 const DRAFT_VERSION = 2;
 
+/** Set to true to re-enable the custom hex/colour picker in the Design Studio.
+ *  Currently disabled so customers only see the curated preset swatches. */
+const STUDIO_CUSTOM_COLOR_ENABLED = false;
+
+/** Inline SVG product icons for the quick-switch tab row.
+ *  Uses currentColor so stroke changes automatically with isActive state. */
+const PRODUCT_TAB_ICONS: Record<string, React.ReactNode> = {
+  tshirt: (
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{width:"100%",height:"100%"}}>
+      <path d="M12 4c0 0 1.6 3 4 3s4-3 4-3l6.5 5-4 4-1.5-1.5V27H11V11.5l-1.5 1.5-4-4Z"/>
+    </svg>
+  ),
+  hoodie: (
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{width:"100%",height:"100%"}}>
+      <path d="M11 4.5C10.5 6 10 8 10 10H4v6h4.5V27h15V16H28v-6h-6c0-2-.5-4-1-5.5"/>
+      <path d="M11 4.5C11 4.5 12.5 7 16 7s5-2.5 5-2.5"/>
+    </svg>
+  ),
+  longsleeve: (
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{width:"100%",height:"100%"}}>
+      <path d="M12 4c0 0 1.6 3 4 3s4-3 4-3l7.5 7-3.5 3L22 12.5V27H10V12.5l-2 1.5-3.5-3Z"/>
+    </svg>
+  ),
+  mug: (
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{width:"100%",height:"100%"}}>
+      <rect x="5" y="9" width="16" height="15" rx="2.5"/>
+      <path d="M21 14h4.5a2 2 0 0 1 0 4H21"/>
+      <line x1="9" y1="14" x2="9" y2="20"/>
+      <line x1="13" y1="14" x2="13" y2="20"/>
+      <line x1="17" y1="14" x2="17" y2="20"/>
+    </svg>
+  ),
+  cap: (
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{width:"100%",height:"100%"}}>
+      <path d="M4 21C6 12 10 8 16 8s10 4 12 13"/>
+      <path d="M5 21h22"/>
+      <line x1="16" y1="8" x2="16" y2="5"/>
+    </svg>
+  ),
+  waterbottle: (
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{width:"100%",height:"100%"}}>
+      <path d="M13 3.5h6v3h1.5C21.5 6.5 22.5 7.5 22.5 9v18c0 1.2-1 2-2 2H11.5c-1 0-2-.8-2-2V9c0-1.5 1-2.5 2-2.5H13Z"/>
+      <line x1="9.5" y1="13" x2="22.5" y2="13"/>
+    </svg>
+  ),
+};
+
 /** The 3 most popular products shown as quick-switch tabs. */
 const QUICK_PRODUCT_IDS = ["tshirt", "hoodie", "longsleeve", "mug"] as const;
 
@@ -2276,17 +2323,17 @@ export default function DesignStudio() {
                       title={prod.name}
                     >
                       <div
-                        className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center"
+                        className="w-9 h-9 rounded-lg flex items-center justify-center p-1.5"
                         style={{
-                          background: isActive ? "rgba(255,255,255,0.18)" : "#f3f4f6",
+                          background: isActive ? "rgba(255,255,255,0.22)" : "#f0f1f3",
+                          color: isActive ? "white" : "#6b7280",
                         }}
                       >
-                        <img
-                          src={prod.frontSrc}
-                          alt={prod.name}
-                          className="w-full h-full object-contain p-0.5"
-                          style={{ filter: isActive ? "brightness(0) invert(1)" : "none" }}
-                        />
+                        {PRODUCT_TAB_ICONS[pid] ?? (
+                          <img src={prod.frontSrc} alt={prod.name}
+                            className="w-full h-full object-contain"
+                            style={{ filter: isActive ? "brightness(0) invert(1)" : "none" }} />
+                        )}
                       </div>
                       <span className="mt-0.5 leading-tight text-center">{label}</span>
                     </button>
@@ -2442,32 +2489,34 @@ export default function DesignStudio() {
                   );
                 })}
               </div>
-              {/* Custom hex/colour picker — lets users go beyond the preset swatches */}
-              <div className="flex items-center gap-2 mt-2.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 shrink-0">Custom</label>
-                <div className="flex items-center gap-1.5 flex-1">
-                  <input
-                    type="color"
-                    value={selectedColor.hex.startsWith("#") && selectedColor.hex.length === 7 ? selectedColor.hex : "#ffffff"}
-                    onChange={e => setSelectedColor({ name: "Custom", hex: e.target.value })}
-                    className="w-8 h-7 rounded-lg border border-gray-200 cursor-pointer p-0.5 bg-white"
-                    title="Pick any colour"
-                  />
-                  <input
-                    type="text"
-                    value={selectedColor.hex}
-                    maxLength={7}
-                    placeholder="#ffffff"
-                    onChange={e => {
-                      const v = e.target.value.startsWith("#") ? e.target.value : `#${e.target.value}`;
-                      if (/^#[0-9a-fA-F]{0,6}$/.test(v)) {
-                        setSelectedColor({ name: v.length === 7 ? "Custom" : selectedColor.name, hex: v });
-                      }
-                    }}
-                    className="flex-1 min-w-0 px-2 py-1 text-xs font-mono rounded-lg border border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-orange-300"
-                  />
+              {/* Custom hex/colour picker — toggle STUDIO_CUSTOM_COLOR_ENABLED to re-enable */}
+              {STUDIO_CUSTOM_COLOR_ENABLED && (
+                <div className="flex items-center gap-2 mt-2.5">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 shrink-0">Custom</label>
+                  <div className="flex items-center gap-1.5 flex-1">
+                    <input
+                      type="color"
+                      value={selectedColor.hex.startsWith("#") && selectedColor.hex.length === 7 ? selectedColor.hex : "#ffffff"}
+                      onChange={e => setSelectedColor({ name: "Custom", hex: e.target.value })}
+                      className="w-8 h-7 rounded-lg border border-gray-200 cursor-pointer p-0.5 bg-white"
+                      title="Pick any colour"
+                    />
+                    <input
+                      type="text"
+                      value={selectedColor.hex}
+                      maxLength={7}
+                      placeholder="#ffffff"
+                      onChange={e => {
+                        const v = e.target.value.startsWith("#") ? e.target.value : `#${e.target.value}`;
+                        if (/^#[0-9a-fA-F]{0,6}$/.test(v)) {
+                          setSelectedColor({ name: v.length === 7 ? "Custom" : selectedColor.name, hex: v });
+                        }
+                      }}
+                      className="flex-1 min-w-0 px-2 py-1 text-xs font-mono rounded-lg border border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-orange-300"
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Mockup area — clicking the background outside the canvas deselects */}

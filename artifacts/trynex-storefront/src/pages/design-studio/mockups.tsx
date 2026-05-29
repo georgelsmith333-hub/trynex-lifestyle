@@ -407,30 +407,65 @@ export function GarmentSVG({
       <rect x={0} y={0} width={1000} height={1000}
         fill={`url(#hi-${filterId})`} style={{ pointerEvents: "none" }} />
 
-      {showPrintZone && (
-        <g style={{ pointerEvents: "none" }}>
-          {/* Minimal dashed border — non-scaling so it stays crisp at any canvas zoom */}
-          <rect
-            x={displayPZ.x} y={displayPZ.y} width={displayPZ.w} height={displayPZ.h}
-            fill="none"
-            stroke="rgba(232,93,4,0.50)"
-            strokeWidth={1.5}
-            strokeDasharray="8 5"
-            rx={5}
-            vectorEffect="non-scaling-stroke"
-          />
-          <text
-            x={displayPZ.x + displayPZ.w / 2} y={displayPZ.y - 7}
-            textAnchor="middle"
-            fontSize={14}
-            fontWeight={600}
-            fill="rgba(232,93,4,0.65)"
-            style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
-          >
-            {isMug && mugMode === "wrap" ? "Full Wrap Area" : "Print Area"}
-          </text>
-        </g>
-      )}
+      {showPrintZone && (() => {
+        const { x, y, w, h } = displayPZ;
+        const x2 = x + w, y2 = y + h, cx = x + w / 2;
+        const L = 30;
+        const labelText = isMug && mugMode === "wrap" ? "Full Wrap Area" : "Print Area";
+        const labelW = labelText === "Full Wrap Area" ? 128 : 94;
+        return (
+          <g style={{ pointerEvents: "none" }}>
+            {/* Subtle white halo behind the border for edge contrast on light garments */}
+            <rect x={x - 1.5} y={y - 1.5} width={w + 3} height={h + 3}
+              fill="none" stroke="rgba(255,255,255,0.45)" strokeWidth={4}
+              rx={8} vectorEffect="non-scaling-stroke" />
+            {/* Main dashed border */}
+            <rect x={x} y={y} width={w} height={h}
+              fill="none" stroke="rgba(232,93,4,0.68)" strokeWidth={2}
+              strokeDasharray="11 7" rx={7}
+              vectorEffect="non-scaling-stroke" />
+            {/* Corner bracket — top-left */}
+            <path d={`M${x} ${y+L} L${x} ${y} L${x+L} ${y}`}
+              stroke="#E85D04" strokeWidth={4} fill="none" strokeLinecap="round" strokeLinejoin="round"
+              vectorEffect="non-scaling-stroke" />
+            {/* Corner bracket — top-right */}
+            <path d={`M${x2-L} ${y} L${x2} ${y} L${x2} ${y+L}`}
+              stroke="#E85D04" strokeWidth={4} fill="none" strokeLinecap="round" strokeLinejoin="round"
+              vectorEffect="non-scaling-stroke" />
+            {/* Corner bracket — bottom-left */}
+            <path d={`M${x} ${y2-L} L${x} ${y2} L${x+L} ${y2}`}
+              stroke="#E85D04" strokeWidth={4} fill="none" strokeLinecap="round" strokeLinejoin="round"
+              vectorEffect="non-scaling-stroke" />
+            {/* Corner bracket — bottom-right */}
+            <path d={`M${x2-L} ${y2} L${x2} ${y2} L${x2} ${y2-L}`}
+              stroke="#E85D04" strokeWidth={4} fill="none" strokeLinecap="round" strokeLinejoin="round"
+              vectorEffect="non-scaling-stroke" />
+            {/* Centre crosshair */}
+            <line x1={cx - 18} y1={y + h / 2} x2={cx + 18} y2={y + h / 2}
+              stroke="rgba(232,93,4,0.35)" strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+            <line x1={cx} y1={y + h / 2 - 18} x2={cx} y2={y + h / 2 + 18}
+              stroke="rgba(232,93,4,0.35)" strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+            {/* Label pill */}
+            <rect x={cx - labelW / 2} y={y - 30} width={labelW} height={24}
+              fill="#E85D04" rx={12} />
+            <rect x={cx - labelW / 2} y={y - 30} width={labelW} height={24}
+              fill="url(#pz-label-grad)" rx={12} />
+            <defs>
+              <linearGradient id="pz-label-grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="rgba(255,255,255,0.18)" />
+                <stop offset="100%" stopColor="rgba(0,0,0,0.08)" />
+              </linearGradient>
+            </defs>
+            <text x={cx} y={y - 14}
+              textAnchor="middle" fontSize={12.5} fontWeight={700} fill="white"
+              letterSpacing="0.6"
+              style={{ fontFamily: "system-ui,-apple-system,sans-serif", textTransform: "uppercase" }}
+            >
+              {labelText}
+            </text>
+          </g>
+        );
+      })()}
     </>
   );
 }
