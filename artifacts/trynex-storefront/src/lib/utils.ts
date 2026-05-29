@@ -31,8 +31,10 @@ export function getApiBaseUrl(): string {
   // Replit preview URL). Always use same-origin so the proxy handles it.
   if (import.meta.env.DEV) return '';
 
-  const fromEnv = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/+$/, '');
-  if (fromEnv) return fromEnv;
+  // If VITE_API_BASE_URL is explicitly defined (even as empty string), use it.
+  // An empty string means "same-origin" — the Vite proxy will handle routing.
+  const fromEnv = import.meta.env.VITE_API_BASE_URL as string | undefined;
+  if (fromEnv !== undefined) return fromEnv.replace(/\/+$/, '');
   return PRODUCTION_API_BASE_URL;
 }
 

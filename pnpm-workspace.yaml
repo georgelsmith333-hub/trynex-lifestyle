@@ -33,3 +33,5 @@ onlyBuiltDependencies:
   - esbuild
   - msw
   - unrs-resolver
+  - sharp
+  - protobufjs
