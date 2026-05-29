@@ -1,0 +1,2 @@
+- [Design Studio color system](design-studio-colors.md) — isNearBlack(<12% luminance) guards black-photo selection; all other darks use white+multiply-tint SVG filter.
+- [Water bottle mockup calibration](waterbottle-mockup.md) — user's actual carabiner bottle PNG; print zone and image path details inside.

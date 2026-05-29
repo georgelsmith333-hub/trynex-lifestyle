@@ -95,9 +95,9 @@ export const MUG_PZ: PrintZone              = { x: 150, y: 180, w: 700, h: 640 }
 /** Mug side — starts below the rim band, stops above the base band. */
 export const MUG_SIDE_PZ: PrintZone         = { x: 188, y: 252, w: 420, h: 478 };
 /** Water bottle — printable front panel on the cylindrical body.
- *  Calibrated to the real 600ml aluminium sublimation bottle photo (1600×1600).
- *  Body spans x:358-659, centre≈508; shoulder ends ~y=375, body bottom ~y=870. */
-export const WATERBOTTLE_PZ: PrintZone      = { x: 393, y: 390, w: 230, h: 460 };
+ *  Calibrated to the real 600ml aluminium carabiner bottle (1600×1600 PNG).
+ *  Content spans x:[326–660] centre≈493; shoulder ends ~y=275, base ~y=858. */
+export const WATERBOTTLE_PZ: PrintZone      = { x: 348, y: 278, w: 290, h: 575 };
 /** Sleeve print area — roughly square (1228×1087px real-world ratio). */
 export const SLEEVE_PZ: PrintZone           = { x: 175, y: 175, w: 650, h: 650 };
 /** Neck label — wider than tall (1299×945px real-world ratio). */
@@ -273,6 +273,20 @@ function isLightTint(hex: string): boolean {
   return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.92;
 }
 
+// Returns true ONLY for near-black / very-dark-charcoal colours (luminance < 12%).
+// These are the only colours that should use the dedicated black garment photo.
+// Every other non-white colour — Navy, Maroon, Olive, Red, Sky Blue, Grey, etc.
+// — stays on the white base photo and gets coloured via SVG multiply-tint, so it
+// renders in the correct hue instead of looking like a tinted black garment.
+function isNearBlack(hex: string): boolean {
+  const h = hex.replace("#", "");
+  if (h.length !== 6) return false;
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255 < 0.12;
+}
+
 export function GarmentSVG({
   product,
   color,
@@ -291,13 +305,17 @@ export function GarmentSVG({
   const base = BASE_BY_CATEGORY[product.category];
   const tintHex = color || product.garmentColor;
   const isDark = !!tintHex && !isLightTint(tintHex);
+  // Only swap to the real black photo for near-black colours (luminance < 12%).
+  // Navy, Maroon, Olive, Red, Grey, Sky Blue, etc. all remain on the white base
+  // and receive their correct hue via the SVG multiply-tint filter below.
+  const useBlackPhoto = !!tintHex && isNearBlack(tintHex);
 
   // Pick the best available source image:
-  // • If dark color selected AND real dark photo exists → use that (no SVG tint needed)
-  // • Otherwise use white/light base photo (SVG tint applied for dark colours)
+  // • Near-black colour AND a real black photo exists → use the black garment photo
+  // • Everything else → white/light base photo (SVG multiply-tint applies the colour)
   const src = (() => {
     if (base) {
-      if (isDark) {
+      if (useBlackPhoto) {
         if (face === "back" && base.darkBack) return base.darkBack;
         if (face !== "back" && base.darkFront) return base.darkFront;
       }
@@ -315,9 +333,10 @@ export function GarmentSVG({
   })();
 
   const useBase = !!base;
-  // Apply SVG tint only when we're using a light base image but need a dark colour
-  // (i.e. no real dark photo available for this category/face)
-  const hasRealDarkImage = isDark && base && (face === "back" ? !!base.darkBack : !!base.darkFront);
+  // A "real dark image" only exists when the colour is near-black AND the category
+  // has a dedicated black photo.  For every other dark colour we fall through to
+  // the SVG multiply-tint on the white base photo.
+  const hasRealDarkImage = useBlackPhoto && base && (face === "back" ? !!base.darkBack : !!base.darkFront);
   const applyTint = useBase && isDark && !hasRealDarkImage;
   const filterId = useMemo(() => nextFilterId(), [product.id, face, tintHex]);
 
@@ -426,11 +445,14 @@ export function FlatZoneSVG({
   zone,
   showPrintZone,
   garmentPhotoSrc,
+  garmentColor,
 }: {
   zone: ApparelZone;
   showPrintZone: boolean;
   /** Real product photo URL (frontSrc from the selected product) shown as context. */
   garmentPhotoSrc?: string;
+  /** Selected garment hex colour — tints the background photo to match. */
+  garmentColor?: string;
 }) {
   const { pz, label, pxDimensions } = zone;
   const cx = pz.x + pz.w / 2;
@@ -474,6 +496,16 @@ export function FlatZoneSVG({
         />
       ) : (
         <rect width={1000} height={1000} fill="#d4d0ca" />
+      )}
+      {/* Garment colour tint — multiply-blend so fabric details stay visible.
+          Only applied for non-white/non-light colours. */}
+      {garmentColor && !isLightTint(garmentColor) && (
+        <rect
+          width={1000} height={1000}
+          fill={garmentColor}
+          opacity={0.62}
+          style={{ mixBlendMode: "multiply" as React.CSSProperties["mixBlendMode"], pointerEvents: "none" }}
+        />
       )}
 
       {/* Very subtle vignette — just enough to lift the artboard off the background */}

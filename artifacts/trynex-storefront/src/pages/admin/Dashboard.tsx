@@ -89,7 +89,7 @@ export default function AdminDashboard() {
       bg: "#eff6ff",
       border: "#bfdbfe",
       desc: "Earned today",
-      trend: (stats.todayRevenue ?? 0) > 0 ? `${stats.todayOrders ?? "—"} orders today` : "No revenue yet today",
+      trend: (stats.todayRevenue ?? 0) > 0 ? `${stats.totalOrders ?? "—"} orders today` : "No revenue yet today",
       link: ""
     },
     {

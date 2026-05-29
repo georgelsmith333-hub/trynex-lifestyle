@@ -2261,7 +2261,6 @@ export default function DesignStudio() {
                     pid === "mug" ? "Mug" :
                     pid === "hoodie" ? "Hoodie" :
                     pid === "longsleeve" ? "Long Sleeve" :
-                    pid === "waterbottle" ? "Bottle" :
                     "T-Shirt";
                   return (
                     <button
@@ -2577,7 +2576,7 @@ export default function DesignStudio() {
                   onClick={handleCanvasClick}
                 >
                   {isFlatZone && activeZoneConfig
-                    ? <FlatZoneSVG zone={activeZoneConfig} showPrintZone={effectiveShowPrintZone} garmentPhotoSrc={displayProduct.frontSrc} />
+                    ? <FlatZoneSVG zone={activeZoneConfig} showPrintZone={effectiveShowPrintZone} garmentPhotoSrc={displayProduct.frontSrc} garmentColor={selectedColor.hex} />
                     : <GarmentSVG product={displayProduct} color={selectedColor.hex} showPrintZone={effectiveShowPrintZone} face={activeFace} mugMode={isMugProduct ? mugMode : undefined} />
                   }
 
