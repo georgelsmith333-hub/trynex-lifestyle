@@ -49,6 +49,11 @@ interface ComposeOptions {
   blendMode?: GlobalCompositeOperation;
 }
 
+/** Maximum number of decoded images to keep in the in-memory cache.
+ *  Older entries are evicted (FIFO) once this limit is reached so long
+ *  design sessions don't accumulate unbounded memory. */
+const IMAGE_CACHE_MAX = 60;
+
 /** Load an image as a Promise; uses cache if provided. */
 export function loadImage(src: string, cache?: Map<string, HTMLImageElement>): Promise<HTMLImageElement> {
   if (cache?.has(src)) {
@@ -58,7 +63,17 @@ export function loadImage(src: string, cache?: Map<string, HTMLImageElement>): P
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = "anonymous";
-    img.onload = () => { cache?.set(src, img); resolve(img); };
+    img.onload = () => {
+      if (cache) {
+        // Evict the oldest entry when the cache is full
+        if (cache.size >= IMAGE_CACHE_MAX) {
+          const firstKey = cache.keys().next().value;
+          if (firstKey !== undefined) cache.delete(firstKey);
+        }
+        cache.set(src, img);
+      }
+      resolve(img);
+    };
     img.onerror = reject;
     img.src = src;
   });
@@ -122,8 +137,17 @@ export async function composeLayers(opts: ComposeOptions): Promise<HTMLCanvasEle
         // Always source-over for photos — multiply would tint them with garment color
         ctx.globalCompositeOperation = "source-over";
         ctx.drawImage(img, -(g.w * sx) / 2, -(g.h * sy) / 2, g.w * sx, g.h * sy);
-      } catch {
-        /* missing image — skip */
+      } catch (imgErr) {
+        // Draw a visible placeholder so users know which layer failed to load
+        ctx.globalCompositeOperation = "source-over";
+        ctx.strokeStyle = "rgba(239,68,68,0.6)";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+        ctx.strokeRect(-(g.w * sx) / 2, -(g.h * sy) / 2, g.w * sx, g.h * sy);
+        ctx.setLineDash([]);
+        ctx.fillStyle = "rgba(239,68,68,0.15)";
+        ctx.fillRect(-(g.w * sx) / 2, -(g.h * sy) / 2, g.w * sx, g.h * sy);
+        console.warn("[composer] Failed to load image layer:", (imgErr as Error)?.message ?? imgErr, l.src);
       }
     } else {
       ctx.globalCompositeOperation = blendMode;

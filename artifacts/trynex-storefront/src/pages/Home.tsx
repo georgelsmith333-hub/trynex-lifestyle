@@ -467,7 +467,25 @@ function usePublicStats(): PublicStats {
 }
 
 function LiveSocialProof({ stats, primaryColor = 'var(--color-primary)' }: { stats: PublicStats; primaryColor?: string }) {
-  if (!stats) return null;
+  if (!stats) return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.92 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.4 }}
+      className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mt-3"
+    >
+      <span className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold"
+        style={{ background: '#fff4ee', color: primaryColor, border: '1.5px solid #fdd5b4' }}>
+        <span className="w-2 h-2 rounded-full inline-block" style={{ background: primaryColor }} />
+        5,000+ happy customers
+      </span>
+      <span className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold"
+        style={{ background: '#f0fdf4', color: '#16a34a', border: '1.5px solid #bbf7d0' }}>
+        <span className="w-2 h-2 rounded-full inline-block bg-green-500" />
+        4.9★ rated nationwide
+      </span>
+    </motion.div>
+  );
 
   const lastOrderLabel = stats.minutesSinceLastOrder === null
     ? null

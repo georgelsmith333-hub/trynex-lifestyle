@@ -74,6 +74,9 @@ export function StickyAddToCart({
         borderTop: "1px solid #e5e7eb",
         boxShadow: "0 -4px 20px rgba(0,0,0,0.08)",
         transform: visible ? "translateY(0)" : "translateY(120%)",
+        // visibility:hidden removes the element from the a11y tree and prevents
+        // Safari from routing touches to a translated-off-screen element.
+        visibility: visible ? "visible" : "hidden",
         pointerEvents: visible ? "auto" : "none",
       }}
       aria-hidden={!visible}

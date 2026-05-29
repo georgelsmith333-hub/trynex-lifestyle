@@ -61,8 +61,13 @@ router.post("/reviews", async (req, res) => {
     }
 
     let verified = false;
+    // Only orders that are delivered/completed confirm a genuine purchase.
+    // Fetching only those rows keeps the query lean for busy buyers.
     const orders = await db.select().from(ordersTable)
-      .where(eq(ordersTable.customerEmail, customerEmail));
+      .where(and(
+        eq(ordersTable.customerEmail, customerEmail),
+        sql`${ordersTable.status} IN ('delivered', 'completed', 'shipped')`
+      ));
     for (const order of orders) {
       const items = order.items as any[];
       // Use Number() on both sides to handle string/number type mismatch in

@@ -10,6 +10,8 @@ interface DeliveryAreaPickerProps {
   onGPSDetect: () => void;
   gpsLoading: boolean;
   error?: string;
+  /** When flipped to true the picker dropdown opens automatically (e.g. after a GPS failure) */
+  autoOpen?: boolean;
 }
 
 type Level = "division" | "district" | "upazila";
@@ -21,8 +23,13 @@ export function DeliveryAreaPicker({
   onGPSDetect,
   gpsLoading,
   error,
+  autoOpen,
 }: DeliveryAreaPickerProps) {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (autoOpen) setOpen(true);
+  }, [autoOpen]);
   const [level, setLevel] = useState<Level>("division");
   const [activeDivision, setActiveDivision] = useState("");
   const [activeDistrict, setActiveDistrict] = useState("");

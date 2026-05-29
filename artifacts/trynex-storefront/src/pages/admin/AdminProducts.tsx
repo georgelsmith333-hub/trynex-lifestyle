@@ -81,6 +81,20 @@ export default function AdminProducts() {
   const categories: Category[] = categoriesData?.categories ?? [];
 
   const watchedColors = watch("colors") ?? "";
+  const watchedName = watch("name") ?? "";
+
+  // Auto-generate slug from product name when creating a new product
+  useEffect(() => {
+    if (editingProduct) return; // don't override slug when editing
+    const slug = watchedName
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/[\s_]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    if (slug) setValue("slug", slug, { shouldValidate: false });
+  }, [watchedName, editingProduct, setValue]);
+
   useEffect(() => {
     const parsed = watchedColors.split(',').map(s => s.trim()).filter(Boolean);
     setColorVariants(prev => {
@@ -155,6 +169,7 @@ export default function AdminProducts() {
       const { url } = await res.json() as { url: string };
       setValue("imageUrl", url);
       setImagePreviewUrl(url);
+      setImgPickerMode("upload"); // switch to upload mode so the preview shows
       toast({ title: "Image uploaded!", description: "Your product image is ready." });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Upload failed";

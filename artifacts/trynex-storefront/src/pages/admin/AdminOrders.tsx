@@ -194,7 +194,7 @@ export default function AdminOrders() {
     const map: Record<string, string> = {
       pending: 'status-pending', processing: 'status-processing',
       shipped: 'status-shipped', delivered: 'status-delivered',
-      cancelled: 'status-cancelled', ongoing: 'status-processing',
+      cancelled: 'status-cancelled', ongoing: 'status-ongoing',
     };
     return map[s] || 'status-pending';
   };
@@ -302,7 +302,7 @@ export default function AdminOrders() {
               </span>
               Live
             </span>
-            {lastRefresh && <span className="text-xs text-gray-400">Auto-syncs every 3s · Last: {lastRefresh}</span>}
+            {lastRefresh && <span className="text-xs text-gray-400">Auto-syncs every 15s · Last: {lastRefresh}</span>}
           </div>
         </div>
         <button

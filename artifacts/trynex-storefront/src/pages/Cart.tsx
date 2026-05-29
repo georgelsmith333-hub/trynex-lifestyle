@@ -216,7 +216,8 @@ const CatalogCartLine = memo(function CatalogCartLine({ item, onChangeQuantity, 
       {show3D && preview.frontTexUrl && (
         <div className="px-4 pb-4 bg-gray-50/50 border-t border-gray-100">
           <div className="aspect-square w-full max-w-[320px] mx-auto rounded-2xl overflow-hidden mt-4 shadow-inner bg-white border border-gray-200">
-            <Suspense fallback={<div className="w-full h-full flex items-center justify-center bg-gray-50"><div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" /></div>}>
+            {/* Fixed-size fallback prevents layout shift when the 3D bundle lazy-loads */}
+            <Suspense fallback={<div className="w-full h-full aspect-square max-w-[320px] flex items-center justify-center bg-gray-50 rounded-2xl"><div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" /></div>}>
               <CartViewer3D
                 category={preview.category}
                 garmentColor={preview.colorHex}

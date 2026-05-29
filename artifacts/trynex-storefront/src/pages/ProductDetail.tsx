@@ -218,33 +218,6 @@ function ReviewsSection({ productId, rating }: { productId: number; rating: numb
         </div>
       )}
 
-      {REVIEW_SAMPLES.length > 0 && reviews.length === 0 && (
-        <>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mt-6">From Our Community</p>
-          {REVIEW_SAMPLES.map((review, i) => (
-            <div key={`sample-${i}`} className="p-6 bg-white rounded-2xl border border-gray-100 shadow-sm opacity-60">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center font-black text-white text-sm"
-                    style={{ background: 'linear-gradient(135deg, #E85D04, #FB8500)' }}>
-                    {review.name[0]}
-                  </div>
-                  <div>
-                    <p className="font-bold text-gray-900 text-sm">{review.name}</p>
-                    <p className="text-xs text-gray-400">{review.location} · {review.date}</p>
-                  </div>
-                </div>
-                <div className="flex">
-                  {Array.from({ length: review.rating }).map((_, j) => (
-                    <Star key={j} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                  ))}
-                </div>
-              </div>
-              <p className="text-sm text-gray-600 leading-relaxed">{review.text}</p>
-            </div>
-          ))}
-        </>
-      )}
     </motion.div>
   );
 }

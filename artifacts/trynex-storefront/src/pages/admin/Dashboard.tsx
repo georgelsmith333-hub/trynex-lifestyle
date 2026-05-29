@@ -78,7 +78,7 @@ export default function AdminDashboard() {
       bg: "#f0fdf4",
       border: "#bbf7d0",
       desc: "All time earnings",
-      trend: "",
+      trend: stats.totalOrders > 0 ? `Avg ${formatPrice(Math.round(stats.totalRevenue / stats.totalOrders))} / order` : "No orders yet",
       link: ""
     },
     {
@@ -89,7 +89,7 @@ export default function AdminDashboard() {
       bg: "#eff6ff",
       border: "#bfdbfe",
       desc: "Earned today",
-      trend: "",
+      trend: (stats.todayRevenue ?? 0) > 0 ? `${stats.todayOrders ?? "—"} orders today` : "No revenue yet today",
       link: ""
     },
     {

@@ -306,6 +306,8 @@ export default function DesignStudio() {
   const [showPrintZone, setShowPrintZone] = useState(true);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
+  /** Describes the current stage of background removal for the in-canvas overlay */
+  const [removeBgPhase, setRemoveBgPhase] = useState<"server" | "model-download" | "processing" | null>(null);
   // null = loading, true = configured (remove.bg API key set), false = not configured (will use in-browser fallback)
   const [removeBgServerConfigured, setRemoveBgServerConfigured] = useState<boolean | null>(null);
   useEffect(() => {
@@ -1037,6 +1039,7 @@ export default function DesignStudio() {
 
     /* ── Step 1: Try server (remove.bg API) ── */
     try {
+      setRemoveBgPhase("server");
       toast({ title: "Removing background…", description: "Processing via server…" });
       const r = await fetch(getApiUrl("/api/remove-bg"), {
         method: "POST",
@@ -1084,11 +1087,13 @@ export default function DesignStudio() {
 
     /* ── Step 2: In-browser ONNX fallback (@imgly/background-removal) ── */
     try {
+      setRemoveBgPhase("model-download");
       toast({
         title: "Switching to in-browser AI…",
         description: "First run downloads a ~30 MB model — stays cached after.",
       });
       const { removeBackground } = await import("@imgly/background-removal");
+      setRemoveBgPhase("processing");
       const blob = await removeBackground(selectedLayer.src, {
         publicPath: "https://staticimgly.com/@imgly/background-removal-data/1.7.0/dist/",
         output: { format: "image/png", quality: 0.9 },
@@ -1113,6 +1118,7 @@ export default function DesignStudio() {
       });
     } finally {
       setIsRemoving(false);
+      setRemoveBgPhase(null);
     }
   };
 
@@ -2407,7 +2413,7 @@ export default function DesignStudio() {
               </div>
             )}
 
-            {/* Garment color swatches + label */}
+            {/* Garment color swatches + label + hex input */}
             <div className="mb-4">
               <div className="flex items-center gap-2 mb-2">
                 <Palette className="w-3.5 h-3.5 text-gray-400" />
@@ -2436,6 +2442,32 @@ export default function DesignStudio() {
                     </button>
                   );
                 })}
+              </div>
+              {/* Custom hex/colour picker — lets users go beyond the preset swatches */}
+              <div className="flex items-center gap-2 mt-2.5">
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 shrink-0">Custom</label>
+                <div className="flex items-center gap-1.5 flex-1">
+                  <input
+                    type="color"
+                    value={selectedColor.hex.startsWith("#") && selectedColor.hex.length === 7 ? selectedColor.hex : "#ffffff"}
+                    onChange={e => setSelectedColor({ name: "Custom", hex: e.target.value })}
+                    className="w-8 h-7 rounded-lg border border-gray-200 cursor-pointer p-0.5 bg-white"
+                    title="Pick any colour"
+                  />
+                  <input
+                    type="text"
+                    value={selectedColor.hex}
+                    maxLength={7}
+                    placeholder="#ffffff"
+                    onChange={e => {
+                      const v = e.target.value.startsWith("#") ? e.target.value : `#${e.target.value}`;
+                      if (/^#[0-9a-fA-F]{0,6}$/.test(v)) {
+                        setSelectedColor({ name: v.length === 7 ? "Custom" : selectedColor.name, hex: v });
+                      }
+                    }}
+                    className="flex-1 min-w-0 px-2 py-1 text-xs font-mono rounded-lg border border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-orange-300"
+                  />
+                </div>
               </div>
             </div>
 
@@ -2786,8 +2818,14 @@ export default function DesignStudio() {
                   >
                     <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
                     <p className="text-xs font-bold text-gray-700">
-                      {isRemoving ? "Removing background…" : "Upscaling image…"}
+                      {isUpscaling ? "Upscaling image…"
+                        : removeBgPhase === "model-download" ? "Downloading AI model (~30 MB)…"
+                        : removeBgPhase === "processing" ? "Processing in-browser…"
+                        : "Removing background…"}
                     </p>
+                    {removeBgPhase === "model-download" && (
+                      <p className="text-[10px] text-gray-400 text-center px-6">Model is cached after the first download — future removals will be instant.</p>
+                    )}
                   </div>
                 )}
               </div>
@@ -2852,8 +2890,45 @@ export default function DesignStudio() {
             </div>
           </div>
 
+          {/* ═══════ MOBILE: Floating "Edit Tools" FAB ═══════ */}
+          <button
+            onClick={() => setMobileToolOpen(true)}
+            className="lg:hidden fixed bottom-20 right-4 z-40 flex items-center gap-2 px-4 py-3 rounded-2xl font-bold text-sm text-white shadow-2xl"
+            style={{ background: "linear-gradient(135deg,#E85D04,#FB8500)", boxShadow: "0 8px 24px rgba(232,93,4,0.45)" }}
+          >
+            <Wand2 className="w-4 h-4" /> Edit Tools
+          </button>
+
+          {/* Mobile bottom-sheet backdrop */}
+          {mobileToolOpen && (
+            <div
+              className="lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+              onClick={() => setMobileToolOpen(false)}
+            />
+          )}
+
           {/* ═══════ RIGHT: TABBED PANEL ═══════ */}
-          <div className="lg:w-[340px] shrink-0 flex flex-col gap-4 lg:sticky lg:top-6 lg:self-start">
+          {/* On desktop: inline sidebar. On mobile: slide-up bottom sheet via mobileToolOpen. */}
+          <div className={`lg:w-[340px] shrink-0 flex flex-col gap-4 lg:sticky lg:top-6 lg:self-start
+            ${mobileToolOpen
+              ? 'fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl max-h-[80vh] overflow-y-auto shadow-2xl'
+              : 'hidden lg:flex'}`}
+            style={mobileToolOpen ? { background: "#faf9f6" } : {}}
+          >
+            {/* Mobile drag handle */}
+            {mobileToolOpen && (
+              <div className="lg:hidden flex flex-col items-center pt-3 pb-1 shrink-0 sticky top-0 z-10"
+                style={{ background: "#faf9f6" }}>
+                <div className="w-10 h-1 rounded-full bg-gray-300 mb-2" />
+                <div className="w-full flex items-center justify-between px-4 pb-2">
+                  <span className="text-sm font-black text-gray-800">Design Tools</span>
+                  <button onClick={() => setMobileToolOpen(false)}
+                    className="p-1.5 rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-100">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Persistent hidden file inputs — always mounted so empty-state tap works
                 regardless of which tab is active. fileInputRef is shared by:

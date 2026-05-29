@@ -57,9 +57,8 @@ export default function Products() {
     const params = new URLSearchParams(window.location.search);
     if (tab === "offers") {
       params.set("tab", "offers");
-      params.delete("q");
-      params.delete("search");
       params.delete("category");
+      // preserve the search query so users can search within offers
     } else {
       params.delete("tab");
     }
@@ -137,16 +136,17 @@ export default function Products() {
   }, [activeCategory, categories]);
 
   const jsonLd = useMemo(() => {
+    const origin = typeof window !== "undefined" ? window.location.origin : "https://trynexshop.com";
     const items = [
-      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://trynexshop.com/" },
-      { "@type": "ListItem", "position": 2, "name": "Shop", "item": "https://trynexshop.com/products" },
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": `${origin}/` },
+      { "@type": "ListItem", "position": 2, "name": "Shop", "item": `${origin}/products` },
     ];
     if (activeCategoryData) {
       items.push({
         "@type": "ListItem",
         "position": 3,
         "name": activeCategoryData.name,
-        "item": `https://trynexshop.com/products?category=${activeCategoryData.slug || activeCategoryData.name.toLowerCase().replace(/\s+/g, '-')}`
+        "item": `${origin}/products?category=${activeCategoryData.slug || activeCategoryData.name.toLowerCase().replace(/\s+/g, '-')}`
       });
     }
     return {

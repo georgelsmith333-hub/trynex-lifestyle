@@ -80,6 +80,7 @@ export default function Checkout() {
   const [promoError, setPromoError] = useState<string | null>(null);
   const [isReferralCode, setIsReferralCode] = useState(false);
   const [gpsLoading, setGpsLoading] = useState(false);
+  const [gpsPickerAutoOpen, setGpsPickerAutoOpen] = useState(false);
   const [serverWaking, setServerWaking] = useState(false);
   const refAppliedRef = useRef(false);
   const wakingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -218,9 +219,11 @@ export default function Checkout() {
             toast({ title: "Location detected!", description: `${matched}${matchedUpazila ? `, ${matchedUpazila}` : ''}${division ? ` — ${division} Division` : ''}` });
           } else {
             toast({ title: "Select manually", description: "We couldn't auto-detect your exact district. Please choose from the list below." });
+            setGpsPickerAutoOpen(true);
           }
         } catch {
           toast({ title: "Select manually", description: "Location lookup timed out. Please choose your district from the list below." });
+          setGpsPickerAutoOpen(true);
         }
         setGpsLoading(false);
       },
@@ -231,6 +234,7 @@ export default function Checkout() {
           toast({ title: "Select manually", description: "Could not determine your location. Please choose your district from the list below." });
         }
         setGpsLoading(false);
+        setGpsPickerAutoOpen(true);
       },
       { enableHighAccuracy: false, timeout: 15000, maximumAge: 300000 }
     );
@@ -1188,6 +1192,7 @@ export default function Checkout() {
                         }}
                         onGPSDetect={handleGPSDetect}
                         gpsLoading={gpsLoading}
+                        autoOpen={gpsPickerAutoOpen}
                         error={errors.shippingDistrict?.message || errors.shippingUpazila?.message}
                       />
                     </div>

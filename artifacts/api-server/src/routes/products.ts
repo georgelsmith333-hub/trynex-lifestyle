@@ -38,18 +38,18 @@ function buildProductOrder(sort: string | undefined) {
 
 // Invalidate all product list cache entries when any product is mutated.
 async function invalidateProductCache(): Promise<void> {
-  // We use a wildcard pattern to bust all cached slices.
-  // The redis helper doesn't expose SCAN, so we bust common keys eagerly.
-  const bases = ["all", "1", "2", "3", "4", "5"].flatMap(cat =>
-    ["false", "true"].flatMap(feat =>
-      ["1", "2", "3"].flatMap(pg =>
-        ["12", "24", "48", "100"].map(lim =>
-          `trynex:products:${cat}:${feat}:pg${pg}:lim${lim}`
-        )
-      )
-    )
-  );
-  await Promise.allSettled(bases.map(k => redisCacheDel(k)));
+  // Bust all permutations of the cache key space including all sort variants,
+  // category IDs up to 20, pages up to 5, and common limit values.
+  const sorts = ["newest", "oldest", "price_asc", "price_desc", "name_asc", "name_desc", "featured"];
+  const cats  = ["all", ...Array.from({ length: 20 }, (_, i) => String(i + 1))];
+  const keys: string[] = [];
+  for (const cat of cats)
+    for (const feat of ["false", "true"])
+      for (const srt of sorts)
+        for (const pg of ["1", "2", "3", "4", "5"])
+          for (const lim of ["12", "24", "48", "100"])
+            keys.push(`trynex:products:${cat}:${feat}:${srt}:pg${pg}:lim${lim}`);
+  await Promise.allSettled(keys.map(k => redisCacheDel(k)));
 }
 
 function mapProduct(p: any, categoryName?: string | null) {
