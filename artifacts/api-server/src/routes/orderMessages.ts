@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { db } from "@workspace/db";
+import { db, notificationsTable } from "@workspace/db";
 import { sql } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { verifyCustomerToken, extractCustomerToken } from "../lib/customerAuth";
@@ -66,12 +66,13 @@ router.post("/admin/orders/:id/messages", requireAdmin, messageLimiter, async (r
       return;
     }
 
-    const orderCheck = await db.execute(sql`SELECT id FROM orders WHERE id = ${orderId}`);
+    const orderCheck = await db.execute(sql`SELECT id, customer_id, order_number FROM orders WHERE id = ${orderId}`);
     const orderRows = (orderCheck as any).rows ?? orderCheck ?? [];
     if (orderRows.length === 0) {
       res.status(404).json({ error: "Order not found" });
       return;
     }
+    const order = orderRows[0];
 
     const inserted = await db.execute(
       sql`INSERT INTO order_messages (order_id, sender_type, sender_name, message, attachment_url, read_by_admin)
@@ -79,6 +80,20 @@ router.post("/admin/orders/:id/messages", requireAdmin, messageLimiter, async (r
           RETURNING *`
     );
     const row = ((inserted as any).rows ?? inserted ?? [])[0];
+
+    if (order.customer_id) {
+      try {
+        await db.insert(notificationsTable).values({
+          customerId: order.customer_id,
+          title: "New Message",
+          message: `You have a new message from TryNex Team regarding order #${order.order_number}.`,
+          type: "message",
+          link: `/account`,
+        });
+      } catch (err) {
+        logger.error({ err }, "Failed to create message notification");
+      }
+    }
 
     res.json({ message: row });
   } catch (err) {

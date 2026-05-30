@@ -1,7 +1,7 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import { createHash } from "crypto";
-import { db, ordersTable, productsTable, settingsTable, promoCodesTable, referralsTable, hamperPackagesTable } from "@workspace/db";
-import { eq, and, desc, sql, inArray, lte, or, ilike } from "drizzle-orm";
+import { db, ordersTable, productsTable, settingsTable, promoCodesTable, referralsTable, hamperPackagesTable, notificationsTable, adminActivityLogsTable } from "@workspace/db";
+import { eq, and, desc, sql, inArray, lte, or, ilike, asc } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { logActivity, getAdminId } from "../lib/activityLog";
 import { verifyCustomerToken, extractCustomerToken } from "../lib/customerAuth";
@@ -358,9 +358,56 @@ function mapOrder(o: any) {
     utmSource: o.utmSource || null,
     utmMedium: o.utmMedium || null,
     utmCampaign: o.utmCampaign || null,
+    courierName: (o as any).courierName || null,
+    trackingNumber: (o as any).trackingNumber || null,
+    trackingUrl: (o as any).trackingUrl || null,
     createdAt: o.createdAt?.toISOString(),
     updatedAt: o.updatedAt?.toISOString(),
   };
+}
+
+async function getOrderTimeline(orderId: number) {
+  try {
+    const logs = await db
+      .select()
+      .from(adminActivityLogsTable)
+      .where(and(eq(adminActivityLogsTable.entity, "order"), eq(adminActivityLogsTable.entityId, String(orderId))))
+      .orderBy(asc(adminActivityLogsTable.createdAt));
+
+    const timeline = [];
+
+    // Map creation
+    const creationLog = logs.find((l) => l.action === "create");
+    if (creationLog) {
+      timeline.push({
+        status: "pending",
+        timestamp: creationLog.createdAt.toISOString(),
+        note: "Order has been placed",
+      });
+    }
+
+    // Map status updates
+    for (const log of logs) {
+      if (log.action === "update" && log.after && (log.after as any).status && (log.after as any).status !== (log.before as any)?.status) {
+        timeline.push({
+          status: (log.after as any).status,
+          timestamp: log.createdAt.toISOString(),
+          note: `Order status changed to ${(log.after as any).status}`,
+        });
+      }
+    }
+
+    // Deduplicate and sort
+    const unique: Record<string, any> = {};
+    timeline.forEach(t => {
+      unique[`${t.status}_${t.timestamp}`] = t;
+    });
+    
+    return Object.values(unique).sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+  } catch (err) {
+    logger.error({ err, orderId }, "Failed to get order timeline");
+    return [];
+  }
 }
 
 router.get("/orders/my", async (req, res) => {
@@ -461,7 +508,9 @@ router.post("/orders/track", async (req, res) => {
       res.status(404).json({ error: "not_found", message: "Order not found. Check your order number and contact details." });
       return;
     }
-    res.json(mapOrder(order));
+    const mapped = mapOrder(order);
+    const timeline = await getOrderTimeline(order.id);
+    res.json({ ...mapped, timeline });
   } catch (err) {
     req.log.error({ err }, "Failed to track order");
     res.status(500).json({ error: "internal_error", message: "Failed to track order" });
@@ -1012,6 +1061,21 @@ router.post("/orders", async (req, res) => {
   }
 });
 
+async function createCustomerNotification(customerId: number | null | undefined, title: string, message: string, type: string = "general", link?: string) {
+  if (!customerId) return;
+  try {
+    await db.insert(notificationsTable).values({
+      customerId,
+      title,
+      message,
+      type,
+      link,
+    });
+  } catch (err) {
+    logger.error({ err, customerId }, "Failed to create customer notification");
+  }
+}
+
 const STATUS_EMOJIS: Record<string, string> = {
   pending:    "⏳",
   confirmed:  "✅",
@@ -1152,6 +1216,17 @@ const updateOrderStatusHandler = async (req: Request, res: Response) => {
     sendStatusUpdateNotification(mapped, status).catch((err) => logger.warn({ err }, "sendStatusUpdateNotification failed (fire-and-forget)"));
     sendTelegramStatusUpdate(mapped, status).catch((err) => logger.warn({ err }, "Telegram status update failed (fire-and-forget)"));
     sendStatusUpdateEmail(mapped, status).catch((err) => logger.warn({ err }, "Status update email failed (fire-and-forget)"));
+
+    if (order.customerId) {
+      const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
+      createCustomerNotification(
+        order.customerId,
+        `Order Status: ${statusLabel}`,
+        `Your order #${order.orderNumber} is now ${status}.`,
+        "order_status",
+        `/account`
+      ).catch((err) => logger.warn({ err }, "Failed to create customer notification (fire-and-forget)"));
+    }
   } catch (err) {
     req.log.error({ err }, "Failed to update order status");
     res.status(500).json({ error: "internal_error", message: "Failed to update order status" });
@@ -1183,6 +1258,17 @@ const updatePaymentStatusHandler = async (req: Request, res: Response) => {
     res.json(mappedPayment);
 
     sendTelegramPaymentStatusUpdate(mappedPayment, paymentStatus).catch((err) => logger.warn({ err }, "Telegram payment status update failed (fire-and-forget)"));
+
+    if (order.customerId) {
+      const pStatusLabel = paymentStatus.charAt(0).toUpperCase() + paymentStatus.slice(1);
+      createCustomerNotification(
+        order.customerId,
+        `Payment Status: ${pStatusLabel}`,
+        `The payment status for your order #${order.orderNumber} has been updated to ${paymentStatus}.`,
+        "payment_status",
+        `/account`
+      ).catch((err) => logger.warn({ err }, "Failed to create customer notification (fire-and-forget)"));
+    }
   } catch (err) {
     req.log.error({ err }, "Failed to update payment status");
     res.status(500).json({ error: "internal_error", message: "Failed to update payment status" });

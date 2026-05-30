@@ -68,7 +68,8 @@ export default function Checkout() {
 
   const [paymentMode, setPaymentMode] = useState<PaymentMode>('advance');
   const [walletChoice, setWalletChoice] = useState<MobileMethod>('bkash');
-  const [step, setStep] = useState<CheckoutStep>('form');
+  const [step, setStep] = useState<number>(1);
+  const [checkoutStatus, setCheckoutStatus] = useState<CheckoutStep>('form');
   const [createdOrder, setCreatedOrder] = useState<Record<string, unknown> | null>(null);
   const [lastFour, setLastFour] = useState("");
   const [isSubmittingPayment, setIsSubmittingPayment] = useState(false);
@@ -99,10 +100,16 @@ export default function Checkout() {
     try { return sessionStorage.getItem("checkout_auth_banner_dismissed") === "1"; } catch { return false; }
   });
 
-  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<CheckoutFormData>({
+  const { register, handleSubmit, formState: { errors }, setValue, watch, trigger } = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: { shippingDistrict: '', shippingUpazila: '', shippingUnion: '', shippingPostCode: '' }
   });
+
+  // Expose trigger for step validation
+  useEffect(() => {
+    (window as any).triggerFormValidation = (fields: any) => trigger(fields);
+    return () => { delete (window as any).triggerFormValidation; };
+  }, [trigger]);
 
   // Auto-fill name/email/phone for logged-in customers (do NOT pre-fill address)
   useEffect(() => {
@@ -338,20 +345,20 @@ export default function Checkout() {
   const total = Math.max(0, liveSubtotal + shippingCost - promoDiscount);
   const advanceAmount = Math.ceil(total * 0.15);
 
-  const displayTotal = step === 'form' ? total : snapshotRef.current.total;
-  const displayAdvance = step === 'form' ? advanceAmount : snapshotRef.current.advance;
+  const displayTotal = checkoutStatus === 'form' ? total : snapshotRef.current.total;
+  const displayAdvance = checkoutStatus === 'form' ? advanceAmount : snapshotRef.current.advance;
 
   useEffect(() => {
-    if (items.length === 0 && step === 'form') {
+    if (items.length === 0 && checkoutStatus === 'form') {
       setLocation("/cart");
     }
-  }, [items.length, step, setLocation]);
+  }, [items.length, checkoutStatus, setLocation]);
 
   // Suppress checkout render while redirecting to /cart on empty cart.
   // We render a deterministic loading state instead of `return null` so
   // the user never sees a flash of empty checkout chrome before the
   // redirect lands.
-  if (items.length === 0 && step === 'form') {
+  if (items.length === 0 && checkoutStatus === 'form') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="flex flex-col items-center gap-3 text-gray-400">
@@ -491,7 +498,7 @@ export default function Checkout() {
         color: i.color,
       }));
       clearCart();
-      setStep('gateway');
+      setCheckoutStatus('gateway');
     } catch (err: any) {
       if (wakingTimerRef.current) { clearTimeout(wakingTimerRef.current); wakingTimerRef.current = null; }
       setServerWaking(false);
@@ -579,7 +586,7 @@ export default function Checkout() {
         headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
         body: JSON.stringify({ lastFourDigits: lastFour, promoCode: promoApplied || undefined })
       });
-      setStep('success');
+      setCheckoutStatus('success');
     } catch {
       toast({ title: "Submission failed", description: "Please screenshot this page and contact us on WhatsApp.", variant: "destructive" });
     } finally {
@@ -627,7 +634,7 @@ export default function Checkout() {
 
   const theme = gatewayTheme[effectiveGatewayMethod];
 
-  if (step === 'success') {
+  if (checkoutStatus === 'success') {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
         <motion.div
@@ -696,9 +703,9 @@ export default function Checkout() {
                           ) : (
                             <CartItemThumbnail item={item} size={48} />
                           )}
-                          <div className="flex-1 min-w-0">
+                          <div className="flex-1 min-w-0 text-left">
                             <p className="font-bold text-xs leading-tight truncate text-gray-800">{item.name}</p>
-                            <p className="text-[11px] text-gray-400 mt-0.5">
+                            <p className="text-[11px] text-gray-400 mt-0.5 text-left">
                               Qty: {item.quantity}
                               {item.size ? ` · ${item.size}` : ''}
                               {item.color ? ` · ${item.color}` : ''}
@@ -782,7 +789,7 @@ export default function Checkout() {
     );
   }
 
-  if (step === 'gateway') {
+  if (checkoutStatus === 'gateway') {
     const snapTotal = snapshotRef.current.total;
     const snapAdvance = snapshotRef.current.advance;
     const snapRemaining = snapTotal - snapAdvance;
@@ -971,6 +978,8 @@ export default function Checkout() {
     );
   }
 
+  const [summaryExpanded, setSummaryExpanded] = useState(false);
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <SEOHead title="Checkout" description="Complete your order at TryNex Lifestyle." noindex />
@@ -979,12 +988,65 @@ export default function Checkout() {
       <main className="flex-1 pt-header pb-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
+          {/* Mobile Order Summary Toggle */}
+          <div className="lg:hidden mb-4">
+            <button
+              onClick={() => setSummaryExpanded(!summaryExpanded)}
+              className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100"
+            >
+              <div className="flex items-center gap-2">
+                <Tag className="w-4 h-4 text-orange-600" />
+                <span className="font-bold text-sm">Order Summary</span>
+                <span className="text-xs text-gray-400">({items.length} items)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-black text-orange-600">{formatPrice(total)}</span>
+                <motion.div animate={{ rotate: summaryExpanded ? 180 : 0 }}>
+                  <ArrowRight className="w-4 h-4 rotate-90" />
+                </motion.div>
+              </div>
+            </button>
+            <AnimatePresence>
+              {summaryExpanded && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="overflow-hidden"
+                >
+                  <div className="p-4 bg-white border-x border-b border-gray-50 rounded-b-2xl space-y-4">
+                    {items.map(item => (
+                      <div key={item.id} className="flex gap-3 items-center">
+                        <CartItemThumbnail item={item} size={48} />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-bold text-xs truncate">{item.name}</p>
+                          <p className="text-[10px] text-gray-400">Qty: {item.quantity}</p>
+                        </div>
+                        <span className="font-bold text-xs">{formatPrice(item.price * item.quantity)}</span>
+                      </div>
+                    ))}
+                    <div className="pt-4 border-t border-gray-50 space-y-2 text-sm">
+                      <div className="flex justify-between text-gray-400">
+                        <span>Subtotal</span>
+                        <span>{formatPrice(liveSubtotal)}</span>
+                      </div>
+                      <div className="flex justify-between font-black text-gray-900">
+                        <span>Total</span>
+                        <span className="text-orange-600">{formatPrice(total)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           <div className="mb-8">
             <div className="flex items-center justify-center gap-0 max-w-md mx-auto" role="navigation" aria-label="Checkout progress">
               {[
-                { num: 1, label: "Cart", done: true },
-                { num: 2, label: "Details", done: false, active: true },
-                { num: 3, label: "Payment", done: false },
+                { num: 1, label: "Delivery", done: step > 1, active: step === 1 },
+                { num: 2, label: "Payment", done: step > 2, active: step === 2 },
+                { num: 3, label: "Review", done: false, active: step === 3 },
               ].map((s, i) => (
                 <div key={s.num} className="flex items-center flex-1 last:flex-initial">
                   <div className="flex flex-col items-center gap-1.5">
@@ -992,7 +1054,7 @@ export default function Checkout() {
                       className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-black transition-all"
                       style={{
                         background: s.done
-                          ? 'linear-gradient(135deg, #E85D04, #FB8500)'
+                          ? 'linear-gradient(135deg, #16a34a, #22c55e)'
                           : s.active
                             ? 'linear-gradient(135deg, #E85D04, #FB8500)'
                             : '#f3f4f6',
@@ -1003,12 +1065,12 @@ export default function Checkout() {
                     >
                       {s.done ? <Check className="w-4 h-4" /> : s.num}
                     </div>
-                    <span className={`text-[10px] font-bold uppercase tracking-wider ${s.active ? 'text-orange-600' : s.done ? 'text-gray-600' : 'text-gray-400'}`}>
+                    <span className={`text-[10px] font-bold uppercase tracking-wider ${s.active ? 'text-orange-600' : s.done ? 'text-green-600' : 'text-gray-400'}`}>
                       {s.label}
                     </span>
                   </div>
                   {i < 2 && (
-                    <div className="flex-1 h-0.5 mx-2 mt-[-1rem] rounded-full" style={{ background: s.done ? '#E85D04' : '#e5e7eb' }} />
+                    <div className="flex-1 h-0.5 mx-2 mt-[-1rem] rounded-full" style={{ background: s.done ? '#16a34a' : '#e5e7eb' }} />
                   )}
                 </div>
               ))}
@@ -1079,14 +1141,14 @@ export default function Checkout() {
             <div className="lg:col-span-7 space-y-6">
               <form id="checkout-form" ref={formRef} onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
-                {/* Delivery Details */}
-                <div className="p-7 rounded-3xl" style={{ background: 'white', border: '1px solid #e5e7eb' }}>
+                {/* Delivery Details Step 1 */}
+                <div className={`p-7 rounded-3xl ${step !== 1 ? 'hidden' : ''}`} style={{ background: 'white', border: '1px solid #e5e7eb' }}>
                   <h2 className="text-xl font-black font-display flex items-center gap-3 mb-6 text-gray-800">
                     <span className="w-8 h-8 rounded-xl flex items-center justify-center"
                       style={{ background: 'rgba(232,93,4,0.08)', color: '#E85D04' }}>
                       <MapPin className="w-4 h-4" />
                     </span>
-                    Delivery Details
+                    Step 1: Delivery Details
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
@@ -1221,11 +1283,6 @@ export default function Checkout() {
                             placeholder="e.g. 1205"
                             autoComplete="postal-code"
                           />
-                          {watch("shippingPostCode") && (
-                            <p className="text-xs text-green-600 font-semibold mt-1.5 flex items-center gap-1">
-                              <CheckCircle2 className="w-3 h-3" /> Auto-filled
-                            </p>
-                          )}
                         </div>
                       </div>
                     )}
@@ -1234,25 +1291,39 @@ export default function Checkout() {
                       <input {...register("notes")} className={inputClass} style={inputStyle} placeholder="Any special instructions..." />
                     </div>
                   </div>
+                  <div className="mt-8">
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        const fields: Array<keyof CheckoutFormData> = [
+                          "firstName", "lastName", "customerPhone", "shippingAddress",
+                          "shippingDistrict", "shippingUpazila"
+                        ];
+                        const isValid = await (window as any).triggerFormValidation(fields);
+                        if (isValid) setStep(2);
+                      }}
+                      className="w-full py-4 rounded-2xl bg-gray-900 text-white font-black flex items-center justify-center gap-2 hover:bg-black transition-all"
+                    >
+                      Continue to Payment <ArrowRight className="w-5 h-5" />
+                    </button>
+                  </div>
                 </div>
 
-                {/* Payment Method */}
-                <div className="p-7 rounded-3xl" style={{ background: 'white', border: '1px solid #e5e7eb' }}>
+                {/* Payment Method Step 2 */}
+                <div className={`p-7 rounded-3xl ${step !== 2 ? 'hidden' : ''}`} style={{ background: 'white', border: '1px solid #e5e7eb' }}>
                   <h2 className="text-xl font-black font-display flex items-center gap-3 mb-6 text-gray-800">
                     <span className="w-8 h-8 rounded-xl flex items-center justify-center"
                       style={{ background: 'rgba(232,93,4,0.08)', color: '#E85D04' }}>
                       <Smartphone className="w-4 h-4" />
                     </span>
-                    E-Wallet Payment
+                    Step 2: Payment Method
                   </h2>
 
                   <p className="text-xs text-gray-500 mb-5 leading-relaxed">
                     Choose how you'd like to pay — then select your preferred e-wallet below.
                   </p>
 
-                  {/* Two payment mode cards */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
-                    {/* Option A: Pay Full */}
                     <button
                       type="button"
                       onClick={() => setPaymentMode('full')}
@@ -1268,17 +1339,12 @@ export default function Checkout() {
                           {paymentMode === 'full' && <div className="w-2 h-2 rounded-full bg-orange-500" />}
                         </div>
                         <span className="font-black text-sm text-gray-900">Pay Full Amount</span>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded font-bold ml-auto"
-                          style={{ background: 'rgba(232,93,4,0.08)', color: '#E85D04', border: '1px solid rgba(232,93,4,0.2)' }}>
-                          Best Deal
-                        </span>
                       </div>
                       <p className="text-xs text-gray-500 leading-relaxed pl-6">
-                        Pay the entire <strong className="text-gray-800">{formatPrice(total)}</strong> now via e-wallet. Order confirmed instantly.
+                        Pay entire <strong className="text-gray-800">{formatPrice(total)}</strong> now.
                       </p>
                     </button>
 
-                    {/* Option B: 15% Advance + COD */}
                     <button
                       type="button"
                       onClick={() => setPaymentMode('advance')}
@@ -1294,19 +1360,14 @@ export default function Checkout() {
                           {paymentMode === 'advance' && <div className="w-2 h-2 rounded-full bg-green-500" />}
                         </div>
                         <span className="font-black text-sm text-gray-900">15% Advance + COD</span>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded font-bold ml-auto"
-                          style={{ background: 'rgba(22,163,74,0.08)', color: '#16a34a', border: '1px solid rgba(22,163,74,0.2)' }}>
-                          Popular
-                        </span>
                       </div>
                       <p className="text-xs text-gray-500 leading-relaxed pl-6">
-                        Pay <strong className="text-gray-800">{formatPrice(advanceAmount)}</strong> now (15% advance). The rest (<strong className="text-gray-800">{formatPrice(total - advanceAmount)}</strong>) on delivery.
+                        Pay <strong className="text-gray-800">{formatPrice(advanceAmount)}</strong> now, rest on delivery.
                       </p>
                     </button>
                   </div>
 
-                  {/* Wallet selector — always visible */}
-                  <div>
+                  <div className="mb-8">
                     <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Select E-Wallet</p>
                     <div className="grid grid-cols-3 gap-2">
                       {([
@@ -1329,9 +1390,89 @@ export default function Checkout() {
                         </button>
                       ))}
                     </div>
-                    <p className="text-xs text-gray-400 mt-2.5 text-center">
-                      Merchant number: <strong className="text-gray-600 font-mono">{getPaymentNumber(walletChoice)}</strong>
-                    </p>
+                  </div>
+
+                  <div className="flex flex-col gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setStep(3)}
+                      className="w-full py-4 rounded-2xl bg-gray-900 text-white font-black flex items-center justify-center gap-2 hover:bg-black transition-all"
+                    >
+                      Review Order <ArrowRight className="w-5 h-5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setStep(1)}
+                      className="w-full py-3 rounded-xl bg-white border border-gray-200 text-gray-500 font-bold text-sm"
+                    >
+                      Back to Delivery
+                    </button>
+                  </div>
+                </div>
+
+                {/* Review & Place Order Step 3 */}
+                <div className={`p-7 rounded-3xl ${step !== 3 ? 'hidden' : ''}`} style={{ background: 'white', border: '1px solid #e5e7eb' }}>
+                  <h2 className="text-xl font-black font-display flex items-center gap-3 mb-6 text-gray-800">
+                    <span className="w-8 h-8 rounded-xl flex items-center justify-center"
+                      style={{ background: 'rgba(232,93,4,0.08)', color: '#E85D04' }}>
+                      <CheckCircle2 className="w-4 h-4" />
+                    </span>
+                    Step 3: Review &amp; Place Order
+                  </h2>
+
+                  <div className="space-y-6 mb-8">
+                    <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100">
+                      <div className="flex justify-between items-center mb-2">
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Delivery To</p>
+                        <button type="button" onClick={() => setStep(1)} className="text-[10px] font-black text-orange-600 uppercase">Edit</button>
+                      </div>
+                      <p className="text-sm font-bold text-gray-900">{watch("firstName")} {watch("lastName")}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">{watch("customerPhone")}</p>
+                      <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+                        {watch("shippingAddress")}, {watch("shippingUpazila")}, {watch("shippingDistrict")}
+                      </p>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100">
+                      <div className="flex justify-between items-center mb-2">
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Payment Method</p>
+                        <button type="button" onClick={() => setStep(2)} className="text-[10px] font-black text-orange-600 uppercase">Edit</button>
+                      </div>
+                      <p className="text-sm font-bold text-gray-900">
+                        {paymentMode === 'full' ? 'Full Payment' : '15% Advance + COD'}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-0.5">Via {walletChoice.toUpperCase()}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-3">
+                    <button
+                      type="submit"
+                      disabled={isPending}
+                      className="w-full py-4 rounded-2xl bg-[#E85D04] text-white font-black text-lg shadow-lg shadow-orange-100 flex items-center justify-center gap-2 hover:bg-[#FB8500] transition-all disabled:opacity-50"
+                    >
+                      {isPending ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          Placing Order...
+                        </>
+                      ) : (
+                        <>
+                          Place Order ({formatPrice(paymentMode === 'full' ? total : advanceAmount)})
+                        </>
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setStep(2)}
+                      className="w-full py-3 rounded-xl bg-white border border-gray-200 text-gray-500 font-bold text-sm"
+                    >
+                      Back to Payment
+                    </button>
+                  </div>
+
+                  <div className="mt-6">
+                    <TrustBadges />
                   </div>
                 </div>
               </form>

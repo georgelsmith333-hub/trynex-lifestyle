@@ -45,15 +45,31 @@ const PAYMENT_STATUSES: Record<string, { label: string; color: string; bg: strin
 
 const ORDER_STEPS = [
   { key: 'pending', icon: Clock, label: 'Order Placed', desc: 'Your order has been received' },
-  { key: 'processing', icon: Package, label: 'Processing', desc: 'Order is being prepared' },
-  { key: 'shipped', icon: Box, label: 'Shipped', desc: 'Sent to delivery partner' },
-  { key: 'ongoing', icon: Truck, label: 'On the Way', desc: 'Your order is in transit' },
+  { key: 'confirmed', icon: CheckCircle2, label: 'Confirmed', desc: 'Order has been confirmed' },
+  { key: 'design_review', icon: Search, label: 'Design Review', desc: 'Our team is reviewing your design' },
+  { key: 'design_approved', icon: Star, label: 'Design Approved', desc: 'Your design is ready for production' },
+  { key: 'in_production', icon: RefreshCw, label: 'In Production', desc: 'Your custom items are being made' },
+  { key: 'quality_check', icon: CheckCircle2, label: 'Quality Check', desc: 'Final inspection before packing' },
+  { key: 'ready_to_ship', icon: Package, label: 'Ready to Ship', desc: 'Packed and waiting for pickup' },
+  { key: 'shipped', icon: Box, label: 'Shipped', desc: 'Handed over to courier' },
+  { key: 'out_for_delivery', icon: Truck, label: 'Out for Delivery', desc: 'Our rider is on the way' },
   { key: 'delivered', icon: CheckCircle2, label: 'Delivered', desc: 'Successfully delivered!' },
 ];
 
 function getOrderStepIndex(status: string): number {
   const map: Record<string, number> = {
-    pending: 0, processing: 1, shipped: 2, ongoing: 3, delivered: 4, cancelled: -1,
+    pending: 0,
+    confirmed: 1,
+    design_review: 2,
+    design_approved: 3,
+    in_production: 4,
+    quality_check: 5,
+    ready_to_ship: 6,
+    shipped: 7,
+    out_for_delivery: 8,
+    delivered: 9,
+    cancelled: -1,
+    refunded: -1
   };
   return map[status] ?? 0;
 }
@@ -222,7 +238,7 @@ export default function TrackOrder() {
 
   const error = trackError;
 
-  const displayOrder = liveOrderData as Record<string, unknown> | null;
+  const displayOrder = liveOrderData as any;
   const stepIdx = displayOrder ? getOrderStepIndex(displayOrder.status as string) : -1;
   const paymentInfo = displayOrder ? PAYMENT_STATUSES[(displayOrder.paymentStatus as string)] || PAYMENT_STATUSES.pending : null;
   const PayIcon = paymentInfo?.icon;
@@ -234,6 +250,8 @@ export default function TrackOrder() {
   const paymentMethodLabel: Record<string, string> = {
     cod: 'Cash on Delivery', bkash: 'bKash', nagad: 'Nagad', rocket: 'Rocket'
   };
+
+  const timeline = (displayOrder?.timeline as any[]) || [];
 
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const { previewItems, previewIndexByItem } = (() => {
@@ -490,6 +508,71 @@ export default function TrackOrder() {
                       </div>
                     )}
                   </div>
+
+                  {/* Courier / Tracking Info */}
+                  {(displayOrder.courierName || displayOrder.trackingNumber) && (
+                    <div className="px-6 sm:px-8 py-5 border-t border-gray-100">
+                      <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Shipping Info</p>
+                      <div className="flex items-center gap-4 p-4 rounded-2xl bg-blue-50 border border-blue-100">
+                        <Truck className="w-6 h-6 shrink-0 text-blue-500" />
+                        <div className="flex-1">
+                          <p className="font-black text-sm text-blue-700">
+                            {displayOrder.courierName || 'Courier Partner'}
+                          </p>
+                          <p className="text-xs text-blue-600 mt-0.5">
+                            Tracking: {displayOrder.trackingNumber || 'Processing...'}
+                          </p>
+                        </div>
+                        {displayOrder.trackingUrl && (
+                          <a
+                            href={displayOrder.trackingUrl as string}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-3 py-1.5 bg-blue-500 text-white text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-blue-600 transition-colors"
+                          >
+                            Track Link
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Order Timeline */}
+                  {timeline.length > 0 && (
+                    <div className="px-6 sm:px-8 py-5 border-t border-gray-100">
+                      <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-4">Status Timeline</p>
+                      <div className="space-y-4">
+                        {timeline.map((t, i) => {
+                          const step = ORDER_STEPS.find(s => s.key === t.status);
+                          const StepIcon = step?.icon || Box;
+                          return (
+                            <div key={i} className="flex gap-4 relative">
+                              {i < timeline.length - 1 && (
+                                <div className="absolute left-2.5 top-6 bottom-0 w-0.5 bg-gray-100" />
+                              )}
+                              <div className={cn(
+                                "w-5 h-5 rounded-full flex items-center justify-center shrink-0 z-10",
+                                i === timeline.length - 1 ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-400"
+                              )}>
+                                <StepIcon className="w-3 h-3" />
+                              </div>
+                              <div className="flex-1 pb-4">
+                                <div className="flex justify-between items-start">
+                                  <p className={cn("text-xs font-black", i === timeline.length - 1 ? "text-gray-900" : "text-gray-500")}>
+                                    {step?.label || t.status.charAt(0).toUpperCase() + t.status.slice(1)}
+                                  </p>
+                                  <span className="text-[10px] text-gray-400 font-medium">
+                                    {new Date(t.timestamp).toLocaleDateString('en-BD', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                  </span>
+                                </div>
+                                <p className="text-[10px] text-gray-400 mt-0.5">{t.note}</p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Payment Status */}
                   {paymentInfo && (displayOrder.paymentMethod as string) !== 'cod' && (

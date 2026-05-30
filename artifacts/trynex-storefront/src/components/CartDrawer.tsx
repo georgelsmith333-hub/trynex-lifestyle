@@ -60,24 +60,33 @@ const CartLine = memo(function CartLine({ item, onChangeQuantity, onRemove, onCl
         <div className="flex flex-wrap gap-1.5 mt-1">
           {item.size && (
             <span className="text-[10px] px-1.5 py-0.5 rounded font-semibold bg-gray-200/60 text-gray-500">
-              {item.size}
+              Size: {item.size}
             </span>
           )}
           {item.color && (
             <span className="text-[10px] px-1.5 py-0.5 rounded font-semibold bg-gray-200/60 text-gray-500 capitalize">
-              {item.color}
+              Color: {item.color}
             </span>
           )}
         </div>
         
-        {studioMeta && (
-          <button
-            onClick={handleReedit}
-            className="mt-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-orange-50 text-orange-600 text-[10px] font-bold hover:bg-orange-100 transition-colors"
-          >
-            ✏️ Re-edit
-          </button>
-        )}
+        <div className="flex flex-wrap items-center gap-2 mt-2">
+          {studioMeta && (
+            <span className="text-[10px] inline-flex items-center gap-1 px-1.5 py-0.5 rounded font-bold bg-orange-50 text-orange-600">
+              <Sparkles className="w-2.5 h-2.5" />
+              Custom
+            </span>
+          )}
+          
+          {studioMeta?.sessionId && (
+            <button
+              onClick={handleReedit}
+              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-orange-50 text-orange-600 text-[10px] font-bold hover:bg-orange-100 transition-colors border border-orange-100"
+            >
+              ✏️ Re-edit
+            </button>
+          )}
+        </div>
 
         <div className="flex items-center justify-between mt-2">
           <div className="flex flex-col gap-2">
@@ -100,14 +109,6 @@ const CartLine = memo(function CartLine({ item, onChangeQuantity, onRemove, onCl
                 <Plus className="w-3 h-3" />
               </button>
             </div>
-            {studioMeta?.sessionId && (
-              <button
-                onClick={handleReedit}
-                className="text-[10px] font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1 px-2 py-1 rounded bg-orange-50 w-fit"
-              >
-                ✏️ Re-edit
-              </button>
-            )}
           </div>
           <span className="font-black text-sm text-gray-900">{formatPrice(item.price * item.quantity)}</span>
         </div>

@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Menu, X, ChevronDown, Heart, ShoppingCart, User, LogIn, LogOut, Package, ShoppingBag, Gift, Search, Tag, Clock, TrendingUp, MessageSquare } from "lucide-react";
+import { Menu, X, ChevronDown, Heart, ShoppingCart, User, LogIn, LogOut, Package, ShoppingBag, Gift, Search, Tag, Clock, TrendingUp, MessageSquare, Bell, Check, ExternalLink } from "lucide-react";
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
@@ -73,6 +73,10 @@ export function Navbar() {
   const [desktopSearchFocused, setDesktopSearchFocused] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>(() => getStoredRecent());
   const [unreadMessages, setUnreadMessages] = useState(0);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const notificationsRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const desktopSearchRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -104,10 +108,16 @@ export function Navbar() {
   }, [location]);
 
   useEffect(() => {
-    if (!isAuthenticated) { setUnreadMessages(0); return; }
+    if (!isAuthenticated) { 
+      setUnreadMessages(0); 
+      setUnreadNotificationsCount(0);
+      setNotifications([]);
+      return; 
+    }
+    const token = localStorage.getItem("trynex_customer_token");
+    if (!token) return;
+
     const fetchUnread = async () => {
-      const token = localStorage.getItem("trynex_customer_token");
-      if (!token) return;
       try {
         const resp = await fetch("/api/orders/my/messages/unread-count", {
           headers: { Authorization: `Bearer ${token}` },
@@ -118,10 +128,60 @@ export function Navbar() {
         }
       } catch {}
     };
+
+    const fetchNotifications = async () => {
+      try {
+        const [unreadResp, listResp] = await Promise.all([
+          fetch("/api/notifications/unread-count", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("/api/notifications?limit=5", {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+        ]);
+
+        if (unreadResp.ok) {
+          const data = await unreadResp.json();
+          setUnreadNotificationsCount(data.count || 0);
+        }
+
+        if (listResp.ok) {
+          const data = await listResp.json();
+          setNotifications(data.notifications || []);
+        }
+      } catch {}
+    };
+
     fetchUnread();
-    const interval = setInterval(fetchUnread, 30000);
+    fetchNotifications();
+    const interval = setInterval(() => {
+      fetchUnread();
+      fetchNotifications();
+    }, 30000);
     return () => clearInterval(interval);
   }, [isAuthenticated]);
+
+  const markNotificationsAsRead = async () => {
+    if (unreadNotificationsCount === 0) return;
+    const token = localStorage.getItem("trynex_customer_token");
+    if (!token) return;
+    try {
+      const resp = await fetch("/api/notifications/mark-all-read", {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (resp.ok) {
+        setUnreadNotificationsCount(0);
+        setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+      }
+    } catch {}
+  };
+
+  useEffect(() => {
+    if (notificationsOpen) {
+      markNotificationsAsRead();
+    }
+  }, [notificationsOpen]);
 
   useEffect(() => {
     if (searchOpen && searchInputRef.current) {
@@ -204,6 +264,9 @@ export function Navbar() {
     const handleClickOutside = (e: MouseEvent) => {
       if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
         setProfileOpen(false);
+      }
+      if (notificationsRef.current && !notificationsRef.current.contains(e.target as Node)) {
+        setNotificationsOpen(false);
       }
       if (desktopSearchRef.current && !desktopSearchRef.current.contains(e.target as Node)) {
         setDesktopSearchFocused(false);
@@ -574,6 +637,122 @@ export function Navbar() {
             >
               <Search className="w-[1.05rem] h-[1.05rem]" />
             </button>
+
+            {isAuthenticated && (
+              <div ref={notificationsRef} className="relative">
+                <button
+                  onClick={() => setNotificationsOpen(!notificationsOpen)}
+                  className={cn(
+                    "btn-press relative flex items-center justify-center w-10 h-10 rounded-full transition-all",
+                    notificationsOpen
+                      ? "text-orange-600 bg-orange-50"
+                      : "text-gray-500 hover:text-orange-600 hover:bg-orange-50/60"
+                  )}
+                  title="Notifications"
+                  aria-label={`Notifications with ${unreadNotificationsCount} unread`}
+                >
+                  <Bell className="w-[1.1rem] h-[1.1rem]" />
+                  {unreadNotificationsCount > 0 && (
+                    <span
+                      className="absolute top-1 right-1 min-w-[1.1rem] h-[1.1rem] px-1 text-[9px] font-black text-white rounded-full flex items-center justify-center ring-2 ring-white animate-pulse"
+                      style={{ background: '#EF4444' }}
+                    >
+                      {unreadNotificationsCount > 99 ? "99+" : unreadNotificationsCount}
+                    </span>
+                  )}
+                </button>
+                <AnimatePresence>
+                  {notificationsOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                      transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
+                      className="absolute top-full right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-xl shadow-gray-200/60 border border-gray-100 overflow-hidden z-50"
+                    >
+                      <div className="px-4 py-3.5 border-b border-gray-100 flex items-center justify-between bg-white sticky top-0 z-10">
+                        <h3 className="text-sm font-bold text-gray-900">Notifications</h3>
+                        {unreadNotificationsCount > 0 && (
+                          <button 
+                            onClick={markNotificationsAsRead}
+                            className="text-[10px] font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1"
+                          >
+                            <Check className="w-3 h-3" /> Mark all as read
+                          </button>
+                        )}
+                      </div>
+                      <div className="max-h-[360px] overflow-y-auto scrollbar-hide overscroll-contain">
+                        {notifications.length > 0 ? (
+                          <div className="divide-y divide-gray-50">
+                            {notifications.map((n) => (
+                              <Link
+                                key={n.id}
+                                href={n.link || "/account"}
+                                onClick={() => {
+                                  setNotificationsOpen(false);
+                                  if (n.link?.includes("orders")) {
+                                    setTimeout(() => window.dispatchEvent(new CustomEvent("account-tab", { detail: "orders" })), 100);
+                                  }
+                                }}
+                                className={cn(
+                                  "flex gap-3 px-4 py-4 transition-colors hover:bg-gray-50 relative",
+                                  !n.read && "bg-orange-50/30"
+                                )}
+                              >
+                                {!n.read && (
+                                  <div className="absolute top-5 left-1 w-1.5 h-1.5 rounded-full bg-orange-600" />
+                                )}
+                                <div className={cn(
+                                  "w-10 h-10 rounded-full flex items-center justify-center shrink-0",
+                                  n.type === "order" ? "bg-blue-50 text-blue-600" :
+                                  n.type === "message" ? "bg-green-50 text-green-600" :
+                                  "bg-orange-50 text-orange-600"
+                                )}>
+                                  {n.type === "order" ? <Package className="w-5 h-5" /> :
+                                   n.type === "message" ? <MessageSquare className="w-5 h-5" /> :
+                                   <Bell className="w-5 h-5" />}
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex justify-between items-start gap-2">
+                                    <p className="text-[13px] font-bold text-gray-900 leading-tight mb-1">{n.title}</p>
+                                    <span className="text-[10px] text-gray-400 whitespace-nowrap font-medium">
+                                      {new Date(n.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                    </span>
+                                  </div>
+                                  <p className="text-[12px] text-gray-600 leading-relaxed line-clamp-2">{n.message}</p>
+                                  {n.link && (
+                                    <div className="mt-2 flex items-center gap-1 text-[10px] font-bold text-orange-600 uppercase tracking-wider">
+                                      View Details <ExternalLink className="w-2.5 h-2.5" />
+                                    </div>
+                                  )}
+                                </div>
+                              </Link>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="py-12 px-6 text-center">
+                            <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center mx-auto mb-3">
+                              <Bell className="w-6 h-6 text-gray-300" />
+                            </div>
+                            <p className="text-sm font-bold text-gray-800">No notifications yet</p>
+                            <p className="text-xs text-gray-400 mt-1">We'll notify you here when something happens.</p>
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-2 border-t border-gray-100 bg-gray-50">
+                        <Link
+                          href="/account"
+                          onClick={() => setNotificationsOpen(false)}
+                          className="flex items-center justify-center w-full py-2 rounded-xl text-xs font-bold text-gray-600 hover:text-orange-600 transition-colors"
+                        >
+                          View All Notifications
+                        </Link>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
 
             {isAuthenticated ? (
               <div ref={profileRef} className="relative hidden sm:block">

@@ -364,6 +364,7 @@ export default function ProductDetail() {
   const [activeImage, setActiveImage] = useState<string>("");
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [sizeShake, setSizeShake] = useState(0);
+  const [colorShake, setColorShake] = useState(0);
   const [activeTab, setActiveTab] = useState<"details" | "reviews">("details");
   const [zoomActive, setZoomActive] = useState(false);
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
@@ -499,13 +500,27 @@ export default function ProductDetail() {
 
   const handleAddToCart = () => {
     if (product.stock < 1) return;
+    
+    let hasError = false;
+
     // Require size selection when sizes are available
     if (product.sizes && product.sizes.length > 0 && !selectedSize) {
       setSizeShake(n => n + 1);
-      toast({ title: "Please select a size", description: "Choose your size before adding to cart.", variant: "destructive" });
-      document.getElementById("size-picker")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      hasError = true;
+    }
+
+    // Require color selection when colors are available
+    if (product.colors && product.colors.length > 0 && !selectedColor) {
+      setColorShake(n => n + 1);
+      hasError = true;
+    }
+
+    if (hasError) {
+      const firstError = document.getElementById(selectedSize ? "color-picker" : "size-picker");
+      firstError?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
+
     // Block if selected color is marked out of stock
     if (selectedColor) {
       const variant = (product.colorVariants ?? []).find((v: any) => v.name === selectedColor);
@@ -986,6 +1001,9 @@ export default function ProductDetail() {
                       </button>
                     ))}
                   </motion.div>
+                  {sizeShake > 0 && !selectedSize && (
+                    <p className="text-xs font-bold text-red-500 mt-2 ml-1">Please select a size</p>
+                  )}
 
                   {/* Size Guide Table */}
                   <AnimatePresence>
@@ -1026,16 +1044,24 @@ export default function ProductDetail() {
 
               {/* Colors */}
               {product.colors && product.colors.length > 0 && (
-                <div className="mb-6">
+                <div className="mb-6" id="color-picker">
                   <p className="font-bold text-gray-900 text-sm mb-3">
                     {selectedColor
                       ? <>Selected: <span className="text-orange-600">{selectedColor}</span></>
                       : <>Choose a color <span className="font-normal text-gray-400">(optional)</span></>}
                   </p>
-                  <div className="flex flex-wrap gap-3">
+                  <motion.div 
+                    key={colorShake}
+                    animate={colorShake > 0 ? { x: [0, -10, 10, -10, 10, -6, 6, 0] } : { x: 0 }}
+                    transition={{ duration: 0.45, ease: "easeInOut" }}
+                    className="flex flex-wrap gap-3"
+                  >
                     {product.colors.map((color: string, colorIdx: number) => {
                       const variantMeta = (product.colorVariants ?? []).find((v: any) => v.name === color);
                       const isOutOfStock = variantMeta ? variantMeta.inStock === false : false;
+                      const colorImages = product.colorImages || {};
+                      const mappedImage = colorImages[color];
+
                       return (
                         <button
                           key={color}
@@ -1043,11 +1069,17 @@ export default function ProductDetail() {
                             if (isOutOfStock) return;
                             const isDeselect = color === selectedColor;
                             setSelectedColor(isDeselect ? "" : color);
-                            const allImages = [product.imageUrl, ...(product.images || [])].filter(Boolean) as string[];
-                            if (!isDeselect && allImages.length > 1 && colorIdx < allImages.length) {
-                              setActiveImage(allImages[colorIdx]);
-                            } else if (isDeselect) {
+                            setColorShake(0);
+                            
+                            if (isDeselect) {
                               setActiveImage("");
+                            } else if (mappedImage) {
+                              setActiveImage(mappedImage);
+                            } else {
+                              const allImages = [product.imageUrl, ...(product.images || [])].filter(Boolean) as string[];
+                              if (allImages.length > 1 && colorIdx < allImages.length) {
+                                setActiveImage(allImages[colorIdx]);
+                              }
                             }
                           }}
                           title={isOutOfStock ? `${color} — Out of stock` : color}
@@ -1076,7 +1108,10 @@ export default function ProductDetail() {
                         </button>
                       );
                     })}
-                  </div>
+                  </motion.div>
+                  {colorShake > 0 && !selectedColor && (
+                    <p className="text-xs font-bold text-red-500 mt-2 ml-1">Please select a color</p>
+                  )}
                   {product.colors.some((c: string) => (product.colorVariants ?? []).find((v: any) => v.name === c)?.inStock === false) && (
                     <p className="text-xs text-gray-400 mt-1.5">Crossed-out colors are currently out of stock.</p>
                   )}

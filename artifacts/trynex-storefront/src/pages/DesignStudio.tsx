@@ -947,6 +947,20 @@ export default function DesignStudio() {
     commitLayers(next);
   }, [layers, commitLayers]);
 
+  const duplicateLayer = useCallback((id: string) => {
+    const layer = layers.find(l => l.id === id);
+    if (!layer) return;
+    const newLayer = {
+      ...layer,
+      id: uid(),
+      name: `${layer.name} (Copy)`,
+      transform: { ...layer.transform, x: layer.transform.x + 20, y: layer.transform.y + 20 }
+    };
+    const next = [...layers, newLayer];
+    commitLayers(next);
+    setSelectedLayerId(newLayer.id);
+  }, [layers, commitLayers]);
+
   /* ── File upload — bulletproof: handles same-file re-pick, decode failures,
         oversized images (>10MB), unreadable files, and races. ───────────── */
   const handleFileUpload = (file: File) => {
@@ -2611,7 +2625,6 @@ export default function DesignStudio() {
                     </motion.div>
                   </AnimatePresence>
                 )}
-                <AnimatePresence mode="wait" initial={false}>
                 <motion.svg
                   key={`${selectedProduct.id}-${isMugProduct ? mugMode : activeFace}`}
                   ref={svgRef}
@@ -2818,7 +2831,48 @@ export default function DesignStudio() {
                       stroke="#E85D04" strokeWidth="1" strokeDasharray="2 3" />
                   )}
                 </motion.svg>
-                </AnimatePresence>
+
+                {/* ── MAIN HORIZONTAL TOOLBAR ── */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1 p-1.5 rounded-2xl border border-gray-200 shadow-xl z-30"
+                  style={{ background: "rgba(255,255,255,0.9)", backdropFilter: "blur(12px)" }}>
+                  <button onClick={() => fileInputRef.current?.click()} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Upload Image">
+                    <Upload className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
+                    <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600">Upload</span>
+                  </button>
+                  <button onClick={() => {
+                      const layer: TextLayer = {
+                        id: uid(), name: "New text", type: "text", visible: true, locked: false,
+                        transform: { ...ZERO_TRANSFORM },
+                        text: "Your text", fontFamily: FONT_FAMILIES[0].value,
+                        fontWeight: 700, fontStyle: "normal", fontSize: 40, color: "#111111",
+                      };
+                      addLayer(layer);
+                      setActiveTab("text");
+                    }} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Add Text">
+                    <Type className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
+                    <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600">Text</span>
+                  </button>
+                  <button onClick={() => setActiveTab("templates")} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Templates">
+                    <Sparkles className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
+                    <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600">Templates</span>
+                  </button>
+                  <button onClick={() => setActiveTab("layers")} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Layers">
+                    <LayersIcon className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
+                    <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600">Layers</span>
+                  </button>
+                  <div className="w-px h-8 bg-gray-200 mx-1" />
+                  <button onClick={undo} disabled={!canUndo} className="p-2 rounded-xl hover:bg-white transition-colors disabled:opacity-30 group" title="Undo">
+                    <Undo2 className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
+                  </button>
+                  <button onClick={redo} disabled={!canRedo} className="p-2 rounded-xl hover:bg-white transition-colors disabled:opacity-30 group" title="Redo">
+                    <Redo2 className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
+                  </button>
+                  <div className="w-px h-8 bg-gray-200 mx-1" />
+                  <button onClick={clearDraft} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-red-50 transition-colors group" title="Clear All">
+                    <Trash2 className="w-4 h-4 text-gray-400 group-hover:text-red-500" />
+                    <span className="text-[10px] font-bold text-gray-400 group-hover:text-red-600">Clear</span>
+                  </button>
+                </div>
 
                 {/* Empty state — drop zone (drag on desktop, tap on mobile) */}
                 {layers.length === 0 && (
@@ -3400,18 +3454,21 @@ export default function DesignStudio() {
                                 <div className="w-7 h-7 rounded flex items-center justify-center shrink-0"
                                   style={{ background: "#f3f4f6", color: l.color, fontWeight: 800, fontSize: 10 }}>T</div>
                               )}
-                              <span className="text-xs font-bold text-gray-700 truncate flex-1">{l.name}</span>
-                              <button onClick={(e) => { e.stopPropagation(); moveLayer(l.id, 1); }} className="text-gray-400 hover:text-gray-700" title="Bring forward">
-                                <ChevronUp className="w-3.5 h-3.5" />
-                              </button>
-                              <button onClick={(e) => { e.stopPropagation(); moveLayer(l.id, -1); }} className="text-gray-400 hover:text-gray-700" title="Send backward">
-                                <ChevronDown className="w-3.5 h-3.5" />
-                              </button>
-                              <button onClick={(e) => { e.stopPropagation();
-                                updateLayer(l.id, x => ({ ...x, locked: !x.locked }), true);
-                              }} className="text-gray-400 hover:text-gray-700" title="Lock/unlock">
-                                {l.locked ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
-                              </button>
+                                <span className="text-xs font-bold text-gray-700 truncate flex-1">{l.name}</span>
+                                <button onClick={(e) => { e.stopPropagation(); moveLayer(l.id, 1); }} className="text-gray-400 hover:text-gray-700" title="Bring forward">
+                                  <ChevronUp className="w-3.5 h-3.5" />
+                                </button>
+                                <button onClick={(e) => { e.stopPropagation(); moveLayer(l.id, -1); }} className="text-gray-400 hover:text-gray-700" title="Send backward">
+                                  <ChevronDown className="w-3.5 h-3.5" />
+                                </button>
+                                <button onClick={(e) => { e.stopPropagation(); duplicateLayer(l.id); }} className="text-gray-400 hover:text-gray-700" title="Duplicate">
+                                  <Copy className="w-3.5 h-3.5" />
+                                </button>
+                                <button onClick={(e) => { e.stopPropagation();
+                                  updateLayer(l.id, x => ({ ...x, locked: !x.locked }), true);
+                                }} className="text-gray-400 hover:text-gray-700" title="Lock/unlock">
+                                  {l.locked ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
+                                </button>
                               <button onClick={(e) => { e.stopPropagation(); removeLayer(l.id); }} className="text-red-400 hover:text-red-600" title="Delete">
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>

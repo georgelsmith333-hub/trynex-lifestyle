@@ -280,5 +280,18 @@ export const orderMessagesTable = pgTable("order_messages", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const notificationsTable = pgTable("notifications", {
+  id: serial("id").primaryKey(),
+  customerId: integer("customer_id").notNull(),
+  title: text("title").notNull(),
+  message: text("message").notNull(),
+  type: text("type").notNull().default("general"),
+  link: text("link"),
+  read: boolean("read").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export type OrderMessage = typeof orderMessagesTable.$inferSelect;
 export type InsertOrderMessage = typeof orderMessagesTable.$inferInsert;
+export type Notification = typeof notificationsTable.$inferSelect;
+export type InsertNotification = typeof notificationsTable.$inferInsert;
