@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TryNex Lifestyle — A-Z Website Overview</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
+  :root {
+    --orange: #E85D04;
+    --orange-light: #fff4ee;
+    --orange-dark: #b84500;
+    --gray-900: #111827;
+    --gray-700: #374151;
+    --gray-500: #6b7280;
+    --gray-200: #e5e7eb;
+    --gray-100: #f3f4f6;
+    --green: #16a34a;
+    --purple: #7c3aed;
+    --blue: #1e40af;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', sans-serif;
+    color: var(--gray-700);
+    background: white;
+    font-size: 13px;
+    line-height: 1.6;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ── Cover Page ── */
+  .cover {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #111827 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 40px;
+    text-align: center;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 20%, rgba(232,93,4,0.18) 0%, transparent 70%);
+  }
+  .cover-logo {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #E85D04, #FB8500);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: 900;
+    color: white;
+    margin-bottom: 28px;
+    box-shadow: 0 20px 60px rgba(232,93,4,0.35);
+    position: relative;
+  }
+  .cover h1 {
+    font-size: 52px;
+    font-weight: 900;
+    color: white;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .cover h1 span { color: #FB8500; }
+  .cover .subtitle {
+    font-size: 18px;
+    color: rgba(255,255,255,0.55);
+    font-weight: 500;
+    margin-bottom: 48px;
+    position: relative;
+  }
+  .cover-badges {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 48px;
+  }
+  .badge {
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .badge-orange { background: rgba(232,93,4,0.2); color: #FB8500; border: 1px solid rgba(232,93,4,0.3); }
+  .badge-green  { background: rgba(22,163,74,0.2); color: #4ade80; border: 1px solid rgba(22,163,74,0.3); }
+  .badge-blue   { background: rgba(59,130,246,0.2); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
+  .badge-purple { background: rgba(124,58,237,0.2); color: #c4b5fd; border: 1px solid rgba(124,58,237,0.3); }
+  .cover-meta {
+    font-size: 12px;
+    color: rgba(255,255,255,0.3);
+    position: relative;
+  }
+  .cover-divider {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #E85D04, #FB8500);
+    border-radius: 2px;
+    margin: 0 auto 48px;
+    position: relative;
+  }
+
+  /* ── Layout ── */
+  .page { max-width: 900px; margin: 0 auto; padding: 56px 40px; }
+  @media print {
+    .page { padding: 40px 32px; }
+    .page-break { page-break-before: always; }
+  }
+  .page-break { page-break-before: always; padding-top: 56px; }
+
+  /* ── Section headers ── */
+  .section-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--orange-light);
+    color: var(--orange);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  h2.section-title {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--gray-900);
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+  .section-desc {
+    color: var(--gray-500);
+    font-size: 13px;
+    margin-bottom: 28px;
+    max-width: 600px;
+  }
+  .divider {
+    height: 1px;
+    background: var(--gray-200);
+    margin: 36px 0;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 14px;
+    padding: 20px 22px;
+    margin-bottom: 14px;
+  }
+  .card-accent {
+    border-left: 4px solid var(--orange);
+    padding-left: 18px;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--gray-900);
+    margin-bottom: 4px;
+  }
+  .card-subtitle {
+    font-size: 11px;
+    color: var(--orange);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+  .card-body { font-size: 12.5px; color: var(--gray-500); }
+
+  /* ── Route table ── */
+  .route-table { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
+  .route-table th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gray-500);
+    background: var(--gray-100);
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .route-table th:first-child { border-radius: 8px 0 0 0; }
+  .route-table th:last-child { border-radius: 0 8px 0 0; }
+  .route-table td {
+    padding: 9px 12px;
+    font-size: 12px;
+    border-bottom: 1px solid var(--gray-100);
+    vertical-align: top;
+  }
+  .route-table tr:last-child td { border-bottom: none; }
+  .route-table tr:hover td { background: #fafafa; }
+  .route-path {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: var(--orange-dark);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .route-desc { color: var(--gray-700); }
+  .route-note { color: var(--gray-500); font-size: 11px; }
+  .tag {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+  .tag-green  { background: rgba(22,163,74,0.1); color: #15803d; }
+  .tag-orange { background: rgba(232,93,4,0.1); color: var(--orange); }
+  .tag-blue   { background: rgba(30,64,175,0.1); color: #1e40af; }
+  .tag-purple { background: rgba(124,58,237,0.1); color: #7c3aed; }
+  .tag-red    { background: rgba(220,38,38,0.1); color: #dc2626; }
+  .tag-gray   { background: var(--gray-100); color: var(--gray-500); }
+
+  /* ── Tech stack grid ── */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .tech-card {
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 14px 16px;
+    background: white;
+  }
+  .tech-card-icon { font-size: 20px; margin-bottom: 6px; }
+  .tech-card-name { font-size: 12px; font-weight: 800; color: var(--gray-900); margin-bottom: 2px; }
+  .tech-card-desc { font-size: 11px; color: var(--gray-500); }
+
+  /* ── Feature list ── */
+  .feature-list { list-style: none; }
+  .feature-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--gray-100);
+    font-size: 12.5px;
+  }
+  .feature-list li:last-child { border-bottom: none; }
+  .feature-check {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #E85D04, #FB8500);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    font-size: 9px;
+    color: white;
+    font-weight: 900;
+  }
+  .feature-text { flex: 1; }
+  .feature-title { font-weight: 700; color: var(--gray-900); }
+  .feature-desc { color: var(--gray-500); font-size: 11.5px; }
+
+  /* ── Two-column layout ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+  /* ── Status indicator ── */
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+  .dot-green { background: #22c55e; }
+  .dot-orange { background: #f97316; }
+  .dot-blue { background: #3b82f6; }
+
+  /* ── Info box ── */
+  .info-box {
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 12.5px;
+  }
+  .info-box-orange { background: var(--orange-light); border: 1px solid rgba(232,93,4,0.2); color: #92400e; }
+  .info-box-green  { background: #f0fdf4; border: 1px solid rgba(22,163,74,0.2); color: #14532d; }
+  .info-box-blue   { background: #eff6ff; border: 1px solid rgba(59,130,246,0.2); color: #1e3a8a; }
+  .info-icon { font-size: 18px; flex-shrink: 0; }
+
+  /* ── Table of contents ── */
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+    background: var(--gray-100);
+  }
+  .toc-number {
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #E85D04, #FB8500);
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .toc-title { font-weight: 700; font-size: 13px; color: var(--gray-900); }
+  .toc-subtitle { font-size: 11px; color: var(--gray-500); }
+  .toc-page { margin-left: auto; font-size: 11px; color: var(--gray-500); font-weight: 600; }
+
+  /* Print */
+  @media print {
+    body { font-size: 12px; }
+    .cover { min-height: auto; padding: 80px 40px; }
+    .cover h1 { font-size: 42px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════ COVER PAGE ══════════════ -->
+<div class="cover">
+  <div class="cover-logo">T</div>
+  <h1><span>TryNex</span> Lifestyle</h1>
+  <p class="subtitle">Bangladesh's #1 Custom Apparel & Lifestyle Brand</p>
+  <div class="cover-divider"></div>
+  <div class="cover-badges">
+    <span class="badge badge-orange">Full-Stack E-Commerce</span>
+    <span class="badge badge-green">3D Design Studio</span>
+    <span class="badge badge-blue">React 19 + TypeScript</span>
+    <span class="badge badge-purple">PostgreSQL + Drizzle ORM</span>
+    <span class="badge badge-orange">Cloudflare R2 Storage</span>
+    <span class="badge badge-green">Upstash Redis Cache</span>
+    <span class="badge badge-blue">AI Art Generation</span>
+    <span class="badge badge-purple">Real-time Messaging</span>
+  </div>
+  <p class="cover-meta">A-Z Website Overview · Generated May 30, 2026 · Confidential</p>
+</div>
+
+<!-- ══════════════ TABLE OF CONTENTS ══════════════ -->
+<div class="page">
+  <div class="section-tag">📋 Navigation</div>
+  <h2 class="section-title">Table of Contents</h2>
+  <p class="section-desc">Complete reference document covering all pages, features, APIs and infrastructure of TryNex Lifestyle.</p>
+
+  <div style="margin-top:24px;">
+    <div class="toc-item"><div class="toc-number">1</div><div><div class="toc-title">Project Overview &amp; Architecture</div><div class="toc-subtitle">Tech stack, monorepo structure, environments</div></div><div class="toc-page">§1</div></div>
+    <div class="toc-item"><div class="toc-number">2</div><div><div class="toc-title">Storefront Pages (Customer-facing)</div><div class="toc-subtitle">Home, Shop, Product Detail, Cart, Checkout, Blog…</div></div><div class="toc-page">§2</div></div>
+    <div class="toc-item"><div class="toc-number">3</div><div><div class="toc-title">Design Studio</div><div class="toc-subtitle">3D viewer, print zones, AI art, mobile UX, layers</div></div><div class="toc-page">§3</div></div>
+    <div class="toc-item"><div class="toc-number">4</div><div><div class="toc-title">Customer Account &amp; Messaging</div><div class="toc-subtitle">Profile, orders, messages, notifications, referrals</div></div><div class="toc-page">§4</div></div>
+    <div class="toc-item"><div class="toc-number">5</div><div><div class="toc-title">Admin Panel</div><div class="toc-subtitle">Products, orders, blog, customers, settings, AI assistant</div></div><div class="toc-page">§5</div></div>
+    <div class="toc-item"><div class="toc-number">6</div><div><div class="toc-title">API Reference</div><div class="toc-subtitle">All endpoints — auth, orders, products, AI, messaging…</div></div><div class="toc-page">§6</div></div>
+    <div class="toc-item"><div class="toc-number">7</div><div><div class="toc-title">Database &amp; Storage</div><div class="toc-subtitle">Schema overview, migrations, R2 storage, Redis cache</div></div><div class="toc-page">§7</div></div>
+    <div class="toc-item"><div class="toc-number">8</div><div><div class="toc-title">Mobile &amp; Responsiveness</div><div class="toc-subtitle">Breakpoints, mobile UX, touch gestures</div></div><div class="toc-page">§8</div></div>
+    <div class="toc-item"><div class="toc-number">9</div><div><div class="toc-title">Security &amp; Environment</div><div class="toc-subtitle">JWT auth, secrets, CORS, deployment</div></div><div class="toc-page">§9</div></div>
+  </div>
+</div>
+
+<!-- ══════════════ §1: PROJECT OVERVIEW ══════════════ -->
+<div class="page page-break">
+  <div class="section-tag">§ 1</div>
+  <h2 class="section-title">Project Overview &amp; Architecture</h2>
+  <p class="section-desc">TryNex Lifestyle is a production-grade full-stack e-commerce platform built as a pnpm monorepo. It enables customers to shop standard products and design fully custom apparel in a real-time 3D studio.</p>
+
+  <div class="info-box info-box-orange">
+    <div class="info-icon">🏭</div>
+    <div><strong>Business:</strong> Bangladesh-based custom apparel and lifestyle brand. Offers T-Shirts, Hoodies, Long Sleeves, Mugs, Caps, Water Bottles in standard and fully-customised variants. Delivers across all 64 districts. Cash-on-delivery available.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-tag">Tech Stack</div>
+  <h2 class="section-title" style="font-size:20px;">Technology</h2>
+  <div class="tech-grid" style="margin-top:16px;">
+    <div class="tech-card"><div class="tech-card-icon">⚛️</div><div class="tech-card-name">React 19 + Vite 7</div><div class="tech-card-desc">TypeScript, Tailwind CSS v4, Framer Motion, wouter router</div></div>
+    <div class="tech-card"><div class="tech-card-icon">🟩</div><div class="tech-card-name">Node 24 + Express 5</div><div class="tech-card-desc">TypeScript, Pino logger, Zod validation, JWT auth</div></div>
+    <div class="tech-card"><div class="tech-card-icon">🗃️</div><div class="tech-card-name">PostgreSQL + Drizzle</div><div class="tech-card-desc">Replit primary DB, Neon failover chain, 12 auto-migrations</div></div>
+    <div class="tech-card"><div class="tech-card-icon">🔴</div><div class="tech-card-name">Upstash Redis</div><div class="tech-card-desc">REST-based cache with in-process Map fallback when offline</div></div>
+    <div class="tech-card"><div class="tech-card-icon">☁️</div><div class="tech-card-name">Cloudflare R2</div><div class="tech-card-desc">S3-compatible object storage for product images &amp; uploads</div></div>
+    <div class="tech-card"><div class="tech-card-icon">🎨</div><div class="tech-card-name">Three.js + R3F</div><div class="tech-card-desc">React Three Fiber, Drei — real-time 3D garment viewer</div></div>
+    <div class="tech-card"><div class="tech-card-icon">🤖</div><div class="tech-card-name">AI Art (Pollinations)</div><div class="tech-card-desc">Text-to-image, image-to-image, remove-BG, HD upscale</div></div>
+    <div class="tech-card"><div class="tech-card-icon">🔄</div><div class="tech-card-name">TanStack Query</div><div class="tech-card-desc">Hooks, optimistic updates, polling for notifications</div></div>
+    <div class="tech-card"><div class="tech-card-icon">📦</div><div class="tech-card-name">pnpm Workspaces</div><div class="tech-card-desc">Monorepo: storefront, api-server, api-worker, lib packages</div></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-tag">Monorepo Structure</div>
+  <h2 class="section-title" style="font-size:20px;">Package Layout</h2>
+  <div class="two-col" style="margin-top:16px;">
+    <div>
+      <div class="card card-accent">
+        <div class="card-subtitle">Storefront · Port 5000</div>
+        <div class="card-title">artifacts/trynex-storefront/</div>
+        <div class="card-body">React 19 SPA — customer shop, design studio, blog, account, admin panel. Vite proxies /api/* to localhost:8080.</div>
+      </div>
+      <div class="card card-accent">
+        <div class="card-subtitle">API Server · Port 8080</div>
+        <div class="card-title">artifacts/api-server/</div>
+        <div class="card-body">Express 5 REST API — all business logic, DB access, auth, AI, order processing.</div>
+      </div>
+    </div>
+    <div>
+      <div class="card card-accent">
+        <div class="card-subtitle">Edge Worker (alternative)</div>
+        <div class="card-title">artifacts/api-worker/</div>
+        <div class="card-body">Hono-based Cloudflare Worker. Can replace the Express API for edge deployment.</div>
+      </div>
+      <div class="card card-accent">
+        <div class="card-subtitle">Shared Libraries</div>
+        <div class="card-title">lib/ packages</div>
+        <div class="card-body">db/ (Drizzle schema), api-spec/ (OpenAPI), api-zod/ (validators), api-client-react/ (TanStack hooks)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box info-box-green">
+    <div class="info-icon">🚀</div>
+    <div><strong>Start command:</strong> <code style="font-family:monospace;background:rgba(0,0,0,0.05);padding:1px 6px;border-radius:3px;">node proxy-8084.mjs &amp; pnpm --filter @workspace/api-server run dev &amp; PORT=5000 pnpm --filter @workspace/trynex-storefront run dev</code><br><strong>Preview proxy:</strong> port 8084 → 5000 for Replit iframe preview.</div>
+  </div>
+</div>
+
+<!-- ══════════════ §2: STOREFRONT PAGES ══════════════ -->
+<div class="page page-break">
+  <div class="section-tag">§ 2</div>
+  <h2 class="section-title">Storefront Pages</h2>
+  <p class="section-desc">All customer-facing pages rendered by the React SPA. Routes are managed by wouter with code-splitting (lazy imports) for optimal bundle size.</p>
+
+  <table class="route-table">
+    <thead>
+      <tr>
+        <th>Route</th>
+        <th>Page</th>
+        <th>Description</th>
+        <th>Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="route-path">/</span></td>
+        <td class="route-desc"><strong>Home</strong></td>
+        <td class="route-note">Hero section, product showcase cards, brand stats (5,000+ customers, 24hr production, 64 districts, 4.9★), testimonials, social proof, announcement bar, flash sale bar</td>
+        <td><span class="tag tag-green">Eager</span></td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/products<br>/shop</span></td>
+        <td class="route-desc"><strong>Products / Shop</strong></td>
+        <td class="route-note">Filterable product grid with categories, price sort, search. Quick-view modal, add-to-cart, wishlist. Recently viewed sidebar.</td>
+        <td><span class="tag tag-green">Eager</span></td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/product/:id</span></td>
+        <td class="route-desc"><strong>Product Detail</strong></td>
+        <td class="route-note">Gallery lightbox, size guide, color variants, quantity selector, reviews, related products. Design-now CTA links to studio.</td>
+        <td><span class="tag tag-green">Eager</span></td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/cart</span></td>
+        <td class="route-desc"><strong>Shopping Cart</strong></td>
+        <td class="route-note">Cart items with custom-design thumbnails (3D CartViewer3D), quantity controls, free-shipping progress bar, coupon code, totals.</td>
+        <td><span class="tag tag-orange">Lazy</span></td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/checkout</span></td>
+        <td class="route-desc"><strong>Checkout</strong></td>
+        <td class="route-note">Customer details form, delivery area picker (64 districts), bKash/Nagad/COD payment, order summary, CSRF-protected submission.</td>
+        <td><span class="tag tag-orange">Lazy</span></td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/track<br>/track-order</span></td>
+        <td class="route-desc"><strong>Track Order</strong></td>
+        <td class="route-note">Order lookup by number + email/phone. 5-step progress tracker (Placed → Processing → Shipped → On the Way → Delivered), payment status, order items with design thumbnails, messaging thread.</td>
+        <td><span class="tag tag-orange">Lazy</span></td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/design-studio</span></td>
+        <td class="route-desc"><strong>Design Studio</strong></td>
+        <td class="route-note">Full custom design editor — see §3 for details.</td>
+        <td><span class="tag tag-orange">Lazy</span></td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/hampers<br>/hampers/build<br>/hampers/:slug</span></td>
+        <td class="route-desc"><strong>Gift Hampers</strong></td>
+        <td class="route-note">Browse pre-built hampers. Custom hamper builder — select items, quantities, packaging. Gift message support.</td>
+        <td><span class="tag tag-orange">Lazy</span></td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/blog<br>/blog/:slug</span></td>
+        <td class="route-desc"><strong>Blog</strong></td>
+        <td class="route-note">Admin-managed blog with rich text, categories, SEO head. Article detail with estimated read time.</td>
+        <td><span class="tag tag-orange">Lazy</span></td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/sale</span></td>
+        <td class="route-desc"><strong>Sale Page</strong></td>
+        <td class="route-note">Flash sale / discounted products with countdown timer and deal badges.</td>
+        <td><span class="tag tag-orange">Lazy</span></td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/wishlist</span></td>
+        <td class="route-desc"><strong>Wishlist</strong></td>
+        <td class="route-note">Saved products. Persisted to localStorage. Quick add-to-cart from wishlist view.</td>
+        <td><span class="tag tag-orange">Lazy</span></td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/account</span></td>
+        <td class="route-desc"><strong>My Account</strong></td>
+        <td class="route-note">Profile, order history, messaging, referral — see §4.</td>
+        <td><span class="tag tag-orange">Lazy</span></td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/login<br>/signup</span></td>
+        <td class="route-desc"><strong>Auth Pages</strong></td>
+        <td class="route-note">Email/password + Google OAuth + Facebook OAuth sign-in. JWT stored in httpOnly cookie.</td>
+        <td><span class="tag tag-orange">Lazy</span></td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/faq</span></td>
+        <td class="route-desc"><strong>FAQ</strong></td>
+        <td class="route-note">Accordion-style frequently asked questions, searchable.</td>
+        <td><span class="tag tag-orange">Lazy</span></td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/about<br>/contact<br>/size-guide</span></td>
+        <td class="route-desc"><strong>Static Pages</strong></td>
+        <td class="route-note">About us, contact form with WhatsApp CTA, printable size guide table for all apparel.</td>
+        <td><span class="tag tag-orange">Lazy</span></td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/shipping-policy<br>/return-policy<br>/privacy-policy<br>/terms-of-service</span></td>
+        <td class="route-desc"><strong>Policy Pages</strong></td>
+        <td class="route-note">Legal content pages — all required for e-commerce compliance.</td>
+        <td><span class="tag tag-orange">Lazy</span></td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/referral</span></td>
+        <td class="route-desc"><strong>Referral Programme</strong></td>
+        <td class="route-note">Unique referral link generation, earnings tracker, share to WhatsApp/Facebook.</td>
+        <td><span class="tag tag-orange">Lazy</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="divider"></div>
+
+  <div class="section-tag">Global UI</div>
+  <h2 class="section-title" style="font-size:20px;">Persistent Components</h2>
+  <div class="two-col" style="margin-top:16px;">
+    <ul class="feature-list">
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Announcement Bar</div><div class="feature-desc">Scrolling marquee with free-shipping threshold, COD info, WhatsApp number. Dismissable. Height injected as CSS variable for sticky offsets.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Navbar</div><div class="feature-desc">Logo, nav links with dropdowns, search (⌘K), wishlist, account, cart badge, notification bell with unread-message badge (polls every 30s).</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Cart Drawer</div><div class="feature-desc">Slide-in from right. Shows all items, 3D design previews, subtotal, free shipping progress, checkout CTA.</div></div></li>
+    </ul>
+    <ul class="feature-list">
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">WhatsApp FAB</div><div class="feature-desc">Fixed bottom-left button linking to business WhatsApp. Always visible across all pages.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Flash Sale Bar</div><div class="feature-desc">Countdown timer banner when flash sales are active. Configurable from admin settings.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Social Proof Toast</div><div class="feature-desc">Floating toasts showing recent purchases (e.g. "Ahmed just ordered a Custom T-Shirt"). Builds FOMO.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Footer</div><div class="feature-desc">Links to all key pages, social media icons, newsletter signup, payment methods, district delivery info.</div></div></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════════════ §3: DESIGN STUDIO ══════════════ -->
+<div class="page page-break">
+  <div class="section-tag">§ 3</div>
+  <h2 class="section-title">Design Studio</h2>
+  <p class="section-desc">The flagship feature — a real-time, browser-based custom apparel design editor at <code style="font-family:monospace;background:var(--gray-100);padding:2px 6px;border-radius:4px;">/design-studio</code>. Supports 6 product types with both 2D mockup editing and 3D preview.</p>
+
+  <div class="info-box info-box-orange">
+    <div class="info-icon">🎨</div>
+    <div><strong>Design Flow:</strong> Customer picks product → selects colour → uploads image or generates AI art → positions/scales/rotates on canvas → adds text layers → previews in 3D → adds custom product to cart → completes standard checkout.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-tag">Products</div>
+  <h2 class="section-title" style="font-size:20px;">Supported Products</h2>
+  <table class="route-table" style="margin-top:16px;">
+    <thead>
+      <tr><th>Product</th><th>Design Zones</th><th>Colours</th><th>Mockup Photos</th><th>3D Model</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Unisex T-Shirt</strong><br><span style="font-size:11px;color:#6b7280;">230GSM Cotton · Best Seller</span></td>
+        <td class="route-note">Front, Back, Left Sleeve, Right Sleeve, Neck Label</td>
+        <td class="route-note">White, Black, Navy, Maroon, Olive, Sky Blue, Grey, Red</td>
+        <td><span class="tag tag-green">White + Black PNGs</span></td>
+        <td><span class="tag tag-blue">tshirt.glb</span></td>
+      </tr>
+      <tr>
+        <td><strong>Unisex Long Sleeve</strong><br><span style="font-size:11px;color:#6b7280;">240GSM Cotton</span></td>
+        <td class="route-note">Front, Back, Left Sleeve, Right Sleeve, Neck Label</td>
+        <td class="route-note">White, Black, Navy, Maroon, Olive, Grey</td>
+        <td><span class="tag tag-green">White PNG + SVG tint</span></td>
+        <td><span class="tag tag-blue">longsleeve.glb</span></td>
+      </tr>
+      <tr>
+        <td><strong>Unisex Hoodie</strong><br><span style="font-size:11px;color:#6b7280;">320GSM Fleece · New</span></td>
+        <td class="route-note">Front (above pocket), Back, Left Sleeve, Right Sleeve, Neck Label</td>
+        <td class="route-note">White, Black, Navy, Grey</td>
+        <td><span class="tag tag-green">White + Black PNGs</span></td>
+        <td><span class="tag tag-blue">hoodie.glb</span></td>
+      </tr>
+      <tr>
+        <td><strong>Coffee Mug</strong><br><span style="font-size:11px;color:#6b7280;">11oz Ceramic · Popular</span></td>
+        <td class="route-note">Left Side, Right Side, Full 360° Wrap</td>
+        <td class="route-note">White, Black</td>
+        <td><span class="tag tag-green">White + Black PNGs</span></td>
+        <td><span class="tag tag-blue">mug.glb</span></td>
+      </tr>
+      <tr>
+        <td><strong>Structured Cap</strong><br><span style="font-size:11px;color:#6b7280;">Cotton Twill</span></td>
+        <td class="route-note">Front panel only</td>
+        <td class="route-note">White, Black</td>
+        <td><span class="tag tag-green">White + Black PNGs</span></td>
+        <td><span class="tag tag-blue">cap.glb</span></td>
+      </tr>
+      <tr>
+        <td><strong>Water Bottle</strong><br><span style="font-size:11px;color:#6b7280;">600ml Aluminium Carabiner</span></td>
+        <td class="route-note">Front body panel (cylindrical wrap)</td>
+        <td class="route-note">White, Black, Navy, Forest, Sky Blue, Red, Pink, Teal</td>
+        <td><span class="tag tag-green">White PNG + tint</span></td>
+        <td><span class="tag tag-purple">Photo mockup mesh</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="divider"></div>
+
+  <div class="section-tag">Canvas Features</div>
+  <h2 class="section-title" style="font-size:20px;">Design Editor Capabilities</h2>
+  <div class="two-col" style="margin-top:16px;">
+    <ul class="feature-list">
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Image Upload</div><div class="feature-desc">JPG, PNG, WebP up to 10MB. Drag & drop or tap to upload. Auto-placed at print zone centre.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">AI Art Generation</div><div class="feature-desc">Text-to-image via Pollinations AI. 6 model options (Flux, Turbo, SD3.5, etc.), style categories (Bengali, Urban, Abstract…), 50+ quick-prompts. Img2img editing.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Text Layers</div><div class="feature-desc">12 font families (including Bangla), bold/italic, size, colour, letter spacing, stroke, drop shadow.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Layer System</div><div class="feature-desc">Multiple layers per zone, show/hide, lock, reorder (bring forward / send back), rename, duplicate, delete.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Transform Tools</div><div class="feature-desc">Drag to move, pinch to scale & rotate (touch), corner/edge resize handles, rotation slider, X/Y nudge arrows.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Background Removal</div><div class="feature-desc">In-browser AI (Transformers.js) or cloud remove.bg API. First use downloads ~30MB model, cached thereafter.</div></div></li>
+    </ul>
+    <ul class="feature-list">
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Image Adjustments</div><div class="feature-desc">Per-layer: brightness, contrast, saturation, flip H/V, opacity, crop.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">HD Upscaling</div><div class="feature-desc">2× resolution upscale using Pollinations upscale API.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">3D Real-Time Preview</div><div class="feature-desc">Toggleable 2D/3D view. WebGL2 garment viewer with orbit controls, studio lighting, fabric normal/roughness maps. Falls back gracefully if no WebGL.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Snap Guides</div><div class="feature-desc">Centre-H and centre-V snap lines appear when dragging near print zone centre.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Undo / Redo</div><div class="feature-desc">Full history stack for all layer operations. Keyboard shortcuts Ctrl+Z / Ctrl+Y.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Draft Auto-Save</div><div class="feature-desc">Design auto-saved to localStorage on every change. Restored on next visit with confirmation dialog.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Stickers &amp; Templates</div><div class="feature-desc">Built-in vector sticker library + pre-made text templates (Urban, Chill, Bengali, Motivation styles).</div></div></li>
+    </ul>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-tag">Mobile UX</div>
+  <h2 class="section-title" style="font-size:20px;">Mobile Design Studio</h2>
+  <div class="two-col" style="margin-top:16px;">
+    <ul class="feature-list">
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Full-width Canvas</div><div class="feature-desc">On screens &lt;lg, the canvas takes full width. Product tabs, zone switcher, colour swatches all visible.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Edit Tools Bottom Sheet</div><div class="feature-desc">Orange "Edit Tools" FAB at bottom-right opens a full-screen slide-up sheet with all tabs (Upload, Text, AI, Layers, Templates).</div></div></li>
+    </ul>
+    <ul class="feature-list">
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Quick-Actions Bar</div><div class="feature-desc">When a layer is selected, a bar appears below the canvas with: Rotate ±15°, Flip H, Centre, Duplicate, Delete, and "More" → Edit Tools. One-tap operations without opening the full sheet.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Touch Gestures</div><div class="feature-desc">Pinch-to-zoom canvas, two-finger rotate layer, single-finger drag. 44px hit areas on all handles.</div></div></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════════════ §4: ACCOUNT & MESSAGING ══════════════ -->
+<div class="page page-break">
+  <div class="section-tag">§ 4</div>
+  <h2 class="section-title">Customer Account &amp; Messaging</h2>
+  <p class="section-desc">Registered customers get a full account dashboard at <code style="font-family:monospace;background:var(--gray-100);padding:2px 6px;border-radius:4px;">/account</code> with five tabs.</p>
+
+  <div class="two-col">
+    <div>
+      <div class="card card-accent">
+        <div class="card-subtitle">Tab 1</div>
+        <div class="card-title">👤 Profile</div>
+        <div class="card-body">Edit name, email, phone. Change password. View account tier (Customer / VIP). Profile photo management.</div>
+      </div>
+      <div class="card card-accent">
+        <div class="card-subtitle">Tab 2</div>
+        <div class="card-title">📦 My Orders</div>
+        <div class="card-body">Full order history with status badges, item thumbnails (including custom designs), payment status, re-order option. Filterable by status.</div>
+      </div>
+      <div class="card card-accent">
+        <div class="card-subtitle">Tab 3</div>
+        <div class="card-title">💬 Messages</div>
+        <div class="card-body">
+          Per-order threaded messaging between customer and admin.<br><br>
+          • Lists all orders with a message preview and unread count badge<br>
+          • Tapping an order opens the full message thread<br>
+          • Customer can send replies (text messages)<br>
+          • Auto-polled every 30s while tab is active<br>
+          • Unread count reflected in navbar notification bell
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card card-accent">
+        <div class="card-subtitle">Tab 4</div>
+        <div class="card-title">🎁 Referrals</div>
+        <div class="card-body">Unique referral link. Track referred customers and earnings. Share via WhatsApp, Facebook, copy-to-clipboard.</div>
+      </div>
+      <div class="card card-accent">
+        <div class="card-subtitle">Tab 5</div>
+        <div class="card-title">🕐 Recently Viewed</div>
+        <div class="card-body">Products the customer viewed recently. Persisted per session. Quick re-access without searching again.</div>
+      </div>
+      <div class="card" style="background:var(--orange-light);border-color:rgba(232,93,4,0.2);">
+        <div class="card-subtitle" style="color:var(--orange);">Notifications</div>
+        <div class="card-title">🔔 Navbar Bell Badge</div>
+        <div class="card-body">The navbar bell icon shows a red badge with the count of unread messages from admin. Polls <code style="font-family:monospace">/api/orders/my/messages/unread-count</code> every 30 seconds when the user is logged in. Badge disappears immediately when the Messages tab is opened.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-tag">Order Messaging</div>
+  <h2 class="section-title" style="font-size:20px;">Auto-Confirmation Message</h2>
+  <div class="info-box info-box-green">
+    <div class="info-icon">✉️</div>
+    <div><strong>When an order is placed:</strong> the API automatically sends a welcome message in the order thread from admin: <em>"Thank you for your order! We have received it and will start processing shortly. If you have any questions, feel free to message us here."</em> This ensures every customer has an active thread they can reply to.</div>
+  </div>
+
+  <div class="section-tag" style="margin-top:24px;">Track Order</div>
+  <h2 class="section-title" style="font-size:20px;">Guest Order Tracking</h2>
+  <div class="info-box info-box-blue">
+    <div class="info-icon">📍</div>
+    <div>Accessible at <code style="font-family:monospace">/track</code> or <code style="font-family:monospace">/track-order</code> (both routes work). Customers enter their order number + email or phone. Shows: 5-step status progress, payment status, ordered items with design thumbnails, delivery address, and an inline messaging thread — identical functionality to the Account Messages tab but accessible without logging in.</div>
+  </div>
+</div>
+
+<!-- ══════════════ §5: ADMIN PANEL ══════════════ -->
+<div class="page page-break">
+  <div class="section-tag">§ 5</div>
+  <h2 class="section-title">Admin Panel</h2>
+  <p class="section-desc">Full management interface at <code style="font-family:monospace;background:var(--gray-100);padding:2px 6px;border-radius:4px;">/admin/*</code>. Login at <code style="font-family:monospace;background:var(--gray-100);padding:2px 6px;border-radius:4px;">/admin/login</code> using the <code style="font-family:monospace;background:var(--gray-100);padding:2px 6px;border-radius:4px;">ADMIN_PASSWORD</code> secret. Supports TOTP 2FA.</p>
+
+  <table class="route-table">
+    <thead>
+      <tr><th>Route</th><th>Section</th><th>Key Features</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="route-path">/admin/orders</span></td>
+        <td class="route-desc"><strong>Orders</strong></td>
+        <td class="route-note">View all orders, update status (pending/processing/shipped/ongoing/delivered/cancelled), update payment status (bKash/Nagad verification), view custom design images, message customers, export CSV, bulk operations.</td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/admin/products</span></td>
+        <td class="route-desc"><strong>Products</strong></td>
+        <td class="route-note">Create/edit/delete products. Rich text description (TipTap), image upload to R2, category assignment, pricing, stock, size variants, colour variants. Facebook Import tool for bulk product import.</td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/admin/categories</span></td>
+        <td class="route-desc"><strong>Categories</strong></td>
+        <td class="route-note">Create/edit product categories with icons, display order, active/hidden toggle.</td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/admin/customers</span></td>
+        <td class="route-desc"><strong>Customers</strong></td>
+        <td class="route-note">View registered + guest customers, order history per customer, contact details, account tier, block/unblock.</td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/admin/blog</span></td>
+        <td class="route-desc"><strong>Blog</strong></td>
+        <td class="route-note">Write and publish blog posts with rich text editor, SEO meta, featured images, categories. Schedule publishing.</td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/admin/reviews</span></td>
+        <td class="route-desc"><strong>Reviews</strong></td>
+        <td class="route-note">Moderate customer reviews, approve/reject, pin featured reviews for product pages.</td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/admin/settings</span></td>
+        <td class="route-desc"><strong>Settings</strong></td>
+        <td class="route-note">Site name, logo, announcement text, free-shipping threshold, studio pricing (tshirt ৳1,099 / mug ৳799), remove-bg API key, Telegram bot token, flash sale toggle, featured products, homepage banners.</td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/admin/backup</span></td>
+        <td class="route-desc"><strong>Backup</strong></td>
+        <td class="route-note">Export full database snapshot. View activity log with rollback capability. Last 200 admin actions tracked.</td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/admin/tech-stack</span></td>
+        <td class="route-desc"><strong>Tech Stack</strong></td>
+        <td class="route-note">Live infrastructure health dashboard — API latency, DB connection, Redis status, R2 storage stats.</td>
+      </tr>
+      <tr>
+        <td><span class="route-path">/admin/facebook-import<br>/admin/facebook-guide</span></td>
+        <td class="route-desc"><strong>Facebook Tools</strong></td>
+        <td class="route-note">Bulk import products from Facebook shop JSON, media processing guide.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="divider"></div>
+
+  <div class="section-tag">AI Assistant</div>
+  <h2 class="section-title" style="font-size:20px;">Admin AI Assistant</h2>
+  <div class="info-box info-box-purple" style="background:#faf5ff;border:1px solid rgba(124,58,237,0.2);color:#4c1d95;">
+    <div class="info-icon">🤖</div>
+    <div><strong>Natural language admin actions.</strong> The Admin AI Assistant understands commands like "Show me orders from today", "Add a new product called X at ৳999", "Change the announcement bar text to…". It calls structured API preview/execute endpoints that require confirmation before writing. Full undo support via rollback API.</div>
+  </div>
+</div>
+
+<!-- ══════════════ §6: API REFERENCE ══════════════ -->
+<div class="page page-break">
+  <div class="section-tag">§ 6</div>
+  <h2 class="section-title">API Reference</h2>
+  <p class="section-desc">Express 5 REST API at port 8080. All paths prefixed <code style="font-family:monospace;background:var(--gray-100);padding:2px 6px;border-radius:4px;">/api/</code>. JSON request/response. Auth via JWT (httpOnly cookie) or Authorization Bearer header.</p>
+
+  <div class="section-tag" style="margin-bottom:8px;">Auth</div>
+  <table class="route-table">
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tag tag-blue">POST</span></td><td><span class="route-path">/api/auth/register</span></td><td class="route-note">Create customer account (email + password)</td></tr>
+      <tr><td><span class="tag tag-blue">POST</span></td><td><span class="route-path">/api/auth/login</span></td><td class="route-note">Login → sets JWT cookie</td></tr>
+      <tr><td><span class="tag tag-blue">POST</span></td><td><span class="route-path">/api/auth/google</span></td><td class="route-note">OAuth via Google ID token</td></tr>
+      <tr><td><span class="tag tag-blue">POST</span></td><td><span class="route-path">/api/auth/facebook</span></td><td class="route-note">OAuth via Facebook access token</td></tr>
+      <tr><td><span class="tag tag-green">GET</span></td><td><span class="route-path">/api/auth/me</span></td><td class="route-note">Current user profile (requires auth)</td></tr>
+      <tr><td><span class="tag tag-blue">POST</span></td><td><span class="route-path">/api/auth/forgot-password</span></td><td class="route-note">Send password reset email</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-tag" style="margin-top:16px;margin-bottom:8px;">Products &amp; Orders</div>
+  <table class="route-table">
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tag tag-green">GET</span></td><td><span class="route-path">/api/products</span></td><td class="route-note">All published products (cached 5min)</td></tr>
+      <tr><td><span class="tag tag-green">GET</span></td><td><span class="route-path">/api/products/:id</span></td><td class="route-note">Single product with reviews</td></tr>
+      <tr><td><span class="tag tag-green">GET</span></td><td><span class="route-path">/api/categories</span></td><td class="route-note">All active categories</td></tr>
+      <tr><td><span class="tag tag-blue">POST</span></td><td><span class="route-path">/api/orders</span></td><td class="route-note">Place order (cart + customer info). Triggers auto-confirmation message.</td></tr>
+      <tr><td><span class="tag tag-blue">POST</span></td><td><span class="route-path">/api/orders/track</span></td><td class="route-note">Track order by number + email/phone</td></tr>
+      <tr><td><span class="tag tag-green">GET</span></td><td><span class="route-path">/api/orders/my</span></td><td class="route-note">Current customer's orders (requires auth)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-tag" style="margin-top:16px;margin-bottom:8px;">Messaging</div>
+  <table class="route-table">
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tag tag-green">GET</span></td><td><span class="route-path">/api/orders/:id/messages</span></td><td class="route-note">Get all messages for an order thread</td></tr>
+      <tr><td><span class="tag tag-blue">POST</span></td><td><span class="route-path">/api/orders/:id/messages</span></td><td class="route-note">Send message to order thread (customer or admin)</td></tr>
+      <tr><td><span class="tag tag-green">GET</span></td><td><span class="route-path">/api/orders/my/messages/unread-count</span></td><td class="route-note">Count of unread admin messages for logged-in customer</td></tr>
+      <tr><td><span class="tag tag-blue">POST</span></td><td><span class="route-path">/api/admin/orders/:id/messages</span></td><td class="route-note">Admin sends message (requires admin auth)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-tag" style="margin-top:16px;margin-bottom:8px;">AI &amp; Storage</div>
+  <table class="route-table">
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tag tag-green">GET</span></td><td><span class="route-path">/api/ai/models</span></td><td class="route-note">Available AI image generation models</td></tr>
+      <tr><td><span class="tag tag-green">GET</span></td><td><span class="route-path">/api/ai/generate</span></td><td class="route-note">Text-to-image SSE stream (prompt, model, neg prompt)</td></tr>
+      <tr><td><span class="tag tag-blue">POST</span></td><td><span class="route-path">/api/ai/reference</span></td><td class="route-note">Upload reference image for img2img editing</td></tr>
+      <tr><td><span class="tag tag-blue">POST</span></td><td><span class="route-path">/api/ai/chat</span></td><td class="route-note">Admin AI assistant chat (natural language → actions)</td></tr>
+      <tr><td><span class="tag tag-blue">POST</span></td><td><span class="route-path">/api/storage/product-image</span></td><td class="route-note">Upload product image to Cloudflare R2 (admin)</td></tr>
+      <tr><td><span class="tag tag-green">GET</span></td><td><span class="route-path">/api/remove-bg/status</span></td><td class="route-note">Check if server-side remove-bg is configured</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-tag" style="margin-top:16px;margin-bottom:8px;">Public &amp; Settings</div>
+  <table class="route-table">
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tag tag-green">GET</span></td><td><span class="route-path">/api/settings</span></td><td class="route-note">Public site settings (branding, prices, announcement)</td></tr>
+      <tr><td><span class="tag tag-green">GET</span></td><td><span class="route-path">/api/blog</span></td><td class="route-note">Published blog posts list</td></tr>
+      <tr><td><span class="tag tag-green">GET</span></td><td><span class="route-path">/api/testimonials</span></td><td class="route-note">Customer testimonials for homepage</td></tr>
+      <tr><td><span class="tag tag-green">GET</span></td><td><span class="route-path">/api/public-stats</span></td><td class="route-note">Homepage stats (orders, customers, districts)</td></tr>
+      <tr><td><span class="tag tag-green">GET</span></td><td><span class="route-path">/api/healthz</span></td><td class="route-note">Health check — returns 200 OK if API is up</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════════════ §7: DATABASE & STORAGE ══════════════ -->
+<div class="page page-break">
+  <div class="section-tag">§ 7</div>
+  <h2 class="section-title">Database &amp; Storage</h2>
+  <p class="section-desc">PostgreSQL via Drizzle ORM. 12 migrations run automatically at startup. Multi-URL failover chain ensures zero downtime if primary DB is unavailable.</p>
+
+  <div class="two-col">
+    <div>
+      <div class="card card-accent">
+        <div class="card-subtitle">Primary Database</div>
+        <div class="card-title">Replit PostgreSQL</div>
+        <div class="card-body">Auto-provisioned by Replit. Connection string in <code style="font-family:monospace">DATABASE_URL</code>. Always tried first.</div>
+      </div>
+      <div class="card card-accent">
+        <div class="card-subtitle">Failover Chain</div>
+        <div class="card-title">Neon PostgreSQL</div>
+        <div class="card-body">3 Neon DBs as fallback: <code style="font-family:monospace">DATABASE_URL_MAIN</code> → <code style="font-family:monospace">DATABASE_URL_TRYNEX_DB</code> → <code style="font-family:monospace">DATABASE_FAILOVER</code>. Tried sequentially on primary failure.</div>
+      </div>
+    </div>
+    <div>
+      <div class="card card-accent">
+        <div class="card-subtitle">Cache Layer</div>
+        <div class="card-title">Upstash Redis</div>
+        <div class="card-body">REST-based Redis for settings, product lists, and session tokens. Falls back to in-process Map when <code style="font-family:monospace">UPSTASH_REDIS_REST_TOKEN</code> is absent.</div>
+      </div>
+      <div class="card card-accent">
+        <div class="card-subtitle">Object Storage</div>
+        <div class="card-title">Cloudflare R2</div>
+        <div class="card-body">S3-compatible. Stores product images, custom design exports, AI-generated art. Credentials: <code style="font-family:monospace">R2_ACCESS_KEY_ID</code> / <code style="font-family:monospace">R2_SECRET_ACCESS_KEY</code>.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-tag">Schema</div>
+  <h2 class="section-title" style="font-size:20px;">Key Database Tables</h2>
+  <table class="route-table" style="margin-top:16px;">
+    <thead><tr><th>Table</th><th>Purpose</th><th>Key Columns</th></tr></thead>
+    <tbody>
+      <tr><td><span class="route-path">customers</span></td><td class="route-desc">Registered customer accounts</td><td class="route-note">id, email, name, phone, password_hash, referral_code, account_tier, google_id, facebook_id</td></tr>
+      <tr><td><span class="route-path">orders</span></td><td class="route-desc">All orders (custom + standard)</td><td class="route-note">id, order_number, customer_id/guest info, items (JSON), total, status, payment_status, payment_method, address, delivery_area</td></tr>
+      <tr><td><span class="route-path">order_messages</span></td><td class="route-desc">Per-order customer ↔ admin threads</td><td class="route-note">id, order_id, sender_type (customer|admin), message, read_by_customer, created_at</td></tr>
+      <tr><td><span class="route-path">products</span></td><td class="route-desc">Product catalogue</td><td class="route-note">id, name, description, price, original_price, images (JSON), category_id, stock, sizes, colors, is_published, is_featured, sku</td></tr>
+      <tr><td><span class="route-path">categories</span></td><td class="route-desc">Product categories</td><td class="route-note">id, name, slug, icon, display_order, is_active</td></tr>
+      <tr><td><span class="route-path">reviews</span></td><td class="route-desc">Product reviews</td><td class="route-note">id, product_id, customer_id, rating, comment, is_approved, is_featured</td></tr>
+      <tr><td><span class="route-path">blog_posts</span></td><td class="route-desc">Admin-authored blog content</td><td class="route-note">id, title, slug, content (HTML), excerpt, featured_image, author, category, is_published, published_at</td></tr>
+      <tr><td><span class="route-path">settings</span></td><td class="route-desc">Single-row site configuration</td><td class="route-note">site_name, announcement_text, free_shipping_threshold, studio_tshirt_price, studio_mug_price, remove_bg_key, telegram_bot_token…</td></tr>
+      <tr><td><span class="route-path">gift_hampers</span></td><td class="route-desc">Pre-built hamper packages</td><td class="route-note">id, name, slug, items (JSON), price, description, images</td></tr>
+      <tr><td><span class="route-path">activity_logs</span></td><td class="route-desc">Admin action audit trail</td><td class="route-note">id, admin_id, action, details (JSON), created_at. Supports rollback.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════════════ §8: MOBILE & RESPONSIVENESS ══════════════ -->
+<div class="page page-break">
+  <div class="section-tag">§ 8</div>
+  <h2 class="section-title">Mobile &amp; Responsiveness</h2>
+  <p class="section-desc">All pages are built mobile-first using Tailwind CSS breakpoints (sm: 640px, md: 768px, lg: 1024px). Tested on 375px (iPhone SE) through 1440px (desktop).</p>
+
+  <table class="route-table">
+    <thead><tr><th>Page / Component</th><th>Mobile Layout</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Home</strong></td>
+        <td class="route-note">Hero: stacked text + product cards grid 2×2. Stats: 2×2 grid. Announcement bar closes via × button.</td>
+        <td><span class="tag tag-green">✓ Responsive</span></td>
+      </tr>
+      <tr>
+        <td><strong>Shop / Products</strong></td>
+        <td class="route-note">Filter drawer slides up. Products in 2-column grid on mobile. Quick-view modal full-width.</td>
+        <td><span class="tag tag-green">✓ Responsive</span></td>
+      </tr>
+      <tr>
+        <td><strong>Product Detail</strong></td>
+        <td class="route-note">Gallery full-width, stacked below text. Size/colour selectors wrap. Add-to-cart sticky bar at bottom.</td>
+        <td><span class="tag tag-green">✓ Responsive</span></td>
+      </tr>
+      <tr>
+        <td><strong>Design Studio</strong></td>
+        <td class="route-note">Canvas full-width. Product/zone/colour tabs visible. Tools in bottom sheet via FAB. Quick-actions bar on layer select. 2D/3D toggle shown at top of canvas.</td>
+        <td><span class="tag tag-green">✓ Responsive</span></td>
+      </tr>
+      <tr>
+        <td><strong>Track Order</strong></td>
+        <td class="route-note">5-step progress tracker shrinks to compact dots with short labels. Payment/item sections full-width cards. Message thread full-width.</td>
+        <td><span class="tag tag-green">✓ Responsive</span></td>
+      </tr>
+      <tr>
+        <td><strong>Account</strong></td>
+        <td class="route-note">Tab strip scrollable horizontally. Content full-width cards. Messages: order list → thread → reply, all vertically stacked.</td>
+        <td><span class="tag tag-green">✓ Responsive</span></td>
+      </tr>
+      <tr>
+        <td><strong>Cart / Checkout</strong></td>
+        <td class="route-note">Cart: full-width items. Checkout: single-column form, district picker full-width, sticky totals at bottom.</td>
+        <td><span class="tag tag-green">✓ Responsive</span></td>
+      </tr>
+      <tr>
+        <td><strong>Navbar</strong></td>
+        <td class="route-note">Hamburger menu hides nav links on mobile. Search, wishlist, account, cart icons remain visible. Logo scales down.</td>
+        <td><span class="tag tag-green">✓ Responsive</span></td>
+      </tr>
+      <tr>
+        <td><strong>Admin Panel</strong></td>
+        <td class="route-note">Admin is desktop-optimised. Basic responsiveness with horizontal scrolling on data tables. Not officially mobile-targeted.</td>
+        <td><span class="tag tag-orange">Desktop-first</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="divider"></div>
+
+  <div class="section-tag">Touch &amp; Gesture</div>
+  <h2 class="section-title" style="font-size:20px;">Touch Interaction Details</h2>
+  <div class="two-col" style="margin-top:16px;">
+    <ul class="feature-list">
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Canvas Pinch-to-Zoom</div><div class="feature-desc">2-finger pinch on the design studio canvas zooms in/out (0.4×–4× range). Canvas pan via 1-finger drag on empty area.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Layer Manipulation</div><div class="feature-desc">Single-finger drag on a layer moves it. The corner resize handles have 30px touch radius. The delete × button has a 44px hit area.</div></div></li>
+    </ul>
+    <ul class="feature-list">
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Swipe &amp; Scroll</div><div class="feature-desc">Zone tabs, product tabs, colour swatches all horizontally scrollable with <code style="font-family:monospace">scrollbarWidth: none</code>. Smooth touch momentum scrolling.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">44px Tap Targets</div><div class="feature-desc">All interactive buttons meet the 44px minimum tap target size across the Design Studio and key CTA buttons.</div></div></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════════════ §9: SECURITY & ENVIRONMENT ══════════════ -->
+<div class="page page-break">
+  <div class="section-tag">§ 9</div>
+  <h2 class="section-title">Security &amp; Environment</h2>
+  <p class="section-desc">All secrets managed via Replit Secrets (env vars). No secrets hardcoded in source code or committed to GitHub.</p>
+
+  <div class="section-tag" style="margin-bottom:8px;">Environment Variables</div>
+  <table class="route-table">
+    <thead><tr><th>Secret Name</th><th>Purpose</th><th>Required</th></tr></thead>
+    <tbody>
+      <tr><td><span class="route-path">DATABASE_URL</span></td><td class="route-note">Replit PostgreSQL primary DB connection string</td><td><span class="tag tag-red">Required</span></td></tr>
+      <tr><td><span class="route-path">JWT_SECRET</span></td><td class="route-note">Customer JWT signing key</td><td><span class="tag tag-red">Required</span></td></tr>
+      <tr><td><span class="route-path">ADMIN_JWT_SECRET</span></td><td class="route-note">Admin JWT signing key (separate from customer)</td><td><span class="tag tag-red">Required</span></td></tr>
+      <tr><td><span class="route-path">ADMIN_PASSWORD</span></td><td class="route-note">Admin panel login password</td><td><span class="tag tag-red">Required</span></td></tr>
+      <tr><td><span class="route-path">ADMIN_SECRET_PASSWORD</span></td><td class="route-note">Master reset / emergency admin bypass</td><td><span class="tag tag-red">Required</span></td></tr>
+      <tr><td><span class="route-path">R2_ACCESS_KEY_ID<br>R2_SECRET_ACCESS_KEY</span></td><td class="route-note">Cloudflare R2 S3-compatible credentials for image storage</td><td><span class="tag tag-orange">For images</span></td></tr>
+      <tr><td><span class="route-path">UPSTASH_REDIS_REST_TOKEN</span></td><td class="route-note">Upstash Redis for caching. Falls back to in-memory if absent.</td><td><span class="tag tag-gray">Optional</span></td></tr>
+      <tr><td><span class="route-path">DATABASE_URL_MAIN<br>DATABASE_URL_TRYNEX_DB<br>DATABASE_FAILOVER</span></td><td class="route-note">Neon PostgreSQL failover chain</td><td><span class="tag tag-gray">Optional</span></td></tr>
+      <tr><td><span class="route-path">GITHUB_PERSONAL_ACCESS_TOKEN</span></td><td class="route-note">GitHub Contents API for CI/CD pushes (Git Trees API)</td><td><span class="tag tag-gray">For CI/CD</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="divider"></div>
+
+  <div class="section-tag">Security</div>
+  <h2 class="section-title" style="font-size:20px;">Security Architecture</h2>
+  <div class="two-col" style="margin-top:16px;">
+    <ul class="feature-list">
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Dual JWT System</div><div class="feature-desc">Customer auth and admin auth use separate secrets. Admin tokens never usable for customer endpoints and vice versa.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">httpOnly Cookies</div><div class="feature-desc">JWT stored in httpOnly, SameSite=Strict cookies. Not accessible via JavaScript — XSS-safe.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">TOTP 2FA (Admin)</div><div class="feature-desc">Admin accounts can enable TOTP two-factor authentication. QR code setup via /admin/totp-setup.</div></div></li>
+    </ul>
+    <ul class="feature-list">
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">Rate Limiting</div><div class="feature-desc">Login endpoints are rate-limited. Order placement has anti-bot checks.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">CSRF Protection</div><div class="feature-desc">Checkout form uses X-Requested-With header check to prevent cross-site form submissions.</div></div></li>
+      <li><div class="feature-check">✓</div><div class="feature-text"><div class="feature-title">requireAdmin Middleware</div><div class="feature-desc">All <code style="font-family:monospace">/api/admin/*</code> routes are protected by the requireAdmin middleware — 401 if missing or invalid admin token.</div></div></li>
+    </ul>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-tag">GitHub Repository</div>
+  <h2 class="section-title" style="font-size:20px;">Source Control</h2>
+  <div class="info-box info-box-blue">
+    <div class="info-icon">🐙</div>
+    <div>
+      <strong>Repository:</strong> <code style="font-family:monospace">georgelsmith333-hub/trynex-liestyle</code> (note: intentional typo in repo name — "liestyle" not "lifestyle")<br>
+      <strong>Branch:</strong> main<br>
+      <strong>Push method:</strong> GitHub Git Trees API via GITHUB_PERSONAL_ACCESS_TOKEN (git push is blocked in Replit sandbox — API push is used instead)<br>
+      <strong>Latest commit:</strong> d19199f — "feat: add mobile quick-actions bar to Design Studio"
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-tag">Deployment</div>
+  <h2 class="section-title" style="font-size:20px;">Hosting &amp; Deployment</h2>
+  <div class="three-col" style="margin-top:16px;">
+    <div class="card">
+      <div class="card-subtitle">Development</div>
+      <div class="card-title">Replit (current)</div>
+      <div class="card-body">pnpm workspaces. Hot reload via Vite. API auto-restarts via tsx watch. Proxy-8084 for Replit iframe preview.</div>
+    </div>
+    <div class="card">
+      <div class="card-subtitle">Production</div>
+      <div class="card-title">Replit Deployments</div>
+      <div class="card-body">Click "Deploy" in Replit UI. Auto-builds and serves on *.replit.app domain with TLS. Production uses same DATABASE_URL.</div>
+    </div>
+    <div class="card">
+      <div class="card-subtitle">Alternative</div>
+      <div class="card-title">Render / CF Worker</div>
+      <div class="card-body">api-worker/ is a Cloudflare Worker (Hono). RENDER_API_KEY and CLOUDFLARE_API_TOKEN secrets ready for alternative deployment targets.</div>
+    </div>
+  </div>
+
+  <div class="divider" style="margin-top: 40px;"></div>
+  <div style="text-align:center;padding:24px 0 8px;">
+    <div style="font-size:11px;color:#9ca3af;">TryNex Lifestyle · A-Z Website Overview · Confidential · Generated May 30, 2026</div>
+    <div style="font-size:11px;color:#d1d5db;margin-top:4px;">Built on React 19 + Express 5 + PostgreSQL + Three.js · Bangladesh's #1 Custom Apparel Platform</div>
+  </div>
+</div>
+
+</body>
+</html>
