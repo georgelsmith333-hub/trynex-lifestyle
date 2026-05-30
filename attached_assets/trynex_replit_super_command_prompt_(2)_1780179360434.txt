@@ -1,0 +1,484 @@
+TRYNEXSHOP — FULL REPLIT SUPER COMMAND PROMPT
+Website: https://www.trynexshop.com
+Goal: Audit and fully fix the customer-facing website, especially Design Studio, product mockups, product colour handling, cart, checkout, order notifications, and live messaging.
+
+Paste this full prompt into Replit AI / agent:
+
+=====================================================================
+SUPER COMMAND PROMPT FOR REPLIT
+=====================================================================
+
+You are working on the TryNexShop custom apparel e-commerce website. Do a complete professional buyer-side, mobile-first, and desktop QA review, then implement fixes across the frontend and backend without breaking existing working features.
+
+Main goal: make the site feel like a polished custom apparel store where customers can pick a product, choose size and colour, customize it in Design Studio, add to cart, checkout smoothly, receive order updates, and see live notifications/messages instantly.
+
+Before changing code:
+1. Inspect the current route structure, frontend components, backend APIs, database schema, order model, cart state, auth/user state, notification/message models, and any current mockup/design editor logic.
+2. Create a backup branch or commit before editing.
+3. Find all affected files first, then implement clean, minimal, production-ready changes.
+4. Do not remove current cart, checkout, order, WhatsApp, e-wallet, bKash/Nagad/Rocket/COD, admin, or design studio features unless replacing them with better working logic.
+5. Make all changes responsive for desktop, tablet, and mobile.
+6. After implementation, run build/tests/lint if available and fix all errors.
+
+=====================================================================
+A. FULL BUYER-SIDE QA FLOW TO TEST FIRST
+=====================================================================
+
+Test the site exactly like a customer:
+
+1. Open homepage.
+2. Review header, navigation, cart, login/user icon, search, design CTA, shop menu, and hero product mockups.
+3. Go to Shop / Products.
+4. Open multiple product cards from different categories: T-shirt, hoodie, mug, cap/custom order if available.
+5. Test product colour swatches on product cards and product detail pages.
+6. Test size selection.
+7. Test Add to Bag without design, with selected size and colour.
+8. Test Design Studio from product page.
+9. Inside Design Studio:
+   - Switch product type: T-shirt, hoodie, long sleeve, mug, cap/more.
+   - Switch print sides: front, back, sleeves, neck if available.
+   - Switch garment colours and verify only the garment/mockup changes, not the full card/background/container.
+   - Add text layer.
+   - Edit text, font, size, colour, outline, shadow.
+   - Add/upload image layer.
+   - Test layers panel, delete layer, reorder layers if available.
+   - Test zoom, drag, resize, rotate.
+   - Test Add Custom Product to Cart.
+10. Open cart.
+11. Verify cart contains correct product thumbnail, design preview, size, colour, quantity, design layer count, edit/re-edit button, subtotal, shipping, total.
+12. Start checkout.
+13. Test guest checkout.
+14. Test logged-in checkout if auth exists.
+15. Verify checkout order is correct: Shipping/Delivery details first, Payment second, Review/Place Order final.
+16. Try to submit with missing fields and confirm errors show next to fields.
+17. Fill order details and test payment step progression.
+18. Verify order creation, order confirmation, admin order visibility, user order history, and customer notifications.
+19. Test live chat/messages, unread count, and new message updates.
+20. Test order status updates: placed, accepted, in production, ready, shipped, delivered, cancelled/refunded if available.
+
+Document and fix every issue found.
+
+=====================================================================
+B. DESIGN STUDIO MOCKUPS — REPLACE WEAK SVG MOCKUPS
+=====================================================================
+
+Problem:
+The current Design Studio uses flat grey SVG/vector mockups. It does not look like professional apparel photography. Customers cannot clearly understand final output quality.
+
+Required fix:
+1. Replace SVG illustration mockups with high-quality photorealistic garment mockups.
+2. Prefer real product photography / ghost mannequin style for T-shirts, hoodies, long sleeves, caps, and mugs.
+3. Keep fallback mockups if API fails, but never show broken images.
+4. Mockups must support multiple product types, sides, and colours.
+
+Best mockup strategy:
+1. Short-term best: Use high-quality local/static photorealistic mockup assets for every product type and colour, stored in /public or CDN/R2. This gives instant preview and avoids API delay.
+2. Medium-term: Integrate Printful Mockup Generator API for products that match Printful catalogue. This is free with Printful account but limited to Printful products and may look generic.
+3. Premium future option: Add Dynamic Mockups / Mediamodifier / similar API for more realistic templates if the business needs better-than-Printful mockups.
+
+Implementation plan:
+1. Create a central mockup map/config:
+   - productType: tshirt, hoodie, longSleeve, mug, cap
+   - colour: white, black, navy, red, green, grey, etc.
+   - side: front, back, leftSleeve, rightSleeve, neck
+   - baseImageUrl
+   - printableArea coordinates: x, y, width, height, rotation, perspective if needed
+2. Use this config in both Design Studio and product detail pages.
+3. When colour changes, update only the garment image, not the full page/card background.
+4. If a variant mockup is missing, show a clean fallback and log a warning.
+5. For Printful integration, create backend endpoints:
+   - POST /api/mockups/printful/create-task
+   - GET /api/mockups/printful/task/:taskKey
+   - POST /api/mockups/generate
+6. Store Printful token only in environment variables. Never expose it in frontend.
+7. Upload generated design PNG to server/R2 first, then send public image_url to Printful.
+8. Cache generated mockup URLs by productId + variantId + side + designHash so repeated generation does not waste API calls.
+9. If API takes time, show “Generating realistic mockup…” with a skeleton loader.
+10. Add retry and rate-limit handling.
+
+=====================================================================
+C. DESIGN STUDIO TOOL LAYOUT — MAKE TOOLS DIRECTLY VISIBLE
+=====================================================================
+
+Problem:
+Editing tools are too hidden in small floating buttons/right toolbar. The user specifically wants tools to show directly in the Design Studio below or near the mockups, not only as floating controls.
+
+Required fix:
+1. Keep floating quick tools if useful, but add a main visible editing toolbar directly below the mockup/canvas area.
+2. Toolbar must include:
+   - Upload Design / Logo
+   - Add Text
+   - AI Art / Clip Art
+   - Templates
+   - Layers
+   - Undo / Redo
+   - Clear All
+   - Save Draft
+3. The selected tool should open a clear panel with controls.
+4. On desktop: mockup canvas left, controls right, main toolbar under canvas.
+5. On mobile: canvas first, sticky bottom toolbar, collapsible editing drawer.
+6. Tool controls must be easy to understand and not disappear while scrolling.
+7. Layer panel must show every object added to design:
+   - text/image name
+   - select
+   - rename optional
+   - duplicate
+   - delete
+   - hide/show
+   - move up/down
+8. The Add Custom Product to Cart button must remain visible/sticky in the purchase panel, but not cover the canvas.
+
+=====================================================================
+D. DESIGN STUDIO LAYER/CANVAS BEHAVIOUR
+=====================================================================
+
+Required behaviour:
+1. Text/image layers must stay inside printable area by default.
+2. Allow drag/resize/rotate but warn if element goes outside print area.
+3. Show dotted print area clearly but not too strong.
+4. Show side label: FRONT/BACK/SLEEVE/NECK.
+5. Save design draft automatically every few seconds after changes.
+6. “You have unfinished design” popup should not block important UI or create confusion. It should have:
+   - Continue Designing
+   - Discard Draft
+   - Later
+7. Saving should persist product type, side, colour, size, layers, quantity, and preview image.
+8. Re-edit from cart should load exact saved design.
+9. Add design preview image to cart/order/admin.
+
+=====================================================================
+E. PRODUCT COLOUR SWATCH FIXES
+=====================================================================
+
+Problem found:
+On product detail pages, selecting a colour swatch changes the selected label but does not always update the product mockup/image. In Design Studio, colour changes work better, but product pages and product cards need consistent logic.
+
+Required fix:
+1. Each product colour variant must have its own image or mockup asset.
+2. On colour swatch click:
+   - update selectedColour state
+   - update main product image/mockup
+   - update cart item colour
+   - update price/stock if variant-specific
+3. Product card swatches should update only the product image area, not the full card background/container.
+4. Product detail page should show selected colour name clearly.
+5. If no colour is selected but product requires colour, show clear inline error near swatches, not only toast.
+6. Add tests for colour selection on product cards, product pages, and design studio.
+7. Ensure colour selection stays when moving from product page to design studio and back to cart.
+
+=====================================================================
+F. ADD TO BAG BUG FIX
+=====================================================================
+
+Problem found:
+Sometimes after selecting a size and clicking Add to Bag, the website still shows “Please select a size.” This means selected size state is not reaching validation correctly.
+
+Required fix:
+1. Refactor product selected options state.
+2. Ensure selectedSize updates immediately and reliably.
+3. Add to cart validation must read from the same selectedOptions state used by UI.
+4. Disable Add to Bag button until required options are selected.
+5. Show inline validation near missing field:
+   - “Please select a size” under size selector.
+   - “Please select a colour” under colour selector.
+6. Do not show wrong error if the size is already selected.
+7. Test flow:
+   - select size M
+   - select colour Navy
+   - click Add to Bag
+   - cart should show Size: M, Colour: Navy.
+8. Fix custom design add-to-cart with same logic.
+
+=====================================================================
+G. CART PAGE FIXES
+=====================================================================
+
+Required fix:
+1. Cart must show accurate item information:
+   - product title
+   - product image or custom design preview
+   - size
+   - colour
+   - quantity
+   - price
+   - design layers count if custom item
+   - re-edit design button
+   - remove item
+2. Cart total must update instantly when quantity changes.
+3. Shipping fee and free shipping progress must be accurate.
+4. “Checkout” button should be clear and sticky on mobile.
+5. Empty cart drawer should not appear when cart has items.
+6. If cart item is custom design, preserve design data in local storage/user account and backend.
+7. Cart drawer and cart page must use the same state source so they do not disagree.
+
+=====================================================================
+H. CHECKOUT FLOW FIXES
+=====================================================================
+
+Problem:
+Checkout flow feels wrong/buggy. It can ask for payment before collecting details, and buttons can appear in odd places.
+
+Required checkout structure:
+1. Step 1: Cart review
+2. Step 2: Delivery / customer details
+3. Step 3: Payment
+4. Step 4: Review & place order
+
+Required details:
+1. Do not ask payment before delivery details are valid.
+2. Keep order summary visible on desktop and collapsible/sticky on mobile.
+3. Progress indicator must show current step clearly.
+4. Proceed buttons must be aligned at the bottom of the current form/card, not floating in the middle.
+5. Form validation must be inline:
+   - first name required
+   - last name required
+   - email required and valid
+   - phone required and valid Bangladesh format
+   - street address required
+   - delivery area required
+6. Fix test issue where fields auto-filled incorrectly or text went into wrong inputs. Ensure tab order and labels are correct.
+7. Delivery area dropdown/search should work clearly, be searchable, and not block other form fields.
+8. Payment section should show bKash, Nagad, Rocket, COD clearly.
+9. If advance payment is required, explain it clearly:
+   - “Pay 15% advance via bKash”
+   - “Remaining amount paid on delivery”
+10. Show trust badges under payment CTA:
+   - Secure checkout
+   - All 64 districts
+   - Free shipping threshold
+11. After order place, show order confirmation page with order number and tracking link.
+12. Send order confirmation notification/email/SMS if configured.
+
+=====================================================================
+I. ORDER NOTIFICATIONS & CUSTOMER UPDATE SYSTEM
+=====================================================================
+
+Problem:
+Order notification auto-sending exists when order is created, but customers do not seem to receive updates when order status changes to processing/shipped/delivered. Logged-in users also need a notification bell.
+
+Required fix:
+1. Add notification bell icon in header for logged-in users.
+2. Bell should show unread count badge.
+3. Clicking bell opens notification dropdown with:
+   - new order confirmation
+   - order accepted
+   - design approved
+   - in production
+   - ready to ship
+   - shipped/tracking added
+   - delivered
+   - cancelled/refunded
+   - new message received
+4. Store notifications in database.
+5. Add backend table/model:
+   notifications:
+   - id
+   - userId
+   - orderId optional
+   - type
+   - title
+   - message
+   - readAt
+   - createdAt
+   - metadata JSON
+6. Backend endpoints:
+   - GET /api/notifications
+   - GET /api/notifications/unread-count
+   - PATCH /api/notifications/:id/read
+   - PATCH /api/notifications/mark-all-read
+7. When admin changes order status, create notification for customer.
+8. When order status changes, also send email/SMS/WhatsApp if current system supports it.
+9. Add notification preferences later:
+   - in-app
+   - email
+   - SMS
+   - WhatsApp
+10. Notification bell should update in real time using websocket/SSE or polling every 15-30 seconds if websocket is not ready.
+
+=====================================================================
+J. ORDER STATUS TRACKING
+=====================================================================
+
+Required order statuses:
+1. Pending / Order Placed
+2. Confirmed
+3. Design Review
+4. Design Approved
+5. In Production
+6. Quality Check
+7. Ready to Ship
+8. Shipped
+9. Out for Delivery
+10. Delivered
+11. Cancelled
+12. Refunded / Returned
+
+Required customer UI:
+1. Track Order page should show order status timeline.
+2. Each status should show time/date if available.
+3. If tracking link/courier is added, show it.
+4. If status changes, send notification and update timeline.
+5. Customer should not need to contact support just to know order progress.
+
+Required admin UI:
+1. Admin can update status.
+2. Admin can add courier, tracking number, delivery note.
+3. Admin can message customer from order page.
+4. Updating status should trigger customer notification.
+5. Add “notify customer” toggle with default on.
+
+=====================================================================
+K. LIVE MESSAGE / CHAT FIX
+=====================================================================
+
+Problem:
+Live messages are not loading instantly.
+
+Required fix:
+1. Inspect current chat/message API.
+2. Ensure messages load on page open.
+3. Implement real-time updates with WebSocket/SSE if possible.
+4. If not possible now, implement smart polling every 5-10 seconds while chat is open.
+5. Store messages in database with:
+   - id
+   - conversationId
+   - senderId
+   - receiverId/adminId
+   - orderId optional
+   - body
+   - attachments optional
+   - readAt
+   - createdAt
+6. Header notification bell should show unread messages count.
+7. Chat UI should show:
+   - sending state
+   - delivered state
+   - read state if available
+   - retry failed message
+8. Admin and customer message views must stay synced.
+9. New message should create notification.
+
+=====================================================================
+L. LOGIN / USER HEADER UX
+=====================================================================
+
+Required fix:
+1. Logged-in header should show:
+   - user avatar/profile
+   - notification bell with unread count
+   - cart count
+   - wishlist count if available
+2. Guest header should show:
+   - sign in/register or user icon
+   - cart
+3. Bell should not appear for guests unless it opens a prompt to sign in.
+4. Keep header clean on mobile with icons in correct order.
+5. Add mobile drawer with account/order links.
+
+=====================================================================
+M. HOMEPAGE / PRODUCT MOCKUP IMPROVEMENTS
+=====================================================================
+
+Required fix:
+1. Replace weak grey hero mockups with photorealistic product previews.
+2. Hero product cards should show real products: T-shirt, hoodie, mug, cap.
+3. Badges like Best Seller/Fan Fav/Top Pick should not overlap product badly.
+4. CTA buttons should be clear:
+   - Start Designing
+   - Shop Best Sellers
+5. Featured product sections should use real product images.
+6. Improve trust badges and avoid clutter.
+7. Keep design consistent: orange/cream/black brand style, premium spacing, no random layouts.
+
+=====================================================================
+N. RESPONSIVE / MOBILE FIXES
+=====================================================================
+
+Required fix:
+1. Test all pages at:
+   - 375px mobile
+   - 430px mobile
+   - 768px tablet
+   - 1024px laptop
+   - 1440px desktop
+2. Design Studio on mobile must not be broken:
+   - canvas visible
+   - toolbar sticky bottom
+   - controls in drawer
+   - add-to-cart sticky
+3. Checkout on mobile:
+   - one column
+   - order summary collapsible
+   - CTA sticky at bottom
+   - no overlapping WhatsApp button/chat popup
+4. Cart drawer must not cover important CTAs incorrectly.
+5. Floating WhatsApp/chat buttons should not block Add to Cart, Checkout, or form fields.
+
+=====================================================================
+O. PERFORMANCE AND RELIABILITY
+=====================================================================
+
+Required fix:
+1. Compress/lazy-load product images and mockups.
+2. Use responsive image sizes.
+3. Avoid loading heavy design editor libraries until user opens Design Studio.
+4. Optimize API calls.
+5. Add loading skeletons instead of blank states.
+6. Handle API errors gracefully.
+7. Add empty/error states for product lists, cart, notifications, messages.
+8. Ensure checkout does not lose cart on refresh.
+9. Ensure design draft persists.
+
+=====================================================================
+P. FINAL TESTING REQUIREMENTS
+=====================================================================
+
+After fixes, run and verify:
+1. Homepage loads correctly.
+2. Product listing cards display correctly.
+3. Colour swatches update only product images.
+4. Product page Add to Bag works after selecting size/colour.
+5. Design Studio works for multiple colours and product types.
+6. Text/image tools are visible below/near mockup and not only floating.
+7. Custom product adds to cart with correct preview and options.
+8. Cart count and cart page update instantly.
+9. Checkout starts with delivery details, then payment, then review.
+10. No middle-floating proceed button bug.
+11. Order placement works.
+12. Order confirmation appears.
+13. Admin order status update triggers customer notification.
+14. Notification bell shows unread count and dropdown.
+15. Live messages load instantly or via polling fallback.
+16. Mobile layout is clean and usable.
+17. Build succeeds with no TypeScript/JS errors.
+18. No console errors in browser.
+19. No broken images.
+20. Existing bKash/Nagad/Rocket/COD/WhatsApp options remain working.
+
+=====================================================================
+EXPECTED DELIVERABLES
+=====================================================================
+
+1. Fixed frontend UI/UX for Design Studio, product pages, cart, checkout, notifications, and messages.
+2. Photorealistic mockup system plan or implementation with local/static assets plus optional Printful API backend.
+3. Colour variant logic working across product cards, product details, design studio, cart, and checkout.
+4. Add-to-bag validation bug fixed.
+5. Notification bell added for logged-in users.
+6. Order status notifications added when status changes.
+7. Live message loading improved with websocket/SSE or polling fallback.
+8. Full testing notes in final response explaining changed files, fixed bugs, and remaining optional future improvements.
+
+=====================================================================
+IMPORTANT QUALITY RULES
+=====================================================================
+
+- Do not create a half-fix. Fix state flow properly.
+- Do not just hide bugs with CSS.
+- Do not break cart or checkout while improving UI.
+- Do not expose API keys in frontend.
+- Keep UI premium, clean, orange/cream/black brand style.
+- Every required option must be validated before checkout.
+- Every customer-facing failure must show clear friendly error.
+- Keep all fixes production-ready.
+
+END OF SUPER COMMAND PROMPT
