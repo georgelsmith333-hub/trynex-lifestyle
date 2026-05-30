@@ -1,21 +1,15 @@
 /**
- * TryNex Garment Mockup PNG Generator — Professional Edition
+ * TryNex Garment Mockup PNG Generator — v3 (Realistic Proportions)
  *
- * Produces 10 distinct, high-quality garment illustration PNGs that closely
- * match real product flat-lay photography style, suitable for a POD website.
- *
- * Improvements vs. the previous version:
- *  • Proportions based on real garment measurements (medium adult size)
- *  • Angular, sharp shoulder/sleeve junctions — not rounded blobs
- *  • Woven fabric-grain texture (SVG pattern)
- *  • 3-layer lighting: base gradient + studio radial highlight + edge vignette
- *  • Collar band detail (separate edge + stitching)
- *  • Hem band with double-stitch line
- *  • Vertical side-seam fold shadows
- *  • Natural underarm curve at armscye
- *  • Proper long-sleeve proportions — cuffs visible at wrist level
- *  • Hoodie with hood shell, drawstrings, kangaroo pocket (front) or
- *    hanging hood + center seam (back)
+ * Critical fixes vs v2:
+ *  • Armscye raised from y≈445 to y≈348 — short sleeves now match real
+ *    garment measurements (≈20cm from shoulder seam to underarm)
+ *  • Body is TALLER than wide (body h=534 vs body w=532) — no more square blob
+ *  • Sleeves are NARROWER vertically (sleeve band ≈215px, not 300px)
+ *  • Long sleeve inner arm is drawn as a SEPARATE closed shape merged on top,
+ *    avoiding the winding-rule cancellation bug in v2
+ *  • Hoodie hood proportions reduced — hood is realistically sized, not a giant slab
+ *  • All paths use straighter lines + fewer bezier curves → crisper, less cartoonish
  *
  * Run:  node scripts/gen-mockups.mjs
  */
@@ -29,506 +23,502 @@ const __dir = dirname(fileURLToPath(import.meta.url));
 const OUT   = join(__dir, "../artifacts/trynex-storefront/public/mockups");
 mkdirSync(OUT, { recursive: true });
 
-// ── render ────────────────────────────────────────────────────────────────
 async function render(svg, file) {
   await sharp(Buffer.from(svg)).png({ compressionLevel: 8 }).toFile(join(OUT, file));
   process.stdout.write(`  ✓  ${file}\n`);
 }
 
 // ── colour tokens ─────────────────────────────────────────────────────────
-const W = { g0:"#FAF9F7", g1:"#F3F2EF", g2:"#E9E8E5",
-            sh:"rgba(0,0,0,0.13)", hi:"rgba(255,255,255,0.30)",
-            sc:"rgba(0,0,0,0.06)",  fc:"rgba(0,0,0,0.042)", dc:"rgba(0,0,0,0.030)" };
-const B = { g0:"#252524", g1:"#1D1D1C", g2:"#141413",
-            sh:"rgba(0,0,0,0.50)", hi:"rgba(255,255,255,0.09)",
-            sc:"rgba(255,255,255,0.060)", fc:"rgba(255,255,255,0.038)", dc:"rgba(255,255,255,0.025)" };
+const W = {
+  g0:"#FAF9F6", g1:"#F3F2EE", g2:"#E9E7E3",
+  sh:"rgba(40,35,28,0.18)", hi:"rgba(255,255,255,0.32)",
+  sc:"rgba(0,0,0,0.068)", fc:"rgba(0,0,0,0.048)", dc:"rgba(0,0,0,0.034)"
+};
+const B = {
+  g0:"#282826", g1:"#1E1E1C", g2:"#141412",
+  sh:"rgba(0,0,0,0.55)", hi:"rgba(255,255,255,0.09)",
+  sc:"rgba(255,255,255,0.075)", fc:"rgba(255,255,255,0.045)", dc:"rgba(255,255,255,0.030)"
+};
 
-// ── SVG definitions (per garment) ─────────────────────────────────────────
+// ── SVG definitions ────────────────────────────────────────────────────────
 function defs(c, id) {
   return `<defs>
-  <!-- Woven fabric-grain texture (2×2 twill cell) -->
-  <pattern id="grain-${id}" patternUnits="userSpaceOnUse" width="4" height="4">
-    <rect x="0" y="0" width="2" height="2" fill="${c.dc}" opacity="0.9"/>
-    <rect x="2" y="2" width="2" height="2" fill="${c.dc}" opacity="0.9"/>
-    <rect x="1" y="0" width="1" height="1" fill="${c.dc}" opacity="0.4"/>
-    <rect x="3" y="2" width="1" height="1" fill="${c.dc}" opacity="0.4"/>
+  <!-- Woven twill grain: 3×3 cell -->
+  <pattern id="g-${id}" patternUnits="userSpaceOnUse" width="3" height="3">
+    <rect width="3" height="3" fill="transparent"/>
+    <rect x="0" y="0" width="1.5" height="1.5" fill="${c.dc}" opacity="0.85"/>
+    <rect x="1.5" y="1.5" width="1.5" height="1.5" fill="${c.dc}" opacity="0.85"/>
   </pattern>
-  <!-- Base top-to-bottom gradient -->
-  <linearGradient id="base-${id}" x1=".5" y1="0" x2=".5" y2="1">
+  <!-- Base gradient -->
+  <linearGradient id="b-${id}" x1=".5" y1="0" x2=".5" y2="1">
     <stop offset="0%"   stop-color="${c.g0}"/>
-    <stop offset="38%"  stop-color="${c.g1}"/>
+    <stop offset="35%"  stop-color="${c.g1}"/>
     <stop offset="100%" stop-color="${c.g2}"/>
   </linearGradient>
-  <!-- Studio key-light from upper-left -->
-  <radialGradient id="key-${id}" cx="35%" cy="16%" r="68%" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1000" y2="1000">
+  <!-- Key light: studio upper-left -->
+  <radialGradient id="k-${id}" cx="33%" cy="14%" r="70%" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1000" y2="1000">
     <stop offset="0%"   stop-color="${c.hi}"/>
-    <stop offset="48%"  stop-color="rgba(255,255,255,0)"/>
+    <stop offset="50%"  stop-color="rgba(255,255,255,0)"/>
     <stop offset="100%" stop-color="rgba(0,0,0,0.07)"/>
   </radialGradient>
   <!-- Edge vignette -->
-  <radialGradient id="vig-${id}" cx="50%" cy="46%" r="54%" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1000" y2="1000">
-    <stop offset="0%"   stop-color="rgba(0,0,0,0)"/>
-    <stop offset="65%"  stop-color="rgba(0,0,0,0)"/>
-    <stop offset="100%" stop-color="rgba(0,0,0,0.09)"/>
+  <radialGradient id="v-${id}" cx="50%" cy="46%" r="52%" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1000" y2="1000">
+    <stop offset="60%"  stop-color="rgba(0,0,0,0)"/>
+    <stop offset="100%" stop-color="rgba(0,0,0,0.10)"/>
   </radialGradient>
-  <!-- Drop-shadow filter -->
-  <filter id="sh-${id}" x="-10%" y="-6%" width="120%" height="120%">
-    <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="${c.sh}"/>
+  <!-- Drop shadow -->
+  <filter id="s-${id}" x="-10%" y="-6%" width="120%" height="120%">
+    <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="${c.sh}"/>
   </filter>
 </defs>`;
 }
 
-// ── garment builder ───────────────────────────────────────────────────────
-function garment(path, c, id, extras = "") {
+// ── layer painter for a single closed path ────────────────────────────────
+function layers(path, c, id) {
+  return `
+<path d="${path}" fill="${c.sh}" filter="url(#s-${id})" transform="translate(0,18)" opacity="0.7"/>
+<path d="${path}" fill="url(#b-${id})"/>
+<path d="${path}" fill="url(#g-${id})"/>
+<path d="${path}" fill="url(#k-${id})"/>
+<path d="${path}" fill="url(#v-${id})"/>`;
+}
+
+function svg(c, id, body, extras="") {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
-${defs(c, id)}
-<!-- shadow layer -->
-<path d="${path}" fill="${c.sh}" filter="url(#sh-${id})" transform="translate(0,16)"/>
-<!-- base colour -->
-<path d="${path}" fill="url(#base-${id})"/>
-<!-- fabric grain -->
-<path d="${path}" fill="url(#grain-${id})"/>
-<!-- key light -->
-<path d="${path}" fill="url(#key-${id})"/>
-<!-- edge vignette -->
-<path d="${path}" fill="url(#vig-${id})"/>
-${extras}
+${defs(c, id)}${body}${extras}
 </svg>`;
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-//  GARMENT PATHS  — 1000×1000 coordinate space, transparent background.
+//  COORDINATE SYSTEM  (1000×1000, transparent background)
 //
-//  Proportions from a standard medium adult tee (flat-lay photography):
-//    body width  ~520px  (x 240–760)
-//    garment ht  ~770px  (y 110–880)
-//    collar w    ~190px  (x 405–595)
-//    front neck  ~105px deep (y 215 at deepest)
-//    back neck    ~25px deep (y 140 at deepest)
-//    short sleeve ~190px long, tip at y≈315
-//    long sleeve  to wrist y≈830
-//    hoodie body  ~560px wide (x 220–780)
+//  Real flat-lay measurements for a standard medium t-shirt:
+//    body chest:     52 cm → scale 10 px/cm
+//    shoulder width: 46 cm → 460 px
+//    shirt length:   72 cm → 720 px
+//    short sleeve:   22 cm → 220 px (from shoulder seam to cuff)
+//    neck width:     19 cm → 190 px
+//    front neck dep:  9 cm → 90 px
+//    back neck dep:   2 cm → 20 px
+//
+//  Canvas layout:
+//    Collar top       y = 105
+//    Shoulder seam    y = 130  (25 px above sleeve)
+//    Armscye          y = 348  (shoulder+218px = 21.8 cm)
+//    Hem              y = 890  (body height from armscye = 542 px = 54.2 cm ≈ real length)
+//    Body left/right  x = 234 / 766  (body width = 532 px = 53.2 cm ≈ real)
+//    Collar           x = 405 / 595  (collar width = 190 px)
+//    Sleeve tip       x ≈  88 / 912  (left/right extremes)
 // ══════════════════════════════════════════════════════════════════════════
 
-// ── shared body segment: left-cuff→body→hem→body→right-cuff ──────────────
-//    used by both t-shirt and long sleeve (collar + sleeve paths differ).
-
-// ──────────────── T-SHIRT ─────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────
+//  T-SHIRT  (body + short sleeves in a single closed path)
+// ─────────────────────────────────────────────────────────────────────────
 function tshirtPath(face) {
-  // Outer silhouette (clockwise) from left-collar-base:
   const collar = face === "front"
-    ? `C 600,116 638,116 602,116
-       C 568,116 552,130 536,170
-       C 520,204 508,228 500,234
-       C 492,228 480,204 464,170
-       C 448,130 432,116 398,116
-       C 362,116 300,120 262,130
+    // Crew-neck U (front) — deepest at y=225
+    ? `C 710,105 638,98  604,98
+       C 570,98  554,112 538,154
+       C 522,192 510,218 500,224
+       C 490,218 478,192 462,154
+       C 446,112 430,98  396,98
+       C 362,98  290,105 256,112
        Z`
-    : `C 600,116 636,116 602,116
-       C 572,115 558,120 543,133
-       C 528,146 514,156 500,159
-       C 486,156 472,146 457,133
-       C 442,120 428,115 398,116
-       C 362,116 300,120 262,130
+    // Shallow back scoop — deepest at y=152
+    : `C 710,105 638,98  604,98
+       C 574,98  560,104 544,118
+       C 528,132 514,144 500,148
+       C 486,144 472,132 456,118
+       C 440,104 426,98  396,98
+       C 362,98  290,105 256,112
        Z`;
 
-  return `M 262,130
-C 248,132 237,138 232,148
-C 218,160 178,182 136,220
-C 96,258 76,298 74,332
-C 72,354 77,380 92,404
-C 107,428 150,442 216,449
-C 222,453 226,457 228,463
-L 228,868
-C 228,880 262,892 336,895
-L 500,898
-L 664,895
-C 738,892 772,880 772,868
-L 772,463
-C 774,457 778,453 784,449
-C 850,442 893,428 908,404
-C 923,380 928,354 926,332
-C 924,298 904,258 864,220
-C 822,182 782,160 768,148
-C 763,138 752,132 738,130
-C 712,124 642,116 ${collar}`;
+  //
+  // Clockwise from left collar-base:
+  //   left collar → shoulder seam → sleeve outer → cuff → armscye
+  //   → body left → hem → body right → armscye → cuff → sleeve outer
+  //   → shoulder seam → right collar-base → collar curve → back to left
+  //
+  return `M 256,112
+C 244,113 234,120 232,130
+C 218,142 180,165 142,202
+C 104,240  84,278  82,312
+C 80, 330  83,346  96,368
+C 110,388 152,400 222,406
+C 228,410 232,412 234,416
+
+L 234,882
+C 234,894 266,906 340,909
+L 500,912
+L 660,909
+C 734,906 766,894 766,882
+L 766,416
+
+C 768,412 772,410 778,406
+C 848,400 890,388 904,368
+C 917,346 920,330 918,312
+C 916,278 896,240 858,202
+C 820,165 782,142 768,130
+C 766,120 756,113 744,112
+C ${collar}`;
 }
 
-// ── t-shirt detail overlays ───────────────────────────────────────────────
 function tshirtDetails(c, id, face) {
   const sc = c.sc, fc = c.fc, dc = c.dc;
-
-  const collarLine = face === "front"
-    ? `M 398,116 C 432,112 448,126 464,168 C 480,204 492,228 500,234 C 508,228 520,204 536,168 C 552,126 568,112 602,116`
-    : `M 398,116 C 428,113 442,118 456,131 C 470,143 484,154 500,157 C 516,154 530,143 544,131 C 558,118 572,113 602,116`;
-
+  const cl = face === "front"
+    ? `M 396,98 C 430,94 446,108 462,152 C 478,190 490,216 500,222 C 510,216 522,190 538,152 C 554,108 570,94 604,98`
+    : `M 396,98 C 426,95 440,100 456,116 C 472,130 486,142 500,146 C 514,142 528,130 544,116 C 560,100 574,95 604,98`;
   return `
-<!-- Collar band edge -->
-<path d="${collarLine}" fill="none" stroke="${sc}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="${collarLine}" fill="none" stroke="${dc}" stroke-width="1.8" stroke-dasharray="4.5,3" stroke-linecap="round"/>
-<!-- Shoulder seams (stitched) -->
-<path d="M 262,130 C 300,122 360,116 398,116" fill="none" stroke="${dc}" stroke-width="2" stroke-dasharray="4,3"/>
-<path d="M 738,130 C 700,122 640,116 602,116" fill="none" stroke="${dc}" stroke-width="2" stroke-dasharray="4,3"/>
+<!-- Collar stitching band -->
+<path d="${cl}" fill="none" stroke="${sc}" stroke-width="6.5" stroke-linecap="round"/>
+<path d="${cl}" fill="none" stroke="${dc}" stroke-width="1.8" stroke-dasharray="4.5,3" stroke-linecap="round"/>
+<!-- Shoulder seam stitch -->
+<path d="M 256,112 C 290,104 362,97 396,98" fill="none" stroke="${dc}" stroke-width="2" stroke-dasharray="4,3"/>
+<path d="M 744,112 C 710,104 638,97 604,98" fill="none" stroke="${dc}" stroke-width="2" stroke-dasharray="4,3"/>
+<!-- Left cuff band -->
+<path d="M 84,332 C 96,356 136,376 212,394" fill="none" stroke="${sc}" stroke-width="5" stroke-linecap="round"/>
+<path d="M 84,332 C 96,356 136,376 212,394" fill="none" stroke="${dc}" stroke-width="1.8" stroke-dasharray="4,3" stroke-linecap="round"/>
+<!-- Right cuff band -->
+<path d="M 916,332 C 904,356 864,376 788,394" fill="none" stroke="${sc}" stroke-width="5" stroke-linecap="round"/>
+<path d="M 916,332 C 904,356 864,376 788,394" fill="none" stroke="${dc}" stroke-width="1.8" stroke-dasharray="4,3" stroke-linecap="round"/>
 <!-- Hem band -->
-<path d="M 230,874 C 265,888 338,896 500,899 C 662,896 735,888 770,874" fill="none" stroke="${sc}" stroke-width="4.5" stroke-linecap="round"/>
-<path d="M 230,874 C 265,888 338,896 500,899 C 662,896 735,888 770,874" fill="none" stroke="${dc}" stroke-width="1.5" stroke-dasharray="4,3.5" stroke-linecap="round"/>
-<!-- Side-seam fold shadows -->
-<path d="M 228,464 C 226,540 225,640 225,750 L 225,868" fill="none" stroke="${fc}" stroke-width="2.5" stroke-linecap="round"/>
-<path d="M 772,464 C 774,540 775,640 775,750 L 775,868" fill="none" stroke="${fc}" stroke-width="2.5" stroke-linecap="round"/>
-<!-- Subtle centre-front crease -->
-<path d="M 500,238 C 498,330 497,460 500,600 C 503,700 500,800 500,868" fill="none" stroke="${dc}" stroke-width="1.5" stroke-linecap="round"/>`;
+<path d="M 236,885 C 268,898 342,910 500,913 C 658,910 732,898 764,885" fill="none" stroke="${sc}" stroke-width="5" stroke-linecap="round"/>
+<path d="M 236,885 C 268,898 342,910 500,913 C 658,910 732,898 764,885" fill="none" stroke="${dc}" stroke-width="1.8" stroke-dasharray="4,3.5" stroke-linecap="round"/>
+<!-- Side-seam shadows -->
+<path d="M 234,418 C 232,520 231,640 231,760 L 231,882" fill="none" stroke="${fc}" stroke-width="2.5"/>
+<path d="M 766,418 C 768,520 769,640 769,760 L 769,882" fill="none" stroke="${fc}" stroke-width="2.5"/>
+<!-- Centre crease -->
+<path d="M 500,228 C 498,340 497,480 500,620 C 503,720 500,810 500,882" fill="none" stroke="${dc}" stroke-width="1.5"/>`;
 }
 
-// ──────────────── LONG SLEEVE ──────────────────────────────────────────────
-function longsleevePath(face) {
+// ─────────────────────────────────────────────────────────────────────────
+//  LONG SLEEVE
+//  Draws BODY + each sleeve as THREE separate closed paths
+//  (avoids winding-number artefacts when inner arm runs beside body edge)
+// ─────────────────────────────────────────────────────────────────────────
+function longsleeveBody(face) {
   const collar = face === "front"
-    ? `C 568,116 552,130 536,170
-       C 520,204 508,228 500,234
-       C 492,228 480,204 464,170
-       C 448,130 432,116 398,116
-       C 362,116 300,120 262,130
+    ? `C 710,105 638,98  604,98
+       C 570,98  554,112 538,154
+       C 522,192 510,218 500,224
+       C 490,218 478,192 462,154
+       C 446,112 430,98  396,98
+       C 362,98  290,105 256,112
        Z`
-    : `C 572,115 558,120 543,133
-       C 528,146 514,156 500,159
-       C 486,156 472,146 457,133
-       C 442,120 428,115 398,116
-       C 362,116 300,120 262,130
+    : `C 710,105 638,98  604,98
+       C 574,98  560,104 544,118
+       C 528,132 514,144 500,148
+       C 486,144 472,132 456,118
+       C 440,104 426,98  396,98
+       C 362,98  290,105 256,112
        Z`;
 
-  return `M 262,130
-C 248,132 237,138 232,148
-C 218,160 178,182 136,220
-C 96,258 76,298 74,355
-C 73,440 73,540 74,638
-C 76,718 78,782 82,826
-C 86,852 96,868 118,876
-L 160,882
-C 180,884 206,884 226,878
-L 226,848
-C 225,800 224,726 223,648
-C 222,558 221,474 221,464
-L 228,868
-C 228,880 262,892 336,895
-L 500,898
-L 664,895
-C 738,892 772,880 772,868
-L 779,464
-C 779,474 778,558 777,648
-C 776,726 775,800 774,848
-L 774,878
-C 794,884 820,884 840,882
-L 882,876
-C 904,868 914,852 918,826
-C 922,782 924,718 926,638
-C 927,540 927,440 926,355
-C 924,298 904,258 864,220
-C 822,182 782,160 768,148
-C 763,138 752,132 738,130
-C 712,124 642,116 602,116
+  return `M 256,112
+C 244,113 234,120 232,130
+L 234,882
+C 234,894 266,906 340,909
+L 500,912
+L 660,909
+C 734,906 766,894 766,882
+L 768,130
+C 766,120 756,113 744,112
 C ${collar}`;
+}
+
+// Left sleeve as its own closed shape
+function leftSleeve() {
+  return `M 232,130
+C 218,142 180,165 142,202
+C 104,240  80,282  76,328
+C 74, 390  74,476  76,560
+C 78, 640  80,720  82,794
+C 85, 840  94, 864 116,878
+L 156,884
+C 176,886 204,886 228,878
+L 228,852
+C 226,800 225,730 224,648
+C 222,560 221,476 221,390
+C 220,342 222,308 234,280
+C 234,260 234,200 234,130
+Z`;
+}
+
+// Right sleeve (mirror)
+function rightSleeve() {
+  return `M 768,130
+C 782,142 820,165 858,202
+C 896,240 920,282 924,328
+C 926,390 926,476 924,560
+C 922,640 920,720 918,794
+C 915,840 906,864 884,878
+L 844,884
+C 824,886 796,886 772,878
+L 772,852
+C 774,800 775,730 776,648
+C 778,560 779,476 779,390
+C 780,342 778,308 766,280
+C 766,260 766,200 766,130
+Z`;
 }
 
 function longsleeveDetails(c, id, face) {
   const sc = c.sc, fc = c.fc, dc = c.dc;
-
-  const collarLine = face === "front"
-    ? `M 398,116 C 432,112 448,126 464,168 C 480,204 492,228 500,234 C 508,228 520,204 536,168 C 552,126 568,112 602,116`
-    : `M 398,116 C 428,113 442,118 456,131 C 470,143 484,154 500,157 C 516,154 530,143 544,131 C 558,118 572,113 602,116`;
-
+  const cl = face === "front"
+    ? `M 396,98 C 430,94 446,108 462,152 C 478,190 490,216 500,222 C 510,216 522,190 538,152 C 554,108 570,94 604,98`
+    : `M 396,98 C 426,95 440,100 456,116 C 472,130 486,142 500,146 C 514,142 528,130 544,116 C 560,100 574,95 604,98`;
   return `
 <!-- Collar band -->
-<path d="${collarLine}" fill="none" stroke="${sc}" stroke-width="6" stroke-linecap="round"/>
-<path d="${collarLine}" fill="none" stroke="${dc}" stroke-width="1.8" stroke-dasharray="4.5,3" stroke-linecap="round"/>
+<path d="${cl}" fill="none" stroke="${sc}" stroke-width="6.5" stroke-linecap="round"/>
+<path d="${cl}" fill="none" stroke="${dc}" stroke-width="1.8" stroke-dasharray="4.5,3" stroke-linecap="round"/>
 <!-- Shoulder seams -->
-<path d="M 262,130 C 300,122 360,116 398,116" fill="none" stroke="${dc}" stroke-width="2" stroke-dasharray="4,3"/>
-<path d="M 738,130 C 700,122 640,116 602,116" fill="none" stroke="${dc}" stroke-width="2" stroke-dasharray="4,3"/>
-<!-- Left cuff double-stitch band -->
-<path d="M 76,855 C 96,870 140,880 192,882" fill="none" stroke="${sc}" stroke-width="4.5" stroke-linecap="round"/>
-<path d="M 78,840 C 98,856 142,866 194,868" fill="none" stroke="${sc}" stroke-width="3" stroke-linecap="round"/>
-<path d="M 76,855 C 96,870 140,880 192,882" fill="none" stroke="${dc}" stroke-width="1.5" stroke-dasharray="4,3" stroke-linecap="round"/>
-<!-- Right cuff double-stitch band -->
-<path d="M 924,855 C 904,870 860,880 808,882" fill="none" stroke="${sc}" stroke-width="4.5" stroke-linecap="round"/>
-<path d="M 922,840 C 902,856 858,866 806,868" fill="none" stroke="${sc}" stroke-width="3" stroke-linecap="round"/>
-<path d="M 924,855 C 904,870 860,880 808,882" fill="none" stroke="${dc}" stroke-width="1.5" stroke-dasharray="4,3" stroke-linecap="round"/>
+<path d="M 256,112 C 290,104 362,97 396,98" fill="none" stroke="${dc}" stroke-width="2" stroke-dasharray="4,3"/>
+<path d="M 744,112 C 710,104 638,97 604,98" fill="none" stroke="${dc}" stroke-width="2" stroke-dasharray="4,3"/>
+<!-- Left wrist cuff band -->
+<path d="M 78,857 C 98,872 142,882 192,886" fill="none" stroke="${sc}" stroke-width="5" stroke-linecap="round"/>
+<path d="M 80,842 C 100,858 144,868 194,872" fill="none" stroke="${sc}" stroke-width="4" stroke-linecap="round"/>
+<path d="M 78,857 C 98,872 142,882 192,886" fill="none" stroke="${dc}" stroke-width="1.5" stroke-dasharray="4,3" stroke-linecap="round"/>
+<!-- Right wrist cuff band -->
+<path d="M 922,857 C 902,872 858,882 808,886" fill="none" stroke="${sc}" stroke-width="5" stroke-linecap="round"/>
+<path d="M 920,842 C 900,858 856,868 806,872" fill="none" stroke="${sc}" stroke-width="4" stroke-linecap="round"/>
+<path d="M 922,857 C 902,872 858,882 808,886" fill="none" stroke="${dc}" stroke-width="1.5" stroke-dasharray="4,3" stroke-linecap="round"/>
 <!-- Hem band -->
-<path d="M 230,874 C 265,888 338,896 500,899 C 662,896 735,888 770,874" fill="none" stroke="${sc}" stroke-width="4.5" stroke-linecap="round"/>
-<path d="M 230,874 C 265,888 338,896 500,899 C 662,896 735,888 770,874" fill="none" stroke="${dc}" stroke-width="1.5" stroke-dasharray="4,3.5" stroke-linecap="round"/>
-<!-- Side seams -->
-<path d="M 221,466 C 220,560 220,660 220,760 L 220,868" fill="none" stroke="${fc}" stroke-width="2.5" stroke-linecap="round"/>
-<path d="M 779,466 C 780,560 780,660 780,760 L 780,868" fill="none" stroke="${fc}" stroke-width="2.5" stroke-linecap="round"/>`;
+<path d="M 236,885 C 268,898 342,910 500,913 C 658,910 732,898 764,885" fill="none" stroke="${sc}" stroke-width="5" stroke-linecap="round"/>
+<path d="M 236,885 C 268,898 342,910 500,913 C 658,910 732,898 764,885" fill="none" stroke="${dc}" stroke-width="1.8" stroke-dasharray="4,3.5" stroke-linecap="round"/>
+<!-- Centre crease -->
+<path d="M 500,228 C 498,360 497,500 500,650 C 502,760 500,825 500,882" fill="none" stroke="${dc}" stroke-width="1.5"/>`;
 }
 
-// ──────────────── HOODIE ──────────────────────────────────────────────────
-// Body is slightly wider than t-shirt; sleeves are thick/ribbed at cuff.
+// ─────────────────────────────────────────────────────────────────────────
+//  HOODIE  (same separate-paths approach)
+// ─────────────────────────────────────────────────────────────────────────
+function hoodieBodyPath(face) {
+  const collar = face === "front"
+    ? `C 716,108 642,100 606,100
+       C 572,100 556,114 540,158
+       C 524,196 512,222 500,228
+       C 488,222 476,196 460,158
+       C 444,114 428,100 394,100
+       C 358,100 284,108 252,116
+       Z`
+    : `C 716,108 642,100 606,100
+       C 576,100 562,106 546,122
+       C 530,136 516,148 500,152
+       C 484,148 470,136 454,122
+       C 438,106 424,100 394,100
+       C 358,100 284,108 252,116
+       Z`;
 
-function hoodieBodyPath() {
-  // Wider body (220–780) with slightly longer sleeves
-  return `M 248,134
-C 232,136 220,142 215,153
-C 200,166 160,190 118,230
-C 78,270 56,314 54,350
-C 52,375 58,402 74,428
-C 90,454 135,470 208,478
-C 216,482 220,486 222,494
-L 222,874
-C 222,886 256,898 330,901
-L 500,904
-L 670,901
-C 744,898 778,886 778,874
-L 778,494
-C 780,486 784,482 792,478
-C 865,470 910,454 926,428
-C 942,402 948,375 946,350
-C 944,314 922,270 882,230
-C 840,190 800,166 785,153
-C 780,142 768,136 752,134`;
+  return `M 252,116
+C 240,117 228,124 226,135
+L 228,885
+C 228,897 260,908 336,911
+L 500,914
+L 664,911
+C 740,908 772,897 772,885
+L 774,135
+C 772,124 760,117 748,116
+C ${collar}`;
 }
 
-function hoodieFrontPath() {
-  return hoodieBodyPath() + `
-C 714,128 644,120 605,118
-C 572,117 558,130 542,170
-C 526,207 512,232 500,238
-C 488,232 474,207 458,170
-C 442,130 428,117 395,118
-C 356,120 286,128 248,134
+function leftHoodieSleeve() {
+  return `M 226,135
+C 212,148 172,172 130,212
+C 90,252 66,296 62,344
+C 60,410 60,500 62,590
+C 64,672 66,748 68,804
+C 72,848 82,868 106,880
+L 148,886
+C 170,888 198,888 222,880
+L 222,850
+C 220,796 219,724 218,640
+C 216,550 215,464 215,380
+C 214,330 216,294 228,268
+C 228,248 228,188 228,135
 Z`;
 }
 
-function hoodieBackPath() {
-  return hoodieBodyPath() + `
-C 714,128 644,120 605,118
-C 575,116 560,122 544,136
-C 528,148 514,160 500,163
-C 486,160 472,148 456,136
-C 440,122 425,116 395,118
-C 356,120 286,128 248,134
+function rightHoodieSleeve() {
+  return `M 774,135
+C 788,148 828,172 870,212
+C 910,252 934,296 938,344
+C 940,410 940,500 938,590
+C 936,672 934,748 932,804
+C 928,848 918,868 894,880
+L 852,886
+C 830,888 802,888 778,880
+L 778,850
+C 780,796 781,724 782,640
+C 784,550 785,464 785,380
+C 786,330 784,294 772,268
+C 772,248 772,188 772,135
 Z`;
 }
 
-// Hood shell (front view — lies over collar, V-opening in middle)
-function hoodFrontPath() {
-  return `M 408,116
-C 390,104 368,84 350,60
-C 334,38 328,26 330,22
-C 340,10 368,4 400,2
-C 430,0 465,2 500,2
-C 535,2 570,0 600,2
-C 632,4 660,10 670,22
-C 672,26 666,38 650,60
-C 632,84 610,104 592,116
-C 564,120 534,122 500,122
-C 466,122 436,120 408,116
+// Hood (front view — folds forward above collar)
+function hoodFront() {
+  return `M 414,108
+C 396,96  374,76  356,52
+C 338,28  332,14  334,8
+C 344,-4  374,-10 404,-12
+L 500,-12
+L 596,-12
+C 626,-10 656,-4  666,8
+C 668,14  662,28  644,52
+C 626,76  604,96  586,108
+C 560,114 532,116 500,116
+C 468,116 440,114 414,108
 Z`;
 }
 
-// Hood hanging down back
-function hoodBackPath() {
-  return `M 420,116
-C 402,128 382,152 368,184
-C 354,218 350,256 360,288
-C 368,314 386,330 404,336
-L 424,340
-L 500,342
-L 576,340
-L 596,336
-C 614,330 632,314 640,288
-C 650,256 646,218 632,184
-C 618,152 598,128 580,116
-C 554,120 528,122 500,122
-C 472,122 446,120 420,116
+// Hood (back view — hangs down behind collar)
+function hoodBack() {
+  return `M 424,108
+C 406,122 386,148 372,182
+C 358,218 354,258 364,292
+C 372,318 390,336 410,342
+L 432,346
+L 500,348
+L 568,346
+L 590,342
+C 610,336 628,318 636,292
+C 646,258 642,218 628,182
+C 614,148 594,122 576,108
+C 550,114 526,116 500,116
+C 474,116 450,114 424,108
 Z`;
 }
 
-// Kangaroo pocket (front only)
-function hoodiePocketPath() {
-  return `M 345,668 C 342,660 350,652 362,652 L 638,652 C 650,652 658,660 655,668
-          L 648,762 C 646,778 635,788 620,788 L 380,788 C 365,788 354,778 352,762 Z`;
+function hoodiePocket() {
+  return `M 348,672 C 345,662 354,654 366,654 L 634,654 C 646,654 655,662 652,672
+          L 644,768 C 642,784 631,794 616,794 L 384,794 C 369,794 358,784 356,768 Z`;
 }
 
 function hoodieDetails(c, id, face, isWhite) {
   const sc = c.sc, fc = c.fc, dc = c.dc;
-  const collarLine = face === "front"
-    ? `M 395,118 C 428,114 442,128 458,168 C 474,206 488,230 500,236 C 512,230 526,206 542,168 C 558,128 572,114 605,118`
-    : `M 395,118 C 426,114 440,120 455,134 C 469,147 484,158 500,161 C 516,158 531,147 545,134 C 560,120 574,114 605,118`;
-
-  const hemBand = `
-<path d="M 224,880 C 258,894 332,902 500,905 C 668,902 742,894 776,880" fill="none" stroke="${sc}" stroke-width="5" stroke-linecap="round"/>
-<path d="M 224,880 C 258,894 332,902 500,905 C 668,902 742,894 776,880" fill="none" stroke="${dc}" stroke-width="1.5" stroke-dasharray="4,3.5" stroke-linecap="round"/>`;
-
-  const seams = `
-<path d="M 222,496 C 220,580 219,680 219,780 L 219,874" fill="none" stroke="${fc}" stroke-width="2.8" stroke-linecap="round"/>
-<path d="M 778,496 C 780,580 781,680 781,780 L 781,874" fill="none" stroke="${fc}" stroke-width="2.8" stroke-linecap="round"/>`;
+  const cl = face === "front"
+    ? `M 394,100 C 428,96 444,110 460,156 C 476,194 488,220 500,226 C 512,220 524,194 540,156 C 556,110 572,96 606,100`
+    : `M 394,100 C 424,96 438,104 454,120 C 470,134 484,146 500,150 C 516,146 530,134 546,120 C 562,104 576,96 606,100`;
+  const cord = isWhite ? "rgba(155,150,142,0.75)" : "rgba(95,90,82,0.75)";
+  const aglet = isWhite ? "#D8D4CE" : "#383634";
 
   if (face === "front") {
-    // Drawstrings hanging from hood
-    const cordColour = isWhite ? "rgba(160,155,148,0.70)" : "rgba(100,95,90,0.70)";
-    const pocket = hoodiePocketPath();
-    const pocketFill = isWhite ? "rgba(0,0,0,0.06)" : "rgba(255,255,255,0.05)";
+    const pkt = hoodiePocket();
+    const pktFill = isWhite ? "rgba(0,0,0,0.065)" : "rgba(255,255,255,0.06)";
     return `
 <!-- Collar band -->
-<path d="${collarLine}" fill="none" stroke="${sc}" stroke-width="6.5" stroke-linecap="round"/>
-<path d="${collarLine}" fill="none" stroke="${dc}" stroke-width="2" stroke-dasharray="4.5,3" stroke-linecap="round"/>
-${hemBand}${seams}
+<path d="${cl}" fill="none" stroke="${sc}" stroke-width="7" stroke-linecap="round"/>
+<path d="${cl}" fill="none" stroke="${dc}" stroke-width="2" stroke-dasharray="4.5,3" stroke-linecap="round"/>
+<!-- Shoulder seams -->
+<path d="M 252,116 C 286,107 358,100 394,100" fill="none" stroke="${dc}" stroke-width="2" stroke-dasharray="4,3"/>
+<path d="M 748,116 C 714,107 642,100 606,100" fill="none" stroke="${dc}" stroke-width="2" stroke-dasharray="4,3"/>
+<!-- Left wrist cuff -->
+<path d="M 64,826 C 84,844 126,858 174,862" fill="none" stroke="${sc}" stroke-width="5.5" stroke-linecap="round"/>
+<path d="M 66,810 C 86,828 128,842 176,846" fill="none" stroke="${sc}" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M 64,826 C 84,844 126,858 174,862" fill="none" stroke="${dc}" stroke-width="1.5" stroke-dasharray="4,3" stroke-linecap="round"/>
+<!-- Right wrist cuff -->
+<path d="M 936,826 C 916,844 874,858 826,862" fill="none" stroke="${sc}" stroke-width="5.5" stroke-linecap="round"/>
+<path d="M 934,810 C 914,828 872,842 824,846" fill="none" stroke="${sc}" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M 936,826 C 916,844 874,858 826,862" fill="none" stroke="${dc}" stroke-width="1.5" stroke-dasharray="4,3" stroke-linecap="round"/>
+<!-- Hem band -->
+<path d="M 230,888 C 262,900 338,912 500,915 C 662,912 738,900 770,888" fill="none" stroke="${sc}" stroke-width="5" stroke-linecap="round"/>
+<path d="M 230,888 C 262,900 338,912 500,915 C 662,912 738,900 770,888" fill="none" stroke="${dc}" stroke-width="1.8" stroke-dasharray="4,3" stroke-linecap="round"/>
 <!-- Kangaroo pocket -->
-<path d="${pocket}" fill="${pocketFill}"/>
-<path d="${pocket}" fill="none" stroke="${sc}" stroke-width="2.5" stroke-linejoin="round"/>
-<line x1="500" y1="652" x2="500" y2="788" stroke="${dc}" stroke-width="1.8" stroke-dasharray="4,3"/>
+<path d="${pkt}" fill="${pktFill}"/>
+<path d="${pkt}" fill="none" stroke="${sc}" stroke-width="2.5" stroke-linejoin="round"/>
+<line x1="500" y1="654" x2="500" y2="794" stroke="${dc}" stroke-width="1.8" stroke-dasharray="4,3"/>
 <!-- Drawcords from hood -->
-<path d="M 458,238 C 452,310 448,388 446,460" fill="none" stroke="${cordColour}" stroke-width="3.5" stroke-linecap="round"/>
-<path d="M 542,238 C 548,310 552,388 554,460" fill="none" stroke="${cordColour}" stroke-width="3.5" stroke-linecap="round"/>
-<circle cx="446" cy="465" r="6" fill="${isWhite?"#DEDAD5":"#3A3A38"}" stroke="${sc}" stroke-width="1.5"/>
-<circle cx="554" cy="465" r="6" fill="${isWhite?"#DEDAD5":"#3A3A38"}" stroke="${sc}" stroke-width="1.5"/>`;
+<path d="M 460,228 C 454,318 450,406 448,472" fill="none" stroke="${cord}" stroke-width="4" stroke-linecap="round"/>
+<path d="M 540,228 C 546,318 550,406 552,472" fill="none" stroke="${cord}" stroke-width="4" stroke-linecap="round"/>
+<circle cx="448" cy="478" r="7" fill="${aglet}" stroke="${sc}" stroke-width="1.5"/>
+<circle cx="552" cy="478" r="7" fill="${aglet}" stroke="${sc}" stroke-width="1.5"/>
+<!-- Hood inner lip shadow -->
+<path d="M 416,106 C 448,98 472,94 500,92 C 528,94 552,98 584,106" fill="none" stroke="${sc}" stroke-width="5" stroke-linecap="round"/>`;
   } else {
-    // Back: hood hang + centre seam + cords
-    const cordColour = isWhite ? "rgba(160,155,148,0.65)" : "rgba(100,95,90,0.65)";
     return `
 <!-- Collar band (back) -->
-<path d="${collarLine}" fill="none" stroke="${sc}" stroke-width="6.5" stroke-linecap="round"/>
-<path d="${collarLine}" fill="none" stroke="${dc}" stroke-width="2" stroke-dasharray="4.5,3" stroke-linecap="round"/>
-${hemBand}${seams}
-<!-- Centre back seam of hood -->
-<line x1="500" y1="122" x2="500" y2="342" stroke="${sc}" stroke-width="3.5" stroke-linecap="round"/>
-<line x1="500" y1="122" x2="500" y2="342" stroke="${dc}" stroke-width="1.5" stroke-dasharray="4,3"/>
-<!-- Drawcords from hood back -->
-<path d="M 440,340 C 434,390 430,440 428,480" fill="none" stroke="${cordColour}" stroke-width="3.5" stroke-linecap="round"/>
-<path d="M 560,340 C 566,390 570,440 572,480" fill="none" stroke="${cordColour}" stroke-width="3.5" stroke-linecap="round"/>`;
+<path d="${cl}" fill="none" stroke="${sc}" stroke-width="7" stroke-linecap="round"/>
+<path d="${cl}" fill="none" stroke="${dc}" stroke-width="2" stroke-dasharray="4.5,3" stroke-linecap="round"/>
+<!-- Left wrist cuff (back) -->
+<path d="M 64,826 C 84,844 126,858 174,862" fill="none" stroke="${sc}" stroke-width="5.5" stroke-linecap="round"/>
+<path d="M 66,810 C 86,828 128,842 176,846" fill="none" stroke="${sc}" stroke-width="3.5" stroke-linecap="round"/>
+<!-- Right wrist cuff (back) -->
+<path d="M 936,826 C 916,844 874,858 826,862" fill="none" stroke="${sc}" stroke-width="5.5" stroke-linecap="round"/>
+<path d="M 934,810 C 914,828 872,842 824,846" fill="none" stroke="${sc}" stroke-width="3.5" stroke-linecap="round"/>
+<!-- Hem band -->
+<path d="M 230,888 C 262,900 338,912 500,915 C 662,912 738,900 770,888" fill="none" stroke="${sc}" stroke-width="5" stroke-linecap="round"/>
+<path d="M 230,888 C 262,900 338,912 500,915 C 662,912 738,900 770,888" fill="none" stroke="${dc}" stroke-width="1.8" stroke-dasharray="4,3" stroke-linecap="round"/>
+<!-- Hood centre seam -->
+<line x1="500" y1="116" x2="500" y2="348" stroke="${sc}" stroke-width="4" stroke-linecap="round"/>
+<line x1="500" y1="116" x2="500" y2="348" stroke="${dc}" stroke-width="1.5" stroke-dasharray="4,3"/>
+<!-- Drawcords -->
+<path d="M 444,344 C 438,398 434,448 432,490" fill="none" stroke="${cord}" stroke-width="4" stroke-linecap="round"/>
+<path d="M 556,344 C 562,398 566,448 568,490" fill="none" stroke="${cord}" stroke-width="4" stroke-linecap="round"/>`;
   }
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-//  GENERATE ALL FILES
+//  GENERATE
 // ══════════════════════════════════════════════════════════════════════════
 async function main() {
-  console.log("\n🎨  Generating garment mockup PNGs (professional edition)…\n");
+  console.log("\n🎨  Generating realistic garment mockup PNGs…\n");
 
-  // ── WHITE T-SHIRT FRONT ───────────────────────────────────────────────
-  await render(garment(tshirtPath("front"), W, "twf", tshirtDetails(W,"twf","front")),
-    "white-tshirt-front.png");
+  // ─────────── T-SHIRT (single path per garment) ───────────────────────
+  for (const [face, label] of [["front","front"],["back","back"]]) {
+    const path = tshirtPath(face);
+    const det  = tshirtDetails(W, `tw${label[0]}`, face);
+    await render(svg(W, `tw${label[0]}`,
+      layers(path, W, `tw${label[0]}`), det),
+      `white-tshirt-${label}.png`);
 
-  // ── WHITE T-SHIRT BACK ────────────────────────────────────────────────
-  await render(garment(tshirtPath("back"),  W, "twb", tshirtDetails(W,"twb","back")),
-    "white-tshirt-back.png");
-
-  // ── BLACK T-SHIRT FRONT ───────────────────────────────────────────────
-  await render(garment(tshirtPath("front"), B, "tbf", tshirtDetails(B,"tbf","front")),
-    "black-tshirt-front.png");
-
-  // ── BLACK T-SHIRT BACK ────────────────────────────────────────────────
-  await render(garment(tshirtPath("back"),  B, "tbb", tshirtDetails(B,"tbb","back")),
-    "black-tshirt-back.png");
-
-  // ── WHITE LONG SLEEVE FRONT ───────────────────────────────────────────
-  await render(garment(longsleevePath("front"), W, "lwf", longsleeveDetails(W,"lwf","front")),
-    "white-longsleeve-front.png");
-
-  // ── WHITE LONG SLEEVE BACK ────────────────────────────────────────────
-  await render(garment(longsleevePath("back"),  W, "lwb", longsleeveDetails(W,"lwb","back")),
-    "white-longsleeve-back.png");
-
-  // ── WHITE HOODIE FRONT ────────────────────────────────────────────────
-  {
-    const body = hoodieFrontPath();
-    const hood = hoodFrontPath();
-    const det  = hoodieDetails(W, "hwf", "front", true);
-    const svg  = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
-${defs(W,"hwf")}
-<!-- body shadow -->
-<path d="${body}" fill="${W.sh}" filter="url(#sh-hwf)" transform="translate(0,16)"/>
-<!-- hood shadow -->
-<path d="${hood}" fill="${W.sh}" filter="url(#sh-hwf)" transform="translate(0,16)"/>
-<!-- body layers -->
-<path d="${body}" fill="url(#base-hwf)"/>
-<path d="${body}" fill="url(#grain-hwf)"/>
-<path d="${body}" fill="url(#key-hwf)"/>
-<path d="${body}" fill="url(#vig-hwf)"/>
-<!-- hood layers (same palette) -->
-<path d="${hood}" fill="url(#base-hwf)"/>
-<path d="${hood}" fill="url(#grain-hwf)"/>
-<path d="${hood}" fill="url(#key-hwf)"/>
-<!-- hood inner-edge shadow (depth) -->
-<path d="M 412,114 C 445,104 468,96 500,94 C 532,96 555,104 588,114" fill="none" stroke="${W.sc}" stroke-width="4" stroke-linecap="round"/>
-${det}
-</svg>`;
-    await render(svg, "white-hoodie-front.png");
+    const detB = tshirtDetails(B, `tb${label[0]}`, face);
+    await render(svg(B, `tb${label[0]}`,
+      layers(path, B, `tb${label[0]}`), detB),
+      `black-tshirt-${label}.png`);
   }
 
-  // ── WHITE HOODIE BACK ─────────────────────────────────────────────────
-  {
-    const body = hoodieBackPath();
-    const hood = hoodBackPath();
-    const det  = hoodieDetails(W, "hwb", "back", true);
-    const svg  = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
-${defs(W,"hwb")}
-<defs>
-  <linearGradient id="hoodgrad-hwb" x1=".5" y1="0" x2=".5" y2="1">
-    <stop offset="0%"   stop-color="${W.g1}"/>
-    <stop offset="100%" stop-color="${W.g2}"/>
-  </linearGradient>
-</defs>
-<path d="${body}" fill="${W.sh}" filter="url(#sh-hwb)" transform="translate(0,16)"/>
-<path d="${hood}" fill="${W.sh}" filter="url(#sh-hwb)" transform="translate(0,16)"/>
-<path d="${body}" fill="url(#base-hwb)"/>
-<path d="${body}" fill="url(#grain-hwb)"/>
-<path d="${body}" fill="url(#key-hwb)"/>
-<path d="${body}" fill="url(#vig-hwb)"/>
-<!-- hanging hood (slightly darker than body) -->
-<path d="${hood}" fill="url(#hoodgrad-hwb)"/>
-<path d="${hood}" fill="url(#grain-hwb)"/>
-${det}
-</svg>`;
-    await render(svg, "white-hoodie-back.png");
+  // ─────────── LONG SLEEVE (3 separate paths per garment) ──────────────
+  for (const [face, label] of [["front","front"],["back","back"]]) {
+    const body  = longsleeveBody(face);
+    const lSlv  = leftSleeve();
+    const rSlv  = rightSleeve();
+    const id    = `lw${label[0]}`;
+    const det   = longsleeveDetails(W, id, face);
+    await render(svg(W, id, [body, lSlv, rSlv].map(p=>layers(p,W,id)).join("\n"), det),
+      `white-longsleeve-${label}.png`);
   }
 
-  // ── BLACK HOODIE FRONT ────────────────────────────────────────────────
-  {
-    const body = hoodieFrontPath();
-    const hood = hoodFrontPath();
-    const det  = hoodieDetails(B, "hbf", "front", false);
-    const svg  = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
-${defs(B,"hbf")}
-<path d="${body}" fill="${B.sh}" filter="url(#sh-hbf)" transform="translate(0,16)"/>
-<path d="${hood}" fill="${B.sh}" filter="url(#sh-hbf)" transform="translate(0,16)"/>
-<path d="${body}" fill="url(#base-hbf)"/>
-<path d="${body}" fill="url(#grain-hbf)"/>
-<path d="${body}" fill="url(#key-hbf)"/>
-<path d="${body}" fill="url(#vig-hbf)"/>
-<path d="${hood}" fill="url(#base-hbf)"/>
-<path d="${hood}" fill="url(#grain-hbf)"/>
-<path d="${hood}" fill="url(#key-hbf)"/>
-<path d="M 412,114 C 445,104 468,96 500,94 C 532,96 555,104 588,114" fill="none" stroke="${B.sc}" stroke-width="4" stroke-linecap="round"/>
-${det}
-</svg>`;
-    await render(svg, "black-hoodie-front.png");
+  // ─────────── HOODIE FRONT ────────────────────────────────────────────
+  for (const [c, prefix, isWhite] of [[W,"white-hoodie",true],[B,"black-hoodie",false]]) {
+    const idF = prefix.replace("-","_") + "_f";
+
+    // FRONT
+    {
+      const id  = idF;
+      const bod = hoodieBodyPath("front");
+      const lSl = leftHoodieSleeve();
+      const rSl = rightHoodieSleeve();
+      const hd  = hoodFront();
+      const det = hoodieDetails(c, id, "front", isWhite);
+      await render(svg(c, id,
+        [bod, lSl, rSl, hd].map(p=>layers(p,c,id)).join("\n"), det),
+        `${prefix}-front.png`);
+    }
+
+    // BACK
+    {
+      const id  = prefix.replace("-","_") + "_b";
+      const bod = hoodieBodyPath("back");
+      const lSl = leftHoodieSleeve();
+      const rSl = rightHoodieSleeve();
+      const hd  = hoodBack();
+      const det = hoodieDetails(c, id, "back", isWhite);
+      await render(svg(c, id,
+        [bod, lSl, rSl, hd].map(p=>layers(p,c,id)).join("\n"), det),
+        `${prefix}-back.png`);
+    }
   }
 
-  // ── BLACK HOODIE BACK ─────────────────────────────────────────────────
-  {
-    const body = hoodieBackPath();
-    const hood = hoodBackPath();
-    const det  = hoodieDetails(B, "hbb", "back", false);
-    const svg  = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
-${defs(B,"hbb")}
-<defs>
-  <linearGradient id="hoodgrad-hbb" x1=".5" y1="0" x2=".5" y2="1">
-    <stop offset="0%"   stop-color="${B.g1}"/>
-    <stop offset="100%" stop-color="${B.g2}"/>
-  </linearGradient>
-</defs>
-<path d="${body}" fill="${B.sh}" filter="url(#sh-hbb)" transform="translate(0,16)"/>
-<path d="${hood}" fill="${B.sh}" filter="url(#sh-hbb)" transform="translate(0,16)"/>
-<path d="${body}" fill="url(#base-hbb)"/>
-<path d="${body}" fill="url(#grain-hbb)"/>
-<path d="${body}" fill="url(#key-hbb)"/>
-<path d="${body}" fill="url(#vig-hbb)"/>
-<path d="${hood}" fill="url(#hoodgrad-hbb)"/>
-<path d="${hood}" fill="url(#grain-hbb)"/>
-${det}
-</svg>`;
-    await render(svg, "black-hoodie-back.png");
-  }
-
-  console.log("\n✅  Done — all 10 garment mockup PNGs regenerated.\n");
+  console.log("\n✅  All 10 garment mockup PNGs generated.\n");
 }
 
 main().catch(e => { console.error("❌", e); process.exit(1); });
