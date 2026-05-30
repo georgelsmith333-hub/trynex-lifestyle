@@ -74,7 +74,7 @@ router.get("/notifications/unread-count", requireCustomer, async (req: any, res)
   }
 });
 
-router.patch("/notifications/:id/read", requireCustomer, async (req: any, res) => {
+router.patch("/notifications/:id/read", requireCustomer, async (req: any, res: any): Promise<void> => {
   try {
     const customerId = req.customer.id;
     const id = parseInt(req.params.id as string, 10);

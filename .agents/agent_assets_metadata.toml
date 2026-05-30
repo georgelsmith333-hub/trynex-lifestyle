@@ -257,3 +257,9 @@ id = "HwWzGJj4KkA-359u0uVpm"
 uri = "file://docs/TryNex-Full-Technical-Documentation.pdf"
 type = "pdf"
 title = "TryNex Lifestyle — Full A-to-Z Technical Documentation"
+
+[[outputs]]
+id = "1Vs0Q8BtGakIc-AnQ7nW8"
+uri = "file://TryNex_TechStack_Documentation.pdf"
+type = "pdf"
+title = "TryNex Lifestyle — Full A to Z Technical Documentation"
