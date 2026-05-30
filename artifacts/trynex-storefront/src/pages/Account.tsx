@@ -10,7 +10,8 @@ import {
   User, Mail, Phone, LogOut, Edit3, Check, X, Package, Heart,
   Loader2, ShieldCheck, Gift, TrendingUp, Wallet, Eye, Clock,
   ArrowRight, Lock, ChevronDown, ChevronUp, CheckCircle2,
-  ShoppingBag, Calendar, MapPin, Tag, Copy, Share2, ExternalLink
+  ShoppingBag, Calendar, MapPin, Tag, Copy, Share2, ExternalLink,
+  MessageSquare, Send, ChevronLeft, Bell
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { OrderSkeleton } from "@/components/ui/skeleton";
@@ -82,6 +83,17 @@ const STATUS_LABELS: Record<string, string> = {
   cancelled: "Cancelled",
 };
 
+interface OrderMessage {
+  id: number;
+  order_id: number;
+  sender_type: "admin" | "customer";
+  sender_name: string;
+  message: string;
+  attachment_url?: string;
+  read_by_customer: boolean;
+  created_at: string;
+}
+
 export default function Account() {
   const [, navigate] = useLocation();
   const { customer, isLoading, isAuthenticated, updateProfile, logout } = useAuth();
@@ -90,7 +102,7 @@ export default function Account() {
   const [editName, setEditName] = useState("");
   const [editPhone, setEditPhone] = useState("");
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<"profile" | "orders" | "referral" | "recent">("profile");
+  const [activeTab, setActiveTab] = useState<"profile" | "orders" | "messages" | "referral" | "recent">("profile");
 
   const [myReferral, setMyReferral] = useState<ReferralData | null>(null);
   const [recentProducts, setRecentProducts] = useState<RecentProduct[]>([]);
@@ -99,6 +111,13 @@ export default function Account() {
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [ordersError, setOrdersError] = useState("");
   const [orderLightbox, setOrderLightbox] = useState<{ orderId: number; index: number } | null>(null);
+
+  const [messages, setMessages] = useState<Record<number, OrderMessage[]>>({});
+  const [messagesLoading, setMessagesLoading] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [messageInput, setMessageInput] = useState("");
+  const [sendingMessage, setSendingMessage] = useState(false);
 
   const [changingPassword, setChangingPassword] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -150,10 +169,86 @@ export default function Account() {
     const handler = (e: Event) => {
       const tab = (e as CustomEvent).detail;
       if (tab === "orders") setActiveTab("orders");
+      if (tab === "messages") setActiveTab("messages");
     };
     window.addEventListener("account-tab", handler);
     return () => window.removeEventListener("account-tab", handler);
   }, []);
+
+  const fetchMessages = async (orderId: number) => {
+    const token = localStorage.getItem("trynex_customer_token");
+    if (!token) return;
+    setMessagesLoading(true);
+    try {
+      const resp = await fetch(getApiUrl(`/api/orders/${orderId}/messages`), {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        setMessages(prev => ({ ...prev, [orderId]: data.messages || [] }));
+      }
+    } catch {}
+    setMessagesLoading(false);
+  };
+
+  const sendMessage = async (orderId: number) => {
+    const token = localStorage.getItem("trynex_customer_token");
+    if (!token || !messageInput.trim() || sendingMessage) return;
+    setSendingMessage(true);
+    try {
+      const resp = await fetch(getApiUrl(`/api/orders/${orderId}/messages`), {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ message: messageInput.trim() }),
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        setMessages(prev => ({ ...prev, [orderId]: [...(prev[orderId] || []), data.message] }));
+        setMessageInput("");
+      } else {
+        toast({ title: "Could not send message", variant: "destructive" });
+      }
+    } catch {
+      toast({ title: "Network error. Please try again.", variant: "destructive" });
+    }
+    setSendingMessage(false);
+  };
+
+  const fetchUnreadCount = async () => {
+    const token = localStorage.getItem("trynex_customer_token");
+    if (!token) return;
+    try {
+      const resp = await fetch(getApiUrl("/api/orders/my/messages/unread-count"), {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        setUnreadCount(data.count || 0);
+      }
+    } catch {}
+  };
+
+  useEffect(() => {
+    if (activeTab === "messages" && customer && orders.length === 0) {
+      fetchOrders();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, customer]);
+
+  useEffect(() => {
+    if (activeTab === "messages" && selectedOrderId !== null) {
+      fetchMessages(selectedOrderId);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, selectedOrderId]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    fetchUnreadCount();
+    const interval = setInterval(fetchUnreadCount, 30000);
+    return () => clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
 
   const fetchOrders = async () => {
     const token = localStorage.getItem("trynex_customer_token");
@@ -244,10 +339,11 @@ export default function Account() {
   }
 
   const tabs = [
-    { id: "profile" as const, label: "Profile", icon: User },
-    { id: "orders" as const, label: "My Orders", icon: ShoppingBag },
-    { id: "referral" as const, label: "Referrals", icon: Gift },
-    { id: "recent" as const, label: "Recently Viewed", icon: Eye },
+    { id: "profile" as const, label: "Profile", icon: User, badge: 0 },
+    { id: "orders" as const, label: "My Orders", icon: ShoppingBag, badge: 0 },
+    { id: "messages" as const, label: "Messages", icon: MessageSquare, badge: unreadCount },
+    { id: "referral" as const, label: "Referrals", icon: Gift, badge: 0 },
+    { id: "recent" as const, label: "Recent", icon: Eye, badge: 0 },
   ];
 
   return (
@@ -288,11 +384,14 @@ export default function Account() {
 
               <div className="relative">
                 <div className="flex border-b border-gray-100 overflow-x-auto no-scrollbar">
-                {tabs.map(({ id, label, icon: Icon }) => (
+                {tabs.map(({ id, label, icon: Icon, badge }) => (
                   <button
                     key={id}
-                    onClick={() => setActiveTab(id)}
-                    className={`flex items-center gap-1.5 px-4 sm:px-5 py-3 text-xs sm:text-sm font-semibold whitespace-nowrap transition-all border-b-2 ${
+                    onClick={() => {
+                      setActiveTab(id);
+                      if (id === "messages") { setUnreadCount(0); setSelectedOrderId(null); }
+                    }}
+                    className={`relative flex items-center gap-1.5 px-3 sm:px-4 py-3 text-xs sm:text-sm font-semibold whitespace-nowrap transition-all border-b-2 ${
                       activeTab === id
                         ? "text-orange-600 border-orange-500"
                         : "text-gray-400 border-transparent hover:text-gray-600"
@@ -300,6 +399,11 @@ export default function Account() {
                   >
                     <Icon className="w-4 h-4" />
                     {label}
+                    {badge > 0 && (
+                      <span className="ml-0.5 min-w-[1.1rem] h-[1.1rem] px-1 text-[9px] font-black text-white rounded-full flex items-center justify-center bg-red-500">
+                        {badge > 99 ? "99+" : badge}
+                      </span>
+                    )}
                   </button>
                 ))}
                 </div>
@@ -610,6 +714,152 @@ export default function Account() {
                             </div>
                           </div>
                         ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === "messages" && (
+                  <div>
+                    {selectedOrderId === null ? (
+                      <div>
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="font-semibold text-gray-900 text-sm flex items-center gap-2">
+                            <Bell className="w-4 h-4 text-orange-500" />
+                            Order Messages
+                          </h3>
+                          <p className="text-[10px] text-gray-400">Chat with TryNex Team about your orders</p>
+                        </div>
+                        {ordersLoading ? (
+                          <div className="space-y-3">
+                            {[...Array(3)].map((_, i) => <OrderSkeleton key={i} />)}
+                          </div>
+                        ) : orders.length === 0 ? (
+                          <div className="text-center py-10">
+                            <MessageSquare className="w-12 h-12 text-gray-200 mx-auto mb-3" />
+                            <h3 className="font-bold text-gray-900 mb-1.5">No Orders Yet</h3>
+                            <p className="text-sm text-gray-500 mb-4">Place an order to start messaging with our team.</p>
+                            <Link href="/products" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-white text-sm" style={{ background: "linear-gradient(135deg, #E85D04, #FB8500)" }}>
+                              Shop Now <ArrowRight className="w-4 h-4" />
+                            </Link>
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            {orders.map((order) => {
+                              const orderMsgs = messages[order.id] || [];
+                              const lastMsg = orderMsgs[orderMsgs.length - 1];
+                              const unread = orderMsgs.filter(m => m.sender_type === "admin" && !m.read_by_customer).length;
+                              return (
+                                <button
+                                  key={order.id}
+                                  onClick={() => { setSelectedOrderId(order.id); fetchMessages(order.id); }}
+                                  className="w-full text-left flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:border-orange-200 hover:bg-orange-50/30 transition-all"
+                                >
+                                  <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 text-white text-xs font-black" style={{ background: "linear-gradient(135deg,#E85D04,#FB8500)" }}>
+                                    <Package className="w-4 h-4" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-xs font-black text-gray-900 font-mono">#{order.orderNumber}</span>
+                                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${STATUS_COLORS[order.status] || "bg-gray-100 text-gray-600"}`}>
+                                        {STATUS_LABELS[order.status] || order.status}
+                                      </span>
+                                    </div>
+                                    {lastMsg ? (
+                                      <p className="text-xs text-gray-500 truncate mt-0.5">{lastMsg.sender_type === "admin" ? "TryNex: " : "You: "}{lastMsg.message}</p>
+                                    ) : (
+                                      <p className="text-xs text-gray-400 italic mt-0.5">No messages yet — tap to start</p>
+                                    )}
+                                  </div>
+                                  <div className="flex flex-col items-end gap-1 shrink-0">
+                                    {unread > 0 && (
+                                      <span className="min-w-[1.1rem] h-[1.1rem] px-1 text-[9px] font-black text-white rounded-full flex items-center justify-center bg-red-500">
+                                        {unread}
+                                      </span>
+                                    )}
+                                    {lastMsg && (
+                                      <span className="text-[10px] text-gray-400">{new Date(lastMsg.created_at).toLocaleDateString("en-BD", { day: "numeric", month: "short" })}</span>
+                                    )}
+                                    <ChevronLeft className="w-3.5 h-3.5 text-gray-300 rotate-180" />
+                                  </div>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex flex-col" style={{ minHeight: "320px" }}>
+                        <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
+                          <button
+                            onClick={() => setSelectedOrderId(null)}
+                            className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 transition-all"
+                          >
+                            <ChevronLeft className="w-5 h-5 text-gray-500" />
+                          </button>
+                          <div>
+                            <p className="text-sm font-bold text-gray-900">
+                              #{orders.find(o => o.id === selectedOrderId)?.orderNumber}
+                            </p>
+                            <p className="text-[10px] text-gray-400">Conversation with TryNex Team</p>
+                          </div>
+                        </div>
+
+                        <div className="flex-1 space-y-3 mb-4 overflow-y-auto max-h-[400px] pr-1">
+                          {messagesLoading ? (
+                            <div className="flex items-center justify-center py-8">
+                              <Loader2 className="w-6 h-6 animate-spin text-orange-500" />
+                            </div>
+                          ) : (messages[selectedOrderId] || []).length === 0 ? (
+                            <div className="text-center py-8">
+                              <MessageSquare className="w-10 h-10 text-gray-200 mx-auto mb-2" />
+                              <p className="text-sm text-gray-500">No messages yet</p>
+                              <p className="text-xs text-gray-400">Send a message to the TryNex Team below</p>
+                            </div>
+                          ) : (
+                            (messages[selectedOrderId] || []).map((msg) => (
+                              <div key={msg.id} className={`flex ${msg.sender_type === "customer" ? "justify-end" : "justify-start"}`}>
+                                <div className={`max-w-[80%] rounded-2xl px-3 py-2 ${
+                                  msg.sender_type === "customer"
+                                    ? "bg-orange-500 text-white rounded-br-sm"
+                                    : "bg-gray-100 text-gray-900 rounded-bl-sm"
+                                }`}>
+                                  {msg.sender_type === "admin" && (
+                                    <p className="text-[10px] font-bold text-orange-600 mb-0.5">{msg.sender_name}</p>
+                                  )}
+                                  <p className="text-xs leading-relaxed whitespace-pre-line">{msg.message}</p>
+                                  <p className={`text-[10px] mt-1 ${msg.sender_type === "customer" ? "text-orange-100" : "text-gray-400"}`}>
+                                    {new Date(msg.created_at).toLocaleTimeString("en-BD", { hour: "2-digit", minute: "2-digit" })}
+                                  </p>
+                                </div>
+                              </div>
+                            ))
+                          )}
+                        </div>
+
+                        <form
+                          onSubmit={(e) => { e.preventDefault(); sendMessage(selectedOrderId); }}
+                          className="flex items-end gap-2"
+                        >
+                          <textarea
+                            value={messageInput}
+                            onChange={(e) => setMessageInput(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(selectedOrderId); }
+                            }}
+                            placeholder="Type a message..."
+                            rows={2}
+                            className="flex-1 px-3 py-2 rounded-xl border border-gray-200 focus:border-orange-400 focus:ring-2 focus:ring-orange-100 outline-none text-sm resize-none"
+                          />
+                          <button
+                            type="submit"
+                            disabled={!messageInput.trim() || sendingMessage}
+                            className="flex items-center justify-center w-10 h-10 rounded-xl text-white transition-all disabled:opacity-40"
+                            style={{ background: "linear-gradient(135deg, #E85D04, #FB8500)" }}
+                          >
+                            {sendingMessage ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                          </button>
+                        </form>
                       </div>
                     )}
                   </div>

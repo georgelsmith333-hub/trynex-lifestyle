@@ -200,4 +200,40 @@ router.post("/orders/:id/messages", messageLimiter, async (req, res) => {
   }
 });
 
+/* ── Customer: unread message count across all their orders ─── */
+router.get("/orders/my/messages/unread-count", messageLimiter, async (req, res) => {
+  try {
+    const token = extractCustomerToken(req);
+    if (!token) {
+      res.json({ count: 0 });
+      return;
+    }
+    let customerEmail: string | null = null;
+    try {
+      const decoded = verifyCustomerToken(token) as any;
+      customerEmail = decoded?.email ?? null;
+    } catch {
+      res.json({ count: 0 });
+      return;
+    }
+    if (!customerEmail) {
+      res.json({ count: 0 });
+      return;
+    }
+    const result = await db.execute(
+      sql`SELECT COUNT(*) as count FROM order_messages om
+          JOIN orders o ON o.id = om.order_id
+          WHERE o.customer_email = ${customerEmail}
+          AND om.sender_type = 'admin'
+          AND om.read_by_customer = false`
+    );
+    const rows = (result as any).rows ?? result ?? [];
+    const count = Number(rows[0]?.count ?? 0);
+    res.json({ count });
+  } catch (err) {
+    logger.error({ err }, "Failed to get unread message count");
+    res.json({ count: 0 });
+  }
+});
+
 export default router;

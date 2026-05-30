@@ -160,6 +160,7 @@ function Router() {
             <Route path="/cart" component={Cart} />
             <Route path="/checkout" component={Checkout} />
             <Route path="/track" component={TrackOrder} />
+            <Route path="/track-order" component={TrackOrder} />
             <Route path="/blog" component={Blog} />
             <Route path="/blog/:slug" component={BlogPost} />
             <Route path="/wishlist" component={Wishlist} />

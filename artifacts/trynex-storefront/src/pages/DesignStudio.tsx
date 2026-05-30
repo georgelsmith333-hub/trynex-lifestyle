@@ -236,7 +236,9 @@ const PRODUCT_TAB_ICONS: Record<string, React.ReactNode> = {
   ),
   longsleeve: (
     <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{width:"100%",height:"100%"}}>
-      <path d="M12 4c0 0 1.6 3 4 3s4-3 4-3l7.5 7-3.5 3L22 12.5V27H10V12.5l-2 1.5-3.5-3Z"/>
+      <path d="M12 4c0 0 1.5 3 4 3s4-3 4-3l3 2.5v5.5H22V27H10V12h-1V6.5Z"/>
+      <path d="M11 6.5L5 9.5v13h5"/>
+      <path d="M21 6.5L27 9.5v13h-5"/>
     </svg>
   ),
   mug: (

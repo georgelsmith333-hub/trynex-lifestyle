@@ -487,6 +487,20 @@ router.get("/orders/:id", requireAdmin, async (req, res) => {
   }
 });
 
+async function sendAutoConfirmationMessage(orderId: number, orderNumber: string, customerName: string) {
+  try {
+    const firstName = customerName.split(" ")[0] || customerName;
+    const message = `🎉 ধন্যবাদ ${firstName}! আপনার অর্ডার #${orderNumber} সফলভাবে কনফার্ম হয়েছে।\n\nআমরা শীঘ্রই আপনার অর্ডার প্রসেস করা শুরু করব। যেকোনো প্রশ্ন বা আপডেটের জন্য এখানে মেসেজ করুন। 🙏\n\n────────────────────\nThank you ${firstName}! Your order #${orderNumber} has been confirmed. We will start processing it shortly. Feel free to message us here for any queries. 🛍️`;
+    await db.execute(
+      sql`INSERT INTO order_messages (order_id, sender_type, sender_name, message, read_by_admin)
+          VALUES (${orderId}, 'admin', 'TryNex Team', ${message}, true)
+          ON CONFLICT DO NOTHING`
+    );
+  } catch (err) {
+    logger.warn({ err, orderId }, "sendAutoConfirmationMessage: failed to insert");
+  }
+}
+
 router.post("/orders", async (req, res) => {
   try {
     // Zod validation — structured 400 with field-level error messages.
@@ -949,6 +963,7 @@ router.post("/orders", async (req, res) => {
     sendWhatsAppNotification(mapped).catch((err) => logger.warn({ err }, "WhatsApp notification failed (fire-and-forget)"));
     sendTelegramNotification(mapped).catch((err) => logger.warn({ err }, "Telegram notification failed (fire-and-forget)"));
     sendOrderConfirmationEmail(mapped).catch((err) => logger.warn({ err }, "Order confirmation email failed (fire-and-forget)"));
+    sendAutoConfirmationMessage(order.id, order.orderNumber, customerName).catch((err) => logger.warn({ err }, "Auto confirmation message failed (fire-and-forget)"));
     checkLowStock().catch((err) => logger.warn({ err }, "checkLowStock failed (fire-and-forget)"));
     checkRevenueMilestone().catch((err) => logger.warn({ err }, "checkRevenueMilestone failed (fire-and-forget)"));
     sendMetaCAPIEvent({

@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Menu, X, ChevronDown, Heart, ShoppingCart, User, LogIn, LogOut, Package, ShoppingBag, Gift, Search, Tag, Clock, TrendingUp } from "lucide-react";
+import { Menu, X, ChevronDown, Heart, ShoppingCart, User, LogIn, LogOut, Package, ShoppingBag, Gift, Search, Tag, Clock, TrendingUp, MessageSquare } from "lucide-react";
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
@@ -72,6 +72,7 @@ export function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [desktopSearchFocused, setDesktopSearchFocused] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>(() => getStoredRecent());
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const desktopSearchRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -101,6 +102,26 @@ export function Navbar() {
     setSearchOpen(false);
     setDesktopSearchFocused(false);
   }, [location]);
+
+  useEffect(() => {
+    if (!isAuthenticated) { setUnreadMessages(0); return; }
+    const fetchUnread = async () => {
+      const token = localStorage.getItem("trynex_customer_token");
+      if (!token) return;
+      try {
+        const resp = await fetch("/api/orders/my/messages/unread-count", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (resp.ok) {
+          const data = await resp.json();
+          setUnreadMessages(data.count || 0);
+        }
+      } catch {}
+    };
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 30000);
+    return () => clearInterval(interval);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (searchOpen && searchInputRef.current) {
@@ -558,7 +579,7 @@ export function Navbar() {
               <div ref={profileRef} className="relative hidden sm:block">
                 <button
                   onClick={() => setProfileOpen(!profileOpen)}
-                  className="btn-press flex items-center gap-2 px-2.5 py-1.5 rounded-full hover:bg-orange-50/70 transition-all"
+                  className="btn-press relative flex items-center gap-2 px-2.5 py-1.5 rounded-full hover:bg-orange-50/70 transition-all"
                   title={customer?.name}
                 >
                   {customer?.avatar ? (
@@ -567,6 +588,9 @@ export function Navbar() {
                     <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-black" style={{ background: "linear-gradient(135deg,#E85D04,#FB8500)" }}>
                       {customer?.name?.[0]?.toUpperCase() || "U"}
                     </div>
+                  )}
+                  {unreadMessages > 0 && (
+                    <span className="absolute top-0.5 left-6 w-2.5 h-2.5 rounded-full bg-red-500 ring-2 ring-white" aria-label={`${unreadMessages} unread messages`} />
                   )}
                   <span className="text-[0.8125rem] font-semibold text-gray-700 max-w-[80px] truncate">
                     {customer?.name?.split(" ")[0]}
@@ -592,6 +616,18 @@ export function Navbar() {
                         </Link>
                         <Link href="/account" onClick={() => setTimeout(() => window.dispatchEvent(new CustomEvent("account-tab", { detail: "orders" })), 50)} className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[0.8125rem] font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
                           <ShoppingBag className="w-4 h-4" /> My Orders
+                        </Link>
+                        <Link
+                          href="/account"
+                          onClick={() => { setProfileOpen(false); setTimeout(() => window.dispatchEvent(new CustomEvent("account-tab", { detail: "messages" })), 50); }}
+                          className="flex items-center justify-between gap-2.5 px-3 py-2 rounded-xl text-[0.8125rem] font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                        >
+                          <span className="flex items-center gap-2.5"><MessageSquare className="w-4 h-4" /> Messages</span>
+                          {unreadMessages > 0 && (
+                            <span className="min-w-[1.1rem] h-[1.1rem] px-1 text-[9px] font-black text-white rounded-full flex items-center justify-center bg-red-500">
+                              {unreadMessages > 99 ? "99+" : unreadMessages}
+                            </span>
+                          )}
                         </Link>
                         <Link href="/track" className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[0.8125rem] font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
                           <Package className="w-4 h-4" /> Track Order
