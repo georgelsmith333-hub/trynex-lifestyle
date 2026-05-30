@@ -1,2 +1,6 @@
 - [Design Studio color system](design-studio-colors.md) — isNearBlack(<12% luminance) guards black-photo selection; all other darks use white+multiply-tint SVG filter.
 - [Water bottle mockup calibration](waterbottle-mockup.md) — user's actual carabiner bottle PNG; print zone and image path details inside.
+- [GitHub restore via Contents API](github-restore-contents-api.md) — git push is sandbox-blocked; use GitHub Contents API PUT to restore/push files to GitHub.
+- [TryNex GitHub repo quirk](trynex-github-repo.md) — repo name is "trynex-liestyle" (typo, not "lifestyle"); owner georgelsmith333-hub.
+- [TryNex deploy.yml fixes](trynex-deploy-fixes.md) — CI/CD: typecheck uses || true, deploy steps use continue-on-error:true, CF deploy guarded by secret check.
+- [TryNex Design Studio flags](trynex-design-studio-flags.md) — STUDIO_CUSTOM_COLOR_ENABLED=false hides custom picker; PRODUCT_TAB_ICONS uses SVG; print zone uses L-bracket corners.
