@@ -111,6 +111,7 @@ const AdminPromoCodes      = lazyWithRetry(() => import("./pages/admin/AdminProm
 const AdminReferrals       = lazyWithRetry(() => import("./pages/admin/AdminReferrals"));
 const AdminNewsletter         = lazyWithRetry(() => import("./pages/admin/AdminNewsletter"));
 const AdminDatabaseCluster    = lazyWithRetry(() => import("./pages/admin/AdminDatabaseCluster"));
+const AdminPageBuilder      = lazyWithRetry(() => import("./pages/admin/AdminPageBuilder"));
 
 const Hampers        = lazyWithRetry(() => import("./pages/Hampers"));
 const HamperDetail   = lazyWithRetry(() => import("./pages/HamperDetail"));
@@ -214,6 +215,7 @@ function Router() {
             <Route path="/admin/referrals"     component={AdminReferrals} />
             <Route path="/admin/newsletter"    component={AdminNewsletter} />
             <Route path="/admin/db-cluster"    component={AdminDatabaseCluster} />
+            <Route path="/admin/page-builder"  component={AdminPageBuilder} />
             <Route path="/admin"               component={AdminDashboard} />
 
             {/* Short-URL redirects */}

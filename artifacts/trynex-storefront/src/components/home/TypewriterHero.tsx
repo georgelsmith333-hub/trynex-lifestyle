@@ -226,7 +226,7 @@ export function TypewriterHero() {
         />
       </div>
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-[1.1fr_1fr] gap-6 md:gap-8 lg:gap-12 items-center">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 lg:px-16 grid grid-cols-1 md:grid-cols-[1.1fr_1fr] gap-6 md:gap-8 lg:gap-12 items-center">
 
         {/* ── LEFT: copy ── */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left min-w-0 w-full">

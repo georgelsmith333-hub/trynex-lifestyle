@@ -845,8 +845,8 @@ export default function Home() {
           CATEGORIES GRID
       ═══════════════════════════════════════ */}
       {settings.sectionCategoriesEnabled !== false && <section className="py-20 px-4" style={{ background: '#FAFAFA' }}>
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
+          <div className="text-center mb-10 md:mb-16">
             <motion.span
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -869,7 +869,7 @@ export default function Home() {
             </motion.p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="flex overflow-x-auto pb-8 md:pb-0 md:grid md:grid-cols-5 gap-4 md:gap-6 snap-x snap-mandatory scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
             {CATEGORIES.filter(cat => {
               if (cat.icon === "tshirt" && settings.categoryTshirtsEnabled === false) return false;
               if (cat.icon === "hoodie" && settings.categoryHoodiesEnabled === false) return false;
@@ -878,11 +878,14 @@ export default function Home() {
               if (cat.icon === "custom" && settings.categoryCustomEnabled === false) return false;
               return true;
             }).map((cat, i) => {
-              const CategoryIcon = cat.icon === "tshirt" ? Shirt
-                : cat.icon === "hoodie" ? Layers
-                : cat.icon === "cap" ? Crown
-                : cat.icon === "mug" ? Coffee
-                : Sparkles;
+              const imageMap: Record<string, string> = {
+                tshirt: "/images/cat-tshirt.png",
+                hoodie: "/images/cat-hoodie.png",
+                cap: "/images/cat-cap.png",
+                mug: "/images/cat-mug.png",
+                custom: "/images/cat-tshirt.png",
+              };
+
               return (
                 <motion.div
                   key={cat.name}
@@ -890,28 +893,40 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                  whileHover={{ y: -8, scale: 1.03 }}
-                  style={{ transformOrigin: 'center bottom' }}
+                  className="min-w-[280px] md:min-w-0 snap-center"
                 >
                   <Link href={cat.href}
-                    className="flex flex-col items-center p-6 rounded-2xl text-center transition-all cursor-pointer group border relative overflow-hidden"
-                    style={{
-                      background: cat.color,
-                      borderColor: `${cat.accent}20`,
-                      boxShadow: `0 4px 20px ${cat.accent}10`,
-                    }}>
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                      style={{ background: `linear-gradient(135deg, ${cat.accent}06, transparent)` }} />
-                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 group-hover:rotate-3"
-                      style={{ background: `${cat.accent}12`, border: `1.5px solid ${cat.accent}25` }}>
-                      <CategoryIcon className="w-6 h-6" style={{ color: cat.accent }} />
+                    className="flex flex-col group h-full rounded-3xl transition-all cursor-pointer border border-gray-100 bg-white overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-2"
+                  >
+                    <div className="relative aspect-[4/5] overflow-hidden bg-gray-50">
+                      {cat.icon === "custom" ? (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center p-6 bg-gradient-to-br from-orange-500 to-primary text-white">
+                          <Sparkles className="w-12 h-12 mb-4 animate-pulse" />
+                          <span className="font-black text-xl">Design Studio</span>
+                        </div>
+                      ) : (
+                        <img 
+                          src={imageMap[cat.icon as string] || "/images/product-placeholder.svg"} 
+                          alt={cat.name}
+                          className="w-full h-full object-contain p-6 transition-transform duration-500 group-hover:scale-110"
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </div>
-                    <h3 className="font-black text-gray-900 text-base mb-1">{cat.name}</h3>
-                    <p className="text-xs text-gray-500 mb-3">{cat.desc}</p>
-                    <span className="text-xs font-bold px-3 py-1 rounded-full"
-                      style={{ background: `${cat.accent}15`, color: cat.accent }}>
-                      {cat.count}
-                    </span>
+                    
+                    <div className="p-6 text-left">
+                      <h3 className="font-black text-gray-900 text-xl mb-1">{cat.name}</h3>
+                      <p className="text-xs text-gray-500 mb-4 line-clamp-1">{cat.desc}</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-black text-primary uppercase tracking-wider"
+                          style={{ color: cat.accent }}>
+                          {cat.count}
+                        </span>
+                        <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
+                          <ArrowRight className="w-4 h-4" />
+                        </div>
+                      </div>
+                    </div>
                   </Link>
                 </motion.div>
               );
@@ -990,7 +1005,7 @@ export default function Home() {
           FEATURES / WHY CHOOSE US
       ═══════════════════════════════════════ */}
       <section className="py-20 px-4" style={{ background: 'linear-gradient(180deg, #FFF8F3 0%, #FFF4EC 100%)' }}>
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
           <div className="text-center mb-16">
             <motion.span
               initial={{ opacity: 0, scale: 0.9 }}
@@ -1060,7 +1075,7 @@ export default function Home() {
           HOW IT WORKS — Animated SVG connector
       ═══════════════════════════════════════ */}
       <section className="py-20 px-4 bg-white" ref={howItWorksRef}>
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto px-4 md:px-8 lg:px-16">
           <div className="text-center mb-16">
             <motion.span
               initial={{ opacity: 0, scale: 0.9 }}
@@ -1202,56 +1217,30 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════
-          STATS — Enhanced animated counters
-      ═══════════════════════════════════════ */}
-      {settings.sectionStatsEnabled !== false && <section className="py-16 px-4 relative overflow-hidden" style={{ background: '#1C1917' }}>
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-0 w-full h-1"
-            style={{ background: 'linear-gradient(90deg, transparent, var(--color-primary), transparent)' }} />
-          <motion.div
-            animate={{ opacity: [0.04, 0.08, 0.04] }}
-            transition={{ duration: 5, repeat: Infinity }}
-            className="absolute inset-0"
-            style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.08) 1px, transparent 0)', backgroundSize: '40px 40px' }}
-          />
-        </div>
-        <div className="max-w-5xl mx-auto relative">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {STATS.map((stat, i) => {
-              const StatIcon = stat.icon;
-              return (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 24, scale: 0.9 }}
-                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.12, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                  whileHover={{ scale: 1.05 }}
-                  className="text-center relative"
-                >
-                  <div className="relative w-12 h-12 mx-auto mb-3">
-                    <motion.div
-                      animate={{ scale: [1, 1.5, 1], opacity: [0.4, 0, 0.4] }}
-                      transition={{ duration: 3, repeat: Infinity, delay: i * 0.5, ease: 'easeOut' }}
-                      className="absolute inset-0 rounded-xl will-change-transform"
-                      style={{ background: stat.color }}
-                    />
-                    <div
-                      className="relative w-12 h-12 rounded-xl flex items-center justify-center"
-                      style={{ background: `${stat.color}18`, border: `1px solid ${stat.color}30` }}
-                    >
-                      <StatIcon className="w-5 h-5" style={{ color: stat.color }} />
-                    </div>
-                  </div>
-                  <div className="text-4xl md:text-5xl font-black font-display mb-1 tabular-nums"
-                    style={{ color: stat.color }}>
-                    <AnimatedCounter target={stat.value} suffix={stat.suffix} />
-                  </div>
-                  <p className="text-gray-500 text-sm font-semibold">{stat.label}</p>
-                </motion.div>
-              );
-            })}
+      {/* Stats Bar */}
+      {settings.sectionStatsEnabled !== false && <section className="py-12 bg-gray-50/50">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+            {STATS.map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center"
+              >
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: `${stat.color}10`, color: stat.color }}>
+                  <stat.icon className="w-5 h-5" />
+                </div>
+                <div className="text-2xl font-black text-gray-900">
+                  <AnimatedCounter target={stat.value} suffix={stat.suffix} />
+                </div>
+                <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">
+                  {stat.label}
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>}
@@ -1260,7 +1249,7 @@ export default function Home() {
           TESTIMONIALS
       ═══════════════════════════════════════ */}
       {settings.sectionTestimonialsEnabled !== false && <section className="py-20 px-4" style={{ background: 'linear-gradient(180deg, #FAFAFA 0%, #FFF4EC 100%)' }}>
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
           <div className="text-center mb-12">
             <motion.span
               initial={{ opacity: 0, scale: 0.9 }}

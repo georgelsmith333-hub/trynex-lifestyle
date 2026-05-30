@@ -294,18 +294,19 @@ export function RealisticShirt({
           sheen={0.55}
           sheenRoughness={0.75}
           sheenColor={garmentColor}
-          envMapIntensity={0.55}
+          envMapIntensity={0.5}
         />
       </mesh>
       {frontTex && frontGeo && (
         <mesh geometry={frontGeo} scale={1.003}>
-          <meshStandardMaterial
-            map={frontTex} transparent roughness={0.72} metalness={0}
-            normalMap={FABRIC_MAPS?.normal ?? null}
-            normalScale={new THREE.Vector2(0.12, 0.12)}
-            depthWrite={false} alphaTest={0.02} side={THREE.FrontSide}
-            envMapIntensity={0.3}
-          />
+            <meshStandardMaterial
+              map={frontTex} transparent roughness={0.72} metalness={0}
+              normalMap={FABRIC_MAPS?.normal ?? null}
+              normalScale={new THREE.Vector2(0.12, 0.12)}
+              depthWrite={false} alphaTest={0.02} side={THREE.FrontSide}
+              envMapIntensity={0.3}
+              blending={THREE.MultiplyBlending}
+            />
         </mesh>
       )}
       {backTex && backGeo && (
@@ -316,6 +317,7 @@ export function RealisticShirt({
             normalScale={new THREE.Vector2(0.12, 0.12)}
             depthWrite={false} alphaTest={0.02} side={THREE.FrontSide}
             envMapIntensity={0.3}
+            blending={THREE.MultiplyBlending}
           />
         </mesh>
       )}
@@ -376,7 +378,7 @@ function GarmentGLB({
             sheen={0.55}
             sheenRoughness={0.75}
             sheenColor={garmentColor}
-            envMapIntensity={0.55}
+            envMapIntensity={0.5}
           />
         </mesh>
       ))}
@@ -388,6 +390,7 @@ function GarmentGLB({
             normalScale={new THREE.Vector2(0.12, 0.12)}
             depthWrite={false} alphaTest={0.02} side={THREE.FrontSide}
             envMapIntensity={0.3}
+            blending={THREE.MultiplyBlending}
           />
         </mesh>
       )}
@@ -399,6 +402,7 @@ function GarmentGLB({
             normalScale={new THREE.Vector2(0.12, 0.12)}
             depthWrite={false} alphaTest={0.02} side={THREE.FrontSide}
             envMapIntensity={0.3}
+            blending={THREE.MultiplyBlending}
           />
         </mesh>
       )}

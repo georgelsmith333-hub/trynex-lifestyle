@@ -656,8 +656,9 @@ export default function ProductDetail() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-12">
-            {/* Images */}
-            <div className="space-y-4">
+            {/* Images Column */}
+            <div className="relative flex flex-col gap-4">
+              {/* Desktop Image Viewer */}
               <motion.div
                 ref={imageContainerRef}
                 className="relative aspect-square rounded-3xl overflow-hidden bg-white border border-gray-100 shadow-sm group cursor-zoom-in hidden md:block"
@@ -665,9 +666,6 @@ export default function ProductDetail() {
                 onMouseEnter={() => setZoomActive(true)}
                 onMouseLeave={() => setZoomActive(false)}
                 onMouseMove={handleImageMouseMove}
-                style={zoomActive && displayImage ? {
-                  cursor: 'zoom-in',
-                } : undefined}
               >
                 {displayImage ? (
                   <img
@@ -700,35 +698,36 @@ export default function ProductDetail() {
                     Only {product.stock} left!
                   </div>
                 )}
-                {!zoomActive && displayImage && (
-                  <div className="absolute bottom-4 right-4 px-2.5 py-1.5 rounded-lg bg-black/50 text-white text-xs font-semibold flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                    <ZoomIn className="w-3.5 h-3.5" /> Hover to zoom
-                  </div>
-                )}
+              </motion.div>
+
+              {/* Mobile Image Stack */}
+              <div className="flex flex-col md:hidden gap-4">
                 {(() => {
                   const rawImages = [product.imageUrl, ...(product.images || [])].filter(Boolean) as string[];
                   const allImages = [...new Set(rawImages)];
-                  if (allImages.length <= 1 || zoomActive) return null;
-                  const activeIdx = Math.max(0, activeImage ? allImages.indexOf(activeImage) : 0);
-                  const goPrev = (e: React.MouseEvent) => { e.stopPropagation(); setActiveImage(allImages[(activeIdx - 1 + allImages.length) % allImages.length]); };
-                  const goNext = (e: React.MouseEvent) => { e.stopPropagation(); setActiveImage(allImages[(activeIdx + 1) % allImages.length]); };
                   return (
                     <>
-                      <button onClick={goPrev} aria-label="Previous image"
-                        className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full flex items-center justify-center bg-white/90 hover:bg-white border border-gray-200 shadow-md opacity-0 group-hover:opacity-100 transition-all hover:scale-105 active:scale-95">
-                        <ArrowLeft className="w-4 h-4 text-gray-700" />
-                      </button>
-                      <button onClick={goNext} aria-label="Next image"
-                        className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full flex items-center justify-center bg-white/90 hover:bg-white border border-gray-200 shadow-md opacity-0 group-hover:opacity-100 transition-all hover:scale-105 active:scale-95">
-                        <ArrowRight className="w-4 h-4 text-gray-700" />
-                      </button>
-                      <span className="absolute bottom-4 left-4 z-10 px-2.5 py-1 rounded-full text-[11px] font-bold bg-black/55 text-white backdrop-blur-sm pointer-events-none">
-                        {activeIdx + 1} / {allImages.length}
-                      </span>
+                      <div className="aspect-square rounded-3xl overflow-hidden bg-white border border-gray-100">
+                         <img src={displayImage} className="w-full h-full object-cover" alt={product.name} />
+                      </div>
+                      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide snap-x">
+                        {allImages.map((img, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setActiveImage(img)}
+                            className={cn(
+                              "relative w-20 h-20 shrink-0 rounded-xl overflow-hidden border-2 transition-all snap-start",
+                              activeImage === img || (!activeImage && i === 0) ? "border-orange-500 scale-95" : "border-transparent"
+                            )}
+                          >
+                            <img src={img} className="w-full h-full object-cover" alt="" />
+                          </button>
+                        ))}
+                      </div>
                     </>
                   );
                 })()}
-              </motion.div>
+              </div>
 
               {(() => {
                 const rawImages = [product.imageUrl, ...(product.images || [])].filter(Boolean) as string[];
@@ -834,31 +833,30 @@ export default function ProductDetail() {
                 );
               })()}
 
-              {(() => {
-                const rawImages = [product.imageUrl, ...(product.images || [])].filter(Boolean) as string[];
-                const allImages = [...new Set(rawImages)];
-                if (allImages.length <= 1) return null;
-                const activeIdx = Math.max(0, activeImage ? allImages.indexOf(activeImage) : 0);
-                return (
-                  <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scroll-snap-x">
-                    {allImages.map((img, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => setActiveImage(img)}
-                        aria-label={`View image ${idx + 1}`}
-                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden shrink-0 transition-all scroll-snap-item"
-                        style={{
-                          border: idx === activeIdx ? '3px solid #E85D04' : '2px solid #e5e7eb',
-                          opacity: idx === activeIdx ? 1 : 0.6,
-                          transform: idx === activeIdx ? 'scale(1.05)' : 'scale(1)',
-                        }}
-                      >
-                        <img src={img} alt={`${product.name} ${idx + 1}`} className="w-full h-full object-cover" loading="lazy" width="80" height="80" />
-                      </button>
-                    ))}
-                  </div>
-                );
-              })()}
+              <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1 sm:mx-0 sm:px-0">
+                {(() => {
+                  const rawImages = [product.imageUrl, ...(product.images || [])].filter(Boolean) as string[];
+                  const allImages = [...new Set(rawImages)];
+                  if (allImages.length <= 1) return null;
+                  return allImages.map((img, i) => (
+                    <button
+                      key={i}
+                      onClick={() => { setActiveImage(img); setZoomActive(false); }}
+                      className={cn(
+                        "relative w-14 sm:w-16 aspect-square shrink-0 rounded-xl overflow-hidden border-2 transition-all",
+                        activeImage === img || (!activeImage && i === 0) ? "border-orange-500 scale-95" : "border-gray-100 hover:border-orange-200"
+                      )}
+                    >
+                      <img
+                        src={img}
+                        alt={`${product.name} thumb ${i + 1}`}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </button>
+                  ));
+                })()}
+              </div>
             </div>
 
             {/* Product Info */}
@@ -977,23 +975,20 @@ export default function ProductDetail() {
                     key={sizeShake}
                     animate={sizeShake > 0 ? { x: [0, -10, 10, -10, 10, -6, 6, 0] } : { x: 0 }}
                     transition={{ duration: 0.45, ease: "easeInOut" }}
-                    className="flex flex-wrap gap-2"
+                    className="flex flex-wrap gap-2 sm:gap-3"
                   >
                     {product.sizes.map((size: string) => (
                       <button
                         key={size}
                         onClick={() => { setSelectedSize(size === selectedSize ? "" : size); setSizeShake(0); }}
                         className={cn(
-                          "px-4 py-2.5 rounded-xl font-bold text-sm transition-all",
+                          "min-w-[48px] px-3 py-2.5 rounded-xl font-bold text-sm transition-all border",
                           selectedSize === size
-                            ? "text-white shadow-md"
-                            : sizeShake > 0
-                              ? "bg-orange-50 text-orange-600 border border-orange-300 hover:border-orange-400"
-                              : "bg-white text-gray-700 border border-gray-200 hover:border-orange-400 hover:text-orange-600"
+                            ? "border-primary text-white"
+                            : "bg-white text-gray-700 border-gray-200 hover:border-orange-400"
                         )}
                         style={selectedSize === size ? {
                           background: 'linear-gradient(135deg, #E85D04, #FB8500)',
-                          border: '1px solid transparent',
                           boxShadow: '0 4px 12px rgba(232,93,4,0.3)'
                         } : undefined}
                       >
@@ -1054,7 +1049,7 @@ export default function ProductDetail() {
                     key={colorShake}
                     animate={colorShake > 0 ? { x: [0, -10, 10, -10, 10, -6, 6, 0] } : { x: 0 }}
                     transition={{ duration: 0.45, ease: "easeInOut" }}
-                    className="flex flex-wrap gap-3"
+                    className="flex flex-wrap gap-3 sm:gap-4"
                   >
                     {product.colors.map((color: string, colorIdx: number) => {
                       const variantMeta = (product.colorVariants ?? []).find((v: any) => v.name === color);

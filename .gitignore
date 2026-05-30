@@ -19,3 +19,9 @@ out/
 .repl*
 *.log
 .DS_Store
+
+# Documentation and Reports
+*.pdf
+TRYNEX_*.md
+*AUDIT*.md
+*REPORT*.md

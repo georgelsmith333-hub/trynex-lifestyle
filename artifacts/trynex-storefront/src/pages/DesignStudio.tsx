@@ -348,28 +348,23 @@ export default function DesignStudio() {
   const [showProductPicker, setShowProductPicker] = useState(false);
   const [productSearch, setProductSearch] = useState("");
   const [productPickerCategory, setProductPickerCategory] = useState<"all" | DesignProduct["category"]>("all");
-  /* Mobile tool panel (bottom sheet) */
+
   const [mobileToolOpen, setMobileToolOpen] = useState(false);
-  const [selectedSize, setSelectedSize] = useState("M");
-  const [quantity, setQuantity] = useState(1);
-  const [showPrintZone, setShowPrintZone] = useState(true);
-  const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const [isRemoving, setIsRemoving] = useState(false);
-  /** Describes the current stage of background removal for the in-canvas overlay */
-  const [removeBgPhase, setRemoveBgPhase] = useState<"server" | "model-download" | "processing" | null>(null);
-  // null = loading, true = configured (remove.bg API key set), false = not configured (will use in-browser fallback)
-  const [removeBgServerConfigured, setRemoveBgServerConfigured] = useState<boolean | null>(null);
-  useEffect(() => {
-    fetch(getApiUrl("/api/remove-bg/status"))
-      .then(r => r.json())
-      .then((d: { configured: boolean }) => setRemoveBgServerConfigured(d.configured))
-      .catch(() => setRemoveBgServerConfigured(false));
+  const [mobileTab, setMobileTab] = useState<"product" | "color" | "edit">("product");
+
+  const isMobile = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    return window.innerWidth < 768;
   }, []);
 
-  /* View mode + active face */
   const [viewMode, setViewMode] = useState<"2d" | "3d">("2d");
   const [activeFace, setActiveFace] = useState<Face>("front");
   const supports3D = useMemo(() => hasWebGL2(), []);
+
+  const effectiveViewMode = isMobile ? "2d" : viewMode;
+
+  const [selectedSize, setSelectedSize] = useState("M");
+  const [quantity, setQuantity] = useState(1);
 
   // Mug-only: 2D editor exposes a 3-way print-mode selector
   // (Side 1 / Side 2 / Wrap) instead of the apparel "Front / Back" tabs.
@@ -456,6 +451,13 @@ export default function DesignStudio() {
   const canvasZoomRef = useRef(1);
   const canvasPanRef = useRef({ x: 0, y: 0 });
   const isCanvasZoomed = canvasZoom !== 1 || canvasPan.x !== 0 || canvasPan.y !== 0;
+
+  /* ── UI state ──────────────────────────────────────────────── */
+  const [showPrintZone, setShowPrintZone] = useState(true);
+  const [isRemoving, setIsRemoving] = useState(false);
+  const [removeBgPhase, setRemoveBgPhase] = useState<string | null>(null);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [removeBgServerConfigured, setRemoveBgServerConfigured] = useState<boolean | undefined>(undefined);
 
   /* ── Draft persistence (localStorage + cloud) ──────────────── */
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
@@ -837,7 +839,7 @@ export default function DesignStudio() {
   //   waterbottle → procedural tumbler shape with wrap texture
   //   hoodie / longsleeve / cap → real product PHOTO as 3D billboard (photorealistic)
   // Only flat template zones (sleeve/neck) have no 3D equivalent.
-  const effectiveSupports3D = supports3D && !isFlatZone;
+  const effectiveSupports3D = supports3D && !isFlatZone && !isMobile;
 
   /* ── Cap dark-color mockup override ─────────────────
      Cap images are full-photo (no transparent cutout), so SVG
@@ -2565,7 +2567,7 @@ export default function DesignStudio() {
                   willChange: "transform",
                 }}
               >
-                {viewMode === "3d" && effectiveSupports3D ? (
+                {effectiveViewMode === "3d" && effectiveSupports3D ? (
                   <div className="absolute inset-0" data-testid="viewer-3d">
                     <Suspense fallback={
                       <div className="w-full h-full flex items-center justify-center text-gray-500">
@@ -2585,7 +2587,7 @@ export default function DesignStudio() {
                           printZone: isMugProduct ? MUG_SIDE_PZ : (selectedProduct.printZoneBack ?? selectedProduct.printZone),
                           baseHeight: selectedProduct.baseHeight,
                         } : undefined}
-                        activeFace={activeFace}
+                        activeFace={activeFace as "front" | "back" | undefined}
                         isWrapMode={isWrapMode}
                       />
                     </Suspense>
@@ -2833,46 +2835,48 @@ export default function DesignStudio() {
                 </motion.svg>
 
                 {/* ── MAIN HORIZONTAL TOOLBAR ── */}
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1 p-1.5 rounded-2xl border border-gray-200 shadow-xl z-30"
-                  style={{ background: "rgba(255,255,255,0.9)", backdropFilter: "blur(12px)" }}>
-                  <button onClick={() => fileInputRef.current?.click()} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Upload Image">
-                    <Upload className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
-                    <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600">Upload</span>
-                  </button>
-                  <button onClick={() => {
-                      const layer: TextLayer = {
-                        id: uid(), name: "New text", type: "text", visible: true, locked: false,
-                        transform: { ...ZERO_TRANSFORM },
-                        text: "Your text", fontFamily: FONT_FAMILIES[0].value,
-                        fontWeight: 700, fontStyle: "normal", fontSize: 40, color: "#111111",
-                      };
-                      addLayer(layer);
-                      setActiveTab("text");
-                    }} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Add Text">
-                    <Type className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
-                    <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600">Text</span>
-                  </button>
-                  <button onClick={() => setActiveTab("templates")} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Templates">
-                    <Sparkles className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
-                    <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600">Templates</span>
-                  </button>
-                  <button onClick={() => setActiveTab("layers")} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Layers">
-                    <LayersIcon className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
-                    <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600">Layers</span>
-                  </button>
-                  <div className="w-px h-8 bg-gray-200 mx-1" />
-                  <button onClick={undo} disabled={!canUndo} className="p-2 rounded-xl hover:bg-white transition-colors disabled:opacity-30 group" title="Undo">
-                    <Undo2 className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
-                  </button>
-                  <button onClick={redo} disabled={!canRedo} className="p-2 rounded-xl hover:bg-white transition-colors disabled:opacity-30 group" title="Redo">
-                    <Redo2 className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
-                  </button>
-                  <div className="w-px h-8 bg-gray-200 mx-1" />
-                  <button onClick={clearDraft} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-red-50 transition-colors group" title="Clear All">
-                    <Trash2 className="w-4 h-4 text-gray-400 group-hover:text-red-500" />
-                    <span className="text-[10px] font-bold text-gray-400 group-hover:text-red-600">Clear</span>
-                  </button>
-                </div>
+                {!isMobile && (
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1 p-1.5 rounded-2xl border border-gray-200 shadow-xl z-30"
+                    style={{ background: "rgba(255,255,255,0.9)", backdropFilter: "blur(12px)" }}>
+                    <button onClick={() => fileInputRef.current?.click()} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Upload Image">
+                      <Upload className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
+                      <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600">Upload</span>
+                    </button>
+                    <button onClick={() => {
+                        const layer: TextLayer = {
+                          id: uid(), name: "New text", type: "text", visible: true, locked: false,
+                          transform: { ...ZERO_TRANSFORM },
+                          text: "Your text", fontFamily: FONT_FAMILIES[0].value,
+                          fontWeight: 700, fontStyle: "normal", fontSize: 40, color: "#111111",
+                        };
+                        addLayer(layer);
+                        setActiveTab("text");
+                      }} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Add Text">
+                      <Type className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
+                      <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600">Text</span>
+                    </button>
+                    <button onClick={() => setActiveTab("templates")} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Templates">
+                      <Sparkles className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
+                      <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600">Templates</span>
+                    </button>
+                    <button onClick={() => setActiveTab("layers")} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Layers">
+                      <LayersIcon className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
+                      <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600">Layers</span>
+                    </button>
+                    <div className="w-px h-8 bg-gray-200 mx-1" />
+                    <button onClick={undo} disabled={!canUndo} className="p-2 rounded-xl hover:bg-white transition-colors disabled:opacity-30 group" title="Undo">
+                      <Undo2 className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
+                    </button>
+                    <button onClick={redo} disabled={!canRedo} className="p-2 rounded-xl hover:bg-white transition-colors disabled:opacity-30 group" title="Redo">
+                      <Redo2 className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
+                    </button>
+                    <div className="w-px h-8 bg-gray-200 mx-1" />
+                    <button onClick={clearDraft} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-red-50 transition-colors group" title="Clear All">
+                      <Trash2 className="w-4 h-4 text-gray-400 group-hover:text-red-500" />
+                      <span className="text-[10px] font-bold text-gray-400 group-hover:text-red-600">Clear</span>
+                    </button>
+                  </div>
+                )}
 
                 {/* Empty state — drop zone (drag on desktop, tap on mobile) */}
                 {layers.length === 0 && (

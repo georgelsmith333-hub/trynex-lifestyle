@@ -7,9 +7,15 @@ import { ObjectStorageService } from "../lib/objectStorage";
 
 const router: IRouter = Router();
 
-router.get("/healthz", (_req, res) => {
+router.get("/healthz", async (_req, res) => {
   res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-  const data = HealthCheckResponse.parse({ status: "ok" });
+  let dbStatus = "ok";
+  try {
+    await db.execute(sql`SELECT 1`);
+  } catch (err) {
+    dbStatus = "error";
+  }
+  const data = HealthCheckResponse.parse({ status: "ok", db: dbStatus });
   res.json(data);
 });
 

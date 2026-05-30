@@ -68,6 +68,7 @@ const SETTINGS_KEYS = [
   "heroTypewriterPhrases",
   // Blog categories (JSON array stored as string)
   "blogCategories",
+  "homepage_layout",
 ];
 
 // Trim-aware fallback: treats null, undefined, or empty/whitespace-only strings as "missing"
@@ -185,6 +186,7 @@ async function buildSettings(map: Record<string, string | null>) {
     seoTwitterHandle: map["seoTwitterHandle"] ?? "",
     // Hero typewriter phrases — newline-separated string; blank means use frontend defaults
     heroTypewriterPhrases: map["heroTypewriterPhrases"] ?? "",
+    homepage_layout: map["homepage_layout"] ?? "[]",
     // NOTE: removeBgApiKey is intentionally NOT included here — it is server-only secret
     // NOTE: metaCapiToken is intentionally NOT included — server-only
     // Safe boolean flag: tells admin UI whether the token is configured (no secret exposed)
@@ -234,6 +236,27 @@ router.get("/settings", async (req, res) => {
       return;
     }
     res.status(500).json({ error: "internal_error", message: "Failed to get settings" });
+  }
+});
+
+/** Public endpoint — Get single setting by key */
+router.get("/settings/:key", async (req, res) => {
+  try {
+    const { key } = req.params;
+    // Don't expose secrets via this endpoint
+    if (key === "removeBgApiKey" || key === "metaCapiToken") {
+      res.status(403).json({ error: "forbidden", message: "Cannot access secret keys" });
+      return;
+    }
+    const [row] = await db.select().from(settingsTable).where(eq(settingsTable.key, key));
+    if (!row) {
+      res.status(404).json({ error: "not_found", message: "Setting not found" });
+      return;
+    }
+    res.json({ key: row.key, value: row.value });
+  } catch (err) {
+    req.log.error({ err }, "Failed to get setting");
+    res.status(500).json({ error: "internal_error", message: "Failed to get setting" });
   }
 });
 
@@ -381,6 +404,54 @@ router.post("/admin/test-email", requireAdmin, async (req, res) => {
   } catch (err) {
     req.log.error({ err }, "Email connection test failed");
     res.status(500).json({ success: false, error: "Internal error testing email" });
+  }
+});
+
+/** Admin: partial update of any settings */
+router.patch("/admin/settings", requireAdmin, async (req, res) => {
+  try {
+    const changedKeys = Object.keys(req.body).filter(k => SETTINGS_KEYS.includes(k));
+    if (changedKeys.length === 0) {
+      res.status(400).json({ error: "validation_error", message: "No valid settings provided" });
+      return;
+    }
+    
+    const beforeRows = await db.select().from(settingsTable);
+    const beforeMap: Record<string, string | null> = {};
+    for (const row of beforeRows) beforeMap[row.key] = row.value;
+    
+    const afterMap: Record<string, string | null> = {};
+    for (const key of changedKeys) {
+      const value = req.body[key]?.toString() ?? null;
+      if (key === "removeBgApiKey" && !value?.trim()) continue;
+      if (key === "metaCapiToken" && !value?.trim()) continue;
+      
+      await db.insert(settingsTable).values({ key, value }).onConflictDoUpdate({
+        target: settingsTable.key,
+        set: { value, updatedAt: new Date() },
+      });
+      afterMap[key] = value;
+    }
+    
+    if (Object.keys(afterMap).length > 0) {
+      const before: Record<string, string | null> = {};
+      for (const k of Object.keys(afterMap)) before[k] = beforeMap[k] ?? null;
+      logActivity({ 
+        action: "update", 
+        entity: "setting", 
+        entityId: 0, 
+        entityName: "Site Settings (Partial)", 
+        before: before as unknown as Record<string, unknown>, 
+        after: afterMap as unknown as Record<string, unknown>, 
+        adminId: getAdminId(req) 
+      });
+      await invalidatePublicSettingsCache();
+    }
+    
+    res.json({ success: true });
+  } catch (err) {
+    req.log.error({ err }, "Failed to update settings");
+    res.status(500).json({ error: "internal_error", message: "Failed to update settings" });
   }
 });
 

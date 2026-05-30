@@ -513,13 +513,16 @@ export default function TrackOrder() {
                   {(displayOrder.courierName || displayOrder.trackingNumber) && (
                     <div className="px-6 sm:px-8 py-5 border-t border-gray-100">
                       <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Shipping Info</p>
-                      <div className="flex items-center gap-4 p-4 rounded-2xl bg-blue-50 border border-blue-100">
-                        <Truck className="w-6 h-6 shrink-0 text-blue-500" />
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 p-4 rounded-2xl bg-blue-50 border border-blue-100">
+                        <Truck className="w-6 h-6 shrink-0 text-blue-500 hidden sm:block" />
                         <div className="flex-1">
-                          <p className="font-black text-sm text-blue-700">
-                            {displayOrder.courierName || 'Courier Partner'}
-                          </p>
-                          <p className="text-xs text-blue-600 mt-0.5">
+                          <div className="flex items-center gap-3">
+                            <Truck className="w-5 h-5 shrink-0 text-blue-500 sm:hidden" />
+                            <p className="font-black text-sm text-blue-700">
+                              {displayOrder.courierName || 'Courier Partner'}
+                            </p>
+                          </div>
+                          <p className="text-xs text-blue-600 mt-1 ml-8 sm:ml-0">
                             Tracking: {displayOrder.trackingNumber || 'Processing...'}
                           </p>
                         </div>
@@ -578,16 +581,20 @@ export default function TrackOrder() {
                   {paymentInfo && (displayOrder.paymentMethod as string) !== 'cod' && (
                     <div className="px-6 sm:px-8 py-5 border-t border-gray-100">
                       <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Payment Status</p>
-                      <div className="flex items-center gap-4 p-4 rounded-2xl"
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 p-4 rounded-2xl"
                         style={{ background: paymentInfo.bg, border: `1px solid ${paymentInfo.border}` }}>
-                        {PayIcon && <PayIcon className="w-6 h-6 shrink-0" style={{ color: paymentInfo.color }} />}
-                        <div className="flex-1">
-                          <p className="font-black text-sm" style={{ color: paymentInfo.color }}>{paymentInfo.label}</p>
-                          <p className="text-xs text-gray-500 mt-0.5">{paymentInfo.desc}</p>
+                        <div className="flex items-center gap-3 flex-1">
+                          {PayIcon && <PayIcon className="w-6 h-6 shrink-0" style={{ color: paymentInfo.color }} />}
+                          <div className="flex-1">
+                            <p className="font-black text-sm" style={{ color: paymentInfo.color }}>{paymentInfo.label}</p>
+                            <p className="text-xs text-gray-500 mt-0.5">{paymentInfo.desc}</p>
+                          </div>
                         </div>
-                        {(displayOrder.paymentStatus as string) === 'verified' && (
-                          <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
-                        )}
+                        <div className="flex items-center justify-between sm:justify-end gap-3 mt-3 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-gray-100 sm:border-transparent">
+                          {(displayOrder.paymentStatus as string) === 'verified' && (
+                            <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
+                          )}
+                        </div>
                       </div>
                       {(displayOrder.paymentStatus as string) === 'submitted' && (
                         <p className="text-xs text-gray-400 mt-2 flex items-center gap-1.5">

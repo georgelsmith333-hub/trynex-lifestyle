@@ -40,6 +40,7 @@ const MENU_GROUPS: MenuGroup[] = [
     label: "Content",
     items: [
       { name: "Page Designer", href: "/admin/designer", icon: Paintbrush },
+      { name: "Page Builder", href: "/admin/page-builder", icon: LayoutDashboard },
       { name: "Blog Posts", href: "/admin/blog", icon: FileText },
       { name: "Reviews", href: "/admin/reviews", icon: Star },
       { name: "SEO", href: "/admin/seo", icon: Search },

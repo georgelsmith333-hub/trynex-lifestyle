@@ -1,0 +1,50 @@
+2026-05-30T22:50:56.66908428Z [migrate] skip  0012_social_login_indexes.sql (already applied)
+2026-05-30T22:50:56.66908662Z [migrate] skip  0013_order_messages.sql (already applied)
+2026-05-30T22:50:56.66908891Z [migrate] skip  0014_color_variants.sql (already applied)
+2026-05-30T22:50:56.66909138Z [migrate] skip  0015_safe_product_columns.sql (already applied)
+2026-05-30T22:50:56.6690937Z [migrate] skip  0016_notifications.sql (already applied)
+2026-05-30T22:50:56.66909604Z [migrate] Done — 0 new migration(s) applied, 17 total.
+2026-05-30T22:51:02.808649867Z {"level":40,"time":1780181462807,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","envVar":"GOOGLE_CLIENT_ID","msg":"[env] Optional env var not set: GOOGLE_CLIENT_ID (Google OAuth 2.0 client ID (social login))"}
+2026-05-30T22:51:02.900053234Z (node:71) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+2026-05-30T22:51:02.900078176Z In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+2026-05-30T22:51:02.900083386Z 
+2026-05-30T22:51:02.900088926Z To prepare for this change:
+2026-05-30T22:51:02.900094527Z - If you want the current behavior, explicitly use 'sslmode=verify-full'
+2026-05-30T22:51:02.900097757Z - If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+2026-05-30T22:51:02.900100717Z 
+2026-05-30T22:51:02.900104527Z See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+2026-05-30T22:51:02.900120348Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-05-30T22:51:02.903866665Z {"level":40,"time":1780181462808,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","envVar":"FACEBOOK_APP_ID","msg":"[env] Optional env var not set: FACEBOOK_APP_ID (Facebook App ID (social login))"}
+2026-05-30T22:51:02.903882906Z {"level":30,"time":1780181462808,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","present":["DATABASE_URL","ADMIN_JWT_SECRET","JWT_SECRET","ADMIN_PASSWORD","ALLOWED_ORIGINS","PORT","R2_ACCOUNT_ID","R2_ACCESS_KEY_ID","R2_SECRET_ACCESS_KEY","R2_BUCKET","R2_PUBLIC_BASE_URL"],"storageBackend":"r2","msg":"[env] All required env vars confirmed present"}
+2026-05-30T22:51:02.903890426Z {"level":30,"time":1780181462901,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","port":10000,"msg":"Server listening"}
+2026-05-30T22:51:02.903894107Z {"level":30,"time":1780181462901,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","backend":"r2","msg":"[storage] active backend: r2"}
+2026-05-30T22:51:03.556311487Z {"level":30,"time":1780181463556,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","appliedCount":0,"totalFiles":17,"msg":"Database migrations complete"}
+2026-05-30T22:51:03.602039777Z {"level":30,"time":1780181463601,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","req":{"id":1,"method":"HEAD","url":"/"},"res":{"statusCode":404},"responseTime":28,"msg":"request completed"}
+2026-05-30T22:51:05.106537953Z {"level":30,"time":1780181465106,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","count":20,"msg":"Seeded blog posts"}
+2026-05-30T22:51:05.222776334Z {"level":30,"time":1780181465222,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","msg":"[scheduler] Starting in-process scheduler"}
+2026-05-30T22:51:05.223053241Z {"level":30,"time":1780181465222,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","msg":"[scheduler] Scheduler active (daily@9am, low-stock@10am&8pm, pending@every2h BST, keep-alive@14min)"}
+2026-05-30T22:51:05.229014902Z {"level":30,"time":1780181465228,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","req":{"id":2,"method":"GET","url":"/api/healthz"},"res":{"statusCode":200},"responseTime":4,"msg":"request completed"}
+2026-05-30T22:51:05.231027724Z {"level":30,"time":1780181465230,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","req":{"id":3,"method":"GET","url":"/api/healthz"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+2026-05-30T22:51:05.963649099Z ==> Your service is live 🎉
+2026-05-30T22:51:06.128450999Z ==> 
+2026-05-30T22:51:06.133576717Z ==> ///////////////////////////////////////////////////////////
+2026-05-30T22:51:06.135549102Z ==> 
+2026-05-30T22:51:06.138318316Z ==> Available at your primary URL https://trynex-api.onrender.com
+2026-05-30T22:51:06.141106Z ==> 
+2026-05-30T22:51:06.14330479Z ==> ///////////////////////////////////////////////////////////
+2026-05-30T22:51:10.231105226Z {"level":30,"time":1780181470230,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","req":{"id":4,"method":"GET","url":"/api/healthz"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+2026-05-30T22:51:15.231030949Z {"level":30,"time":1780181475230,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","req":{"id":5,"method":"GET","url":"/api/healthz"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+2026-05-30T22:51:20.231144952Z {"level":30,"time":1780181480230,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","req":{"id":6,"method":"GET","url":"/api/healthz"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+2026-05-30T22:51:25.231558924Z {"level":30,"time":1780181485231,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","req":{"id":7,"method":"GET","url":"/api/healthz"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+2026-05-30T22:51:30.231749452Z {"level":30,"time":1780181490231,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","req":{"id":8,"method":"GET","url":"/api/healthz"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+2026-05-30T22:51:35.224808377Z {"level":30,"time":1780181495224,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","req":{"id":9,"method":"GET","url":"/api/healthz"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+2026-05-30T22:51:35.230596458Z {"level":30,"time":1780181495230,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","req":{"id":10,"method":"GET","url":"/api/healthz"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+2026-05-30T22:51:40.232011919Z {"level":30,"time":1780181500231,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","req":{"id":11,"method":"GET","url":"/api/healthz"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+2026-05-30T22:51:45.232386497Z {"level":30,"time":1780181505232,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","req":{"id":12,"method":"GET","url":"/api/healthz"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+2026-05-30T22:51:50.232089354Z {"level":30,"time":1780181510231,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","req":{"id":13,"method":"GET","url":"/api/healthz"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+2026-05-30T22:51:55.298089607Z {"level":30,"time":1780181515297,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","req":{"id":14,"method":"GET","url":"/api/healthz"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+2026-05-30T22:52:00.231793835Z {"level":30,"time":1780181520231,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","req":{"id":15,"method":"GET","url":"/api/healthz"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+2026-05-30T22:52:05.233395006Z {"level":30,"time":1780181525233,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","req":{"id":16,"method":"GET","url":"/api/healthz"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+2026-05-30T22:52:05.2347857Z {"level":30,"time":1780181525234,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","req":{"id":17,"method":"GET","url":"/api/healthz"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+2026-05-30T22:52:05.346598823Z {"level":30,"time":1780181525346,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","req":{"id":18,"method":"GET","url":"/api/healthz"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+2026-05-30T22:52:05.395761491Z {"level":30,"time":1780181525395,"pid":71,"hostname":"srv-d7b774mdqaus73carp70-hibernate-895b647f-v8r99","status":200,"msg":"[scheduler] Keep-alive ping sent"}
