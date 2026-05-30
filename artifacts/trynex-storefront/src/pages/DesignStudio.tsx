@@ -20,7 +20,7 @@ import {
   Undo2, Redo2, Lock, Unlock, ChevronUp, ChevronDown,
   Image as ImageIcon, Plus, Check, CloudUpload,
   Box, Image as Image2D, Search, X, ChevronRight,
-  Palette, Package,
+  Palette, Package, FlipHorizontal, Copy, Crosshair,
 } from "lucide-react";
 import {
   PRODUCTS, type DesignProduct, GarmentSVG, FlatZoneSVG,
@@ -2938,6 +2938,85 @@ export default function DesignStudio() {
                 </div>
               )}
             </div>
+
+            {/* ═══════ MOBILE: Quick-actions bar (shown when layer selected) ═══════
+                Lets users rotate, flip, centre, duplicate and delete without opening
+                the full bottom-sheet tool panel. Only rendered on screens < lg. */}
+            {selectedLayer && viewMode === "2d" && (
+              <div className="lg:hidden mt-2 flex items-center gap-1.5 px-3 py-2.5 rounded-2xl"
+                style={{ background: "white", border: "1px solid #e9e5e0", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
+                {/* Layer type badge */}
+                <span className="text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-lg mr-1 shrink-0"
+                  style={{ background: selectedLayer.type === "text" ? "#ede9fe" : "#fff4ee", color: selectedLayer.type === "text" ? "#7c3aed" : "#E85D04" }}>
+                  {selectedLayer.type === "text" ? "TXT" : "IMG"}
+                </span>
+                <div className="flex items-center gap-1 flex-1 justify-around">
+                  {/* Rotate CCW */}
+                  <button
+                    aria-label="Rotate counter-clockwise"
+                    onClick={() => updateLayer(selectedLayer.id, l => ({ ...l, transform: { ...l.transform, rotation: l.transform.rotation - 15 } }), true)}
+                    className="p-2 rounded-xl active:scale-95 transition-transform"
+                    style={{ background: "#f3f4f6" }}>
+                    <RotateCcw className="w-4 h-4 text-gray-600" />
+                  </button>
+                  {/* Rotate CW */}
+                  <button
+                    aria-label="Rotate clockwise"
+                    onClick={() => updateLayer(selectedLayer.id, l => ({ ...l, transform: { ...l.transform, rotation: l.transform.rotation + 15 } }), true)}
+                    className="p-2 rounded-xl active:scale-95 transition-transform"
+                    style={{ background: "#f3f4f6" }}>
+                    <RotateCw className="w-4 h-4 text-gray-600" />
+                  </button>
+                  {/* Flip H — image layers only */}
+                  {selectedLayer.type === "image" && (
+                    <button
+                      aria-label="Flip horizontal"
+                      onClick={() => updateLayer(selectedLayer.id, l => l.type === "image" ? ({ ...l, flipH: !(l as any).flipH }) as any : l, true)}
+                      className="p-2 rounded-xl active:scale-95 transition-transform"
+                      style={{ background: "#f3f4f6" }}>
+                      <FlipHorizontal className="w-4 h-4 text-gray-600" />
+                    </button>
+                  )}
+                  {/* Centre on print zone */}
+                  <button
+                    aria-label="Centre layer"
+                    onClick={() => updateLayer(selectedLayer.id, l => ({ ...l, transform: { ...l.transform, x: 0, y: 0 } }), true)}
+                    className="p-2 rounded-xl active:scale-95 transition-transform"
+                    style={{ background: "#f3f4f6" }}>
+                    <Crosshair className="w-4 h-4 text-gray-600" />
+                  </button>
+                  {/* Duplicate */}
+                  <button
+                    aria-label="Duplicate layer"
+                    onClick={() => {
+                      const dup: Layer = { ...selectedLayer, id: uid(), name: `${selectedLayer.name} copy`, face: selectedLayer.face ?? activeFace };
+                      const next = [...layers, dup];
+                      commitLayers(next);
+                      setSelectedLayerId(dup.id);
+                    }}
+                    className="p-2 rounded-xl active:scale-95 transition-transform"
+                    style={{ background: "#f3f4f6" }}>
+                    <Copy className="w-4 h-4 text-gray-600" />
+                  </button>
+                  {/* Delete */}
+                  <button
+                    aria-label="Delete layer"
+                    onClick={() => removeLayer(selectedLayer.id)}
+                    className="p-2 rounded-xl active:scale-95 transition-transform"
+                    style={{ background: "#fef2f2" }}>
+                    <Trash2 className="w-4 h-4 text-red-500" />
+                  </button>
+                </div>
+                {/* More tools shortcut */}
+                <button
+                  onClick={() => { setMobileToolOpen(true); setActiveTab("layers"); }}
+                  className="shrink-0 flex items-center gap-1 px-3 py-2 rounded-xl text-[10px] font-bold text-white ml-1"
+                  style={{ background: "linear-gradient(135deg,#E85D04,#FB8500)", boxShadow: "0 3px 8px rgba(232,93,4,0.3)" }}>
+                  <Wand2 className="w-3.5 h-3.5" />
+                  <span>More</span>
+                </button>
+              </div>
+            )}
           </div>
 
           {/* ═══════ MOBILE: Floating "Edit Tools" FAB ═══════ */}
