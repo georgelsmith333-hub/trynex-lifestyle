@@ -1580,21 +1580,6 @@ export default function Checkout() {
 
                 <TrustBadges />
 
-                <div className="sticky bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-md border-t border-gray-100 lg:relative lg:p-0 lg:bg-transparent lg:backdrop-blur-none lg:border-none z-50">
-                  <button
-                    type="submit"
-                    form="checkout-form"
-                    disabled={isPending}
-                    className="btn-glow w-full py-4 rounded-xl font-bold text-white text-base flex items-center justify-center gap-2 disabled:opacity-50 disabled:transform-none"
-                    style={{ background: 'linear-gradient(135deg, #E85D04, #FB8500)', boxShadow: '0 6px 24px rgba(232,93,4,0.35)' }}
-                  >
-                    {isPending ? (
-                      <><span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> {serverWaking ? "Waking up server…" : "Placing Order..."}</>
-                    ) : (
-                      <>Proceed to {walletChoice === 'bkash' ? 'bKash' : walletChoice === 'nagad' ? 'Nagad' : 'uPay'} Payment <ArrowRight className="w-5 h-5" /></>
-                    )}
-                  </button>
-                </div>
 
                 {serverWaking && isPending && (
                   <div className="mt-3 p-3 rounded-xl text-xs font-semibold text-amber-700 flex items-start gap-2"
