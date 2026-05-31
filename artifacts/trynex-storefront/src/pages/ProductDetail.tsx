@@ -509,14 +509,8 @@ export default function ProductDetail() {
       hasError = true;
     }
 
-    // Require color selection when colors are available
-    if (product.colors && product.colors.length > 0 && !selectedColor) {
-      setColorShake(n => n + 1);
-      hasError = true;
-    }
-
     if (hasError) {
-      const firstError = document.getElementById(selectedSize ? "color-picker" : "size-picker");
+      const firstError = document.getElementById("size-picker");
       firstError?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
@@ -1104,9 +1098,6 @@ export default function ProductDetail() {
                       );
                     })}
                   </motion.div>
-                  {colorShake > 0 && !selectedColor && (
-                    <p className="text-xs font-bold text-red-500 mt-2 ml-1">Please select a color</p>
-                  )}
                   {product.colors.some((c: string) => (product.colorVariants ?? []).find((v: any) => v.name === c)?.inStock === false) && (
                     <p className="text-xs text-gray-400 mt-1.5">Crossed-out colors are currently out of stock.</p>
                   )}
