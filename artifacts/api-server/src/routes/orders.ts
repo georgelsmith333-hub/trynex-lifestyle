@@ -1221,10 +1221,10 @@ const updateOrderStatusHandler = async (req: Request, res: Response) => {
       const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
       createCustomerNotification(
         order.customerId,
-        `Order Status: ${statusLabel}`,
-        `Your order #${order.orderNumber} is now ${status}.`,
+        `Order ${statusLabel}: #${order.orderNumber}`,
+        `Your order #${order.orderNumber} is now ${statusLabel.toLowerCase()}. Tap to view details.`,
         "order_status",
-        `/account`
+        `/account?order=${order.orderNumber}`
       ).catch((err) => logger.warn({ err }, "Failed to create customer notification (fire-and-forget)"));
     }
   } catch (err) {
@@ -1263,10 +1263,10 @@ const updatePaymentStatusHandler = async (req: Request, res: Response) => {
       const pStatusLabel = paymentStatus.charAt(0).toUpperCase() + paymentStatus.slice(1);
       createCustomerNotification(
         order.customerId,
-        `Payment Status: ${pStatusLabel}`,
-        `The payment status for your order #${order.orderNumber} has been updated to ${paymentStatus}.`,
+        `Payment Update: #${order.orderNumber}`,
+        `Your payment for order #${order.orderNumber} is now ${pStatusLabel.toLowerCase()}. Tap to view details.`,
         "payment_status",
-        `/account`
+        `/account?order=${order.orderNumber}`
       ).catch((err) => logger.warn({ err }, "Failed to create customer notification (fire-and-forget)"));
     }
   } catch (err) {
