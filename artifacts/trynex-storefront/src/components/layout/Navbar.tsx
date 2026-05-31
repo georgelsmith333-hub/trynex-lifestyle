@@ -108,21 +108,27 @@ export function Navbar() {
   }, [location]);
 
   useEffect(() => {
-    if (!isAuthenticated) { 
-      setUnreadMessages(0); 
+    // Guard: only poll when a customer is logged in. Clear all counts on logout.
+    if (!isAuthenticated) {
+      setUnreadMessages(0);
       setUnreadNotificationsCount(0);
       setNotifications([]);
-      return; 
+      return;
     }
     const token = localStorage.getItem("trynex_customer_token");
     if (!token) return;
+
+    // Mounted flag prevents state updates on unmounted component (avoids React
+    // "Can't perform a React state update on an unmounted component" warnings
+    // during hot-reload and fast navigation).
+    let mounted = true;
 
     const fetchUnread = async () => {
       try {
         const resp = await fetch("/api/orders/my/messages/unread-count", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (resp.ok) {
+        if (resp.ok && mounted) {
           const data = await resp.json();
           setUnreadMessages(data.count || 0);
         }
@@ -137,28 +143,34 @@ export function Navbar() {
           }),
           fetch("/api/notifications?limit=5", {
             headers: { Authorization: `Bearer ${token}` },
-          })
+          }),
         ]);
 
-        if (unreadResp.ok) {
+        if (unreadResp.ok && mounted) {
           const data = await unreadResp.json();
           setUnreadNotificationsCount(data.count || 0);
         }
 
-        if (listResp.ok) {
+        if (listResp.ok && mounted) {
           const data = await listResp.json();
           setNotifications(data.notifications || []);
         }
       } catch {}
     };
 
+    // Initial fetch on mount / re-auth, then poll every 30 s.
+    // Single consolidated interval — no duplicate timers.
     fetchUnread();
     fetchNotifications();
     const interval = setInterval(() => {
       fetchUnread();
       fetchNotifications();
     }, 30000);
-    return () => clearInterval(interval);
+
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
   }, [isAuthenticated]);
 
   const markNotificationsAsRead = async () => {
