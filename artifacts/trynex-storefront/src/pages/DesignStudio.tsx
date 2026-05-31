@@ -884,6 +884,32 @@ export default function DesignStudio() {
   // When no layers exist yet, always show so the user knows where to upload.
   const effectiveShowPrintZone = showPrintZone && (selectedLayerId !== null || currentFaceLayers.length === 0);
 
+  // Print-safe warning: true when any layer on the current face extends outside the print zone.
+  const anyLayerOutsidePZ = useMemo(() => {
+    if (!pz || currentFaceLayers.length === 0) return false;
+    return currentFaceLayers.some(l => {
+      if (!l.visible) return false;
+      const { x, y, scale, scaleX = 1, scaleY = 1 } = l.transform;
+      let hw: number, hh: number;
+      if (l.type === "image") {
+        const imgL = l as ImageLayer;
+        const aspect = imgL.naturalH / Math.max(imgL.naturalW, 1);
+        hw = (pz.w * scale * scaleX) / 2;
+        hh = (pz.w * scale * scaleY * aspect) / 2;
+      } else {
+        const txtL = l as TextLayer;
+        hw = txtL.fontSize * scale * scaleX * 3;
+        hh = txtL.fontSize * scale * scaleY * 1.5;
+      }
+      return (
+        x - hw < pz.x ||
+        x + hw > pz.x + pz.w ||
+        y - hh < pz.y ||
+        y + hh > pz.y + pz.h
+      );
+    });
+  }, [currentFaceLayers, pz]);
+
   /* ── Coord helpers ─────────────────────────────────── */
   const clientToSVG = useCallback((clientX: number, clientY: number) => {
     const svg = svgRef.current;
@@ -2984,6 +3010,15 @@ export default function DesignStudio() {
                   >
                     +
                   </button>
+                </div>
+              )}
+
+              {/* Print-safe warning — shown when any layer bleeds outside the print zone */}
+              {anyLayerOutsidePZ && viewMode === "2d" && (
+                <div className="mx-3 mb-1 flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-bold"
+                  style={{ background: "#fef2f2", border: "1.5px solid #fca5a5", color: "#dc2626" }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  Design extends outside print area — it will be cropped
                 </div>
               )}
 
