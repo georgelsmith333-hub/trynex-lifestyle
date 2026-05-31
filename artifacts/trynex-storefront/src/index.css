@@ -740,3 +740,194 @@
   }
   .animate-slide-in { animation: slide-in-right 0.25s ease-out; }
   
+/* ═══════════════════════════════════════════════════
+   PREMIUM EFFECTS 2026 — TryNex Full Polish Sprint
+   ═══════════════════════════════════════════════════ */
+
+/* Custom scrollbar — branded orange */
+:root { scrollbar-width: thin; scrollbar-color: rgba(232,93,4,0.38) transparent; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(232,93,4,0.35); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(232,93,4,0.62); }
+
+/* Glassmorphism panel */
+.glass-panel {
+  background: rgba(255,255,255,0.78);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.85);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.07), inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+/* Animated gradient background */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.animate-gradient { background-size: 300% 300%; animation: gradient-shift 8s ease infinite; }
+
+/* Slow spin for decorative elements */
+@keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.animate-spin-slow { animation: spin-slow 12s linear infinite; }
+
+/* Breathe pulse */
+@keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+.animate-breathe { animation: breathe 3.5s ease-in-out infinite; }
+
+/* Orange glow text */
+.text-glow-orange {
+  color: var(--color-primary);
+  text-shadow: 0 0 20px rgba(232,93,4,0.52), 0 0 40px rgba(232,93,4,0.22);
+}
+
+/* Premium hero product card */
+.hero-card {
+  background: linear-gradient(145deg, #FFF8F3 0%, #FFF0E0 100%);
+  border: 1.5px solid rgba(232,93,4,0.13);
+  box-shadow:
+    0 10px 40px rgba(56,30,8,0.11),
+    0 2px 8px rgba(56,30,8,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.92);
+  transition: all 0.45s cubic-bezier(0.22,1,0.36,1);
+}
+.hero-card:hover {
+  border-color: rgba(232,93,4,0.28);
+  box-shadow:
+    0 22px 60px rgba(56,30,8,0.18),
+    0 4px 16px rgba(232,93,4,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.92);
+  transform: translateY(-6px);
+}
+
+/* Category card hover shadow */
+.cat-card {
+  border: 1.5px solid #ede9e4;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.055), 0 1px 4px rgba(0,0,0,0.035);
+  transition: box-shadow 0.4s ease, border-color 0.35s ease;
+}
+.cat-card:hover {
+  box-shadow: 0 20px 60px rgba(0,0,0,0.13), 0 6px 20px rgba(232,93,4,0.1);
+  border-color: rgba(232,93,4,0.25);
+}
+
+/* Gradient top-accent on category card */
+.cat-card-accent-top {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.group:hover .cat-card-accent-top { opacity: 1; }
+
+/* Big decorative number behind feature card */
+.feature-num-bg {
+  position: absolute;
+  right: -0.25rem;
+  top: -1.75rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 9rem;
+  font-weight: 900;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.045;
+  letter-spacing: -0.04em;
+  transition: opacity 0.4s ease;
+}
+.group:hover .feature-num-bg { opacity: 0.09; }
+
+/* Badge ping animation */
+@keyframes badge-ping {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232,93,4,0.38); }
+  50% { box-shadow: 0 0 0 8px rgba(232,93,4,0); }
+}
+.badge-ping { animation: badge-ping 2.6s ease-in-out infinite; }
+
+/* Mesh section background */
+.section-mesh {
+  background:
+    radial-gradient(circle at 18% 22%, rgba(232,93,4,0.045) 0%, transparent 48%),
+    radial-gradient(circle at 82% 78%, rgba(251,133,0,0.04) 0%, transparent 48%),
+    #FAFAFA;
+}
+
+/* Sheen sweep effect on hover */
+@keyframes sheen-sweep {
+  0% { transform: translateX(-160%) skewX(-18deg); }
+  100% { transform: translateX(260%) skewX(-18deg); }
+}
+.sheen-hover { position: relative; overflow: hidden; }
+.sheen-hover::after {
+  content: '';
+  position: absolute; top: 0; bottom: 0; left: 0;
+  width: 42%;
+  background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
+  transform: translateX(-160%) skewX(-18deg);
+  pointer-events: none;
+}
+.sheen-hover:hover::after { animation: sheen-sweep 0.7s ease forwards; }
+
+/* Stronger card lift utility */
+.card-lift {
+  transition: transform 0.42s cubic-bezier(0.22,1,0.36,1), box-shadow 0.42s cubic-bezier(0.22,1,0.36,1);
+}
+.card-lift:hover {
+  transform: translateY(-10px) scale(1.015);
+  box-shadow: 0 28px 64px rgba(0,0,0,0.14), 0 8px 24px rgba(232,93,4,0.1);
+}
+
+/* Animated orange dot for "live" indicators */
+@keyframes dot-live {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232,93,4,0.6); }
+  70% { box-shadow: 0 0 0 8px rgba(232,93,4,0); }
+}
+.dot-live {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  animation: dot-live 1.6s ease-in-out infinite;
+}
+
+/* ── Step number glow for HOW IT WORKS ── */
+.step-num {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 900;
+  font-size: 4.5rem;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  color: var(--color-primary);
+  opacity: 0.1;
+  position: absolute;
+  right: 1rem;
+  top: 0.5rem;
+  pointer-events: none;
+  user-select: none;
+  transition: opacity 0.35s ease;
+}
+.group:hover .step-num { opacity: 0.18; }
+
+/* ── Announcement bar shimmer ── */
+@keyframes announcement-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ── Section heading gradient accent ── */
+.heading-accent {
+  display: inline;
+  background: linear-gradient(135deg, var(--color-primary), #FB8500 50%, #FFB347);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Premium stat number ── */
+.stat-number {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: var(--color-primary);
+}
