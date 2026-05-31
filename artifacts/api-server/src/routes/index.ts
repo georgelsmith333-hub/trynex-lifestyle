@@ -31,6 +31,7 @@ import uptimeRobotRouter from "./uptimeRobot";
 import dbClusterRouter from "./dbCluster";
 import orderMessagesRouter from "./orderMessages";
 import notificationsRouter from "./notifications";
+import mockupsRouter from "./mockups";
 
 const router: IRouter = Router();
 
@@ -66,5 +67,6 @@ router.use(uptimeRobotRouter);
 router.use(dbClusterRouter);
 router.use(orderMessagesRouter);
 router.use(notificationsRouter);
+router.use(mockupsRouter);
 
 export default router;
