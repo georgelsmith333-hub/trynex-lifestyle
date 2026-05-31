@@ -59,7 +59,7 @@ router.post("/admin/mockups", requireAdmin, async (req: Request, res: Response) 
 
 router.patch("/admin/mockups/:id", requireAdmin, async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id, 10);
+    const id = parseInt(req.params.id as string, 10);
     if (!Number.isFinite(id)) {
       res.status(400).json({ error: "validation_error", message: "Invalid id" });
       return;
@@ -90,7 +90,7 @@ router.patch("/admin/mockups/:id", requireAdmin, async (req: Request, res: Respo
 
 router.delete("/admin/mockups/:id", requireAdmin, async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id, 10);
+    const id = parseInt(req.params.id as string, 10);
     if (!Number.isFinite(id)) {
       res.status(400).json({ error: "validation_error", message: "Invalid id" });
       return;
