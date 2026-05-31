@@ -900,9 +900,18 @@ export default function Home() {
                   >
                     <div className="relative aspect-[4/5] overflow-hidden bg-gray-50">
                       {cat.icon === "custom" ? (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center p-6 bg-gradient-to-br from-orange-500 to-primary text-white">
-                          <Sparkles className="w-12 h-12 mb-4 animate-pulse" />
-                          <span className="font-black text-xl">Design Studio</span>
+                        <div className="absolute inset-0 bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
+                          <img
+                            src="/mockups/white-tshirt-front.png"
+                            alt="Design Studio"
+                            className="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-110 drop-shadow-lg"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-orange-500/15 to-transparent pointer-events-none" />
+                          <div className="absolute top-3 right-3 pointer-events-none">
+                            <span className="bg-orange-500 text-white text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest shadow-md">
+                              ✦ Studio
+                            </span>
+                          </div>
                         </div>
                       ) : (
                         <img 

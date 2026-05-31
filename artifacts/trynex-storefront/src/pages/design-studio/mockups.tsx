@@ -5,21 +5,29 @@
 ════════════════════════════════════════════════════════ */
 import { useMemo } from "react";
 
-const tshirtFront       = "/mockups/white-tshirt-front.png";
-const tshirtBack        = "/mockups/white-tshirt-back.png";
-const tshirtFrontDark   = "/mockups/black-tshirt-front.png";
-const tshirtBackDark    = "/mockups/black-tshirt-back.png";
-const longsleeveFront   = "/mockups/white-longsleeve-front.png";
-const longsleeveBack    = "/mockups/white-longsleeve-back.png";
-const hoodieFront       = "/mockups/white-hoodie-front.png";
-const hoodieBack        = "/mockups/white-hoodie-back.png";
-const hoodieFrontDark   = "/mockups/black-hoodie-front.png";
-const hoodieBackDark    = "/mockups/black-hoodie-back.png";
-const mugFront          = "/mockups/white-mug-front.png";
-const mugFrontDark      = "/mockups/black-mug-front.png";
-const capFront          = "/mockups/white-cap-front.png";
-const capFrontDark      = "/mockups/black-cap-front.png";
-const waterBottleFront  = "/mockups/white-waterbottle-front.png";
+const tshirtFront          = "/mockups/white-tshirt-front.png";
+const tshirtBack           = "/mockups/white-tshirt-back.png";
+const tshirtFrontDark      = "/mockups/black-tshirt-front.png";
+const tshirtBackDark       = "/mockups/black-tshirt-back.png";
+const tshirtFrontCutout    = "/mockups/white-tshirt-front-cutout.png";
+const tshirtBackCutout     = "/mockups/white-tshirt-back-cutout.png";
+const longsleeveFront      = "/mockups/white-longsleeve-front.png";
+const longsleeveBack       = "/mockups/white-longsleeve-back.png";
+const longsleeveFrontCutout = "/mockups/white-longsleeve-front-cutout.png";
+const longsleeveBackCutout  = "/mockups/white-longsleeve-back-cutout.png";
+const hoodieFront          = "/mockups/white-hoodie-front.png";
+const hoodieBack           = "/mockups/white-hoodie-back.png";
+const hoodieFrontDark      = "/mockups/black-hoodie-front.png";
+const hoodieBackDark       = "/mockups/black-hoodie-back.png";
+const hoodieFrontCutout    = "/mockups/white-hoodie-front-cutout.png";
+const hoodieBackCutout     = "/mockups/white-hoodie-back-cutout.png";
+const mugFront             = "/mockups/white-mug-front.png";
+const mugFrontDark         = "/mockups/black-mug-front.png";
+const mugFrontCutout       = "/mockups/white-mug-front-cutout.png";
+const capFront             = "/mockups/white-cap-front.png";
+const capFrontDark         = "/mockups/black-cap-front.png";
+const waterBottleFront     = "/mockups/white-waterbottle-front.png";
+const waterBottleCutout    = "/mockups/white-waterbottle-cutout.png";
 
 /** A single available garment colour (name + hex). */
 export interface ProductColor { name: string; hex: string }
@@ -251,14 +259,14 @@ export const PRODUCTS: DesignProduct[] = [
 
 export const BASE_BY_CATEGORY: Record<
   DesignProduct["category"],
-  { front: string; back?: string; darkFront?: string; darkBack?: string } | undefined
+  { front: string; back?: string; darkFront?: string; darkBack?: string; frontCutout?: string; backCutout?: string } | undefined
 > = {
-  tshirt:      { front: tshirtFront, back: tshirtBack, darkFront: tshirtFrontDark, darkBack: tshirtBackDark },
-  longsleeve:  { front: longsleeveFront, back: longsleeveBack },
-  hoodie:      { front: hoodieFront, back: hoodieBack, darkFront: hoodieFrontDark, darkBack: hoodieBackDark },
-  mug:         { front: mugFront, back: mugFront, darkFront: mugFrontDark, darkBack: mugFrontDark },
+  tshirt:      { front: tshirtFront, back: tshirtBack, darkFront: tshirtFrontDark, darkBack: tshirtBackDark, frontCutout: tshirtFrontCutout, backCutout: tshirtBackCutout },
+  longsleeve:  { front: longsleeveFront, back: longsleeveBack, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout },
+  hoodie:      { front: hoodieFront, back: hoodieBack, darkFront: hoodieFrontDark, darkBack: hoodieBackDark, frontCutout: hoodieFrontCutout, backCutout: hoodieBackCutout },
+  mug:         { front: mugFront, back: mugFront, darkFront: mugFrontDark, darkBack: mugFrontDark, frontCutout: mugFrontCutout },
   cap:         { front: capFront, darkFront: capFrontDark },
-  waterbottle: { front: waterBottleFront },
+  waterbottle: { front: waterBottleFront, frontCutout: waterBottleCutout },
 };
 
 let _filterUid = 0;
@@ -340,6 +348,16 @@ export function GarmentSVG({
   const applyTint = useBase && isDark && !hasRealDarkImage;
   const filterId = useMemo(() => nextFilterId(), [product.id, face, tintHex]);
 
+  // When colour-tinting, switch to the transparent-background cutout PNG so the
+  // SVG filter only affects actual garment pixels — never the white rectangle
+  // that surrounds the garment in the regular photo.  Non-tinted views (white or
+  // near-black garments that use a dedicated dark photo) keep the full photo as-is.
+  const imageSrc = (() => {
+    if (!applyTint || !base) return src;
+    if (face === "back" && base.backCutout) return base.backCutout;
+    return base.frontCutout ?? src;
+  })();
+
   const isMugRightSide = isMug && (face === "back" || mugMode === "side2");
 
   // When the mug photo is horizontally flipped (right-side view), the print zone
@@ -381,10 +399,14 @@ export function GarmentSVG({
         </radialGradient>
       </defs>
 
+      {/* Warm neutral background so cutout garments sit on a soft surface
+          rather than exposing the raw canvas colour behind the garment. */}
+      <rect width={1000} height={1000} fill="#f8f5f2" style={{ pointerEvents: "none" }} />
+
       {isMugRightSide ? (
         <g transform="translate(1000,0) scale(-1,1)">
           <image
-            href={src}
+            href={imageSrc}
             x={0} y={0} width={1000} height={1000}
             preserveAspectRatio="xMidYMid meet"
             filter={applyTint ? `url(#${filterId})` : undefined}
@@ -393,7 +415,7 @@ export function GarmentSVG({
         </g>
       ) : (
         <image
-          href={src}
+          href={imageSrc}
           x={0} y={0} width={1000} height={1000}
           preserveAspectRatio="xMidYMid meet"
           filter={applyTint ? `url(#${filterId})` : undefined}

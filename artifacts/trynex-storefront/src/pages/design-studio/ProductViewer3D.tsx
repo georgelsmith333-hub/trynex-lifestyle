@@ -292,11 +292,14 @@ export default function ProductViewer3D({
             />
           )}
 
-          {/* ── WATER BOTTLE — procedural 3D cylinder with design wrap ── */}
+          {/* ── WATER BOTTLE — photorealistic photo mockup + design overlay ── */}
           {product.category === "waterbottle" && (
-            <WaterBottleBody
-              wrapTex={bottleFrontTex}
-              garmentColor={garmentColor}
+            <PhotoMockupMesh
+              frontPhotoSrc={product.frontSrc}
+              frontTex={bottleFrontTex}
+              activeFace="front"
+              planeW={2.20}
+              planeH={2.80}
             />
           )}
 
