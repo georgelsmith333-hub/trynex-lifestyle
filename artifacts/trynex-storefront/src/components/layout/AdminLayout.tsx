@@ -3,7 +3,7 @@ import {
   LayoutDashboard, Package, ShoppingCart, Settings, LogOut, Menu, X,
   FileText, Users, HardDrive, Sparkles, Star, Code2, BookOpen, Paintbrush,
   GitBranch, Gift, Layers, History, Shield, Search, Tag, Share2, Mail,
-  ChevronRight, DatabaseZap,
+  ChevronRight, DatabaseZap, Images,
 } from "lucide-react";
 import { useAdminLogout, useAdminMe } from "@workspace/api-client-react";
 import React, { useEffect, useState } from "react";
@@ -39,6 +39,7 @@ const MENU_GROUPS: MenuGroup[] = [
   {
     label: "Content",
     items: [
+      { name: "Mockup Gallery", href: "/admin/mockups", icon: Images },
       { name: "Page Designer", href: "/admin/designer", icon: Paintbrush },
       { name: "Page Builder", href: "/admin/page-builder", icon: LayoutDashboard },
       { name: "Blog Posts", href: "/admin/blog", icon: FileText },
