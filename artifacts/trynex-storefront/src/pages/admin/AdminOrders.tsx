@@ -3,7 +3,7 @@ import { AdminLayout } from "@/components/layout/AdminLayout";
 import { useListOrders } from "@workspace/api-client-react";
 import { ItemPreviewThumb, PreviewLightbox, type PreviewItem } from "@/components/ZoomableImage";
 import { Loader } from "@/components/ui/Loader";
-import { getAuthHeaders, formatPrice, getApiUrl } from "@/lib/utils";
+import { getAuthHeaders, formatPrice, getApiUrl, resolveImageUrl } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { getListOrdersQueryKey } from "@workspace/api-client-react";
@@ -221,7 +221,15 @@ export default function AdminOrders() {
       try { parsed = JSON.parse(item.customNote ?? "{}"); } catch { /* ignore */ }
       if (parsed && typeof parsed === "object" && parsed.hamper) return;
       const isStudio = !!item.isStudio || !!(parsed && parsed.studioDesign);
-      const src = (item.imageUrl as string) || (item.productImage as string) || '';
+
+      // Studio thumbnails: data: URLs (canvas snapshots) and /objects/ paths (R2) are
+      // used as-is so the custom design image shows correctly in the admin table.
+      // Regular catalog images go through resolveImageUrl to normalise relative paths.
+      const rawSrc: string = (item.imageUrl as string | null) ?? (item.productImage as string | null) ?? '';
+      const isDataUrl = rawSrc.startsWith('data:');
+      const isR2Path  = rawSrc.includes('/objects/');
+      const src = (isDataUrl || isR2Path) ? rawSrc : resolveImageUrl(rawSrc);
+
       if (src) {
         mainIdx.set(idx, items.length);
         items.push({ src, alt: `${item.productName} preview`, isStudio });
