@@ -45,13 +45,21 @@ function addCfAsyncFalse(html: string): string {
     .join("");
 }
 
+function injectBuildMeta(html: string): string {
+  const hash = process.env.VITE_BUILD_HASH || new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
+  return html.replace(
+    /<meta name="theme-color"/,
+    `<meta name="build" content="${hash}" />\n    <meta name="theme-color"`
+  );
+}
+
 const cfDisableRocketLoader = {
   name: "trynex:disable-cf-rocket-loader",
   // Stamp the dev server response so dev iframes match production behaviour.
   transformIndexHtml: {
     order: "post" as const,
     handler(html: string): string {
-      return addCfAsyncFalse(html);
+      return addCfAsyncFalse(injectBuildMeta(html));
     },
   },
   // vite-plugin-pwa appends its <script id="vite-plugin-pwa:register-sw">
@@ -62,7 +70,7 @@ const cfDisableRocketLoader = {
       const fs = await import("node:fs/promises");
       const outFile = path.resolve(import.meta.dirname, "dist/index.html");
       const html = await fs.readFile(outFile, "utf8");
-      const patched = addCfAsyncFalse(html);
+      const patched = addCfAsyncFalse(injectBuildMeta(html));
       if (patched !== html) await fs.writeFile(outFile, patched, "utf8");
       // NOTE: Do NOT write dist/404.html here. When 404.html coexists with the
       // "/* /index.html 200" rule in _redirects, Cloudflare Pages silently
