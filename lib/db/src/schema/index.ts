@@ -295,3 +295,21 @@ export type OrderMessage = typeof orderMessagesTable.$inferSelect;
 export type InsertOrderMessage = typeof orderMessagesTable.$inferInsert;
 export type Notification = typeof notificationsTable.$inferSelect;
 export type InsertNotification = typeof notificationsTable.$inferInsert;
+
+export const mockupsTable = pgTable("mockups", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  productId: integer("product_id"),
+  productName: text("product_name"),
+  imageUrl: text("image_url").notNull(),
+  thumbUrl: text("thumb_url"),
+  tags: jsonb("tags").default([]),
+  isActive: boolean("is_active").notNull().default(true),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export type Mockup = typeof mockupsTable.$inferSelect;
+export type InsertMockup = typeof mockupsTable.$inferInsert;
