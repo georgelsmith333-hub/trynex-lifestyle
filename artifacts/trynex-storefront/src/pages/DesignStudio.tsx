@@ -21,6 +21,7 @@ import {
   Image as ImageIcon, Plus, Check, CloudUpload,
   Box, Image as Image2D, Search, X, ChevronRight,
   Palette, Package, FlipHorizontal, Copy, Crosshair,
+  Download, AlignLeft, AlignCenter, AlignRight,
 } from "lucide-react";
 import {
   PRODUCTS, type DesignProduct, GarmentSVG, FlatZoneSVG,
@@ -41,10 +42,15 @@ const ZERO_TRANSFORM: Transform = { x: 0, y: 0, scale: 1, rotation: 0, opacity: 
 
 type Face = "front" | "back" | "left-sleeve" | "right-sleeve" | "neck-label";
 interface BaseLayer { id: string; name: string; visible: boolean; locked: boolean; transform: Transform; face?: Face }
-interface ImageLayer extends BaseLayer { type: "image"; src: string; naturalW: number; naturalH: number }
+interface ImageLayer extends BaseLayer {
+  type: "image"; src: string; naturalW: number; naturalH: number;
+  flipH?: boolean; flipV?: boolean;
+  brightness?: number; contrast?: number; saturation?: number;
+}
 interface TextLayer extends BaseLayer {
   type: "text"; text: string; fontFamily: string; fontWeight: number;
   fontStyle: "normal" | "italic"; fontSize: number; color: string;
+  textAlign?: "left" | "center" | "right";
   strokeColor?: string; strokeWidth?: number;
   shadowOffsetX?: number; shadowOffsetY?: number; shadowBlur?: number; shadowColor?: string;
   letterSpacing?: number;
@@ -264,6 +270,18 @@ const PRODUCT_TAB_ICONS: Record<string, React.ReactNode> = {
     </svg>
   ),
 };
+
+/** Image filter presets for one-click style changes on image layers. */
+const FILTER_PRESETS = [
+  { name: "Original", brightness: 100, contrast: 100, saturation: 100 },
+  { name: "Vintage",  brightness: 88,  contrast: 82,  saturation: 60  },
+  { name: "B&W",      brightness: 100, contrast: 110, saturation: 0   },
+  { name: "Sepia",    brightness: 95,  contrast: 90,  saturation: 25  },
+  { name: "Bold",     brightness: 100, contrast: 130, saturation: 150 },
+  { name: "Warm",     brightness: 108, contrast: 100, saturation: 115 },
+  { name: "Cold",     brightness: 100, contrast: 108, saturation: 75  },
+  { name: "Faded",    brightness: 115, contrast: 80,  saturation: 55  },
+];
 
 /** The 3 most popular products shown as quick-switch tabs. */
 const QUICK_PRODUCT_IDS = ["tshirt", "hoodie", "longsleeve", "mug"] as const;
@@ -1782,6 +1800,39 @@ export default function DesignStudio() {
     return { cx, cy, w, h, x: cx - w / 2, y: cy - h / 2 };
   };
 
+  /* ── Export design as PNG ──────────────────────────── */
+  const handleExportPNG = useCallback(async () => {
+    if (layers.length === 0) {
+      toast({ title: "Nothing to export", description: "Add at least one layer first.", variant: "destructive" });
+      return;
+    }
+    const activeLayers = layers.filter(l => (l.face ?? "front") === activeFace) as unknown as ComposerLayer[];
+    if (activeLayers.length === 0) {
+      toast({ title: "No layers on this face", description: "Switch to the face with your design.", variant: "destructive" });
+      return;
+    }
+    try {
+      const canvas = document.createElement("canvas");
+      const garmentBase = BASE_BY_CATEGORY[selectedProduct.category];
+      const garmentSrc = garmentBase?.front ?? selectedProduct.frontSrc;
+      await composeGarmentMockup({
+        canvas,
+        garmentSrc,
+        garmentColor: selectedColor.hex,
+        printZone: isMugProduct ? MUG_SIDE_PZ : selectedProduct.printZone,
+        layers: activeLayers,
+        outSize: 1200,
+      });
+      const url = canvas.toDataURL("image/png");
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `trynex-${selectedProduct.id}-${activeFace}-design.png`;
+      a.click();
+    } catch {
+      toast({ title: "Export failed", description: "Could not generate image. Please try again.", variant: "destructive" });
+    }
+  }, [layers, selectedProduct, selectedColor, activeFace, isMugProduct, toast]);
+
   /* ── Add to cart ───────────────────────────────────── */
   const handleAddToCart = useCallback(async () => {
     if (layers.length === 0) {
@@ -2684,15 +2735,14 @@ export default function DesignStudio() {
                       .map(({ layer: l, geom: g }) => {
                       if (!l.visible) return null;
                       if (l.type === "image") {
-                        const lx = l as any;
-                        const hasCssFilter = (lx.brightness != null && lx.brightness !== 100) || (lx.contrast != null && lx.contrast !== 100) || (lx.saturation != null && lx.saturation !== 100);
+                        const hasCssFilter = (l.brightness != null && l.brightness !== 100) || (l.contrast != null && l.contrast !== 100) || (l.saturation != null && l.saturation !== 100);
                         const cssFilter = hasCssFilter
-                          ? `brightness(${lx.brightness ?? 100}%) contrast(${lx.contrast ?? 100}%) saturate(${lx.saturation ?? 100}%)`
+                          ? `brightness(${l.brightness ?? 100}%) contrast(${l.contrast ?? 100}%) saturate(${l.saturation ?? 100}%)`
                           : undefined;
                         // Build SVG transform: rotate + optional flip around image center
-                        const flipSX = lx.flipH ? -1 : 1;
-                        const flipSY = lx.flipV ? -1 : 1;
-                        const hasFlip = lx.flipH || lx.flipV;
+                        const flipSX = l.flipH ? -1 : 1;
+                        const flipSY = l.flipV ? -1 : 1;
+                        const hasFlip = l.flipH || l.flipV;
                         const imgTransform = hasFlip
                           ? `rotate(${l.transform.rotation}, ${g.cx}, ${g.cy}) translate(${g.cx}, ${g.cy}) scale(${flipSX}, ${flipSY}) translate(${-g.cx}, ${-g.cy})`
                           : `rotate(${l.transform.rotation}, ${g.cx}, ${g.cy})`;
@@ -2727,14 +2777,15 @@ export default function DesignStudio() {
                           )}
                           <text
                             data-layer-id={l.id}
-                            x={g.cx} y={g.cy}
+                            x={l.textAlign === "left" ? g.cx - g.w / 2 : l.textAlign === "right" ? g.cx + g.w / 2 : g.cx}
+                            y={g.cy}
                             fill={l.color}
                             fontFamily={l.fontFamily}
                             fontWeight={l.fontWeight}
                             fontStyle={l.fontStyle}
                             fontSize={l.fontSize * l.transform.scale}
                             opacity={l.transform.opacity}
-                            textAnchor="middle"
+                            textAnchor={l.textAlign === "left" ? "start" : l.textAlign === "right" ? "end" : "middle"}
                             dominantBaseline="middle"
                             letterSpacing={l.letterSpacing != null ? `${l.letterSpacing}em` : undefined}
                             stroke={l.strokeWidth ? (l.strokeColor ?? "#000000") : "none"}
@@ -2897,6 +2948,10 @@ export default function DesignStudio() {
                       <Redo2 className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
                     </button>
                     <div className="w-px h-8 bg-gray-200 mx-1" />
+                    <button onClick={handleExportPNG} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Export PNG">
+                      <Download className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
+                      <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600">Export</span>
+                    </button>
                     <button onClick={clearDraft} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-red-50 transition-colors group" title="Clear All">
                       <Trash2 className="w-4 h-4 text-gray-400 group-hover:text-red-500" />
                       <span className="text-[10px] font-bold text-gray-400 group-hover:text-red-600">Clear</span>
@@ -3362,6 +3417,32 @@ export default function DesignStudio() {
                           >I</button>
                         </div>
 
+                        {/* Text Alignment */}
+                        <div>
+                          <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5">Alignment</label>
+                          <div className="flex gap-1">
+                            {(["left", "center", "right"] as const).map(align => {
+                              const Icon = align === "left" ? AlignLeft : align === "center" ? AlignCenter : AlignRight;
+                              const isActive = (selectedLayer.textAlign ?? "center") === align;
+                              return (
+                                <button
+                                  key={align}
+                                  onClick={() => updateLayer(selectedLayer.id, l => l.type === "text" ? { ...l, textAlign: align } : l, true)}
+                                  className="flex-1 flex items-center justify-center py-2 rounded-lg border transition-all"
+                                  style={{
+                                    background: isActive ? "#fff4ee" : "white",
+                                    color: isActive ? "#E85D04" : "#6b7280",
+                                    borderColor: isActive ? "#fdd5b4" : "#e5e7eb",
+                                  }}
+                                  title={`Align ${align}`}
+                                >
+                                  <Icon className="w-3.5 h-3.5" />
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
                         {/* Letter Spacing */}
                         <div>
                           <div className="flex items-center justify-between mb-1">
@@ -3665,16 +3746,16 @@ export default function DesignStudio() {
                               <div className="text-[11px] font-bold text-gray-500 mb-1.5">Flip</div>
                               <div className="flex gap-2">
                                 <button
-                                  onClick={() => updateLayer(selectedLayer.id, l => l.type === "image" ? { ...l, flipH: !(l as any).flipH } as any : l, true)}
+                                  onClick={() => updateLayer(selectedLayer.id, l => l.type === "image" ? { ...l, flipH: !l.flipH } : l, true)}
                                   className="flex-1 py-1.5 rounded-lg text-xs font-bold border transition-all"
-                                  style={{ background: (selectedLayer as any).flipH ? "#fff4ee" : "white", borderColor: (selectedLayer as any).flipH ? "#E85D04" : "#e5e7eb", color: (selectedLayer as any).flipH ? "#E85D04" : "#6b7280" }}
+                                  style={{ background: (selectedLayer as ImageLayer).flipH ? "#fff4ee" : "white", borderColor: (selectedLayer as ImageLayer).flipH ? "#E85D04" : "#e5e7eb", color: (selectedLayer as ImageLayer).flipH ? "#E85D04" : "#6b7280" }}
                                 >
                                   ↔ Flip H
                                 </button>
                                 <button
-                                  onClick={() => updateLayer(selectedLayer.id, l => l.type === "image" ? { ...l, flipV: !(l as any).flipV } as any : l, true)}
+                                  onClick={() => updateLayer(selectedLayer.id, l => l.type === "image" ? { ...l, flipV: !l.flipV } : l, true)}
                                   className="flex-1 py-1.5 rounded-lg text-xs font-bold border transition-all"
-                                  style={{ background: (selectedLayer as any).flipV ? "#fff4ee" : "white", borderColor: (selectedLayer as any).flipV ? "#E85D04" : "#e5e7eb", color: (selectedLayer as any).flipV ? "#E85D04" : "#6b7280" }}
+                                  style={{ background: (selectedLayer as ImageLayer).flipV ? "#fff4ee" : "white", borderColor: (selectedLayer as ImageLayer).flipV ? "#E85D04" : "#e5e7eb", color: (selectedLayer as ImageLayer).flipV ? "#E85D04" : "#6b7280" }}
                                 >
                                   ↕ Flip V
                                 </button>
@@ -3684,43 +3765,69 @@ export default function DesignStudio() {
                             <div>
                               <div className="flex items-center justify-between mb-1">
                                 <label className="text-[11px] font-bold text-gray-500">Brightness</label>
-                                <span className="text-[11px] font-bold text-gray-600">{(selectedLayer as any).brightness ?? 100}%</span>
+                                <span className="text-[11px] font-bold text-gray-600">{(selectedLayer as ImageLayer).brightness ?? 100}%</span>
                               </div>
                               <input type="range" min="20" max="200" step="5"
-                                value={(selectedLayer as any).brightness ?? 100}
-                                onChange={e => updateLayer(selectedLayer.id, l => l.type === "image" ? { ...l, brightness: parseInt(e.target.value) } as any : l, false)}
+                                value={(selectedLayer as ImageLayer).brightness ?? 100}
+                                onChange={e => updateLayer(selectedLayer.id, l => l.type === "image" ? { ...l, brightness: parseInt(e.target.value) } : l, false)}
                                 onPointerUp={() => commitLayers(layers)}
                                 className="w-full h-1.5 rounded-full appearance-none bg-gray-100" style={{ accentColor: "#E85D04" }} />
                             </div>
                             <div>
                               <div className="flex items-center justify-between mb-1">
                                 <label className="text-[11px] font-bold text-gray-500">Contrast</label>
-                                <span className="text-[11px] font-bold text-gray-600">{(selectedLayer as any).contrast ?? 100}%</span>
+                                <span className="text-[11px] font-bold text-gray-600">{(selectedLayer as ImageLayer).contrast ?? 100}%</span>
                               </div>
                               <input type="range" min="20" max="200" step="5"
-                                value={(selectedLayer as any).contrast ?? 100}
-                                onChange={e => updateLayer(selectedLayer.id, l => l.type === "image" ? { ...l, contrast: parseInt(e.target.value) } as any : l, false)}
+                                value={(selectedLayer as ImageLayer).contrast ?? 100}
+                                onChange={e => updateLayer(selectedLayer.id, l => l.type === "image" ? { ...l, contrast: parseInt(e.target.value) } : l, false)}
                                 onPointerUp={() => commitLayers(layers)}
                                 className="w-full h-1.5 rounded-full appearance-none bg-gray-100" style={{ accentColor: "#E85D04" }} />
                             </div>
                             <div>
                               <div className="flex items-center justify-between mb-1">
                                 <label className="text-[11px] font-bold text-gray-500">Saturation</label>
-                                <span className="text-[11px] font-bold text-gray-600">{(selectedLayer as any).saturation ?? 100}%</span>
+                                <span className="text-[11px] font-bold text-gray-600">{(selectedLayer as ImageLayer).saturation ?? 100}%</span>
                               </div>
                               <input type="range" min="0" max="200" step="5"
-                                value={(selectedLayer as any).saturation ?? 100}
-                                onChange={e => updateLayer(selectedLayer.id, l => l.type === "image" ? { ...l, saturation: parseInt(e.target.value) } as any : l, false)}
+                                value={(selectedLayer as ImageLayer).saturation ?? 100}
+                                onChange={e => updateLayer(selectedLayer.id, l => l.type === "image" ? { ...l, saturation: parseInt(e.target.value) } : l, false)}
                                 onPointerUp={() => commitLayers(layers)}
                                 className="w-full h-1.5 rounded-full appearance-none bg-gray-100" style={{ accentColor: "#E85D04" }} />
                             </div>
                             <button
-                              onClick={() => updateLayer(selectedLayer.id, l => l.type === "image" ? { ...l, brightness: 100, contrast: 100, saturation: 100, flipH: false, flipV: false, transform: { ...l.transform, opacity: 1 } } as any : l, true)}
+                              onClick={() => updateLayer(selectedLayer.id, l => l.type === "image" ? { ...l, brightness: 100, contrast: 100, saturation: 100, flipH: false, flipV: false, transform: { ...l.transform, opacity: 1 } } : l, true)}
                               className="w-full py-2 rounded-lg text-xs font-bold border"
                               style={{ background: "white", borderColor: "#e5e7eb", color: "#6b7280" }}
                             >
                               Reset All Adjustments
                             </button>
+
+                            {/* Quick filter presets */}
+                            <div className="pt-2 border-t border-gray-100">
+                              <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Quick Presets</div>
+                              <div className="grid grid-cols-4 gap-1">
+                                {FILTER_PRESETS.map(preset => {
+                                  const isActive = (selectedLayer as ImageLayer).brightness === preset.brightness
+                                    && (selectedLayer as ImageLayer).contrast === preset.contrast
+                                    && (selectedLayer as ImageLayer).saturation === preset.saturation;
+                                  return (
+                                    <button
+                                      key={preset.name}
+                                      onClick={() => updateLayer(selectedLayer.id, l => l.type === "image" ? { ...l, brightness: preset.brightness, contrast: preset.contrast, saturation: preset.saturation } : l, true)}
+                                      className="py-1.5 rounded-lg text-[9px] font-black border transition-all"
+                                      style={{
+                                        background: isActive ? "#fff4ee" : "white",
+                                        color: isActive ? "#E85D04" : "#6b7280",
+                                        borderColor: isActive ? "#fdd5b4" : "#e5e7eb",
+                                      }}
+                                    >
+                                      {preset.name}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
                           </div>
                         )}
                       </div>

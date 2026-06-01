@@ -17,6 +17,9 @@ export interface ComposerImageLayer {
   transform: ComposerTransform;
   flipH?: boolean;
   flipV?: boolean;
+  brightness?: number;   // 0–200, default 100
+  contrast?: number;     // 0–200, default 100
+  saturation?: number;   // 0–200, default 100
 }
 export interface ComposerTextLayer {
   type: "text";
@@ -28,6 +31,14 @@ export interface ComposerTextLayer {
   fontSize: number;
   color: string;
   transform: ComposerTransform;
+  textAlign?: "left" | "center" | "right";
+  letterSpacing?: number;   // em units
+  strokeColor?: string;
+  strokeWidth?: number;
+  shadowColor?: string;
+  shadowBlur?: number;
+  shadowOffsetX?: number;
+  shadowOffsetY?: number;
 }
 export type ComposerLayer = ComposerImageLayer | ComposerTextLayer;
 
@@ -35,26 +46,19 @@ export interface ComposerPrintZone { x: number; y: number; w: number; h: number;
 
 interface ComposeOptions {
   canvas: HTMLCanvasElement;
-  /** The coordinate space height — for the unified 1000×1000 viewBox this is 1000 */
   baseHeight: number;
   printZone: ComposerPrintZone;
   layers: ComposerLayer[];
-  /** garment fill color; pass `null` for a transparent background */
   garmentColor: string | null;
   outW: number;
   outH: number;
   imageCache?: Map<string, HTMLImageElement>;
   clipToPrintZone?: boolean;
-  /** blend mode for TEXT layers (multiply gives fabric-ink feel); image layers always use source-over so photos are not tinted */
   blendMode?: GlobalCompositeOperation;
 }
 
-/** Maximum number of decoded images to keep in the in-memory cache.
- *  Older entries are evicted (FIFO) once this limit is reached so long
- *  design sessions don't accumulate unbounded memory. */
 const IMAGE_CACHE_MAX = 60;
 
-/** Load an image as a Promise; uses cache if provided. */
 export function loadImage(src: string, cache?: Map<string, HTMLImageElement>): Promise<HTMLImageElement> {
   if (cache?.has(src)) {
     const img = cache.get(src)!;
@@ -65,7 +69,6 @@ export function loadImage(src: string, cache?: Map<string, HTMLImageElement>): P
     img.crossOrigin = "anonymous";
     img.onload = () => {
       if (cache) {
-        // Evict the oldest entry when the cache is full
         if (cache.size >= IMAGE_CACHE_MAX) {
           const firstKey = cache.keys().next().value;
           if (firstKey !== undefined) cache.delete(firstKey);
@@ -79,7 +82,6 @@ export function loadImage(src: string, cache?: Map<string, HTMLImageElement>): P
   });
 }
 
-/** Compute the SVG-space bounding box of a layer (matches DesignStudio.layerGeom). */
 function layerGeom(l: ComposerLayer, pz: ComposerPrintZone) {
   const cx = pz.x + pz.w / 2 + l.transform.x;
   const cy = pz.y + pz.h / 2 + l.transform.y;
@@ -95,19 +97,85 @@ function layerGeom(l: ComposerLayer, pz: ComposerPrintZone) {
   return { cx, cy, w, h };
 }
 
-/**
- * Compose layers onto a canvas. All async image loads are awaited.
- * Coordinate space: unified 1000×1000 (matches SVG viewBox "0 0 1000 1000").
- * Image layers always use source-over (no tinting); text layers use blendMode (default "multiply").
- */
+/** Build CSS filter string for image adjustments. Returns '' if no adjustments. */
+function buildImageFilter(l: ComposerImageLayer): string {
+  const br = l.brightness ?? 100;
+  const co = l.contrast ?? 100;
+  const sa = l.saturation ?? 100;
+  if (br === 100 && co === 100 && sa === 100) return "";
+  const parts: string[] = [];
+  if (br !== 100) parts.push(`brightness(${br}%)`);
+  if (co !== 100) parts.push(`contrast(${co}%)`);
+  if (sa !== 100) parts.push(`saturate(${sa}%)`);
+  return parts.join(" ");
+}
+
+/** Draw text with full stroke, shadow, letterSpacing, and textAlign support. */
+function drawText(
+  ctx: CanvasRenderingContext2D,
+  l: ComposerTextLayer,
+  fontSize: number,
+  textX: number,
+  textY: number,
+  sx: number,
+  sy: number,
+) {
+  const align = l.textAlign ?? "center";
+  ctx.textAlign = align;
+  ctx.textBaseline = "middle";
+
+  if (l.letterSpacing != null && l.letterSpacing !== 0) {
+    (ctx as any).letterSpacing = `${l.letterSpacing * fontSize}px`;
+  } else {
+    (ctx as any).letterSpacing = "0px";
+  }
+
+  if (l.shadowBlur || l.shadowOffsetX || l.shadowOffsetY) {
+    ctx.shadowColor = l.shadowColor ?? "rgba(0,0,0,0.5)";
+    ctx.shadowBlur = (l.shadowBlur ?? 0) * Math.min(sx, sy);
+    ctx.shadowOffsetX = (l.shadowOffsetX ?? 0) * sx;
+    ctx.shadowOffsetY = (l.shadowOffsetY ?? 0) * sy;
+  } else {
+    ctx.shadowColor = "transparent";
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+  }
+
+  if (l.strokeWidth && l.strokeWidth > 0) {
+    ctx.strokeStyle = l.strokeColor ?? "#000000";
+    ctx.lineWidth = l.strokeWidth * l.transform.scale * Math.min(sx, sy);
+    ctx.lineJoin = "round";
+    ctx.strokeText(l.text, textX, textY);
+  }
+
+  ctx.fillStyle = l.color;
+  ctx.fillText(l.text, textX, textY);
+
+  ctx.shadowColor = "transparent";
+  ctx.shadowBlur = 0;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 0;
+  (ctx as any).letterSpacing = "0px";
+}
+
+/** Get the X offset for a text alignment relative to the layer center. */
+function textAlignOffset(align: "left" | "center" | "right", halfW: number): number {
+  if (align === "left") return -halfW;
+  if (align === "right") return halfW;
+  return 0;
+}
+
 export async function composeLayers(opts: ComposeOptions): Promise<HTMLCanvasElement> {
-  const { canvas, baseHeight, printZone, layers, garmentColor, outW, outH, imageCache, clipToPrintZone = true, blendMode = "multiply" } = opts;
+  const {
+    canvas, baseHeight, printZone, layers, garmentColor,
+    outW, outH, imageCache, clipToPrintZone = true, blendMode = "multiply",
+  } = opts;
   canvas.width = outW;
   canvas.height = outH;
   const ctx = canvas.getContext("2d");
   if (!ctx) return canvas;
 
-  // Scale from the 1000×1000 coordinate space to canvas pixels
   const sx = outW / baseHeight;
   const sy = outH / baseHeight;
 
@@ -131,14 +199,25 @@ export async function composeLayers(opts: ComposeOptions): Promise<HTMLCanvasEle
     ctx.translate(g.cx * sx, g.cy * sy);
     ctx.rotate((l.transform.rotation * Math.PI) / 180);
     ctx.globalAlpha = l.transform.opacity;
+
     if (l.type === "image") {
       try {
         const img = await loadImage(l.src, imageCache);
-        // Always source-over for photos — multiply would tint them with garment color
         ctx.globalCompositeOperation = "source-over";
-        ctx.drawImage(img, -(g.w * sx) / 2, -(g.h * sy) / 2, g.w * sx, g.h * sy);
+
+        const cssFilter = buildImageFilter(l);
+        if (cssFilter) ctx.filter = cssFilter;
+
+        const flipSX = l.flipH ? -1 : 1;
+        const flipSY = l.flipV ? -1 : 1;
+        if (l.flipH || l.flipV) ctx.scale(flipSX, flipSY);
+
+        const w = g.w * sx;
+        const h = g.h * sy;
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+
+        if (cssFilter) ctx.filter = "none";
       } catch (imgErr) {
-        // Draw a visible placeholder so users know which layer failed to load
         ctx.globalCompositeOperation = "source-over";
         ctx.strokeStyle = "rgba(239,68,68,0.6)";
         ctx.lineWidth = 2;
@@ -151,25 +230,20 @@ export async function composeLayers(opts: ComposeOptions): Promise<HTMLCanvasEle
       }
     } else {
       ctx.globalCompositeOperation = blendMode;
-      ctx.fillStyle = l.color;
-      ctx.font = `${l.fontStyle} ${l.fontWeight} ${Math.round(l.fontSize * l.transform.scale * sy)}px ${l.fontFamily}`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(l.text, 0, 0);
+      const fs = Math.round(l.fontSize * l.transform.scale * sy);
+      ctx.font = `${l.fontStyle} ${l.fontWeight} ${fs}px ${l.fontFamily}`;
+
+      const align = l.textAlign ?? "center";
+      const xOffset = textAlignOffset(align, (g.w * sx) / 2);
+      drawText(ctx, l, fs, xOffset, 0, sx, sy);
     }
     ctx.restore();
   }
 
   if (clipToPrintZone) ctx.restore();
-
   return canvas;
 }
 
-/**
- * Compose a full garment + design snapshot for the cart thumbnail.
- * Draws: garment photo → color tint (if non-white) → design layers on top.
- * Uses the 1000×1000 coordinate space matching the SVG viewBox.
- */
 export async function composeGarmentMockup(opts: {
   canvas: HTMLCanvasElement;
   garmentSrc: string;
@@ -188,13 +262,10 @@ export async function composeGarmentMockup(opts: {
 
   ctx.clearRect(0, 0, outSize, outSize);
 
-  // 1. Draw garment PNG
   try {
     const garmentImg = await loadImage(garmentSrc, imageCache);
     ctx.drawImage(garmentImg, 0, 0, outSize, outSize);
 
-    // 2. Multiply-tint for non-white colors, CLIPPED to the garment alpha mask
-    //    so transparent areas around the garment never become tinted (no card bleed).
     const r = parseInt(garmentColor.slice(1, 3), 16) || 0;
     const g = parseInt(garmentColor.slice(3, 5), 16) || 0;
     const b = parseInt(garmentColor.slice(5, 7), 16) || 0;
@@ -203,27 +274,24 @@ export async function composeGarmentMockup(opts: {
       ctx.globalCompositeOperation = "multiply";
       ctx.fillStyle = garmentColor;
       ctx.fillRect(0, 0, outSize, outSize);
-      // Re-mask to the garment's alpha so the multiply tint cannot leak past the silhouette
       ctx.globalCompositeOperation = "destination-in";
       ctx.drawImage(garmentImg, 0, 0, outSize, outSize);
       ctx.globalCompositeOperation = "source-over";
     }
   } catch {
-    // Fallback: solid garment color clipped to a rounded rect so it doesn't fill the whole card
     ctx.fillStyle = garmentColor;
     ctx.beginPath();
-    const r = outSize * 0.06;
+    const rr = outSize * 0.06;
     const x = outSize * 0.12, y = outSize * 0.10, w = outSize * 0.76, h = outSize * 0.80;
-    ctx.moveTo(x + r, y);
-    ctx.arcTo(x + w, y, x + w, y + h, r);
-    ctx.arcTo(x + w, y + h, x, y + h, r);
-    ctx.arcTo(x, y + h, x, y, r);
-    ctx.arcTo(x, y, x + w, y, r);
+    ctx.moveTo(x + rr, y);
+    ctx.arcTo(x + w, y, x + w, y + h, rr);
+    ctx.arcTo(x + w, y + h, x, y + h, rr);
+    ctx.arcTo(x, y + h, x, y, rr);
+    ctx.arcTo(x, y, x + w, y, rr);
     ctx.closePath();
     ctx.fill();
   }
 
-  // 3. Draw design layers clipped to the print zone (matches studio editor clipping)
   ctx.save();
   ctx.beginPath();
   ctx.rect(printZone.x * s, printZone.y * s, printZone.w * s, printZone.h * s);
@@ -245,27 +313,31 @@ export async function composeGarmentMockup(opts: {
         const img = await loadImage(layer.src, imageCache);
         const w = geom.w * s;
         const h = geom.h * s;
-        const sx = layer.flipH ? -1 : 1;
-        const sy = layer.flipV ? -1 : 1;
-        if (sx !== 1 || sy !== 1) ctx.scale(sx, sy);
-        ctx.drawImage(img, sx * (-w / 2), sy * (-h / 2), sx * w, sy * h);
+
+        const cssFilter = buildImageFilter(layer);
+        if (cssFilter) ctx.filter = cssFilter;
+
+        const flipSX = layer.flipH ? -1 : 1;
+        const flipSY = layer.flipV ? -1 : 1;
+        if (layer.flipH || layer.flipV) ctx.scale(flipSX, flipSY);
+
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+        if (cssFilter) ctx.filter = "none";
       } catch {}
     } else {
       const fs = Math.round(layer.fontSize * layer.transform.scale * s);
-      ctx.fillStyle = layer.color;
       ctx.font = `${layer.fontStyle} ${layer.fontWeight} ${fs}px ${layer.fontFamily}`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(layer.text, 0, 0);
+      const align = layer.textAlign ?? "center";
+      const xOffset = textAlignOffset(align, (geom.w * s) / 2);
+      ctx.globalCompositeOperation = "multiply";
+      drawText(ctx, layer, fs, xOffset, 0, s, s);
+      ctx.globalCompositeOperation = "source-over";
     }
     ctx.restore();
   }
 
   ctx.restore();
 
-  // 4. Realistic print blending — re-composite garment shadows over the design
-  //    so the print looks like it's embedded in the fabric rather than pasted on top.
-  //    Only applies if there are visible layers (no point blending an empty design).
   if (layers.some(l => l.visible)) {
     try {
       const garmentImg2 = await loadImage(garmentSrc, imageCache);
@@ -273,34 +345,19 @@ export async function composeGarmentMockup(opts: {
       ctx.beginPath();
       ctx.rect(printZone.x * s, printZone.y * s, printZone.w * s, printZone.h * s);
       ctx.clip();
-      // Multiply the garment image back over the print zone at low opacity.
-      // This causes garment creases and shadows to blend into the design, giving
-      // it a "screen-printed" / DTG look instead of a flat sticker overlay.
       ctx.globalCompositeOperation = "multiply";
       ctx.globalAlpha = 0.22;
       ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
-      // Add a subtle screen highlight for fabric micro-texture shimmer
       ctx.globalCompositeOperation = "screen";
       ctx.globalAlpha = 0.06;
       ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
       ctx.restore();
-    } catch {
-      // No-op — blending is a visual enhancement, not critical
-    }
+    } catch {}
   }
 
   return canvas;
 }
 
-/**
- * Compose just the design as a texture for the 3D viewer.
- * Transparent background; design placed at its 1000×1000 coordinate position.
- * The output covers the full 1000-unit space so it UV-maps correctly onto the garment mesh.
- *
- * clipToPrintZone (default true): restricts all design pixels to the print zone rectangle.
- * This prevents the design from bleeding into sleeve/side UV regions on the 3D mesh,
- * keeping the design flat inside the front print zone no matter how the camera orbits.
- */
 export async function composeDesignTexture(opts: {
   canvas: HTMLCanvasElement;
   printZone: ComposerPrintZone;
@@ -341,28 +398,31 @@ export async function composeDesignTexture(opts: {
         const img = await loadImage(layer.src, imageCache);
         const w = geom.w * s;
         const h = geom.h * s;
-        const sx = layer.flipH ? -1 : 1;
-        const sy = layer.flipV ? -1 : 1;
-        if (sx !== 1 || sy !== 1) ctx.scale(sx, sy);
-        ctx.drawImage(img, sx * (-w / 2), sy * (-h / 2), sx * w, sy * h);
+
+        const cssFilter = buildImageFilter(layer);
+        if (cssFilter) ctx.filter = cssFilter;
+
+        const flipSX = layer.flipH ? -1 : 1;
+        const flipSY = layer.flipV ? -1 : 1;
+        if (layer.flipH || layer.flipV) ctx.scale(flipSX, flipSY);
+
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+        if (cssFilter) ctx.filter = "none";
       } catch {}
     } else {
       const fs = Math.round(layer.fontSize * layer.transform.scale * s);
-      ctx.fillStyle = layer.color;
       ctx.font = `${layer.fontStyle} ${layer.fontWeight} ${fs}px ${layer.fontFamily}`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(layer.text, 0, 0);
+      const align = layer.textAlign ?? "center";
+      const xOffset = textAlignOffset(align, (geom.w * s) / 2);
+      drawText(ctx, layer, fs, xOffset, 0, s, s);
     }
     ctx.restore();
   }
 
   if (clipToPrintZone) ctx.restore();
-
   return canvas;
 }
 
-/** Cheap WebGL2 capability probe — used to decide whether to offer the 3D toggle. */
 export function hasWebGL2(): boolean {
   if (typeof window === "undefined") return false;
   try {
