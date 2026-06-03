@@ -8,6 +8,35 @@ const port = Number(process.env.PORT ?? "5173");
 const basePath = process.env.BASE_PATH ?? "/";
 const apiPort = process.env.API_PORT ?? "8080";
 
+function patchAdminMockupsModule(code: string): string {
+  let out = code;
+  out = out.replace(
+    'import { useState, useRef, useCallback } from "react";',
+    'import { useState, useEffect, useRef, useCallback } from "react";'
+  );
+  out = out.replace(
+    'import { getAuthHeaders } from "@/lib/utils";',
+    'import { getAuthHeaders, getApiUrl } from "@/lib/utils";'
+  );
+  out = out.replace('const API = import.meta.env.VITE_API_URL ?? "";\n\n', '');
+  out = out.replace('fetch(`${API}${path}`, {', 'fetch(getApiUrl(path), {');
+  out = out.replace('headers: { "Content-Type": "application/json", ...getAuthHeaders(), ...(opts.headers ?? {}) },', 'headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest", ...getAuthHeaders(), ...(opts.headers ?? {}) },');
+  out = out.replace('`${API}/api/storage/public-objects/${objectPath}`', 'getApiUrl(`/api/storage/public-objects/${objectPath}`)');
+  out = out.replace('useState(() => { fetchMockups(); });', 'useEffect(() => { fetchMockups(); }, [fetchMockups]);');
+  return out;
+}
+
+const trynexRuntimeHotfixes = {
+  name: "trynex:runtime-hotfixes",
+  enforce: "pre" as const,
+  transform(code: string, id: string) {
+    if (id.replace(/\\/g, "/").endsWith("/src/pages/admin/AdminMockups.tsx")) {
+      return { code: patchAdminMockupsModule(code), map: null };
+    }
+    return null;
+  },
+};
+
 /**
  * Cloudflare Rocket Loader rewrites every `<script>` it sees, including
  * `<script type="module">`, replacing the `type` attribute with a synthetic
@@ -22,9 +51,6 @@ const apiPort = process.env.API_PORT ?? "8080";
  * don't depend on the Cloudflare dashboard setting being correct.
  */
 function addCfAsyncFalse(html: string): string {
-  // Strip HTML comments out of consideration first so we don't mutate the
-  // text inside `<!-- ... <script ... -->` documentation blocks. We only
-  // operate on the live markup between comments.
   const COMMENT_RE = /<!--[\s\S]*?-->/g;
   const parts: { isComment: boolean; text: string }[] = [];
   let lastIdx = 0;
@@ -34,11 +60,6 @@ function addCfAsyncFalse(html: string): string {
     lastIdx = m.index! + m[0].length;
   }
   if (lastIdx < html.length) parts.push({ isComment: false, text: html.slice(lastIdx) });
-
-  // Only an opening `<script` followed by whitespace, `>`, or `/` is a real
-  // tag opener; this avoids mutating literal `<scripty` text inside JSON-LD
-  // blobs. The negative lookahead skips tags that already carry
-  // data-cfasync so we don't double-stamp.
   const TAG_RE = /<script(?=[\s>/])(?![^>]*\bdata-cfasync\b)/gi;
   return parts
     .map((p) => (p.isComment ? p.text : p.text.replace(TAG_RE, '<script data-cfasync="false"')))
@@ -62,16 +83,12 @@ function injectBuildMeta(html: string): string {
 
 const cfDisableRocketLoader = {
   name: "trynex:disable-cf-rocket-loader",
-  // Stamp the dev server response so dev iframes match production behaviour.
   transformIndexHtml: {
     order: "post" as const,
     handler(html: string): string {
       return addCfAsyncFalse(injectBuildMeta(html));
     },
   },
-  // vite-plugin-pwa appends its <script id="vite-plugin-pwa:register-sw">
-  // tag *after* all transformIndexHtml hooks run, so we also rewrite the
-  // emitted dist/index.html on disk once the bundle is fully written.
   async closeBundle() {
     try {
       const fs = await import("node:fs/promises");
@@ -79,13 +96,8 @@ const cfDisableRocketLoader = {
       const html = await fs.readFile(outFile, "utf8");
       const patched = addCfAsyncFalse(injectBuildMeta(html));
       if (patched !== html) await fs.writeFile(outFile, patched, "utf8");
-      // NOTE: Do NOT write dist/404.html here. When 404.html coexists with the
-      // "/* /index.html 200" rule in _redirects, Cloudflare Pages silently
-      // ignores the _redirects rule and falls back to 404.html — returning
-      // HTTP 404 for all non-root routes. Removing 404.html forces CF Pages
-      // to honour the _redirects rule and return HTTP 200 for every route.
     } catch {
-      // dist/index.html doesn't exist (e.g. dev mode) — nothing to do.
+      // dist/index.html doesn't exist in dev mode.
     }
   },
 };
@@ -93,6 +105,7 @@ const cfDisableRocketLoader = {
 export default defineConfig({
   base: basePath,
   plugins: [
+    trynexRuntimeHotfixes,
     react(),
     tailwindcss(),
     cfDisableRocketLoader,
@@ -137,20 +150,9 @@ export default defineConfig({
             "@radix-ui/react-toast",
             "@radix-ui/react-popover",
           ],
-          // Tiptap only loaded by admin blog editor — keep it out of the
-          // storefront bundle so customers never download it.
-          "vendor-editor": [
-            "@tiptap/react",
-            "@tiptap/starter-kit",
-          ],
+          "vendor-editor": ["@tiptap/react", "@tiptap/starter-kit"],
           "vendor-charts": ["recharts"],
-          // Three.js + React Three Fiber/Drei only needed in DesignStudio.
-          // Splitting them keeps the storefront critical path bundle lean.
-          "vendor-3d": [
-            "three",
-            "@react-three/fiber",
-            "@react-three/drei",
-          ],
+          "vendor-3d": ["three", "@react-three/fiber", "@react-three/drei"],
         },
       },
     },
@@ -166,10 +168,6 @@ export default defineConfig({
         secure: false,
         configure: (proxy) => {
           proxy.on("proxyReq", (proxyReq) => {
-            // Strip Origin/Referer so the API server's CORS policy
-            // treats this as a same-origin server request, not a
-            // cross-origin browser request.  changeOrigin:true only
-            // rewrites Host, not Origin.
             proxyReq.removeHeader("origin");
             proxyReq.removeHeader("referer");
           });
