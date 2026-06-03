@@ -47,10 +47,17 @@ function addCfAsyncFalse(html: string): string {
 
 function injectBuildMeta(html: string): string {
   const hash = process.env.VITE_BUILD_HASH || new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
-  return html.replace(
+  let out = html.replace(
     /<meta name="theme-color"/,
     `<meta name="build" content="${hash}" />\n    <meta name="theme-color"`
   );
+  if (!out.includes('/mobile-fixes.css')) {
+    out = out.replace(
+      /<\/head>/,
+      `    <link rel="stylesheet" href="/mobile-fixes.css" />\n  </head>`
+    );
+  }
+  return out;
 }
 
 const cfDisableRocketLoader = {
