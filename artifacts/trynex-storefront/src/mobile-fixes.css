@@ -1,0 +1,87 @@
+/* Mobile production guardrails for live TryNex UI.
+   These rules fix viewport overflow and floating overlays without changing desktop layout. */
+
+html,
+body,
+#root {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
+@media (max-width: 640px) {
+  body {
+    width: 100%;
+    min-width: 0;
+  }
+
+  header {
+    max-width: 100vw;
+  }
+
+  header > div,
+  main,
+  section,
+  footer {
+    max-width: 100vw;
+  }
+
+  /* Notification dropdown in Navbar: keep it inside the phone viewport. */
+  header [class*="top-full"][class*="right-0"][class*="w-80"],
+  header [class*="top-full"][class*="right-0"][class*="sm:w-96"] {
+    position: fixed !important;
+    left: 0.75rem !important;
+    right: 0.75rem !important;
+    top: calc(var(--announcement-height, 0px) + 4.75rem) !important;
+    width: auto !important;
+    max-width: calc(100vw - 1.5rem) !important;
+    transform: none !important;
+    transform-origin: top center !important;
+  }
+
+  /* Mobile menu should sit above page promos, WhatsApp bubble, and social proof toasts. */
+  header [class*="md:hidden"][class*="overflow-hidden"][class*="bg-white"] {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: calc(var(--announcement-height, 0px) + 4.25rem) !important;
+    max-height: calc(100dvh - var(--announcement-height, 0px) - 4.25rem) !important;
+    overflow-y: auto !important;
+    z-index: 70 !important;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+  }
+
+  /* Horizontally scrolling tab bars should not expand the page width. */
+  [class*="overflow-x-auto"] {
+    max-width: 100%;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Long labels/emails inside cards must wrap or truncate instead of pushing layout. */
+  .break-mobile-safe,
+  main p,
+  main span,
+  main h1,
+  main h2,
+  main h3 {
+    overflow-wrap: anywhere;
+  }
+
+  /* Keep floating WhatsApp/social proof from covering open navigation and dialogs. */
+  body:has(header [class*="md:hidden"][class*="overflow-hidden"][class*="bg-white"]) .fixed.bottom-4,
+  body:has(header [class*="md:hidden"][class*="overflow-hidden"][class*="bg-white"]) .fixed.bottom-5,
+  body:has(header [class*="md:hidden"][class*="overflow-hidden"][class*="bg-white"]) .fixed.bottom-6 {
+    z-index: 30 !important;
+  }
+}
