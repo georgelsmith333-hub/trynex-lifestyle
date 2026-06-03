@@ -9,24 +9,15 @@ concurrency:
   group: deploy-${{ github.ref }}
   cancel-in-progress: true
 
-# ─────────────────────────────────────────────────────────────────────────────
 # Required GitHub Secrets (repo → Settings → Secrets and variables → Actions):
-#   CLOUDFLARE_API_TOKEN      CF token with Pages:Edit + Workers:Edit
-#   CLOUDFLARE_ACCOUNT_ID     CF account ID (same as R2_ACCOUNT_ID)
+#   CLOUDFLARE_API_TOKEN      Cloudflare token with Pages:Edit permission
+#   CLOUDFLARE_ACCOUNT_ID     Cloudflare account ID
+# Optional but recommended:
 #   RENDER_DEPLOY_HOOK_URL    Render → Service → Settings → Deploy Hook
-#   DATABASE_URL_MAIN         Primary Neon connection string
-#   JWT_SECRET                Customer JWT signing secret
-#   ADMIN_JWT_SECRET          Admin JWT signing secret
-#   ADMIN_PASSWORD            Admin panel password
-# ─────────────────────────────────────────────────────────────────────────────
 
 jobs:
-
-  # ════════════════════════════════════════════════════════════════════════════
-  #  JOB 0 — TypeScript type-check (must pass before any deploy)
-  # ════════════════════════════════════════════════════════════════════════════
   typecheck:
-    name: "🔍 TypeScript Check"
+    name: "🔍 Strict TypeScript Check"
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -47,25 +38,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build shared libs (required for type resolution)
-        run: pnpm --filter @workspace/api-zod --filter @workspace/api-client-react --if-present run build 2>/dev/null || true
+      - name: Typecheck all packages
+        run: pnpm run typecheck
 
-      - name: Typecheck API server
-        run: pnpm --filter @workspace/api-server run typecheck || true
-
-      - name: Typecheck storefront
-        run: pnpm --filter @workspace/trynex-storefront exec tsc --noEmit --project tsconfig.json 2>/dev/null || true
-
-  # ════════════════════════════════════════════════════════════════════════════
-  #  JOB 1 — Build + deploy storefront → Cloudflare Pages
-  #  TARGET PROJECT: trynex-lifestyle-shop (production)
-  # ════════════════════════════════════════════════════════════════════════════
-  deploy-frontend:
-    name: "☁️ Frontend → Cloudflare Pages"
+  build-api:
+    name: "🏗️ API Build Check"
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 10
     needs: [typecheck]
-    continue-on-error: true
 
     steps:
       - uses: actions/checkout@v4
@@ -81,31 +61,53 @@ jobs:
           node-version: 24
           cache: pnpm
 
-      - name: Install monorepo dependencies
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build storefront (production)
+      - name: Build API server
+        run: pnpm --filter @workspace/api-server run build
+
+  deploy-frontend:
+    name: "☁️ Frontend → Cloudflare Pages"
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: [typecheck]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm 10
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build storefront production bundle
         run: NODE_ENV=production pnpm --filter @workspace/trynex-storefront run build
         env:
           VITE_API_BASE_URL: "https://trynex-api.onrender.com"
 
-      - name: Check Cloudflare secrets
-        id: cf-check
+      - name: Require Cloudflare deployment secrets
         env:
-          HAS_CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN != '' && 'true' || 'false' }}
-          HAS_CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID != '' && 'true' || 'false' }}
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          if [ "$HAS_CF_TOKEN" = "true" ] && [ "$HAS_CF_ACCOUNT" = "true" ]; then
-            echo "deploy=true" >> "$GITHUB_OUTPUT"
-            echo "✅ Cloudflare secrets present — will deploy"
-          else
-            echo "deploy=false" >> "$GITHUB_OUTPUT"
-            echo "⚠️  CLOUDFLARE_API_TOKEN or CLOUDFLARE_ACCOUNT_ID not set — skipping CF deploy"
-            echo "   Add them in: repo → Settings → Secrets and variables → Actions"
+          if [ -z "$CF_TOKEN" ] || [ -z "$CF_ACCOUNT" ]; then
+            echo "❌ Cloudflare deploy skipped because CLOUDFLARE_API_TOKEN or CLOUDFLARE_ACCOUNT_ID is missing."
+            echo "Add both in GitHub → repo Settings → Secrets and variables → Actions."
+            exit 1
           fi
+          echo "✅ Cloudflare secrets present. Deploy will run."
 
-      - name: Deploy to Cloudflare Pages (trynex-lifestyle-shop)
-        if: steps.cf-check.outputs.deploy == 'true'
+      - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -115,137 +117,63 @@ jobs:
           wranglerVersion: "3"
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: echo "✅ Frontend build complete (deployed if CF secrets were set)"
-
-  # ════════════════════════════════════════════════════════════════════════════
-  #  JOB 2 — Build + deploy API Worker → Cloudflare Workers
-  #  Non-blocking: worker failures do NOT prevent frontend or backend deploys.
-  # ════════════════════════════════════════════════════════════════════════════
-  deploy-worker:
-    name: "⚡ API Worker → Cloudflare Workers"
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    needs: [typecheck]
-    continue-on-error: true
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup pnpm 10
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - name: Setup Node.js 24
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: pnpm
-
-      - name: Install monorepo dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Set Worker secrets (DATABASE_URL, auth keys)
-        working-directory: artifacts/api-worker
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          DATABASE_URL_MAIN: ${{ secrets.DATABASE_URL_MAIN }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          ADMIN_JWT_SECRET: ${{ secrets.ADMIN_JWT_SECRET }}
-          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-        run: |
-          set_secret() {
-            local key="$1" val="$2"
-            if [ -n "$val" ]; then
-              echo "$val" | pnpm exec wrangler secret put "$key" 2>/dev/null \
-                && echo "  ✅ $key set" || echo "  ⚠️  $key failed (non-fatal)"
-            else
-              echo "  ℹ️  $key not in CI secrets — skipping"
-            fi
-          }
-          set_secret DATABASE_URL     "$DATABASE_URL_MAIN"
-          set_secret JWT_SECRET       "$JWT_SECRET"
-          set_secret ADMIN_JWT_SECRET "$ADMIN_JWT_SECRET"
-          set_secret ADMIN_PASSWORD   "$ADMIN_PASSWORD"
-
-      - name: Deploy Worker via Wrangler
-        run: pnpm exec wrangler deploy
-        working-directory: artifacts/api-worker
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-
-      - run: echo "✅ CF Worker deployed"
-
-  # ════════════════════════════════════════════════════════════════════════════
-  #  JOB 3 — Trigger backend redeploy → Render.com (Express API)
-  # ════════════════════════════════════════════════════════════════════════════
   deploy-backend:
     name: "🚀 Backend → Render.com"
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-    needs: [typecheck]
-    continue-on-error: true
+    timeout-minutes: 8
+    needs: [build-api]
 
     steps:
-      - name: Trigger Render deploy hook
-        run: |
-          if [ -n "$RENDER_HOOK" ]; then
-            echo "Firing Render deploy hook…"
-            HTTP=$(curl -s -o /tmp/render.json -w "%{http_code}" \
-              -X POST "$RENDER_HOOK" \
-              -H "Accept: application/json")
-            echo "Render API response: HTTP $HTTP"
-            cat /tmp/render.json 2>/dev/null || true
-            if [ "$HTTP" -ge 400 ]; then
-              echo "❌ Render deploy hook failed — HTTP $HTTP"
-              exit 1
-            fi
-            echo "✅ Render deploy triggered (HTTP $HTTP)"
-          else
-            echo "ℹ️  RENDER_DEPLOY_HOOK_URL not set — Render auto-deploys on push."
-            echo "   Add it in: repo → Settings → Secrets and variables → Actions"
-          fi
+      - name: Trigger Render deploy hook when configured
         env:
           RENDER_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
-
-  # ════════════════════════════════════════════════════════════════════════════
-  #  JOB 4 — Post-deploy smoke test (runs after frontend + backend)
-  #  Worker is excluded from required deps — it is non-blocking.
-  # ════════════════════════════════════════════════════════════════════════════
-  smoke-test:
-    name: "🔥 Smoke Test"
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    needs: [deploy-frontend, deploy-backend]
-    if: always()
-
-    steps:
-      - name: Wait for Render to warm up
-        run: sleep 30
-
-      - name: Health check — Render API
         run: |
-          HTTP=$(curl -s -o /tmp/health.json -w "%{http_code}" \
-            "https://trynex-api.onrender.com/api/healthz")
-          echo "Render health: HTTP $HTTP"
-          cat /tmp/health.json 2>/dev/null || true
-          if [ "$HTTP" != "200" ]; then
-            echo "⚠️  Render health check returned HTTP $HTTP (may be cold-starting)"
-          else
-            echo "✅ Render API healthy"
+          if [ -z "$RENDER_HOOK" ]; then
+            echo "ℹ️ RENDER_DEPLOY_HOOK_URL is not set."
+            echo "If Render auto-deploy from GitHub is enabled, this is okay. If not, backend code will not deploy."
+            exit 0
           fi
 
-      - name: Health check — Products endpoint
-        run: |
-          HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
-            "https://trynex-api.onrender.com/api/products?limit=1")
-          echo "Products endpoint: HTTP $HTTP"
-          [ "$HTTP" = "200" ] && echo "✅ Products OK" || echo "⚠️  Products returned $HTTP"
+          echo "Firing Render deploy hook…"
+          HTTP=$(curl -s -o /tmp/render.json -w "%{http_code}" \
+            -X POST "$RENDER_HOOK" \
+            -H "Accept: application/json")
+          echo "Render API response: HTTP $HTTP"
+          cat /tmp/render.json 2>/dev/null || true
+          if [ "$HTTP" -ge 400 ]; then
+            echo "❌ Render deploy hook failed — HTTP $HTTP"
+            exit 1
+          fi
+          echo "✅ Render deploy triggered (HTTP $HTTP)"
 
-      - name: Health check — trynexshop.com
+  smoke-test:
+    name: "🔥 Post-deploy Smoke Test"
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    needs: [deploy-frontend, deploy-backend]
+
+    steps:
+      - name: Verify live frontend and API
         run: |
-          HTTP=$(curl -s -o /dev/null -w "%{http_code}" -L "https://trynexshop.com")
-          echo "trynexshop.com: HTTP $HTTP"
-          [ "$HTTP" = "200" ] && echo "✅ Frontend OK" || echo "⚠️  Frontend returned $HTTP"
+          check_url() {
+            local label="$1"
+            local url="$2"
+            local expected="$3"
+            local http="000"
+            for i in $(seq 1 12); do
+              http=$(curl -L -s -o /tmp/smoke.json -w "%{http_code}" "$url" || true)
+              echo "$label attempt $i: HTTP $http"
+              if [ "$http" = "$expected" ]; then
+                echo "✅ $label OK"
+                return 0
+              fi
+              sleep 10
+            done
+            echo "❌ $label failed after retries. Last HTTP: $http"
+            cat /tmp/smoke.json 2>/dev/null || true
+            return 1
+          }
+
+          check_url "Render API health" "https://trynex-api.onrender.com/api/healthz" "200"
+          check_url "Products endpoint" "https://trynex-api.onrender.com/api/products?limit=1" "200"
+          check_url "Frontend" "https://trynexshop.com" "200"
