@@ -5,4 +5,5 @@
 - [Waterbottle cutout file](waterbottle-cutout.md) — use white-waterbottle-front-cutout.png (228KB, proper transparency); NOT white-waterbottle-cutout.png (206KB = same as front photo, no alpha).
 - [DB schema](db-schema.md) — full schema in lib/db/src/schema/index.ts; Drizzle ORM + Neon; admin sessions table (not JWT); DATABASE_URL_MAIN preferred over DATABASE_URL.
 - [PhotoMockupMesh color fix](photo-mockup-color.md) — do NOT use adjustGarmentColor for photo planes; near-white (lum>0.88) must return "#ffffff" not "#D2CFC9" or white garments look grey in 3D.
-- [GitHub push blocked](github-push.md) — Replit askpass intercepts HTTPS git auth; GitHub PAT expired (401); local repo diverges from GitHub; user must force-push with new token after session ends.
+- [GitHub push blocked](github-push.md) — Replit askpass intercepts HTTPS git auth; use GitHub API (REST) to push blobs/trees/commits instead of git CLI.
+- [Storefront fixes](storefront-fixes.md) — AnimatePresence mode="wait" caused white screen on navigation; PRODUCT_TAB_ICONS must be {} to show photo tabs; _redirects needs /sitemap.xml proxy line before /*.

@@ -141,18 +141,18 @@ function Router() {
   const [location] = useLocation();
 
   return (
-    // mode="wait" — old route fully exits before new route mounts, eliminating
-    // the double-render overlap that caused the blank flash between pages.
-    // Suspense is placed INSIDE each motion.div so each route manages its own
-    // loading state independently without blocking the exit animation.
-    <AnimatePresence mode="wait" initial={false}>
+    // No mode="wait" — old page stays visible while new page mounts.
+    // This eliminates the blank white gap that mode="wait" causes when
+    // lazy chunks take time to load or Suspense resolves slowly.
+    // The new page fades in on top of the old one, giving instant feedback.
+    <AnimatePresence initial={false}>
       <motion.div
         key={location}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.12, ease: "easeInOut" }}
-        style={{ minHeight: "100vh" }}
+        exit={{ opacity: 0, position: "absolute" as const, top: 0, left: 0, right: 0 }}
+        transition={{ duration: 0.15, ease: "easeOut" }}
+        style={{ minHeight: "100vh", width: "100%" }}
       >
         <Suspense fallback={<Loader />}>
           <Switch>

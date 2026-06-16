@@ -226,50 +226,10 @@ const DRAFT_VERSION = 2;
  *  colours consistent with available stock. Use the curated swatches only. */
 const STUDIO_CUSTOM_COLOR_ENABLED = false;
 
-/** Inline SVG product icons for the quick-switch tab row.
- *  Uses currentColor so stroke changes automatically with isActive state. */
-const PRODUCT_TAB_ICONS: Record<string, React.ReactNode> = {
-  tshirt: (
-    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{width:"100%",height:"100%"}}>
-      <path d="M12 4c0 0 1.6 3 4 3s4-3 4-3l6.5 5-4 4-1.5-1.5V27H11V11.5l-1.5 1.5-4-4Z"/>
-    </svg>
-  ),
-  hoodie: (
-    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{width:"100%",height:"100%"}}>
-      <path d="M11 4.5C10.5 6 10 8 10 10H4v6h4.5V27h15V16H28v-6h-6c0-2-.5-4-1-5.5"/>
-      <path d="M11 4.5C11 4.5 12.5 7 16 7s5-2.5 5-2.5"/>
-    </svg>
-  ),
-  longsleeve: (
-    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{width:"100%",height:"100%"}}>
-      <path d="M12 4c0 0 1.5 3 4 3s4-3 4-3l3 2.5v5.5H22V27H10V12h-1V6.5Z"/>
-      <path d="M11 6.5L5 9.5v13h5"/>
-      <path d="M21 6.5L27 9.5v13h-5"/>
-    </svg>
-  ),
-  mug: (
-    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{width:"100%",height:"100%"}}>
-      <rect x="5" y="9" width="16" height="15" rx="2.5"/>
-      <path d="M21 14h4.5a2 2 0 0 1 0 4H21"/>
-      <line x1="9" y1="14" x2="9" y2="20"/>
-      <line x1="13" y1="14" x2="13" y2="20"/>
-      <line x1="17" y1="14" x2="17" y2="20"/>
-    </svg>
-  ),
-  cap: (
-    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{width:"100%",height:"100%"}}>
-      <path d="M4 21C6 12 10 8 16 8s10 4 12 13"/>
-      <path d="M5 21h22"/>
-      <line x1="16" y1="8" x2="16" y2="5"/>
-    </svg>
-  ),
-  waterbottle: (
-    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{width:"100%",height:"100%"}}>
-      <path d="M13 3.5h6v3h1.5C21.5 6.5 22.5 7.5 22.5 9v18c0 1.2-1 2-2 2H11.5c-1 0-2-.8-2-2V9c0-1.5 1-2.5 2-2.5H13Z"/>
-      <line x1="9.5" y1="13" x2="22.5" y2="13"/>
-    </svg>
-  ),
-};
+/** Product tab icons — empty so each tab uses the actual product photo mockup.
+ *  The rendering fallback below renders prod.frontSrc (real product photo) when
+ *  no icon is defined here. This gives realistic product previews in the tab row. */
+const PRODUCT_TAB_ICONS: Record<string, React.ReactNode> = {};
 
 /** Image filter presets for one-click style changes on image layers. */
 const FILTER_PRESETS = [
@@ -2554,7 +2514,7 @@ export default function DesignStudio() {
                         {PRODUCT_TAB_ICONS[pid] ?? (
                           <img src={prod.frontSrc} alt={prod.name}
                             className="w-full h-full object-contain"
-                            style={{ filter: isActive ? "brightness(0) invert(1)" : "none" }} />
+                            style={{ opacity: isActive ? 1 : 0.82 }} />
                         )}
                       </div>
                       <span className="mt-0.5 leading-tight text-center">{label}</span>

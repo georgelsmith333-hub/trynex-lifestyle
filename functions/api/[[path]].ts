@@ -58,14 +58,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     });
   }
 
-  /* ── Guard: API_URL must be configured ──────────────────────────────── */
-  const apiBase = (env.API_URL ?? "").replace(/\/+$/, "");
-  if (!apiBase) {
-    return Response.json(
-      { error: "API_URL is not configured in CF Pages environment variables." },
-      { status: 503 }
-    );
-  }
+  /* ── Guard: API_URL must be configured (fallback to production Render URL) */
+  const apiBase = (env.API_URL ?? "https://trynex-api.onrender.com").replace(/\/+$/, "");
 
   /* ── Build upstream target URL ───────────────────────────────────────── */
   const targetUrl = `${apiBase}${url.pathname}${url.search}`;

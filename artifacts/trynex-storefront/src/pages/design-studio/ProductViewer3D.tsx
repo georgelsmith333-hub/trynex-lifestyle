@@ -335,10 +335,10 @@ export default function ProductViewer3D({
 
           <ContactShadows
             position={[0, VIEWER_FRAMING[product.category].shadowY, 0]}
-            opacity={0.55}
-            blur={2.8}
-            scale={8}
-            far={6}
+            opacity={product.category === "mug" || product.category === "waterbottle" ? 0.18 : 0.45}
+            blur={product.category === "mug" || product.category === "waterbottle" ? 1.5 : 2.8}
+            scale={product.category === "mug" || product.category === "waterbottle" ? 4 : 8}
+            far={product.category === "mug" || product.category === "waterbottle" ? 2 : 6}
             color="#1a0a00"
           />
 
