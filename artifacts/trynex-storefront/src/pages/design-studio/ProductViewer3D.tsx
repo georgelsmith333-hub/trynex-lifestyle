@@ -177,11 +177,13 @@ export default function ProductViewer3D({
   const nearBlack = isNearBlack(garmentColor);
   const base = BASE_BY_CATEGORY[product.category as keyof typeof BASE_BY_CATEGORY];
   const hasDarkPhoto = nearBlack && base && (base.darkFront || base.darkBack);
-  const resolvedFrontPhoto = hasDarkPhoto && base?.darkFront
-    ? base.darkFront
+  // For near-black colours, prefer the dark cutout PNG (transparent BG) over the
+  // full dark photo — shadow wraps the garment silhouette cleanly in 3D.
+  const resolvedFrontPhoto = hasDarkPhoto
+    ? (base?.darkFrontCutout ?? base?.darkFront ?? product.frontSrc)
     : (base?.frontCutout ?? product.frontSrc);
-  const resolvedBackPhoto  = hasDarkPhoto && base?.darkBack
-    ? base.darkBack
+  const resolvedBackPhoto  = hasDarkPhoto
+    ? (base?.darkBackCutout ?? base?.darkBack ?? product.backSrc ?? product.frontSrc)
     : (base?.backCutout ?? product.backSrc ?? product.frontSrc);
   /* tint = undefined → no colour multiplication (dark photo already correct colour) */
   const photoTint = hasDarkPhoto ? undefined : garmentColor;

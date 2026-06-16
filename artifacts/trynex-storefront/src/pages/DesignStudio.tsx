@@ -2505,16 +2505,19 @@ export default function DesignStudio() {
                       title={prod.name}
                     >
                       <div
-                        className="w-9 h-9 rounded-lg flex items-center justify-center p-1.5"
+                        className="w-9 h-9 rounded-lg flex items-center justify-center overflow-hidden"
                         style={{
-                          background: isActive ? "rgba(255,255,255,0.22)" : "#f0f1f3",
-                          color: isActive ? "white" : "#6b7280",
+                          background: isActive ? "rgba(255,255,255,0.22)" : "#e6e0d8",
+                          padding: "5px",
                         }}
                       >
                         {PRODUCT_TAB_ICONS[pid] ?? (
-                          <img src={prod.frontSrc} alt={prod.name}
+                          <img
+                            src={BASE_BY_CATEGORY[prod.category as keyof typeof BASE_BY_CATEGORY]?.frontCutout ?? prod.frontSrc}
+                            alt={prod.name}
                             className="w-full h-full object-contain"
-                            style={{ opacity: isActive ? 1 : 0.82 }} />
+                            style={{ opacity: isActive ? 1 : 0.9 }}
+                          />
                         )}
                       </div>
                       <span className="mt-0.5 leading-tight text-center">{label}</span>

@@ -27,8 +27,12 @@ const mugFrontCutout       = "/mockups/white-mug-front-cutout.png";
 const capFront             = "/mockups/white-cap-front.png";
 const capFrontDark         = "/mockups/black-cap-front.png";
 const capFrontCutout       = "/mockups/white-cap-front-cutout.png";
-const waterBottleFront     = "/mockups/white-waterbottle-front.png";
-const waterBottleCutout    = "/mockups/white-waterbottle-front-cutout.png";
+const waterBottleFront          = "/mockups/white-waterbottle-front.png";
+const waterBottleCutout         = "/mockups/white-waterbottle-front-cutout.png";
+const tshirtFrontDarkCutout     = "/mockups/black-tshirt-front-cutout.png";
+const tshirtBackDarkCutout      = "/mockups/black-tshirt-back-cutout.png";
+const hoodieFrontDarkCutout     = "/mockups/black-hoodie-front-cutout.png";
+const hoodieBackDarkCutout      = "/mockups/black-hoodie-back-cutout.png";
 
 /** A single available garment colour (name + hex). */
 export interface ProductColor { name: string; hex: string }
@@ -269,11 +273,11 @@ export const PRODUCTS: DesignProduct[] = [
 
 export const BASE_BY_CATEGORY: Record<
   DesignProduct["category"],
-  { front: string; back?: string; darkFront?: string; darkBack?: string; frontCutout?: string; backCutout?: string } | undefined
+  { front: string; back?: string; darkFront?: string; darkBack?: string; frontCutout?: string; backCutout?: string; darkFrontCutout?: string; darkBackCutout?: string } | undefined
 > = {
-  tshirt:      { front: tshirtFront, back: tshirtBack, darkFront: tshirtFrontDark, darkBack: tshirtBackDark, frontCutout: tshirtFrontCutout, backCutout: tshirtBackCutout },
+  tshirt:      { front: tshirtFront, back: tshirtBack, darkFront: tshirtFrontDark, darkBack: tshirtBackDark, frontCutout: tshirtFrontCutout, backCutout: tshirtBackCutout, darkFrontCutout: tshirtFrontDarkCutout, darkBackCutout: tshirtBackDarkCutout },
   longsleeve:  { front: longsleeveFront, back: longsleeveBack, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout },
-  hoodie:      { front: hoodieFront, back: hoodieBack, darkFront: hoodieFrontDark, darkBack: hoodieBackDark, frontCutout: hoodieFrontCutout, backCutout: hoodieBackCutout },
+  hoodie:      { front: hoodieFront, back: hoodieBack, darkFront: hoodieFrontDark, darkBack: hoodieBackDark, frontCutout: hoodieFrontCutout, backCutout: hoodieBackCutout, darkFrontCutout: hoodieFrontDarkCutout, darkBackCutout: hoodieBackDarkCutout },
   mug:         { front: mugFront, back: mugFront, darkFront: mugFrontDark, darkBack: mugFrontDark, frontCutout: mugFrontCutout },
   cap:         { front: capFront, darkFront: capFrontDark, frontCutout: capFrontCutout },
   waterbottle: { front: waterBottleFront, frontCutout: waterBottleCutout },
@@ -377,16 +381,41 @@ export function GarmentSVG({
   // Exception: near-black garments that switch to the dedicated black photo keep
   // that photo as-is (black photo already has its own visual weight).
   const isCylUnderImageSrc = product.category === "mug" || product.category === "waterbottle";
-  const isApparelForCutout = (
-    product.category === "tshirt" ||
-    product.category === "hoodie" ||
-    product.category === "longsleeve"
-  ) && hasCutout && !useBlackPhoto;
+  const hasDarkCutout = !!base && (face === "back" ? !!base.darkBackCutout : !!base.darkFrontCutout);
+
+  // WHITE / LIGHT GARMENTS — multiply-blend strategy:
+  //   Render the ORIGINAL full photo with mix-blend-mode:multiply.
+  //   White pixels (255,255,255) × any background = background → invisible.
+  //   Shadow/crease details (grey) × background = darker than bg → visible.
+  //   Result: photorealistic garment with perfect fabric texture & natural edges.
+  //   We also render a near-invisible cutout underneath as the shadow SOURCE so the
+  //   drop-shadow filter follows the garment silhouette, not the photo rectangle.
+  const useMixBlend = isApparel && !isDark && !useBlackPhoto;
+
+  // DARK-COLOUR / BLACK GARMENTS — cutout strategy:
+  //   Use the transparent-BG cutout so the SVG tint filter only colours garment
+  //   pixels (not the background rectangle). For near-black, use the dedicated
+  //   black-cutout so the shadow wraps the silhouette cleanly.
+  const isApparelForCutout = isApparel && !useMixBlend &&
+    ((useBlackPhoto && hasDarkCutout) || (!useBlackPhoto && hasCutout));
+
+  // Shadow source for the mix-blend case: the white cutout PNG gives the SVG
+  // drop-shadow filter a garment-shaped alpha to trace.
+  const shadowCutoutSrc: string | undefined = useMixBlend && base
+    ? (face === "back" ? (base.backCutout ?? undefined) : (base.frontCutout ?? undefined))
+    : undefined;
+
   const imageSrc = (() => {
+    if (useMixBlend) return src; // full photo; white BG removed by mix-blend-mode
     if (!applyTint || !base) {
-      if ((isCylUnderImageSrc || isApparelForCutout) && base && !useBlackPhoto) {
-        if (face === "back" && base.backCutout) return base.backCutout;
-        if (base.frontCutout) return base.frontCutout;
+      if ((isCylUnderImageSrc || isApparelForCutout) && base) {
+        if (useBlackPhoto) {
+          if (face === "back" && base.darkBackCutout) return base.darkBackCutout;
+          if (base.darkFrontCutout) return base.darkFrontCutout;
+        } else {
+          if (face === "back" && base.backCutout) return base.backCutout;
+          if (base.frontCutout) return base.frontCutout;
+        }
       }
       return src;
     }
