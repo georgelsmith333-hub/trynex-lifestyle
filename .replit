@@ -31,11 +31,19 @@ externalPort = 80
 localPort = 8082
 externalPort = 3000
 
+[[ports]]
+localPort = 8083
+externalPort = 3001
+
+[[ports]]
+localPort = 8084
+externalPort = 3002
+
 [userenv]
 
 [userenv.shared]
 NODE_ENV = "development"
-ALLOWED_ORIGINS = "https://trynexshop.com,http://localhost:5173,http://localhost:8080"
+ALLOWED_ORIGINS = "https://trynexshop.com,https://www.trynexshop.com,https://trynex-lifestyle-shop.pages.dev,http://localhost:5173,http://localhost:8080"
 API_BASE_URL = "https://31fc7a81-f4d0-4738-938e-7f3870bed233-00-2867xp8sdaohx.pike.replit.dev"
 CLOUDFLARE_ACCOUNT_ID = "060a0f28c7f62affa5ac09be3b1dd1a9"
 R2_BUCKET = "trynex"

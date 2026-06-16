@@ -1,1 +1,3 @@
 - [TryNex API routes & ports](trynex-api-routes.md) — missing routes fixed, port config, build process, promo/mobile workflow issues
+- [Mockup rendering](mockup-rendering.md) — cylinder products need cutout PNG; mug/waterbottle-front.png has white BG; use frontCutout for light colors too; studio bg must be #c9c4bc.
+- [Production DNS](production-dns.md) — trynexshop.com CNAME must point to Replit Autoscale URL, NOT CF Pages; dev domain routing breaks with custom DNS.
