@@ -4,3 +4,5 @@
 - [CF Pages deployment](cf-pages-deploy.md) — static frontend on CF Pages (trynex-lifestyle-shop.pages.dev); API proxied via functions/api/[[path]].ts; set API_URL env var in CF Pages.
 - [Waterbottle cutout file](waterbottle-cutout.md) — use white-waterbottle-front-cutout.png (228KB, proper transparency); NOT white-waterbottle-cutout.png (206KB = same as front photo, no alpha).
 - [DB schema](db-schema.md) — full schema in lib/db/src/schema/index.ts; Drizzle ORM + Neon; admin sessions table (not JWT); DATABASE_URL_MAIN preferred over DATABASE_URL.
+- [PhotoMockupMesh color fix](photo-mockup-color.md) — do NOT use adjustGarmentColor for photo planes; near-white (lum>0.88) must return "#ffffff" not "#D2CFC9" or white garments look grey in 3D.
+- [GitHub push blocked](github-push.md) — Replit askpass intercepts HTTPS git auth; GitHub PAT expired (401); local repo diverges from GitHub; user must force-push with new token after session ends.
