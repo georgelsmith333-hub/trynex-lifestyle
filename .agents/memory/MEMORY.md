@@ -1,3 +1,6 @@
 - [TryNex API routes & ports](trynex-api-routes.md) — missing routes fixed, port config, build process, promo/mobile workflow issues
 - [Mockup rendering](mockup-rendering.md) — cylinder products need cutout PNG; mug/waterbottle-front.png has white BG; use frontCutout for light colors too; studio bg must be #c9c4bc.
-- [Production DNS](production-dns.md) — trynexshop.com CNAME must point to Replit Autoscale URL, NOT CF Pages; dev domain routing breaks with custom DNS.
+- [GLB models missing — use PhotoMockupMesh](glb-models.md) — tshirt/hoodie/longsleeve/cap GLBs absent; all replaced with photo-billboard approach; all useGLTF.preload calls commented out.
+- [CF Pages deployment](cf-pages-deploy.md) — static frontend on CF Pages (trynex-lifestyle-shop.pages.dev); API proxied via functions/api/[[path]].ts; set API_URL env var in CF Pages.
+- [Waterbottle cutout file](waterbottle-cutout.md) — use white-waterbottle-front-cutout.png (228KB, proper transparency); NOT white-waterbottle-cutout.png (206KB = same as front photo, no alpha).
+- [DB schema](db-schema.md) — full schema in lib/db/src/schema/index.ts; Drizzle ORM + Neon; admin sessions table (not JWT); DATABASE_URL_MAIN preferred over DATABASE_URL.
