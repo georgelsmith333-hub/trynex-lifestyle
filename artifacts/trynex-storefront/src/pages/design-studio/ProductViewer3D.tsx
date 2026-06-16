@@ -170,13 +170,19 @@ export default function ProductViewer3D({
   /* ── Photo selection: pick the dark product photo for near-black colours ──
    * Products that have a dedicated dark/black photo (mug, cap) switch to it
    * when garmentColor is near-black so the 3D scene uses the real black photo.
-   * For all other products or non-dark colours, use the white/base photo and
-   * apply garmentColor as the Three.js material colour (multiply-tint). */
+   * For all other products or non-dark colours, use the CUTOUT PNG (transparent
+   * background) so the 3D photo plane shows the garment floating on the scene
+   * background — matching how coloured garments already look (cutout + tint).
+   * PhotoMockupMesh already uses transparent:true + alphaTest:0.01 so cutouts work. */
   const nearBlack = isNearBlack(garmentColor);
   const base = BASE_BY_CATEGORY[product.category as keyof typeof BASE_BY_CATEGORY];
   const hasDarkPhoto = nearBlack && base && (base.darkFront || base.darkBack);
-  const resolvedFrontPhoto = hasDarkPhoto && base?.darkFront ? base.darkFront : product.frontSrc;
-  const resolvedBackPhoto  = hasDarkPhoto && base?.darkBack  ? base.darkBack  : (product.backSrc ?? product.frontSrc);
+  const resolvedFrontPhoto = hasDarkPhoto && base?.darkFront
+    ? base.darkFront
+    : (base?.frontCutout ?? product.frontSrc);
+  const resolvedBackPhoto  = hasDarkPhoto && base?.darkBack
+    ? base.darkBack
+    : (base?.backCutout ?? product.backSrc ?? product.frontSrc);
   /* tint = undefined → no colour multiplication (dark photo already correct colour) */
   const photoTint = hasDarkPhoto ? undefined : garmentColor;
 

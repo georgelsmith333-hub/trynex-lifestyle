@@ -25,5 +25,12 @@ Admin password: `Administration@Trynexshop` (default in api-server/src/routes/ad
 ## Render deploy failures after env-var-only update
 When env vars are updated via Render API PUT, Render attempts a service restart. If the restart takes too long (cold start + DB connection ~10s), the health check times out → `update_failed`. The OLD deploy keeps serving. Fix: trigger a full code deploy (`POST /v1/services/{id}/deploys`) after the env var update — this re-builds and re-deploys properly.
 
+## White garment mockups look invisible on beige studio background
+For apparel (tshirt/hoodie/longsleeve), white/near-white garments used the full photo (with white BG rectangle) as `imageSrc`. The drop-shadow filter boxed the entire rectangle → garment invisible on the beige `#c9c4bc` background. Fix: add `isApparelForCutout` flag so white apparel uses the cutout PNG (transparent BG) just like coloured garments do. Same fix needed in ProductViewer3D.tsx for 3D (use `base?.frontCutout` instead of `product.frontSrc`). Both files use the same logic now.
+
+**Why:** The drop-shadow SVG filter follows the image's alpha-channel when the PNG has a transparent background. For the full photo (white BG), it shadows a rectangle. For the cutout (transparent BG), it shadows the garment silhouette — making white shirts visually pop.
+
+**How to apply:** In `mockups.tsx` `GarmentSVG` — add `isApparelForCutout` check alongside `isCylUnderImageSrc` in the `imageSrc` IIFE. In `ProductViewer3D.tsx` — use `base?.frontCutout ?? product.frontSrc` for `resolvedFrontPhoto`.
+
 ## Homepage category images
 Category card images need `object-contain p-4` (not `object-cover`) so product photos aren't cropped. Product photos have white/light backgrounds and are designed to be shown full-frame.

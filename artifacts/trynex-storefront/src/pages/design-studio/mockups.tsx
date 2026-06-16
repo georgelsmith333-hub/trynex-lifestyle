@@ -368,14 +368,23 @@ export function GarmentSVG({
   // that surrounds the garment in the regular photo.  Non-tinted views (white or
   // near-black garments that use a dedicated dark photo) keep the full photo as-is.
   //
-  // Special case — cylinders (mug / waterbottle): always prefer the cutout even for
-  // white / light colours so the product shape has a transparent background and the
-  // shadow filter follows the actual mug / bottle outline rather than shading an
-  // invisible white square.
+  // Always prefer the cutout PNG when available so the drop-shadow filter wraps
+  // the garment silhouette — not the full rectangular image boundary.
+  // • Cylinders (mug / waterbottle): always needed — mug handle etc.
+  // • Apparel (tshirt / hoodie / longsleeve): needed even for white/light colours
+  //   so white shirts stand out on the beige studio background instead of looking
+  //   like an invisible white blob.
+  // Exception: near-black garments that switch to the dedicated black photo keep
+  // that photo as-is (black photo already has its own visual weight).
   const isCylUnderImageSrc = product.category === "mug" || product.category === "waterbottle";
+  const isApparelForCutout = (
+    product.category === "tshirt" ||
+    product.category === "hoodie" ||
+    product.category === "longsleeve"
+  ) && hasCutout && !useBlackPhoto;
   const imageSrc = (() => {
     if (!applyTint || !base) {
-      if (isCylUnderImageSrc && base && !useBlackPhoto) {
+      if ((isCylUnderImageSrc || isApparelForCutout) && base && !useBlackPhoto) {
         if (face === "back" && base.backCutout) return base.backCutout;
         if (base.frontCutout) return base.frontCutout;
       }
