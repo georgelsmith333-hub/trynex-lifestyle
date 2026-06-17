@@ -5,6 +5,7 @@ import { requireAdmin, validateToken } from "../middlewares/adminAuth";
 import { logActivity, getAdminId } from "../lib/activityLog";
 import { z } from "zod";
 import { redisCacheGet, redisCacheSet, redisCacheDel } from "../lib/redis";
+import { pingSitemaps } from "../lib/sitemapPing";
 
 // ── Blog cache keys ───────────────────────────────────────────────────────────
 const BLOG_CATS_KEY = "trynex:blog:categories";
@@ -472,6 +473,7 @@ router.post("/blog", requireAdmin, async (req, res) => {
       readingTimeOverride: readingTimeOverride ?? undefined,
     }).returning();
     logActivity({ action: "create", entity: "blog", entityId: post.id, entityName: post.title, after: post as unknown as Record<string, unknown>, adminId: getAdminId(req) });
+    if (post.published) pingSitemaps();
     const threshold = await getTrendingThreshold();
     res.status(201).json(mapPost(post, threshold));
   } catch (err) {
@@ -511,6 +513,7 @@ router.put("/blog/:id", requireAdmin, async (req, res) => {
       return;
     }
     logActivity({ action: "update", entity: "blog", entityId: id, entityName: post.title, before: (beforeSnapshot ?? null) as unknown as Record<string, unknown>, after: post as unknown as Record<string, unknown>, adminId: getAdminId(req) });
+    if (post.published) pingSitemaps();
     const threshold = await getTrendingThreshold();
     res.json(mapPost(post, threshold));
   } catch (err) {

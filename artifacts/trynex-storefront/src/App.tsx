@@ -87,6 +87,7 @@ const Signup         = lazyWithRetry(() => import("./pages/Signup"));
 const Account        = lazyWithRetry(() => import("./pages/Account"));
 const NotFound       = lazyWithRetry(() => import("./pages/not-found"));
 const SeoGuide       = lazyWithRetry(() => import("./pages/SeoGuide").then(m => ({ default: m.SeoGuide })));
+const KeywordLanding = lazyWithRetry(() => import("./pages/KeywordLanding"));
 
 const AdminLogin           = lazyWithRetry(() => import("./pages/admin/Login"));
 const AdminDashboard       = lazyWithRetry(() => import("./pages/admin/Dashboard"));
@@ -182,6 +183,12 @@ function Router() {
             <Route path="/contact" component={Contact} />
             <Route path="/size-guide" component={SizeGuide} />
             <Route path="/seo-guide" component={SeoGuide} />
+            <Route path="/custom-tshirt-bangladesh"  component={(p: any) => <KeywordLanding params={{ slug: "custom-tshirt-bangladesh" }} />} />
+            <Route path="/custom-hoodie-bangladesh"  component={(p: any) => <KeywordLanding params={{ slug: "custom-hoodie-bangladesh" }} />} />
+            <Route path="/custom-gift-bangladesh"    component={(p: any) => <KeywordLanding params={{ slug: "custom-gift-bangladesh" }} />} />
+            <Route path="/corporate-gift-dhaka"      component={(p: any) => <KeywordLanding params={{ slug: "corporate-gift-dhaka" }} />} />
+            <Route path="/custom-mug-bangladesh"     component={(p: any) => <KeywordLanding params={{ slug: "custom-mug-bangladesh" }} />} />
+            <Route path="/birthday-gift-bangladesh"  component={(p: any) => <KeywordLanding params={{ slug: "birthday-gift-bangladesh" }} />} />
             <Route path="/login" component={Login} />
             <Route path="/signup" component={Signup} />
             <Route path="/account" component={Account} />

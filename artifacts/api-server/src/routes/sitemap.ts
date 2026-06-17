@@ -59,6 +59,12 @@ router.get("/sitemap.xml", async (_req, res) => {
       { loc: "/privacy-policy", priority: "0.4", changefreq: "monthly" },
       { loc: "/terms-of-service", priority: "0.4", changefreq: "monthly" },
       { loc: "/referral", priority: "0.5", changefreq: "monthly" },
+      { loc: "/custom-tshirt-bangladesh",  priority: "0.9", changefreq: "weekly" },
+      { loc: "/custom-hoodie-bangladesh",  priority: "0.9", changefreq: "weekly" },
+      { loc: "/custom-gift-bangladesh",    priority: "0.9", changefreq: "weekly" },
+      { loc: "/corporate-gift-dhaka",      priority: "0.8", changefreq: "weekly" },
+      { loc: "/custom-mug-bangladesh",     priority: "0.8", changefreq: "weekly" },
+      { loc: "/birthday-gift-bangladesh",  priority: "0.8", changefreq: "weekly" },
     ];
 
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;

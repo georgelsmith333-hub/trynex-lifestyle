@@ -25,6 +25,40 @@ const SITE_URL = "https://trynexshop.com";
 const DEFAULT_OG = `${SITE_URL}/opengraph.jpg`;
 const API_TIMEOUT_MS = 4000;
 
+/* ── Keyword landing page static meta ───────────────────────────────────── */
+const KEYWORD_PAGES: Record<string, { title: string; description: string; keywords: string }> = {
+  "custom-tshirt-bangladesh": {
+    title: "Custom T-Shirt Bangladesh — Design Your Own Tee | TryNex Lifestyle",
+    description: "Design your own custom t-shirt in Bangladesh. Premium cotton, unlimited color & print options. Fast delivery to Dhaka & all 64 districts. bKash, Nagad, COD accepted.",
+    keywords: "custom t-shirt bangladesh, কাস্টম টি-শার্ট বাংলাদেশ, custom tshirt dhaka, personalized tshirt bd, bulk tshirt printing dhaka",
+  },
+  "custom-hoodie-bangladesh": {
+    title: "Custom Hoodie Bangladesh — Premium Oversized Hoodies | TryNex Lifestyle",
+    description: "Premium custom hoodies in Bangladesh. Oversized 340GSM fleece. Name, logo, or photo printing. Fast delivery Dhaka & all districts. bKash, COD accepted.",
+    keywords: "custom hoodie bangladesh, কাস্টম হুডি বাংলাদেশ, oversized hoodie bangladesh, couple hoodie bangladesh, corporate hoodie bd",
+  },
+  "custom-gift-bangladesh": {
+    title: "Custom Gift Bangladesh — Personalized Gifts Delivered | TryNex Lifestyle",
+    description: "Bangladesh's #1 personalized gift shop. Custom t-shirts, mugs, hoodies, caps & hampers. Fast delivery to Dhaka & all 64 districts. Gift wrapping available.",
+    keywords: "custom gift bangladesh, কাস্টম গিফট বাংলাদেশ, personalized gift dhaka, customized gift bd, unique gift idea bangladesh",
+  },
+  "corporate-gift-dhaka": {
+    title: "Corporate Gift Dhaka — Bulk Branded Gifts for Companies | TryNex Lifestyle",
+    description: "Premium corporate gifts in Dhaka & across Bangladesh. Branded t-shirts, mugs, hoodies, caps with company logo. Bulk discounts. Tax invoice provided.",
+    keywords: "corporate gift dhaka, corporate gift bangladesh, branded gift dhaka, bulk custom gift dhaka, promotional gift bangladesh",
+  },
+  "custom-mug-bangladesh": {
+    title: "Custom Mug Bangladesh — Photo & Name Printed Mugs | TryNex Lifestyle",
+    description: "Personalized custom mugs in Bangladesh. Photo, name & design printing. 11oz & 15oz ceramic mugs. Gift-ready packaging. Fast delivery Dhaka & all districts.",
+    keywords: "custom mug bangladesh, কাস্টম মগ বাংলাদেশ, photo mug bangladesh, personalized mug dhaka, couple mug bangladesh",
+  },
+  "birthday-gift-bangladesh": {
+    title: "Birthday Gift Bangladesh — Unique Personalized Birthday Gifts | TryNex Lifestyle",
+    description: "Best birthday gift ideas in Bangladesh. Personalized t-shirts, mugs, hoodies, hampers with name & photo. Gift wrapping. Fast delivery Dhaka & all districts.",
+    keywords: "birthday gift bangladesh, জন্মদিনের উপহার বাংলাদেশ, birthday gift dhaka, unique birthday gift bd, custom birthday tshirt bangladesh",
+  },
+};
+
 const BOT_PATTERNS = [
   "googlebot", "bingbot", "slurp", "duckduckbot", "baiduspider",
   "yandexbot", "facebookexternalhit", "twitterbot", "linkedinbot",
@@ -187,10 +221,48 @@ export const onRequest: PagesFunction<{ API_URL: string }> = async ({ request, e
 
   const productMatch = path.match(/^\/product\/([^/]+)$/);
   const blogMatch = path.match(/^\/blog\/([^/]+)$/);
+  const keywordSlug = path.replace(/^\//, "");
+  const keywordPage = KEYWORD_PAGES[keywordSlug];
 
   // Pass through: not a bot, or not a dynamic page pattern
-  if (!isBot(ua) || (!productMatch && !blogMatch)) {
+  if (!isBot(ua) || (!productMatch && !blogMatch && !keywordPage)) {
     return env.ASSETS.fetch(request);
+  }
+
+  // Keyword landing page — static meta injection (no API call needed)
+  if (keywordPage && !productMatch && !blogMatch) {
+    const baseRes = await env.ASSETS.fetch(new Request(new URL("/", request.url).toString()));
+    const baseHtml = await baseRes.text();
+    try {
+      const canonical = `${SITE_URL}/${keywordSlug}`;
+      const injected = injectMeta(baseHtml, {
+        title: keywordPage.title,
+        description: keywordPage.description,
+        canonical,
+        ogType: "website",
+        ogImage: DEFAULT_OG,
+        keywords: keywordPage.keywords,
+        jsonLd: [{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: keywordPage.title.split("—")[0].trim(),
+          description: keywordPage.description,
+          url: canonical,
+          publisher: { "@type": "Organization", name: "TryNex Lifestyle", url: SITE_URL },
+        }],
+      });
+      return new Response(injected, {
+        status: 200,
+        headers: {
+          "Content-Type": "text/html; charset=utf-8",
+          "Cache-Control": "public, max-age=3600, s-maxage=3600, stale-while-revalidate=300",
+          "X-Robots-Tag": "index, follow, max-image-preview:large",
+          "X-Prerendered": "1",
+        },
+      });
+    } catch {
+      return baseRes;
+    }
   }
 
   const slug = (productMatch ?? blogMatch)![1];

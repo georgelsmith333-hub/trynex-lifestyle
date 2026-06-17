@@ -4,6 +4,7 @@ import { eq, ilike, or, and, sql, desc, asc } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { logActivity, getAdminId } from "../lib/activityLog";
 import { redisCacheGet, redisCacheSet, redisCacheDel } from "../lib/redis";
+import { pingSitemaps } from "../lib/sitemapPing";
 
 const router: IRouter = Router();
 
@@ -236,6 +237,7 @@ router.post("/products", requireAdmin, async (req, res) => {
 
     logActivity({ action: "create", entity: "product", entityId: product.id, entityName: product.name, after: product as unknown as Record<string, unknown>, adminId: getAdminId(req) });
     await invalidateProductCache();
+    pingSitemaps();
     res.status(201).json(mapProduct(product));
   } catch (err) {
     req.log.error({ err }, "Failed to create product");
@@ -290,6 +292,7 @@ router.put("/products/:id", requireAdmin, async (req, res) => {
 
     logActivity({ action: "update", entity: "product", entityId: id, entityName: product.name, before: existing as unknown as Record<string, unknown>, after: product as unknown as Record<string, unknown>, adminId: getAdminId(req) });
     await invalidateProductCache();
+    pingSitemaps();
     res.json(mapProduct(product));
   } catch (err) {
     req.log.error({ err }, "Failed to update product");
