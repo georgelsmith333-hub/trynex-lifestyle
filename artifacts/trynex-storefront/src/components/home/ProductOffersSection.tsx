@@ -169,7 +169,7 @@ export function ProductOffersSection({ fullPage = false }: { fullPage?: boolean 
           if (pct >= 30) return "#16a34a";
           return "#2563eb";
         })(),
-        href: `/product/${p.id}`,
+        href: `/product/${p.slug || p.id}`,
       };
     });
   })();

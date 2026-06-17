@@ -327,7 +327,7 @@ export function QuickViewModal({ product, open, onClose }: QuickViewModalProps) 
                     </button>
 
                     <Link
-                      href={`/product/${product.id}`}
+                      href={`/product/${product.slug || product.id}`}
                       onClick={onClose}
                       className="h-12 px-4 rounded-xl font-bold text-gray-700 border border-gray-200 flex items-center gap-1.5 hover:border-orange-400 hover:text-orange-600 transition-all whitespace-nowrap text-sm"
                     >

@@ -64,7 +64,7 @@ function ProductCard({ product }: { product: any }) {
   const isLowStock = product.stock > 0 && product.stock <= 5;
 
   return (
-    <Link href={`/product/${product.id}`}>
+    <Link href={`/product/${product.slug || product.id}`}>
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}

@@ -29,7 +29,7 @@ export function RecentlyViewed() {
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
             >
-              <Link href={`/product/${item.id}`}>
+              <Link href={`/product/${(item as any).slug || item.id}`}>
                 <div className="group bg-white rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1"
                   style={{ border: '1px solid #f0f0f0', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
                   <div className="aspect-square overflow-hidden bg-gray-50" style={{ aspectRatio: '1/1' }}>

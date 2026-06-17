@@ -60,7 +60,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
     // Build WhatsApp order URL
     const whatsappNumber = "8801903426915";
     const whatsappMsg = encodeURIComponent(
-      `Hello TryNex! I want to order:\n*${product.name}*\nPrice: ${formatPrice(discountPrice || price)}\nProduct link: https://trynexshop.com/product/${product.id}`
+      `Hello TryNex! I want to order:\n*${product.name}*\nPrice: ${formatPrice(discountPrice || price)}\nProduct link: https://trynexshop.com/product/${product.slug || product.id}`
     );
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMsg}`;
 
@@ -132,7 +132,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       });
     };
 
-    const goToDetail = () => navigate(`/product/${product.id}`);
+    const goToDetail = () => navigate(`/product/${product.slug || product.id}`);
 
     /* ──────────────────────────────────────────────────────────────────────
        Hover/focus prefetch — eliminates the "blank page for a moment" flash
@@ -208,7 +208,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         >
           {/* Stretched semantic link — covers card for click + keyboard nav */}
           <Link
-            href={`/product/${product.id}`}
+            href={`/product/${product.slug || product.id}`}
             aria-label={`View ${product.name}`}
             className="absolute inset-0 z-10 rounded-2xl focus:outline-none"
           />

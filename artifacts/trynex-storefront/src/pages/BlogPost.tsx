@@ -28,6 +28,7 @@ interface BlogPostData {
   readingTime: number;
   viewCount: number;
   createdAt: string;
+  updatedAt?: string;
 }
 
 interface TocItem {
@@ -414,7 +415,7 @@ export default function BlogPost() {
         ...(post.authorAvatarUrl ? { "image": post.authorAvatarUrl } : {}),
       },
       "datePublished": post.createdAt,
-      "dateModified": post.createdAt,
+      "dateModified": post.updatedAt || post.createdAt,
       "publisher": {
         "@type": "Organization",
         "name": "TryNex Lifestyle",
