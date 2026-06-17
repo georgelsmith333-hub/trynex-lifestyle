@@ -1,0 +1,1790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TryNex Lifestyle Shop — Comprehensive Technical Report</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --orange: #E85D04;
+    --orange-light: #FFF0E6;
+    --dark: #1a1a1a;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --bg: #f9fafb;
+    --card: #ffffff;
+    --code-bg: #1e1e2e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: var(--dark);
+    background: var(--bg);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  /* Cover page */
+  .cover {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 40px;
+    position: relative;
+    overflow: hidden;
+    page-break-after: always;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -100px; left: -100px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(232,93,4,0.3) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: -150px; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(232,93,4,0.2) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .cover-logo {
+    width: 80px; height: 80px;
+    background: var(--orange);
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; font-weight: 900; color: white;
+    margin-bottom: 24px;
+    box-shadow: 0 20px 60px rgba(232,93,4,0.4);
+    z-index: 1;
+  }
+
+  .cover-title {
+    font-size: 48px; font-weight: 900; color: white;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+    z-index: 1;
+  }
+
+  .cover-subtitle {
+    font-size: 20px; color: rgba(255,255,255,0.7);
+    margin-bottom: 8px; z-index: 1;
+  }
+
+  .cover-tagline {
+    font-size: 15px; color: rgba(255,255,255,0.5);
+    margin-bottom: 48px; z-index: 1;
+  }
+
+  .cover-meta {
+    display: flex; gap: 40px; z-index: 1;
+  }
+
+  .cover-meta-item {
+    text-align: center;
+  }
+
+  .cover-meta-label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+    color: rgba(255,255,255,0.4); margin-bottom: 4px;
+  }
+
+  .cover-meta-value {
+    font-size: 15px; font-weight: 600; color: white;
+  }
+
+  .cover-divider {
+    width: 60px; height: 3px;
+    background: var(--orange);
+    border-radius: 2px;
+    margin: 40px auto;
+    z-index: 1;
+  }
+
+  .cover-url {
+    font-size: 13px; color: rgba(255,255,255,0.5); z-index: 1;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* TOC */
+  .toc {
+    padding: 60px 80px;
+    background: white;
+    page-break-after: always;
+  }
+
+  .toc-header {
+    font-size: 28px; font-weight: 800; margin-bottom: 8px;
+    color: var(--dark);
+  }
+
+  .toc-divider {
+    width: 40px; height: 3px; background: var(--orange);
+    border-radius: 2px; margin-bottom: 40px;
+  }
+
+  .toc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .toc-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    color: var(--dark);
+    text-decoration: none;
+    transition: background 0.1s;
+  }
+
+  .toc-item:hover { background: var(--orange-light); }
+
+  .toc-num {
+    width: 28px; height: 28px;
+    background: var(--orange);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: white;
+    flex-shrink: 0;
+  }
+
+  .toc-name { font-size: 13px; font-weight: 500; }
+  .toc-desc { font-size: 11px; color: var(--muted); }
+
+  /* Main content */
+  .content {
+    padding: 0 80px 60px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 60px;
+    page-break-inside: avoid;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-top: 48px;
+    border-top: 1px solid var(--border);
+  }
+
+  .section-header:first-child {
+    border-top: none;
+    padding-top: 40px;
+  }
+
+  .section-num {
+    width: 40px; height: 40px;
+    background: var(--orange);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 800; color: white;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-size: 24px; font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .section-subtitle {
+    font-size: 13px; color: var(--muted);
+  }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-size: 14px; font-weight: 700;
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .card-body {
+    font-size: 12px; color: #374151; line-height: 1.7;
+  }
+
+  /* Grid layouts */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
+
+  /* Stat cards */
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    text-align: center;
+  }
+
+  .stat-val {
+    font-size: 28px; font-weight: 900;
+    color: var(--orange);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 11px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  th {
+    background: #f3f4f6;
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+  }
+
+  td {
+    padding: 9px 14px;
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  tr:hover td { background: #f9fafb; }
+
+  /* Badges */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+
+  .badge-orange { background: var(--orange-light); color: var(--orange); }
+  .badge-green { background: #dcfce7; color: #166534; }
+  .badge-blue { background: #dbeafe; color: #1d4ed8; }
+  .badge-grey { background: #f3f4f6; color: #374151; }
+  .badge-purple { background: #f3e8ff; color: #7c3aed; }
+  .badge-red { background: #fee2e2; color: #dc2626; }
+
+  /* Code */
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    background: #f3f4f6;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    color: #374151;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 16px 20px;
+    overflow-x: auto;
+    margin-bottom: 16px;
+  }
+
+  pre code {
+    background: transparent;
+    color: #cdd6f4;
+    font-size: 11px;
+    padding: 0;
+  }
+
+  /* Tag cloud */
+  .tag-cloud {
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+
+  .tech-tag {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 500;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .tech-tag .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* Route list */
+  .route {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+
+  .route:last-child { border-bottom: none; }
+
+  .method {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    min-width: 44px;
+    text-align: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .method-get { background: #dbeafe; color: #1d4ed8; }
+  .method-post { background: #dcfce7; color: #166534; }
+  .method-put { background: #fef9c3; color: #854d0e; }
+  .method-patch { background: #f3e8ff; color: #7c3aed; }
+  .method-delete { background: #fee2e2; color: #dc2626; }
+
+  .route-path {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--dark);
+    flex: 1;
+  }
+
+  .route-desc { color: var(--muted); font-size: 11px; }
+
+  /* Alert box */
+  .alert {
+    padding: 14px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 12px;
+    line-height: 1.6;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .alert-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  .alert-info { background: #eff6ff; border-left: 3px solid #3b82f6; color: #1e40af; }
+  .alert-success { background: #f0fdf4; border-left: 3px solid #22c55e; color: #166534; }
+  .alert-warning { background: #fffbeb; border-left: 3px solid #f59e0b; color: #92400e; }
+
+  /* Color swatches */
+  .color-swatch {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.1);
+    vertical-align: middle;
+    margin-right: 4px;
+  }
+
+  /* Product card */
+  .product-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+
+  .product-name {
+    font-size: 13px; font-weight: 700; margin-bottom: 4px;
+  }
+
+  .product-detail {
+    font-size: 11px; color: var(--muted); margin-bottom: 8px;
+  }
+
+  .color-row {
+    display: flex; flex-wrap: wrap; gap: 4px;
+    margin-top: 8px;
+  }
+
+  /* Footer */
+  .footer {
+    background: var(--dark);
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+    padding: 40px;
+    font-size: 12px;
+    margin-top: 60px;
+  }
+
+  /* Print styles */
+  @media print {
+    body { background: white; }
+    .cover { min-height: 100vh; }
+    .toc { page-break-after: always; }
+    .section { page-break-inside: avoid; }
+    a { text-decoration: none; color: inherit; }
+    .alert, .card, table { page-break-inside: avoid; }
+  }
+
+  /* Utility */
+  .text-muted { color: var(--muted); }
+  .text-orange { color: var(--orange); }
+  .font-mono { font-family: 'JetBrains Mono', monospace; }
+  .mb-0 { margin-bottom: 0; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-24 { margin-bottom: 24px; }
+  .mt-16 { margin-top: 16px; }
+  p { margin-bottom: 12px; }
+  ul { padding-left: 18px; margin-bottom: 12px; }
+  li { margin-bottom: 4px; font-size: 12px; }
+  h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; margin-top: 16px; color: var(--dark); }
+  h5 { font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  strong { font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════ COVER ══════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-logo">T</div>
+  <div class="cover-title">TryNex Lifestyle</div>
+  <div class="cover-subtitle">Comprehensive Technical Report</div>
+  <div class="cover-tagline">Full-Stack Custom Print-on-Demand E-Commerce Platform</div>
+  <div class="cover-divider"></div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Report Date</div>
+      <div class="cover-meta-value">June 17, 2026</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Version</div>
+      <div class="cover-meta-value">Production v1.0</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Status</div>
+      <div class="cover-meta-value" style="color:#4ade80">● Live</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Platform</div>
+      <div class="cover-meta-value">BD / Global</div>
+    </div>
+  </div>
+  <div class="cover-divider" style="margin-top:32px; margin-bottom:24px;"></div>
+  <div class="cover-url">🌐 trynexshop.com &nbsp;·&nbsp; trynex-lifestyle-shop.pages.dev</div>
+</div>
+
+<!-- ══════════════════════════════════════════ TOC ══════════════════════════════════════════ -->
+<div class="toc">
+  <div class="toc-header">Table of Contents</div>
+  <div class="toc-divider"></div>
+  <div class="toc-grid">
+    <a class="toc-item" href="#s1">
+      <div class="toc-num">01</div>
+      <div><div class="toc-name">Executive Summary</div><div class="toc-desc">Business overview & key metrics</div></div>
+    </a>
+    <a class="toc-item" href="#s2">
+      <div class="toc-num">02</div>
+      <div><div class="toc-name">System Architecture</div><div class="toc-desc">High-level diagram & components</div></div>
+    </a>
+    <a class="toc-item" href="#s3">
+      <div class="toc-num">03</div>
+      <div><div class="toc-name">Frontend Storefront</div><div class="toc-desc">React + Vite, Tailwind, Radix UI</div></div>
+    </a>
+    <a class="toc-item" href="#s4">
+      <div class="toc-num">04</div>
+      <div><div class="toc-name">Design Studio</div><div class="toc-desc">Custom product mockup engine</div></div>
+    </a>
+    <a class="toc-item" href="#s5">
+      <div class="toc-num">05</div>
+      <div><div class="toc-name">Product Catalogue</div><div class="toc-desc">6 product types, colors, SKUs</div></div>
+    </a>
+    <a class="toc-item" href="#s6">
+      <div class="toc-num">06</div>
+      <div><div class="toc-name">Backend API Server</div><div class="toc-desc">Express 5, 202 endpoints</div></div>
+    </a>
+    <a class="toc-item" href="#s7">
+      <div class="toc-num">07</div>
+      <div><div class="toc-name">Database Schema</div><div class="toc-desc">Neon PostgreSQL + Drizzle ORM</div></div>
+    </a>
+    <a class="toc-item" href="#s8">
+      <div class="toc-num">08</div>
+      <div><div class="toc-name">Authentication & Security</div><div class="toc-desc">JWT, TOTP 2FA, session management</div></div>
+    </a>
+    <a class="toc-item" href="#s9">
+      <div class="toc-num">09</div>
+      <div><div class="toc-name">AI Integration</div><div class="toc-desc">Design generation & AI chat</div></div>
+    </a>
+    <a class="toc-item" href="#s10">
+      <div class="toc-num">10</div>
+      <div><div class="toc-name">Mobile App</div><div class="toc-desc">Expo React Native (iOS & Android)</div></div>
+    </a>
+    <a class="toc-item" href="#s11">
+      <div class="toc-num">11</div>
+      <div><div class="toc-name">Admin Panel</div><div class="toc-desc">Orders, products, analytics, CMS</div></div>
+    </a>
+    <a class="toc-item" href="#s12">
+      <div class="toc-num">12</div>
+      <div><div class="toc-name">Order & Payment Flow</div><div class="toc-desc">COD, bKash, Nagad, Rocket</div></div>
+    </a>
+    <a class="toc-item" href="#s13">
+      <div class="toc-num">13</div>
+      <div><div class="toc-name">Deployment Infrastructure</div><div class="toc-desc">CF Pages, Render, Neon, GitHub</div></div>
+    </a>
+    <a class="toc-item" href="#s14">
+      <div class="toc-num">14</div>
+      <div><div class="toc-name">Performance & Caching</div><div class="toc-desc">Upstash Redis, PWA, CDN</div></div>
+    </a>
+    <a class="toc-item" href="#s15">
+      <div class="toc-num">15</div>
+      <div><div class="toc-name">Full Tech Stack A–Z</div><div class="toc-desc">Every library and service used</div></div>
+    </a>
+    <a class="toc-item" href="#s16">
+      <div class="toc-num">16</div>
+      <div><div class="toc-name">Known Issues & Roadmap</div><div class="toc-desc">Current status & next steps</div></div>
+    </a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ CONTENT ══════════════════════════════════════════ -->
+<div class="content">
+
+  <!-- Section 1 -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <div>
+        <div class="section-title">Executive Summary</div>
+        <div class="section-subtitle">Business overview &amp; platform highlights</div>
+      </div>
+    </div>
+
+    <p>TryNex Lifestyle is a Bangladeshi print-on-demand e-commerce platform that allows customers to design and order custom-printed apparel, accessories, and lifestyle products. The platform consists of a web storefront, an Express REST API, a PostgreSQL database, and an Expo mobile app — all managed as a single pnpm monorepo.</p>
+
+    <div class="grid-4 mb-24">
+      <div class="stat-card">
+        <div class="stat-val">6</div>
+        <div class="stat-label">Product Types</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">202</div>
+        <div class="stat-label">API Endpoints</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">56</div>
+        <div class="stat-label">UI Pages</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">98</div>
+        <div class="stat-label">Components</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">🌐 Web Storefront</div>
+        <div class="card-body">React 19 + Vite SPA deployed on Cloudflare Pages. Custom domain: <strong>trynexshop.com</strong>. PWA-enabled with service worker, offline caching, and installable app experience. CDN-served globally from 300+ edge locations.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">📱 Mobile App</div>
+        <div class="card-body">Expo React Native app for iOS &amp; Android. Shares API client with the web storefront. Full shopping experience, Design Studio, cart, checkout, and order tracking in a native wrapper.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">🎨 Design Studio</div>
+        <div class="card-body">Browser-based custom product designer. Customers upload artwork, add text, position designs, and see a live photorealistic mockup. SVG-based 2D renderer with multiply-blend garment compositing. Supports front/back views.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">🔧 API Server</div>
+        <div class="card-body">Express 5 REST API deployed on Render (free tier). Handles authentication (JWT + argon2 password hashing), orders, products, CMS, AI art generation, admin operations, and Telegram notifications.</div>
+      </div>
+    </div>
+
+    <div class="alert alert-success">
+      <div class="alert-icon">✅</div>
+      <div><strong>Live status:</strong> The production site at <strong>trynexshop.com</strong> is fully operational. Cloudflare Pages hosts the frontend (all stages: queued → initialize → clone → build → deploy all success). The Render API server is live with Neon PostgreSQL connection pooling.</div>
+    </div>
+  </div>
+
+  <!-- Section 2 -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <div>
+        <div class="section-title">System Architecture</div>
+        <div class="section-subtitle">How all the pieces connect</div>
+      </div>
+    </div>
+
+    <div class="card mb-16">
+      <div class="card-title">📐 Monorepo Structure (pnpm workspaces)</div>
+      <pre><code>trynex-lifestyle/
+├── artifacts/
+│   ├── trynex-storefront/     # React/Vite web app (CF Pages)
+│   │   ├── src/pages/         # 56 page components
+│   │   ├── src/components/    # 98 reusable components
+│   │   ├── public/mockups/    # Garment PNG files (photo + cutout)
+│   │   └── functions/         # CF Pages middleware (API proxy)
+│   ├── api-server/            # Express 5 REST API (Render)
+│   │   └── src/routes/        # 20 route files, 202 endpoints
+│   ├── trynex-mobile/         # Expo React Native app
+│   └── trynex-promo/          # Promo animation video (React/Framer)
+├── lib/
+│   ├── db/                    # Drizzle ORM schema + migrations
+│   ├── api-client/            # Typed API client (shared)
+│   └── api-client-react/      # React Query hooks
+└── pnpm-workspace.yaml</code></pre>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">🔄 Request Flow (Web)</div>
+        <div class="card-body">
+          <ol style="padding-left:16px; font-size:12px;">
+            <li style="margin-bottom:6px;"><strong>Browser</strong> → trynexshop.com (CF Pages CDN)</li>
+            <li style="margin-bottom:6px;"><strong>CF Pages edge</strong> serves static assets (HTML/JS/CSS/images)</li>
+            <li style="margin-bottom:6px;"><strong>/api/*</strong> requests → CF Pages Function middleware → proxied to Render API server</li>
+            <li style="margin-bottom:6px;"><strong>API server</strong> queries Neon PostgreSQL via connection pooling</li>
+            <li style="margin-bottom:6px;"><strong>Redis cache</strong> (Upstash) intercepts hot paths before DB hits</li>
+            <li><strong>Response</strong> streamed back through CF edge to browser</li>
+          </ol>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🧩 Key Integrations</div>
+        <div class="card-body">
+          <table style="margin-bottom:0;" class="mb-0">
+            <tr><td><strong>Neon PostgreSQL</strong></td><td>Primary database (serverless, pooled)</td></tr>
+            <tr><td><strong>Upstash Redis</strong></td><td>Response caching, rate-limit counters</td></tr>
+            <tr><td><strong>Cloudflare Pages</strong></td><td>Frontend CDN hosting, edge functions</td></tr>
+            <tr><td><strong>Render.com</strong></td><td>API server hosting (free tier)</td></tr>
+            <tr><td><strong>GitHub</strong></td><td>Source control + CF Pages CI/CD trigger</td></tr>
+            <tr><td><strong>Telegram Bot</strong></td><td>Real-time order notifications</td></tr>
+            <tr><td><strong>AI Provider</strong></td><td>Design generation (configurable model)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3 -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <div>
+        <div class="section-title">Frontend Storefront</div>
+        <div class="section-subtitle">React 19 + Vite 6 SPA — trynex-storefront</div>
+      </div>
+    </div>
+
+    <div class="grid-3 mb-16">
+      <div class="card">
+        <div class="card-title">⚛️ Framework</div>
+        <div class="card-body">React 19 with concurrent features. Wouter for client-side routing (lightweight, ~2kb). React Query (TanStack) for server state, caching, and background refetching.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">🎨 Styling</div>
+        <div class="card-body">Tailwind CSS v4 with tw-animate-css. Radix UI primitives for accessible components. Class Variance Authority (CVA) for component variant management.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">🏗️ Build</div>
+        <div class="card-body">Vite 6 with @vitejs/plugin-react (SWC). TypeScript strict mode. PWA plugin (vite-plugin-pwa) generates service worker with Workbox. Output to <code>dist/</code> for CF Pages.</div>
+      </div>
+    </div>
+
+    <h4>Key Pages (56 total)</h4>
+    <table>
+      <thead>
+        <tr><th>Page</th><th>Route</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Home</strong></td><td><code>/</code></td><td>Hero, featured products, categories, testimonials, blog preview</td></tr>
+        <tr><td><strong>Shop</strong></td><td><code>/shop</code></td><td>Product grid with filters (category, price, color), search, sorting, pagination</td></tr>
+        <tr><td><strong>Product Detail</strong></td><td><code>/products/:slug</code></td><td>Gallery, specs, size chart, related products, reviews, Add to Cart</td></tr>
+        <tr><td><strong>Design Studio</strong></td><td><code>/design-studio</code></td><td>Custom product designer (detailed in §4)</td></tr>
+        <tr><td><strong>Cart</strong></td><td><code>/cart</code></td><td>Cart review with 3D product viewer previews, quantity editor, promo codes</td></tr>
+        <tr><td><strong>Checkout</strong></td><td><code>/checkout</code></td><td>Multi-step: address → payment (COD/bKash/Nagad/Rocket) → review → submit</td></tr>
+        <tr><td><strong>Order Tracking</strong></td><td><code>/track</code></td><td>Real-time order status by order number or email</td></tr>
+        <tr><td><strong>Blog</strong></td><td><code>/blog</code></td><td>Full blog with categories, search, rich text articles (TipTap editor)</td></tr>
+        <tr><td><strong>Gift Hampers</strong></td><td><code>/gift-hampers</code></td><td>Curated gift sets with bundle pricing</td></tr>
+        <tr><td><strong>Admin</strong></td><td><code>/admin/*</code></td><td>Full admin panel (protected, detailed in §11)</td></tr>
+        <tr><td><strong>Auth</strong></td><td><code>/login</code>, <code>/register</code></td><td>JWT-based customer auth with Google OAuth option</td></tr>
+        <tr><td><strong>Profile</strong></td><td><code>/profile</code></td><td>Account management, order history, saved designs</td></tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-info">
+      <div class="alert-icon">ℹ️</div>
+      <div>The storefront uses <strong>React Query</strong> for all API calls with automatic caching (stale-while-revalidate). Cart state is persisted to <code>localStorage</code>. The PWA service worker pre-caches critical assets so the site works offline for browsing.</div>
+    </div>
+  </div>
+
+  <!-- Section 4 -->
+  <div class="section" id="s4">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <div>
+        <div class="section-title">Design Studio</div>
+        <div class="section-subtitle">Custom mockup engine — SVG compositing with garment photography</div>
+      </div>
+    </div>
+
+    <p>The Design Studio is TryNex's signature feature — a browser-native product customisation tool that gives customers a photorealistic preview of their design on each product. No external mockup service is used; all rendering happens client-side in real time.</p>
+
+    <div class="grid-2 mb-16">
+      <div class="card">
+        <div class="card-title">🖼️ Garment Rendering Engine</div>
+        <div class="card-body">
+          <p>Three rendering strategies depending on garment colour:</p>
+          <ul>
+            <li><strong>White / light colours:</strong> Two-layer multiply-blend. The full original photo renders with <code>mix-blend-mode: multiply</code> so the white background becomes transparent while all fabric texture, creases, and shadows remain perfectly photorealistic.</li>
+            <li><strong>Near-black garments:</strong> Full dedicated dark photo (e.g. <code>black-tshirt-front.png</code>) renders directly with SVG drop-shadow filter. No cutout artifacts.</li>
+            <li><strong>Mid-tone colours (navy, maroon, olive…):</strong> Transparent-background cutout PNG + SVG <code>feFlood</code> colour-tinting filter. The tint is masked to the garment silhouette via <code>feComposite in2="SourceAlpha"</code>.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🔧 SVG Filter Pipeline (Tint)</div>
+        <pre style="margin-bottom:0;"><code>filter desaturate (feColorMatrix)
+  → flood colour (feFlood)
+  → mask to alpha (feComposite)
+  → multiply with base (feBlend)
+  → restore alpha (feComposite)
+drop-shadow (feDropShadow)
+  → follows garment silhouette α</code></pre>
+      </div>
+    </div>
+
+    <h4>Design Studio Features</h4>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">📤 Upload Image</div>
+        <div class="card-body">JPG/PNG/WebP up to 10MB. Drag-and-drop or file picker. Images rendered as SVG <code>&lt;image&gt;</code> elements inside a bounded print zone. Resize, rotate, reposition handles via pointer events. Z-order management with layers panel.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">🤖 AI Art Generation</div>
+        <div class="card-body">Customers enter a text prompt; the API calls a configurable AI model (server-side, model-agnostic). Generated image URLs streamed back. Reference image upload for style transfer. Models listed dynamically from API.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">🔤 Text Tool</div>
+        <div class="card-body">Add custom text layers with font family (100+ Google Fonts), size, colour, bold/italic/underline, letter spacing, line height. Each text block is a draggable, scalable SVG element.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">📋 Templates</div>
+        <div class="card-body">Pre-built design templates stored per product category. One-click apply. Templates are admin-managed via the Admin Panel CMS. Customers can customise any template after applying.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">👔 Product Switcher</div>
+        <div class="card-body">Switch between T-Shirt, Hoodie, Long Sleeve, Mug, Cap, Waterbottle without losing the design. The print zone and mockup update; the design layers reflow to fit the new canvas. Front/Back toggle for apparel.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">💾 Draft Saving</div>
+        <div class="card-body">Designs auto-saved to <code>localStorage</code> as JSON (SVG elements + product selection + colour). Draft restoration on revisit. Logged-in users can save named drafts to the server. Drafts JSON-exported for order fulfillment.</div>
+      </div>
+    </div>
+
+    <div class="alert alert-info" style="margin-top:16px;">
+      <div class="alert-icon">💡</div>
+      <div>The Design Studio renderer is built entirely with inline SVG. There is no canvas/WebGL dependency for the 2D view. On desktop, an optional Three.js 3D preview renders the design on a photo-billboard mesh for extra realism. The SVG approach ensures pixel-perfect print export and universal browser compatibility.</div>
+    </div>
+  </div>
+
+  <!-- Section 5 -->
+  <div class="section" id="s5">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <div>
+        <div class="section-title">Product Catalogue</div>
+        <div class="section-subtitle">6 customisable product types with multiple variants</div>
+      </div>
+    </div>
+
+    <div class="grid-2 mb-16">
+      <div class="product-card">
+        <div class="product-name">👕 Unisex T-Shirt</div>
+        <div class="product-detail">230GSM Cotton · Sizes XS–XXXL · Front &amp; Back print</div>
+        <div class="tag-cloud">
+          <span class="tech-tag"><span class="dot" style="background:#F8F7F4; border:1px solid #999;"></span>White</span>
+          <span class="tech-tag"><span class="dot" style="background:#1a1a1a;"></span>Black</span>
+          <span class="tech-tag"><span class="dot" style="background:#1e3a5f;"></span>Navy</span>
+          <span class="tech-tag"><span class="dot" style="background:#7f1d1d;"></span>Maroon</span>
+          <span class="tech-tag"><span class="dot" style="background:#4a5240;"></span>Olive</span>
+          <span class="tech-tag"><span class="dot" style="background:#0ea5e9;"></span>Sky Blue</span>
+          <span class="tech-tag"><span class="dot" style="background:#6b7280;"></span>Grey</span>
+          <span class="tech-tag"><span class="dot" style="background:#dc2626;"></span>Red</span>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-name">🧥 Unisex Hoodie</div>
+        <div class="product-detail">320GSM Fleece · Sizes XS–XXXL · Front &amp; Back print</div>
+        <div class="tag-cloud">
+          <span class="tech-tag"><span class="dot" style="background:#F2EFE9; border:1px solid #999;"></span>White</span>
+          <span class="tech-tag"><span class="dot" style="background:#1a1a1a;"></span>Black</span>
+          <span class="tech-tag"><span class="dot" style="background:#1e3a5f;"></span>Navy</span>
+          <span class="tech-tag"><span class="dot" style="background:#6b7280;"></span>Grey</span>
+          <span class="tech-tag"><span class="dot" style="background:#7f1d1d;"></span>Maroon</span>
+          <span class="tech-tag"><span class="dot" style="background:#4a5240;"></span>Olive</span>
+          <span class="tech-tag"><span class="dot" style="background:#dc2626;"></span>Red</span>
+          <span class="tech-tag"><span class="dot" style="background:#0ea5e9;"></span>Sky Blue</span>
+          <span class="tech-tag"><span class="dot" style="background:#166534;"></span>Forest</span>
+          <span class="tech-tag"><span class="dot" style="background:#6b1a2c;"></span>Burgundy</span>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-name">👔 Unisex Long Sleeve</div>
+        <div class="product-detail">240GSM Cotton · Sizes XS–XXXL · Front &amp; Back print</div>
+        <div class="tag-cloud">
+          <span class="tech-tag"><span class="dot" style="background:#F5F5F3; border:1px solid #999;"></span>White</span>
+          <span class="tech-tag"><span class="dot" style="background:#1a1a1a;"></span>Black</span>
+          <span class="tech-tag"><span class="dot" style="background:#1e3a5f;"></span>Navy</span>
+          <span class="tech-tag"><span class="dot" style="background:#7f1d1d;"></span>Maroon</span>
+          <span class="tech-tag"><span class="dot" style="background:#4a5240;"></span>Olive</span>
+          <span class="tech-tag"><span class="dot" style="background:#6b7280;"></span>Grey</span>
+          <span class="tech-tag"><span class="dot" style="background:#dc2626;"></span>Red</span>
+          <span class="tech-tag"><span class="dot" style="background:#0ea5e9;"></span>Sky Blue</span>
+          <span class="tech-tag"><span class="dot" style="background:#6b1a2c;"></span>Burgundy</span>
+          <span class="tech-tag"><span class="dot" style="background:#166534;"></span>Forest</span>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-name">☕ Coffee Mug</div>
+        <div class="product-detail">11oz Ceramic · Dishwasher safe · 360° wrap print</div>
+        <div class="tag-cloud">
+          <span class="tech-tag"><span class="dot" style="background:#F5F5F5; border:1px solid #999;"></span>White</span>
+          <span class="tech-tag"><span class="dot" style="background:#1C1917;"></span>Black</span>
+          <span class="tech-tag"><span class="dot" style="background:#1e3a5f;"></span>Navy</span>
+          <span class="tech-tag"><span class="dot" style="background:#dc2626;"></span>Red</span>
+          <span class="tech-tag"><span class="dot" style="background:#16a34a;"></span>Green</span>
+          <span class="tech-tag"><span class="dot" style="background:#7c3aed;"></span>Purple</span>
+          <span class="tech-tag"><span class="dot" style="background:#0ea5e9;"></span>Sky Blue</span>
+          <span class="tech-tag"><span class="dot" style="background:#ec4899;"></span>Pink</span>
+          <span class="tech-tag"><span class="dot" style="background:#7f1d1d;"></span>Maroon</span>
+          <span class="tech-tag"><span class="dot" style="background:#ea580c;"></span>Orange</span>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-name">🧢 Structured Cap</div>
+        <div class="product-detail">6-panel cotton · Adjustable strap · Front panel print</div>
+        <div class="tag-cloud">
+          <span class="tech-tag"><span class="dot" style="background:#F5F2EC; border:1px solid #999;"></span>White</span>
+          <span class="tech-tag"><span class="dot" style="background:#1a1a1a;"></span>Black</span>
+          <span class="tech-tag"><span class="dot" style="background:#1e3a5f;"></span>Navy</span>
+          <span class="tech-tag"><span class="dot" style="background:#7f1d1d;"></span>Maroon</span>
+          <span class="tech-tag"><span class="dot" style="background:#4a5240;"></span>Olive</span>
+          <span class="tech-tag"><span class="dot" style="background:#dc2626;"></span>Red</span>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-name">💧 Waterbottle</div>
+        <div class="product-detail">500ml Stainless steel · Insulated · Wrap print</div>
+        <div class="tag-cloud">
+          <span class="tech-tag"><span class="dot" style="background:#F5F5F5; border:1px solid #999;"></span>White</span>
+          <span class="tech-tag"><span class="dot" style="background:#1a1a1a;"></span>Black</span>
+          <span class="tech-tag"><span class="dot" style="background:#1e3a5f;"></span>Navy</span>
+          <span class="tech-tag"><span class="dot" style="background:#dc2626;"></span>Red</span>
+          <span class="tech-tag"><span class="dot" style="background:#7c3aed;"></span>Purple</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert alert-info">
+      <div class="alert-icon">📦</div>
+      <div>All products are <strong>catalogued in the database</strong> (productsTable) and also <strong>hardcoded in the Design Studio</strong> (mockups.tsx PRODUCTS array) for the mockup engine. The database holds shop-facing product data (pricing, stock, images) while the Design Studio has its own garment-specific config (print zones, mockup photos, colour swatches).</div>
+    </div>
+  </div>
+
+  <!-- Section 6 -->
+  <div class="section" id="s6">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <div>
+        <div class="section-title">Backend API Server</div>
+        <div class="section-subtitle">Express 5 REST API — 202 endpoints across 20 route files</div>
+      </div>
+    </div>
+
+    <div class="grid-3 mb-16">
+      <div class="stat-card">
+        <div class="stat-val">202</div>
+        <div class="stat-label">Total Endpoints</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">20</div>
+        <div class="stat-label">Route Files</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">Express 5</div>
+        <div class="stat-label">Framework</div>
+      </div>
+    </div>
+
+    <h4>API Route Groups</h4>
+    <table>
+      <thead>
+        <tr><th>Group</th><th>Prefix</th><th>Key Endpoints</th><th>Auth Required</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Authentication</strong></td>
+          <td><code>/auth</code></td>
+          <td>register, login, Google OAuth, Facebook OAuth, guest session, forgot/reset password, profile update, logout</td>
+          <td><span class="badge badge-grey">Public + User</span></td>
+        </tr>
+        <tr>
+          <td><strong>Admin Auth</strong></td>
+          <td><code>/admin</code></td>
+          <td>login, TOTP setup/enable/disable, change-password, session management, system health, flush-cache</td>
+          <td><span class="badge badge-red">Admin Only</span></td>
+        </tr>
+        <tr>
+          <td><strong>Products</strong></td>
+          <td><code>/products</code></td>
+          <td>list, get, featured, create, update, delete, bulk-create, toggle-featured</td>
+          <td><span class="badge badge-grey">Public (read)</span></td>
+        </tr>
+        <tr>
+          <td><strong>Orders</strong></td>
+          <td><code>/orders</code></td>
+          <td>create, list, get, my-orders, track, update status, update payment, payment info</td>
+          <td><span class="badge badge-grey">Mixed</span></td>
+        </tr>
+        <tr>
+          <td><strong>AI</strong></td>
+          <td><code>/ai</code></td>
+          <td>generate image (SSE stream), chat, reference upload, models list, developer chat/tools</td>
+          <td><span class="badge badge-blue">Session</span></td>
+        </tr>
+        <tr>
+          <td><strong>Blog</strong></td>
+          <td><code>/blog</code></td>
+          <td>list posts, get post, create, update, delete, categories CRUD, search</td>
+          <td><span class="badge badge-grey">Public (read)</span></td>
+        </tr>
+        <tr>
+          <td><strong>Cart</strong></td>
+          <td><code>/cart</code></td>
+          <td>save cart, get cart, merge guest→user, abandoned cart recovery</td>
+          <td><span class="badge badge-blue">Session</span></td>
+        </tr>
+        <tr>
+          <td><strong>Coupons</strong></td>
+          <td><code>/coupons</code></td>
+          <td>validate, list, create, update, delete, usage stats</td>
+          <td><span class="badge badge-grey">Public (validate)</span></td>
+        </tr>
+        <tr>
+          <td><strong>Reviews</strong></td>
+          <td><code>/reviews</code></td>
+          <td>list by product, create, approve, delete, stats</td>
+          <td><span class="badge badge-blue">User</span></td>
+        </tr>
+        <tr>
+          <td><strong>Customers</strong></td>
+          <td><code>/admin/customers</code></td>
+          <td>list customers, view profile, guest→member conversion, order history</td>
+          <td><span class="badge badge-red">Admin Only</span></td>
+        </tr>
+        <tr>
+          <td><strong>Analytics</strong></td>
+          <td><code>/admin/stats</code></td>
+          <td>revenue, orders, customers, top products, recent activity, time-series charts</td>
+          <td><span class="badge badge-red">Admin Only</span></td>
+        </tr>
+        <tr>
+          <td><strong>Settings</strong></td>
+          <td><code>/settings</code></td>
+          <td>get/set store settings (name, logo, shipping, policies, banner)</td>
+          <td><span class="badge badge-red">Admin (write)</span></td>
+        </tr>
+        <tr>
+          <td><strong>Activity Log</strong></td>
+          <td><code>/admin/activity-logs</code></td>
+          <td>list admin actions, rollback specific changes</td>
+          <td><span class="badge badge-red">Admin Only</span></td>
+        </tr>
+        <tr>
+          <td><strong>AI Execute</strong></td>
+          <td><code>/admin/ai-execute</code></td>
+          <td>AI-driven admin operations (bulk updates, preview &amp; undo)</td>
+          <td><span class="badge badge-red">Admin Only</span></td>
+        </tr>
+        <tr>
+          <td><strong>Backup</strong></td>
+          <td><code>/admin/backup</code></td>
+          <td>export orders CSV, full data export (JSON), import</td>
+          <td><span class="badge badge-red">Admin Only</span></td>
+        </tr>
+        <tr>
+          <td><strong>SEO</strong></td>
+          <td>/sitemap.xml, /robots.txt</td>
+          <td>Dynamic sitemap generation, robots rules</td>
+          <td><span class="badge badge-grey">Public</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-warning">
+      <div class="alert-icon">⚠️</div>
+      <div><strong>Render cold starts:</strong> The API server on Render free tier spins down after 15 minutes of inactivity. First requests after inactivity take 20–50 seconds. Consider upgrading to Render Starter ($7/mo) or adding a cron-based health ping to keep the server warm.</div>
+    </div>
+  </div>
+
+  <!-- Section 7 -->
+  <div class="section" id="s7">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <div>
+        <div class="section-title">Database Schema</div>
+        <div class="section-subtitle">Neon PostgreSQL + Drizzle ORM — lib/db/src/schema/index.ts</div>
+      </div>
+    </div>
+
+    <div class="grid-2 mb-16">
+      <div class="card">
+        <div class="card-title">🗄️ Database</div>
+        <div class="card-body"><strong>Neon PostgreSQL</strong> (serverless) with connection pooling via <code>@neondatabase/serverless</code>. Region: US East 1. Connection string via env var <code>DATABASE_URL_MAIN</code>. Drizzle ORM for type-safe queries and schema management.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">📊 ORM</div>
+        <div class="card-body"><strong>Drizzle ORM</strong> — zero-abstraction TypeScript ORM. Schema defined with <code>pgTable</code> DSL, full type inference from schema. Migrations via <code>drizzle-kit</code>. No raw SQL strings — all queries are type-checked at compile time.</div>
+      </div>
+    </div>
+
+    <h4>Tables Overview</h4>
+    <table>
+      <thead>
+        <tr><th>Table</th><th>Key Columns</th><th>Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>admins</code></td>
+          <td>id, username, password_hash, totp_secret, totp_enabled</td>
+          <td>Admin user accounts with optional TOTP 2FA</td>
+        </tr>
+        <tr>
+          <td><code>admin_sessions</code></td>
+          <td>token_hash, admin_id, role, expires_at, revoked_at, ip, user_agent</td>
+          <td>Secure session tokens (hashed), revocable</td>
+        </tr>
+        <tr>
+          <td><code>customers</code></td>
+          <td>id, email, name, phone, password_hash, google_id, created_at</td>
+          <td>Registered customer accounts</td>
+        </tr>
+        <tr>
+          <td><code>guest_customers</code></td>
+          <td>id, name, email, phone, session_id, created_at</td>
+          <td>Guest orders — convertible to full accounts</td>
+        </tr>
+        <tr>
+          <td><code>categories</code></td>
+          <td>id, name, slug, description, image_url, product_count</td>
+          <td>Product taxonomy</td>
+        </tr>
+        <tr>
+          <td><code>products</code></td>
+          <td>id, name, slug, description, price, category_id, stock, featured, customizable</td>
+          <td>Product catalogue with JSON variants (sizes, colours)</td>
+        </tr>
+        <tr>
+          <td><code>orders</code></td>
+          <td>id, order_number, customer_{name,email,phone}, shipping_{address,city,district}, payment_{method,status}, status, items (jsonb), promo_code</td>
+          <td>Customer orders with full line items as JSONB</td>
+        </tr>
+        <tr>
+          <td><code>order_items</code></td>
+          <td>id, order_id, product_id, quantity, price, custom_design (jsonb)</td>
+          <td>Line items with embedded custom design JSON</td>
+        </tr>
+        <tr>
+          <td><code>coupons</code></td>
+          <td>id, code, type (percent/fixed), value, min_order, usage_limit, used_count, expires_at</td>
+          <td>Promotional discount codes</td>
+        </tr>
+        <tr>
+          <td><code>reviews</code></td>
+          <td>id, product_id, customer_id, rating, body, approved, created_at</td>
+          <td>Product reviews with moderation queue</td>
+        </tr>
+        <tr>
+          <td><code>blog_posts</code></td>
+          <td>id, title, slug, content (jsonb), excerpt, image_url, author, published, category</td>
+          <td>CMS blog articles</td>
+        </tr>
+        <tr>
+          <td><code>settings</code></td>
+          <td>id, key, value, updated_at</td>
+          <td>Key-value store for dynamic site configuration</td>
+        </tr>
+        <tr>
+          <td><code>activity_log</code></td>
+          <td>id, admin_id, action, entity_type, entity_id, old_value (jsonb), new_value (jsonb)</td>
+          <td>Audit trail for all admin operations (rollback capable)</td>
+        </tr>
+        <tr>
+          <td><code>saved_designs</code></td>
+          <td>id, customer_id, name, product_type, design_data (jsonb), created_at</td>
+          <td>Customer design library</td>
+        </tr>
+        <tr>
+          <td><code>cart_sessions</code></td>
+          <td>id, session_id, customer_id, items (jsonb), updated_at</td>
+          <td>Server-persisted cart state (guest + logged-in)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 8 -->
+  <div class="section" id="s8">
+    <div class="section-header">
+      <div class="section-num">8</div>
+      <div>
+        <div class="section-title">Authentication &amp; Security</div>
+        <div class="section-subtitle">Multi-layer auth, JWT, TOTP 2FA, rate limiting</div>
+      </div>
+    </div>
+
+    <div class="grid-2 mb-16">
+      <div class="card">
+        <div class="card-title">🔐 Customer Auth</div>
+        <div class="card-body">
+          <ul>
+            <li><strong>Registration:</strong> Email + password → Argon2id hash stored</li>
+            <li><strong>Login:</strong> Password verify → JWT issued (HTTP-only cookie)</li>
+            <li><strong>Google OAuth:</strong> <code>google-auth-library</code> verifies ID token → create/match account by google_id</li>
+            <li><strong>Facebook OAuth:</strong> Access token verified → same flow</li>
+            <li><strong>Guest mode:</strong> Session UUID issued, orders linked to session, convertible to account</li>
+            <li><strong>Password reset:</strong> Time-limited token emailed via Nodemailer</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🛡️ Admin Auth</div>
+        <div class="card-body">
+          <ul>
+            <li><strong>Login:</strong> Username + password → session token (SHA-256 hashed in DB)</li>
+            <li><strong>TOTP 2FA:</strong> Optional second factor via authenticator app (QR code setup, 6-digit verification)</li>
+            <li><strong>Sessions:</strong> Listed, revocable individually or all-at-once</li>
+            <li><strong>IP/UA logging:</strong> Every session records IP address + user agent</li>
+            <li><strong>Master reset:</strong> Emergency password reset via secure env-var token</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <h4>API Security Layers</h4>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">🔒 Helmet.js</div>
+        <div class="card-body">Sets 15+ HTTP security headers: <code>Content-Security-Policy</code>, <code>X-Frame-Options</code>, <code>X-Content-Type-Options</code>, <code>Strict-Transport-Security</code>, <code>Referrer-Policy</code>, <code>Permissions-Policy</code>.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">⏱️ Rate Limiting</div>
+        <div class="card-body"><code>express-rate-limit</code> applied globally + extra-tight on auth endpoints. Upstash Redis backend for distributed counters (prevents bypass on multi-process deploy).</div>
+      </div>
+      <div class="card">
+        <div class="card-title">🌐 CORS</div>
+        <div class="card-body">Configured <code>cors</code> middleware with allowlist of origins (trynexshop.com, trynex-lifestyle-shop.pages.dev, localhost variants). Credentials included for cookie-based auth.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">🧼 Input Validation</div>
+        <div class="card-body">All request bodies validated with <strong>Zod</strong> schemas (<code>@workspace/api-zod</code>). Parse failures return structured 400 errors. Schema shared between API and client via workspace package.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 9 -->
+  <div class="section" id="s9">
+    <div class="section-header">
+      <div class="section-num">9</div>
+      <div>
+        <div class="section-title">AI Integration</div>
+        <div class="section-subtitle">Design generation, AI chat, admin AI operations</div>
+      </div>
+    </div>
+
+    <div class="grid-2 mb-16">
+      <div class="card">
+        <div class="card-title">🎨 AI Design Generation</div>
+        <div class="card-body">
+          <p>Customers enter a text prompt in the Design Studio's "AI Art" tab. The API streams image generation via <code>GET /ai/generate</code> using Server-Sent Events (SSE). The generated image is served as a temporary URL from <code>GET /ai/ref/:filename</code>. Users can also upload a reference image for style-guided generation via <code>POST /ai/reference</code>.</p>
+          <p>The AI model is configurable server-side — multiple providers are supported. Available models are queried dynamically via <code>GET /ai/models</code>.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">💬 AI Chat</div>
+        <div class="card-body">
+          <p><code>POST /ai/chat</code> supports a conversational AI assistant accessible in the Design Studio. Helps customers with design ideas, colour suggestions, and print specifications.</p>
+          <p><strong>Admin AI Developer:</strong> A separate admin-only developer chat (<code>/ai/developer/chat</code>) with access to a configurable set of tools, allowing automated admin operations via AI prompts. Includes context injection, multi-model support, and tool execution.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🤖 AI Admin Execute (aiExecute)</div>
+      <div class="card-body">
+        <p>A sophisticated admin feature allowing AI-driven bulk operations. Flow:</p>
+        <ol style="padding-left:16px; font-size:12px;">
+          <li><strong>Preview:</strong> <code>POST /admin/ai-preview</code> — dry-run shows what changes would be made</li>
+          <li><strong>Execute:</strong> <code>POST /admin/ai-execute</code> — applies the changes, logs to activity_log</li>
+          <li><strong>Undo:</strong> <code>POST /admin/ai-undo</code> — reverts any AI-executed operation using activity_log old_value snapshots</li>
+        </ol>
+        <p>Supports product bulk updates, coupon generation, category changes, and more.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🖼️ Product Image Storage</div>
+      <div class="card-body">AI-generated product images and admin-uploaded images stored via <code>POST /storage/product-image</code> (requires admin auth). Images stored on a configurable S3-compatible bucket (AWS S3 SDK via <code>@aws-sdk/client-s3</code>). Pre-signed URLs generated for direct browser upload (<code>@aws-sdk/s3-request-presigner</code>).</div>
+    </div>
+  </div>
+
+  <!-- Section 10 -->
+  <div class="section" id="s10">
+    <div class="section-header">
+      <div class="section-num">10</div>
+      <div>
+        <div class="section-title">Mobile App</div>
+        <div class="section-subtitle">Expo React Native — iOS &amp; Android</div>
+      </div>
+    </div>
+
+    <div class="grid-2 mb-16">
+      <div class="card">
+        <div class="card-title">📱 Expo Framework</div>
+        <div class="card-body">Expo SDK with React Native. Managed workflow (no native code ejection). Dev server served from Replit. Uses <code>expo-router</code> for file-based navigation. Shared API client (<code>@workspace/api-client</code>) with the web storefront — same types, same endpoints.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">🎨 Mobile UI</div>
+        <div class="card-body">NativeWind (Tailwind for React Native). Custom mobile-first components. The Design Studio on mobile uses the same <code>GarmentSVG</code> renderer wrapped in a WebView or React Native SVG. All garment mockup logic is shared with the web via the same TypeScript code.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📦 Core Features (Mobile)</div>
+      <div class="card-body">
+        <div class="grid-2" style="gap:8px;">
+          <ul>
+            <li>Full product catalogue browsing</li>
+            <li>Product detail with image gallery</li>
+            <li>Design Studio (2D mode)</li>
+            <li>Cart management</li>
+            <li>Checkout (COD + mobile banking)</li>
+          </ul>
+          <ul>
+            <li>Order placement &amp; tracking</li>
+            <li>User authentication</li>
+            <li>Profile &amp; order history</li>
+            <li>Blog reading</li>
+            <li>Push notifications (Expo Notifications)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 11 -->
+  <div class="section" id="s11">
+    <div class="section-header">
+      <div class="section-num">11</div>
+      <div>
+        <div class="section-title">Admin Panel</div>
+        <div class="section-subtitle">Full-featured CMS and operations dashboard</div>
+      </div>
+    </div>
+
+    <p>The admin panel is embedded in the storefront at <code>/admin/*</code> (protected by session token). It is a fully-featured back-office for managing every aspect of the TryNex business.</p>
+
+    <div class="grid-2 mb-16">
+      <div class="card">
+        <div class="card-title">📊 Dashboard &amp; Analytics</div>
+        <div class="card-body">Real-time sales figures, order counts, revenue totals, top-selling products, customer growth, and revenue time-series charts (Recharts). Export to CSV.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">📦 Order Management</div>
+        <div class="card-body">List, filter, search orders. Update status (Pending → Processing → Shipped → Delivered → Cancelled). Update payment status (Pending → Paid → Refunded). Add internal notes. View full order details including custom design JSON. Telegram notification on new orders.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">🛍️ Product CMS</div>
+        <div class="card-body">Create/edit/delete products. Rich text description (TipTap editor). Multiple image upload (S3). Category assignment. Stock management. Featured toggle. Customizable flag (enables Design Studio for product). Bulk operations via AI Execute.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">✍️ Blog CMS</div>
+        <div class="card-body">Create/edit/delete blog posts. TipTap rich text editor with image embedding. Categories management. Publish/unpublish. SEO metadata (title, description, OG image).</div>
+      </div>
+      <div class="card">
+        <div class="card-title">🎟️ Coupons &amp; Promotions</div>
+        <div class="card-body">Create percentage or fixed-amount discount codes. Set minimum order value, usage limits, expiry dates. Usage analytics (how many times used, revenue impact).</div>
+      </div>
+      <div class="card">
+        <div class="card-title">👥 Customer Management</div>
+        <div class="card-body">Browse registered customers and guests. View order history per customer. Convert guest accounts to member accounts. Email outreach.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">⚙️ Site Settings</div>
+        <div class="card-body">Store name, logo, tagline. Announcement banner (text + colour). Shipping policy, return policy, about text. Social media links. Telegram bot token configuration. Minimum free-shipping threshold.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">🔍 Activity Log &amp; Audit</div>
+        <div class="card-body">Every admin action is logged: entity type, entity ID, old value (JSON snapshot), new value. Each entry can be individually rolled back. Filterable by admin user, action type, and date range.</div>
+      </div>
+    </div>
+
+    <div class="alert alert-success">
+      <div class="alert-icon">🔒</div>
+      <div><strong>Admin access URL:</strong> <code>trynexshop.com/admin</code> — protected by session token (HTTP-only cookie). Optional TOTP 2FA via authenticator app. All admin endpoints require <code>requireAdmin</code> middleware which validates the token hash against the <code>admin_sessions</code> table.</div>
+    </div>
+  </div>
+
+  <!-- Section 12 -->
+  <div class="section" id="s12">
+    <div class="section-header">
+      <div class="section-num">12</div>
+      <div>
+        <div class="section-title">Order &amp; Payment Flow</div>
+        <div class="section-subtitle">COD + Bangladesh mobile banking integration</div>
+      </div>
+    </div>
+
+    <div class="grid-2 mb-16">
+      <div class="card">
+        <div class="card-title">🛒 Order Flow</div>
+        <div class="card-body">
+          <ol style="padding-left:16px; font-size:12px;">
+            <li>Customer adds items to cart (localStorage + optional server sync)</li>
+            <li>Checkout: enter name, phone, address, district, city</li>
+            <li>Select payment method</li>
+            <li>Optionally enter promo code → validated against DB</li>
+            <li><code>POST /orders</code> creates order, returns order number</li>
+            <li>Telegram bot notifies admin instantly</li>
+            <li>Admin updates status as order progresses</li>
+            <li>Customer tracks order at <code>/track</code> with order number</li>
+          </ol>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">💳 Payment Methods</div>
+        <div class="card-body">
+          <table style="margin:0;">
+            <tr>
+              <td><strong>🚚 Cash on Delivery (COD)</strong></td>
+              <td>Default. Customer pays on delivery. Most popular in BD market.</td>
+            </tr>
+            <tr>
+              <td><strong>📱 bKash</strong></td>
+              <td>Customer sends payment to merchant bKash number, enters transaction ID.</td>
+            </tr>
+            <tr>
+              <td><strong>📱 Nagad</strong></td>
+              <td>Same flow as bKash — transaction ID submitted for admin verification.</td>
+            </tr>
+            <tr>
+              <td><strong>📱 Rocket</strong></td>
+              <td>DBBL Rocket mobile banking — same verification flow.</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🤖 Telegram Order Notifications</div>
+      <div class="card-body">When a new order is placed, the API sends a formatted Telegram message to the admin's configured Telegram chat. Message includes: order number, customer name, phone, address, items, total, payment method. Configurable via Admin → Settings → Telegram. Tested via <code>POST /admin/telegram/test</code>.</div>
+    </div>
+  </div>
+
+  <!-- Section 13 -->
+  <div class="section" id="s13">
+    <div class="section-header">
+      <div class="section-num">13</div>
+      <div>
+        <div class="section-title">Deployment Infrastructure</div>
+        <div class="section-subtitle">Cloudflare Pages + Render + Neon + GitHub CI/CD</div>
+      </div>
+    </div>
+
+    <div class="grid-2 mb-16">
+      <div class="card">
+        <div class="card-title">☁️ Cloudflare Pages — Frontend</div>
+        <div class="card-body">
+          <p>Project: <code>trynex-lifestyle-shop</code></p>
+          <p>Custom domain: <strong>trynexshop.com</strong></p>
+          <ul>
+            <li>Builds from GitHub main branch automatically on push</li>
+            <li>Build command: <code>pnpm --filter @workspace/trynex-storefront run build</code></li>
+            <li>Output: <code>artifacts/trynex-storefront/dist/</code></li>
+            <li>Edge functions (<code>functions/api/[[path]].ts</code>) proxy all <code>/api/*</code> requests to Render</li>
+            <li>Env var: <code>API_URL</code> = Render API server URL</li>
+            <li>300+ global edge locations, unlimited bandwidth on free tier</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🖥️ Render — API Server</div>
+        <div class="card-body">
+          <p>Service ID: <code>srv-d7b774mdqaus73carp70</code></p>
+          <ul>
+            <li>Free tier (spins down after 15min inactivity)</li>
+            <li>Build: TypeScript → ESM bundle via custom <code>build.mjs</code></li>
+            <li>Runtime: Node.js 24, port from <code>PORT</code> env var</li>
+            <li>Env vars: <code>DATABASE_URL_MAIN</code>, <code>JWT_SECRET</code>, <code>CORS_ORIGIN</code>, <code>ADMIN_PASSWORD</code>, AI keys</li>
+            <li>Health endpoint: <code>/api/admin/health</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🐘 Neon PostgreSQL — Database</div>
+        <div class="card-body">
+          <ul>
+            <li>Serverless PostgreSQL (cold-start on first query)</li>
+            <li>Connection pooling endpoint (Neon pooler)</li>
+            <li>Region: US East 1 (c-5)</li>
+            <li>Drizzle ORM migrations applied manually</li>
+            <li>Free tier: 512MB storage, 190 compute hours/month</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">⚡ Upstash Redis — Cache</div>
+        <div class="card-body">
+          <ul>
+            <li>Serverless Redis for API response caching</li>
+            <li>Used by <code>@upstash/redis</code> package in the API</li>
+            <li>Caches: product listings, settings, featured products</li>
+            <li>TTL-based invalidation (5 min for products)</li>
+            <li>Manual flush via <code>POST /admin/system/flush-cache</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🔄 CI/CD Pipeline</div>
+      <div class="card-body">
+        <ol style="padding-left:16px; font-size:12px; line-height:2;">
+          <li><strong>Developer</strong> pushes to GitHub (<code>georgelsmith333-hub/trynex-lifestyle</code>, main branch)</li>
+          <li><strong>CF Pages webhook</strong> triggered → queues new build automatically</li>
+          <li>Build stage: installs pnpm, runs <code>pnpm install</code>, then <code>pnpm --filter trynex-storefront build</code></li>
+          <li>Vite compiles TypeScript, bundles JS, generates service worker, outputs <code>dist/</code></li>
+          <li>CF Pages deploys output to global CDN edge network</li>
+          <li>Total CI/CD time: ~90 seconds from push to live</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 14 -->
+  <div class="section" id="s14">
+    <div class="section-header">
+      <div class="section-num">14</div>
+      <div>
+        <div class="section-title">Performance &amp; Caching</div>
+        <div class="section-subtitle">PWA, Workbox, Redis, CDN edge caching</div>
+      </div>
+    </div>
+
+    <div class="grid-2 mb-16">
+      <div class="card">
+        <div class="card-title">📦 Progressive Web App (PWA)</div>
+        <div class="card-body">
+          <p>Generated by <code>vite-plugin-pwa</code> using Workbox. Strategies:</p>
+          <ul>
+            <li><strong>Precaching:</strong> All JS/CSS bundles, fonts, critical images</li>
+            <li><strong>CacheFirst:</strong> Static assets (images, fonts) — fast loads</li>
+            <li><strong>StaleWhileRevalidate:</strong> API responses — instant display, background refresh</li>
+            <li><strong>NetworkFirst:</strong> Page navigations — always fresh HTML</li>
+          </ul>
+          <p>Users can install the PWA on mobile home screen for app-like experience.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">⚡ API Caching (Redis)</div>
+        <div class="card-body">
+          <p>Upstash Redis intercepts hot GET routes:</p>
+          <ul>
+            <li><code>GET /products</code> — 5 min TTL</li>
+            <li><code>GET /products/featured</code> — 10 min TTL</li>
+            <li><code>GET /settings</code> — 30 min TTL</li>
+            <li><code>GET /blog/posts</code> — 5 min TTL</li>
+          </ul>
+          <p>Admin mutations (create/update/delete) flush related cache keys. Manual flush available via admin panel.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <div class="stat-card">
+        <div class="stat-val">~90s</div>
+        <div class="stat-label">CF Pages deploy time</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">300+</div>
+        <div class="stat-label">CF Edge locations</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">&lt;100ms</div>
+        <div class="stat-label">Static asset TTFB</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 15 -->
+  <div class="section" id="s15">
+    <div class="section-header">
+      <div class="section-num">15</div>
+      <div>
+        <div class="section-title">Full Tech Stack A–Z</div>
+        <div class="section-subtitle">Every library, framework, and service used in the platform</div>
+      </div>
+    </div>
+
+    <h4>Frontend (trynex-storefront)</h4>
+    <div class="tag-cloud mb-16">
+      <span class="tech-tag"><span class="dot" style="background:#61dafb;"></span>React 19</span>
+      <span class="tech-tag"><span class="dot" style="background:#646cff;"></span>Vite 6</span>
+      <span class="tech-tag"><span class="dot" style="background:#3178c6;"></span>TypeScript 5</span>
+      <span class="tech-tag"><span class="dot" style="background:#38bdf8;"></span>Tailwind CSS v4</span>
+      <span class="tech-tag"><span class="dot" style="background:#7c3aed;"></span>Radix UI</span>
+      <span class="tech-tag"><span class="dot" style="background:#e11d48;"></span>Wouter</span>
+      <span class="tech-tag"><span class="dot" style="background:#ff4154;"></span>TanStack Query</span>
+      <span class="tech-tag"><span class="dot" style="background:#00a550;"></span>Three.js + R3F</span>
+      <span class="tech-tag"><span class="dot" style="background:#0a0a0a;"></span>@react-three/drei</span>
+      <span class="tech-tag"><span class="dot" style="background:#f97316;"></span>Framer Motion</span>
+      <span class="tech-tag"><span class="dot" style="background:#1a1a1a;"></span>TipTap Editor</span>
+      <span class="tech-tag"><span class="dot" style="background:#f59e0b;"></span>Lenis (smooth scroll)</span>
+      <span class="tech-tag"><span class="dot" style="background:#6366f1;"></span>Embla Carousel</span>
+      <span class="tech-tag"><span class="dot" style="background:#3b82f6;"></span>Recharts</span>
+      <span class="tech-tag"><span class="dot" style="background:#10b981;"></span>React Hook Form</span>
+      <span class="tech-tag"><span class="dot" style="background:#ef4444;"></span>Zod</span>
+      <span class="tech-tag"><span class="dot" style="background:#8b5cf6;"></span>Sonner (toasts)</span>
+      <span class="tech-tag"><span class="dot" style="background:#64748b;"></span>date-fns</span>
+      <span class="tech-tag"><span class="dot" style="background:#0ea5e9;"></span>Workbox (PWA)</span>
+      <span class="tech-tag"><span class="dot" style="background:#22d3ee;"></span>vite-plugin-pwa</span>
+      <span class="tech-tag"><span class="dot" style="background:#a855f7;"></span>@imgly/background-removal</span>
+      <span class="tech-tag"><span class="dot" style="background:#84cc16;"></span>onnxruntime-web</span>
+      <span class="tech-tag"><span class="dot" style="background:#0891b2;"></span>JSZip</span>
+      <span class="tech-tag"><span class="dot" style="background:#059669;"></span>DOMPurify</span>
+      <span class="tech-tag"><span class="dot" style="background:#dc2626;"></span>react-helmet-async</span>
+      <span class="tech-tag"><span class="dot" style="background:#7c3aed;"></span>CVA (class-variance-authority)</span>
+      <span class="tech-tag"><span class="dot" style="background:#374151;"></span>clsx + tailwind-merge</span>
+      <span class="tech-tag"><span class="dot" style="background:#0284c7;"></span>lucide-react</span>
+      <span class="tech-tag"><span class="dot" style="background:#f43f5e;"></span>react-icons</span>
+      <span class="tech-tag"><span class="dot" style="background:#4f46e5;"></span>vaul (drawer)</span>
+      <span class="tech-tag"><span class="dot" style="background:#0f172a;"></span>cmdk (command palette)</span>
+      <span class="tech-tag"><span class="dot" style="background:#6d28d9;"></span>@use-gesture/react</span>
+    </div>
+
+    <h4>Backend API (api-server)</h4>
+    <div class="tag-cloud mb-16">
+      <span class="tech-tag"><span class="dot" style="background:#68a063;"></span>Node.js 24</span>
+      <span class="tech-tag"><span class="dot" style="background:#010101;"></span>Express 5</span>
+      <span class="tech-tag"><span class="dot" style="background:#3178c6;"></span>TypeScript 5</span>
+      <span class="tech-tag"><span class="dot" style="background:#ef4444;"></span>Zod (validation)</span>
+      <span class="tech-tag"><span class="dot" style="background:#854d0e;"></span>Drizzle ORM</span>
+      <span class="tech-tag"><span class="dot" style="background:#336791;"></span>pg (node-postgres)</span>
+      <span class="tech-tag"><span class="dot" style="background:#0ea5e9;"></span>@upstash/redis</span>
+      <span class="tech-tag"><span class="dot" style="background:#FF9900;"></span>@aws-sdk/client-s3</span>
+      <span class="tech-tag"><span class="dot" style="background:#059669;"></span>@node-rs/argon2</span>
+      <span class="tech-tag"><span class="dot" style="background:#6366f1;"></span>jsonwebtoken</span>
+      <span class="tech-tag"><span class="dot" style="background:#f97316;"></span>Nodemailer</span>
+      <span class="tech-tag"><span class="dot" style="background:#a3e635;"></span>helmet</span>
+      <span class="tech-tag"><span class="dot" style="background:#14b8a6;"></span>cors</span>
+      <span class="tech-tag"><span class="dot" style="background:#8b5cf6;"></span>cookie-parser</span>
+      <span class="tech-tag"><span class="dot" style="background:#f59e0b;"></span>express-rate-limit</span>
+      <span class="tech-tag"><span class="dot" style="background:#22d3ee;"></span>pino + pino-http</span>
+      <span class="tech-tag"><span class="dot" style="background:#10b981;"></span>google-auth-library</span>
+      <span class="tech-tag"><span class="dot" style="background:#64748b;"></span>qrcode (TOTP QR)</span>
+    </div>
+
+    <h4>Database &amp; Infrastructure</h4>
+    <div class="tag-cloud mb-16">
+      <span class="tech-tag"><span class="dot" style="background:#336791;"></span>Neon PostgreSQL</span>
+      <span class="tech-tag"><span class="dot" style="background:#dc2626;"></span>Upstash Redis</span>
+      <span class="tech-tag"><span class="dot" style="background:#F6821F;"></span>Cloudflare Pages</span>
+      <span class="tech-tag"><span class="dot" style="background:#46E3B7;"></span>Render.com</span>
+      <span class="tech-tag"><span class="dot" style="background:#181717;"></span>GitHub (CI/CD)</span>
+      <span class="tech-tag"><span class="dot" style="background:#FF9900;"></span>AWS S3 (storage)</span>
+      <span class="tech-tag"><span class="dot" style="background:#26A5E4;"></span>Telegram Bot API</span>
+    </div>
+
+    <h4>Mobile (trynex-mobile)</h4>
+    <div class="tag-cloud mb-16">
+      <span class="tech-tag"><span class="dot" style="background:#000020;"></span>Expo SDK</span>
+      <span class="tech-tag"><span class="dot" style="background:#61dafb;"></span>React Native</span>
+      <span class="tech-tag"><span class="dot" style="background:#38bdf8;"></span>NativeWind</span>
+      <span class="tech-tag"><span class="dot" style="background:#3178c6;"></span>TypeScript</span>
+      <span class="tech-tag"><span class="dot" style="background:#7c3aed;"></span>expo-router</span>
+    </div>
+
+    <h4>Shared Packages</h4>
+    <div class="tag-cloud">
+      <span class="tech-tag"><span class="dot" style="background:#3178c6;"></span>@workspace/db (Drizzle schema)</span>
+      <span class="tech-tag"><span class="dot" style="background:#ef4444;"></span>@workspace/api-zod (Zod schemas)</span>
+      <span class="tech-tag"><span class="dot" style="background:#ff4154;"></span>@workspace/api-client (typed fetch)</span>
+      <span class="tech-tag"><span class="dot" style="background:#ff4154;"></span>@workspace/api-client-react (RQ hooks)</span>
+    </div>
+  </div>
+
+  <!-- Section 16 -->
+  <div class="section" id="s16">
+    <div class="section-header">
+      <div class="section-num">16</div>
+      <div>
+        <div class="section-title">Known Issues &amp; Roadmap</div>
+        <div class="section-subtitle">Current status, resolved issues, and next steps</div>
+      </div>
+    </div>
+
+    <h4>✅ Recently Resolved (this session)</h4>
+    <table class="mb-16">
+      <thead><tr><th>Issue</th><th>Fix Applied</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>White garments invisible on beige studio background</td>
+          <td>Two-layer multiply-blend render: shadow cutout layer + full photo with <code>mix-blend-mode: multiply</code></td>
+          <td><span class="badge badge-green">✅ Fixed &amp; Deployed</span></td>
+        </tr>
+        <tr>
+          <td>Black garments showing cutout artifacts (triangular shapes, zoom issues)</td>
+          <td>Reverted to full dark photo approach for black garments — no cutout used</td>
+          <td><span class="badge badge-green">✅ Fixed &amp; Deployed</span></td>
+        </tr>
+        <tr>
+          <td>Long sleeve showing as "short sleeve" (sleeves invisible)</td>
+          <td>Multiply-blend fix makes white sleeve fabric visible — photo IS a long sleeve</td>
+          <td><span class="badge badge-green">✅ Fixed &amp; Deployed</span></td>
+        </tr>
+        <tr>
+          <td>Coloured garments filling entire canvas (colour flood)</td>
+          <td>Regenerated 7 cutout PNGs with proper TrueColorAlpha channels for correct silhouette masking</td>
+          <td><span class="badge badge-green">✅ Fixed &amp; Deployed</span></td>
+        </tr>
+        <tr>
+          <td>Product tab icons invisible (white garment on white tab background)</td>
+          <td>Tab icons now use cutout PNG + warm beige (#e6e0d8) tab background</td>
+          <td><span class="badge badge-green">✅ Fixed &amp; Deployed</span></td>
+        </tr>
+        <tr>
+          <td>TDZ error: <code>Cannot access 'isApparel' before initialization</code></td>
+          <td>Moved <code>isApparel</code> &amp; <code>isCylinder</code> declarations before their first use</td>
+          <td><span class="badge badge-green">✅ Fixed &amp; Deployed</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>⚠️ Current Known Limitations</h4>
+    <table class="mb-16">
+      <thead><tr><th>Issue</th><th>Impact</th><th>Recommended Fix</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Render API cold-start delay (~30s)</td>
+          <td>First API request after 15 min idle is slow</td>
+          <td>Upgrade Render to Starter tier ($7/mo) or add health-ping cron</td>
+        </tr>
+        <tr>
+          <td>No real payment gateway integration</td>
+          <td>Mobile payments (bKash/Nagad) require manual admin verification</td>
+          <td>Integrate bKash PGW API for automated payment confirmation</td>
+        </tr>
+        <tr>
+          <td>No long-sleeve black photo mockup</td>
+          <td>Black long sleeve uses colour-tint of white cutout (less accurate)</td>
+          <td>Provide <code>black-longsleeve-front.png</code> &amp; <code>black-longsleeve-back.png</code></td>
+        </tr>
+        <tr>
+          <td>Design Studio color URL param not honoured</td>
+          <td>Cannot deep-link to specific garment + colour combo</td>
+          <td>Parse <code>?color=hex</code> in DesignStudio initialisation &amp; set <code>selectedColor</code></td>
+        </tr>
+        <tr>
+          <td>GitHub push requires token in URL (PAT-based)</td>
+          <td>Deployment requires manual REST API or token-URL git push</td>
+          <td>Set up GitHub Actions or use a deploy key instead of PAT</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>🗺️ Suggested Roadmap</h4>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">🔜 Near-term (1–2 months)</div>
+        <div class="card-body">
+          <ul>
+            <li>bKash PGW automated payment verification</li>
+            <li>Email order confirmation to customers</li>
+            <li>Black long-sleeve mockup photos</li>
+            <li>Render paid tier (eliminate cold-start)</li>
+            <li>Color deep-link URL param in Design Studio</li>
+            <li>Product search improvements (full-text DB search)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">📅 Mid-term (3–6 months)</div>
+        <div class="card-body">
+          <ul>
+            <li>Customer loyalty / points system</li>
+            <li>Product bundle builder (gift sets)</li>
+            <li>Bulk order / corporate ordering portal</li>
+            <li>WhatsApp order notifications (in addition to Telegram)</li>
+            <li>Admin mobile app for order management</li>
+            <li>SEO improvements — structured data (JSON-LD)</li>
+            <li>Multi-language support (Bengali / English)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <div style="font-size:20px; font-weight:800; color:white; margin-bottom:8px;">TryNex Lifestyle</div>
+  <div style="margin-bottom:4px;">Comprehensive Technical Report · Generated June 17, 2026</div>
+  <div style="margin-bottom:16px;">trynexshop.com · api on Render · DB on Neon · CDN on Cloudflare Pages</div>
+  <div style="font-size:10px; opacity:0.5;">CONFIDENTIAL — Internal Use Only</div>
+</div>
+
+<script>
+// Add smooth print button
+const btn = document.createElement('button');
+btn.textContent = '🖨️ Print / Save as PDF';
+btn.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#E85D04;color:white;border:none;border-radius:8px;padding:12px 20px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(232,93,4,0.4);z-index:999;font-family:Inter,sans-serif;';
+btn.onclick = () => window.print();
+document.body.appendChild(btn);
+</script>
+</body>
+</html>

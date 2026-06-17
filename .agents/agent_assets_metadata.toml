@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "MC6gfx4CAEVELR0DuNTVC"
+uri = "file://trynex-report.tar.gz"
+type = "unspecified"
+title = "TryNex Lifestyle — Comprehensive A-Z Technical Report (HTML)"

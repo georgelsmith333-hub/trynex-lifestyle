@@ -383,6 +383,11 @@ export function GarmentSVG({
   const isCylUnderImageSrc = product.category === "mug" || product.category === "waterbottle";
   const hasDarkCutout = !!base && (face === "back" ? !!base.darkBackCutout : !!base.darkFrontCutout);
 
+  // Is this an apparel product (tshirt / hoodie / longsleeve)?
+  // Declared here so it can be referenced below in useMixBlend / isApparelForCutout.
+  const isApparel = product.category === "tshirt" || product.category === "hoodie" || product.category === "longsleeve";
+  const isCylinder = product.category === "mug" || product.category === "waterbottle";
+
   // WHITE / LIGHT GARMENTS — multiply-blend strategy:
   //   Render the ORIGINAL full photo with mix-blend-mode:multiply.
   //   White pixels (255,255,255) × any background = background → invisible.
@@ -392,12 +397,12 @@ export function GarmentSVG({
   //   drop-shadow filter follows the garment silhouette, not the photo rectangle.
   const useMixBlend = isApparel && !isDark && !useBlackPhoto;
 
-  // DARK-COLOUR / BLACK GARMENTS — cutout strategy:
+  // DARK-COLOUR GARMENTS — cutout strategy (only for non-black non-mixblend):
   //   Use the transparent-BG cutout so the SVG tint filter only colours garment
-  //   pixels (not the background rectangle). For near-black, use the dedicated
-  //   black-cutout so the shadow wraps the silhouette cleanly.
-  const isApparelForCutout = isApparel && !useMixBlend &&
-    ((useBlackPhoto && hasDarkCutout) || (!useBlackPhoto && hasCutout));
+  //   pixels (not the background rectangle).
+  //   Near-black garments use the full dark photo directly (better quality than
+  //   background-removed cutouts which create artefacts on dark fabric).
+  const isApparelForCutout = isApparel && !useMixBlend && !useBlackPhoto && hasCutout;
 
   // Shadow source for the mix-blend case: the white cutout PNG gives the SVG
   // drop-shadow filter a garment-shaped alpha to trace.
@@ -429,10 +434,6 @@ export function GarmentSVG({
   // rectangle must also be mirrored so it aligns with the printable area on the
   // flipped image. Mirror formula: new_x = viewBoxWidth - pz.x - pz.w
   const displayPZ = isMugRightSide ? { ...pz, x: 1000 - pz.x - pz.w } : pz;
-
-  // Is this an apparel product (tshirt / hoodie / longsleeve)?
-  const isApparel = product.category === "tshirt" || product.category === "hoodie" || product.category === "longsleeve";
-  const isCylinder = product.category === "mug" || product.category === "waterbottle";
 
   return (
     <>
@@ -525,9 +526,13 @@ export function GarmentSVG({
           have clear contrast and the product photo pops cleanly */}
       <rect width={1000} height={1000} fill="#c9c4bc" style={{ pointerEvents: "none" }} />
 
-      {/* Garment photo — shadow applied to the <g> wrapper so it works with
-          both plain AND tinted images (colored shirts). The shadow follows
-          the garment alpha-channel shape for PNG cutouts. */}
+      {/* Garment photo rendering:
+          • Mug right-side: horizontally flipped, single shadow pass.
+          • White/light apparel (useMixBlend): TWO layers —
+              Layer 1 = white cutout inside shadow group → garment-shaped drop shadow.
+              Layer 2 = full original photo with mix-blend-mode:multiply → white BG
+                        becomes transparent while all fabric texture/shadows stay.
+          • Coloured/black apparel & cylinders: single layer in shadow group. */}
       {isMugRightSide ? (
         <g transform="translate(1000,0) scale(-1,1)" filter={`url(#shadow-${filterId})`}>
           <image
@@ -538,6 +543,27 @@ export function GarmentSVG({
             style={{ pointerEvents: "none" }}
           />
         </g>
+      ) : useMixBlend ? (
+        <>
+          {/* Shadow layer — cutout gives the filter an alpha silhouette to trace */}
+          {shadowCutoutSrc && (
+            <g filter={`url(#shadow-${filterId})`}>
+              <image
+                href={shadowCutoutSrc}
+                x={0} y={0} width={1000} height={1000}
+                preserveAspectRatio="xMidYMid meet"
+                style={{ pointerEvents: "none" }}
+              />
+            </g>
+          )}
+          {/* Texture layer — full photo; multiply blend removes the white background */}
+          <image
+            href={imageSrc}
+            x={0} y={0} width={1000} height={1000}
+            preserveAspectRatio="xMidYMid meet"
+            style={{ pointerEvents: "none", mixBlendMode: "multiply" } as React.CSSProperties}
+          />
+        </>
       ) : (
         <g filter={`url(#shadow-${filterId})`}>
           <image
