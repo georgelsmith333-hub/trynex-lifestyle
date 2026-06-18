@@ -20,7 +20,7 @@ import {
   Undo2, Redo2, Lock, Unlock, ChevronUp, ChevronDown,
   Image as ImageIcon, Plus, Check, CloudUpload,
   Box, Image as Image2D, Search, X, ChevronRight,
-  Palette, Package, FlipHorizontal, Copy, Crosshair,
+  Palette, Package, FlipHorizontal, Copy, Crosshair, Maximize2,
   Download, AlignLeft, AlignCenter, AlignRight,
 } from "lucide-react";
 import {
@@ -243,8 +243,8 @@ const FILTER_PRESETS = [
   { name: "Faded",    brightness: 115, contrast: 80,  saturation: 55  },
 ];
 
-/** The 3 most popular products shown as quick-switch tabs. */
-const QUICK_PRODUCT_IDS = ["tshirt", "hoodie", "longsleeve", "mug"] as const;
+/** The 3 most popular products shown as quick-switch tabs (+ "More" button for the rest). */
+const QUICK_PRODUCT_IDS = ["tshirt", "hoodie", "mug"] as const;
 
 /** Map legacy colour-prefixed product IDs (e.g. "white-tshirt") to new simple IDs. */
 const LEGACY_ID_MAP: Record<string, string> = {
@@ -2353,16 +2353,16 @@ export default function DesignStudio() {
                 <Trash2 className="w-3 h-3" /> Clear All
               </button>
             )}
-            {/* Undo / Redo — hidden on mobile to save space */}
+            {/* Undo / Redo — always visible so mobile users can undo mistakes */}
             <button onClick={undo} disabled={!canUndo}
-              className="hidden sm:flex p-2 rounded-xl text-gray-600 disabled:opacity-30"
+              className="flex p-2 rounded-xl text-gray-600 disabled:opacity-30"
               style={{ background: "#f3f4f6" }} title="Undo (Ctrl+Z)">
-              <Undo2 className="w-4 h-4" />
+              <Undo2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
             <button onClick={redo} disabled={!canRedo}
-              className="hidden sm:flex p-2 rounded-xl text-gray-600 disabled:opacity-30"
+              className="flex p-2 rounded-xl text-gray-600 disabled:opacity-30"
               style={{ background: "#f3f4f6" }} title="Redo (Ctrl+Y)">
-              <Redo2 className="w-4 h-4" />
+              <Redo2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
             {/* 2D / 3D toggle — hidden on mobile (shown below product tabs instead) */}
             {effectiveSupports3D && (
@@ -2492,7 +2492,6 @@ export default function DesignStudio() {
                   const label =
                     pid === "mug" ? "Mug" :
                     pid === "hoodie" ? "Hoodie" :
-                    pid === "longsleeve" ? "Long Sleeve" :
                     "T-Shirt";
                   return (
                     <button
@@ -3317,6 +3316,22 @@ export default function DesignStudio() {
                     style={{ background: "#f3f4f6" }}>
                     <Crosshair className="w-4 h-4 text-gray-600" />
                   </button>
+                  {/* Fit to print area — image layers only */}
+                  {selectedLayer.type === "image" && (
+                    <button
+                      aria-label="Fit to print area"
+                      title="Fit design to print area"
+                      onClick={() => {
+                        const imgL = selectedLayer as ImageLayer;
+                        const aspect = imgL.naturalW / Math.max(imgL.naturalH, 1);
+                        const fitScale = Math.min(0.90, (pz.h * 0.90 * aspect) / pz.w);
+                        updateLayer(selectedLayer.id, l => ({ ...l, transform: { ...l.transform, scale: fitScale, x: 0, y: 0 } }), true);
+                      }}
+                      className="p-2 rounded-xl active:scale-95 transition-transform"
+                      style={{ background: "#f3f4f6" }}>
+                      <Maximize2 className="w-4 h-4 text-gray-600" />
+                    </button>
+                  )}
                   {/* Duplicate */}
                   <button
                     aria-label="Duplicate layer"
@@ -3932,6 +3947,47 @@ export default function DesignStudio() {
                                 onPointerUp={() => commitLayers(layers)}
                                 className="w-full h-1.5 rounded-full appearance-none bg-gray-100" style={{ accentColor: "#E85D04" }} />
                             </div>
+                            {/* Position & Fit quick actions */}
+                            <div>
+                              <div className="text-[11px] font-bold text-gray-500 mb-1.5">Position &amp; Fit</div>
+                              <div className="flex gap-1.5">
+                                <button
+                                  title="Center in print area"
+                                  onClick={() => updateLayer(selectedLayer.id, l => ({ ...l, transform: { ...l.transform, x: 0, y: 0 } }), true)}
+                                  className="flex-1 py-1.5 rounded-lg text-[11px] font-bold border transition-all hover:border-orange-300 hover:text-orange-600"
+                                  style={{ background: "white", borderColor: "#e5e7eb", color: "#6b7280" }}
+                                >
+                                  Center
+                                </button>
+                                <button
+                                  title="Fit to print area — scales design to fill 90% of the print zone"
+                                  onClick={() => {
+                                    const imgL = selectedLayer as ImageLayer;
+                                    const aspect = imgL.naturalW / Math.max(imgL.naturalH, 1);
+                                    const fitScale = Math.min(0.90, (pz.h * 0.90 * aspect) / pz.w);
+                                    updateLayer(selectedLayer.id, l => ({ ...l, transform: { ...l.transform, scale: fitScale, x: 0, y: 0 } }), true);
+                                  }}
+                                  className="flex-1 py-1.5 rounded-lg text-[11px] font-bold border transition-all hover:border-orange-300 hover:text-orange-600"
+                                  style={{ background: "white", borderColor: "#e5e7eb", color: "#6b7280" }}
+                                >
+                                  Fit
+                                </button>
+                                <button
+                                  title="Fill print area — scales design to cover the full print zone (may crop edges)"
+                                  onClick={() => {
+                                    const imgL = selectedLayer as ImageLayer;
+                                    const aspect = imgL.naturalW / Math.max(imgL.naturalH, 1);
+                                    const fillScale = Math.max(1.0, (pz.h * aspect) / pz.w);
+                                    updateLayer(selectedLayer.id, l => ({ ...l, transform: { ...l.transform, scale: fillScale, x: 0, y: 0 } }), true);
+                                  }}
+                                  className="flex-1 py-1.5 rounded-lg text-[11px] font-bold border transition-all hover:border-orange-300 hover:text-orange-600"
+                                  style={{ background: "white", borderColor: "#e5e7eb", color: "#6b7280" }}
+                                >
+                                  Fill
+                                </button>
+                              </div>
+                            </div>
+
                             {/* Flip buttons */}
                             <div>
                               <div className="text-[11px] font-bold text-gray-500 mb-1.5">Flip</div>
