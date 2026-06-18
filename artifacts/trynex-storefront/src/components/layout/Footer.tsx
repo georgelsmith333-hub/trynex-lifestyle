@@ -143,6 +143,30 @@ export function Footer() {
           </div>
         </div>
 
+        {/* Popular Searches — SEO internal links to keyword landing pages */}
+        <div className="py-6 border-b border-white/5">
+          <p className="text-[10px] font-black uppercase tracking-widest text-gray-600 mb-3 text-center">Popular Searches</p>
+          <div className="flex flex-wrap justify-center gap-2">
+            {[
+              { label: "Custom T-Shirt Bangladesh", href: "/custom-tshirt-bangladesh" },
+              { label: "Custom Hoodie Bangladesh",  href: "/custom-hoodie-bangladesh" },
+              { label: "Custom Mug Bangladesh",     href: "/custom-mug-bangladesh" },
+              { label: "Corporate Gift Dhaka",      href: "/corporate-gift-dhaka" },
+              { label: "Custom Gift Bangladesh",    href: "/custom-gift-bangladesh" },
+              { label: "Birthday Gift Bangladesh",  href: "/birthday-gift-bangladesh" },
+            ].map(({ label, href }) => (
+              <Link
+                key={href}
+                href={href}
+                className="text-xs text-gray-500 hover:text-orange-400 transition-colors px-3 py-1.5 rounded-full"
+                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 py-14">
 
           <div className="lg:col-span-4">

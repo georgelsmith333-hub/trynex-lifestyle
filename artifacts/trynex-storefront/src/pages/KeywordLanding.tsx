@@ -123,6 +123,40 @@ export default function KeywordLanding({ params }: { params: { slug: string } })
     },
   };
 
+  const localBusinessSchema = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": `${SITE_URL}/#organization`,
+    name: "TryNex Lifestyle",
+    description: "Bangladesh's leading custom apparel, mug, and gifting brand. Design your own t-shirt, hoodie, or mug with fast nationwide delivery.",
+    url: SITE_URL,
+    telephone: "+8801903426915",
+    email: "info@trynexshop.com",
+    image: `${SITE_URL}/og-image.jpg`,
+    logo: `${SITE_URL}/trynex-logo.png`,
+    priceRange: "৳৳",
+    openingHoursSpecification: {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+      opens: "09:00",
+      closes: "21:00",
+    },
+    address: {
+      "@type": "PostalAddress",
+      addressCountry: "BD",
+      addressLocality: "Dhaka",
+      addressRegion: "Dhaka Division",
+    },
+    areaServed: {
+      "@type": "Country",
+      name: "Bangladesh",
+    },
+    sameAs: [
+      "https://www.facebook.com/trynexlifestyle",
+      "https://www.instagram.com/trynexlifestyle",
+    ],
+  };
+
   return (
     <>
       <SEOHead
@@ -130,7 +164,7 @@ export default function KeywordLanding({ params }: { params: { slug: string } })
         description={config.description}
         canonical={`/${config.slug}`}
         keywords={config.keywords}
-        jsonLd={[faqSchema, breadcrumbSchema, collectionSchema]}
+        jsonLd={[faqSchema, breadcrumbSchema, collectionSchema, localBusinessSchema]}
       />
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}

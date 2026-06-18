@@ -1273,6 +1273,76 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ═══════════════════════════════════════
+          KEYWORD LANDING PAGE CARDS
+          "Most Popular Custom Products"
+      ═══════════════════════════════════════ */}
+      <section className="py-14 bg-white">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
+          <div className="text-center mb-10">
+            <motion.span
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="section-eyebrow mb-4"
+            >
+              Custom Products
+            </motion.span>
+            <motion.h2
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="font-display font-black text-2xl md:text-3xl text-gray-900 mt-4"
+            >
+              Most Popular Custom Products in Bangladesh
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 8 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="text-gray-500 mt-3 text-sm"
+            >
+              Fast nationwide delivery · Premium quality · No minimum order
+            </motion.p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
+            {([
+              { href: "/custom-tshirt-bangladesh",  emoji: "👕", title: "Custom T-Shirt",     desc: "From ৳399 · DTG & Screen Print",  color: "#E85D04" },
+              { href: "/custom-hoodie-bangladesh",   emoji: "🧥", title: "Custom Hoodie",      desc: "340GSM premium fleece",            color: "#7c3aed" },
+              { href: "/custom-mug-bangladesh",      emoji: "☕", title: "Custom Mug",         desc: "Photo & name print mugs",         color: "#2563eb" },
+              { href: "/corporate-gift-dhaka",       emoji: "🏢", title: "Corporate Gift",     desc: "Bulk orders with brand logo",     color: "#16a34a" },
+              { href: "/custom-gift-bangladesh",     emoji: "🎁", title: "Custom Gift",        desc: "Personalised gift hampers",       color: "#db2777" },
+              { href: "/birthday-gift-bangladesh",   emoji: "🎂", title: "Birthday Gift",      desc: "Same-day Dhaka delivery",        color: "#d97706" },
+            ] as Array<{ href: string; emoji: string; title: string; desc: string; color: string }>).map((item, i) => (
+              <motion.a
+                key={item.href}
+                href={item.href}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.06 }}
+                whileHover={{ y: -3, boxShadow: "0 8px 24px rgba(0,0,0,0.08)" }}
+                className="flex items-center gap-4 p-4 md:p-5 rounded-2xl border border-gray-100 bg-white hover:border-orange-200 transition-all group cursor-pointer"
+                style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}
+              >
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 text-2xl"
+                  style={{ background: `${item.color}14` }}
+                >
+                  {item.emoji}
+                </div>
+                <div className="min-w-0">
+                  <div className="font-black text-gray-900 text-sm group-hover:text-orange-600 transition-colors truncate">{item.title}</div>
+                  <div className="text-xs text-gray-400 mt-0.5 truncate">{item.desc}</div>
+                </div>
+              </motion.a>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Stats Bar */}
       {settings.sectionStatsEnabled !== false && <section className="py-12 bg-gray-50/50">
         <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
