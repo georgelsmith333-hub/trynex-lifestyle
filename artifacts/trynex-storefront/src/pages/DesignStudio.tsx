@@ -2873,15 +2873,18 @@ export default function DesignStudio() {
                             ? `brightness(${l.brightness ?? 100}%) contrast(${l.contrast ?? 100}%) saturate(${l.saturation ?? 100}%)`
                             : "";
                         const cssFilter = [fabricBase, userAdj].filter(Boolean).join(" ") || undefined;
-                        // Smart blend mode — makes designs look screen-printed on light garments
-                        // by removing white halos (multiply removes white → transparent).
-                        // Dark garments use normal mode so the design stays fully visible.
+                        // Smart blend mode — only apply multiply on truly near-white garments
+                        // (luminance > 0.92, matching the isLightTint threshold in GarmentSVG).
+                        // multiply removes white halos so designs look screen-printed on white shirts.
+                        // For every other garment (navy, red, grey, sky-blue, etc.) the garment
+                        // uses an SVG tint filter — multiply would wrongly shade the design with the
+                        // garment's color, making all designs look "same shade". Use normal there.
                         const gh = selectedColor.hex.replace("#", "");
                         const gLum = (0.299 * parseInt(gh.slice(0, 2), 16) +
                                       0.587 * parseInt(gh.slice(2, 4), 16) +
                                       0.114 * parseInt(gh.slice(4, 6), 16)) / 255;
                         const designBlend: React.CSSProperties["mixBlendMode"] =
-                          isApparel && gLum > 0.58 ? "multiply" : "normal";
+                          isApparel && gLum > 0.92 ? "multiply" : "normal";
                         // Build SVG transform: rotate + optional flip around image center
                         const flipSX = l.flipH ? -1 : 1;
                         const flipSY = l.flipV ? -1 : 1;
