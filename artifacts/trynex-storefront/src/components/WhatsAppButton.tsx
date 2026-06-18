@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import { X, MessageCircle, Minus } from "lucide-react";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 
@@ -10,6 +11,7 @@ export function WhatsAppButton() {
   const [minimized, setMinimized] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const settings = useSiteSettings();
+  const [pathname] = useLocation();
   const whatsappNumber = settings.whatsappNumber?.replace(/[^0-9]/g, '') || "";
 
   useEffect(() => {
@@ -42,6 +44,7 @@ export function WhatsAppButton() {
   };
 
   if (!whatsappNumber) return null;
+  if (pathname.startsWith("/design-studio")) return null;
 
   if (minimized) {
     return (

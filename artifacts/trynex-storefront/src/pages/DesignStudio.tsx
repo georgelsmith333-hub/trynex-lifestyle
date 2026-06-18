@@ -902,7 +902,10 @@ export default function DesignStudio() {
   // The zone hint disappears even while a layer is selected so there's no visual clutter.
   const effectiveShowPrintZone = showPrintZone && currentFaceLayers.length === 0;
 
-  // Print-safe warning: true when any layer on the current face extends outside the print zone.
+  // Print-safe warning: true when any layer on the current face extends meaningfully outside the print zone.
+  // A small tolerance (BLEED_TOL) prevents false-positive warnings for layers that are just barely
+  // touching the edge — normal usage when users drag a design to the boundary.
+  const BLEED_TOL = 8; // SVG units (~0.8% of the 1000-unit canvas)
   const anyLayerOutsidePZ = useMemo(() => {
     if (!pz || currentFaceLayers.length === 0) return false;
     return currentFaceLayers.some(l => {
@@ -916,14 +919,14 @@ export default function DesignStudio() {
         hh = (pz.w * scale * scaleY * aspect) / 2;
       } else {
         const txtL = l as TextLayer;
-        hw = txtL.fontSize * scale * scaleX * 3;
-        hh = txtL.fontSize * scale * scaleY * 1.5;
+        hw = txtL.fontSize * scale * scaleX * 2.5;
+        hh = txtL.fontSize * scale * scaleY * 1.2;
       }
       return (
-        x - hw < pz.x ||
-        x + hw > pz.x + pz.w ||
-        y - hh < pz.y ||
-        y + hh > pz.y + pz.h
+        x - hw < pz.x - BLEED_TOL ||
+        x + hw > pz.x + pz.w + BLEED_TOL ||
+        y - hh < pz.y - BLEED_TOL ||
+        y + hh > pz.y + pz.h + BLEED_TOL
       );
     });
   }, [currentFaceLayers, pz]);
@@ -3346,7 +3349,7 @@ export default function DesignStudio() {
             style={{
               background: "linear-gradient(135deg,#E85D04,#FB8500)",
               boxShadow: "0 8px 24px rgba(232,93,4,0.45)",
-              bottom: "max(80px, calc(env(safe-area-inset-bottom, 0px) + 72px))",
+              bottom: "max(96px, calc(env(safe-area-inset-bottom, 0px) + 88px))",
             }}
           >
             <Wand2 className="w-4 h-4" /> Edit Tools

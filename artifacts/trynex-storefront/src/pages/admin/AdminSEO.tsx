@@ -4,6 +4,7 @@ import { getApiUrl, getAuthHeaders } from "@/lib/utils";
 import {
   Search, ExternalLink, CheckCircle2, AlertCircle, Loader2,
   Send, RefreshCw, Trash2, Eye, EyeOff, MapPin, Clock, ShieldCheck,
+  BarChart2, Globe,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -394,6 +395,84 @@ export default function AdminSEO() {
               </ol>
             </div>
 
+          </div>
+        </motion.div>
+
+        {/* Keyword Landing Pages Tracker */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.13 }}
+          className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+        >
+          <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+            <BarChart2 className="w-5 h-5 text-orange-500 shrink-0" />
+            <div>
+              <h2 className="font-bold text-gray-900">Keyword Landing Pages</h2>
+              <p className="text-xs text-gray-500 mt-0.5">6 SEO pages targeting high-value Bangladesh search terms. Click any row to inspect it in Google Search Console.</p>
+            </div>
+          </div>
+          <div className="divide-y divide-gray-50">
+            {[
+              { slug: "custom-tshirt-bangladesh",   keyword: "custom t-shirt Bangladesh",   priority: "0.9", badge: "TOP" },
+              { slug: "custom-hoodie-bangladesh",   keyword: "custom hoodie Bangladesh",    priority: "0.9", badge: "TOP" },
+              { slug: "custom-gift-bangladesh",     keyword: "custom gift Bangladesh",      priority: "0.8", badge: null },
+              { slug: "corporate-gift-dhaka",       keyword: "corporate gift Dhaka",        priority: "0.8", badge: null },
+              { slug: "custom-mug-bangladesh",      keyword: "custom mug Bangladesh",       priority: "0.8", badge: null },
+              { slug: "birthday-gift-bangladesh",   keyword: "birthday gift Bangladesh",    priority: "0.8", badge: null },
+            ].map(({ slug, keyword, priority, badge }) => {
+              const liveUrl = `https://trynexshop.com/${slug}`;
+              const gscUrl  = `https://search.google.com/search-console/inspect?resource_id=https%3A%2F%2Ftrynexshop.com%2F&id=${encodeURIComponent(liveUrl)}`;
+              return (
+                <div key={slug} className="flex items-center gap-3 px-6 py-3.5 hover:bg-orange-50/30 transition-colors group">
+                  <Globe className="w-4 h-4 text-gray-300 shrink-0 group-hover:text-orange-400 transition-colors" />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-sm font-bold text-gray-800 truncate">/{slug}</span>
+                      {badge && (
+                        <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full"
+                          style={{ background: "linear-gradient(135deg,#E85D04,#FB8500)", color: "white" }}>
+                          {badge}
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-0.5 flex items-center gap-2">
+                      <span>{keyword}</span>
+                      <span className="text-gray-300">·</span>
+                      <span>priority {priority}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <a
+                      href={liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 rounded-lg text-gray-400 hover:text-orange-500 hover:bg-orange-50 transition-colors"
+                      title="View live page"
+                      onClick={e => e.stopPropagation()}
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                    <a
+                      href={gscUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-bold text-white transition-colors"
+                      style={{ background: "linear-gradient(135deg,#4285F4,#1a73e8)" }}
+                      title="Inspect in Google Search Console"
+                    >
+                      <Search className="w-3 h-3" /> Inspect
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="px-6 py-3 border-t border-gray-50 bg-gray-50/50">
+            <p className="text-[11px] text-gray-400 leading-relaxed">
+              <strong>Inspect</strong> opens Google Search Console URL Inspection for that page — check indexing status, request crawl, and see the last crawl date.
+              Pages are included in <code className="text-[10px] bg-white px-1 rounded border border-gray-100">/sitemap.xml</code> with FAQ schema and breadcrumbs.
+            </p>
           </div>
         </motion.div>
 
