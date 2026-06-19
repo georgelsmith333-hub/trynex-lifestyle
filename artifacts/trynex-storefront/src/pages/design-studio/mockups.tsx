@@ -19,13 +19,14 @@ const hoodieFront          = "/mockups/white-hoodie-front.png";
 const hoodieBack           = "/mockups/white-hoodie-back.png";
 const hoodieFrontDark      = "/mockups/black-hoodie-front.png";
 const hoodieBackDark       = "/mockups/black-hoodie-back.png";
-const hoodieFrontCutout    = "/mockups/white-hoodie-front-cutout.png";
+const hoodieFrontCutout    = "/mockups/white-hoodie-front.png";
 const hoodieBackCutout     = "/mockups/white-hoodie-back-cutout.png";
 const mugFront             = "/mockups/white-mug-front.png";
 const mugFrontDark         = "/mockups/black-mug-front.png";
 const mugFrontCutout       = "/mockups/white-mug-front-cutout.png";
+const mugFrontDarkCutout   = "/mockups/black-mug-front-cutout.png";
 const capFront             = "/mockups/white-cap-front.png";
-const capFrontDark         = "/mockups/black-cap-front.png";
+// black-cap-front.png has no alpha and is 896×1280 (wrong size) — cap uses SVG tint for all dark colours
 const capFrontCutout       = "/mockups/white-cap-front-cutout.png";
 const waterBottleFront          = "/mockups/white-waterbottle-front.png";
 const waterBottleCutout         = "/mockups/white-waterbottle-front-cutout.png";
@@ -278,8 +279,8 @@ export const BASE_BY_CATEGORY: Record<
   tshirt:      { front: tshirtFront, back: tshirtBack, darkFront: tshirtFrontDark, darkBack: tshirtBackDark, frontCutout: tshirtFrontCutout, backCutout: tshirtBackCutout, darkFrontCutout: tshirtFrontDarkCutout, darkBackCutout: tshirtBackDarkCutout },
   longsleeve:  { front: longsleeveFront, back: longsleeveBack, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout },
   hoodie:      { front: hoodieFront, back: hoodieBack, darkFront: hoodieFrontDark, darkBack: hoodieBackDark, frontCutout: hoodieFrontCutout, backCutout: hoodieBackCutout, darkFrontCutout: hoodieFrontDarkCutout, darkBackCutout: hoodieBackDarkCutout },
-  mug:         { front: mugFront, back: mugFront, darkFront: mugFrontDark, darkBack: mugFrontDark, frontCutout: mugFrontCutout },
-  cap:         { front: capFront, darkFront: capFrontDark, frontCutout: capFrontCutout },
+  mug:         { front: mugFront, back: mugFront, darkFront: mugFrontDark, darkBack: mugFrontDark, frontCutout: mugFrontCutout, darkFrontCutout: mugFrontDarkCutout, darkBackCutout: mugFrontDarkCutout },
+  cap:         { front: capFront, frontCutout: capFrontCutout },
   waterbottle: { front: waterBottleFront, frontCutout: waterBottleCutout },
 };
 

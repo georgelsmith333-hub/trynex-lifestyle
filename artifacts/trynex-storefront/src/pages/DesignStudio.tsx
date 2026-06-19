@@ -859,22 +859,7 @@ export default function DesignStudio() {
   // Only flat template zones (sleeve/neck) have no 3D equivalent.
   const effectiveSupports3D = supports3D && !isFlatZone && !isMobile;
 
-  /* ── Cap dark-color mockup override ─────────────────
-     Cap images are full-photo (no transparent cutout), so SVG
-     tinting can't be applied. Swap frontSrc to the black photo
-     directly when a dark colour is selected. */
-  const displayProduct = useMemo(() => {
-    if (selectedProduct.category === "cap") {
-      const h = selectedColor.hex.replace("#", "");
-      const r = parseInt(h.slice(0, 2), 16) || 0;
-      const g = parseInt(h.slice(2, 4), 16) || 0;
-      const b = parseInt(h.slice(4, 6), 16) || 0;
-      if ((0.299 * r + 0.587 * g + 0.114 * b) / 255 < 0.55) {
-        return { ...selectedProduct, frontSrc: "/mockups/black-cap-front.png" };
-      }
-    }
-    return selectedProduct;
-  }, [selectedProduct, selectedColor.hex]);
+  const displayProduct = selectedProduct;
 
   /* ── Per-product price (used in UI + cart serialisation) ── */
   const studioPrice = useMemo(() => {
