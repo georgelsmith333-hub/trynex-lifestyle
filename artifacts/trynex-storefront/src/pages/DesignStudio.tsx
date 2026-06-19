@@ -2660,7 +2660,7 @@ export default function DesignStudio() {
                   return (
                     <button key={c.hex} title={c.name}
                       onClick={() => setSelectedColor({ name: c.name, hex: c.hex })}
-                      className="w-8 h-8 rounded-xl border-2 transition-all hover:scale-110 relative"
+                      className="w-10 h-10 sm:w-8 sm:h-8 rounded-xl border-2 transition-all hover:scale-110 relative touch-manipulation"
                       style={{
                         background: c.hex,
                         borderColor: isSelected ? "#E85D04" : (c.hex.toUpperCase() === "#FFFFFF" || c.hex === "#F5F5F5" || c.hex === "#F5F2EC" || c.hex === "#F4F3F1" ? "#d1d5db" : c.hex),
@@ -3394,7 +3394,7 @@ export default function DesignStudio() {
           {/* On desktop: inline sidebar. On mobile: slide-up bottom sheet via mobileToolOpen. */}
           <div className={`lg:w-[340px] shrink-0 flex flex-col lg:sticky lg:self-start
             ${mobileToolOpen
-              ? 'fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl max-h-[92vh] overflow-hidden shadow-2xl gap-2'
+              ? 'fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl max-h-[80vh] overflow-hidden shadow-2xl gap-2'
               : 'hidden lg:flex gap-4'}`}
             style={mobileToolOpen
               ? { background: "#faf9f6", paddingBottom: "max(16px, env(safe-area-inset-bottom, 16px))" }

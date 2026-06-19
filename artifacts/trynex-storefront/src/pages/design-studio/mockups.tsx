@@ -380,7 +380,9 @@ export function GarmentSVG({
   //   like an invisible white blob.
   // Exception: near-black garments that switch to the dedicated black photo keep
   // that photo as-is (black photo already has its own visual weight).
-  const isCylUnderImageSrc = product.category === "mug" || product.category === "waterbottle";
+  // Cap is treated like a cylinder/cutout product: for white/light cap, use the
+  // transparent-BG cutout so the SVG drop-shadow traces the cap silhouette, not a rectangle.
+  const isCylUnderImageSrc = product.category === "mug" || product.category === "waterbottle" || product.category === "cap";
   const hasDarkCutout = !!base && (face === "back" ? !!base.darkBackCutout : !!base.darkFrontCutout);
 
   // Is this an apparel product (tshirt / hoodie / longsleeve)?

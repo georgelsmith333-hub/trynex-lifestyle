@@ -7,3 +7,5 @@
 - [PhotoMockupMesh color fix](photo-mockup-color.md) — do NOT use adjustGarmentColor for photo planes; near-white (lum>0.88) must return "#ffffff" not "#D2CFC9" or white garments look grey in 3D.
 - [GitHub push blocked](github-push.md) — Replit askpass intercepts HTTPS git auth; use GitHub API (REST) to push blobs/trees/commits instead of git CLI.
 - [Storefront fixes](storefront-fixes.md) — AnimatePresence mode="wait" caused white screen on navigation; PRODUCT_TAB_ICONS must be {} to show photo tabs; _redirects needs /sitemap.xml proxy line before /*.
+- [Design blend mode threshold](design-blend-threshold.md) — designBlend multiply threshold must match isLightTint (lum>0.92); using 0.58 tints designs with garment colour on sky-blue/grey/red garments ("same shade" bug).
+- [Cap shadow silhouette](cap-shadow.md) — cap must be in isCylUnderImageSrc so white/light cap uses transparent cutout PNG; otherwise SVG drop-shadow wraps rectangle not cap shape.
