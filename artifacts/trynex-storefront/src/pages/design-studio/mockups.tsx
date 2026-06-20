@@ -486,6 +486,16 @@ export function GarmentSVG({
           <stop offset="100%" stopColor="rgba(0,0,0,0.10)" />
         </linearGradient>
 
+        {/* Hoodie pocket fade — hides kangaroo pocket (starts ~y=565) by fading
+            it into the studio background so only the print zone stays visible. */}
+        {product.category === "hoodie" && face !== "back" && (
+          <linearGradient id={`hfade-${filterId}`} gradientUnits="userSpaceOnUse"
+            x1={0} y1={490} x2={0} y2={680}>
+            <stop offset="0%"   stopColor="#c9c4bc" stopOpacity={0} />
+            <stop offset="100%" stopColor="#c9c4bc" stopOpacity={1} />
+          </linearGradient>
+        )}
+
         {/* Cylinder shadows for mug/waterbottle — steep fade so the dark edge
             reaches ZERO before the print zone starts.
             Mug print zone left edge ≈ x=188 (18.8%). Gradient is fully transparent
@@ -598,6 +608,14 @@ export function GarmentSVG({
             fill={`url(#cyl-r-${filterId})`}
             style={{ pointerEvents: "none", mixBlendMode: "multiply", opacity: 0.25 }} />
         </>
+      )}
+
+      {/* Hoodie pocket fade — solid #c9c4bc overlay that starts transparent at y=490
+          and becomes fully opaque at y=680, hiding the kangaroo pocket. */}
+      {product.category === "hoodie" && face !== "back" && (
+        <rect x={0} y={0} width={1000} height={1000}
+          fill={`url(#hfade-${filterId})`}
+          style={{ pointerEvents: "none" }} />
       )}
 
       {showPrintZone && (() => {
