@@ -19,8 +19,8 @@ const hoodieFront          = "/mockups/white-hoodie-front.png";
 const hoodieBack           = "/mockups/white-hoodie-back.png";
 const hoodieFrontDark      = "/mockups/black-hoodie-front.png";
 const hoodieBackDark       = "/mockups/black-hoodie-back.png";
-const hoodieFrontCutout    = "/mockups/white-hoodie-front-cutout-new.png";
-const hoodieBackCutout     = "/mockups/white-hoodie-back-cutout-new.png";
+const hoodieFrontCutout    = "/mockups/white-hoodie-front-cutout.png";
+const hoodieBackCutout     = "/mockups/white-hoodie-back-cutout.png";
 const mugFront             = "/mockups/white-mug-front.png";
 const mugFrontDark         = "/mockups/black-mug-front.png";
 const mugFrontCutout       = "/mockups/white-mug-front-cutout.png";
@@ -398,7 +398,9 @@ export function GarmentSVG({
   //   Result: photorealistic garment with perfect fabric texture & natural edges.
   //   We also render a near-invisible cutout underneath as the shadow SOURCE so the
   //   drop-shadow filter follows the garment silhouette, not the photo rectangle.
-  const useMixBlend = isApparel && !isDark && !useBlackPhoto;
+  // Longsleeve excluded: its full photo has a warm studio background (not pure white)
+  // so multiply-blend tints the garment brownish. Use the cutout PNG directly instead.
+  const useMixBlend = isApparel && product.category !== "longsleeve" && !isDark && !useBlackPhoto;
 
   // DARK-COLOUR GARMENTS — cutout strategy (only for non-black non-mixblend):
   //   Use the transparent-BG cutout so the SVG tint filter only colours garment
@@ -416,7 +418,10 @@ export function GarmentSVG({
   const imageSrc = (() => {
     if (useMixBlend) return src; // full photo; white BG removed by mix-blend-mode
     if (!applyTint || !base) {
-      if ((isCylUnderImageSrc || isApparelForCutout) && base) {
+      // isApparel && useBlackPhoto: use the dark transparent cutout so the drop-shadow
+      // filter wraps the garment silhouette (not the full rectangular photo boundary),
+      // matching the consistent behaviour of all other colour variants.
+      if ((isCylUnderImageSrc || isApparelForCutout || (isApparel && useBlackPhoto)) && base) {
         if (useBlackPhoto) {
           if (face === "back" && base.darkBackCutout) return base.darkBackCutout;
           if (base.darkFrontCutout) return base.darkFrontCutout;
@@ -459,10 +464,9 @@ export function GarmentSVG({
         {/* Garment drop-shadow — lifts the garment off the background so
             white/light shirts are clearly visible on the off-white canvas.
             Three-layer shadow: wide ambient + mid diffuse + tight contact. */}
-        <filter id={`shadow-${filterId}`} x="-12%" y="-12%" width="124%" height="124%" colorInterpolationFilters="sRGB">
-          <feDropShadow dx="0" dy="12" stdDeviation="32" floodColor="rgba(0,0,0,0.22)" />
-          <feDropShadow dx="0" dy="5"  stdDeviation="14" floodColor="rgba(0,0,0,0.18)" />
-          <feDropShadow dx="0" dy="2"  stdDeviation="5"  floodColor="rgba(0,0,0,0.14)" />
+        <filter id={`shadow-${filterId}`} x="-8%" y="-8%" width="116%" height="116%" colorInterpolationFilters="sRGB">
+          <feDropShadow dx="0" dy="6" stdDeviation="20" floodColor="rgba(0,0,0,0.14)" />
+          <feDropShadow dx="0" dy="2" stdDeviation="8"  floodColor="rgba(0,0,0,0.09)" />
         </filter>
 
         {/* Radial edge vignette — subtle depth around garment edges */}

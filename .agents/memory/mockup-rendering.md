@@ -14,4 +14,16 @@ description: How the design studio SVG mockup renderer works and what fixes were
 
 **Cylinder gradient stops:** Gradients must fade to zero BEFORE the mug print zone left edge (x=188 = 18.8%). Currently set to fade at 17%. If mug print zones change, keep the fade point safely inside 0-17%.
 
-**Drop shadow filter:** Three-layer shadow — ambient (stdDeviation=32, 0.22 opacity), diffuse (14, 0.18), contact (5, 0.14). Filter region extended to `-12% -12% 124% 124%` to avoid clipping large shadows.
+**Drop shadow filter:** Reduced to two-layer — ambient (stdDeviation=20, 0.14 opacity), contact (8, 0.09 opacity). Filter region `-8% -8% 116% 116%`. Was previously three-layer at 0.22/0.18/0.14 which was too harsh.
+
+**Long sleeve excluded from useMixBlend:**
+`white-longsleeve-front.png` has a warm studio background (not pure white). With `mixBlendMode:multiply` on the `#c9c4bc` canvas, the background tints brownish. Fix: `product.category !== "longsleeve"` in `useMixBlend` condition — longsleeve always uses the cutout PNG directly.
+
+**Black apparel uses dark CUTOUT (not full dark photo):**
+Previous behaviour: black tshirt/hoodie used `black-tshirt-front.png` (full photo with white background), causing shadow to wrap the rectangular image boundary (inconsistent with all other colours which show garment-shaped shadows). Fix: `(isApparel && useBlackPhoto)` added to the imageSrc cutout-selection condition — black apparel now uses `black-tshirt-front-cutout.png` / `black-hoodie-front-cutout.png` (transparent background), so the drop-shadow filter always traces the garment silhouette.
+
+**Hoodie cutout quality:**
+Use `white-hoodie-front-cutout.png` (606KB, OLD) NOT `white-hoodie-front-cutout-new.png` (240KB, -new suffix). The -new file is lower quality/resolution. Back cutout: same — use the non-new version.
+
+**isApparel must precede useMixBlend:**
+`isApparel` const must be declared BEFORE `useMixBlend` in the GarmentSVG component body. Reordering causes a TDZ (Temporal Dead Zone) reference error at runtime.
