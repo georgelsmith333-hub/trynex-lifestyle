@@ -13,8 +13,8 @@ const tshirtFrontCutout    = "/mockups/white-tshirt-front-cutout.png";
 const tshirtBackCutout     = "/mockups/white-tshirt-back-cutout.png";
 const longsleeveFront      = "/mockups/white-longsleeve-front.png";
 const longsleeveBack       = "/mockups/white-longsleeve-back.png";
-const longsleeveFrontCutout = "/mockups/white-longsleeve-front-cutout-new.png";
-const longsleeveBackCutout  = "/mockups/white-longsleeve-back-cutout-new.png";
+const longsleeveFrontCutout = "/mockups/white-longsleeve-front.png";
+const longsleeveBackCutout  = "/mockups/white-longsleeve-back.png";
 const hoodieFront          = "/mockups/white-hoodie-front.png";
 const hoodieBack           = "/mockups/white-hoodie-back.png";
 const hoodieFrontDark      = "/mockups/black-hoodie-front.png";
@@ -28,12 +28,12 @@ const mugFrontDarkCutout   = "/mockups/black-mug-front-cutout.png";
 const capFront             = "/mockups/white-cap-front.png";
 // black-cap-front.png has no alpha and is 896×1280 (wrong size) — cap uses SVG tint for all dark colours
 const capFrontCutout       = "/mockups/white-cap-front-cutout.png";
-const waterBottleFront          = "/mockups/white-waterbottle-photo.png";
+const waterBottleFront          = "/mockups/white-waterbottle-front.png";
 const waterBottleCutout         = "/mockups/white-waterbottle-front-cutout.png";
-const tshirtFrontDarkCutout     = "/mockups/black-tshirt-front-cutout.png";
-const tshirtBackDarkCutout      = "/mockups/black-tshirt-back-cutout.png";
-const hoodieFrontDarkCutout     = "/mockups/black-hoodie-front-cutout.png";
-const hoodieBackDarkCutout      = "/mockups/black-hoodie-back-cutout.png";
+const tshirtFrontDarkCutout     = "/mockups/black-tshirt-front.png";
+const tshirtBackDarkCutout      = "/mockups/black-tshirt-back.png";
+const hoodieFrontDarkCutout     = "/mockups/black-hoodie-front.png";
+const hoodieBackDarkCutout      = "/mockups/black-hoodie-back.png";
 
 /** A single available garment colour (name + hex). */
 export interface ProductColor { name: string; hex: string }
@@ -392,15 +392,13 @@ export function GarmentSVG({
   const isCylinder = product.category === "mug" || product.category === "waterbottle";
 
   // WHITE / LIGHT GARMENTS — multiply-blend strategy:
-  //   Render the ORIGINAL full photo with mix-blend-mode:multiply.
-  //   White pixels (255,255,255) × any background = background → invisible.
-  //   Shadow/crease details (grey) × background = darker than bg → visible.
-  //   Result: photorealistic garment with perfect fabric texture & natural edges.
-  //   We also render a near-invisible cutout underneath as the shadow SOURCE so the
-  //   drop-shadow filter follows the garment silhouette, not the photo rectangle.
-  // Longsleeve excluded: its full photo has a warm studio background (not pure white)
-  // so multiply-blend tints the garment brownish. Use the cutout PNG directly instead.
-  const useMixBlend = isApparel && product.category !== "longsleeve" && !isDark && !useBlackPhoto;
+  //   This strategy requires a REAL product photo with a white background (not a
+  //   transparent cutout). It renders the full photo with mix-blend-mode:multiply,
+  //   which makes the white background invisible while preserving shadows/creases.
+  //   DISABLED for all products: the current front.png files are transparent cutouts
+  //   (not real photos), so mix-blend produces nothing. The cutout rendering below
+  //   handles all apparel correctly — transparent PNG with shadow filter + tint.
+  const useMixBlend = false;
 
   // DARK-COLOUR GARMENTS — cutout strategy (only for non-black non-mixblend):
   //   Use the transparent-BG cutout so the SVG tint filter only colours garment

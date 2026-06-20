@@ -2494,16 +2494,22 @@ export default function DesignStudio() {
                       <div
                         className="w-9 h-9 rounded-lg flex items-center justify-center overflow-hidden"
                         style={{
-                          background: isActive ? "rgba(255,255,255,0.22)" : "#e6e0d8",
+                          background: isActive
+                            ? "rgba(255,255,255,0.22)"
+                            : "radial-gradient(ellipse at 50% 40%, #8a8578 0%, #6b6659 100%)",
                           padding: "5px",
                         }}
                       >
                         {PRODUCT_TAB_ICONS[pid] ?? (
                           <img
-                            src={BASE_BY_CATEGORY[prod.category as keyof typeof BASE_BY_CATEGORY]?.frontCutout ?? prod.frontSrc}
+                            src={prod.frontSrc}
                             alt={prod.name}
                             className="w-full h-full object-contain"
-                            style={{ opacity: isActive ? 1 : 0.9 }}
+                            style={{
+                              opacity: isActive ? 1 : 0.95,
+                              filter: isActive ? "none" : "drop-shadow(0 1px 2px rgba(0,0,0,0.3))",
+                            }}
+                            draggable={false}
                           />
                         )}
                       </div>
