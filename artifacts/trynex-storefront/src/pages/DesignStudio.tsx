@@ -2807,8 +2807,55 @@ export default function DesignStudio() {
                     <clipPath id="design-clip">
                       <rect x={pz.x} y={pz.y} width={pz.w} height={pz.h} rx="4" />
                     </clipPath>
-                    {/* Cylinder gradients removed — product photos have natural shading baked in.
-                        Applying extra overlays caused grey shadow boxes on the print zone. */}
+
+                    {/* ── Cylinder wrap filter ────────────────────────────────────────────
+                        feDisplacementMap with a white→grey→black horizontal gradient:
+                        • Left edge (white, R=1): pixels shift +scale/2 rightward
+                        • Centre (grey, R=0.5): no shift
+                        • Right edge (black, R=0): pixels shift −scale/2 leftward
+                        Net effect: edges pinch inward → barrel/cylinder curvature illusion.
+                        filter region is padded by 30px so warped pixels aren't clipped. */}
+                    {(isMugProduct || isWaterBottle) && (
+                      <>
+                        <filter id="cyl-wrap-img" filterUnits="userSpaceOnUse"
+                          x={pz.x - 30} y={pz.y - 20} width={pz.w + 60} height={pz.h + 40}>
+                          <feImage
+                            result="dispMap"
+                            href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0id2hpdGUiLz48c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iZ3JheSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iYmxhY2siLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEiIGZpbGw9InVybCgjZykiLz48L3N2Zz4="
+                            x={pz.x} y={pz.y} width={pz.w} height={pz.h}
+                            preserveAspectRatio="none"
+                          />
+                          <feDisplacementMap
+                            in="SourceGraphic" in2="dispMap"
+                            xChannelSelector="R" yChannelSelector="G"
+                            scale={isMugProduct ? 32 : 20}
+                          />
+                        </filter>
+                        {/* Edge shadow gradient — darkens design at cylinder edges to
+                            reinforce depth cue. Applied AFTER design layers via multiply rect. */}
+                        <linearGradient id="cyl-edge-shadow" gradientUnits="userSpaceOnUse"
+                          x1={pz.x} y1="0" x2={pz.x + pz.w} y2="0">
+                          <stop offset="0%"   stopColor="rgba(0,0,0,0.28)" />
+                          <stop offset="13%"  stopColor="rgba(0,0,0,0.07)" />
+                          <stop offset="50%"  stopColor="rgba(0,0,0,0)" />
+                          <stop offset="87%"  stopColor="rgba(0,0,0,0.07)" />
+                          <stop offset="100%" stopColor="rgba(0,0,0,0.28)" />
+                        </linearGradient>
+                      </>
+                    )}
+
+                    {/* ── Fabric grain overlay filter ────────────────────────────────────
+                        feTurbulence fractal noise blended in overlay mode over design layers.
+                        Creates a subtle screen-print / ink-absorbed-into-weave texture.
+                        Applied as a rect AFTER design layers so it sits on top of designs. */}
+                    {(selectedProduct.category === "tshirt" || selectedProduct.category === "hoodie" || selectedProduct.category === "longsleeve") && (
+                      <filter id="fabric-grain-ovl" x="0" y="0" width="1" height="1" colorInterpolationFilters="sRGB">
+                        <feTurbulence type="fractalNoise" baseFrequency="0.80 0.90" numOctaves="4" seed="17" result="noise" />
+                        <feColorMatrix in="noise" type="saturate" values="0" result="gray" />
+                        <feBlend in="SourceGraphic" in2="gray" mode="overlay" result="textured" />
+                        <feComposite in="textured" in2="SourceAlpha" operator="in" />
+                      </filter>
+                    )}
                   </defs>
                   <g clipPath="url(#design-clip)">
                     {layersRender
@@ -2850,6 +2897,21 @@ export default function DesignStudio() {
                         const imgTransform = hasFlip
                           ? `rotate(${l.transform.rotation}, ${g.cx}, ${g.cy}) translate(${g.cx}, ${g.cy}) scale(${flipSX}, ${flipSY}) translate(${-g.cx}, ${-g.cy})`
                           : `rotate(${l.transform.rotation}, ${g.cx}, ${g.cy})`;
+                        if (isMugProduct || isWaterBottle) {
+                          return (
+                            <g key={l.id} filter="url(#cyl-wrap-img)">
+                              <image
+                                data-layer-id={l.id}
+                                href={l.src}
+                                x={g.x} y={g.y} width={g.w} height={g.h}
+                                opacity={l.transform.opacity}
+                                transform={imgTransform}
+                                preserveAspectRatio="none"
+                                style={{ cursor: l.locked ? "not-allowed" : "grab", filter: cssFilter, mixBlendMode: designBlend }}
+                              />
+                            </g>
+                          );
+                        }
                         return (
                           <image key={l.id}
                             data-layer-id={l.id}
@@ -2904,10 +2966,26 @@ export default function DesignStudio() {
                     })}
                   </g>
 
+                  {/* Cylinder edge depth — darkens design at left/right edges via multiply,
+                      reinforcing the wrap-around curvature of the mug/bottle surface. */}
+                  {(isMugProduct || isWaterBottle) && (
+                    <g clipPath="url(#design-clip)" pointerEvents="none">
+                      <rect x={pz.x} y={pz.y} width={pz.w} height={pz.h}
+                        fill="url(#cyl-edge-shadow)"
+                        style={{ mixBlendMode: "multiply" as React.CSSProperties["mixBlendMode"] }} />
+                    </g>
+                  )}
 
-                  {/* Cylinder surface overlays removed — they created visible grey shadows
-                      both outside and inside the print zone even with no design placed.
-                      The mug/waterbottle product photos have natural cylindrical shading built-in. */}
+                  {/* Fabric grain — subtle fractal noise over print zone makes designs look
+                      screen-printed on fabric rather than digitally pasted (apparel only). */}
+                  {(selectedProduct.category === "tshirt" || selectedProduct.category === "hoodie" || selectedProduct.category === "longsleeve") && (
+                    <g clipPath="url(#design-clip)" pointerEvents="none">
+                      <rect x={pz.x} y={pz.y} width={pz.w} height={pz.h}
+                        fill="rgba(80,60,40,0.06)"
+                        filter="url(#fabric-grain-ovl)"
+                        style={{ mixBlendMode: "overlay" as React.CSSProperties["mixBlendMode"] }} />
+                    </g>
+                  )}
 
 
                   {/* Selection outline + handles */}

@@ -461,23 +461,16 @@ export function GarmentSVG({
       )}
 
       <defs>
-        {/* Garment drop-shadow — lifts the garment off the background so
-            white/light shirts are clearly visible on the off-white canvas.
-            Three-layer shadow: wide ambient + mid diffuse + tight contact. */}
-        <filter id={`shadow-${filterId}`} x="-8%" y="-8%" width="116%" height="116%" colorInterpolationFilters="sRGB">
-          <feDropShadow dx="0" dy="6" stdDeviation="20" floodColor="rgba(0,0,0,0.14)" />
-          <feDropShadow dx="0" dy="2" stdDeviation="8"  floodColor="rgba(0,0,0,0.09)" />
+        {/* Garment drop-shadow — very subtle lift so the product photo reads
+            clearly against the canvas. Kept intentionally soft (stdDeviation≤6)
+            so it never creates a visible dark halo behind white/light garments. */}
+        <filter id={`shadow-${filterId}`} x="-5%" y="-5%" width="110%" height="110%" colorInterpolationFilters="sRGB">
+          <feDropShadow dx="0" dy="3" stdDeviation="6" floodColor="rgba(0,0,0,0.10)" />
         </filter>
 
-        {/* Hoodie pocket fade — solid #c9c4bc overlay starting transparent at y=490
-            fading to fully opaque at y=680, hiding the kangaroo pocket area. */}
-        {product.category === "hoodie" && face !== "back" && (
-          <linearGradient id={`hfade-${filterId}`} gradientUnits="userSpaceOnUse"
-            x1={0} y1={490} x2={0} y2={680}>
-            <stop offset="0%"   stopColor="#c9c4bc" stopOpacity={0} />
-            <stop offset="100%" stopColor="#c9c4bc" stopOpacity={1} />
-          </linearGradient>
-        )}
+        {/* Hoodie pocket fade removed — the full garment photo is shown as-is.
+            The print zone brackets (orange corners) indicate the printable area.
+            Hiding the lower half made the hoodie look "cut off" to designers. */}
 
         {/* Apparel fabric micro-texture — subtle creasing/fold effect only
             within the garment print area (apparel only, no cylinders) */}
@@ -549,13 +542,7 @@ export function GarmentSVG({
           Product photos already have natural lighting and depth baked in.
           Extra overlays caused visible shadows on t-shirts and grey boxes on mugs. */}
 
-      {/* Hoodie pocket fade — solid #c9c4bc overlay that starts transparent at y=490
-          and becomes fully opaque at y=680, hiding the kangaroo pocket. */}
-      {product.category === "hoodie" && face !== "back" && (
-        <rect x={0} y={0} width={1000} height={1000}
-          fill={`url(#hfade-${filterId})`}
-          style={{ pointerEvents: "none" }} />
-      )}
+      {/* Hoodie pocket fade rect removed — see comment in defs above. */}
 
       {showPrintZone && (() => {
         const { x, y, w, h } = displayPZ;
