@@ -2807,35 +2807,8 @@ export default function DesignStudio() {
                     <clipPath id="design-clip">
                       <rect x={pz.x} y={pz.y} width={pz.w} height={pz.h} rx="4" />
                     </clipPath>
-                    {/* Cylindrical perspective gradients — applied only for curved products (mug, waterbottle).
-                        gradientUnits="userSpaceOnUse" so x1/x2 are in SVG coordinates matching the print zone. */}
-                    {(selectedProduct.category === "mug" || selectedProduct.category === "waterbottle") && (<>
-                      {/* Left-edge shadow — subtle cylinder wrap-around darkening */}
-                      <linearGradient id="cyl-shade-l" gradientUnits="userSpaceOnUse"
-                        x1={pz.x} y1={pz.y} x2={pz.x + pz.w} y2={pz.y}>
-                        <stop offset="0%"   stopColor="rgba(0,0,0,0.16)" />
-                        <stop offset="18%"  stopColor="rgba(0,0,0,0.05)" />
-                        <stop offset="38%"  stopColor="rgba(0,0,0,0.01)" />
-                        <stop offset="100%" stopColor="rgba(0,0,0,0)" />
-                      </linearGradient>
-                      {/* Right-edge shadow — mirror of left */}
-                      <linearGradient id="cyl-shade-r" gradientUnits="userSpaceOnUse"
-                        x1={pz.x} y1={pz.y} x2={pz.x + pz.w} y2={pz.y}>
-                        <stop offset="0%"   stopColor="rgba(0,0,0,0)" />
-                        <stop offset="62%"  stopColor="rgba(0,0,0,0.01)" />
-                        <stop offset="82%"  stopColor="rgba(0,0,0,0.05)" />
-                        <stop offset="100%" stopColor="rgba(0,0,0,0.16)" />
-                      </linearGradient>
-                      {/* Center specular highlight — studio lamp on cylinder crown */}
-                      <linearGradient id="cyl-highlight" gradientUnits="userSpaceOnUse"
-                        x1={pz.x} y1={pz.y} x2={pz.x + pz.w} y2={pz.y}>
-                        <stop offset="0%"   stopColor="rgba(255,255,255,0)" />
-                        <stop offset="30%"  stopColor="rgba(255,255,255,0.10)" />
-                        <stop offset="50%"  stopColor="rgba(255,255,255,0.22)" />
-                        <stop offset="70%"  stopColor="rgba(255,255,255,0.10)" />
-                        <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-                      </linearGradient>
-                    </>)}
+                    {/* Cylinder gradients removed — product photos have natural shading baked in.
+                        Applying extra overlays caused grey shadow boxes on the print zone. */}
                   </defs>
                   <g clipPath="url(#design-clip)">
                     {layersRender
@@ -2932,17 +2905,9 @@ export default function DesignStudio() {
                   </g>
 
 
-                  {/* Cylindrical surface overlay — ONLY for mug & water bottle.
-                      Gives 360° cylinder wrap depth with correct edge falloff on both sides.
-                      Apparel products (tshirt/hoodie/longsleeve) do NOT get any overlay
-                      so uploaded designs are rendered clean — no print-zone shade. */}
-                  {(selectedProduct.category === "mug" || selectedProduct.category === "waterbottle") && (
-                    <g clipPath="url(#design-clip)" pointerEvents="none">
-                      <rect x={pz.x} y={pz.y} width={pz.w} height={pz.h} fill="url(#cyl-shade-l)" style={{ mixBlendMode: "multiply" as const }} />
-                      <rect x={pz.x} y={pz.y} width={pz.w} height={pz.h} fill="url(#cyl-shade-r)" style={{ mixBlendMode: "multiply" as const }} />
-                      <rect x={pz.x} y={pz.y} width={pz.w} height={pz.h} fill="url(#cyl-highlight)" style={{ mixBlendMode: "screen" as const }} />
-                    </g>
-                  )}
+                  {/* Cylinder surface overlays removed — they created visible grey shadows
+                      both outside and inside the print zone even with no design placed.
+                      The mug/waterbottle product photos have natural cylindrical shading built-in. */}
 
 
                   {/* Selection outline + handles */}

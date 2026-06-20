@@ -469,29 +469,8 @@ export function GarmentSVG({
           <feDropShadow dx="0" dy="2" stdDeviation="8"  floodColor="rgba(0,0,0,0.09)" />
         </filter>
 
-        {/* Radial edge vignette — subtle depth around garment edges */}
-        <radialGradient id={`vign-${filterId}`} cx="50%" cy="48%" r="56%"
-          gradientUnits="userSpaceOnUse">
-          <stop offset="0%"   stopColor="rgba(0,0,0,0)" />
-          <stop offset="60%"  stopColor="rgba(0,0,0,0.01)" />
-          <stop offset="82%"  stopColor="rgba(0,0,0,0.06)" />
-          <stop offset="100%" stopColor="rgba(0,0,0,0.18)" />
-        </radialGradient>
-        {/* Top shoulder highlight — studio key-light */}
-        <radialGradient id={`hi-${filterId}`} cx="50%" cy="15%" r="38%" gradientUnits="userSpaceOnUse">
-          <stop offset="0%"   stopColor="rgba(255,255,255,0.10)" />
-          <stop offset="60%"  stopColor="rgba(255,255,255,0.03)" />
-          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-        </radialGradient>
-        {/* Bottom ambient shadow */}
-        <linearGradient id={`bot-${filterId}`} gradientUnits="userSpaceOnUse"
-          x1={0} y1={760} x2={0} y2={1000}>
-          <stop offset="0%"   stopColor="rgba(0,0,0,0)" />
-          <stop offset="100%" stopColor="rgba(0,0,0,0.10)" />
-        </linearGradient>
-
-        {/* Hoodie pocket fade — hides kangaroo pocket (starts ~y=565) by fading
-            it into the studio background so only the print zone stays visible. */}
+        {/* Hoodie pocket fade — solid #c9c4bc overlay starting transparent at y=490
+            fading to fully opaque at y=680, hiding the kangaroo pocket area. */}
         {product.category === "hoodie" && face !== "back" && (
           <linearGradient id={`hfade-${filterId}`} gradientUnits="userSpaceOnUse"
             x1={0} y1={490} x2={0} y2={680}>
@@ -499,33 +478,6 @@ export function GarmentSVG({
             <stop offset="100%" stopColor="#c9c4bc" stopOpacity={1} />
           </linearGradient>
         )}
-
-        {/* Cylinder shadows for mug/waterbottle — steep fade so the dark edge
-            reaches ZERO before the print zone starts.
-            Mug print zone left edge ≈ x=188 (18.8%). Gradient is fully transparent
-            by 17% so no shading ever reaches the design area. */}
-        <linearGradient id={`cyl-l-${filterId}`} gradientUnits="userSpaceOnUse"
-          x1={0} y1={0} x2={1000} y2={0}>
-          <stop offset="0%"   stopColor="rgba(0,0,0,0.45)" />
-          <stop offset="10%"  stopColor="rgba(0,0,0,0.18)" />
-          <stop offset="17%"  stopColor="rgba(0,0,0,0.00)" />
-          <stop offset="100%" stopColor="rgba(0,0,0,0)" />
-        </linearGradient>
-        <linearGradient id={`cyl-r-${filterId}`} gradientUnits="userSpaceOnUse"
-          x1={0} y1={0} x2={1000} y2={0}>
-          <stop offset="0%"   stopColor="rgba(0,0,0,0)" />
-          <stop offset="83%"  stopColor="rgba(0,0,0,0.00)" />
-          <stop offset="90%"  stopColor="rgba(0,0,0,0.18)" />
-          <stop offset="100%" stopColor="rgba(0,0,0,0.45)" />
-        </linearGradient>
-        <linearGradient id={`cyl-hi-${filterId}`} gradientUnits="userSpaceOnUse"
-          x1={0} y1={0} x2={1000} y2={0}>
-          <stop offset="0%"   stopColor="rgba(255,255,255,0)" />
-          <stop offset="38%"  stopColor="rgba(255,255,255,0.16)" />
-          <stop offset="50%"  stopColor="rgba(255,255,255,0.26)" />
-          <stop offset="62%"  stopColor="rgba(255,255,255,0.16)" />
-          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-        </linearGradient>
 
         {/* Apparel fabric micro-texture — subtle creasing/fold effect only
             within the garment print area (apparel only, no cylinders) */}
@@ -593,26 +545,9 @@ export function GarmentSVG({
         </g>
       )}
 
-      {/* Depth overlays — vignette + highlight + bottom shadow */}
-      <rect x={0} y={0} width={1000} height={1000}
-        fill={`url(#vign-${filterId})`} style={{ pointerEvents: "none" }} />
-      <rect x={0} y={0} width={1000} height={1000}
-        fill={`url(#hi-${filterId})`} style={{ pointerEvents: "none" }} />
-      <rect x={0} y={0} width={1000} height={1000}
-        fill={`url(#bot-${filterId})`} style={{ pointerEvents: "none" }} />
-
-      {/* Cylindrical depth overlays — very subtle, applied to the FULL IMAGE area (not the print zone)
-          so they never shade the design. Print zone itself stays clean/unobscured. */}
-      {isCylinder && (
-        <>
-          <rect x={0} y={0} width={1000} height={1000}
-            fill={`url(#cyl-l-${filterId})`}
-            style={{ pointerEvents: "none", mixBlendMode: "multiply", opacity: 0.25 }} />
-          <rect x={0} y={0} width={1000} height={1000}
-            fill={`url(#cyl-r-${filterId})`}
-            style={{ pointerEvents: "none", mixBlendMode: "multiply", opacity: 0.25 }} />
-        </>
-      )}
+      {/* All vignette/highlight/bottom/cylinder depth overlays removed.
+          Product photos already have natural lighting and depth baked in.
+          Extra overlays caused visible shadows on t-shirts and grey boxes on mugs. */}
 
       {/* Hoodie pocket fade — solid #c9c4bc overlay that starts transparent at y=490
           and becomes fully opaque at y=680, hiding the kangaroo pocket. */}
