@@ -2810,21 +2810,21 @@ export default function DesignStudio() {
                     {/* Cylindrical perspective gradients — applied only for curved products (mug, waterbottle).
                         gradientUnits="userSpaceOnUse" so x1/x2 are in SVG coordinates matching the print zone. */}
                     {(selectedProduct.category === "mug" || selectedProduct.category === "waterbottle") && (<>
-                      {/* Left-edge shadow — stronger cylinder wrap-around darkening */}
+                      {/* Left-edge shadow — subtle cylinder wrap-around darkening */}
                       <linearGradient id="cyl-shade-l" gradientUnits="userSpaceOnUse"
                         x1={pz.x} y1={pz.y} x2={pz.x + pz.w} y2={pz.y}>
-                        <stop offset="0%"   stopColor="rgba(0,0,0,0.42)" />
-                        <stop offset="18%"  stopColor="rgba(0,0,0,0.12)" />
-                        <stop offset="38%"  stopColor="rgba(0,0,0,0.02)" />
+                        <stop offset="0%"   stopColor="rgba(0,0,0,0.16)" />
+                        <stop offset="18%"  stopColor="rgba(0,0,0,0.05)" />
+                        <stop offset="38%"  stopColor="rgba(0,0,0,0.01)" />
                         <stop offset="100%" stopColor="rgba(0,0,0,0)" />
                       </linearGradient>
                       {/* Right-edge shadow — mirror of left */}
                       <linearGradient id="cyl-shade-r" gradientUnits="userSpaceOnUse"
                         x1={pz.x} y1={pz.y} x2={pz.x + pz.w} y2={pz.y}>
                         <stop offset="0%"   stopColor="rgba(0,0,0,0)" />
-                        <stop offset="62%"  stopColor="rgba(0,0,0,0.02)" />
-                        <stop offset="82%"  stopColor="rgba(0,0,0,0.12)" />
-                        <stop offset="100%" stopColor="rgba(0,0,0,0.42)" />
+                        <stop offset="62%"  stopColor="rgba(0,0,0,0.01)" />
+                        <stop offset="82%"  stopColor="rgba(0,0,0,0.05)" />
+                        <stop offset="100%" stopColor="rgba(0,0,0,0.16)" />
                       </linearGradient>
                       {/* Center specular highlight — studio lamp on cylinder crown */}
                       <linearGradient id="cyl-highlight" gradientUnits="userSpaceOnUse"

@@ -31,6 +31,8 @@ import { BASE_BY_CATEGORY, isNearBlack, type DesignProduct } from "./mockups";
 import {
   RealisticShirt,
   PhotoMockupMesh,
+  WaterBottleBody,
+  adjustGarmentColor,
   ResettableOrbitControls,
   ViewerLoadingOverlay,
   NoWebGLFallback,
@@ -329,15 +331,11 @@ export default function ProductViewer3D({
             />
           )}
 
-          {/* ── WATER BOTTLE — real photo plane + colour tint ── */}
+          {/* ── WATER BOTTLE — procedural 3D cylinder (aluminium sublimation bottle) ── */}
           {product.category === "waterbottle" && (
-            <PhotoMockupMesh
-              frontPhotoSrc={resolvedFrontPhoto}
-              frontTex={bottleFrontTex}
-              garmentColor={photoTint}
-              activeFace="front"
-              planeW={2.20}
-              planeH={2.80}
+            <WaterBottleBody
+              wrapTex={bottleFrontTex}
+              garmentColor={adjustGarmentColor(garmentColor)}
             />
           )}
 
