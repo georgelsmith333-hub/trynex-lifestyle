@@ -28,7 +28,7 @@ const mugFrontDarkCutout   = "/mockups/black-mug-front-cutout.png";
 const capFront             = "/mockups/white-cap-front.png";
 // black-cap-front.png has no alpha and is 896×1280 (wrong size) — cap uses SVG tint for all dark colours
 const capFrontCutout       = "/mockups/white-cap-front-cutout.png";
-const waterBottleFront          = "/mockups/white-waterbottle-front.png";
+const waterBottleFront          = "/mockups/white-waterbottle-photo.png";
 const waterBottleCutout         = "/mockups/white-waterbottle-front-cutout.png";
 const tshirtFrontDarkCutout     = "/mockups/black-tshirt-front-cutout.png";
 const tshirtBackDarkCutout      = "/mockups/black-tshirt-back-cutout.png";

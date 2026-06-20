@@ -4741,7 +4741,9 @@ export default function DesignStudio() {
                           >
                             {/* Product photo */}
                             <div className="w-full aspect-square relative overflow-hidden"
-                              style={{ background: "radial-gradient(ellipse at 50% 40%, #f5f5f3 0%, #e8e5e0 100%)" }}>
+                              style={{ background: (["tshirt","hoodie","longsleeve"] as string[]).includes(prod.category)
+                                ? "radial-gradient(ellipse at 50% 40%, #c8c5be 0%, #b0ada6 100%)"
+                                : "radial-gradient(ellipse at 50% 40%, #f5f5f3 0%, #e8e5e0 100%)" }}>
                               <img
                                 src={prod.frontSrc}
                                 alt={prod.name}
