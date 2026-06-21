@@ -28,8 +28,8 @@ const mugFrontDarkCutout   = "/mockups/black-mug-front-cutout.png";
 const capFront             = "/mockups/white-cap-front.png";
 // black-cap-front.png has no alpha and is 896×1280 (wrong size) — cap uses SVG tint for all dark colours
 const capFrontCutout       = "/mockups/white-cap-front-cutout.png";
-const waterBottleFront          = "/mockups/white-waterbottle-front.png";
-const waterBottleCutout         = "/mockups/white-waterbottle-front-cutout.png";
+const waterBottleFront          = "/mockups/white-waterbottle-real.png";
+const waterBottleCutout         = "/mockups/white-waterbottle-real-cutout.png";
 const tshirtFrontDarkCutout     = "/mockups/black-tshirt-front.png";
 const tshirtBackDarkCutout      = "/mockups/black-tshirt-back.png";
 const hoodieFrontDarkCutout     = "/mockups/black-hoodie-front.png";
@@ -44,7 +44,8 @@ export type ProductType =
   | "hoodie"
   | "cap"
   | "longsleeve"
-  | "waterbottle";
+  | "waterbottle"
+  | "watertumbler";
 
 /** All possible design zones — front/back are garment views; sleeve/neck are flat templates. */
 export type Face =
@@ -259,6 +260,21 @@ export const PRODUCTS: DesignProduct[] = [
     printZone: WATERBOTTLE_PZ,
     frontSrc: WATERBOTTLE_MOCKUP_URL,
   },
+  {
+    id: "watertumbler", name: "Water Tumbler", icon: "🍶", category: "waterbottle",
+    garmentColor: "#F4F3F1",
+    colors: [
+      { name: "White",    hex: "#F4F3F1" }, { name: "Black",    hex: "#1C1917" },
+      { name: "Navy",     hex: "#1e3a5f" }, { name: "Forest",   hex: "#166534" },
+      { name: "Sky Blue", hex: "#0ea5e9" }, { name: "Red",      hex: "#dc2626" },
+      { name: "Pink",     hex: "#f472b6" }, { name: "Teal",     hex: "#0f766e" },
+    ],
+    description: "600ml Insulated",
+    badge: "New",
+    viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
+    printZone: WATERBOTTLE_PZ,
+    frontSrc: WATERBOTTLE_MOCKUP_URL,
+  },
 ];
 
 /* ═══════════════════════════════════════════════════════
@@ -282,6 +298,7 @@ export const BASE_BY_CATEGORY: Record<
   mug:         { front: mugFront, back: mugFront, darkFront: mugFrontDark, darkBack: mugFrontDark, frontCutout: mugFrontCutout, darkFrontCutout: mugFrontDarkCutout, darkBackCutout: mugFrontDarkCutout },
   cap:         { front: capFront, frontCutout: capFrontCutout },
   waterbottle: { front: waterBottleFront, frontCutout: waterBottleCutout },
+  // watertumbler uses category "waterbottle" — shares the same base entry
 };
 
 let _filterUid = 0;

@@ -597,14 +597,18 @@ export default function Checkout() {
     }
     setIsSubmittingPayment(true);
     try {
-      await fetch(getApiUrl(`/api/orders/${(createdOrder as Record<string, unknown>)?.id}/payment-info`), {
+      const res = await fetch(getApiUrl(`/api/orders/${(createdOrder as Record<string, unknown>)?.id}/payment-info`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
         body: JSON.stringify({ lastFourDigits: lastFour, promoCode: promoApplied || undefined })
       });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.message || `Server error: ${res.status}`);
+      }
       setCheckoutStatus('success');
-    } catch {
-      toast({ title: "Submission failed", description: "Please screenshot this page and contact us on WhatsApp.", variant: "destructive" });
+    } catch (err: any) {
+      toast({ title: "Payment submission failed", description: err?.message || "Please screenshot this page and contact us on WhatsApp.", variant: "destructive" });
     } finally {
       setIsSubmittingPayment(false);
     }
@@ -657,7 +661,7 @@ export default function Checkout() {
           initial={{ scale: 0.85, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", damping: 20 }}
-          className="max-w-md w-full rounded-3xl p-8 text-center bg-white"
+          className="max-w-xl w-full rounded-3xl p-8 text-center bg-white"
           style={{ border: '1px solid #e5e7eb', boxShadow: '0 8px 40px rgba(0,0,0,0.08)' }}
         >
           <motion.div
@@ -828,7 +832,7 @@ export default function Checkout() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-md w-full space-y-4"
+          className="max-w-xl w-full space-y-4"
         >
           <div className="rounded-3xl overflow-hidden bg-white"
             style={{ border: `1px solid ${theme.border}`, boxShadow: theme.glow }}>
@@ -1351,7 +1355,7 @@ export default function Checkout() {
                     Choose how you'd like to pay — then select your preferred e-wallet below.
                   </p>
 
-                  <div className="grid grid-cols-1 gap-3 mb-5">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
                     <button
                       type="button"
                       onClick={() => setPaymentMode('full')}

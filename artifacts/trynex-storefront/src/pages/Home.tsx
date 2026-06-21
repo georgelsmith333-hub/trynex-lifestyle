@@ -929,7 +929,8 @@ export default function Home() {
                 hoodie:      "/images/cat-hoodie.png",
                 cap:         "/images/cat-cap.png",
                 mug:         "/images/cat-mug.png",
-                waterbottle: "/images/cat-mug.png",
+                waterbottle: "/images/cat-waterbottle.png",
+                watertumbler:"/images/cat-waterbottle.png",
                 custom:      "/images/cat-tshirt.png",
               };
 

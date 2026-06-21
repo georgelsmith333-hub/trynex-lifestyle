@@ -253,7 +253,8 @@ const LEGACY_ID_MAP: Record<string, string> = {
   "white-longsleeve": "longsleeve", "black-longsleeve": "longsleeve",
   "white-mug": "mug", "black-mug": "mug",
   "white-cap": "cap", "black-cap": "cap",
-  "white-waterbottle": "waterbottle",
+  "white-waterbottle": "waterbottle", "black-waterbottle": "waterbottle",
+  "white-watertumbler": "watertumbler", "black-watertumbler": "watertumbler",
 };
 type SaveStatus = "idle" | "saving" | "saved";
 interface DraftPayload {
