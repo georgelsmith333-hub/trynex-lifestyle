@@ -54,6 +54,66 @@ uri = "file://artifacts/trynex-storefront/public/mockups/black-hoodie-back-real.
 type = "image"
 title = "generated_image"
 
+[[generated]]
+id = "LHkru5fH3OyXuYf1um5nn"
+uri = "file://artifacts/trynex-storefront/public/mockups/white-tshirt-back.png"
+type = "image"
+title = "White t-shirt back"
+
+[[generated]]
+id = "A_pgMO0FYzuHdc_Acl02y"
+uri = "file://artifacts/trynex-storefront/public/mockups/white-hoodie-front.png"
+type = "image"
+title = "White hoodie front"
+
+[[generated]]
+id = "ZH7XNjMsNad2eEWR2q_j_"
+uri = "file://artifacts/trynex-storefront/public/mockups/black-tshirt-front.png"
+type = "image"
+title = "Black t-shirt front"
+
+[[generated]]
+id = "L_n8KnlYYYJNYcQ4Vr4JL"
+uri = "file://artifacts/trynex-storefront/public/mockups/black-hoodie-front.png"
+type = "image"
+title = "Black hoodie front"
+
+[[generated]]
+id = "GmjNTq1Glk8O6RwjqgA4M"
+uri = "file://artifacts/trynex-storefront/public/mockups/white-longsleeve-front.png"
+type = "image"
+title = "White long sleeve front"
+
+[[generated]]
+id = "ZsHiVWoqOaYLu8qIM2K-c"
+uri = "file://artifacts/trynex-storefront/public/mockups/white-longsleeve-back.png"
+type = "image"
+title = "White long sleeve back"
+
+[[generated]]
+id = "qBJgL29CIkMuxQeoRvKAg"
+uri = "file://artifacts/trynex-storefront/public/mockups/white-cap-front.png"
+type = "image"
+title = "White cap front"
+
+[[generated]]
+id = "48ZrtsGK8q8rbSy-gsL58"
+uri = "file://artifacts/trynex-storefront/public/mockups/white-mug-front.png"
+type = "image"
+title = "White mug side"
+
+[[generated]]
+id = "3ma7NSUGGdr1XkqZLIcVK"
+uri = "file://artifacts/trynex-storefront/public/mockups/white-waterbottle-front.png"
+type = "image"
+title = "White water bottle front"
+
+[[generated]]
+id = "O6wTCB1fGIebbkWYYZJ3_"
+uri = "file://artifacts/trynex-storefront/public/mockups/black-mug-front.png"
+type = "image"
+title = "Black mug side"
+
 [[outputs]]
 id = "MC6gfx4CAEVELR0DuNTVC"
 uri = "file://trynex-report.tar.gz"
