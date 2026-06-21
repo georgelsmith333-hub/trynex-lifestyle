@@ -117,11 +117,7 @@ export default function Checkout() {
     document.body.scrollTop = 0;
   }, []);
 
-  // Expose trigger for step validation
-  useEffect(() => {
-    (window as any).triggerFormValidation = (fields: any) => trigger(fields);
-    return () => { delete (window as any).triggerFormValidation; };
-  }, [trigger]);
+  // trigger is available directly from useForm — no need for window hack
 
   // Auto-fill name/email/phone for logged-in customers (do NOT pre-fill address)
   useEffect(() => {
@@ -165,26 +161,6 @@ export default function Checkout() {
       }
     }
   }, [errors]);
-
-  const gpsTriedRef = useRef(false);
-  useEffect(() => {
-    if (gpsTriedRef.current) return;
-    gpsTriedRef.current = true;
-    if (!navigator.geolocation) return;
-    try {
-      if (navigator.permissions && typeof navigator.permissions.query === 'function') {
-        navigator.permissions.query({ name: 'geolocation' as PermissionName }).then(result => {
-          if (result.state === 'prompt' || result.state === 'granted') {
-            handleGPSDetect();
-          }
-        }).catch(() => {});
-      } else {
-        handleGPSDetect();
-      }
-    } catch {
-      handleGPSDetect();
-    }
-  }, []);
 
   const selectedDistrict = watch("shippingDistrict");
   const selectedUpazila = watch("shippingUpazila");
@@ -258,6 +234,29 @@ export default function Checkout() {
       { enableHighAccuracy: false, timeout: 15000, maximumAge: 300000 }
     );
   }, [setValue, toast]);
+
+  const gpsTriedRef = useRef(false);
+  useEffect(() => {
+    if (gpsTriedRef.current) return;
+    gpsTriedRef.current = true;
+    if (!navigator.geolocation) return;
+    try {
+      if (navigator.permissions && typeof navigator.permissions.query === 'function') {
+        navigator.permissions.query({ name: 'geolocation' as PermissionName }).then(result => {
+          if (result.state === 'granted') {
+            handleGPSDetect();
+          }
+          // If 'prompt' → don't auto-trigger; let the user click the button
+          // If 'denied' → silently skip
+        }).catch(() => {});
+      } else {
+        // No permissions API → attempt once
+        handleGPSDetect();
+      }
+    } catch {
+      handleGPSDetect();
+    }
+  }, [handleGPSDetect]);
 
   useEffect(() => {
     return () => {
@@ -1070,7 +1069,7 @@ export default function Checkout() {
 
           {/* Step Indicator */}
           <div className="mb-8">
-            <div className="flex items-center justify-center gap-0 max-w-md mx-auto" role="navigation" aria-label="Checkout progress">
+            <div className="flex items-center justify-center gap-0 max-w-lg mx-auto" role="navigation" aria-label="Checkout progress">
               {[
                 { num: 1, label: "Delivery", done: step > 1, active: step === 1 },
                 { num: 2, label: "Payment", done: step > 2, active: step === 2 },
@@ -1328,7 +1327,7 @@ export default function Checkout() {
                           "firstName", "lastName", "customerPhone", "shippingAddress",
                           "shippingDistrict", "shippingUpazila"
                         ];
-                        const isValid = await (window as any).triggerFormValidation(fields);
+                        const isValid = await trigger(fields);
                         if (isValid) setStep(2);
                       }}
                       className="w-full py-4 rounded-2xl bg-gray-900 text-white font-black flex items-center justify-center gap-2 hover:bg-black transition-all"
