@@ -260,21 +260,8 @@ export const PRODUCTS: DesignProduct[] = [
     printZone: WATERBOTTLE_PZ,
     frontSrc: WATERBOTTLE_MOCKUP_URL,
   },
-  {
-    id: "watertumbler", name: "Water Tumbler", icon: "🍶", category: "waterbottle",
-    garmentColor: "#F4F3F1",
-    colors: [
-      { name: "White",    hex: "#F4F3F1" }, { name: "Black",    hex: "#1C1917" },
-      { name: "Navy",     hex: "#1e3a5f" }, { name: "Forest",   hex: "#166534" },
-      { name: "Sky Blue", hex: "#0ea5e9" }, { name: "Red",      hex: "#dc2626" },
-      { name: "Pink",     hex: "#f472b6" }, { name: "Teal",     hex: "#0f766e" },
-    ],
-    description: "600ml Insulated",
-    badge: "New",
-    viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
-    printZone: WATERBOTTLE_PZ,
-    frontSrc: WATERBOTTLE_MOCKUP_URL,
-  },
+  // NOTE: Water Tumbler removed — it was a duplicate of Water Bottle with identical
+  // mockup, colors, and print zone. Re-add if a distinct tumbler mockup is provided.
 ];
 
 /* ═══════════════════════════════════════════════════════
