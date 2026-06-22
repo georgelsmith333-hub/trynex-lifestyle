@@ -13,8 +13,8 @@ const tshirtFrontCutout    = "/mockups/white-tshirt-front-cutout.png";
 const tshirtBackCutout     = "/mockups/white-tshirt-back-cutout.png";
 const longsleeveFront      = "/mockups/white-longsleeve-front.png";
 const longsleeveBack       = "/mockups/white-longsleeve-back.png";
-const longsleeveFrontCutout = "/mockups/white-longsleeve-front.png";
-const longsleeveBackCutout  = "/mockups/white-longsleeve-back.png";
+const longsleeveFrontCutout = "/mockups/white-longsleeve-front-cutout.png";
+const longsleeveBackCutout  = "/mockups/white-longsleeve-back-cutout.png";
 const hoodieFront          = "/mockups/white-hoodie-front.png";
 const hoodieBack           = "/mockups/white-hoodie-back.png";
 const hoodieFrontDark      = "/mockups/black-hoodie-front.png";
@@ -30,10 +30,10 @@ const capFront             = "/mockups/white-cap-front.png";
 const capFrontCutout       = "/mockups/white-cap-front-cutout.png";
 const waterBottleFront          = "/mockups/white-waterbottle-real.png";
 const waterBottleCutout         = "/mockups/white-waterbottle-real-cutout.png";
-const tshirtFrontDarkCutout     = "/mockups/black-tshirt-front.png";
-const tshirtBackDarkCutout      = "/mockups/black-tshirt-back.png";
-const hoodieFrontDarkCutout     = "/mockups/black-hoodie-front.png";
-const hoodieBackDarkCutout      = "/mockups/black-hoodie-back.png";
+const tshirtFrontDarkCutout     = "/mockups/black-tshirt-front-cutout.png";
+const tshirtBackDarkCutout      = "/mockups/black-tshirt-back-cutout.png";
+const hoodieFrontDarkCutout     = "/mockups/black-hoodie-front-cutout.png";
+const hoodieBackDarkCutout      = "/mockups/black-hoodie-back-cutout.png";
 
 /** A single available garment colour (name + hex). */
 export interface ProductColor { name: string; hex: string }
@@ -448,6 +448,7 @@ export function GarmentSVG({
       return src;
     }
     if (face === "back" && base.backCutout) return base.backCutout;
+    if (face === "back") return src; // back photo instead of front cutout
     return base.frontCutout ?? src;
   })();
 

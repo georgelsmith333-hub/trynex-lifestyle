@@ -41,9 +41,9 @@ const GARMENT_FRONT_PHOTO: Record<GarmentCategory, string> = {
 };
 /** Back photo for garments that have a printable back face. */
 const GARMENT_BACK_PHOTO: Partial<Record<GarmentCategory, string>> = {
-  tshirt:     "/mockups/white-tshirt-back-cutout.png",
-  longsleeve: "/mockups/white-longsleeve-back-cutout.png",
-  hoodie:     "/mockups/white-hoodie-back-cutout.png",
+  tshirt:     "/mockups/white-tshirt-back.png",
+  longsleeve: "/mockups/white-longsleeve-back.png",
+  hoodie:     "/mockups/white-hoodie-back.png",
 };
 
 type GarmentCategory = "tshirt" | "longsleeve" | "hoodie" | "mug" | "cap" | "waterbottle";
