@@ -3,7 +3,7 @@ import {
   LayoutDashboard, Package, ShoppingCart, Settings, LogOut, Menu, X,
   FileText, Users, HardDrive, Sparkles, Star, Code2, BookOpen, Paintbrush,
   GitBranch, Gift, Layers, History, Shield, Search, Tag, Share2, Mail,
-  ChevronRight, DatabaseZap, Images, Bot, KeyRound,
+  ChevronRight, DatabaseZap, Images, Bot, KeyRound, MessageSquare,
 } from "lucide-react";
 import { useAdminLogout, useAdminMe } from "@workspace/api-client-react";
 import React, { useEffect, useState } from "react";
@@ -30,6 +30,7 @@ const MENU_GROUPS: MenuGroup[] = [
     items: [
       { name: "Dashboard", href: "/admin", icon: LayoutDashboard, exact: true },
       { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
+      { name: "Messages", href: "/admin/messages", icon: MessageSquare },
       { name: "Products", href: "/admin/products", icon: Package },
       { name: "Categories", href: "/admin/categories", icon: Layers },
       { name: "Gift Hampers", href: "/admin/hampers", icon: Gift },

@@ -291,10 +291,23 @@ export const notificationsTable = pgTable("notifications", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const supportMessagesTable = pgTable("support_messages", {
+  id: serial("id").primaryKey(),
+  customerId: integer("customer_id").notNull(),
+  senderType: text("sender_type").notNull(),
+  senderName: text("sender_name"),
+  message: text("message").notNull(),
+  readByAdmin: boolean("read_by_admin").notNull().default(false),
+  readByCustomer: boolean("read_by_customer").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export type OrderMessage = typeof orderMessagesTable.$inferSelect;
 export type InsertOrderMessage = typeof orderMessagesTable.$inferInsert;
 export type Notification = typeof notificationsTable.$inferSelect;
 export type InsertNotification = typeof notificationsTable.$inferInsert;
+export type SupportMessage = typeof supportMessagesTable.$inferSelect;
+export type InsertSupportMessage = typeof supportMessagesTable.$inferInsert;
 
 export const mockupsTable = pgTable("mockups", {
   id: serial("id").primaryKey(),

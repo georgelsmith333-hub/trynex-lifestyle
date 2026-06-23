@@ -420,17 +420,15 @@ export function GarmentSVG({
   const imageSrc = (() => {
     if (useMixBlend) return src; // full photo; white BG removed by mix-blend-mode
     if (!applyTint || !base) {
-      // isApparel && useBlackPhoto: use the dark transparent cutout so the drop-shadow
-      // filter wraps the garment silhouette (not the full rectangular photo boundary),
-      // matching the consistent behaviour of all other colour variants.
+      // Near-black apparel must use the real photographic black mockup, not the
+      // background-removed cutout. The cutouts are useful for tint/shadow masks,
+      // but on black t-shirts/hoodies they can read like a flat icon instead of
+      // the realistic product photo the customer expects.
+      if (isApparel && useBlackPhoto) return src;
+
       if ((isCylUnderImageSrc || isApparelForCutout || (isApparel && useBlackPhoto)) && base) {
-        if (useBlackPhoto) {
-          if (face === "back" && base.darkBackCutout) return base.darkBackCutout;
-          if (base.darkFrontCutout) return base.darkFrontCutout;
-        } else {
-          if (face === "back" && base.backCutout) return base.backCutout;
-          if (base.frontCutout) return base.frontCutout;
-        }
+        if (face === "back" && base.backCutout) return base.backCutout;
+        if (base.frontCutout) return base.frontCutout;
       }
       return src;
     }

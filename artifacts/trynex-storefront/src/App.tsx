@@ -94,6 +94,7 @@ const AdminDashboard       = lazyWithRetry(() => import("./pages/admin/Dashboard
 const AdminProducts        = lazyWithRetry(() => import("./pages/admin/AdminProducts"));
 const AdminCategories      = lazyWithRetry(() => import("./pages/admin/AdminCategories"));
 const AdminOrders          = lazyWithRetry(() => import("./pages/admin/AdminOrders"));
+const AdminMessages        = lazyWithRetry(() => import("./pages/admin/AdminMessages"));
 const AdminSettings        = lazyWithRetry(() => import("./pages/admin/AdminSettings"));
 const AdminBlog            = lazyWithRetry(() => import("./pages/admin/AdminBlog"));
 const AdminCustomers       = lazyWithRetry(() => import("./pages/admin/AdminCustomers"));
@@ -207,6 +208,7 @@ function Router() {
             <Route path="/admin/products"      component={AdminProducts} />
             <Route path="/admin/categories"    component={AdminCategories} />
             <Route path="/admin/orders"        component={AdminOrders} />
+            <Route path="/admin/messages"      component={AdminMessages} />
             <Route path="/admin/blog"          component={AdminBlog} />
             <Route path="/admin/customers"     component={AdminCustomers} />
             <Route path="/admin/backup"        component={AdminBackup} />

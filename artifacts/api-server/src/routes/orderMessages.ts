@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { db, notificationsTable } from "@workspace/db";
+import { db, customersTable, notificationsTable, supportMessagesTable } from "@workspace/db";
 import { sql } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { verifyCustomerToken, extractCustomerToken } from "../lib/customerAuth";
@@ -23,6 +23,167 @@ async function getOrderMessages(orderId: number) {
   );
   return (res as any).rows ?? res ?? [];
 }
+
+function requireCustomer(req: any, res: any, next: any) {
+  const token = extractCustomerToken(req);
+  if (!token) {
+    res.status(401).json({ error: "unauthorized", message: "Authentication required" });
+    return;
+  }
+  const decoded = verifyCustomerToken(token);
+  if (!decoded) {
+    res.status(401).json({ error: "unauthorized", message: "Invalid or expired token" });
+    return;
+  }
+  req.customer = decoded;
+  next();
+}
+
+async function getSupportMessages(customerId: number) {
+  const res = await db.execute(
+    sql`SELECT id, customer_id, sender_type, sender_name, message,
+               read_by_admin, read_by_customer, created_at
+        FROM support_messages
+        WHERE customer_id = ${customerId}
+        ORDER BY created_at ASC`
+  );
+  return (res as any).rows ?? res ?? [];
+}
+
+/* ── Admin: list direct support conversations ─────────────── */
+router.get("/admin/messages/conversations", requireAdmin, async (_req, res) => {
+  try {
+    const result = await db.execute(sql`
+      SELECT
+        c.id AS customer_id,
+        c.name AS customer_name,
+        c.email AS customer_email,
+        c.phone AS customer_phone,
+        MAX(sm.created_at) AS last_message_at,
+        COUNT(*) FILTER (WHERE sm.sender_type = 'customer' AND sm.read_by_admin = false) AS unread_count,
+        (
+          SELECT sm2.message
+          FROM support_messages sm2
+          WHERE sm2.customer_id = c.id
+          ORDER BY sm2.created_at DESC
+          LIMIT 1
+        ) AS last_message
+      FROM support_messages sm
+      JOIN customers c ON c.id = sm.customer_id
+      GROUP BY c.id, c.name, c.email, c.phone
+      ORDER BY MAX(sm.created_at) DESC
+      LIMIT 200
+    `);
+    res.json({ conversations: (result as any).rows ?? result ?? [] });
+  } catch (err) {
+    logger.error({ err }, "Failed to list support conversations");
+    res.status(500).json({ error: "Failed to load conversations" });
+  }
+});
+
+/* ── Admin: direct support messages for one customer ───────── */
+router.get("/admin/messages/customers/:customerId", requireAdmin, async (req, res) => {
+  try {
+    const customerId = Number(req.params.customerId);
+    if (!customerId) {
+      res.status(400).json({ error: "Invalid customer id" });
+      return;
+    }
+    const messages = await getSupportMessages(customerId);
+    await db.execute(sql`
+      UPDATE support_messages SET read_by_admin = true
+      WHERE customer_id = ${customerId} AND read_by_admin = false
+    `);
+    res.json({ messages });
+  } catch (err) {
+    logger.error({ err }, "Failed to load admin support messages");
+    res.status(500).json({ error: "Failed to load messages" });
+  }
+});
+
+router.post("/admin/messages/customers/:customerId", requireAdmin, messageLimiter, async (req, res) => {
+  try {
+    const customerId = Number(req.params.customerId);
+    const { message } = req.body ?? {};
+    if (!customerId) {
+      res.status(400).json({ error: "Invalid customer id" });
+      return;
+    }
+    if (!message || typeof message !== "string" || message.trim().length === 0) {
+      res.status(400).json({ error: "Message is required" });
+      return;
+    }
+    if (message.length > 2000) {
+      res.status(400).json({ error: "Message too long (max 2000 chars)" });
+      return;
+    }
+    const inserted = await db.insert(supportMessagesTable).values({
+      customerId,
+      senderType: "admin",
+      senderName: "TryNex Team",
+      message: message.trim(),
+      readByAdmin: true,
+    }).returning();
+    await db.insert(notificationsTable).values({
+      customerId,
+      title: "New Support Message",
+      message: "You have a new message from TryNex Team.",
+      type: "message",
+      link: "/account?tab=messages",
+    }).catch(() => undefined);
+    res.json({ message: inserted[0] });
+  } catch (err) {
+    logger.error({ err }, "Failed to send admin support message");
+    res.status(500).json({ error: "Failed to send message" });
+  }
+});
+
+/* ── Customer: direct support chat, no order required ──────── */
+router.get("/support/messages", requireCustomer, messageLimiter, async (req: any, res) => {
+  try {
+    const customerId = Number(req.customer.id);
+    const messages = await getSupportMessages(customerId);
+    await db.execute(sql`
+      UPDATE support_messages SET read_by_customer = true
+      WHERE customer_id = ${customerId} AND read_by_customer = false
+    `);
+    res.json({ messages });
+  } catch (err) {
+    logger.error({ err }, "Failed to load customer support messages");
+    res.status(500).json({ error: "Failed to load messages" });
+  }
+});
+
+router.post("/support/messages", requireCustomer, messageLimiter, async (req: any, res) => {
+  try {
+    const customerId = Number(req.customer.id);
+    const { message } = req.body ?? {};
+    if (!message || typeof message !== "string" || message.trim().length === 0) {
+      res.status(400).json({ error: "Message is required" });
+      return;
+    }
+    if (message.length > 2000) {
+      res.status(400).json({ error: "Message too long (max 2000 chars)" });
+      return;
+    }
+    const customerRows = await db
+      .select({ name: customersTable.name })
+      .from(customersTable)
+      .where(sql`${customersTable.id} = ${customerId}`)
+      .limit(1);
+    const inserted = await db.insert(supportMessagesTable).values({
+      customerId,
+      senderType: "customer",
+      senderName: customerRows[0]?.name ?? "Customer",
+      message: message.trim(),
+      readByCustomer: true,
+    }).returning();
+    res.json({ message: inserted[0] });
+  } catch (err) {
+    logger.error({ err }, "Failed to send customer support message");
+    res.status(500).json({ error: "Failed to send message" });
+  }
+});
 
 /* ── Admin: list messages for an order ──────────────────────── */
 router.get("/admin/orders/:id/messages", requireAdmin, async (req, res) => {

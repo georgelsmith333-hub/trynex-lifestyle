@@ -4,6 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SEOHead } from "@/components/SEOHead";
 import { useAuth } from "@/context/AuthContext";
+import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { useToast } from "@/hooks/use-toast";
 import { formatPrice, getApiUrl } from "@/lib/utils";
 import {
@@ -94,9 +95,20 @@ interface OrderMessage {
   created_at: string;
 }
 
+interface SupportMessage {
+  id: number;
+  customer_id: number;
+  sender_type: "admin" | "customer";
+  sender_name: string;
+  message: string;
+  read_by_customer: boolean;
+  created_at: string;
+}
+
 export default function Account() {
   const [, navigate] = useLocation();
   const { customer, isLoading, isAuthenticated, updateProfile, logout } = useAuth();
+  const settings = useSiteSettings();
   const { toast } = useToast();
   const [editing, setEditing] = useState(false);
   const [editName, setEditName] = useState("");
@@ -118,6 +130,10 @@ export default function Account() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [messageInput, setMessageInput] = useState("");
   const [sendingMessage, setSendingMessage] = useState(false);
+  const [supportMessages, setSupportMessages] = useState<SupportMessage[]>([]);
+  const [supportInput, setSupportInput] = useState("");
+  const [supportLoading, setSupportLoading] = useState(false);
+  const [supportSending, setSupportSending] = useState(false);
 
   const [changingPassword, setChangingPassword] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -214,6 +230,45 @@ export default function Account() {
     setSendingMessage(false);
   };
 
+  const fetchSupportMessages = async () => {
+    const token = localStorage.getItem("trynex_customer_token");
+    if (!token) return;
+    setSupportLoading(true);
+    try {
+      const resp = await fetch(getApiUrl("/api/support/messages"), {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        setSupportMessages(data.messages || []);
+      }
+    } catch {}
+    setSupportLoading(false);
+  };
+
+  const sendSupportMessage = async () => {
+    const token = localStorage.getItem("trynex_customer_token");
+    if (!token || !supportInput.trim() || supportSending) return;
+    setSupportSending(true);
+    try {
+      const resp = await fetch(getApiUrl("/api/support/messages"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ message: supportInput.trim() }),
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        setSupportMessages(prev => [...prev, data.message]);
+        setSupportInput("");
+      } else {
+        toast({ title: "Could not send message", variant: "destructive" });
+      }
+    } catch {
+      toast({ title: "Network error. Please try again.", variant: "destructive" });
+    }
+    setSupportSending(false);
+  };
+
   const fetchUnreadCount = async () => {
     const token = localStorage.getItem("trynex_customer_token");
     if (!token) return;
@@ -238,6 +293,9 @@ export default function Account() {
   useEffect(() => {
     if (activeTab === "messages" && selectedOrderId !== null) {
       fetchMessages(selectedOrderId);
+    }
+    if (activeTab === "messages" && selectedOrderId === null) {
+      fetchSupportMessages();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, selectedOrderId]);
@@ -345,6 +403,9 @@ export default function Account() {
     { id: "referral" as const, label: "Referrals", icon: Gift, badge: 0 },
     { id: "recent" as const, label: "Recent", icon: Eye, badge: 0 },
   ];
+  const rawWhatsApp = settings.whatsappNumber?.replace(/[^0-9]/g, "") || "8801903426915";
+  const supportWhatsAppNumber = rawWhatsApp.startsWith("88") ? rawWhatsApp : `88${rawWhatsApp}`;
+  const supportWhatsAppHref = `https://wa.me/${supportWhatsAppNumber}?text=${encodeURIComponent("Hi TryNex! I need help with my order or have a question.")}`;
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -732,7 +793,7 @@ export default function Account() {
                         </div>
                         {/* Direct contact CTA — always visible */}
                         <a
-                          href="https://wa.me/8801903426915?text=Hi%20TryNex!%20I%20need%20help%20with%20my%20order%20or%20have%20a%20question."
+                          href={supportWhatsAppHref}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-3 w-full p-3 rounded-xl mb-4 hover:brightness-95 transition-all"
@@ -747,6 +808,51 @@ export default function Account() {
                           </div>
                           <ExternalLink className="w-4 h-4 text-white/60 shrink-0" />
                         </a>
+
+                        <div className="rounded-2xl border border-orange-100 bg-orange-50/40 mb-4 overflow-hidden">
+                          <div className="px-4 py-3 border-b border-orange-100 flex items-center justify-between">
+                            <div>
+                              <p className="font-black text-gray-900 text-sm">Direct TryNex Chat</p>
+                              <p className="text-[11px] text-gray-500">Ask anything — no order required.</p>
+                            </div>
+                            <MessageSquare className="w-4 h-4 text-orange-500" />
+                          </div>
+                          <div className="max-h-56 overflow-y-auto p-3 space-y-2 bg-white/70">
+                            {supportLoading ? (
+                              <p className="text-xs text-gray-400 text-center py-3">Loading chat…</p>
+                            ) : supportMessages.length === 0 ? (
+                              <p className="text-xs text-gray-400 text-center py-3">No direct messages yet. Send your first message below.</p>
+                            ) : supportMessages.map(msg => {
+                              const mine = msg.sender_type === "customer";
+                              return (
+                                <div key={msg.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
+                                  <div className="max-w-[85%] rounded-xl px-3 py-2 text-xs"
+                                    style={{ background: mine ? "#E85D04" : "#f3f4f6", color: mine ? "white" : "#111827" }}>
+                                    {!mine && <p className="text-[10px] font-bold opacity-70 mb-0.5">{msg.sender_name || "TryNex Team"}</p>}
+                                    <p className="leading-relaxed whitespace-pre-line">{msg.message}</p>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                          <form onSubmit={(e) => { e.preventDefault(); sendSupportMessage(); }} className="p-3 flex gap-2 bg-white border-t border-orange-100">
+                            <textarea
+                              value={supportInput}
+                              onChange={(e) => setSupportInput(e.target.value)}
+                              onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendSupportMessage(); } }}
+                              rows={2}
+                              maxLength={2000}
+                              placeholder="Type your question..."
+                              className="flex-1 resize-none px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-orange-400"
+                              style={{ border: "1px solid #fed7aa" }}
+                            />
+                            <button type="submit" disabled={!supportInput.trim() || supportSending}
+                              className="px-3 rounded-xl text-white font-black disabled:opacity-50"
+                              style={{ background: "linear-gradient(135deg, #E85D04, #FB8500)" }}>
+                              {supportSending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                            </button>
+                          </form>
+                        </div>
 
                         {ordersLoading ? (
                           <div className="space-y-3">
