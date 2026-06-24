@@ -98,6 +98,62 @@ export interface OrderTrackResponse {
   timeline: { status: string; timestamp: string; note?: string }[];
 }
 
+export interface CreateOrderPayload {
+  customerName: string;
+  customerPhone: string;
+  customerEmail?: string;
+  shippingAddress: string;
+  shippingCity?: string;
+  shippingDistrict?: string;
+  shippingThana?: string;
+  paymentMethod: string;
+  notes?: string;
+  promoCode?: string;
+  items: {
+    productId: number;
+    quantity: number;
+    size?: string;
+    color?: string;
+    price: number;
+  }[];
+  subtotal: number;
+  shippingCost: number;
+  total: number;
+  promoDiscount?: number;
+  source?: string;
+}
+
+export interface PromoValidateResponse {
+  valid: boolean;
+  code: string;
+  discountType: string;
+  discountValue: number;
+  discount: number;
+  message?: string;
+  isReferral?: boolean;
+  freeShipping?: boolean;
+}
+
+export interface Testimonial {
+  id: number;
+  name: string;
+  message: string;
+  rating: number;
+  location?: string;
+  avatarUrl?: string;
+  productName?: string;
+  featured: boolean;
+}
+
+export interface Review {
+  id: number;
+  customerName: string;
+  rating: number;
+  comment?: string;
+  createdAt?: string;
+  approved: boolean;
+}
+
 export const api = {
   getProducts: (params?: {
     categoryId?: number;
@@ -129,4 +185,48 @@ export const api = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+
+  createOrder: (data: CreateOrderPayload) =>
+    apiFetch<{ order: Order; message?: string }>(`/api/orders`, {
+      method: "POST",
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+      body: JSON.stringify(data),
+    }),
+
+  validatePromo: (code: string, orderTotal: number, customerEmail?: string) =>
+    apiFetch<PromoValidateResponse>(`/api/promo-codes/validate`, {
+      method: "POST",
+      body: JSON.stringify({ code, orderTotal, customerEmail }),
+    }),
+
+  getTestimonials: () =>
+    apiFetch<{ testimonials: Testimonial[] }>(`/api/testimonials`),
+
+  getReviews: (productId: number) =>
+    apiFetch<{ reviews: Review[] }>(`/api/reviews?productId=${productId}`),
+
+  submitReview: (data: {
+    productId: number;
+    customerName: string;
+    customerPhone?: string;
+    rating: number;
+    comment?: string;
+  }) =>
+    apiFetch<{ review: Review; message?: string }>(`/api/reviews`, {
+      method: "POST",
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+      body: JSON.stringify(data),
+    }),
+
+  subscribeNewsletter: (email: string, name?: string) =>
+    apiFetch<{ message: string }>(`/api/newsletter/subscribe`, {
+      method: "POST",
+      body: JSON.stringify({ email, name }),
+    }),
+
+  getSettings: () =>
+    apiFetch<Record<string, string>>(`/api/settings`),
+
+  getPublicStats: () =>
+    apiFetch<{ happyCustomers?: number; districts?: number; production?: string; rating?: number }>(`/api/public-stats`),
 };

@@ -470,9 +470,9 @@ router.get("/auth/me", async (req, res) => {
   }
 });
 
-router.put("/auth/change-password", async (req, res) => {
+async function handleChangePassword(req: import("express").Request, res: import("express").Response): Promise<void> {
   try {
-    const token = req.headers.authorization?.replace("Bearer ", "") ?? req.cookies?.customer_token;
+    const token = req.headers.authorization?.replace("Bearer ", "") ?? (req.cookies as Record<string, string>)?.customer_token;
     if (!token) {
       res.status(401).json({ error: "unauthorized", message: "Not authenticated" });
       return;
@@ -491,7 +491,7 @@ router.put("/auth/change-password", async (req, res) => {
       return;
     }
     if (!customer.passwordHash) {
-      res.status(400).json({ error: "bad_request", message: "Password change not available for social login accounts. Please use Google or Facebook to sign in." });
+      res.status(400).json({ error: "bad_request", message: "Password change not available for social login accounts." });
       return;
     }
     const isValid = await verifyPasswordAny(customer.passwordHash, currentPassword, CUSTOMER_SALT);
@@ -508,7 +508,10 @@ router.put("/auth/change-password", async (req, res) => {
     req.log.error({ err }, "Change password failed");
     res.status(500).json({ error: "internal_error", message: "Failed to change password" });
   }
-});
+}
+
+router.put("/auth/change-password", handleChangePassword);
+router.post("/auth/change-password", handleChangePassword);
 
 // ---------------------------------------------------------------------------
 // POST /api/auth/forgot-password

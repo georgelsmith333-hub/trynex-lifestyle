@@ -43,6 +43,10 @@ function RootLayoutNav() {
         name="cart"
         options={{ headerShown: false, animation: "slide_from_bottom", presentation: "modal" }}
       />
+      <Stack.Screen
+        name="checkout"
+        options={{ headerShown: false, animation: "slide_from_right" }}
+      />
     </Stack>
   );
 }

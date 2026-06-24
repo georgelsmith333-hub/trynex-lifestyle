@@ -5,7 +5,6 @@ import { router } from "expo-router";
 import React from "react";
 import {
   Alert,
-  Linking,
   Platform,
   Pressable,
   RefreshControl,
@@ -30,32 +29,9 @@ export default function CartScreen() {
   const shipping = items.length > 0 ? 60 : 0;
   const total = subtotal + shipping;
 
-  const onCheckout = async () => {
+  const onCheckout = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-
-    const itemSummary = items
-      .map((i) => `• ${i.product.name}${i.size ? ` (${i.size})` : ""}${i.color ? ` - ${i.color}` : ""} x${i.quantity}`)
-      .join("\n");
-
-    const message = `Hi! I'd like to place an order:\n\n${itemSummary}\n\nSubtotal: ৳${subtotal.toLocaleString()}\nShipping: ৳${shipping}\nTotal: ৳${total.toLocaleString()}`;
-
-    const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-    const canWhatsApp = await Linking.canOpenURL(waUrl);
-
-    Alert.alert(
-      "Complete Your Order",
-      "Choose how you'd like to finish your purchase:",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "🌐 Website",
-          onPress: () => Linking.openURL(WEBSITE_URL),
-        },
-        ...(canWhatsApp
-          ? [{ text: "💬 WhatsApp", onPress: () => Linking.openURL(waUrl) }]
-          : []),
-      ],
-    );
+    router.push("/checkout");
   };
 
   const onRemove = (id: string) => {
