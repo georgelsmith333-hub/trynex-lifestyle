@@ -2809,11 +2809,28 @@ export default function DesignStudio() {
                     : <GarmentSVG product={displayProduct} color={selectedColor.hex} showPrintZone={effectiveShowPrintZone} face={activeFace} mugMode={isMugProduct ? mugMode : undefined} />
                   }
 
-                  {/* Layers (clipped to print zone) */}
+                  {/* Layers (clipped to print zone + optional product silhouette) */}
                   <defs>
                     <clipPath id="design-clip">
                       <rect x={pz.x} y={pz.y} width={pz.w} height={pz.h} rx="4" />
                     </clipPath>
+
+                    {/* ── Product-silhouette clip — prevents designs from visually
+                        overflowing outside the actual mug or bottle body when a layer
+                        is placed near the edge of the rectangular print zone. ────── */}
+                    {isMugProduct && (
+                      <clipPath id="product-silhouette-clip">
+                        {/* Mug cylinder body (left+top+bottom, excluding the handle on the right).
+                            Coordinates are in the 1000×1000 SVG viewBox. */}
+                        <rect x="145" y="172" width="575" height="678" rx="18" />
+                      </clipPath>
+                    )}
+                    {isWaterBottle && (
+                      <clipPath id="product-silhouette-clip">
+                        {/* Water bottle cylindrical body — full height of the bottle label area. */}
+                        <rect x="268" y="55" width="464" height="890" rx="38" />
+                      </clipPath>
+                    )}
 
                     {/* ── Cylinder wrap filter ────────────────────────────────────────────
                         feDisplacementMap with a white→grey→black horizontal gradient:
@@ -2864,6 +2881,7 @@ export default function DesignStudio() {
                       </filter>
                     )}
                   </defs>
+                  <g clipPath={(isMugProduct || isWaterBottle) ? "url(#product-silhouette-clip)" : undefined}>
                   <g clipPath="url(#design-clip)">
                     {layersRender
                       .filter(({ layer }) => (layer.face ?? "front") === activeFace)
@@ -2981,14 +2999,19 @@ export default function DesignStudio() {
                       );
                     })}
                   </g>
+                  </g>{/* end product-silhouette-clip outer group */}
 
                   {/* Cylinder edge depth — darkens design at left/right edges via multiply,
-                      reinforcing the wrap-around curvature of the mug/bottle surface. */}
+                      reinforcing the wrap-around curvature of the mug/bottle surface.
+                      Also clipped to the product silhouette so depth shading stays within
+                      the visible mug/bottle body. */}
                   {(isMugProduct || isWaterBottle) && (
+                    <g clipPath="url(#product-silhouette-clip)">
                     <g clipPath="url(#design-clip)" pointerEvents="none">
                       <rect x={pz.x} y={pz.y} width={pz.w} height={pz.h}
                         fill="url(#cyl-edge-shadow)"
                         style={{ mixBlendMode: "multiply" as React.CSSProperties["mixBlendMode"] }} />
+                    </g>
                     </g>
                   )}
 

@@ -11,16 +11,20 @@ const tshirtFrontDark      = "/mockups/black-tshirt-front.png";
 const tshirtBackDark       = "/mockups/black-tshirt-back.png";
 const tshirtFrontCutout    = "/mockups/white-tshirt-front-cutout.png";
 const tshirtBackCutout     = "/mockups/white-tshirt-back-cutout.png";
-const longsleeveFront      = "/mockups/white-longsleeve-front.png";
-const longsleeveBack       = "/mockups/white-longsleeve-back.png";
-const longsleeveFrontCutout = "/mockups/white-longsleeve-front-cutout.png";
-const longsleeveBackCutout  = "/mockups/white-longsleeve-back-cutout.png";
+const longsleeveFront          = "/mockups/white-longsleeve-front.png";
+const longsleeveBack           = "/mockups/white-longsleeve-back.png";
+const longsleeveFrontDark      = "/mockups/black-longsleeve-front.png";
+const longsleeveBackDark       = "/mockups/black-longsleeve-back.png";
+const longsleeveFrontCutout    = "/mockups/white-longsleeve-front-cutout-new.png";
+const longsleeveBackCutout     = "/mockups/white-longsleeve-back-cutout-new.png";
+const longsleeveFrontDarkCutout = "/mockups/black-longsleeve-front-cutout.png";
+const longsleeveBackDarkCutout  = "/mockups/black-longsleeve-back-cutout.png";
 const hoodieFront          = "/mockups/white-hoodie-front.png";
 const hoodieBack           = "/mockups/white-hoodie-back.png";
 const hoodieFrontDark      = "/mockups/black-hoodie-front.png";
 const hoodieBackDark       = "/mockups/black-hoodie-back.png";
-const hoodieFrontCutout    = "/mockups/white-hoodie-front-cutout.png";
-const hoodieBackCutout     = "/mockups/white-hoodie-back-cutout.png";
+const hoodieFrontCutout    = "/mockups/white-hoodie-front-cutout-new.png";
+const hoodieBackCutout     = "/mockups/white-hoodie-back-cutout-new.png";
 const mugFront             = "/mockups/white-mug-front.png";
 const mugFrontDark         = "/mockups/black-mug-front.png";
 const mugFrontCutout       = "/mockups/white-mug-front-cutout.png";
@@ -280,7 +284,7 @@ export const BASE_BY_CATEGORY: Record<
   { front: string; back?: string; darkFront?: string; darkBack?: string; frontCutout?: string; backCutout?: string; darkFrontCutout?: string; darkBackCutout?: string } | undefined
 > = {
   tshirt:      { front: tshirtFront, back: tshirtBack, darkFront: tshirtFrontDark, darkBack: tshirtBackDark, frontCutout: tshirtFrontCutout, backCutout: tshirtBackCutout, darkFrontCutout: tshirtFrontDarkCutout, darkBackCutout: tshirtBackDarkCutout },
-  longsleeve:  { front: longsleeveFront, back: longsleeveBack, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout },
+  longsleeve:  { front: longsleeveFront, back: longsleeveBack, darkFront: longsleeveFrontDark, darkBack: longsleeveBackDark, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout, darkFrontCutout: longsleeveFrontDarkCutout, darkBackCutout: longsleeveBackDarkCutout },
   hoodie:      { front: hoodieFront, back: hoodieBack, darkFront: hoodieFrontDark, darkBack: hoodieBackDark, frontCutout: hoodieFrontCutout, backCutout: hoodieBackCutout, darkFrontCutout: hoodieFrontDarkCutout, darkBackCutout: hoodieBackDarkCutout },
   mug:         { front: mugFront, back: mugFront, darkFront: mugFrontDark, darkBack: mugFrontDark, frontCutout: mugFrontCutout, darkFrontCutout: mugFrontDarkCutout, darkBackCutout: mugFrontDarkCutout },
   cap:         { front: capFront, frontCutout: capFrontCutout },
