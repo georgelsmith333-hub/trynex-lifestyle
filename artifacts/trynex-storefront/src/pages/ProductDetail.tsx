@@ -403,6 +403,19 @@ export default function ProductDetail() {
     };
   }, [product?.id, product?.stock]);
 
+  // Auto-open Reviews tab and scroll to review form when ?review=1 is in URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("review") === "1") {
+      setActiveTab("reviews");
+      setTimeout(() => {
+        const el = document.getElementById("reviews-section");
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 400);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     setActiveImage("");
     setQuantity(1);
@@ -1323,7 +1336,7 @@ export default function ProductDetail() {
           </div>
 
           {/* Tabs: Details & Reviews */}
-          <div className="mt-16">
+          <div className="mt-16" id="reviews-section">
             <div className="flex gap-1 border-b border-gray-200 mb-8">
               {[
                 { id: "details", label: "Product Details" },

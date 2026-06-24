@@ -245,10 +245,18 @@ export default function Account() {
   useEffect(() => {
     if (!isAuthenticated) return;
     fetchUnreadCount();
-    const interval = setInterval(fetchUnreadCount, 30000);
+    const interval = setInterval(fetchUnreadCount, 8000);
     return () => clearInterval(interval);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
+
+  // Live message polling — refresh messages every 5s when chat is open
+  useEffect(() => {
+    if (!isAuthenticated || selectedOrderId === null) return;
+    const interval = setInterval(() => fetchMessages(selectedOrderId), 5000);
+    return () => clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, selectedOrderId]);
 
   const fetchOrders = async () => {
     const token = localStorage.getItem("trynex_customer_token");
@@ -689,11 +697,8 @@ export default function Account() {
                                 </div>
                               </div>
 
-                              <div className="flex justify-end pt-2 border-t border-gray-100 mt-1">
+                              <div className="flex items-center justify-between pt-2 border-t border-gray-100 mt-1 gap-2 flex-wrap">
                                 <Link
-                                  // Auto-fill: prefer phone, fall back to email
-                                  // so the tracking page can auto-submit even
-                                  // for users who never set a phone number.
                                   href={(() => {
                                     const id = customer?.phone?.trim();
                                     const email = customer?.email?.trim();
@@ -710,6 +715,15 @@ export default function Account() {
                                 >
                                   Track this order <ArrowRight className="w-3 h-3" />
                                 </Link>
+                                {(order.status === "delivered" || order.status === "shipped") && (
+                                  <Link
+                                    href={`/product/${order.items[0]?.productId || ''}?review=1`}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold transition-colors hover:bg-amber-50"
+                                    style={{ color: '#FB8500', border: '1px solid #fde68a' }}
+                                  >
+                                    ★ Write a Review
+                                  </Link>
+                                )}
                               </div>
                             </div>
                           </div>

@@ -2931,9 +2931,18 @@ export default function DesignStudio() {
                           />
                         );
                       }
-                      // text — multiply blend so ink looks printed on fabric
+                      // text — multiply blend only on light/white garments (same logic as image layers)
                       const hasShadow = !!(l.shadowBlur || l.shadowOffsetX || l.shadowOffsetY);
                       const shadowFilterId = hasShadow ? `tshadow-${l.id}` : undefined;
+                      const textIsApparel = selectedProduct.category === "tshirt" ||
+                        selectedProduct.category === "hoodie" ||
+                        selectedProduct.category === "longsleeve";
+                      const tgh = selectedColor.hex.replace("#", "");
+                      const tgLum = (0.299 * parseInt(tgh.slice(0, 2), 16) +
+                                     0.587 * parseInt(tgh.slice(2, 4), 16) +
+                                     0.114 * parseInt(tgh.slice(4, 6), 16)) / 255;
+                      const textDesignBlend: React.CSSProperties["mixBlendMode"] =
+                        textIsApparel && tgLum > 0.92 ? "multiply" : "normal";
                       return (
                         <g key={l.id}>
                           {hasShadow && (
@@ -2966,7 +2975,7 @@ export default function DesignStudio() {
                             paintOrder={l.strokeWidth ? "stroke" : undefined}
                             transform={`rotate(${l.transform.rotation}, ${g.cx}, ${g.cy})`}
                             filter={shadowFilterId ? `url(#${shadowFilterId})` : undefined}
-                            style={{ cursor: l.locked ? "not-allowed" : "grab", userSelect: "none", mixBlendMode: "multiply" }}
+                            style={{ cursor: l.locked ? "not-allowed" : "grab", userSelect: "none", mixBlendMode: textDesignBlend }}
                           >{l.text}</text>
                         </g>
                       );
@@ -2984,15 +2993,23 @@ export default function DesignStudio() {
                   )}
 
                   {/* Fabric grain — subtle fractal noise over print zone makes designs look
-                      screen-printed on fabric rather than digitally pasted (apparel only). */}
-                  {(selectedProduct.category === "tshirt" || selectedProduct.category === "hoodie" || selectedProduct.category === "longsleeve") && (
-                    <g clipPath="url(#design-clip)" pointerEvents="none">
-                      <rect x={pz.x} y={pz.y} width={pz.w} height={pz.h}
-                        fill="rgba(80,60,40,0.06)"
-                        filter="url(#fabric-grain-ovl)"
-                        style={{ mixBlendMode: "overlay" as React.CSSProperties["mixBlendMode"] }} />
-                    </g>
-                  )}
+                      screen-printed on fabric rather than digitally pasted (apparel only).
+                      Skip on dark/black garments where overlay would make designs invisible. */}
+                  {(selectedProduct.category === "tshirt" || selectedProduct.category === "hoodie" || selectedProduct.category === "longsleeve") && (() => {
+                    const fgh = selectedColor.hex.replace("#", "");
+                    const fgLum = (0.299 * parseInt(fgh.slice(0, 2), 16) +
+                                   0.587 * parseInt(fgh.slice(2, 4), 16) +
+                                   0.114 * parseInt(fgh.slice(4, 6), 16)) / 255;
+                    if (fgLum < 0.3) return null;
+                    return (
+                      <g clipPath="url(#design-clip)" pointerEvents="none">
+                        <rect x={pz.x} y={pz.y} width={pz.w} height={pz.h}
+                          fill="rgba(80,60,40,0.06)"
+                          filter="url(#fabric-grain-ovl)"
+                          style={{ mixBlendMode: "overlay" as React.CSSProperties["mixBlendMode"] }} />
+                      </g>
+                    );
+                  })()}
 
 
                   {/* Selection outline + handles */}
@@ -3433,7 +3450,7 @@ export default function DesignStudio() {
               : 'hidden lg:flex gap-4'}`}
             style={mobileToolOpen
               ? { background: "#faf9f6", paddingBottom: "max(16px, env(safe-area-inset-bottom, 16px))" }
-              : { top: "calc(var(--announcement-height, 0px) + 8.5rem)" }}
+              : { top: "calc(var(--announcement-height, 0px) + 8rem)", maxHeight: "calc(100vh - var(--announcement-height, 0px) - 8rem)", overflowY: "auto" }}
           >
             {/* Mobile drag handle */}
             {mobileToolOpen && (
@@ -3459,7 +3476,7 @@ export default function DesignStudio() {
               className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) { handleFileUpload(f); e.target.value = ""; } }} />
 
             {/* Tab strip */}
-            <div className={`rounded-2xl${mobileToolOpen ? ' flex-1 min-h-0 flex flex-col' : ' overflow-hidden'}`} style={{ background: "white", border: "1px solid #e9e5e0" }}>
+            <div className={`rounded-2xl${mobileToolOpen ? ' flex-1 min-h-0 flex flex-col' : ' flex flex-col'}`} style={{ background: "white", border: "1px solid #e9e5e0" }}>
               <div className="flex border-b border-gray-100 shrink-0">
                 {[
                   { id: "upload" as const,    label: "Upload",    icon: Upload },
@@ -3482,7 +3499,7 @@ export default function DesignStudio() {
                 ))}
               </div>
 
-              <div className={mobileToolOpen ? 'flex-1 min-h-0 overflow-y-auto' : ''}>
+              <div className={mobileToolOpen ? 'flex-1 min-h-0 overflow-y-auto' : 'overflow-y-auto'}>
               <AnimatePresence mode="wait">
                 {/* ── UPLOAD TAB ── */}
                 {activeTab === "upload" && (
