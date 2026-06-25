@@ -2832,54 +2832,6 @@ export default function DesignStudio() {
                       </clipPath>
                     )}
 
-                    {/* ── Cylinder wrap filter ────────────────────────────────────────────
-                        feDisplacementMap with a white→grey→black horizontal gradient:
-                        • Left edge (white, R=1): pixels shift +scale/2 rightward
-                        • Centre (grey, R=0.5): no shift
-                        • Right edge (black, R=0): pixels shift −scale/2 leftward
-                        Net effect: edges pinch inward → barrel/cylinder curvature illusion.
-                        filter region is padded by 30px so warped pixels aren't clipped. */}
-                    {(isMugProduct || isWaterBottle) && (
-                      <>
-                        <filter id="cyl-wrap-img" filterUnits="userSpaceOnUse"
-                          x={pz.x - 30} y={pz.y - 20} width={pz.w + 60} height={pz.h + 40}>
-                          <feImage
-                            result="dispMap"
-                            href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0id2hpdGUiLz48c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iZ3JheSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iYmxhY2siLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEiIGZpbGw9InVybCgjZykiLz48L3N2Zz4="
-                            x={pz.x} y={pz.y} width={pz.w} height={pz.h}
-                            preserveAspectRatio="none"
-                          />
-                          <feDisplacementMap
-                            in="SourceGraphic" in2="dispMap"
-                            xChannelSelector="R" yChannelSelector="G"
-                            scale={isMugProduct ? 32 : 20}
-                          />
-                        </filter>
-                        {/* Edge shadow gradient — darkens design at cylinder edges to
-                            reinforce depth cue. Applied AFTER design layers via multiply rect. */}
-                        <linearGradient id="cyl-edge-shadow" gradientUnits="userSpaceOnUse"
-                          x1={pz.x} y1="0" x2={pz.x + pz.w} y2="0">
-                          <stop offset="0%"   stopColor="rgba(0,0,0,0.28)" />
-                          <stop offset="13%"  stopColor="rgba(0,0,0,0.07)" />
-                          <stop offset="50%"  stopColor="rgba(0,0,0,0)" />
-                          <stop offset="87%"  stopColor="rgba(0,0,0,0.07)" />
-                          <stop offset="100%" stopColor="rgba(0,0,0,0.28)" />
-                        </linearGradient>
-                      </>
-                    )}
-
-                    {/* ── Fabric grain overlay filter ────────────────────────────────────
-                        feTurbulence fractal noise blended in overlay mode over design layers.
-                        Creates a subtle screen-print / ink-absorbed-into-weave texture.
-                        Applied as a rect AFTER design layers so it sits on top of designs. */}
-                    {(selectedProduct.category === "tshirt" || selectedProduct.category === "hoodie" || selectedProduct.category === "longsleeve") && (
-                      <filter id="fabric-grain-ovl" x="0" y="0" width="1" height="1" colorInterpolationFilters="sRGB">
-                        <feTurbulence type="fractalNoise" baseFrequency="0.80 0.90" numOctaves="4" seed="17" result="noise" />
-                        <feColorMatrix in="noise" type="saturate" values="0" result="gray" />
-                        <feBlend in="SourceGraphic" in2="gray" mode="overlay" result="textured" />
-                        <feComposite in="textured" in2="SourceAlpha" operator="in" />
-                      </filter>
-                    )}
                   </defs>
                   <g clipPath={(isMugProduct || isWaterBottle) ? "url(#product-silhouette-clip)" : undefined}>
                   <g clipPath="url(#design-clip)">
@@ -2888,55 +2840,18 @@ export default function DesignStudio() {
                       .map(({ layer: l, geom: g }) => {
                       if (!l.visible) return null;
                       if (l.type === "image") {
-                        // Base "printed on fabric" look: slight brightness/contrast/saturation
-                        // shift simulates ink absorbed into cotton weave — no rectangular shade.
-                        const isApparel = selectedProduct.category === "tshirt" ||
-                          selectedProduct.category === "hoodie" ||
-                          selectedProduct.category === "longsleeve";
-                        const fabricBase = isApparel
-                          ? "brightness(94%) contrast(106%) saturate(91%)"
-                          : "";
                         const userAdj =
                           (l.brightness != null && l.brightness !== 100) ||
                           (l.contrast != null && l.contrast !== 100) ||
                           (l.saturation != null && l.saturation !== 100)
                             ? `brightness(${l.brightness ?? 100}%) contrast(${l.contrast ?? 100}%) saturate(${l.saturation ?? 100}%)`
-                            : "";
-                        const cssFilter = [fabricBase, userAdj].filter(Boolean).join(" ") || undefined;
-                        // Smart blend mode — only apply multiply on truly near-white garments
-                        // (luminance > 0.92, matching the isLightTint threshold in GarmentSVG).
-                        // multiply removes white halos so designs look screen-printed on white shirts.
-                        // For every other garment (navy, red, grey, sky-blue, etc.) the garment
-                        // uses an SVG tint filter — multiply would wrongly shade the design with the
-                        // garment's color, making all designs look "same shade". Use normal there.
-                        const gh = selectedColor.hex.replace("#", "");
-                        const gLum = (0.299 * parseInt(gh.slice(0, 2), 16) +
-                                      0.587 * parseInt(gh.slice(2, 4), 16) +
-                                      0.114 * parseInt(gh.slice(4, 6), 16)) / 255;
-                        const designBlend: React.CSSProperties["mixBlendMode"] =
-                          isApparel && gLum > 0.92 ? "multiply" : "normal";
-                        // Build SVG transform: rotate + optional flip around image center
+                            : undefined;
                         const flipSX = l.flipH ? -1 : 1;
                         const flipSY = l.flipV ? -1 : 1;
                         const hasFlip = l.flipH || l.flipV;
                         const imgTransform = hasFlip
                           ? `rotate(${l.transform.rotation}, ${g.cx}, ${g.cy}) translate(${g.cx}, ${g.cy}) scale(${flipSX}, ${flipSY}) translate(${-g.cx}, ${-g.cy})`
                           : `rotate(${l.transform.rotation}, ${g.cx}, ${g.cy})`;
-                        if (isMugProduct || isWaterBottle) {
-                          return (
-                            <g key={l.id} filter="url(#cyl-wrap-img)">
-                              <image
-                                data-layer-id={l.id}
-                                href={l.src}
-                                x={g.x} y={g.y} width={g.w} height={g.h}
-                                opacity={l.transform.opacity}
-                                transform={imgTransform}
-                                preserveAspectRatio="none"
-                                style={{ cursor: l.locked ? "not-allowed" : "grab", filter: cssFilter, mixBlendMode: designBlend }}
-                              />
-                            </g>
-                          );
-                        }
                         return (
                           <image key={l.id}
                             data-layer-id={l.id}
@@ -2945,22 +2860,12 @@ export default function DesignStudio() {
                             opacity={l.transform.opacity}
                             transform={imgTransform}
                             preserveAspectRatio="none"
-                            style={{ cursor: l.locked ? "not-allowed" : "grab", filter: cssFilter, mixBlendMode: designBlend }}
+                            style={{ cursor: l.locked ? "not-allowed" : "grab", filter: userAdj }}
                           />
                         );
                       }
-                      // text — multiply blend only on light/white garments (same logic as image layers)
                       const hasShadow = !!(l.shadowBlur || l.shadowOffsetX || l.shadowOffsetY);
                       const shadowFilterId = hasShadow ? `tshadow-${l.id}` : undefined;
-                      const textIsApparel = selectedProduct.category === "tshirt" ||
-                        selectedProduct.category === "hoodie" ||
-                        selectedProduct.category === "longsleeve";
-                      const tgh = selectedColor.hex.replace("#", "");
-                      const tgLum = (0.299 * parseInt(tgh.slice(0, 2), 16) +
-                                     0.587 * parseInt(tgh.slice(2, 4), 16) +
-                                     0.114 * parseInt(tgh.slice(4, 6), 16)) / 255;
-                      const textDesignBlend: React.CSSProperties["mixBlendMode"] =
-                        textIsApparel && tgLum > 0.92 ? "multiply" : "normal";
                       return (
                         <g key={l.id}>
                           {hasShadow && (
@@ -2993,7 +2898,7 @@ export default function DesignStudio() {
                             paintOrder={l.strokeWidth ? "stroke" : undefined}
                             transform={`rotate(${l.transform.rotation}, ${g.cx}, ${g.cy})`}
                             filter={shadowFilterId ? `url(#${shadowFilterId})` : undefined}
-                            style={{ cursor: l.locked ? "not-allowed" : "grab", userSelect: "none", mixBlendMode: textDesignBlend }}
+                            style={{ cursor: l.locked ? "not-allowed" : "grab", userSelect: "none" }}
                           >{l.text}</text>
                         </g>
                       );
@@ -3001,38 +2906,6 @@ export default function DesignStudio() {
                   </g>
                   </g>{/* end product-silhouette-clip outer group */}
 
-                  {/* Cylinder edge depth — darkens design at left/right edges via multiply,
-                      reinforcing the wrap-around curvature of the mug/bottle surface.
-                      Also clipped to the product silhouette so depth shading stays within
-                      the visible mug/bottle body. */}
-                  {(isMugProduct || isWaterBottle) && (
-                    <g clipPath="url(#product-silhouette-clip)">
-                    <g clipPath="url(#design-clip)" pointerEvents="none">
-                      <rect x={pz.x} y={pz.y} width={pz.w} height={pz.h}
-                        fill="url(#cyl-edge-shadow)"
-                        style={{ mixBlendMode: "multiply" as React.CSSProperties["mixBlendMode"] }} />
-                    </g>
-                    </g>
-                  )}
-
-                  {/* Fabric grain — subtle fractal noise over print zone makes designs look
-                      screen-printed on fabric rather than digitally pasted (apparel only).
-                      Skip on dark/black garments where overlay would make designs invisible. */}
-                  {(selectedProduct.category === "tshirt" || selectedProduct.category === "hoodie" || selectedProduct.category === "longsleeve") && (() => {
-                    const fgh = selectedColor.hex.replace("#", "");
-                    const fgLum = (0.299 * parseInt(fgh.slice(0, 2), 16) +
-                                   0.587 * parseInt(fgh.slice(2, 4), 16) +
-                                   0.114 * parseInt(fgh.slice(4, 6), 16)) / 255;
-                    if (fgLum < 0.3) return null;
-                    return (
-                      <g clipPath="url(#design-clip)" pointerEvents="none">
-                        <rect x={pz.x} y={pz.y} width={pz.w} height={pz.h}
-                          fill="rgba(80,60,40,0.06)"
-                          filter="url(#fabric-grain-ovl)"
-                          style={{ mixBlendMode: "overlay" as React.CSSProperties["mixBlendMode"] }} />
-                      </g>
-                    );
-                  })()}
 
 
                   {/* Selection outline + handles */}

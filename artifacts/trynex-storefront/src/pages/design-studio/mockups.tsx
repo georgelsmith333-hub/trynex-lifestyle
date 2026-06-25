@@ -3,7 +3,6 @@
    All products use a unified 1000×1000 coordinate space.
    The mockup PNGs live in /public/mockups/<id>-<face>.png
 ════════════════════════════════════════════════════════ */
-import { useMemo } from "react";
 
 const tshirtFront          = "/mockups/white-tshirt-front.png";
 const tshirtBack           = "/mockups/white-tshirt-back.png";
@@ -292,8 +291,6 @@ export const BASE_BY_CATEGORY: Record<
   // watertumbler uses category "waterbottle" — shares the same base entry
 };
 
-let _filterUid = 0;
-function nextFilterId() { _filterUid = (_filterUid + 1) % 1_000_000; return `tint-${_filterUid}`; }
 
 function isLightTint(hex: string): boolean {
   const h = hex.replace("#", "");
@@ -333,223 +330,72 @@ export function GarmentSVG({
   mugMode?: "side1" | "side2" | "wrap";
 }) {
   const isMug = product.category === "mug";
-
   const base = BASE_BY_CATEGORY[product.category];
   const tintHex = color || product.garmentColor;
-  const isDark = !!tintHex && !isLightTint(tintHex);
-  // Only swap to the real black photo for near-black colours (luminance < 12%).
-  // Navy, Maroon, Olive, Red, Grey, Sky Blue, etc. all remain on the white base
-  // and receive their correct hue via the SVG multiply-tint filter below.
   const useBlackPhoto = !!tintHex && isNearBlack(tintHex);
+  const needsTint = !!tintHex && !isLightTint(tintHex) && !useBlackPhoto;
 
-  // Pick the best available source image:
-  // • Near-black colour AND a real black photo exists → use the black garment photo
-  // • Everything else → white/light base photo (SVG multiply-tint applies the colour)
-  const src = (() => {
-    if (base) {
-      if (useBlackPhoto) {
-        if (face === "back" && base.darkBack) return base.darkBack;
-        if (face !== "back" && base.darkFront) return base.darkFront;
-      }
-      return (face === "back" && base.back) ? base.back : base.front;
+  const imageSrc = (() => {
+    if (!base) return (face === "back" && product.backSrc) ? product.backSrc : product.frontSrc;
+    if (useBlackPhoto) {
+      if (face === "back" && base.darkBackCutout) return base.darkBackCutout;
+      if (base.darkFrontCutout) return base.darkFrontCutout;
+      if (face === "back" && base.darkBack) return base.darkBack;
+      return base.darkFront ?? base.front;
     }
-    return (face === "back" && product.backSrc) ? product.backSrc : product.frontSrc;
+    if (face === "back" && base.backCutout) return base.backCutout;
+    if (base.frontCutout) return base.frontCutout;
+    if (face === "back" && base.back) return base.back;
+    return base.front;
   })();
 
   const pz = (() => {
-    if (!isMug) {
-      return (face === "back" && product.printZoneBack) ? product.printZoneBack : product.printZone;
-    }
+    if (!isMug) return (face === "back" && product.printZoneBack) ? product.printZoneBack : product.printZone;
     if (mugMode === "wrap") return MUG_PZ;
     return MUG_SIDE_PZ;
   })();
 
-  const useBase = !!base;
-  // A "real dark image" only exists when the colour is near-black AND the category
-  // has a dedicated black photo.  For every other dark colour we fall through to
-  // the SVG multiply-tint on the white base photo.
-  const hasRealDarkImage = useBlackPhoto && base && (face === "back" ? !!base.darkBack : !!base.darkFront);
-  // Only apply tinting when a transparent-background cutout PNG is available.
-  // Without a cutout, the SVG filter would tint the entire photo including the
-  // white background rectangle, producing a wrongly-coloured background.
-  const hasCutout = !!base && (face === "back" ? !!base.backCutout : !!base.frontCutout);
-  const applyTint = useBase && isDark && !hasRealDarkImage && hasCutout;
-  const filterId = useMemo(() => nextFilterId(), [product.id, face, tintHex]);
-
-  // When colour-tinting, switch to the transparent-background cutout PNG so the
-  // SVG filter only affects actual garment pixels — never the white rectangle
-  // that surrounds the garment in the regular photo.  Non-tinted views (white or
-  // near-black garments that use a dedicated dark photo) keep the full photo as-is.
-  //
-  // Always prefer the cutout PNG when available so the drop-shadow filter wraps
-  // the garment silhouette — not the full rectangular image boundary.
-  // • Cylinders (mug / waterbottle): always needed — mug handle etc.
-  // • Apparel (tshirt / hoodie / longsleeve): needed even for white/light colours
-  //   so white shirts stand out on the beige studio background instead of looking
-  //   like an invisible white blob.
-  // Exception: near-black garments that switch to the dedicated black photo keep
-  // that photo as-is (black photo already has its own visual weight).
-  // Cap is treated like a cylinder/cutout product: for white/light cap, use the
-  // transparent-BG cutout so the SVG drop-shadow traces the cap silhouette, not a rectangle.
-  const isCylUnderImageSrc = product.category === "mug" || product.category === "waterbottle" || product.category === "cap";
-  const hasDarkCutout = !!base && (face === "back" ? !!base.darkBackCutout : !!base.darkFrontCutout);
-
-  // Is this an apparel product (tshirt / hoodie / longsleeve)?
-  // Declared here so it can be referenced below in useMixBlend / isApparelForCutout.
-  const isApparel = product.category === "tshirt" || product.category === "hoodie" || product.category === "longsleeve";
-  const isCylinder = product.category === "mug" || product.category === "waterbottle";
-
-  // WHITE / LIGHT GARMENTS — multiply-blend strategy:
-  //   This strategy requires a REAL product photo with a white background (not a
-  //   transparent cutout). It renders the full photo with mix-blend-mode:multiply,
-  //   which makes the white background invisible while preserving shadows/creases.
-  //   DISABLED for all products: the current front.png files are transparent cutouts
-  //   (not real photos), so mix-blend produces nothing. The cutout rendering below
-  //   handles all apparel correctly — transparent PNG with shadow filter + tint.
-  const useMixBlend = false;
-
-  // DARK-COLOUR GARMENTS — cutout strategy (only for non-black non-mixblend):
-  //   Use the transparent-BG cutout so the SVG tint filter only colours garment
-  //   pixels (not the background rectangle).
-  //   Near-black garments use the full dark photo directly (better quality than
-  //   background-removed cutouts which create artefacts on dark fabric).
-  const isApparelForCutout = isApparel && !useMixBlend && !useBlackPhoto && hasCutout;
-
-  // Shadow source for the mix-blend case: the white cutout PNG gives the SVG
-  // drop-shadow filter a garment-shaped alpha to trace.
-  const shadowCutoutSrc: string | undefined = useMixBlend && base
-    ? (face === "back" ? (base.backCutout ?? undefined) : (base.frontCutout ?? undefined))
-    : undefined;
-
-  const imageSrc = (() => {
-    if (useMixBlend) return src; // full photo; white BG removed by mix-blend-mode
-    if (!applyTint || !base) {
-      // isApparel && useBlackPhoto: use the dark transparent cutout so the drop-shadow
-      // filter wraps the garment silhouette (not the full rectangular photo boundary),
-      // matching the consistent behaviour of all other colour variants.
-      if ((isCylUnderImageSrc || isApparelForCutout || (isApparel && useBlackPhoto)) && base) {
-        if (useBlackPhoto) {
-          if (face === "back" && base.darkBackCutout) return base.darkBackCutout;
-          if (base.darkFrontCutout) return base.darkFrontCutout;
-        } else {
-          if (face === "back" && base.backCutout) return base.backCutout;
-          if (base.frontCutout) return base.frontCutout;
-        }
-      }
-      return src;
-    }
-    if (face === "back" && base.backCutout) return base.backCutout;
-    if (face === "back") return src; // back photo instead of front cutout
-    return base.frontCutout ?? src;
-  })();
-
   const isMugRightSide = isMug && (face === "back" || mugMode === "side2");
-
-  // When the mug photo is horizontally flipped (right-side view), the print zone
-  // rectangle must also be mirrored so it aligns with the printable area on the
-  // flipped image. Mirror formula: new_x = viewBoxWidth - pz.x - pz.w
   const displayPZ = isMugRightSide ? { ...pz, x: 1000 - pz.x - pz.w } : pz;
 
   return (
     <>
-      {applyTint && (
-        <defs>
-          {/* Transparent-PNG tint: desaturate → flood colour → mask to
-              original alpha → multiply with grey → restore original alpha.
-              Works for all cutout PNGs (tshirt, mug, waterbottle, etc.) */}
-          <filter id={filterId} x="0" y="0" width="1" height="1" colorInterpolationFilters="sRGB">
-            <feColorMatrix in="SourceGraphic" type="saturate" values="0" result="gray" />
-            <feFlood floodColor={tintHex} result="flood" />
-            <feComposite in="flood" in2="SourceAlpha" operator="in" result="tinted" />
-            <feBlend in="tinted" in2="gray" mode="multiply" result="blended" />
-            <feComposite in="blended" in2="SourceGraphic" operator="in" />
-          </filter>
-        </defs>
-      )}
-
       <defs>
-        {/* Garment drop-shadow — very subtle lift so the product photo reads
-            clearly against the canvas. Kept intentionally soft (stdDeviation≤6)
-            so it never creates a visible dark halo behind white/light garments. */}
-        <filter id={`shadow-${filterId}`} x="-5%" y="-5%" width="110%" height="110%" colorInterpolationFilters="sRGB">
-          <feDropShadow dx="0" dy="3" stdDeviation="6" floodColor="rgba(0,0,0,0.10)" />
+        <filter id="garment-shadow" x="-6%" y="-6%" width="112%" height="112%" colorInterpolationFilters="sRGB">
+          <feDropShadow dx="0" dy="5" stdDeviation="10" floodColor="rgba(0,0,0,0.13)" />
         </filter>
-
-        {/* Hoodie pocket fade removed — the full garment photo is shown as-is.
-            The print zone brackets (orange corners) indicate the printable area.
-            Hiding the lower half made the hoodie look "cut off" to designers. */}
-
-        {/* Apparel fabric micro-texture — subtle creasing/fold effect only
-            within the garment print area (apparel only, no cylinders) */}
-        {isApparel && (
-          <filter id={`fabric-${filterId}`} x="0" y="0" width="1" height="1" colorInterpolationFilters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="4" seed="3" result="noise" />
-            <feColorMatrix in="noise" type="saturate" values="0" result="gray" />
-            <feBlend in="SourceGraphic" in2="gray" mode="multiply" result="textured" />
-            <feComposite in="textured" in2="SourceAlpha" operator="in" />
+        {needsTint && (
+          <filter id="garment-tint" x="0" y="0" width="1" height="1" colorInterpolationFilters="sRGB">
+            <feFlood floodColor={tintHex} result="flood" />
+            <feBlend in="flood" in2="SourceGraphic" mode="multiply" result="tinted" />
+            <feComposite in="tinted" in2="SourceAlpha" operator="in" />
           </filter>
         )}
       </defs>
 
-      {/* Studio neutral background — warm medium-gray so white/light garments
-          have clear contrast and the product photo pops cleanly */}
-      <rect width={1000} height={1000} fill="#c9c4bc" style={{ pointerEvents: "none" }} />
+      <rect width={1000} height={1000} fill="#EFEFED" style={{ pointerEvents: "none" }} />
 
-      {/* Garment photo rendering:
-          • Mug right-side: horizontally flipped, single shadow pass.
-          • White/light apparel (useMixBlend): TWO layers —
-              Layer 1 = white cutout inside shadow group → garment-shaped drop shadow.
-              Layer 2 = full original photo with mix-blend-mode:multiply → white BG
-                        becomes transparent while all fabric texture/shadows stay.
-          • Coloured/black apparel & cylinders: single layer in shadow group. */}
       {isMugRightSide ? (
-        <g transform="translate(1000,0) scale(-1,1)" filter={`url(#shadow-${filterId})`}>
+        <g transform="translate(1000,0) scale(-1,1)" filter="url(#garment-shadow)">
           <image
             href={imageSrc}
             x={0} y={0} width={1000} height={1000}
             preserveAspectRatio="xMidYMid meet"
-            filter={applyTint ? `url(#${filterId})` : undefined}
+            filter={needsTint ? "url(#garment-tint)" : undefined}
             style={{ pointerEvents: "none" }}
           />
         </g>
-      ) : useMixBlend ? (
-        <>
-          {/* Shadow layer — cutout gives the filter an alpha silhouette to trace */}
-          {shadowCutoutSrc && (
-            <g filter={`url(#shadow-${filterId})`}>
-              <image
-                href={shadowCutoutSrc}
-                x={0} y={0} width={1000} height={1000}
-                preserveAspectRatio="xMidYMid meet"
-                style={{ pointerEvents: "none" }}
-              />
-            </g>
-          )}
-          {/* Texture layer — full photo; multiply blend removes the white background */}
-          <image
-            href={imageSrc}
-            x={0} y={0} width={1000} height={1000}
-            preserveAspectRatio="xMidYMid meet"
-            style={{ pointerEvents: "none", mixBlendMode: "multiply" } as React.CSSProperties}
-          />
-        </>
       ) : (
-        <g filter={`url(#shadow-${filterId})`}>
+        <g filter="url(#garment-shadow)">
           <image
             href={imageSrc}
             x={0} y={0} width={1000} height={1000}
             preserveAspectRatio="xMidYMid meet"
-            filter={applyTint ? `url(#${filterId})` : undefined}
+            filter={needsTint ? "url(#garment-tint)" : undefined}
             style={{ pointerEvents: "none" }}
           />
         </g>
       )}
-
-      {/* All vignette/highlight/bottom/cylinder depth overlays removed.
-          Product photos already have natural lighting and depth baked in.
-          Extra overlays caused visible shadows on t-shirts and grey boxes on mugs. */}
-
-      {/* Hoodie pocket fade rect removed — see comment in defs above. */}
 
       {showPrintZone && (() => {
         const { x, y, w, h } = displayPZ;
@@ -557,7 +403,6 @@ export function GarmentSVG({
         const L = 32;
         return (
           <g style={{ pointerEvents: "none" }}>
-            {/* Corner brackets only — clean, no text, no fill */}
             <path d={`M${x} ${y+L} L${x} ${y} L${x+L} ${y}`}
               stroke="rgba(232,93,4,0.80)" strokeWidth={3.5} fill="none" strokeLinecap="round" strokeLinejoin="round"
               vectorEffect="non-scaling-stroke" />

@@ -1,29 +1,45 @@
 ---
-name: Mockup rendering quirks
-description: How the design studio SVG mockup renderer works and what fixes were needed
+name: Mockup rendering approach
+description: How Design Studio GarmentSVG renders product photos and applies color
 ---
 
-**Cylinder products (mug/waterbottle) — always use cutout PNG:**
-`white-mug-front.png` and `white-waterbottle-front.png` have opaque white backgrounds. The drop shadow filter wraps the entire 1000×1000 square instead of the product outline, making them invisible on the studio background. Fix: `isCylUnderImageSrc` check in `imageSrc` IIFE forces `frontCutout` for light/white colors on cylinder products.
+## Current approach (simplified realistic rendering)
 
-**Why:** Without the cutout, the mug looks like an invisible rectangle. The cutout PNG has a transparent background so the studio color shows through and the shadow wraps the mug shape.
+GarmentSVG uses real cutout PNGs with a minimal 3-step SVG tint filter. All artificial simulation layers were removed after user feedback that they looked "fake/disturbing".
 
-**How to apply:** Any new cylinder product category (e.g., can, tumbler) must have a cutout PNG and the category must be added to the `isCylUnderImageSrc` check in `mockups.tsx`.
+**Photo selection:**
+- Near-black hex (lum < 12%) → dark cutout PNG (`black-*-front/back-cutout.png`)
+- Light/white hex (lum > 0.92) → white cutout PNG, no tint
+- All other colors → white cutout PNG + `garment-tint` filter applied
 
-**Studio background:** Must be `#c9c4bc` (warm medium gray). The old `#edeae6` was too close to white, making white garments invisible. The `FlatZoneSVG` background should be `#c8c3bc` for consistency.
+**Tint filter (3-step):**
+```xml
+<feFlood floodColor={tintHex} result="flood" />
+<feBlend in="flood" in2="SourceGraphic" mode="multiply" result="tinted" />
+<feComposite in="tinted" in2="SourceAlpha" operator="in" />
+```
+White pixels → target color; shadow/crease pixels darken naturally; transparent areas stay transparent. No background contamination because of the final `feComposite in2="SourceAlpha"` clip step.
 
-**Cylinder gradient stops:** Gradients must fade to zero BEFORE the mug print zone left edge (x=188 = 18.8%). Currently set to fade at 17%. If mug print zones change, keep the fade point safely inside 0-17%.
+**Static filter IDs:** `garment-shadow` and `garment-tint` — no rotating IDs needed since only one GarmentSVG is active at a time in DesignStudio.
 
-**Drop shadow filter:** Reduced to two-layer — ambient (stdDeviation=20, 0.14 opacity), contact (8, 0.09 opacity). Filter region `-8% -8% 116% 116%`. Was previously three-layer at 0.22/0.18/0.14 which was too harsh.
+**Background:** `#EFEFED` (clean off-white)
 
-**Long sleeve excluded from useMixBlend:**
-`white-longsleeve-front.png` has a warm studio background (not pure white). With `mixBlendMode:multiply` on the `#c9c4bc` canvas, the background tints brownish. Fix: `product.category !== "longsleeve"` in `useMixBlend` condition — longsleeve always uses the cutout PNG directly.
+**Drop shadow:** `feDropShadow dx=0 dy=5 stdDeviation=10 floodColor=rgba(0,0,0,0.13)`
 
-**Black apparel uses dark CUTOUT (not full dark photo):**
-Previous behaviour: black tshirt/hoodie used `black-tshirt-front.png` (full photo with white background), causing shadow to wrap the rectangular image boundary (inconsistent with all other colours which show garment-shaped shadows). Fix: `(isApparel && useBlackPhoto)` added to the imageSrc cutout-selection condition — black apparel now uses `black-tshirt-front-cutout.png` / `black-hoodie-front-cutout.png` (transparent background), so the drop-shadow filter always traces the garment silhouette.
+**Removed (fake-looking effects user disliked):**
+- `feTurbulence` fabric grain overlay on design layers
+- `feDisplacementMap` cylinder distortion (`cyl-wrap-img`)
+- Cylinder edge shadow gradient (`cyl-edge-shadow`)
+- Rotating filter IDs via `nextFilterId()` / `useMemo`
+- `fabricBase` CSS filter on image layers (fake ink simulation)
+- Garment-aware `designBlend` multiply mode on text/image layers
+- Old complex 5-step tint chain
+- `useMixBlend` code path (was always `false` anyway)
 
-**Hoodie cutout quality:**
-Use `white-hoodie-front-cutout.png` (606KB, OLD) NOT `white-hoodie-front-cutout-new.png` (240KB, -new suffix). The -new file is lower quality/resolution. Back cutout: same — use the non-new version.
+**Design layers:** Render with `filter: userAdj` (user brightness/contrast/saturation only) — no blend mode override.
 
-**isApparel must precede useMixBlend:**
-`isApparel` const must be declared BEFORE `useMixBlend` in the GarmentSVG component body. Reordering causes a TDZ (Temporal Dead Zone) reference error at runtime.
+**Hoodie cutouts:** Use `-new` versions (`white-hoodie-front-cutout-new.png`, `white-hoodie-back-cutout-new.png`) — these are 1000×1000 and correctly aligned.
+
+**Longsleeve dark variants:** `black-longsleeve-front/back-cutout.png` generated via ImageMagick and registered in `BASE_BY_CATEGORY`.
+
+**Why:** Real product photos already have natural lighting and texture baked in. Less is more — simpler rendering = more realistic result.
