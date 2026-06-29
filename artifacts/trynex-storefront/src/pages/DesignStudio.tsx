@@ -2448,12 +2448,13 @@ export default function DesignStudio() {
                   boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
                 }}
               >
-                <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 bg-gray-50 flex items-center justify-center"
-                  style={{ border: "1px solid #f0efee" }}>
+                <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 flex items-center justify-center"
+                  style={{ border: "1px solid #f0efee", background: "white" }}>
                   <img
-                    src={displayProduct.frontSrc}
+                    src={BASE_BY_CATEGORY[displayProduct.category]?.frontCutout ?? displayProduct.frontSrc}
                     alt={selectedProduct.name}
                     className="w-full h-full object-contain"
+                    style={{ padding: "2px", filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.18))" }}
                     onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                   />
                 </div>
@@ -2495,20 +2496,18 @@ export default function DesignStudio() {
                       <div
                         className="w-9 h-9 rounded-lg flex items-center justify-center overflow-hidden"
                         style={{
-                          background: isActive
-                            ? "rgba(255,255,255,0.22)"
-                            : "radial-gradient(ellipse at 50% 40%, #8a8578 0%, #6b6659 100%)",
-                          padding: "5px",
+                          background: isActive ? "rgba(255,255,255,0.25)" : "white",
+                          padding: "3px",
+                          border: isActive ? "none" : "1px solid rgba(0,0,0,0.06)",
                         }}
                       >
                         {PRODUCT_TAB_ICONS[pid] ?? (
                           <img
-                            src={prod.frontSrc}
+                            src={BASE_BY_CATEGORY[prod.category]?.frontCutout ?? prod.frontSrc}
                             alt={prod.name}
                             className="w-full h-full object-contain"
                             style={{
-                              opacity: isActive ? 1 : 0.95,
-                              filter: isActive ? "none" : "drop-shadow(0 1px 2px rgba(0,0,0,0.3))",
+                              filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.22))",
                             }}
                             draggable={false}
                           />

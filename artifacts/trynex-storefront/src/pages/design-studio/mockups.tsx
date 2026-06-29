@@ -283,7 +283,7 @@ export const BASE_BY_CATEGORY: Record<
   { front: string; back?: string; darkFront?: string; darkBack?: string; frontCutout?: string; backCutout?: string; darkFrontCutout?: string; darkBackCutout?: string } | undefined
 > = {
   tshirt:      { front: tshirtFront, back: tshirtBack, darkFront: tshirtFrontDark, darkBack: tshirtBackDark, frontCutout: tshirtFrontCutout, backCutout: tshirtBackCutout, darkFrontCutout: tshirtFrontDarkCutout, darkBackCutout: tshirtBackDarkCutout },
-  longsleeve:  { front: longsleeveFront, back: longsleeveBack, darkFront: longsleeveFrontDark, darkBack: longsleeveBackDark, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout, darkFrontCutout: longsleeveFrontDarkCutout, darkBackCutout: longsleeveBackDarkCutout },
+  longsleeve:  { front: longsleeveFront, back: longsleeveBack, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout },
   hoodie:      { front: hoodieFront, back: hoodieBack, darkFront: hoodieFrontDark, darkBack: hoodieBackDark, frontCutout: hoodieFrontCutout, backCutout: hoodieBackCutout, darkFrontCutout: hoodieFrontDarkCutout, darkBackCutout: hoodieBackDarkCutout },
   mug:         { front: mugFront, back: mugFront, darkFront: mugFrontDark, darkBack: mugFrontDark, frontCutout: mugFrontCutout, darkFrontCutout: mugFrontDarkCutout, darkBackCutout: mugFrontDarkCutout },
   cap:         { front: capFront, frontCutout: capFrontCutout },
@@ -337,12 +337,22 @@ export function GarmentSVG({
 
   const imageSrc = (() => {
     if (!base) return (face === "back" && product.backSrc) ? product.backSrc : product.frontSrc;
-    if (useBlackPhoto) {
+    // Dark/near-black colour — use dedicated dark product photo if available (good quality),
+    // otherwise fall through to cutout + tint (handles longsleeve which has no good dark photos).
+    if (useBlackPhoto && (base.darkFrontCutout || base.darkFront)) {
       if (face === "back" && base.darkBackCutout) return base.darkBackCutout;
       if (base.darkFrontCutout) return base.darkFrontCutout;
       if (face === "back" && base.darkBack) return base.darkBack;
       return base.darkFront ?? base.front;
     }
+    // Light/white garment — use the full product photo (natural background, lighting, shadows)
+    // so the garment is clearly visible against the light mockup background.
+    // Cutout PNGs (transparent) look washed-out on the #EFEFED canvas.
+    if (!needsTint && !useBlackPhoto) {
+      if (face === "back" && base.back) return base.back;
+      return base.front;
+    }
+    // Coloured garment (or forced dark via tint) — use transparent cutout + SVG multiply tint.
     if (face === "back" && base.backCutout) return base.backCutout;
     if (base.frontCutout) return base.frontCutout;
     if (face === "back" && base.back) return base.back;
