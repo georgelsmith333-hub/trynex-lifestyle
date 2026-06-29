@@ -3,13 +3,13 @@
  *
  * Priority order for connection URLs:
  *   1. DATABASE_URL_MAIN     (Neon primary — ep-proud-hill) ← preferred when set
- *   2. DATABASE_URL          (Replit built-in / local dev fallback)
- *   3. DATABASE_URL_TRYNEX_DB (Neon secondary — ep-small-cake)
- *   4. DATABASE_FAILOVER     (Neon failover  — ep-crimson-dawn)
+ *   2. DATABASE_FAILOVER     (Neon failover — ep-crimson-dawn) ← second Neon instance
+ *   3. DATABASE_URL_TRYNEX_DB (Neon secondary)
+ *   4. DATABASE_URL          (Replit built-in — local dev last resort)
  *
- * Neon (DATABASE_URL_MAIN) is tried first so production data is always used
- * when the Neon credentials are configured.  The Replit built-in Postgres
- * remains as an automatic fallback for local dev without any extra config.
+ * The probe validates that a connection both connects AND has the expected schema
+ * (by checking for the `products` table). This prevents falling back to an empty
+ * local DB when Neon is reachable but slow to wake up.
  *
  * The module probes all URLs at startup (non-blocking) and switches
  * transparently to the first reachable one. All callers use the same
@@ -25,10 +25,10 @@ const { Pool } = pg;
 /* ─── Candidate URL resolution ───────────────────────────────────────────── */
 function getCandidateUrls(): string[] {
   const candidates = [
-    process.env.DATABASE_URL_MAIN,   // Neon primary — preferred production DB
-    process.env.DATABASE_URL,        // Replit built-in / local dev fallback
-    process.env.DATABASE_URL_TRYNEX_DB,
-    process.env.DATABASE_FAILOVER,
+    process.env.DATABASE_URL_MAIN,     // Neon primary — preferred production DB
+    process.env.DATABASE_FAILOVER,     // Neon failover — ep-crimson-dawn (has schema)
+    process.env.DATABASE_URL_TRYNEX_DB, // Neon secondary
+    process.env.DATABASE_URL,          // Replit built-in — local dev last resort
   ].filter((url): url is string => typeof url === "string" && url.trim().length > 0);
 
   // Preserve insertion order, deduplicate
@@ -48,7 +48,7 @@ let _activePool: pg.Pool = new Pool({
   connectionString: urls[0],
   max: 10,
   idleTimeoutMillis: 30_000,
-  connectionTimeoutMillis: 5_000,
+  connectionTimeoutMillis: 10_000,
 });
 
 let _activeDb: NodePgDatabase<typeof schema> = drizzle(_activePool, { schema });
@@ -67,6 +67,24 @@ export const db = new Proxy({} as NodePgDatabase<typeof schema>, {
   },
 });
 
+/* ─── Schema validation helper ───────────────────────────────────────────── */
+/**
+ * Returns true if this pool can connect AND the database has the expected
+ * schema (products table exists). This prevents falling back to an empty
+ * local database when Neon is reachable but the local DB has no tables.
+ */
+async function hasSchema(testPool: pg.Pool): Promise<boolean> {
+  const client = await testPool.connect();
+  try {
+    const result = await client.query(
+      "SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='products' LIMIT 1"
+    );
+    return result.rowCount !== null && result.rowCount > 0;
+  } finally {
+    client.release();
+  }
+}
+
 /* ─── Non-blocking startup probe + failover ─────────────────────────────── */
 async function probeAndFailover(): Promise<void> {
   for (let i = 0; i < urls.length; i++) {
@@ -74,14 +92,23 @@ async function probeAndFailover(): Promise<void> {
     const testPool =
       i === 0
         ? _activePool
-        : new Pool({ connectionString: url, max: 1, connectionTimeoutMillis: 5_000 });
+        : new Pool({ connectionString: url, max: 1, connectionTimeoutMillis: 10_000 });
 
     try {
-      const client = await testPool.connect();
-      client.release();
+      const schemaOk = await hasSchema(testPool);
+
+      if (!schemaOk && i < urls.length - 1) {
+        // This DB connects but has no schema — try the next candidate
+        const host = url.split("@").pop()?.split("?")[0] ?? "unknown";
+        console.warn(
+          `[DB] Candidate #${i + 1} (${host}) has no schema — trying next candidate`,
+        );
+        if (i > 0) await testPool.end().catch(() => {});
+        continue;
+      }
 
       if (i > 0) {
-        // Primary is down — switch to this fallback permanently for this process
+        // Primary is down or empty — switch to this fallback permanently
         const prev = _activePool;
         _activePool = testPool;
         _activeDb = drizzle(_activePool, { schema });
@@ -90,8 +117,11 @@ async function probeAndFailover(): Promise<void> {
 
         const host = url.split("@").pop()?.split("?")[0] ?? "unknown";
         console.warn(
-          `[DB] Primary unreachable. Switched to fallback #${i + 1} (${host})`,
+          `[DB] Primary unreachable or empty. Switched to fallback #${i + 1} (${host})`,
         );
+      } else {
+        const host = url.split("@").pop()?.split("?")[0] ?? "unknown";
+        console.info(`[DB] Connected to primary (${host})`);
       }
 
       return; // Found a working connection
@@ -107,8 +137,9 @@ async function probeAndFailover(): Promise<void> {
   );
 }
 
-// Fire probe async — does not block module load or server startup
-probeAndFailover().catch(() => {});
+// Exported promise — await this before running migrations or seeding
+// so the correct database is active before any schema queries run.
+export const dbReady: Promise<void> = probeAndFailover().catch(() => {});
 
 /* ─── DB health helper (used by /api/health/auth) ───────────────────────── */
 export async function getActiveDbUrl(): Promise<string> {

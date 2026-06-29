@@ -113,6 +113,10 @@ if (process.env.NODE_ENV === "production") {
 const server = app.listen(port, "0.0.0.0", async () => {
   logger.info({ port }, "Server listening");
   logActiveStorageBackend(logger);
+  // Wait for the DB failover probe to complete so the correct database
+  // (Neon primary or its failover) is active before running migrations/seed.
+  const { dbReady } = await import("@workspace/db");
+  await dbReady;
   await runMigrations();
   await autoSeedIfEmpty();
   await loadSavedChatId();

@@ -1,31 +1,34 @@
 ---
-name: TryNex API missing routes & fixes
-description: Routes that were missing from the API server and were added — plus port/proxy config
+name: TryNex API routes, ports, DB config
+description: Health route path, port layout, DB failover config, autoSeed fix
 ---
 
-## Port Config (Critical)
-- Storefront (web): 8080
-- Mockup-sandbox (design): 8081
-- API server (api): 8082
-- Promo (video): 8083 — FAILS restart_workflow (port detection broken for `kind = "video"`)
-- Mobile (mobile): NOT STARTED — Expo domain routing, different health check
+## Health endpoint
+- Route is `/api/healthz` (NOT `/api/health`). Returns `{"status":"ok","db":"ok"}`.
+- `/api/health/storage` and `/api/health/auth` also exist on the health router.
 
-**Why:** restart_workflow tool only reliably detects ports for `kind = "web"` and `kind = "api"` artifacts.
+## Port layout
+- API server: PORT=8082 (set in workflow command `PORT=8082 NODE_ENV=development node ./dist/index.mjs`)
+- Storefront Vite dev: PORT=8080
+- `API_PORT` env var in Replit = 8080 (used by Vite proxy config, but Replit's own proxy handles /api/* routing to 8082 directly — Vite proxy irrelevant in Replit env)
 
-## Routes Added (were 404)
-- `GET /api/admin/session` — alias for `/api/admin/me` (login page calls this on load)
-- `GET /api/announcement` — public announcement data from settings cache
-- `GET /api/products/featured` — shortcut for `?featured=true`; added BEFORE `/products/:id`
-- Note: `GET /api/admin/settings` remains `PATCH` only — GET is via `/api/admin/designer-settings`
+## DB failover state (as of 2026-06-29)
+- DATABASE_URL_MAIN (ep-proud-hill) = QUOTA EXCEEDED — do not use
+- DATABASE_FAILOVER (ep-crimson-dawn-apycvzvv.c-7.us-east-1.aws.neon.tech) = ACTIVE
+- DB priority order in lib/db/src/index.ts: DATABASE_URL_MAIN → DATABASE_FAILOVER → DATABASE_URL_TRYNEX_DB → DATABASE_URL
+- `dbReady` promise exported from lib/db/src/index.ts — must be awaited before any DB operations at module load time
 
-## Admin Auth Flow
-- Login: `POST /api/admin/login` with `ADMIN_PASSWORD` secret → returns token stored in sessionStorage
-- Session check: `GET /api/admin/me` (or alias `/admin/session`) with `Cookie: admin_token=<token>`
-- Returns 401 with no/invalid token (correct), 200 with valid token
+## migrateOrdersTable race condition fix
+- In artifacts/api-server/src/routes/orders.ts: migrateOrdersTable() must be wrapped in dbReady import (not called bare at module load)
+- Fixed: `import("@workspace/db").then(({ dbReady }) => dbReady).then(() => migrateOrdersTable()).catch(() => {});`
 
-## Build
-- API server runs from pre-built `dist/index.mjs`
-- After source changes: `cd artifacts/api-server && node ./build.mjs`
-- Restart: use restart_workflow tool
+## Missing tables
+- `notifications` and `mockups` tables were absent from DATABASE_FAILOVER — created manually with SQL matching schema/index.ts definitions.
 
-**Why:** Source changes have no effect until rebuilt and restarted.
+## Seeded data (DATABASE_FAILOVER)
+- 9 products, 5 categories, 20 blog posts, 8 testimonials, 5 promo codes, 3 hampers, 15 settings
+
+## GitHub
+- Repo: georgelsmith333-hub/trynex-lifestyle (main branch)
+- Push method: GitHub REST API (blobs→tree→commit→PATCH ref) — git CLI blocked by Replit askpass
+- Latest commit: cf8d030c38c4

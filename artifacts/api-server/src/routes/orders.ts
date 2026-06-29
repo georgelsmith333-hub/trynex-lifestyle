@@ -86,7 +86,8 @@ async function migrateOrdersTable() {
     logger.warn({ err }, "migrateOrdersTable failed; UTM columns may be missing");
   }
 }
-migrateOrdersTable();
+// Delay migration until DB failover probe settles so we run against the correct DB
+import("@workspace/db").then(({ dbReady }) => dbReady).then(() => migrateOrdersTable()).catch(() => {});
 
 async function sendMetaCAPIEvent(event: {
   eventName: string;
