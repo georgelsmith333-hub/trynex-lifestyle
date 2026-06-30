@@ -3,43 +3,55 @@ name: Mockup rendering approach
 description: How Design Studio GarmentSVG renders product photos and applies color
 ---
 
-## Current approach (simplified realistic rendering)
+## Current approach
 
-GarmentSVG uses real cutout PNGs with a minimal 3-step SVG tint filter. All artificial simulation layers were removed after user feedback that they looked "fake/disturbing".
+GarmentSVG uses real garment photos with SVG-native feBlend multiply for colored garments.
 
 **Photo selection:**
-- Near-black hex (lum < 12%) → dark cutout PNG (`black-*-front/back-cutout.png`)
-- Light/white hex (lum > 0.92) → white cutout PNG, no tint
-- All other colors → white cutout PNG + `garment-tint` filter applied
+- Near-black hex (lum < 12%) → dedicated dark photo (`darkFront`/`darkFrontCutout`)
+- Light/white hex (lum > 0.92) → full white garment PHOTO with drop shadow, no tint
+- All other colors → white garment FULL PHOTO + `feBlend multiply` filter + silhouette mask
 
-**Tint filter (3-step):**
-```xml
-<feFlood floodColor={tintHex} result="flood" />
-<feBlend in="flood" in2="SourceGraphic" mode="multiply" result="tinted" />
-<feComposite in="tinted" in2="SourceAlpha" operator="in" />
+**Colored garment rendering (the correct approach):**
+
+Apply `filter` and `mask` DIRECTLY on the `<image>` element (NOT a separate `<rect>`).
+SVG guarantees: filter runs first, mask second. No isolation context issues.
+
+```tsx
+// In <defs>:
+<filter id="garment-color-tint" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
+  <feFlood floodColor={tintHex} result="flood" />
+  <feBlend in="flood" in2="SourceGraphic" mode="multiply" />
+</filter>
+<mask id="garment-silhouette">
+  <image href={cutoutMaskSrc} x={0} y={0} width={1000} height={1000} preserveAspectRatio="xMidYMid meet"/>
+</mask>
+
+// Garment image:
+<image
+  href={basePhotoSrc}        // full white garment photo (has natural depth/shadows)
+  mask="url(#garment-silhouette)"     // clips to garment silhouette
+  filter="url(#garment-color-tint)"  // multiplies tint color with photo
+/>
 ```
-White pixels → target color; shadow/crease pixels darken naturally; transparent areas stay transparent. No background contamination because of the final `feComposite in2="SourceAlpha"` clip step.
 
-**Static filter IDs:** `garment-shadow` and `garment-tint` — no rotating IDs needed since only one GarmentSVG is active at a time in DesignStudio.
+Result: white photo pixels × tint = tint color; shadow pixels × tint = darker tint → photorealistic depth.
+
+**CRITICAL — Do NOT use CSS `mix-blend-mode: multiply` on a `<rect>` in SVG.**
+The `<g filter="url(#...)">` wrapper around the base image creates an isolated compositing
+context. Any `mix-blend-mode` on a sibling `<rect>` blends against that isolated context,
+NOT the raw photo pixels — making colored garments appear completely flat/opaque.
+
+**Mug right side:**
+Wrap inside `<g transform="translate(1000,0) scale(-1,1)">`. SVG evaluates the mask
+in the TRANSFORMED coordinate space, so the same `#garment-silhouette` mask works
+correctly for both left and right side views — no separate flipped mask needed.
 
 **Background:** `#EFEFED` (clean off-white)
+**Drop shadow:** `feDropShadow dx=0 dy=5 stdDeviation=12 floodColor=rgba(0,0,0,0.18)`
+**Hoodie cutouts:** Use `-new` versions (`white-hoodie-front-cutout-new.png`, `white-hoodie-back-cutout-new.png`)
+**Longsleeve dark variants:** `black-longsleeve-front/back-cutout.png`
 
-**Drop shadow:** `feDropShadow dx=0 dy=5 stdDeviation=10 floodColor=rgba(0,0,0,0.13)`
-
-**Removed (fake-looking effects user disliked):**
-- `feTurbulence` fabric grain overlay on design layers
-- `feDisplacementMap` cylinder distortion (`cyl-wrap-img`)
-- Cylinder edge shadow gradient (`cyl-edge-shadow`)
-- Rotating filter IDs via `nextFilterId()` / `useMemo`
-- `fabricBase` CSS filter on image layers (fake ink simulation)
-- Garment-aware `designBlend` multiply mode on text/image layers
-- Old complex 5-step tint chain
-- `useMixBlend` code path (was always `false` anyway)
-
-**Design layers:** Render with `filter: userAdj` (user brightness/contrast/saturation only) — no blend mode override.
-
-**Hoodie cutouts:** Use `-new` versions (`white-hoodie-front-cutout-new.png`, `white-hoodie-back-cutout-new.png`) — these are 1000×1000 and correctly aligned.
-
-**Longsleeve dark variants:** `black-longsleeve-front/back-cutout.png` generated via ImageMagick and registered in `BASE_BY_CATEGORY`.
-
-**Why:** Real product photos already have natural lighting and texture baked in. Less is more — simpler rendering = more realistic result.
+**Why:** CSS mix-blend-mode in SVG is broken whenever a parent has a `filter` attribute — the
+filter creates an isolated compositing layer. SVG-native feBlend on the element itself bypasses
+this completely and is guaranteed cross-browser.

@@ -379,62 +379,89 @@ export function GarmentSVG({
   return (
     <>
       <defs>
+        {/* Drop shadow — used only for white / dark garments */}
         <filter id="garment-shadow" x="-6%" y="-6%" width="112%" height="112%" colorInterpolationFilters="sRGB">
           <feDropShadow dx="0" dy="5" stdDeviation="12" floodColor="rgba(0,0,0,0.18)" />
         </filter>
-        {/* SVG mask from the garment cutout PNG — clips the colour multiply rect to garment shape */}
+
+        {/* ── Colour multiply-tint filter ──────────────────────────────────────
+            Applied DIRECTLY to the <image> element (not a separate rect).
+            SVG guarantees: filter is evaluated first, mask second — no
+            isolated-compositing-context issues that break CSS mix-blend-mode. */}
+        {needsTint && tintHex && (
+          <filter id="garment-color-tint" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
+            <feFlood floodColor={tintHex} result="flood" />
+            <feBlend in="flood" in2="SourceGraphic" mode="multiply" />
+          </filter>
+        )}
+
+        {/* Garment silhouette mask — clips the tinted photo to the product shape.
+            Inside a flipped <g> the mask coords are automatically re-evaluated
+            in the transformed space, so the same mask id works for both sides. */}
         {needsTint && cutoutMaskSrc && (
-          <mask id="garment-shape-mask">
-            {isMugRightSide ? (
-              <g transform="translate(1000,0) scale(-1,1)">
-                <image href={cutoutMaskSrc} x={0} y={0} width={1000} height={1000}
-                  preserveAspectRatio="xMidYMid meet" />
-              </g>
-            ) : (
-              <image href={cutoutMaskSrc} x={0} y={0} width={1000} height={1000}
-                preserveAspectRatio="xMidYMid meet" />
-            )}
+          <mask id="garment-silhouette">
+            <image
+              href={cutoutMaskSrc}
+              x={0} y={0} width={1000} height={1000}
+              preserveAspectRatio="xMidYMid meet"
+            />
           </mask>
         )}
       </defs>
 
       <rect width={1000} height={1000} fill="#EFEFED" style={{ pointerEvents: "none" }} />
 
-      {/* ── Garment base layer ─────────────────────────────────────────────────
-          Coloured variants show the full white product photo so natural shadows
-          and fabric texture survive the colour tint.
-          White / dark variants use imageSrc (full photo or dedicated dark photo). */}
-      {isMugRightSide ? (
-        <g transform="translate(1000,0) scale(-1,1)" filter="url(#garment-shadow)">
+      {/* ── Garment render ────────────────────────────────────────────────────
+          COLOURED  → full white product photo + feBlend multiply tint + silhouette mask.
+                      Because filter is applied to the image directly (not a
+                      separate rect), there is no stacking-context isolation —
+                      the multiply sees the actual photo pixels and preserves
+                      all depth, shadows and fabric texture.
+          WHITE     → full product photo with drop shadow (no tint needed).
+          NEAR-BLACK → dedicated dark photo with drop shadow.
+      ───────────────────────────────────────────────────────────────────────── */}
+      {needsTint && cutoutMaskSrc ? (
+        isMugRightSide ? (
+          <g transform="translate(1000,0) scale(-1,1)">
+            <image
+              href={base!.front}
+              x={0} y={0} width={1000} height={1000}
+              preserveAspectRatio="xMidYMid meet"
+              mask="url(#garment-silhouette)"
+              filter="url(#garment-color-tint)"
+              style={{ pointerEvents: "none" }}
+            />
+          </g>
+        ) : (
           <image
-            href={needsTint ? base!.front : imageSrc}
+            href={basePhotoSrc}
             x={0} y={0} width={1000} height={1000}
             preserveAspectRatio="xMidYMid meet"
+            mask="url(#garment-silhouette)"
+            filter="url(#garment-color-tint)"
             style={{ pointerEvents: "none" }}
           />
-        </g>
+        )
       ) : (
-        <g filter="url(#garment-shadow)">
-          <image
-            href={needsTint ? basePhotoSrc : imageSrc}
-            x={0} y={0} width={1000} height={1000}
-            preserveAspectRatio="xMidYMid meet"
-            style={{ pointerEvents: "none" }}
-          />
-        </g>
-      )}
-
-      {/* ── Colour multiply overlay ────────────────────────────────────────────
-          Masked to the garment silhouette (cutout PNG) + CSS mix-blend-mode:multiply.
-          Result: photo depth & shadows are preserved inside the chosen colour,
-          giving a photorealistic coloured-garment preview. */}
-      {needsTint && cutoutMaskSrc && tintHex && (
-        <rect
-          x={0} y={0} width={1000} height={1000}
-          fill={tintHex}
-          mask="url(#garment-shape-mask)"
-          style={{ mixBlendMode: "multiply", pointerEvents: "none" }}
-        />
+        isMugRightSide ? (
+          <g transform="translate(1000,0) scale(-1,1)" filter="url(#garment-shadow)">
+            <image
+              href={imageSrc}
+              x={0} y={0} width={1000} height={1000}
+              preserveAspectRatio="xMidYMid meet"
+              style={{ pointerEvents: "none" }}
+            />
+          </g>
+        ) : (
+          <g filter="url(#garment-shadow)">
+            <image
+              href={imageSrc}
+              x={0} y={0} width={1000} height={1000}
+              preserveAspectRatio="xMidYMid meet"
+              style={{ pointerEvents: "none" }}
+            />
+          </g>
+        )
       )}
 
       {showPrintZone && (() => {
