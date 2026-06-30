@@ -368,43 +368,73 @@ export function GarmentSVG({
   const isMugRightSide = isMug && (face === "back" || mugMode === "side2");
   const displayPZ = isMugRightSide ? { ...pz, x: 1000 - pz.x - pz.w } : pz;
 
+  const basePhotoSrc = base
+    ? (face === "back" && base.back ? base.back : base.front)
+    : (face === "back" && product.backSrc ? product.backSrc : product.frontSrc);
+
+  const cutoutMaskSrc = base
+    ? (face === "back" && base.backCutout ? base.backCutout : (base.frontCutout ?? ""))
+    : "";
+
   return (
     <>
       <defs>
         <filter id="garment-shadow" x="-6%" y="-6%" width="112%" height="112%" colorInterpolationFilters="sRGB">
-          <feDropShadow dx="0" dy="5" stdDeviation="10" floodColor="rgba(0,0,0,0.13)" />
+          <feDropShadow dx="0" dy="5" stdDeviation="12" floodColor="rgba(0,0,0,0.18)" />
         </filter>
-        {needsTint && (
-          <filter id="garment-tint" x="0" y="0" width="1" height="1" colorInterpolationFilters="sRGB">
-            <feFlood floodColor={tintHex} result="flood" />
-            <feBlend in="flood" in2="SourceGraphic" mode="multiply" result="tinted" />
-            <feComposite in="tinted" in2="SourceAlpha" operator="in" />
-          </filter>
+        {/* SVG mask from the garment cutout PNG — clips the colour multiply rect to garment shape */}
+        {needsTint && cutoutMaskSrc && (
+          <mask id="garment-shape-mask">
+            {isMugRightSide ? (
+              <g transform="translate(1000,0) scale(-1,1)">
+                <image href={cutoutMaskSrc} x={0} y={0} width={1000} height={1000}
+                  preserveAspectRatio="xMidYMid meet" />
+              </g>
+            ) : (
+              <image href={cutoutMaskSrc} x={0} y={0} width={1000} height={1000}
+                preserveAspectRatio="xMidYMid meet" />
+            )}
+          </mask>
         )}
       </defs>
 
       <rect width={1000} height={1000} fill="#EFEFED" style={{ pointerEvents: "none" }} />
 
+      {/* ── Garment base layer ─────────────────────────────────────────────────
+          Coloured variants show the full white product photo so natural shadows
+          and fabric texture survive the colour tint.
+          White / dark variants use imageSrc (full photo or dedicated dark photo). */}
       {isMugRightSide ? (
         <g transform="translate(1000,0) scale(-1,1)" filter="url(#garment-shadow)">
           <image
-            href={imageSrc}
+            href={needsTint ? base!.front : imageSrc}
             x={0} y={0} width={1000} height={1000}
             preserveAspectRatio="xMidYMid meet"
-            filter={needsTint ? "url(#garment-tint)" : undefined}
             style={{ pointerEvents: "none" }}
           />
         </g>
       ) : (
         <g filter="url(#garment-shadow)">
           <image
-            href={imageSrc}
+            href={needsTint ? basePhotoSrc : imageSrc}
             x={0} y={0} width={1000} height={1000}
             preserveAspectRatio="xMidYMid meet"
-            filter={needsTint ? "url(#garment-tint)" : undefined}
             style={{ pointerEvents: "none" }}
           />
         </g>
+      )}
+
+      {/* ── Colour multiply overlay ────────────────────────────────────────────
+          Masked to the garment silhouette (cutout PNG) + CSS mix-blend-mode:multiply.
+          Result: photo depth & shadows are preserved inside the chosen colour,
+          giving a photorealistic coloured-garment preview. */}
+      {needsTint && cutoutMaskSrc && tintHex && (
+        <rect
+          x={0} y={0} width={1000} height={1000}
+          fill={tintHex}
+          mask="url(#garment-shape-mask)"
+          style={{ mixBlendMode: "multiply", pointerEvents: "none" }}
+        />
       )}
 
       {showPrintZone && (() => {

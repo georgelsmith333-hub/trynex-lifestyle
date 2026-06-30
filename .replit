@@ -1,4 +1,4 @@
-modules = ["nodejs-24", "python-3.11"]
+modules = ["nodejs-24", "python-3.11", "postgresql-16"]
 
 [deployment]
 router = "application"
@@ -78,3 +78,6 @@ CLOUDFLARE_API_TOKEN_V2 = "cfut_x8rgWkdTb7lKTM4SHpOMyrhANOA6VEIuwIeRsxWb43c1aa6b
 CLOUDFLARE_KEYS_TOKEN = "cfk_oNzyuVrz5zoEOQVngzIVscAm1v7Wj3TkzTddCBap7e86f2ed"
 GITHUB_TOKEN = "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"
 GITHUB_PROJECT_URL = "https://github.com/georgelsmith333-hub/trynex-lifestyle"
+
+[nix]
+channel = "stable-25_05"

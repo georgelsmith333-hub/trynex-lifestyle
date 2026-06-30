@@ -683,6 +683,7 @@ export default function ProductDetail() {
                     height={800}
                     fetchPriority="high"
                     decoding="async"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                     style={zoomActive ? {
                       transform: 'scale(2)',
                       transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
@@ -770,6 +771,7 @@ export default function ProductDetail() {
                         height="600"
                         fetchPriority="high"
                         draggable={false}
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-50 to-amber-50">

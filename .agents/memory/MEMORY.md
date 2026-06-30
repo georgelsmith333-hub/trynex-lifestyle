@@ -9,3 +9,4 @@
 - [Storefront fixes](storefront-fixes.md) — AnimatePresence mode="wait" caused white screen on navigation; PRODUCT_TAB_ICONS must be {} to show photo tabs; _redirects needs /sitemap.xml proxy line before /*.
 - [Design blend mode threshold](design-blend-threshold.md) — designBlend multiply threshold must match isLightTint (lum>0.92); using 0.58 tints designs with garment colour on sky-blue/grey/red garments ("same shade" bug).
 - [Cap shadow silhouette](cap-shadow.md) — cap must be in isCylUnderImageSrc so white/light cap uses transparent cutout PNG; otherwise SVG drop-shadow wraps rectangle not cap shape.
+- [Product image maintenance](product-image-maintenance.md) — Unsplash photos can go 404; use Bearer token auth for admin API product updates (cookie CSRF blocked)
