@@ -243,8 +243,8 @@ const FILTER_PRESETS = [
   { name: "Faded",    brightness: 115, contrast: 80,  saturation: 55  },
 ];
 
-/** The 3 most popular products shown as quick-switch tabs (+ "More" button for the rest). */
-const QUICK_PRODUCT_IDS = ["tshirt", "hoodie", "mug"] as const;
+/** The 4 most popular products shown as quick-switch tabs (+ "More" button for the rest). */
+const QUICK_PRODUCT_IDS = ["tshirt", "hoodie", "mug", "cap"] as const;
 
 /** Map legacy colour-prefixed product IDs (e.g. "white-tshirt") to new simple IDs. */
 const LEGACY_ID_MAP: Record<string, string> = {
@@ -858,7 +858,13 @@ export default function DesignStudio() {
   //   waterbottle → procedural tumbler shape with wrap texture
   //   hoodie / longsleeve / cap → real product PHOTO as 3D billboard (photorealistic)
   // Only flat template zones (sleeve/neck) have no 3D equivalent.
+  // 3D mode is only available on desktop and for non-flat zones.
+  // When a flat zone (sleeve/neck) is active, automatically force back to 2D.
   const effectiveSupports3D = supports3D && !isFlatZone && !isMobile;
+  // Auto-switch to 2D when navigating to a flat zone in 3D mode
+  useEffect(() => {
+    if (isFlatZone && viewMode === "3d") setViewMode("2d");
+  }, [isFlatZone, viewMode]);
 
   const displayProduct = selectedProduct;
 
@@ -2479,6 +2485,7 @@ export default function DesignStudio() {
                   const label =
                     pid === "mug" ? "Mug" :
                     pid === "hoodie" ? "Hoodie" :
+                    pid === "cap" ? "Cap" :
                     "T-Shirt";
                   return (
                     <button

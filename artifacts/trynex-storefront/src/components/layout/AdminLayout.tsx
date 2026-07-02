@@ -100,8 +100,11 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     setLocation("/admin/login");
   };
 
-  if (!token || isPending || isFetching) return <Loader fullScreen />;
-  if (isError || !data?.admin) return <Loader fullScreen />;
+  // Only block on the initial load — not on background refetches.
+  // isFetching is true during background polls (every 15s), which caused a
+  // full-screen flash every time the admin navigated between pages.
+  if (!token || isPending) return <Loader fullScreen />;
+  if (isError || (!isPending && data && !data.admin)) return <Loader fullScreen />;
 
   const isActive = (item: MenuItem) =>
     item.exact

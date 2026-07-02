@@ -125,7 +125,7 @@ export function adjustGarmentColor(hex: string): string {
   const b = parseInt(hex.slice(5, 7), 16);
   // Perceived luminance (Rec. 601)
   const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  if (lum > 0.88) return "#D2CFC9";   // warm off-white — 3-D depth visible
+  if (lum > 0.88) return "#ffffff";   // near-white → pure white so photo looks correct
   if (lum < 0.15) return "#2e2e2e";   // dark charcoal — catches #1a1a1a / #1C1917 correctly
   return hex;
 }

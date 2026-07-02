@@ -152,8 +152,11 @@ export function getApparelZones(
     case "longsleeve":
     case "hoodie":
       return [
-        { face: "front", label: "Front", shortLabel: "Front", pxDimensions: FRONT_BACK_DIMS, pz: frontPZ, isFlat: false },
-        { face: "back",  label: "Back",  shortLabel: "Back",  pxDimensions: FRONT_BACK_DIMS, pz: backPZ,  isFlat: false },
+        { face: "front",       label: "Front",        shortLabel: "Front",  pxDimensions: FRONT_BACK_DIMS, pz: frontPZ,   isFlat: false },
+        { face: "back",        label: "Back",         shortLabel: "Back",   pxDimensions: FRONT_BACK_DIMS, pz: backPZ,    isFlat: false },
+        { face: "left-sleeve", label: "Left Sleeve",  shortLabel: "L.Sleeve", pxDimensions: SLEEVE_DIMS,  pz: SLEEVE_PZ, isFlat: true  },
+        { face: "right-sleeve",label: "Right Sleeve", shortLabel: "R.Sleeve", pxDimensions: SLEEVE_DIMS,  pz: SLEEVE_PZ, isFlat: true  },
+        { face: "neck-label",  label: "Neck Label",   shortLabel: "Neck",   pxDimensions: NECK_DIMS,      pz: NECK_LABEL_PZ, isFlat: true },
       ];
     default:
       return [
