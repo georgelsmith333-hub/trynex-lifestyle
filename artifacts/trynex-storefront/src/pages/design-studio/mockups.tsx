@@ -283,7 +283,7 @@ export const BASE_BY_CATEGORY: Record<
   { front: string; back?: string; darkFront?: string; darkBack?: string; frontCutout?: string; backCutout?: string; darkFrontCutout?: string; darkBackCutout?: string } | undefined
 > = {
   tshirt:      { front: tshirtFront, back: tshirtBack, darkFront: tshirtFrontDark, darkBack: tshirtBackDark, frontCutout: tshirtFrontCutout, backCutout: tshirtBackCutout, darkFrontCutout: tshirtFrontDarkCutout, darkBackCutout: tshirtBackDarkCutout },
-  longsleeve:  { front: longsleeveFront, back: longsleeveBack, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout },
+  longsleeve:  { front: longsleeveFront, back: longsleeveBack, darkFront: longsleeveFrontDark, darkBack: longsleeveBackDark, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout, darkFrontCutout: longsleeveFrontDarkCutout, darkBackCutout: longsleeveBackDarkCutout },
   hoodie:      { front: hoodieFront, back: hoodieBack, darkFront: hoodieFrontDark, darkBack: hoodieBackDark, frontCutout: hoodieFrontCutout, backCutout: hoodieBackCutout, darkFrontCutout: hoodieFrontDarkCutout, darkBackCutout: hoodieBackDarkCutout },
   mug:         { front: mugFront, back: mugFront, darkFront: mugFrontDark, darkBack: mugFrontDark, frontCutout: mugFrontCutout, darkFrontCutout: mugFrontDarkCutout, darkBackCutout: mugFrontDarkCutout },
   cap:         { front: capFront, frontCutout: capFrontCutout },
@@ -332,7 +332,12 @@ export function GarmentSVG({
   const isMug = product.category === "mug";
   const base = BASE_BY_CATEGORY[product.category];
   const tintHex = color || product.garmentColor;
-  const useBlackPhoto = !!tintHex && isNearBlack(tintHex);
+  // Only treat a colour as "use the dedicated dark photo" when that photo actually
+  // exists for this product (mug, tshirt, hoodie). Products without a dark photo
+  // (cap, longsleeve, waterbottle) must fall through to the tint path below, or a
+  // near-black selection would render as an untinted white cutout (looks white/blank).
+  const hasDarkPhotoAsset = !!(base?.darkFrontCutout || base?.darkFront);
+  const useBlackPhoto = !!tintHex && isNearBlack(tintHex) && hasDarkPhotoAsset;
   const needsTint = !!tintHex && !isLightTint(tintHex) && !useBlackPhoto;
 
   const imageSrc = (() => {
