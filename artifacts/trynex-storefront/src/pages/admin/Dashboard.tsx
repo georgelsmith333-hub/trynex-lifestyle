@@ -11,6 +11,7 @@ import {
   ResponsiveContainer, PieChart, Pie, Cell, Legend, BarChart, Bar
 } from "recharts";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { useToast } from "@/hooks/use-toast";
 
 const FALLBACK_WEEKLY: AdminStatsWeeklyDataItem[] = [
   { day: "Mon", revenue: 0, orders: 0 },
@@ -225,7 +226,7 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
 
         {/* Revenue Chart */}
-        <ErrorBoundary section="weekly revenue chart" fallback={<div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex items-center justify-center h-48 text-gray-400 text-sm">Chart unavailable — <button className="ml-1 text-orange-600 underline" onClick={() => window.location.reload()}>reload</button></div>}>
+        <ErrorBoundary section="weekly revenue chart" fallback={<div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex items-center justify-center h-48 text-gray-400 text-sm">Chart unavailable — <button className="ml-1 text-orange-600 underline" onClick={() => refetch()}>reload</button></div>}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -450,6 +451,7 @@ function SystemHealthWidget() {
   const [health, setHealth] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
   const [actionLoading, setActionLoading] = React.useState<string | null>(null);
+  const { toast } = useToast();
 
   const fetchHealth = async () => {
     try {
@@ -477,12 +479,12 @@ function SystemHealthWidget() {
         headers: getAuthHeaders(),
       });
       if (res.ok) {
-        alert(`${action === "flush-cache" ? "Cache flushed" : "Telegram test sent"} successfully!`);
+        toast({ title: action === "flush-cache" ? "Cache flushed" : "Telegram test sent", description: "Action completed successfully." });
       } else {
-        alert("Action failed. Check console or logs.");
+        toast({ title: "Action failed", description: "Check server logs for details.", variant: "destructive" });
       }
     } catch (err) {
-      alert("Action failed. Connection error.");
+      toast({ title: "Connection error", description: "Could not reach the server.", variant: "destructive" });
     } finally {
       setActionLoading(null);
       if (action === "flush-cache") fetchHealth();

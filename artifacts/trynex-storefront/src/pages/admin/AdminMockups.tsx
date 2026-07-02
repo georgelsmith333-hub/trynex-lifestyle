@@ -1,7 +1,7 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { useListProducts } from "@workspace/api-client-react";
-import { getAuthHeaders } from "@/lib/utils";
+import { getAuthHeaders, getApiUrl } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ImageIcon, Upload, Trash2, Pencil, X, Check, Plus, Search,
@@ -25,10 +25,8 @@ interface Mockup {
   updatedAt: string;
 }
 
-const API = import.meta.env.VITE_API_URL ?? "";
-
 async function apiFetch(path: string, opts: RequestInit = {}) {
-  const res = await fetch(`${API}${path}`, {
+  const res = await fetch(getApiUrl(path), {
     ...opts,
     headers: { "Content-Type": "application/json", ...getAuthHeaders(), ...(opts.headers ?? {}) },
   });
@@ -45,8 +43,7 @@ async function uploadFile(file: File): Promise<string> {
     body: JSON.stringify({ contentType: file.type, size: file.size }),
   });
   await fetch(uploadURL, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
-  const base = import.meta.env.VITE_R2_PUBLIC_URL ?? import.meta.env.VITE_CDN_URL ?? "";
-  return base ? `${base}/${objectPath}` : `${API}/api/storage/public-objects/${objectPath}`;
+  return getApiUrl(`/api/storage/public-objects/${objectPath}`);
 }
 
 function TagBadge({ tag, onRemove }: { tag: string; onRemove?: () => void }) {
@@ -105,9 +102,9 @@ export default function AdminMockups() {
     }
   }, [search, filterProduct, filterActive]);
 
-  useState(() => {
+  useEffect(() => {
     void fetchMockups();
-  });
+  }, [fetchMockups]);
 
   const handleUpload = async (files: FileList | null) => {
     if (!files?.length) return;

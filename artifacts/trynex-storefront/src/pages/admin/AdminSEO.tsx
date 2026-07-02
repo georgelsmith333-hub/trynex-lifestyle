@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { getApiUrl, getAuthHeaders } from "@/lib/utils";
 import {
   Search, ExternalLink, CheckCircle2, AlertCircle, Loader2,
@@ -22,6 +23,7 @@ export default function AdminSEO() {
   const [submitting, setSubmitting] = useState(false);
   const [savingConfig, setSavingConfig] = useState(false);
   const [removingConfig, setRemovingConfig] = useState(false);
+  const [removeConfigConfirm, setRemoveConfigConfirm] = useState(false);
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
@@ -141,8 +143,9 @@ export default function AdminSEO() {
     setSavingConfig(false);
   };
 
-  const handleRemoveConfig = async () => {
-    if (!confirm("Remove the Google Search Console service account credentials?")) return;
+  const handleRemoveConfig = () => setRemoveConfigConfirm(true);
+  const doRemoveConfig = async () => {
+    setRemoveConfigConfirm(false);
     setRemovingConfig(true);
     try {
       await fetch(getApiUrl("/api/admin/seo/gsc-config"), {
@@ -565,6 +568,16 @@ export default function AdminSEO() {
           </div>
         </motion.div>
       </div>
+
+      <ConfirmDialog
+        open={removeConfigConfirm}
+        title="Remove GSC Credentials"
+        description="Remove the Google Search Console service account credentials? You'll need to re-upload them to use GSC features."
+        confirmText="Remove"
+        variant="warning"
+        onConfirm={doRemoveConfig}
+        onCancel={() => setRemoveConfigConfirm(false)}
+      />
     </AdminLayout>
   );
 }

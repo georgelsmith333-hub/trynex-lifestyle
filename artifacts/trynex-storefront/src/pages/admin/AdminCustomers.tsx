@@ -2,6 +2,7 @@ import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Loader } from "@/components/ui/Loader";
 import { getAuthHeaders, formatPrice } from "@/lib/utils";
 import { useState } from "react";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import {
   Users, Search, MapPin, Phone, Mail, ShoppingBag,
   TrendingUp, Calendar, ChevronDown, ChevronUp, Globe,
@@ -60,6 +61,7 @@ export default function AdminCustomers() {
   const convertGuest = useConvertGuestCustomer(authOpts);
   const deleteGuest = useDeleteGuestCustomer(authOpts);
   const { toast } = useToast();
+  const [deleteGuestConfirm, setDeleteGuestConfirm] = useState<{ id: number; label: string } | null>(null);
 
   if (isLoading) return <AdminLayout><Loader fullScreen /></AdminLayout>;
 
@@ -281,16 +283,7 @@ export default function AdminCustomers() {
                             <button
                               type="button"
                               title="Delete guest account"
-                              onClick={async () => {
-                                if (!window.confirm(`Delete guest #${String(g.guestSequence ?? "").padStart(4, "0")}? This cannot be undone.`)) return;
-                                try {
-                                  await deleteGuest.mutateAsync({ id: g.id });
-                                  toast({ title: "Guest deleted" });
-                                } catch (e: unknown) {
-                                  const msg = e instanceof Error ? e.message : "Try again";
-                                  toast({ title: "Delete failed", description: msg, variant: "destructive" });
-                                }
-                              }}
+                              onClick={() => setDeleteGuestConfirm({ id: g.id, label: `Guest #${String(g.guestSequence ?? "").padStart(4, "0")}` })}
                               className="p-1.5 rounded-md text-red-500 hover:bg-red-50"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -456,6 +449,26 @@ export default function AdminCustomers() {
           </div>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={!!deleteGuestConfirm}
+        title="Delete Guest Account"
+        description={`Delete ${deleteGuestConfirm?.label ?? "this guest"}? This action cannot be undone.`}
+        confirmText="Delete"
+        onConfirm={async () => {
+          if (!deleteGuestConfirm) return;
+          try {
+            await deleteGuest.mutateAsync({ id: deleteGuestConfirm.id });
+            toast({ title: "Guest deleted" });
+          } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : "Try again";
+            toast({ title: "Delete failed", description: msg, variant: "destructive" });
+          } finally {
+            setDeleteGuestConfirm(null);
+          }
+        }}
+        onCancel={() => setDeleteGuestConfirm(null)}
+      />
     </AdminLayout>
   );
 }

@@ -1,7 +1,9 @@
 import { AdminLayout } from "@/components/layout/AdminLayout";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useToast } from "@/hooks/use-toast";
 import { getApiUrl, formatPrice, getAuthHeaders } from "@/lib/utils";
 import { Share2, Trash2, ToggleLeft, ToggleRight, RefreshCw, TrendingUp, Users, DollarSign } from "lucide-react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface Referral {
@@ -23,6 +25,7 @@ function authHeaders() {
 export default function AdminReferrals() {
   const { toast } = useToast();
   const qc = useQueryClient();
+  const [deleteRefConfirm, setDeleteRefConfirm] = useState<{ id: number; name: string } | null>(null);
 
   const { data, isLoading, refetch } = useQuery<{ referrals: Referral[] }>({
     queryKey: ["/api/referrals"],
@@ -176,11 +179,7 @@ export default function AdminReferrals() {
                         </button>
                         <button
                           title="Delete"
-                          onClick={() => {
-                            if (confirm(`Delete referral code for "${ref.ownerName}"? This cannot be undone.`)) {
-                              deleteReferral(ref.id);
-                            }
-                          }}
+                          onClick={() => setDeleteRefConfirm({ id: ref.id, name: ref.ownerName })}
                           className="p-2 rounded-lg hover:bg-red-50 transition-colors text-gray-300 hover:text-red-500"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -197,6 +196,15 @@ export default function AdminReferrals() {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!deleteRefConfirm}
+        title="Delete Referral Code"
+        description={`Delete referral code for "${deleteRefConfirm?.name ?? ""}"? This cannot be undone.`}
+        confirmText="Delete"
+        onConfirm={() => { if (deleteRefConfirm) { deleteReferral(deleteRefConfirm.id); setDeleteRefConfirm(null); } }}
+        onCancel={() => setDeleteRefConfirm(null)}
+      />
     </AdminLayout>
   );
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { getApiUrl, getAuthHeaders } from "@/lib/utils";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import {
   GitBranch, Github, Save, Rocket, Loader2, CheckCircle2, AlertCircle,
   Eye, EyeOff, Trash2, Clock, ExternalLink, Copy, Check, Zap, Info, Shield, Server, RefreshCw, ChevronDown
@@ -75,6 +76,7 @@ export default function AdminDeployment() {
   const [triggerResult, setTriggerResult] = useState<TriggerResult | null>(null);
   const [showToken, setShowToken] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [clearTokenConfirm, setClearTokenConfirm] = useState(false);
 
   const [owner, setOwner] = useState("");
   const [repo, setRepo] = useState("");
@@ -127,15 +129,12 @@ export default function AdminDeployment() {
     setCheckingHealth(false);
   };
 
-  const flushCache = async () => {
-    if (!confirm("Flush all cached data? This may temporarily slow down the site.")) return;
+  const [flushCacheConfirm, setFlushCacheConfirm] = useState(false);
+  const doFlushCache = async () => {
+    setFlushCacheConfirm(false);
     setFlushingCache(true);
     try {
-      const r = await fetch(getApiUrl("/api/admin/system/flush-cache"), { 
-        method: "POST", 
-        headers: getAuthHeaders() 
-      });
-      if (r.ok) alert("Cache flush command sent successfully.");
+      await fetch(getApiUrl("/api/admin/system/flush-cache"), { method: "POST", headers: getAuthHeaders() });
     } catch (e) {}
     setFlushingCache(false);
   };
@@ -223,8 +222,9 @@ export default function AdminDeployment() {
     setTriggering(false);
   };
 
-  const handleClearToken = async () => {
-    if (!confirm("Remove the saved GitHub token? You'll need to enter it again to push.")) return;
+  const handleClearToken = () => setClearTokenConfirm(true);
+  const doDeleteToken = async () => {
+    setClearTokenConfirm(false);
     setSaving(true);
     try {
       await fetch(getApiUrl("/api/admin/deployment/token"), { method: "DELETE", headers: getAuthHeaders() });
@@ -306,7 +306,7 @@ export default function AdminDeployment() {
                   Check System Health
                 </button>
                 <button
-                  onClick={flushCache}
+                  onClick={() => setFlushCacheConfirm(true)}
                   disabled={flushingCache}
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-100 text-orange-700 text-xs font-bold hover:bg-orange-200 transition-colors disabled:opacity-50"
                 >
@@ -719,6 +719,25 @@ export default function AdminDeployment() {
           <p><strong className="text-gray-600">Push to GitHub:</strong> Configure your GitHub repo and token below, then use the push button to sync changes.</p>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={clearTokenConfirm}
+        title="Remove GitHub Token"
+        description="Remove the saved GitHub token? You'll need to enter it again to push."
+        confirmText="Remove"
+        variant="warning"
+        onConfirm={doDeleteToken}
+        onCancel={() => setClearTokenConfirm(false)}
+      />
+      <ConfirmDialog
+        open={flushCacheConfirm}
+        title="Flush Cache"
+        description="Flush all cached data? This may temporarily slow down the site."
+        confirmText="Flush"
+        variant="warning"
+        onConfirm={doFlushCache}
+        onCancel={() => setFlushCacheConfirm(false)}
+      />
     </AdminLayout>
   );
 }

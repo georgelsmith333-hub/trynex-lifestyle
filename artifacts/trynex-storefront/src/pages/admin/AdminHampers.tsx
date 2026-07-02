@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useToast } from "@/hooks/use-toast";
 import { getApiUrl, formatPrice, getAuthHeaders } from "@/lib/utils";
 import { Gift, Plus, Trash2, Edit3, X, Save, Star, RefreshCw } from "lucide-react";
@@ -66,6 +67,7 @@ export default function AdminHampers() {
   const [hampers, setHampers] = useState<Hamper[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Partial<Hamper> | null>(null);
+  const [deleteHamperConfirm, setDeleteHamperConfirm] = useState<number | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -117,12 +119,14 @@ export default function AdminHampers() {
     }
   };
 
-  const remove = async (id: number) => {
-    if (!confirm("Delete this hamper?")) return;
-    await fetch(getApiUrl(`/api/admin/hampers/${id}`), {
+  const remove = (id: number) => setDeleteHamperConfirm(id);
+  const doRemoveHamper = async () => {
+    if (!deleteHamperConfirm) return;
+    await fetch(getApiUrl(`/api/admin/hampers/${deleteHamperConfirm}`), {
       method: "DELETE",
       headers: getAuthHeaders(),
     });
+    setDeleteHamperConfirm(null);
     void load();
   };
 
@@ -363,6 +367,15 @@ export default function AdminHampers() {
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        open={deleteHamperConfirm !== null}
+        title="Delete Hamper"
+        description="This hamper will be permanently removed."
+        confirmText="Delete"
+        onConfirm={doRemoveHamper}
+        onCancel={() => setDeleteHamperConfirm(null)}
+      />
     </AdminLayout>
   );
 }

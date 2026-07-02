@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useToast } from "@/hooks/use-toast";
 import { getApiUrl, formatPrice, getAuthHeaders } from "@/lib/utils";
 import { Tag, Plus, Trash2, ToggleLeft, ToggleRight, RefreshCw, Copy, Check, AlertCircle, Clock, Infinity } from "lucide-react";
@@ -49,6 +50,7 @@ export default function AdminPromoCodes() {
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState(empty);
   const [copied, setCopied] = useState<string | null>(null);
+  const [deleteCodeConfirm, setDeleteCodeConfirm] = useState<{ id: number; code: string } | null>(null);
 
   const { data, isLoading, refetch } = useQuery<{ promoCodes: PromoCode[] }>({
     queryKey: ["/api/promo-codes"],
@@ -365,9 +367,7 @@ export default function AdminPromoCodes() {
                           </button>
                           <button
                             title="Delete"
-                            onClick={() => {
-                              if (confirm(`Delete promo code "${code.code}"?`)) deleteCode(code.id);
-                            }}
+                            onClick={() => setDeleteCodeConfirm({ id: code.id, code: code.code })}
                             className="p-2 rounded-lg hover:bg-red-50 transition-colors text-gray-300 hover:text-red-500"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -385,6 +385,15 @@ export default function AdminPromoCodes() {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!deleteCodeConfirm}
+        title="Delete Promo Code"
+        description={`Delete promo code "${deleteCodeConfirm?.code ?? ""}"? This cannot be undone.`}
+        confirmText="Delete"
+        onConfirm={() => { if (deleteCodeConfirm) { deleteCode(deleteCodeConfirm.id); setDeleteCodeConfirm(null); } }}
+        onCancel={() => setDeleteCodeConfirm(null)}
+      />
     </AdminLayout>
   );
 }

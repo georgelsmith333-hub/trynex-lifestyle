@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useToast } from "@/hooks/use-toast";
 import { getApiUrl, getAuthHeaders } from "@/lib/utils";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -27,6 +28,8 @@ export default function AdminNewsletter() {
   const qc = useQueryClient();
   const [filter, setFilter] = useState<"all" | "duplicate">("all");
   const [search, setSearch] = useState("");
+  const [deleteSubConfirm, setDeleteSubConfirm] = useState<{ id: number; email: string } | null>(null);
+  const [deleteIpConfirm, setDeleteIpConfirm] = useState<{ ip: string; count: number } | null>(null);
 
   const { data, isLoading, refetch } = useQuery<SubscribersResponse>({
     queryKey: ["/api/newsletter/subscribers"],
@@ -275,11 +278,7 @@ export default function AdminNewsletter() {
                           <div className="flex items-center justify-end gap-1.5">
                             {sub.duplicateIp && sub.ip && (
                               <button
-                                onClick={() => {
-                                  if (confirm(`Remove ALL ${sub.ipCount} subscribers from IP ${sub.ip}?`)) {
-                                    deleteByIpMut.mutate(sub.ip!);
-                                  }
-                                }}
+                                onClick={() => setDeleteIpConfirm({ ip: sub.ip!, count: sub.ipCount ?? 0 })}
                                 title="Remove all from this IP"
                                 className="p-1.5 rounded-lg text-red-400 hover:text-red-700 hover:bg-red-50 transition-colors text-[10px] font-bold"
                               >
@@ -287,11 +286,7 @@ export default function AdminNewsletter() {
                               </button>
                             )}
                             <button
-                              onClick={() => {
-                                if (confirm(`Remove ${sub.email} from newsletter?`)) {
-                                  deleteMut.mutate(sub.id);
-                                }
-                              }}
+                              onClick={() => setDeleteSubConfirm({ id: sub.id, email: sub.email })}
                               disabled={deleteMut.isPending}
                               className="p-1.5 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors"
                             >
@@ -311,6 +306,24 @@ export default function AdminNewsletter() {
           Showing {filtered.length} of {subscribers.length} subscribers
         </p>
       </div>
+
+      <ConfirmDialog
+        open={!!deleteSubConfirm}
+        title="Remove Subscriber"
+        description={`Remove ${deleteSubConfirm?.email ?? ""} from the newsletter?`}
+        confirmText="Remove"
+        onConfirm={() => { if (deleteSubConfirm) { deleteMut.mutate(deleteSubConfirm.id); setDeleteSubConfirm(null); } }}
+        onCancel={() => setDeleteSubConfirm(null)}
+      />
+      <ConfirmDialog
+        open={!!deleteIpConfirm}
+        title="Remove All from IP"
+        description={`Remove ALL ${deleteIpConfirm?.count ?? 0} subscribers from IP ${deleteIpConfirm?.ip ?? ""}?`}
+        confirmText="Remove All"
+        variant="danger"
+        onConfirm={() => { if (deleteIpConfirm) { deleteByIpMut.mutate(deleteIpConfirm.ip); setDeleteIpConfirm(null); } }}
+        onCancel={() => setDeleteIpConfirm(null)}
+      />
     </AdminLayout>
   );
 }

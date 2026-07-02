@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import {
   useGetDesignerSettings, usePatchDesignerSettings,
   useAdminListTestimonials, useCreateTestimonial, useUpdateTestimonial, useDeleteTestimonial,
@@ -129,6 +130,7 @@ function TestimonialsManager() {
   const [editId, setEditId] = useState<number | null>(null);
   const [form, setForm] = useState<TestimonialFormData>({ name: "", role: "", location: "", body: "", stars: 5 });
   const [showAdd, setShowAdd] = useState(false);
+  const [deleteTestimonialConfirm, setDeleteTestimonialConfirm] = useState<number | null>(null);
 
   const resetForm = () => { setForm({ name: "", role: "", location: "", body: "", stars: 5 }); setEditId(null); setShowAdd(false); };
 
@@ -160,13 +162,15 @@ function TestimonialsManager() {
     } catch { toast({ title: "Failed to update", variant: "destructive" }); }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("Delete this testimonial?")) return;
+  const handleDelete = (id: number) => setDeleteTestimonialConfirm(id);
+  const doDeleteTestimonial = async () => {
+    if (!deleteTestimonialConfirm) return;
     try {
-      await del({ id });
+      await del({ id: deleteTestimonialConfirm });
       invalidate();
       toast({ title: "Deleted." });
     } catch { toast({ title: "Delete failed", variant: "destructive" }); }
+    finally { setDeleteTestimonialConfirm(null); }
   };
 
   const beginEdit = (t: TestimonialRow) => {
@@ -260,6 +264,15 @@ function TestimonialsManager() {
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={deleteTestimonialConfirm !== null}
+        title="Delete Testimonial"
+        description="This testimonial will be permanently removed."
+        confirmText="Delete"
+        onConfirm={doDeleteTestimonial}
+        onCancel={() => setDeleteTestimonialConfirm(null)}
+      />
     </div>
   );
 }
