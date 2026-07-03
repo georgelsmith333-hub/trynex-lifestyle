@@ -353,11 +353,16 @@ export function GarmentSVG({
       if (face === "back" && base.darkBack) return base.darkBack;
       return base.darkFront ?? base.front;
     }
-    // Light/white garment — use the full product photo (natural background, lighting, shadows)
-    // so the garment is clearly visible against the light mockup background.
-    // Cutout PNGs (transparent) look washed-out on the #EFEFED canvas.
+    // Light/white garment — use the transparent cutout PNG so the garment floats
+    // cleanly on the dark studio canvas (dark bg = perfect contrast for white/light shirts).
+    // Fallback order: backCutout → back (correct face first!) → frontCutout → front.
+    // Critically: do NOT fall through to frontCutout before back photo, or the back
+    // face would render the front silhouette on products that have back photos but no
+    // back cutout.
     if (!needsTint && !useBlackPhoto) {
+      if (face === "back" && base.backCutout) return base.backCutout;
       if (face === "back" && base.back) return base.back;
+      if (base.frontCutout) return base.frontCutout;
       return base.front;
     }
     // Coloured garment (or forced dark via tint) — use transparent cutout + SVG multiply tint.
@@ -387,9 +392,10 @@ export function GarmentSVG({
   return (
     <>
       <defs>
-        {/* Drop shadow — used only for white / dark garments */}
-        <filter id="garment-shadow" x="-6%" y="-6%" width="112%" height="112%" colorInterpolationFilters="sRGB">
-          <feDropShadow dx="0" dy="5" stdDeviation="12" floodColor="rgba(0,0,0,0.18)" />
+        {/* Drop shadow — crisp silhouette lift on the dark studio canvas */}
+        <filter id="garment-shadow" x="-10%" y="-8%" width="120%" height="120%" colorInterpolationFilters="sRGB">
+          <feDropShadow dx="0" dy="8" stdDeviation="22" floodColor="rgba(0,0,0,0.65)" />
+          <feDropShadow dx="0" dy="2" stdDeviation="6"  floodColor="rgba(0,0,0,0.30)" />
         </filter>
 
         {/* ── Colour multiply-tint filter ──────────────────────────────────────
@@ -417,7 +423,8 @@ export function GarmentSVG({
         )}
       </defs>
 
-      <rect width={1000} height={1000} fill="#EFEFED" style={{ pointerEvents: "none" }} />
+      {/* Dark studio canvas — makes every garment colour (white, black, vivid) pop with clear depth */}
+      <rect width={1000} height={1000} fill="#1C1C1E" style={{ pointerEvents: "none" }} />
 
       {/* ── Garment render ────────────────────────────────────────────────────
           COLOURED  → full white product photo + feBlend multiply tint + silhouette mask.
@@ -545,9 +552,8 @@ export function FlatZoneSVG({
         </clipPath>
       </defs>
 
-      {/* Full background — real garment photo (lightly dimmed for context so
-          the user can see they're designing for a real sleeve / neck label). */}
-      <rect width={1000} height={1000} fill="#e8e5e0" />
+      {/* Full background — dark studio to match the main garment canvas. */}
+      <rect width={1000} height={1000} fill="#1C1C1E" />
       {garmentPhotoSrc ? (
         <image
           href={garmentPhotoSrc}
