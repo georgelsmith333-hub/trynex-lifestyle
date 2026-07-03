@@ -2,8 +2,25 @@ import { Router, type IRouter } from "express";
 import { db, ordersTable, productsTable, categoriesTable, settingsTable, blogPostsTable } from "@workspace/db";
 import { desc, sql } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
+import { runBackupSync } from "../lib/dbBackupSync";
 
 const router: IRouter = Router();
+
+/**
+ * Mirrors Neon Main into every configured backup/shard database right now
+ * (Failover, Secondary, Products shard, Analytics shard). Same job that runs
+ * automatically every 30 minutes — exposed here so an admin can trigger it
+ * on demand and see the result immediately.
+ */
+router.post("/admin/backup/sync-now", requireAdmin, async (req, res) => {
+  try {
+    const results = await runBackupSync();
+    res.json({ success: true, results });
+  } catch (err) {
+    req.log.error({ err }, "Failed to run backup sync");
+    res.status(500).json({ error: "internal_error", message: "Backup sync failed" });
+  }
+});
 
 router.get("/admin/export/orders-csv", requireAdmin, async (req, res) => {
   try {
