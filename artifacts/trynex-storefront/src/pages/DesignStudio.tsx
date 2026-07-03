@@ -26,7 +26,7 @@ import {
 import {
   PRODUCTS, type DesignProduct, GarmentSVG, FlatZoneSVG,
   STICKERS, BASE_BY_CATEGORY, MUG_SIDE_PZ,
-  getApparelZones, getZonePZ, type ApparelZone,
+  getApparelZones, getZonePZ, type ApparelZone, isNearBlack,
 } from "./design-studio/mockups";
 import { composeLayers, composeGarmentMockup, composeDesignTexture, hasWebGL2, type ComposerLayer } from "./design-studio/composer";
 
@@ -867,6 +867,10 @@ export default function DesignStudio() {
   }, [isFlatZone, viewMode]);
 
   const displayProduct = selectedProduct;
+  // True when the selected garment colour is near-black (e.g. Black #1a1a1a).
+  // Used to flip the studio canvas and outer container from dark → light so the
+  // dark garment silhouette remains visible against its background.
+  const isBlackGarment = isNearBlack(selectedColor.hex);
 
   /* ── Per-product price (used in UI + cart serialisation) ── */
   const studioPrice = useMemo(() => {
@@ -2503,7 +2507,9 @@ export default function DesignStudio() {
                       <div
                         className="w-11 h-11 rounded-xl flex items-center justify-center overflow-hidden"
                         style={{
-                          background: isActive ? "#2c2c2e" : "#f8f8f8",
+                          // Active: dark so white cutout pops. Inactive: warm mid-grey
+                          // so white garment cutouts are visible (not white-on-white).
+                          background: isActive ? "#2c2c2e" : "#dedad5",
                           padding: "4px",
                         }}
                       >
@@ -2531,7 +2537,7 @@ export default function DesignStudio() {
                   style={{ background: "white", color: "#6b7280", border: "1.5px solid #e5e7eb", boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}
                   title="Browse all products"
                 >
-                  <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: "#f8f8f8" }}>
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: "#dedad5" }}>
                     <Package className="w-5 h-5 text-gray-400" />
                   </div>
                   <span className="font-black">More</span>
@@ -2735,7 +2741,9 @@ export default function DesignStudio() {
             <div
               className="relative rounded-3xl overflow-hidden select-none"
               style={{
-                background: "radial-gradient(ellipse at 50% 35%, #2e2e30 0%, #1c1c1e 55%, #111113 100%)",
+                background: isBlackGarment
+                  ? "radial-gradient(ellipse at 50% 35%, #e8e5e0 0%, #d8d5cf 55%, #ccc9c4 100%)"
+                  : "radial-gradient(ellipse at 50% 35%, #2e2e30 0%, #1c1c1e 55%, #111113 100%)",
                 border: "1px solid #3a3a3c",
                 boxShadow: "0 6px 40px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.04)",
                 isolation: "isolate",
@@ -3247,7 +3255,10 @@ export default function DesignStudio() {
               {/* Interaction hint */}
               {layers.length > 0 && (
                 <div className="px-4 py-2 text-[10px] font-semibold text-gray-400 flex items-center gap-2"
-                  style={{ background: "#1C1C1E", borderTop: "1px solid #2a2a2c" }}>
+                  style={{
+                    background: isBlackGarment ? "#d8d5cf" : "#1C1C1E",
+                    borderTop: isBlackGarment ? "1px solid #bbb8b2" : "1px solid #2a2a2c",
+                  }}>
                   <Move className="w-3 h-3 text-gray-500 shrink-0" />
                   Drag · Pinch to scale &amp; rotate · +/− to zoom
                 </div>
@@ -4695,7 +4706,9 @@ export default function DesignStudio() {
                             {/* Product photo */}
                             <div className="w-full aspect-square relative overflow-hidden"
                               style={{ background: (["tshirt","hoodie","longsleeve"] as string[]).includes(prod.category)
-                                ? "radial-gradient(ellipse at 50% 40%, #c8c5be 0%, #b0ada6 100%)"
+                                // Warm mid-tone grey: enough contrast for the white garment photo/cutout
+                                // to read clearly (avoids white-shirt-on-white-bg invisibility).
+                                ? "radial-gradient(ellipse at 50% 40%, #d8d5cf 0%, #c4c1bb 100%)"
                                 : "radial-gradient(ellipse at 50% 40%, #f5f5f3 0%, #e8e5e0 100%)" }}>
                               <img
                                 src={prod.frontSrc}

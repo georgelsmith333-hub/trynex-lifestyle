@@ -286,7 +286,11 @@ export const BASE_BY_CATEGORY: Record<
   { front: string; back?: string; darkFront?: string; darkBack?: string; frontCutout?: string; backCutout?: string; darkFrontCutout?: string; darkBackCutout?: string } | undefined
 > = {
   tshirt:      { front: tshirtFront, back: tshirtBack, darkFront: tshirtFrontDark, darkBack: tshirtBackDark, frontCutout: tshirtFrontCutout, backCutout: tshirtBackCutout, darkFrontCutout: tshirtFrontDarkCutout, darkBackCutout: tshirtBackDarkCutout },
-  longsleeve:  { front: longsleeveFront, back: longsleeveBack, darkFront: longsleeveFrontDark, darkBack: longsleeveBackDark, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout, darkFrontCutout: longsleeveFrontDarkCutout, darkBackCutout: longsleeveBackDarkCutout },
+  // Long-sleeve dark assets (black-longsleeve-*.png) are 17-20 KB grayscale stubs with
+  // no colour information — they render as near-white on a dark canvas and look broken.
+  // Removing them from here forces longsleeve to always use the tint path for dark
+  // colours, which correctly multiplies the hue onto the white cutout photo.
+  longsleeve:  { front: longsleeveFront, back: longsleeveBack, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout },
   hoodie:      { front: hoodieFront, back: hoodieBack, darkFront: hoodieFrontDark, darkBack: hoodieBackDark, frontCutout: hoodieFrontCutout, backCutout: hoodieBackCutout, darkFrontCutout: hoodieFrontDarkCutout, darkBackCutout: hoodieBackDarkCutout },
   mug:         { front: mugFront, back: mugFront, darkFront: mugFrontDark, darkBack: mugFrontDark, frontCutout: mugFrontCutout, darkFrontCutout: mugFrontDarkCutout, darkBackCutout: mugFrontDarkCutout },
   cap:         { front: capFront, frontCutout: capFrontCutout },
@@ -345,27 +349,30 @@ export function GarmentSVG({
 
   const imageSrc = (() => {
     if (!base) return (face === "back" && product.backSrc) ? product.backSrc : product.frontSrc;
-    // Dark/near-black colour — use dedicated dark product photo if available (good quality),
-    // otherwise fall through to cutout + tint (handles longsleeve which has no good dark photos).
-    if (useBlackPhoto && (base.darkFrontCutout || base.darkFront)) {
-      if (face === "back" && base.darkBackCutout) return base.darkBackCutout;
-      if (base.darkFrontCutout) return base.darkFrontCutout;
+    // ── Dark / near-black garment ─────────────────────────────────────────
+    // Prefer the FULL dark photo (RGB, no alpha, has its own studio background)
+    // over the dark cutout. A dark-silhouette cutout on the dark studio canvas
+    // (#1C1C1E) is essentially invisible. The full photo always produces contrast.
+    // Fallback chain: full-back → cutout-back → full-front → cutout-front → white base.
+    if (useBlackPhoto) {
       if (face === "back" && base.darkBack) return base.darkBack;
-      return base.darkFront ?? base.front;
+      if (face === "back" && base.darkBackCutout) return base.darkBackCutout;
+      if (base.darkFront) return base.darkFront;
+      if (base.darkFrontCutout) return base.darkFrontCutout;
+      // No dark photo asset — fall through to tint path below.
     }
-    // Light/white garment — use the transparent cutout PNG so the garment floats
-    // cleanly on the dark studio canvas (dark bg = perfect contrast for white/light shirts).
-    // Fallback order: backCutout → back (correct face first!) → frontCutout → front.
-    // Critically: do NOT fall through to frontCutout before back photo, or the back
-    // face would render the front silhouette on products that have back photos but no
-    // back cutout.
+    // ── White / light garment ─────────────────────────────────────────────
+    // Use transparent cutout so the garment floats on the dark canvas.
+    // Fallback: backCutout → back photo (correct face first!) → frontCutout → front.
     if (!needsTint && !useBlackPhoto) {
       if (face === "back" && base.backCutout) return base.backCutout;
       if (face === "back" && base.back) return base.back;
       if (base.frontCutout) return base.frontCutout;
       return base.front;
     }
-    // Coloured garment (or forced dark via tint) — use transparent cutout + SVG multiply tint.
+    // ── Coloured garment (tint path) ───────────────────────────────────────
+    // Also reached by dark garments that have no dedicated dark photo (e.g. longsleeve).
+    // Uses the white cutout + SVG multiply-tint filter — colour is applied in GarmentSVG render.
     if (face === "back" && base.backCutout) return base.backCutout;
     if (base.frontCutout) return base.frontCutout;
     if (face === "back" && base.back) return base.back;
@@ -389,10 +396,33 @@ export function GarmentSVG({
     ? (face === "back" && base.backCutout ? base.backCutout : (base.frontCutout ?? ""))
     : "";
 
+  // True when the selected dark imageSrc is a full studio photo (has its own baked
+  // background — no transparent pixels we need to worry about). Detection relies on
+  // the naming convention: files containing "cutout" in their path are transparent
+  // PNGs; all other dark-garment files are full opaque studio photos.
+  //
+  // This covers both the primary case (darkFront/darkBack) and back-face fallbacks
+  // where the front full-photo is used instead (no face-strict comparison needed).
+  const isFullDarkPhoto = useBlackPhoto && !imageSrc.includes("cutout");
+
+  // Canvas background colour:
+  //   • Dark/black garments that ARE rendered via the tint path (no full photo):
+  //     use a warm light tone so the dark-tinted silhouette is visible.
+  //   • Everything else (white, coloured, OR dark-with-full-photo): dark studio.
+  //     When a full dark photo is used it covers the bg rect anyway, so this only
+  //     matters for the tint-path dark case (e.g. longsleeve black).
+  const needsDarkGarmentLightBg = isNearBlack(tintHex) && !isFullDarkPhoto;
+  const canvasBg = needsDarkGarmentLightBg ? "#EAE8E4" : "#1C1C1E";
+
+  // Drop-shadow filter: only on transparent-bg (cutout) images.
+  // Applying it to a full opaque photo creates a box shadow around the rectangle.
+  const shadowFilter = isFullDarkPhoto ? undefined : "url(#garment-shadow)";
+
   return (
     <>
       <defs>
-        {/* Drop shadow — crisp silhouette lift on the dark studio canvas */}
+        {/* Drop shadow — crisp silhouette lift on the dark studio canvas.
+            Applied only to cutout (transparent) images, not full opaque photos. */}
         <filter id="garment-shadow" x="-10%" y="-8%" width="120%" height="120%" colorInterpolationFilters="sRGB">
           <feDropShadow dx="0" dy="8" stdDeviation="22" floodColor="rgba(0,0,0,0.65)" />
           <feDropShadow dx="0" dy="2" stdDeviation="6"  floodColor="rgba(0,0,0,0.30)" />
@@ -423,8 +453,10 @@ export function GarmentSVG({
         )}
       </defs>
 
-      {/* Dark studio canvas — makes every garment colour (white, black, vivid) pop with clear depth */}
-      <rect width={1000} height={1000} fill="#1C1C1E" style={{ pointerEvents: "none" }} />
+      {/* Studio canvas background — dark for white/coloured garments (they pop with contrast),
+          warm-light for near-black garments rendered via tint path (silhouette visibility).
+          Full opaque dark photos cover this rect entirely, so the colour is irrelevant there. */}
+      <rect width={1000} height={1000} fill={canvasBg} style={{ pointerEvents: "none" }} />
 
       {/* ── Garment render ────────────────────────────────────────────────────
           COLOURED  → full white product photo + feBlend multiply tint + silhouette mask.
@@ -459,7 +491,7 @@ export function GarmentSVG({
         )
       ) : (
         isMugRightSide ? (
-          <g transform="translate(1000,0) scale(-1,1)" filter="url(#garment-shadow)">
+          <g transform="translate(1000,0) scale(-1,1)" filter={shadowFilter}>
             <image
               href={imageSrc}
               x={0} y={0} width={1000} height={1000}
@@ -468,7 +500,7 @@ export function GarmentSVG({
             />
           </g>
         ) : (
-          <g filter="url(#garment-shadow)">
+          <g filter={shadowFilter}>
             <image
               href={imageSrc}
               x={0} y={0} width={1000} height={1000}
