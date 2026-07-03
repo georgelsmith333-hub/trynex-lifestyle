@@ -901,7 +901,7 @@ export default function DesignStudio() {
   // Print-safe warning: true when any layer on the current face extends meaningfully outside the print zone.
   // A small tolerance (BLEED_TOL) prevents false-positive warnings for layers that are just barely
   // touching the edge — normal usage when users drag a design to the boundary.
-  const BLEED_TOL = 8; // SVG units (~0.8% of the 1000-unit canvas)
+  const BLEED_TOL = 14; // SVG units (~1.4% of the 1000-unit canvas)
   const anyLayerOutsidePZ = useMemo(() => {
     if (!pz || currentFaceLayers.length === 0) return false;
     return currentFaceLayers.some(l => {
@@ -1038,13 +1038,18 @@ export default function DesignStudio() {
       }
 
       // Smart auto-placement: scale the image to fit within the print zone
-      // respecting both width and height, with a comfortable 85% fill.
+      // respecting both width and height, with a comfortable 80% fill.
+      // A small SAFETY_MARGIN keeps the freshly-placed image safely clear of
+      // the bleed-tolerance check so a brand-new upload never immediately
+      // shows the "extends outside print area" warning before the user has
+      // touched anything.
       const currentPz = pzRef.current;
       const aspect = img.naturalWidth / Math.max(img.naturalHeight, 1);
+      const SAFETY_MARGIN = 0.96;
       // At scale=1 the image fills the print zone WIDTH. Clamp so it also
       // fits within the print zone HEIGHT (tall images get scaled down).
       const maxScaleForHeight = (currentPz.h * aspect) / currentPz.w;
-      const initialScale = Math.min(0.85, maxScaleForHeight);
+      const initialScale = Math.min(0.8, maxScaleForHeight) * SAFETY_MARGIN;
 
       const layer: ImageLayer = {
         id: uid(), name: file.name.replace(/\.[^.]+$/, "") || "Image",
