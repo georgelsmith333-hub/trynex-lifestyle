@@ -2478,7 +2478,7 @@ export default function DesignStudio() {
 
             {/* ── Quick product tabs ── T-Shirt · Mug · Bottle (+ "More" opens full picker) */}
             {!linkedStoreProduct && (
-              <div className="flex gap-1.5 mb-3" data-testid="quick-product-tabs">
+              <div className="flex gap-2 mb-3" data-testid="quick-product-tabs">
                 {QUICK_PRODUCT_IDS.map(pid => {
                   const prod = PRODUCTS.find(p => p.id === pid)!;
                   const isActive = selectedProduct.id === pid && !linkedStoreProduct;
@@ -2491,21 +2491,20 @@ export default function DesignStudio() {
                     <button
                       key={pid}
                       onClick={() => handleQuickProductSwitch(prod)}
-                      className="flex-1 flex flex-col items-center gap-0.5 py-1.5 rounded-xl text-[9px] font-bold transition-all"
+                      className="flex-1 flex flex-col items-center gap-1 py-2 rounded-2xl text-[10px] font-bold transition-all"
                       style={{
-                        background: isActive ? "linear-gradient(135deg,#E85D04,#FB8500)" : "white",
+                        background: isActive ? "#1C1C1E" : "white",
                         color: isActive ? "white" : "#374151",
-                        border: isActive ? "2px solid transparent" : "1.5px solid #e5e7eb",
-                        boxShadow: isActive ? "0 4px 12px rgba(232,93,4,0.28)" : "none",
+                        border: isActive ? "2px solid #3a3a3c" : "1.5px solid #e5e7eb",
+                        boxShadow: isActive ? "0 4px 16px rgba(0,0,0,0.25)" : "0 1px 4px rgba(0,0,0,0.04)",
                       }}
                       title={prod.name}
                     >
                       <div
-                        className="w-9 h-9 rounded-lg flex items-center justify-center overflow-hidden"
+                        className="w-11 h-11 rounded-xl flex items-center justify-center overflow-hidden"
                         style={{
-                          background: isActive ? "rgba(255,255,255,0.25)" : "white",
-                          padding: "3px",
-                          border: isActive ? "none" : "1px solid rgba(0,0,0,0.06)",
+                          background: isActive ? "#2c2c2e" : "#f8f8f8",
+                          padding: "4px",
                         }}
                       >
                         {PRODUCT_TAB_ICONS[pid] ?? (
@@ -2514,24 +2513,28 @@ export default function DesignStudio() {
                             alt={prod.name}
                             className="w-full h-full object-contain"
                             style={{
-                              filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.22))",
+                              filter: isActive
+                                ? "drop-shadow(0 1px 6px rgba(255,255,255,0.3)) brightness(1.1)"
+                                : "drop-shadow(0 1px 4px rgba(0,0,0,0.20))",
                             }}
                             draggable={false}
                           />
                         )}
                       </div>
-                      <span className="mt-0.5 leading-tight text-center">{label}</span>
+                      <span className="leading-tight text-center font-black">{label}</span>
                     </button>
                   );
                 })}
                 <button
                   onClick={() => { setShowProductPicker(true); setProductSearch(""); setProductPickerCategory("all"); }}
-                  className="shrink-0 flex flex-col items-center gap-0.5 py-2 px-2.5 rounded-xl text-[10px] font-bold transition-all"
-                  style={{ background: "white", color: "#6b7280", border: "1.5px solid #e5e7eb" }}
+                  className="shrink-0 flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-2xl text-[10px] font-bold transition-all"
+                  style={{ background: "white", color: "#6b7280", border: "1.5px solid #e5e7eb", boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}
                   title="Browse all products"
                 >
-                  <Package className="w-4 h-4" />
-                  <span className="mt-0.5">More</span>
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: "#f8f8f8" }}>
+                    <Package className="w-5 h-5 text-gray-400" />
+                  </div>
+                  <span className="font-black">More</span>
                 </button>
               </div>
             )}
@@ -2554,12 +2557,12 @@ export default function DesignStudio() {
                       <button
                         key={zone.face}
                         onClick={() => setActiveFace(zone.face)}
-                        className="relative shrink-0 px-3.5 py-2 rounded-xl text-xs font-bold transition-all"
+                        className="relative shrink-0 px-3.5 py-2 rounded-xl text-xs font-black transition-all"
                         style={{
-                          background: isActive ? "linear-gradient(135deg,#1f2937,#374151)" : "white",
+                          background: isActive ? "#1C1C1E" : "white",
                           color: isActive ? "white" : "#374151",
-                          border: isActive ? "none" : "1.5px solid #e5e7eb",
-                          boxShadow: isActive ? "0 4px 12px rgba(0,0,0,0.15)" : "none",
+                          border: isActive ? "1.5px solid #3a3a3c" : "1.5px solid #e5e7eb",
+                          boxShadow: isActive ? "0 4px 14px rgba(0,0,0,0.22)" : "0 1px 3px rgba(0,0,0,0.04)",
                         }}
                         data-testid={`zone-${zone.face}`}
                         title={zone.label}
@@ -2568,7 +2571,7 @@ export default function DesignStudio() {
                         {/* Layer badge */}
                         {zoneLayerCount > 0 && !isActive && (
                           <span
-                            className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-black text-white"
+                            className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-black text-white"
                             style={{ background: "#E85D04", boxShadow: "0 1px 4px rgba(232,93,4,0.4)" }}
                           >
                             {zoneLayerCount}
@@ -2629,12 +2632,12 @@ export default function DesignStudio() {
                 ] as const).map(({ v, label }) => (
                   <button key={v}
                     onClick={() => setMugMode(v)}
-                    className="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-bold transition-all"
+                    className="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-black transition-all"
                     style={{
-                      background: mugMode === v ? "linear-gradient(135deg,#1f2937,#374151)" : "white",
+                      background: mugMode === v ? "#1C1C1E" : "white",
                       color: mugMode === v ? "white" : "#374151",
-                      border: mugMode === v ? "none" : "1.5px solid #e5e7eb",
-                      boxShadow: mugMode === v ? "0 4px 12px rgba(0,0,0,0.15)" : "none",
+                      border: mugMode === v ? "1.5px solid #3a3a3c" : "1.5px solid #e5e7eb",
+                      boxShadow: mugMode === v ? "0 4px 14px rgba(0,0,0,0.22)" : "0 1px 3px rgba(0,0,0,0.04)",
                     }}
                     data-testid={`mug-mode-${v}`}
                   >
@@ -2646,28 +2649,52 @@ export default function DesignStudio() {
 
             {/* Garment color swatches + label + hex input */}
             <div className="mb-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Palette className="w-3.5 h-3.5 text-gray-400" />
-                <span className="text-[11px] font-black uppercase tracking-widest text-gray-400">
-                  Color: <span className="text-gray-600 normal-case tracking-normal font-bold">{selectedColor.name}</span>
+              <div className="flex items-center justify-between mb-2.5">
+                <div className="flex items-center gap-2">
+                  <Palette className="w-3.5 h-3.5 text-gray-400" />
+                  <span className="text-[11px] font-black uppercase tracking-widest text-gray-400">Color</span>
+                </div>
+                <span
+                  className="text-[11px] font-bold px-2.5 py-0.5 rounded-full"
+                  style={{ background: selectedColor.hex, color: (0.299 * parseInt(selectedColor.hex.slice(1,3)||"80",16) + 0.587 * parseInt(selectedColor.hex.slice(3,5)||"80",16) + 0.114 * parseInt(selectedColor.hex.slice(5,7)||"80",16)) > 140 ? "#374151" : "white", boxShadow: "0 1px 4px rgba(0,0,0,0.18)", border: selectedColor.hex.toUpperCase() === "#FFFFFF" || selectedColor.hex === "#F5F5F5" ? "1px solid #d1d5db" : "none" }}
+                >
+                  {selectedColor.name}
                 </span>
               </div>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex flex-wrap gap-2">
                 {studioColors.map(c => {
                   const isSelected = selectedColor.hex.toLowerCase() === c.hex.toLowerCase();
+                  const lum = 0.299 * parseInt(c.hex.slice(1,3)||"80",16) + 0.587 * parseInt(c.hex.slice(3,5)||"80",16) + 0.114 * parseInt(c.hex.slice(5,7)||"80",16);
+                  const isNearWhite = lum > 230;
                   return (
                     <button key={c.hex} title={c.name}
                       onClick={() => setSelectedColor({ name: c.name, hex: c.hex })}
-                      className="w-10 h-10 sm:w-8 sm:h-8 rounded-xl border-2 transition-all hover:scale-110 relative touch-manipulation"
-                      style={{
-                        background: c.hex,
-                        borderColor: isSelected ? "#E85D04" : (c.hex.toUpperCase() === "#FFFFFF" || c.hex === "#F5F5F5" || c.hex === "#F5F2EC" || c.hex === "#F4F3F1" ? "#d1d5db" : c.hex),
-                        boxShadow: isSelected ? "0 0 0 3px rgba(232,93,4,0.35), 0 2px 6px rgba(0,0,0,0.12)" : "0 1px 3px rgba(0,0,0,0.10)",
-                      }}
+                      className="relative touch-manipulation flex-shrink-0 transition-transform duration-100 hover:scale-110"
+                      style={{ width: 34, height: 34 }}
                     >
+                      {/* Selection ring */}
                       {isSelected && (
-                        <span className="absolute inset-0 flex items-center justify-center">
-                          <Check className="w-3.5 h-3.5" style={{ color: (0.299 * parseInt(c.hex.slice(1,3),16) + 0.587 * parseInt(c.hex.slice(3,5),16) + 0.114 * parseInt(c.hex.slice(5,7),16)) > 128 ? "#333" : "white" }} />
+                        <span className="absolute inset-0 rounded-full pointer-events-none" style={{
+                          border: "2.5px solid #E85D04",
+                          transform: "scale(1.28)",
+                          boxShadow: "0 0 0 2px rgba(232,93,4,0.20)",
+                        }} />
+                      )}
+                      {/* Swatch circle */}
+                      <span
+                        className="absolute rounded-full transition-transform duration-100"
+                        style={{
+                          inset: 3,
+                          background: c.hex,
+                          border: isNearWhite ? "1.5px solid #d1d5db" : "1px solid rgba(0,0,0,0.10)",
+                          transform: isSelected ? "scale(0.88)" : "scale(1)",
+                          boxShadow: isSelected ? "0 2px 8px rgba(0,0,0,0.28)" : "0 1px 4px rgba(0,0,0,0.14)",
+                        }}
+                      />
+                      {/* Check mark */}
+                      {isSelected && (
+                        <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                          <Check className="w-3 h-3" style={{ color: lum > 140 ? "#333" : "white" }} />
                         </span>
                       )}
                     </button>
@@ -2708,9 +2735,9 @@ export default function DesignStudio() {
             <div
               className="relative rounded-3xl overflow-hidden select-none"
               style={{
-                background: "radial-gradient(ellipse at 50% 40%, #F2F0ED 0%, #E8E5E1 50%, #DDDAD5 100%)",
-                border: "1px solid #d8d5d0",
-                boxShadow: "inset 0 2px 20px rgba(0,0,0,0.04), 0 4px 24px rgba(0,0,0,0.08)",
+                background: "radial-gradient(ellipse at 50% 35%, #2e2e30 0%, #1c1c1e 55%, #111113 100%)",
+                border: "1px solid #3a3a3c",
+                boxShadow: "0 6px 40px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.04)",
                 isolation: "isolate",
               }}
               onDrop={handleDrop}
@@ -3128,10 +3155,10 @@ export default function DesignStudio() {
                   </div>
                 )}
 
-                {/* Fabric label */}
+                {/* Fabric label — dark glass badge for contrast on the studio canvas */}
                 <div className="absolute top-4 left-4">
-                  <span className="px-3 py-1.5 rounded-xl text-xs font-black"
-                    style={{ background: "rgba(255,255,255,0.96)", color: "#374151", boxShadow: "0 2px 8px rgba(0,0,0,0.10)" }}>
+                  <span className="px-3 py-1.5 rounded-xl text-[11px] font-black"
+                    style={{ background: "rgba(0,0,0,0.68)", color: "rgba(255,255,255,0.90)", backdropFilter: "blur(8px)", boxShadow: "0 2px 10px rgba(0,0,0,0.30)", letterSpacing: "0.01em" }}>
                     {selectedProduct.description}
                   </span>
                 </div>
@@ -3219,10 +3246,10 @@ export default function DesignStudio() {
 
               {/* Interaction hint */}
               {layers.length > 0 && (
-                <div className="px-4 py-2.5 text-[11px] font-semibold text-gray-500 flex items-center gap-2 border-t border-gray-100"
-                  style={{ background: "white" }}>
-                  <Move className="w-3.5 h-3.5 text-orange-400 shrink-0" />
-                  Drag to move · Pinch to scale &amp; rotate · Use +/− buttons to zoom canvas
+                <div className="px-4 py-2 text-[10px] font-semibold text-gray-400 flex items-center gap-2"
+                  style={{ background: "#1C1C1E", borderTop: "1px solid #2a2a2c" }}>
+                  <Move className="w-3 h-3 text-gray-500 shrink-0" />
+                  Drag · Pinch to scale &amp; rotate · +/− to zoom
                 </div>
               )}
             </div>
@@ -3378,8 +3405,8 @@ export default function DesignStudio() {
               className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) { handleFileUpload(f); e.target.value = ""; } }} />
 
             {/* Tab strip */}
-            <div className={`rounded-2xl${mobileToolOpen ? ' flex-1 min-h-0 flex flex-col' : ' flex flex-col'}`} style={{ background: "white", border: "1px solid #e9e5e0" }}>
-              <div className="flex border-b border-gray-100 shrink-0">
+            <div className={`rounded-2xl${mobileToolOpen ? ' flex-1 min-h-0 flex flex-col' : ' flex flex-col'}`} style={{ background: "white", border: "1px solid #e9e5e0", boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
+              <div className="flex shrink-0 p-1.5 gap-1" style={{ background: "#f8f7f5", borderRadius: "16px 16px 0 0", borderBottom: "1px solid #ede9e4" }}>
                 {[
                   { id: "upload" as const,    label: "Upload",    icon: Upload },
                   { id: "text" as const,      label: "Text",      icon: Type },
@@ -3388,15 +3415,15 @@ export default function DesignStudio() {
                   { id: "templates" as const, label: "Templates", icon: Sparkles },
                 ].map(({ id, label, icon: Icon }) => (
                   <button key={id} onClick={() => setActiveTab(id)}
-                    className="relative flex-1 flex flex-col items-center justify-center gap-0.5 py-3 text-[9px] font-bold transition-colors"
+                    className="relative flex-1 flex flex-col items-center justify-center gap-0.5 py-2 rounded-xl text-[9px] font-black transition-all"
                     style={{
-                      color: activeTab === id ? "#E85D04" : "#6b7280",
-                      borderBottom: activeTab === id ? "2px solid #E85D04" : "2px solid transparent",
-                      marginBottom: "-1px",
+                      background: activeTab === id ? "white" : "transparent",
+                      color: activeTab === id ? "#E85D04" : "#9ca3af",
+                      boxShadow: activeTab === id ? "0 1px 6px rgba(0,0,0,0.10)" : "none",
                     }}
                   >
                     <Icon className="w-4 h-4" />{label}
-                    {id === "ai" && <span className="absolute top-1 right-1 bg-orange-500 text-white text-[6px] px-1 py-0.5 rounded-full font-black leading-none">AI</span>}
+                    {id === "ai" && <span className="absolute top-0.5 right-0.5 bg-orange-500 text-white text-[6px] px-1 py-0.5 rounded-full font-black leading-none">AI</span>}
                   </button>
                 ))}
               </div>
