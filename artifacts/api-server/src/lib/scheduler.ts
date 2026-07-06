@@ -2,6 +2,7 @@ import { db, ordersTable, productsTable } from "@workspace/db";
 import { eq, and, desc, gte, sql, lte } from "drizzle-orm";
 import { logger } from "./logger";
 import { tgSend, tgIsConfigured } from "./telegram";
+import { runBackupSync } from "./dbBackupSync";
 
 const BST_OFFSET_MS = 6 * 60 * 60 * 1000;
 
@@ -209,6 +210,30 @@ async function keepAlive(): Promise<void> {
   }
 }
 
+// ── Backup / Failover Sync ───────────────────────────────────────────────────
+// Mirrors Neon Main into the Failover, Secondary, Products, and Analytics
+// databases every 30 minutes so a failover never serves stale/missing data.
+let lastBackupSyncMs = 0;
+const BACKUP_SYNC_INTERVAL_MS = 30 * 60 * 1000;
+
+async function runScheduledBackupSync(): Promise<void> {
+  const now = Date.now();
+  if (now - lastBackupSyncMs < BACKUP_SYNC_INTERVAL_MS) return;
+  lastBackupSyncMs = now;
+
+  try {
+    const results = await runBackupSync();
+    const ok = results.filter((r) => r.status === "ok").length;
+    const failed = results.filter((r) => r.status === "error");
+    logger.info({ ok, total: results.length }, "[scheduler] Backup sync complete");
+    if (failed.length > 0) {
+      logger.warn({ failed }, "[scheduler] Some backup targets failed to sync");
+    }
+  } catch (err) {
+    logger.warn({ err }, "[scheduler] Backup sync failed");
+  }
+}
+
 // ── Main Scheduler ───────────────────────────────────────────────────────────
 export function startScheduler(): void {
   logger.info("[scheduler] Starting in-process scheduler");
@@ -222,8 +247,14 @@ export function startScheduler(): void {
     if (h === 9 && m < 2) await sendDailySummary().catch(() => {});
     if ((h === 10 || h === 20) && m < 2) await checkAndAlertLowStock().catch(() => {});
     if (m < 2 && h % 2 === 0) await checkStalePendingOrders().catch(() => {});
+    await runScheduledBackupSync().catch(() => {});
   }, 60_000);
 
   tick.unref();
-  logger.info("[scheduler] Scheduler active (daily@9am, low-stock@10am&8pm, pending@every2h BST, keep-alive@14min)");
+  logger.info("[scheduler] Scheduler active (daily@9am, low-stock@10am&8pm, pending@every2h BST, backup-sync@30min, keep-alive@14min)");
+
+  // Run one backup sync shortly after boot so a fresh deploy is protected immediately.
+  setTimeout(() => {
+    runScheduledBackupSync().catch(() => {});
+  }, 30_000).unref();
 }
