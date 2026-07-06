@@ -40,8 +40,11 @@ type EnvVarSpec = {
 };
 
 // Core vars that every production deployment requires regardless of backend.
+// NOTE: the database connection string is checked separately below via
+// DB_FAILOVER_CHAIN_VARS, since this project supports a multi-database
+// failover chain (DATABASE_URL_MAIN, DATABASE_FAILOVER, etc.) and does not
+// require the plain "DATABASE_URL" var specifically — see lib/db/src/index.ts.
 const CORE_ENV_VAR_MATRIX: EnvVarSpec[] = [
-  { name: "DATABASE_URL",     required: true,  description: "PostgreSQL connection string" },
   { name: "ADMIN_JWT_SECRET", required: true,  description: "Admin JWT signing secret (32+ chars, must differ from JWT_SECRET)" },
   // JWT_SECRET is required: customerAuth.ts hard-throws at module load in production
   { name: "JWT_SECRET",       required: true,  description: "Customer JWT signing secret (must differ from ADMIN_JWT_SECRET)" },
@@ -79,9 +82,22 @@ const OPTIONAL_ENV_VAR_MATRIX: EnvVarSpec[] = [
   { name: "FACEBOOK_APP_ID",  required: false, description: "Facebook App ID (social login)" },
 ];
 
+// Mirrors the failover priority order in lib/db/src/index.ts — any ONE of
+// these being set is sufficient to boot; DATABASE_URL alone is not required.
+const DB_FAILOVER_CHAIN_VARS = ["DATABASE_URL_MAIN", "DATABASE_FAILOVER", "DATABASE_URL_TRYNEX_DB", "DATABASE_URL"];
+
 if (process.env.NODE_ENV === "production") {
   const missing: string[] = [];
   const present: string[] = [];
+
+  const hasDbConnection = DB_FAILOVER_CHAIN_VARS.some((name) => process.env[name]);
+  if (hasDbConnection) {
+    present.push(...DB_FAILOVER_CHAIN_VARS.filter((name) => process.env[name]));
+  } else {
+    missing.push(
+      `MISSING (required): one of [${DB_FAILOVER_CHAIN_VARS.join(", ")}] — PostgreSQL connection string`,
+    );
+  }
 
   const allSpecs = [
     ...CORE_ENV_VAR_MATRIX,
