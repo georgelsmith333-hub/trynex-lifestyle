@@ -242,7 +242,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                   onLoad={() => setImgLoaded(true)}
                   onError={e => {
                     setImgLoaded(true);
-                    (e.currentTarget as HTMLImageElement).style.display = "none";
+                    (e.currentTarget as HTMLImageElement).src = "/images/product-placeholder.svg";
                   }}
                   className="w-full h-full object-cover"
                   style={{

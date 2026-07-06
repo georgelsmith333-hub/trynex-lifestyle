@@ -295,11 +295,6 @@ export default function AdminAIDeveloper() {
     inputRef.current.style.height = Math.min(inputRef.current.scrollHeight, 160) + "px";
   }, [input]);
 
-  const getAuthHeaders = () => {
-    const token = sessionStorage.getItem("trynex_admin_token");
-    return { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) };
-  };
-
   const currentProvider  = providers.find(p => p.id === selectedProv) ?? providers[0];
   const currentModelObj  = currentProvider?.models.find(m => m.id === selectedModel) ?? currentProvider?.models[0];
 

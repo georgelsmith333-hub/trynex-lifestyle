@@ -158,3 +158,15 @@ export async function redisCacheDel(...keys: string[]): Promise<void> {
   }
   fallbackDel(...keys);
 }
+
+/**
+ * Flush all in-process fallback cache entries.
+ * When Upstash Redis is active, this can only clear the in-process Map
+ * (Upstash REST API does not expose FLUSHALL). Use this for admin cache busts.
+ */
+export async function redisCacheFlushAll(): Promise<{ cleared: number; backend: "upstash" | "in-process" }> {
+  const cleared = _fallback.size;
+  _fallback.clear();
+  const client = await getClient();
+  return { cleared, backend: client ? "upstash" : "in-process" };
+}

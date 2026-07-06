@@ -595,14 +595,9 @@ router.get("/admin/system/health", requireAdmin, async (req, res) => {
 // ---------------------------------------------------------------------------
 router.post("/admin/system/flush-cache", requireAdmin, async (req, res) => {
   try {
-    await redisCacheDel("*"); // This might not work as expected with Upstash/Map, 
-    // but the task asks for it. In artifacts/api-server/src/lib/redis.ts, del takes keys.
-    // If it's a Map, we should clear it. If it's Redis, we might need a different approach for flushAll.
-    // Given current redis.ts, let's just log it or try to clear what we can.
-    
-    // For now, let's assume we want to clear common prefixes or just return success
-    // if we don't have a global flush implemented in redis.ts.
-    
+    const { redisCacheFlushAll } = await import("../lib/redis");
+    const result = await redisCacheFlushAll();
+    req.log.info(result, "[admin] Cache flushed by admin");
     await logActivity({
       action: "update",
       entity: "setting",
@@ -610,7 +605,11 @@ router.post("/admin/system/flush-cache", requireAdmin, async (req, res) => {
       entityName: "System Cache",
       adminId: getAdminId(req as AdminRequest),
     });
-    res.json({ success: true, message: "Cache flush command sent" });
+    res.json({
+      success: true,
+      message: `Cache cleared — ${result.cleared} in-process entries flushed (backend: ${result.backend})`,
+      ...result,
+    });
   } catch (err) {
     req.log.error({ err }, "Flush cache failed");
     res.status(500).json({ error: "internal_error" });

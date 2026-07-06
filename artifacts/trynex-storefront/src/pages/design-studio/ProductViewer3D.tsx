@@ -185,8 +185,8 @@ export default function ProductViewer3D({
     ? (base?.darkFrontCutout ?? base?.darkFront ?? product.frontSrc)
     : (base?.frontCutout ?? product.frontSrc);
   const resolvedBackPhoto  = hasDarkPhoto
-    ? (base?.darkBack ?? product.backSrc ?? product.frontSrc)
-    : (product.backSrc ?? base?.backCutout ?? product.frontSrc);
+    ? (base?.darkBackCutout ?? base?.darkBack ?? product.backSrc ?? product.frontSrc)
+    : (base?.backCutout ?? product.backSrc ?? product.frontSrc);
   /* tint = undefined → no colour multiplication (dark photo already correct colour) */
   const photoTint = hasDarkPhoto ? undefined : garmentColor;
 

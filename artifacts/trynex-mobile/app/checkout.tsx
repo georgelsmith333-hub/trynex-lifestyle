@@ -108,6 +108,7 @@ export default function CheckoutScreen() {
         size: i.size,
         color: i.color,
         price: i.product.discountPrice ?? i.product.price,
+        customNote: i.customNote,
       }));
 
       const res = await api.createOrder({
@@ -176,7 +177,7 @@ export default function CheckoutScreen() {
         </Pressable>
         <Pressable
           style={[styles.homeBtn, { borderColor: colors.border }]}
-          onPress={() => router.replace("/(tabs)/index")}
+          onPress={() => router.replace("/(tabs)/")}
         >
           <Text style={[styles.homeBtnText, { color: colors.foreground }]}>Continue Shopping</Text>
         </Pressable>

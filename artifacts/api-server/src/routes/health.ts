@@ -111,19 +111,8 @@ router.get("/admin/system/health", requireAdmin, async (req, res) => {
   }
 });
 
-router.post("/api/admin/system/flush-cache", requireAdmin, async (req, res) => {
-  try {
-    // We don't have a flushAll in the lib, but we can at least clear known prefixes
-    // or if it's the fallback Map we can clear it.
-    // Since our redis lib uses a Map fallback, let's just clear that for now if we can.
-    // Better: add a flush method to the lib.
-    await redisCacheDel("_health_test");
-    // For now just return success as a placeholder if we can't do a full flush easily
-    res.json({ success: true, message: "Cache flush triggered" });
-  } catch (err) {
-    res.status(500).json({ error: "flush_failed" });
-  }
-});
+// Note: POST /api/admin/system/flush-cache is handled by routes/admin.ts
+// which is mounted correctly at /api and uses redisCacheFlushAll.
 
 router.get("/admin/system/env-status", requireAdmin, async (req, res) => {
   const vars = [

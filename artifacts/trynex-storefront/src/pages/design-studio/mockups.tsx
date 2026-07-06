@@ -451,6 +451,31 @@ export function GarmentSVG({
             />
           </mask>
         )}
+
+        {/* ── Shadow-only filter for tinted garments ───────────────────────────
+            SVG elements can only hold ONE filter. For the tint path, that slot is
+            taken by garment-color-tint. So we use a SEPARATE filter that outputs
+            ONLY the drop-shadow (no source image) from the garment alpha-channel.
+            Rendered before the tinted garment, it sits behind the garment layer. */}
+        {needsTint && cutoutMaskSrc && (
+          <filter id="garment-tint-shadow" x="-12%" y="-10%" width="124%" height="124%" colorInterpolationFilters="sRGB">
+            {/* Layer 1: soft outer shadow */}
+            <feGaussianBlur in="SourceAlpha" stdDeviation="22" result="blur1" />
+            <feOffset       in="blur1" dx="0" dy="8"  result="off1" />
+            <feFlood        floodColor="rgba(0,0,0,0.65)" floodOpacity="1" result="col1" />
+            <feComposite    in="col1"  in2="off1"    operator="in" result="shadow1" />
+            {/* Layer 2: tight inner shadow */}
+            <feGaussianBlur in="SourceAlpha" stdDeviation="6"  result="blur2" />
+            <feOffset       in="blur2" dx="0" dy="2"  result="off2" />
+            <feFlood        floodColor="rgba(0,0,0,0.30)" floodOpacity="1" result="col2" />
+            <feComposite    in="col2"  in2="off2"    operator="in" result="shadow2" />
+            {/* Merge both shadow layers — output has NO source image */}
+            <feMerge>
+              <feMergeNode in="shadow1" />
+              <feMergeNode in="shadow2" />
+            </feMerge>
+          </filter>
+        )}
       </defs>
 
       {/* Studio canvas background — dark for white/coloured garments (they pop with contrast),
@@ -459,14 +484,25 @@ export function GarmentSVG({
       <rect width={1000} height={1000} fill={canvasBg} style={{ pointerEvents: "none" }} />
 
       {/* ── Garment render ────────────────────────────────────────────────────
-          COLOURED  → full white product photo + feBlend multiply tint + silhouette mask.
-                      Because filter is applied to the image directly (not a
-                      separate rect), there is no stacking-context isolation —
-                      the multiply sees the actual photo pixels and preserves
-                      all depth, shadows and fabric texture.
+          COLOURED  → shadow-only pass (behind), then multiply-tinted photo (in front).
+                      Both use the cutout PNG: shadow-only filter emits only the
+                      shadow from the alpha channel; the tint filter blends hue onto
+                      the white studio photo, clipped to garment silhouette mask.
           WHITE     → full product photo with drop shadow (no tint needed).
           NEAR-BLACK → dedicated dark photo with drop shadow.
       ───────────────────────────────────────────────────────────────────────── */}
+
+      {/* Shadow pass for coloured garments — rendered first so it sits BEHIND the garment */}
+      {needsTint && cutoutMaskSrc && (
+        <image
+          href={cutoutMaskSrc}
+          x={0} y={0} width={1000} height={1000}
+          preserveAspectRatio="xMidYMid meet"
+          filter="url(#garment-tint-shadow)"
+          style={{ pointerEvents: "none" }}
+        />
+      )}
+
       {needsTint && cutoutMaskSrc ? (
         isMugRightSide ? (
           <g transform="translate(1000,0) scale(-1,1)">
@@ -582,30 +618,40 @@ export function FlatZoneSVG({
         <clipPath id="flat-clip-pz">
           <rect x={pz.x} y={pz.y} width={pz.w} height={pz.h} rx={10} />
         </clipPath>
+        {/* SVG multiply-tint filter — more reliable than CSS mix-blend-mode inside SVG.
+            Uses feBlend with the blurred garment photo as in2 so fabric details stay. */}
+        {garmentColor && !isLightTint(garmentColor) && (
+          <filter id="flat-color-tint" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
+            <feFlood floodColor={garmentColor} floodOpacity="0.62" result="flood" />
+            <feBlend in="flood" in2="SourceGraphic" mode="multiply" />
+          </filter>
+        )}
       </defs>
 
       {/* Full background — dark studio to match the main garment canvas. */}
       <rect width={1000} height={1000} fill="#1C1C1E" />
       {garmentPhotoSrc ? (
-        <image
-          href={garmentPhotoSrc}
-          x={0} y={0} width={1000} height={1000}
-          preserveAspectRatio="xMidYMid meet"
-          filter="url(#flat-blur-bg)"
-          style={{ pointerEvents: "none" }}
-        />
+        garmentColor && !isLightTint(garmentColor) ? (
+          /* Tinted background — filter applied directly to the photo via SVG feBlend,
+             which correctly multiplies hue onto photo pixels without stacking-context issues. */
+          <image
+            href={garmentPhotoSrc}
+            x={0} y={0} width={1000} height={1000}
+            preserveAspectRatio="xMidYMid meet"
+            filter="url(#flat-color-tint)"
+            style={{ pointerEvents: "none" }}
+          />
+        ) : (
+          <image
+            href={garmentPhotoSrc}
+            x={0} y={0} width={1000} height={1000}
+            preserveAspectRatio="xMidYMid meet"
+            filter="url(#flat-blur-bg)"
+            style={{ pointerEvents: "none" }}
+          />
+        )
       ) : (
         <rect width={1000} height={1000} fill="#d4d0ca" />
-      )}
-      {/* Garment colour tint — multiply-blend so fabric details stay visible.
-          Only applied for non-white/non-light colours. */}
-      {garmentColor && !isLightTint(garmentColor) && (
-        <rect
-          width={1000} height={1000}
-          fill={garmentColor}
-          opacity={0.62}
-          style={{ mixBlendMode: "multiply" as React.CSSProperties["mixBlendMode"], pointerEvents: "none" }}
-        />
       )}
 
       {/* Very subtle vignette — just enough to lift the artboard off the background */}

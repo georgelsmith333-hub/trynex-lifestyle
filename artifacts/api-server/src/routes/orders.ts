@@ -620,21 +620,14 @@ router.post("/orders", async (req, res) => {
       logger.warn({ err, route: "POST /orders" }, "Failed to load studio prices from settings; using defaults");
     }
 
-    const productIds = catalogItems.map((i: any) => Number(i.productId));
+    const productIds = [...new Set(catalogItems.map((i: any) => Number(i.productId)))];
 
-    const products = await Promise.all(
-      productIds.map(async (id: number) => {
-        const [p] = await db.select().from(productsTable).where(eq(productsTable.id, id));
-        return p;
-      })
-    );
+    // Single batched query for all product IDs (replaces N individual selects)
+    const products = productIds.length > 0
+      ? await db.select().from(productsTable).where(inArray(productsTable.id, productIds))
+      : [];
 
-    // `products` may contain `undefined` slots for deleted product IDs — filter
-     // those out before building the map, otherwise `p.id` throws and the
-     // request 500s instead of returning a structured `product_missing` error.
-    const productMap = Object.fromEntries(
-      products.filter((p): p is NonNullable<typeof p> => !!p).map(p => [p.id, p])
-    );
+    const productMap = Object.fromEntries(products.map(p => [p.id, p]));
 
     const missingProduct = catalogItems.find((item: any) => !productMap[item.productId]);
     if (missingProduct) {

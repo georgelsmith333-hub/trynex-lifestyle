@@ -129,6 +129,26 @@ export default function CartScreen() {
                     <Text style={[styles.itemMeta, { color: colors.mutedForeground }]}>
                       {[item.color, item.size].filter(Boolean).join(" · ")}
                     </Text>
+                    {!!item.customNote && (() => {
+                      try {
+                        const note = JSON.parse(item.customNote);
+                        const parts: string[] = [];
+                        if (note.zone) parts.push(`Zone: ${note.zone}`);
+                        if (note.designStatus) parts.push(note.designStatus);
+                        if (parts.length === 0 && item.customNote) parts.push("Custom Design");
+                        return parts.length > 0 ? (
+                          <Text style={[styles.itemMeta, { color: "#E85D04", fontSize: 11 }]}>
+                            🎨 {parts.join(" · ")}
+                          </Text>
+                        ) : null;
+                      } catch {
+                        return (
+                          <Text style={[styles.itemMeta, { color: "#E85D04", fontSize: 11 }]}>
+                            🎨 Custom Design
+                          </Text>
+                        );
+                      }
+                    })()}
                     <Text style={[styles.itemPrice, { color: colors.primary }]}>
                       ৳{itemTotal.toLocaleString()}
                     </Text>

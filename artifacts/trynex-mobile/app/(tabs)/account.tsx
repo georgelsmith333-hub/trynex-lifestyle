@@ -4,7 +4,6 @@ import { router } from "expo-router";
 import React from "react";
 import {
   Alert,
-  FlatList,
   Linking,
   Platform,
   Pressable,
@@ -20,8 +19,6 @@ import { ProductCard } from "@/components/ProductCard";
 import { useColors } from "@/hooks/useColors";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
 
 const WHATSAPP_NUMBER = "8801903426915";
 const WEBSITE_URL = "https://trynex.shop";
@@ -52,6 +49,16 @@ async function handleAboutTrynex() {
   await Linking.openURL(WEBSITE_URL);
 }
 
+async function handleLoginRegister() {
+  const url = `${WEBSITE_URL}/login`;
+  const canOpen = await Linking.canOpenURL(url);
+  if (canOpen) {
+    await Linking.openURL(url);
+  } else {
+    await Linking.openURL(WEBSITE_URL);
+  }
+}
+
 const MENU_ITEMS = [
   { icon: "shopping-bag", label: "My Orders", onPress: () => router.push("/(tabs)/orders") },
   { icon: "edit-3", label: "Design Studio", onPress: () => router.push("/(tabs)/design") },
@@ -68,8 +75,6 @@ export default function AccountScreen() {
   const { items: wishlistItems } = useWishlist();
   const { totalItems } = useCart();
 
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-
   return (
     <ScrollView
       style={[styles.container, { backgroundColor: colors.background }]}
@@ -83,20 +88,25 @@ export default function AccountScreen() {
         <View style={styles.avatar}>
           <Feather name="user" size={32} color={colors.primary} />
         </View>
-        <Text style={styles.headerTitle}>{isLoggedIn ? "Welcome Back!" : "My Account"}</Text>
-        <Text style={styles.headerSub}>{isLoggedIn ? "John Doe" : "Trynex Lifestyle Member"}</Text>
+        <Text style={styles.headerTitle}>My Account</Text>
+        <Text style={styles.headerSub}>Trynex Lifestyle Member</Text>
       </View>
 
-      {!isLoggedIn && (
-        <View style={styles.loginSection}>
-          <Pressable 
-            style={[styles.loginBtn, { backgroundColor: colors.primary }]}
-            onPress={() => setIsLoggedIn(true)}
-          >
-            <Text style={styles.loginBtnText}>Login / Register</Text>
-          </Pressable>
-        </View>
-      )}
+      <View style={styles.loginSection}>
+        <Pressable
+          style={[styles.loginBtn, { backgroundColor: colors.primary }]}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            handleLoginRegister();
+          }}
+        >
+          <Feather name="user" size={16} color="#fff" style={{ marginRight: 8 }} />
+          <Text style={styles.loginBtnText}>Login / Register on Website</Text>
+        </Pressable>
+        <Text style={{ color: colors.mutedForeground, fontSize: 12, textAlign: "center", marginTop: 8 }}>
+          Manage your orders, profile and more at trynex.shop
+        </Text>
+      </View>
 
       {/* Stats */}
       <View style={[styles.statsRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -185,23 +195,22 @@ export default function AccountScreen() {
               <Feather name="chevron-right" size={18} color={colors.mutedForeground} />
             </Pressable>
           ))}
-          {isLoggedIn && (
-            <Pressable
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                setIsLoggedIn(false);
-              }}
-              style={({ pressed }) => [
-                styles.menuItem,
-                { borderTopWidth: 1, borderTopColor: colors.border, opacity: pressed ? 0.7 : 1 },
-              ]}
-            >
-              <View style={[styles.menuIcon, { backgroundColor: colors.destructive + "10" }]}>
-                <Feather name="log-out" size={18} color={colors.destructive} />
-              </View>
-              <Text style={[styles.menuLabel, { color: colors.destructive }]}>Logout</Text>
-            </Pressable>
-          )}
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              handleLoginRegister();
+            }}
+            style={({ pressed }) => [
+              styles.menuItem,
+              { borderTopWidth: 1, borderTopColor: colors.border, opacity: pressed ? 0.7 : 1 },
+            ]}
+          >
+            <View style={[styles.menuIcon, { backgroundColor: colors.secondary }]}>
+              <Feather name="external-link" size={18} color={colors.primary} />
+            </View>
+            <Text style={[styles.menuLabel, { color: colors.foreground }]}>Manage Account</Text>
+            <Feather name="chevron-right" size={18} color={colors.mutedForeground} />
+          </Pressable>
         </View>
       </View>
 

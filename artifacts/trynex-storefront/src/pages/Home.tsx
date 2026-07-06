@@ -83,8 +83,10 @@ const TESTIMONIALS = [
   },
 ];
 
-const STATS = [
-  { value: "5000", suffix: "+", label: "Happy Customers", icon: Users, color: "var(--color-primary)" },
+// Stats are seeded with strong baseline values and updated live from the API
+// when available (publicStats.totalOrders reflects real order volume).
+const BASE_STATS = [
+  { key: "customers", value: "5000", suffix: "+", label: "Happy Customers", icon: Users, color: "var(--color-primary)" },
   { value: "98", suffix: "%", label: "Satisfaction Rate", icon: Star, color: "#eab308" },
   { value: "48", suffix: "h", label: "Production Time", icon: Zap, color: "#d97706" },
   { value: "64", suffix: "", label: "Districts Served", icon: Truck, color: "#16a34a" },
@@ -1348,26 +1350,32 @@ export default function Home() {
       {settings.sectionStatsEnabled !== false && <section className="py-12 bg-gray-50/50">
         <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-            {STATS.map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center"
-              >
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: `${stat.color}10`, color: stat.color }}>
-                  <stat.icon className="w-5 h-5" />
-                </div>
-                <div className="text-2xl font-black text-gray-900">
-                  <AnimatedCounter target={stat.value} suffix={stat.suffix} />
-                </div>
-                <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">
-                  {stat.label}
-                </div>
-              </motion.div>
-            ))}
+            {BASE_STATS.map((stat, i) => {
+              // Use live order count for customers stat when API data is available
+              const liveValue = stat.key === "customers" && publicStats?.totalOrders
+                ? String(Math.max(5000, publicStats.totalOrders))
+                : (stat as any).value as string;
+              return (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center"
+                >
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: `${stat.color}10`, color: stat.color }}>
+                    <stat.icon className="w-5 h-5" />
+                  </div>
+                  <div className="text-2xl font-black text-gray-900">
+                    <AnimatedCounter target={liveValue} suffix={stat.suffix} />
+                  </div>
+                  <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">
+                    {stat.label}
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>}
