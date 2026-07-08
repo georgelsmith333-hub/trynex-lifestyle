@@ -2851,7 +2851,15 @@ export default function DesignStudio() {
                   onClick={handleCanvasClick}
                 >
                   {isFlatZone && activeZoneConfig
-                    ? <FlatZoneSVG zone={activeZoneConfig} showPrintZone={effectiveShowPrintZone} garmentPhotoSrc={displayProduct.frontSrc} garmentColor={selectedColor.hex} />
+                    ? <FlatZoneSVG zone={activeZoneConfig} showPrintZone={effectiveShowPrintZone} garmentPhotoSrc={(() => {
+                        const base = BASE_BY_CATEGORY[selectedProduct.category];
+                        if (!base) return displayProduct.frontSrc;
+                        // Near-black garments: use the dark cutout (when it exists) so
+                        // the sleeve/neck zone shows the correct dark silhouette on the
+                        // warm-light background. Falls back to white cutout if no dark asset.
+                        if (isBlackGarment && base.darkFrontCutout) return base.darkFrontCutout;
+                        return base.frontCutout ?? displayProduct.frontSrc;
+                      })()} garmentColor={selectedColor.hex} />
                     : <GarmentSVG product={displayProduct} color={selectedColor.hex} showPrintZone={effectiveShowPrintZone} face={activeFace} mugMode={isMugProduct ? mugMode : undefined} />
                   }
 

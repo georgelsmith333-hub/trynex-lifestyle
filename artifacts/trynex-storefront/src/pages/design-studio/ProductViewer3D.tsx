@@ -242,12 +242,15 @@ export default function ProductViewer3D({
     }).then(() => setFallbackUrl(c.toDataURL("image/png")));
   }, [supports3D, front]);
 
-  /* No WebGL2 → flat 2D photo mockup fallback */
+  /* No WebGL2 → flat 2D photo mockup fallback.
+     Use the transparent cutout PNG (not the full studio photo) so the garment
+     floats cleanly on the page background — identical to how GarmentSVG renders. */
   if (!supports3D) {
+    const fallbackGarmentSrc = base?.frontCutout ?? product.frontSrc;
     return (
       <div style={{ position: "relative", width: "100%", height: "100%" }}>
         <NoWebGLFallback
-          garmentSrc={product.frontSrc}
+          garmentSrc={fallbackGarmentSrc}
           designSrc={fallbackUrl}
           garmentColor={garmentColor}
         />

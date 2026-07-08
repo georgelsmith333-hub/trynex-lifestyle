@@ -22,42 +22,53 @@ import {
   VIEWER_FRAMING,
   VIEWER_FRAMING_BACK,
 } from "./garment3d";
+import { isNearBlack, BASE_BY_CATEGORY } from "../pages/design-studio/mockups";
 
-const tshirtSrc      = "/mockups/white-tshirt-front-cutout.png";
-const longsleeveSrc  = "/mockups/white-longsleeve-front-cutout.png";
-const hoodieSrc      = "/mockups/white-hoodie-front-cutout.png";
-const capSrc         = "/mockups/white-cap-front-cutout.png";
-const mugSrc         = "/mockups/white-mug-front-cutout.png";
-const waterBottleSrc = "/mockups/white-waterbottle-front-cutout.png";
+/**
+ * Resolve the correct front + back product photos for CartViewer3D.
+ *
+ * Rules (mirrors ProductViewer3D logic so cart and studio look identical):
+ *  • For near-black garment colours: use the dedicated dark cutout PNG when one
+ *    exists (tshirt / hoodie / mug). For products without a dark asset
+ *    (longsleeve, cap, waterbottle) stay on the white cutout — PhotoMockupMesh
+ *    will multiply-tint it to the correct dark hue.
+ *  • Back photos always use the transparent-background cutout variant so colour
+ *    tinting doesn't spill onto a studio-background rectangle.
+ *  • Longsleeve dark PNGs are intentionally excluded — they are grayscale stubs
+ *    that look broken in 3D. The white cutout + tint path renders correctly.
+ */
+function resolveCartPhotos(
+  category: GarmentCategory,
+  garmentColor: string,
+): { frontSrc: string; backSrc?: string } {
+  const base = BASE_BY_CATEGORY[category as keyof typeof BASE_BY_CATEGORY];
+  const nearBlack = isNearBlack(garmentColor);
+  // Use dark photo only when a proper dark asset exists in BASE_BY_CATEGORY
+  const hasDarkFront = nearBlack && !!base && !!(base.darkFront || base.darkFrontCutout);
+  const hasDarkBack  = nearBlack && !!base && !!(base.darkBack  || base.darkBackCutout);
 
-/** Front photo used by the 3D photo-billboard for each garment category. */
-const GARMENT_FRONT_PHOTO: Record<GarmentCategory, string> = {
-  tshirt:      "/mockups/white-tshirt-front-cutout.png",
-  longsleeve:  "/mockups/white-longsleeve-front-cutout.png",
-  hoodie:      "/mockups/white-hoodie-front-cutout.png",
-  cap:         "/mockups/white-cap-front-cutout.png",
-  mug:         "/mockups/white-mug-front-cutout.png",
-  waterbottle: "/mockups/white-waterbottle-front-cutout.png",
-};
-/** Back photo for garments that have a printable back face. */
-const GARMENT_BACK_PHOTO: Partial<Record<GarmentCategory, string>> = {
-  tshirt:     "/mockups/white-tshirt-back.png",
-  longsleeve: "/mockups/white-longsleeve-back.png",
-  hoodie:     "/mockups/white-hoodie-back.png",
-};
+  const fronts: Record<GarmentCategory, string> = {
+    tshirt:      hasDarkFront ? "/mockups/black-tshirt-front-cutout.png"      : "/mockups/white-tshirt-front-cutout.png",
+    // longsleeve dark PNGs are grayscale stubs — always tint the white cutout
+    longsleeve:  "/mockups/white-longsleeve-front-cutout-new.png",
+    hoodie:      hasDarkFront ? "/mockups/black-hoodie-front-cutout.png"       : "/mockups/white-hoodie-front-cutout-new.png",
+    cap:         "/mockups/white-cap-front-cutout.png",
+    mug:         hasDarkFront ? "/mockups/black-mug-front-cutout.png"          : "/mockups/white-mug-front-cutout.png",
+    waterbottle: "/mockups/white-waterbottle-front-cutout.png",
+  };
+
+  // Back photos: always use the cutout version (transparent BG) so tinting
+  // doesn't bleed onto a studio-background rectangle visible behind the garment.
+  const backs: Partial<Record<GarmentCategory, string>> = {
+    tshirt:     hasDarkBack ? "/mockups/black-tshirt-back-cutout.png"      : "/mockups/white-tshirt-back-cutout.png",
+    longsleeve: "/mockups/white-longsleeve-back-cutout-new.png",
+    hoodie:     hasDarkBack ? "/mockups/black-hoodie-back-cutout.png"      : "/mockups/white-hoodie-back-cutout-new.png",
+  };
+
+  return { frontSrc: fronts[category], backSrc: backs[category] };
+}
 
 type GarmentCategory = "tshirt" | "longsleeve" | "hoodie" | "mug" | "cap" | "waterbottle";
-
-/** Static garment cutout PNG used by the WebGL-less fallback,
- *  layered under the user's design for a faithful 2D mockup. */
-const FALLBACK_GARMENT_BY_CATEGORY: Record<GarmentCategory, string> = {
-  tshirt:      tshirtSrc,
-  longsleeve:  longsleeveSrc,
-  hoodie:      hoodieSrc,
-  cap:         capSrc,
-  mug:         mugSrc,
-  waterbottle: waterBottleSrc,
-};
 
 /**
  * Unified camera controller for garments (non-mug):
@@ -145,13 +156,20 @@ export default function CartViewer3D({
   const mugTex        = useUrlTexture(isMug ? frontTexUrl : undefined);
   const bottleTex     = useUrlTexture(isWaterBottle ? frontTexUrl : undefined);
 
+  // Resolve colour-aware product photos (dark cutout for near-black, white cutout otherwise).
+  // Memoised by category + garmentColor so the THREE.TextureLoader only fires on colour change.
+  const { frontSrc: resolvedFrontSrc, backSrc: resolvedBackSrc } = useMemo(
+    () => resolveCartPhotos(category, garmentColor),
+    [category, garmentColor],
+  );
+
   // WebGL2 capability check — gracefully degrade to 2D mockup if unsupported
   const supports3D = useMemo(() => hasWebGL2(), []);
   if (!supports3D) {
     return (
       <div style={{ position: "relative", width: "100%", height: "100%" }}>
         <NoWebGLFallback
-          garmentSrc={FALLBACK_GARMENT_BY_CATEGORY[category]}
+          garmentSrc={resolvedFrontSrc}
           designSrc={frontTexUrl}
           garmentColor={garmentColor}
         />
@@ -218,12 +236,15 @@ export default function CartViewer3D({
           {category === "waterbottle" && (
             <WaterBottleBody wrapTex={bottleTex} garmentColor={garmentColor} />
           )}
-          {/* Garments — photo billboard (same approach as Design Studio). */}
+          {/* Garments — photo billboard (same approach as Design Studio).
+              resolvedFrontSrc / resolvedBackSrc are colour-aware cutout PNGs:
+              dark for near-black, white for everything else. PhotoMockupMesh
+              multiplies garmentColor onto the white photo for mid-range hues. */}
           {(category === "tshirt" || category === "longsleeve" ||
             category === "hoodie" || category === "cap") && (
             <PhotoMockupMesh
-              frontPhotoSrc={GARMENT_FRONT_PHOTO[category]}
-              backPhotoSrc={GARMENT_BACK_PHOTO[category]}
+              frontPhotoSrc={resolvedFrontSrc}
+              backPhotoSrc={resolvedBackSrc}
               frontTex={frontTex}
               backTex={backTex}
               garmentColor={garmentColor}

@@ -597,17 +597,22 @@ export function FlatZoneSVG({
   const isNeck = zone.face === "neck-label";
   const isLeftSleeve = zone.face === "left-sleeve";
 
+  // ── Colour classification (mirrors GarmentSVG logic) ────────────────────
+  // • Light tint  (lum > 0.92): white/off-white garment → show photo as-is, dark canvas
+  // • Near-black  (lum < 0.12): dark/black garment → show dark photo as-is, LIGHT canvas
+  //                              so the silhouette is visible (matches canvasBg in GarmentSVG)
+  // • Mid-range              : multiply-tint the white cutout, dark canvas
+  const isNearBlackGarment = garmentColor ? isNearBlack(garmentColor) : false;
+  const useTint = garmentColor && !isLightTint(garmentColor) && !isNearBlackGarment;
+  // Dark-studio for white/coloured; warm-light so near-black silhouette stays visible.
+  const canvasBg = isNearBlackGarment ? "#EAE8E4" : "#1C1C1E";
+  // Vignette darkens the canvas edges — invert to a light vignette on the warm-light bg.
+  const vigEndColor = isNearBlackGarment ? "rgba(0,0,0,0.14)" : "rgba(0,0,0,0.22)";
+
   return (
     <>
       <defs>
-        <filter id="flat-blur-bg">
-          <feGaussianBlur stdDeviation="1.2" />
-          <feColorMatrix type="matrix"
-            values="0.85 0 0 0 0.06
-                    0 0.85 0 0 0.06
-                    0 0 0.85 0 0.06
-                    0 0 0 0.82 0" />
-        </filter>
+        {/* flat-artboard-glow: white glow + drop shadow behind the print-zone artboard */}
         <filter id="flat-artboard-glow">
           <feDropShadow dx="0" dy="0" stdDeviation="18" floodColor="rgba(255,255,255,0.60)" />
           <feDropShadow dx="0" dy="6" stdDeviation="12" floodColor="rgba(0,0,0,0.18)" />
@@ -618,22 +623,24 @@ export function FlatZoneSVG({
         <clipPath id="flat-clip-pz">
           <rect x={pz.x} y={pz.y} width={pz.w} height={pz.h} rx={10} />
         </clipPath>
-        {/* SVG multiply-tint filter — more reliable than CSS mix-blend-mode inside SVG.
-            Uses feBlend with the blurred garment photo as in2 so fabric details stay. */}
-        {garmentColor && !isLightTint(garmentColor) && (
+        {/* Colour multiply-tint — only defined for mid-range (non-white, non-black) colours.
+            Full opacity (floodOpacity="1") matches GarmentSVG exactly. */}
+        {useTint && (
           <filter id="flat-color-tint" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
-            <feFlood floodColor={garmentColor} floodOpacity="0.62" result="flood" />
+            <feFlood floodColor={garmentColor!} floodOpacity="1" result="flood" />
             <feBlend in="flood" in2="SourceGraphic" mode="multiply" />
           </filter>
         )}
       </defs>
 
-      {/* Full background — dark studio to match the main garment canvas. */}
-      <rect width={1000} height={1000} fill="#1C1C1E" />
+      {/* Canvas background:
+          • dark studio (#1C1C1E) for white and mid-range garments (they pop with contrast)
+          • warm light (#EAE8E4) for near-black garments (dark silhouette needs light bg) */}
+      <rect width={1000} height={1000} fill={canvasBg} />
       {garmentPhotoSrc ? (
-        garmentColor && !isLightTint(garmentColor) ? (
-          /* Tinted background — filter applied directly to the photo via SVG feBlend,
-             which correctly multiplies hue onto photo pixels without stacking-context issues. */
+        useTint ? (
+          /* Mid-range colour (navy, red, sky-blue, etc.) — full multiply-tint.
+             Matches GarmentSVG so sleeve zone colour is identical to the main view. */
           <image
             href={garmentPhotoSrc}
             x={0} y={0} width={1000} height={1000}
@@ -642,11 +649,15 @@ export function FlatZoneSVG({
             style={{ pointerEvents: "none" }}
           />
         ) : (
+          /* White/light OR near-black garment — show the photo as-is at high opacity.
+             For white: transparent cutout floats on dark studio canvas.
+             For near-black: dark cutout photo (passed by DesignStudio) floats on warm
+             light canvas — silhouette clearly visible, no tint multiplication. */
           <image
             href={garmentPhotoSrc}
             x={0} y={0} width={1000} height={1000}
             preserveAspectRatio="xMidYMid meet"
-            filter="url(#flat-blur-bg)"
+            opacity="0.92"
             style={{ pointerEvents: "none" }}
           />
         )
@@ -654,10 +665,11 @@ export function FlatZoneSVG({
         <rect width={1000} height={1000} fill="#d4d0ca" />
       )}
 
-      {/* Very subtle vignette — just enough to lift the artboard off the background */}
+      {/* Subtle vignette — lifts the artboard off the background.
+          Strength adjusted by canvas bg: lighter on the warm-light (near-black) bg. */}
       <radialGradient id="flat-vig" cx="50%" cy="50%" r="70%" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="1000">
         <stop offset="0%" stopColor="transparent" />
-        <stop offset="100%" stopColor="rgba(0,0,0,0.22)" />
+        <stop offset="100%" stopColor={vigEndColor} />
       </radialGradient>
       <rect width={1000} height={1000} fill="url(#flat-vig)" style={{ pointerEvents: "none" }} />
 
