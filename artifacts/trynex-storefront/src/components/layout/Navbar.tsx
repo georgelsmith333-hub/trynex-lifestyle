@@ -6,6 +6,7 @@ import { useWishlist } from "@/context/WishlistContext";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { useAuth } from "@/context/AuthContext";
 import { cn, getApiUrl } from "@/lib/utils";
+import { prefetchDesignStudio } from "@/lib/prefetch";
 import { motion, AnimatePresence } from "framer-motion";
 import { CartDrawer } from "@/components/CartDrawer";
 import { useListProducts, useListCategories } from "@workspace/api-client-react";
@@ -440,6 +441,8 @@ export function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
+                  onMouseEnter={link.href === "/design-studio" ? prefetchDesignStudio : undefined}
+                  onTouchStart={link.href === "/design-studio" ? prefetchDesignStudio : undefined}
                   className={cn(
                     "relative px-4 py-2 rounded-full font-semibold text-[0.8125rem] transition-all inline-flex items-center gap-1.5",
                     location === link.href

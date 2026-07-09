@@ -12,3 +12,4 @@
 - [Product image maintenance](product-image-maintenance.md) — Unsplash photos can go 404; use Bearer token auth for admin API product updates (cookie CSRF blocked)
 - [Storefront missing PWA assets](storefront-favicon.md) — favicon/manifest.json referenced in index.html but absent from public/ caused a silent 404; regenerate from favicon.svg with ImageMagick if missing again.
 - [DB backup sync engine](db-backup-sync.md) — self-healing full-mirror sync (Main→Failover/Products/Analytics); handles json serialization + schema drift auto-heal.
+- [Hoodie/longsleeve mockup asset naming](mockup-cutout-real-assets.md) — use `*-cutout-real.png`, not `-cutout-new.png`/`-cutout.png` (broken/ghosted); keep mockups.tsx and CartViewer3D.tsx in sync.

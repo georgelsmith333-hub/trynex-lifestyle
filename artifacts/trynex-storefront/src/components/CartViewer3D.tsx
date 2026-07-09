@@ -50,8 +50,8 @@ function resolveCartPhotos(
   const fronts: Record<GarmentCategory, string> = {
     tshirt:      hasDarkFront ? "/mockups/black-tshirt-front-cutout.png"      : "/mockups/white-tshirt-front-cutout.png",
     // longsleeve dark PNGs are grayscale stubs — always tint the white cutout
-    longsleeve:  "/mockups/white-longsleeve-front-cutout-new.png",
-    hoodie:      hasDarkFront ? "/mockups/black-hoodie-front-cutout.png"       : "/mockups/white-hoodie-front-cutout-new.png",
+    longsleeve:  "/mockups/white-longsleeve-front-cutout-real.png",
+    hoodie:      hasDarkFront ? "/mockups/black-hoodie-front-cutout-real.png" : "/mockups/white-hoodie-front-cutout-real.png",
     cap:         "/mockups/white-cap-front-cutout.png",
     mug:         hasDarkFront ? "/mockups/black-mug-front-cutout.png"          : "/mockups/white-mug-front-cutout.png",
     waterbottle: "/mockups/white-waterbottle-front-cutout.png",
@@ -61,8 +61,8 @@ function resolveCartPhotos(
   // doesn't bleed onto a studio-background rectangle visible behind the garment.
   const backs: Partial<Record<GarmentCategory, string>> = {
     tshirt:     hasDarkBack ? "/mockups/black-tshirt-back-cutout.png"      : "/mockups/white-tshirt-back-cutout.png",
-    longsleeve: "/mockups/white-longsleeve-back-cutout-new.png",
-    hoodie:     hasDarkBack ? "/mockups/black-hoodie-back-cutout.png"      : "/mockups/white-hoodie-back-cutout-new.png",
+    longsleeve: "/mockups/white-longsleeve-back-cutout-real.png",
+    hoodie:     hasDarkBack ? "/mockups/black-hoodie-back-cutout-real.png" : "/mockups/white-hoodie-back-cutout-real.png",
   };
 
   return { frontSrc: fronts[category], backSrc: backs[category] };

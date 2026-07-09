@@ -1,4 +1,5 @@
 import { Link, useLocation } from "wouter";
+import { prefetchDesignStudio } from "@/lib/prefetch";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ProductCard } from "@/components/ProductCard";
@@ -381,12 +382,14 @@ function useMagneticEffect<T extends HTMLElement>() {
   return { ref, magneticStyle, eventHandlers };
 }
 
-function MagneticButton({ children, className, style, href, onClick }: {
+function MagneticButton({ children, className, style, href, onClick, onMouseEnter, onTouchStart }: {
   children: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
   href?: string;
   onClick?: () => void;
+  onMouseEnter?: () => void;
+  onTouchStart?: () => void;
 }) {
   const linkMagnet = useMagneticEffect<HTMLAnchorElement>();
   const btnMagnet = useMagneticEffect<HTMLButtonElement>();
@@ -401,6 +404,8 @@ function MagneticButton({ children, className, style, href, onClick }: {
         className={className}
         style={{ ...style, ...linkMagnet.magneticStyle }}
         {...linkMagnet.eventHandlers}
+        onMouseEnter={() => { linkMagnet.eventHandlers?.onMouseEnter?.(); onMouseEnter?.(); }}
+        onTouchStart={onTouchStart}
       >
         {children}
       </a>
@@ -1232,6 +1237,8 @@ export default function Home() {
             >
               <a
                 href="/design-studio"
+                onMouseEnter={prefetchDesignStudio}
+                onTouchStart={prefetchDesignStudio}
                 className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-xl font-black text-white text-sm"
                 style={{ background: 'linear-gradient(135deg, var(--color-primary), var(--color-primary))', boxShadow: '0 8px 24px var(--color-primary-medium)' }}
               >
@@ -1575,6 +1582,8 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <MagneticButton
               href="/design-studio"
+              onMouseEnter={prefetchDesignStudio}
+              onTouchStart={prefetchDesignStudio}
               className="inline-flex items-center justify-center gap-2.5 px-10 py-5 rounded-2xl font-bold text-white text-lg shimmer-btn"
               style={{
                 background: 'linear-gradient(135deg, var(--color-primary), #FB8500)',
