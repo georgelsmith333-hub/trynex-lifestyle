@@ -63,7 +63,7 @@ export interface ProductViewer3DProps {
 function useFaceTexture(
   face: FacePayload | undefined,
   garmentColor: string | null,
-  opts: { outW: number; outH: number; clipToPrintZone?: boolean }
+  opts: { outW: number; outH: number; clipToPrintZone?: boolean; curvature?: number }
 ): THREE.CanvasTexture | null {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const cacheRef = useRef<Map<string, HTMLImageElement>>(new Map());
@@ -118,6 +118,7 @@ function useFaceTexture(
       imageCache: cacheRef.current,
       clipToPrintZone: clipFlag,
       blendMode: "multiply",
+      curvature: opts.curvature ?? 0,
     }).then(() => {
       if (cancelled) return;
       if (textureRef.current) textureRef.current.needsUpdate = true;
@@ -190,35 +191,42 @@ export default function ProductViewer3D({
   /* tint = undefined → no colour multiplication (dark photo already correct colour) */
   const photoTint = hasDarkPhoto ? undefined : garmentColor;
 
+  const isCap = product.category === "cap";
+  /* Curved surfaces get a fake cylindrical/dome wrap so the design reads as
+   * printed onto the object rather than a flat sticker. Flat garments (tshirt,
+   * longsleeve, hoodie) get curvature 0. */
+  const capCurvature = isCap ? 0.1 : 0;
+
   /* Garments (tshirt / longsleeve / hoodie / cap): transparent per-face overlays */
   const frontTex = useFaceTexture(
     isGarment ? front : undefined,
     null,
-    { outW: 1024, outH: 1024, clipToPrintZone: true }
+    { outW: 1024, outH: 1024, clipToPrintZone: true, curvature: capCurvature }
   );
   const backTex = useFaceTexture(
     isGarment && back ? back : undefined,
     null,
-    { outW: 1024, outH: 1024, clipToPrintZone: true }
+    { outW: 1024, outH: 1024, clipToPrintZone: true, curvature: capCurvature }
   );
 
-  /* Mug: photo-mockup approach — front and back design overlays on the product photo. */
+  /* Mug: photo-mockup approach — front and back design overlays on the product photo.
+   * The mug body is a curved cylinder, so both sides get the wrap treatment. */
   const mugFrontTex = useFaceTexture(
     isMug ? front : undefined,
     null,
-    { outW: 1024, outH: 1024, clipToPrintZone: true }
+    { outW: 1024, outH: 1024, clipToPrintZone: true, curvature: 0.16 }
   );
   const mugBackTex = useFaceTexture(
     isMug && back ? back : undefined,
     null,
-    { outW: 1024, outH: 1024, clipToPrintZone: true }
+    { outW: 1024, outH: 1024, clipToPrintZone: true, curvature: 0.16 }
   );
 
-  /* Water bottle: photo-mockup overlay */
+  /* Water bottle: photo-mockup overlay on a cylindrical body. */
   const bottleFrontTex = useFaceTexture(
     isWaterBottle ? front : undefined,
     null,
-    { outW: 1024, outH: 1024, clipToPrintZone: true }
+    { outW: 1024, outH: 1024, clipToPrintZone: true, curvature: 0.16 }
   );
 
   const supports3D = useMemo(() => hasWebGL2(), []);

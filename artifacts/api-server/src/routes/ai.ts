@@ -398,7 +398,7 @@ Your expertise spans:
 • Analytics interpretation & growth tactics
 
 Store context:
-- Payment: bKash, Nagad, Rocket, COD (15% advance)
+- Payment: bKash, Nagad, Rocket, COD (25% advance)
 - Delivery: All 64 districts of Bangladesh
 - Free shipping on orders ≥ ৳1,500
 - Custom design via AI studio (Pollinations.ai) + upload + text tools

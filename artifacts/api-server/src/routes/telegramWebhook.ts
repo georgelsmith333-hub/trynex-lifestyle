@@ -304,7 +304,7 @@ async function cmdInvoice(orderNumber: string): Promise<string> {
   const shipping = parseFloat(String(o.shippingCost || 0));
   const discount = parseFloat(String(o.promoDiscount || 0));
   const total = parseFloat(String(o.total || 0));
-  const advance = Math.ceil(total * 0.15);
+  const advance = Math.ceil(total * 0.25);
   const due = total - advance;
 
   const dateStr = new Date(o.createdAt).toLocaleDateString("en-BD", {
@@ -340,7 +340,7 @@ async function cmdInvoice(orderNumber: string): Promise<string> {
     `💳 Payment: ${(o.paymentMethod || "COD").toUpperCase()}`,
     `💚 Pay Status: <b>${(o.paymentStatus || "not_paid").toUpperCase()}</b>`,
     ...(o.paymentMethod !== "cod" ? [
-      `🏷️ Advance (15%): ৳${advance.toLocaleString()}`,
+      `🏷️ Advance (25%): ৳${advance.toLocaleString()}`,
       `💸 Balance Due:   ৳${due.toLocaleString()}`,
     ] : []),
     ``,

@@ -55,6 +55,11 @@ interface ComposeOptions {
   imageCache?: Map<string, HTMLImageElement>;
   clipToPrintZone?: boolean;
   blendMode?: GlobalCompositeOperation;
+  /** 0 = flat (apparel). >0 fakes a cylindrical/dome wrap for curved surfaces
+   *  (mug, water bottle, cap) — edges compress horizontally, bow slightly
+   *  vertically, and darken to mimic the surface curving away from camera.
+   *  Typical values: 0.16 (mug/bottle side curve), 0.10 (cap dome). */
+  curvature?: number;
 }
 
 const IMAGE_CACHE_MAX = 60;
@@ -166,10 +171,51 @@ function textAlignOffset(align: "left" | "center" | "right", halfW: number): num
   return 0;
 }
 
+/** Draw an image warped to fake a cylindrical/dome surface curve.
+ *  Slices the image into vertical strips; strips near the left/right edges
+ *  are shifted down slightly (barrel bow) and darkened (surface curving away
+ *  from the light), while the centre strip is untouched. This is a cheap 2D
+ *  approximation — not a true 3D projection — but reads correctly on a
+ *  photographed curved surface (mug, bottle, cap dome) instead of looking
+ *  like a flat sticker slapped over a round object. */
+function drawImageCurved(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  w: number,
+  h: number,
+  curvature: number,
+) {
+  const STRIPS = 28;
+  const stripW = w / STRIPS;
+  for (let i = 0; i < STRIPS; i++) {
+    // u ranges -1 (left edge) .. 0 (centre) .. 1 (right edge)
+    const u = (i + 0.5) / STRIPS - 0.5;
+    const u2 = 2 * u; // -1..1
+    // Barrel bow: centre sits "closest" to camera, edges recede downward.
+    const bow = (1 - Math.cos((u2 * Math.PI) / 2)) * h * curvature * 0.5;
+    // Edge darkening: surface curving away catches less light.
+    const shade = 1 - Math.abs(u2) * curvature * 1.6;
+
+    const sx0 = (i / STRIPS) * img.naturalWidth;
+    const sw = img.naturalWidth / STRIPS;
+    const dx0 = -w / 2 + i * stripW;
+
+    ctx.save();
+    ctx.filter = shade < 1 ? `brightness(${Math.max(0.55, shade) * 100}%)` : "none";
+    ctx.drawImage(
+      img,
+      sx0, 0, sw, img.naturalHeight,
+      dx0, -h / 2 + bow, stripW + 0.6, h,
+    );
+    ctx.restore();
+  }
+}
+
 export async function composeLayers(opts: ComposeOptions): Promise<HTMLCanvasElement> {
   const {
     canvas, baseHeight, printZone, layers, garmentColor,
     outW, outH, imageCache, clipToPrintZone = true, blendMode = "multiply",
+    curvature = 0,
   } = opts;
   canvas.width = outW;
   canvas.height = outH;
@@ -214,7 +260,11 @@ export async function composeLayers(opts: ComposeOptions): Promise<HTMLCanvasEle
 
         const w = g.w * sx;
         const h = g.h * sy;
-        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+        if (curvature > 0) {
+          drawImageCurved(ctx, img, w, h, curvature);
+        } else {
+          ctx.drawImage(img, -w / 2, -h / 2, w, h);
+        }
 
         if (cssFilter) ctx.filter = "none";
       } catch (imgErr) {
@@ -252,8 +302,9 @@ export async function composeGarmentMockup(opts: {
   layers: ComposerLayer[];
   outSize: number;
   imageCache?: Map<string, HTMLImageElement>;
+  curvature?: number;
 }): Promise<HTMLCanvasElement> {
-  const { canvas, garmentSrc, garmentColor, printZone, layers, outSize, imageCache } = opts;
+  const { canvas, garmentSrc, garmentColor, printZone, layers, outSize, imageCache, curvature = 0 } = opts;
   canvas.width = outSize;
   canvas.height = outSize;
   const ctx = canvas.getContext("2d");
@@ -321,7 +372,11 @@ export async function composeGarmentMockup(opts: {
         const flipSY = layer.flipV ? -1 : 1;
         if (layer.flipH || layer.flipV) ctx.scale(flipSX, flipSY);
 
-        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+        if (curvature > 0) {
+          drawImageCurved(ctx, img, w, h, curvature);
+        } else {
+          ctx.drawImage(img, -w / 2, -h / 2, w, h);
+        }
         if (cssFilter) ctx.filter = "none";
       } catch {}
     } else {
@@ -383,8 +438,9 @@ export async function composeDesignTexture(opts: {
   outSize: number;
   imageCache?: Map<string, HTMLImageElement>;
   clipToPrintZone?: boolean;
+  curvature?: number;
 }): Promise<HTMLCanvasElement> {
-  const { canvas, printZone, layers, outSize, imageCache, clipToPrintZone = true } = opts;
+  const { canvas, printZone, layers, outSize, imageCache, clipToPrintZone = true, curvature = 0 } = opts;
   canvas.width = outSize;
   canvas.height = outSize;
   const ctx = canvas.getContext("2d");
@@ -424,7 +480,11 @@ export async function composeDesignTexture(opts: {
         const flipSY = layer.flipV ? -1 : 1;
         if (layer.flipH || layer.flipV) ctx.scale(flipSX, flipSY);
 
-        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+        if (curvature > 0) {
+          drawImageCurved(ctx, img, w, h, curvature);
+        } else {
+          ctx.drawImage(img, -w / 2, -h / 2, w, h);
+        }
         if (cssFilter) ctx.filter = "none";
       } catch {}
     } else {

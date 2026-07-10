@@ -354,7 +354,7 @@ export default function Checkout() {
   const qualifiesForFreeShipping = freeShippingThreshold > 0 && liveSubtotal >= freeShippingThreshold;
   const shippingCost = liveSubtotal > 0 && !qualifiesForFreeShipping ? shippingFee : 0;
   const total = Math.max(0, liveSubtotal + shippingCost - promoDiscount);
-  const advanceAmount = Math.ceil(total * 0.15);
+  const advanceAmount = Math.ceil(total * 0.25);
 
   const displayTotal = checkoutStatus === 'form' ? total : snapshotRef.current.total;
   const displayAdvance = checkoutStatus === 'form' ? advanceAmount : snapshotRef.current.advance;
@@ -388,7 +388,7 @@ export default function Checkout() {
     const snapQualifies = freeShippingThreshold > 0 && snapSubtotal >= freeShippingThreshold;
     const snapShipping = snapSubtotal > 0 && !snapQualifies ? shippingFee : 0;
     const snapTotal = Math.max(0, snapSubtotal + snapShipping - promoDiscount);
-    const snapAdvance = Math.ceil(snapTotal * 0.15);
+    const snapAdvance = Math.ceil(snapTotal * 0.25);
 
     snapshotRef.current = { total: snapTotal, advance: snapAdvance, shipping: snapShipping };
 
@@ -478,7 +478,7 @@ export default function Checkout() {
       setCreatedOrder(orderData);
 
       const serverTotal = typeof orderData.total === "number" ? orderData.total : snapTotal;
-      const serverAdvance = Math.ceil(serverTotal * 0.15);
+      const serverAdvance = Math.ceil(serverTotal * 0.25);
       snapshotRef.current = { total: serverTotal, advance: serverAdvance, shipping: snapshotRef.current.shipping };
 
       trackPurchase({
@@ -679,7 +679,7 @@ export default function Checkout() {
               ? "Full payment submitted! Our team will verify and confirm your order shortly."
               : paymentMode === 'cod'
               ? "Your order is confirmed! Pay in cash when your parcel arrives at your door."
-              : "15% advance submitted. We'll collect the remaining balance on delivery."}
+              : "25% advance submitted. We'll collect the remaining balance on delivery."}
           </p>
 
           <div className="p-5 rounded-2xl mb-4 bg-gray-50 border border-gray-100">
@@ -843,7 +843,7 @@ export default function Checkout() {
               <p className="text-sm text-gray-500">
                 {paymentMode === 'full'
                   ? `Pay full amount via ${theme.name} — order confirmed instantly`
-                  : `Pay 15% advance via ${theme.name} — rest collected on delivery`}
+                  : `Pay 25% advance via ${theme.name} — rest collected on delivery`}
               </p>
             </div>
 
@@ -862,7 +862,7 @@ export default function Checkout() {
 
               <div className="rounded-2xl p-5 text-center" style={{ background: theme.light, border: `2px solid ${theme.border}` }}>
                 <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: theme.primary }}>
-                  {paymentMode === 'full' ? 'Send This Amount (Full Payment)' : 'Send This Amount (15% Advance)'}
+                  {paymentMode === 'full' ? 'Send This Amount (Full Payment)' : 'Send This Amount (25% Advance)'}
                 </p>
                 <p className="text-6xl font-black font-display" style={{ color: theme.primary }}>
                   {formatPrice(amountToSend)}
@@ -1391,10 +1391,10 @@ export default function Checkout() {
                         <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${paymentMode === 'advance' ? 'border-green-500' : 'border-gray-300'}`}>
                           {paymentMode === 'advance' && <div className="w-2 h-2 rounded-full bg-green-500" />}
                         </div>
-                        <span className="font-black text-sm text-gray-900">15% Advance + Pay Rest on Delivery</span>
+                        <span className="font-black text-sm text-gray-900">25% Advance + Pay Rest on Delivery</span>
                       </div>
                       <p className="text-xs text-gray-500 leading-relaxed pl-6">
-                        Pay <strong className="text-gray-800">{formatPrice(advanceAmount)}</strong> now via bKash / Nagad, rest on delivery.
+                        Pay <strong className="text-gray-800">{formatPrice(advanceAmount)}</strong> now (25%) via bKash / Nagad, rest on delivery.
                       </p>
                     </button>
 
@@ -1494,7 +1494,7 @@ export default function Checkout() {
                         <button type="button" onClick={() => setStep(2)} className="text-[10px] font-black text-orange-600 uppercase">Edit</button>
                       </div>
                       <p className="text-sm font-bold text-gray-900">
-                        {paymentMode === 'full' ? 'Full Payment' : paymentMode === 'advance' ? '15% Advance + COD' : 'Cash on Delivery'}
+                        {paymentMode === 'full' ? 'Full Payment' : paymentMode === 'advance' ? '25% Advance + COD' : 'Cash on Delivery'}
                       </p>
                       {paymentMode !== 'cod' && (
                         <p className="text-xs text-gray-500 mt-0.5">Via {walletChoice.toUpperCase()}</p>
@@ -1620,7 +1620,7 @@ export default function Checkout() {
                       <>
                         <div className="flex justify-between items-center p-3 rounded-xl"
                           style={{ background: 'rgba(232,93,4,0.04)', border: '1px solid rgba(232,93,4,0.12)' }}>
-                          <span className="text-xs font-bold text-orange-600">Pay Now (15% Advance via {walletChoice === 'bkash' ? 'bKash' : walletChoice === 'nagad' ? 'Nagad' : 'uPay'})</span>
+                          <span className="text-xs font-bold text-orange-600">Pay Now (25% Advance via {walletChoice === 'bkash' ? 'bKash' : walletChoice === 'nagad' ? 'Nagad' : 'uPay'})</span>
                           <span className="font-black text-orange-600">{formatPrice(advanceAmount)}</span>
                         </div>
                         <div className="flex justify-between items-center p-3 rounded-xl"

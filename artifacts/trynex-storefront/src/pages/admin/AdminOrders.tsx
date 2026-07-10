@@ -705,7 +705,7 @@ export default function AdminOrders() {
                       {selectedOrder.paymentMethod === 'cod' && (
                         <span className="ml-2 text-[10px] font-bold px-1.5 py-0.5 rounded"
                           style={{ background: 'rgba(74,222,128,0.1)', color: '#4ade80' }}>
-                          15% Advance
+                          25% Advance
                         </span>
                       )}
                     </p>

@@ -127,7 +127,7 @@ export async function sendOrderConfirmationEmail(order: OrderEmailData): Promise
   const payLabel   = (order.paymentMethod ?? "cod").toUpperCase();
   const isCOD      = !order.paymentMethod || order.paymentMethod.toLowerCase() === "cod";
   const totalNum   = Number(order.total);
-  const advance    = Math.ceil(totalNum * 0.15);
+  const advance    = Math.ceil(totalNum * 0.25);
   const itemsHtml  = order.items.map(itemRow).join("");
   const shippingN  = Number(order.shippingCost ?? 0);
   const subtotalN  = Number(order.subtotal ?? (totalNum - shippingN));
@@ -140,7 +140,7 @@ export async function sendOrderConfirmationEmail(order: OrderEmailData): Promise
        </div>`
     : `<div style="background:#FFF8F3;border:1px solid #FFD0A8;border-radius:10px;padding:16px;margin-top:20px;">
          <div style="font-size:13px;font-weight:700;color:${BRAND_ORANGE};margin-bottom:8px;">💳 Payment: ${payLabel}</div>
-         <p style="margin:0 0 6px;font-size:13px;color:#475569;">Please send <b>৳${advance.toLocaleString()}</b> advance (15%) to confirm your order.</p>
+         <p style="margin:0 0 6px;font-size:13px;color:#475569;">Please send <b>৳${advance.toLocaleString()}</b> advance (25%) to confirm your order.</p>
          <p style="margin:0;font-size:13px;color:#475569;">Our team will contact you on <b>${order.customerPhone}</b> with payment details.</p>
        </div>`;
 

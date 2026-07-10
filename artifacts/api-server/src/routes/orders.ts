@@ -160,7 +160,7 @@ async function sendTelegramNotification(orderData: any) {
     .map((i: any) => `  • ${i.productName || i.name} x${i.quantity}`)
     .join("\n");
   const moreItems = (orderData.items || []).length > 5 ? `\n  + ${(orderData.items || []).length - 5} more` : "";
-  const advance = Math.ceil((orderData.total || 0) * 0.15);
+  const advance = Math.ceil((orderData.total || 0) * 0.25);
 
   const message = [
     `🛍️ <b>NEW ORDER #${orderData.orderNumber}</b>`,
@@ -176,7 +176,7 @@ async function sendTelegramNotification(orderData: any) {
     ``,
     `💰 <b>Total:</b> ৳${orderData.total}`,
     `💳 <b>Payment:</b> ${(orderData.paymentMethod || 'COD').toUpperCase()}`,
-    `🏷️ <b>Advance (15%):</b> ৳${advance}`,
+    `🏷️ <b>Advance (25%):</b> ৳${advance}`,
     orderData.promoCode ? `🎟️ <b>Promo:</b> ${orderData.promoCode} (-৳${orderData.promoDiscount})` : '',
     orderData.notes ? `📝 <b>Notes:</b> ${orderData.notes}` : '',
     ``,
@@ -224,7 +224,7 @@ async function sendWhatsAppNotification(orderData: any) {
     .map((i: any) => `${i.productName} x${i.quantity}`)
     .join(", ");
 
-  const advance = Math.ceil(orderData.total * 0.15);
+  const advance = Math.ceil(orderData.total * 0.25);
   const message = [
     `🛒 *NEW ORDER!* #${orderData.orderNumber}`,
     `━━━━━━━━━━━━━━━`,
@@ -237,7 +237,7 @@ async function sendWhatsAppNotification(orderData: any) {
     `🛍️ *Items:* ${itemsList}`,
     `💰 *Total:* ৳${orderData.total}`,
     `💳 *Payment:* ${orderData.paymentMethod?.toUpperCase()}`,
-    `🏷️ *Advance (15%):* ৳${advance}`,
+    `🏷️ *Advance (25%):* ৳${advance}`,
     orderData.promoCode ? `🎟️ *Promo:* ${orderData.promoCode} (-৳${orderData.promoDiscount})` : '',
     orderData.notes ? `📝 *Notes:* ${orderData.notes}` : '',
     `━━━━━━━━━━━━━━━`,

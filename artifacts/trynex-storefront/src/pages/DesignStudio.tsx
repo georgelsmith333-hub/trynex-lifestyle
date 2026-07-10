@@ -1045,11 +1045,14 @@ export default function DesignStudio() {
       // touched anything.
       const currentPz = pzRef.current;
       const aspect = img.naturalWidth / Math.max(img.naturalHeight, 1);
-      const SAFETY_MARGIN = 0.96;
-      // At scale=1 the image fills the print zone WIDTH. Clamp so it also
-      // fits within the print zone HEIGHT (tall images get scaled down).
+      // Smart auto-fit: scale=1 means the image fills the print zone WIDTH exactly.
+      // We want the image to "contain" the print zone — filling as much as possible
+      // while never overflowing either dimension.
+      //   maxScaleForHeight = scale at which image height equals pz.h
+      //   Math.min(1.0, ...) ensures we never exceed 100% of the width either.
+      // Then apply a 90% fill factor so there's a small visible margin.
       const maxScaleForHeight = (currentPz.h * aspect) / currentPz.w;
-      const initialScale = Math.min(0.8, maxScaleForHeight) * SAFETY_MARGIN;
+      const initialScale = Math.min(1.0, maxScaleForHeight) * 0.90;
 
       const layer: ImageLayer = {
         id: uid(), name: file.name.replace(/\.[^.]+$/, "") || "Image",
@@ -1745,7 +1748,9 @@ export default function DesignStudio() {
       },
     },
     {
-      drag: { filterTaps: true, pointer: { touch: true }, threshold: 1 },
+      // No `pointer: { touch: true }` — that would restrict dragging to touch only and break
+      // mouse drag on desktop entirely. Both mouse and touch pointer events are needed.
+      drag: { filterTaps: true, threshold: 1, pointer: { buttons: [1] } },
       // offset is multiplicative for scale (starts at 1) and additive degrees for angle (starts at 0)
       pinch: { scaleBounds: { min: 0.1, max: 5 }, rubberband: true, from: () => [1, 0] },
       eventOptions: { passive: false },
@@ -1817,6 +1822,45 @@ export default function DesignStudio() {
     setCanvasZoom(1);
     setCanvasPan({ x: 0, y: 0 });
   }, [selectedProduct.id, activeFace, viewMode]);
+
+  /* ── Desktop mouse-wheel zoom ──────────────────────────────────────
+   * Fires on the SVG canvas. Ctrl+Wheel or plain Wheel both zoom the
+   * design canvas (no layer selected) or the selected layer (layer hit).
+   * Prevents default scroll when over the canvas so the page does not
+   * scroll while the user is editing their design.
+   */
+  const handleCanvasWheel = useCallback((e: React.WheelEvent<SVGSVGElement>) => {
+    e.preventDefault();
+    const delta = e.deltaY;
+    const factor = delta < 0 ? 1.12 : 1 / 1.12;
+
+    // Check if the wheel event landed on a layer — if so, scale the layer.
+    const target = e.target as Element;
+    const layerId =
+      target.getAttribute?.("data-layer-id") ??
+      target.closest?.("[data-layer-id]")?.getAttribute("data-layer-id");
+
+    if (layerId && !e.ctrlKey) {
+      // Scale the hovered layer
+      setLayers(prev =>
+        prev.map(l => {
+          if (l.id !== layerId) return l;
+          const newScale = Math.max(0.05, Math.min(8, l.transform.scale * factor));
+          return { ...l, transform: { ...l.transform, scale: newScale } };
+        })
+      );
+      return;
+    }
+
+    // No layer hit (or Ctrl held) → zoom the canvas
+    const newZoom = Math.max(0.4, Math.min(4, canvasZoomRef.current * factor));
+    canvasZoomRef.current = newZoom;
+    setCanvasZoom(newZoom);
+    if (newZoom <= 1) {
+      canvasPanRef.current = { x: 0, y: 0 };
+      setCanvasPan({ x: 0, y: 0 });
+    }
+  }, []);
 
   /* ── Compute layer SVG geometry ────────────────────── */
   const layerGeom = (l: Layer) => {
@@ -2006,14 +2050,17 @@ export default function DesignStudio() {
           imageCache,
           clipToPrintZone: true,
           blendMode: "multiply",
+          curvature: 0.16,
         });
       } else {
+        const curveByCategory = isWaterBottle ? 0.16 : isCap ? 0.1 : 0;
         await composeDesignTexture({
           canvas: frontTexCanvas,
           printZone: frontPZ,
           layers: frontLayers,
           outSize: 1024,
           imageCache,
+          curvature: curveByCategory,
         });
       }
       const frontTexUrl = frontTexCanvas.toDataURL("image/webp", 0.85);
@@ -2849,6 +2896,7 @@ export default function DesignStudio() {
                   {...(bindCanvasGestures() as Record<string, unknown>)}
                   onPointerDown={handleSvgPointerDown}
                   onClick={handleCanvasClick}
+                  onWheel={handleCanvasWheel}
                 >
                   {isFlatZone && activeZoneConfig
                     ? <FlatZoneSVG zone={activeZoneConfig} showPrintZone={effectiveShowPrintZone} garmentPhotoSrc={(() => {
