@@ -1046,13 +1046,15 @@ export default function DesignStudio() {
       const currentPz = pzRef.current;
       const aspect = img.naturalWidth / Math.max(img.naturalHeight, 1);
       // Smart auto-fit: scale=1 means the image fills the print zone WIDTH exactly.
-      // We want the image to "contain" the print zone — filling as much as possible
-      // while never overflowing either dimension.
-      //   maxScaleForHeight = scale at which image height equals pz.h
-      //   Math.min(1.0, ...) ensures we never exceed 100% of the width either.
-      // Then apply a 90% fill factor so there's a small visible margin.
+      // "contain" fit — the image fills as much of the print zone as possible while
+      // keeping both dimensions fully inside the zone (no clipping).
+      //   maxScaleForWidth  = 1.0 (scale=1 → width exactly fills pz.w)
+      //   maxScaleForHeight = scale at which image height exactly equals pz.h
+      //     = pz.h / (pz.w / aspect) = (pz.h * aspect) / pz.w
+      // Take the minimum so neither dimension overflows, then apply 95% so the
+      // placed image has a tiny margin and never triggers the "outside print area" warning.
       const maxScaleForHeight = (currentPz.h * aspect) / currentPz.w;
-      const initialScale = Math.min(1.0, maxScaleForHeight) * 0.90;
+      const initialScale = Math.min(1.0, maxScaleForHeight) * 0.95;
 
       const layer: ImageLayer = {
         id: uid(), name: file.name.replace(/\.[^.]+$/, "") || "Image",
@@ -1626,7 +1628,11 @@ export default function DesignStudio() {
     {
       onDragStart: ({ event, xy: [cx, cy] }) => {
         const target = event.target as Element;
-        const layerId = target.getAttribute?.("data-layer-id");
+        // Use closest() fallback so touches landing on child elements of a layer group
+        // (e.g. text spans, image child nodes) still resolve to the correct layer.
+        const layerId =
+          target.getAttribute?.("data-layer-id") ??
+          target.closest?.("[data-layer-id]")?.getAttribute("data-layer-id");
         if (layerId) {
           const layer = layersRef.current.find(l => l.id === layerId);
           if (!layer || layer.locked) { gestureRef.current = null; return; }
@@ -1748,9 +1754,10 @@ export default function DesignStudio() {
       },
     },
     {
-      // No `pointer: { touch: true }` — that would restrict dragging to touch only and break
-      // mouse drag on desktop entirely. Both mouse and touch pointer events are needed.
-      drag: { filterTaps: true, threshold: 1, pointer: { buttons: [1] } },
+      // No pointer restriction — allow both mouse (any button state) and touch.
+      // pointer:{buttons:[1]} was tried but breaks touch on Android/iOS where PointerEvents
+      // don't consistently report buttons=1. Removing it restores universal drag.
+      drag: { filterTaps: true, threshold: 1 },
       // offset is multiplicative for scale (starts at 1) and additive degrees for angle (starts at 0)
       pinch: { scaleBounds: { min: 0.1, max: 5 }, rubberband: true, from: () => [1, 0] },
       eventOptions: { passive: false },
@@ -2262,6 +2269,29 @@ export default function DesignStudio() {
     window.addEventListener("pointerup", onUp);
   }, [selectedLayer, removeLayer]);
 
+  /* ── Rotate handle drag (desktop + touch) ───────────── */
+  const handleRotateDown = useCallback((e: React.PointerEvent<SVGCircleElement>) => {
+    e.stopPropagation();
+    if (!selectedLayer || selectedLayer.locked) return;
+    (e.target as Element).setPointerCapture(e.pointerId);
+    const cx = pz.x + pz.w / 2 + selectedLayer.transform.x;
+    const cy = pz.y + pz.h / 2 + selectedLayer.transform.y;
+    const onMove = (me: PointerEvent) => {
+      const pt = clientToSVG(me.clientX, me.clientY);
+      // atan2(dx, -dy) gives CW angle from top, matching SVG rotate direction
+      const angle = Math.atan2(pt.x - cx, cy - pt.y) * (180 / Math.PI);
+      setLayers(prev => prev.map(l => l.id === selectedLayer.id
+        ? { ...l, transform: { ...l.transform, rotation: angle } } : l));
+    };
+    const onUp = () => {
+      window.removeEventListener("pointermove", onMove as EventListener);
+      window.removeEventListener("pointerup", onUp);
+      setLayers(curr => { commitLayers(curr); return curr; });
+    };
+    window.addEventListener("pointermove", onMove as EventListener);
+    window.addEventListener("pointerup", onUp);
+  }, [selectedLayer, clientToSVG, pz, commitLayers]);
+
   const handleEdgeResizeDown = useCallback((e: React.PointerEvent<SVGCircleElement | SVGRectElement>, edgeKey: string) => {
     e.stopPropagation();
     if (!selectedLayer || selectedLayer.locked || selectedLayer.type !== "image") return;
@@ -2322,6 +2352,19 @@ export default function DesignStudio() {
         y: cy + dx * Math.sin(rad) + dy * Math.cos(rad),
       };
     });
+  }, [selectedLayer, selGeom]);
+
+  /* ── Rotate handle position — circle above top-center of selection ── */
+  const rotateHandle = useMemo(() => {
+    if (!selectedLayer || !selGeom) return null;
+    const { cx, cy, h } = selGeom;
+    const rad = (selectedLayer.transform.rotation * Math.PI) / 180;
+    // Local vector: (0, -(h/2 + 38)) — above the top edge by 38 SVG units
+    const dist = h / 2 + 38;
+    return {
+      x: cx + dist * Math.sin(rad),
+      y: cy - dist * Math.cos(rad),
+    };
   }, [selectedLayer, selGeom]);
 
   return (
@@ -2470,7 +2513,7 @@ export default function DesignStudio() {
       </div>
 
       <div className="flex-1 max-w-7xl mx-auto w-full px-4 py-6">
-        <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex flex-col md:flex-row gap-6">
 
           {/* ═══════ LEFT: MOCKUP CANVAS ═══════ */}
           <div className="flex-1 min-w-0">
@@ -2965,15 +3008,26 @@ export default function DesignStudio() {
                           ? `rotate(${l.transform.rotation}, ${g.cx}, ${g.cy}) translate(${g.cx}, ${g.cy}) scale(${flipSX}, ${flipSY}) translate(${-g.cx}, ${-g.cy})`
                           : `rotate(${l.transform.rotation}, ${g.cx}, ${g.cy})`;
                         return (
-                          <image key={l.id}
-                            data-layer-id={l.id}
-                            href={l.src}
-                            x={g.x} y={g.y} width={g.w} height={g.h}
-                            opacity={l.transform.opacity}
-                            transform={imgTransform}
-                            preserveAspectRatio="none"
-                            style={{ cursor: l.locked ? "not-allowed" : "grab", filter: userAdj }}
-                          />
+                          <g key={l.id} data-layer-id={l.id} transform={imgTransform}
+                            style={{ cursor: l.locked ? "not-allowed" : "grab" }}>
+                            <image
+                              data-layer-id={l.id}
+                              href={l.src}
+                              x={g.x} y={g.y} width={g.w} height={g.h}
+                              opacity={l.transform.opacity}
+                              preserveAspectRatio="none"
+                              pointerEvents="none"
+                              style={{ filter: userAdj }}
+                            />
+                            {/* Transparent hit-rect — ensures reliable pointer events on every
+                                browser/device regardless of SVG <image> pointer-event quirks */}
+                            <rect
+                              data-layer-id={l.id}
+                              x={g.x} y={g.y} width={g.w} height={g.h}
+                              fill="transparent"
+                              pointerEvents="all"
+                            />
+                          </g>
                         );
                       }
                       const hasShadow = !!(l.shadowBlur || l.shadowOffsetX || l.shadowOffsetY);
@@ -3020,27 +3074,62 @@ export default function DesignStudio() {
 
 
 
-                  {/* Selection outline + handles */}
+                  {/* ── Canva-style selection: border + corner squares + rotate handle ── */}
                   {selectedLayer && selGeom && (
                     <g pointerEvents="none">
+                      {/* Solid selection border — no dash, clean white outline with orange inner */}
                       <rect x={selGeom.x} y={selGeom.y} width={selGeom.w} height={selGeom.h}
-                        fill="none" stroke="#E85D04" strokeWidth="1" strokeDasharray="4 3"
+                        fill="none" stroke="white" strokeWidth="2.5"
                         transform={`rotate(${selectedLayer.transform.rotation}, ${selGeom.cx}, ${selGeom.cy})`}
                         vectorEffect="non-scaling-stroke" />
+                      <rect x={selGeom.x} y={selGeom.y} width={selGeom.w} height={selGeom.h}
+                        fill="none" stroke="#E85D04" strokeWidth="1.2"
+                        transform={`rotate(${selectedLayer.transform.rotation}, ${selGeom.cx}, ${selGeom.cy})`}
+                        vectorEffect="non-scaling-stroke" />
+                      {/* Rotate line from top-center to handle circle */}
+                      {rotateHandle && (() => {
+                        const topCx = selGeom.cx + (selGeom.h / 2) * Math.sin(selectedLayer.transform.rotation * Math.PI / 180);
+                        const topCy = selGeom.cy - (selGeom.h / 2) * Math.cos(selectedLayer.transform.rotation * Math.PI / 180);
+                        return (
+                          <line x1={topCx} y1={topCy} x2={rotateHandle.x} y2={rotateHandle.y}
+                            stroke="white" strokeWidth="2" strokeDasharray="3 2" vectorEffect="non-scaling-stroke" />
+                        );
+                      })()}
                     </g>
                   )}
-                  {/* Corner resize handles — visible dot + transparent 44px hit area */}
+                  {/* Rotate handle circle — drag to rotate the selected layer */}
+                  {selectedLayer && rotateHandle && !selectedLayer.locked && (
+                    <g>
+                      <circle cx={rotateHandle.x} cy={rotateHandle.y} r={9}
+                        fill="white" stroke="#E85D04" strokeWidth="1.5"
+                        style={{ filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.25))" }}
+                        vectorEffect="non-scaling-stroke"
+                        pointerEvents="none"
+                      />
+                      {/* Curved arrow icon inside rotate handle */}
+                      <text x={rotateHandle.x} y={rotateHandle.y} textAnchor="middle" dominantBaseline="middle"
+                        fontSize="9" fill="#E85D04" style={{ userSelect: "none" }} pointerEvents="none">↻</text>
+                      {/* Large transparent hit area */}
+                      <circle cx={rotateHandle.x} cy={rotateHandle.y} r={22}
+                        fill="transparent"
+                        style={{ cursor: "crosshair", touchAction: "none" }}
+                        pointerEvents="all"
+                        onPointerDown={handleRotateDown}
+                      />
+                    </g>
+                  )}
+                  {/* Corner resize handles — Canva-style square knobs + large transparent hit area */}
                   {selectedLayer && rotatedCorners.map(h => (
                     <g key={h.key}>
-                      {/* Visible handle dot — smaller and minimal */}
-                      <circle cx={h.x} cy={h.y} r={5}
+                      {/* Visible square handle */}
+                      <rect x={h.x - 6} y={h.y - 6} width={12} height={12} rx={2}
                         fill="white" stroke="#E85D04" strokeWidth="1.5"
-                        style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.18))" }}
+                        style={{ filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.25))" }}
                         pointerEvents="none"
                         vectorEffect="non-scaling-stroke"
                       />
-                      {/* Transparent hit area — 30px radius on all devices for reliable finger taps */}
-                      <circle cx={h.x} cy={h.y} r={30}
+                      {/* Large transparent hit area for reliable touch + mouse */}
+                      <circle cx={h.x} cy={h.y} r={26}
                         fill="transparent"
                         style={{ cursor: "nwse-resize", touchAction: "none" }}
                         pointerEvents="all"
@@ -3049,39 +3138,7 @@ export default function DesignStudio() {
                     </g>
                   ))}
 
-                  {/* Edge midpoint handles — visible rect + transparent 44×44 hit rect */}
-                  {selectedLayer && selectedLayer.type === "image" && selGeom && edgeMidpoints.map(h => (
-                    /* Each strip is rendered in LOCAL (un-rotated) layer coordinates,
-                       then rotated around the layer center via SVG transform.
-                       This makes the entire edge length touchable — not just the midpoint. */
-                    <g key={h.key} transform={`rotate(${selectedLayer.transform.rotation}, ${selGeom.cx}, ${selGeom.cy})`}>
-                      {/* Full-edge transparent hit strip — spans the whole side */}
-                      <rect
-                        x={h.midX - h.stripW / 2}
-                        y={h.midY - h.stripH / 2}
-                        width={h.stripW}
-                        height={h.stripH}
-                        fill="transparent"
-                        style={{ cursor: h.cursor, touchAction: "none" }}
-                        pointerEvents="all"
-                        onPointerDown={e => handleEdgeResizeDown(e as unknown as React.PointerEvent<SVGCircleElement | SVGRectElement>, h.key)}
-                      />
-                      {/* Pill-shaped visible indicator at the edge midpoint — minimal */}
-                      <rect
-                        x={h.key === "n" || h.key === "s" ? h.midX - 10 : h.midX - 4}
-                        y={h.key === "n" || h.key === "s" ? h.midY - 4 : h.midY - 10}
-                        width={h.key === "n" || h.key === "s" ? 20 : 8}
-                        height={h.key === "n" || h.key === "s" ? 8 : 20}
-                        rx={4}
-                        fill="white"
-                        stroke="#E85D04"
-                        strokeWidth="1.5"
-                        vectorEffect="non-scaling-stroke"
-                        style={{ filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.18))" }}
-                        pointerEvents="none"
-                      />
-                    </g>
-                  ))}
+                  {/* Edge midpoint handles removed — Canva-style: corner handles only */}
 
                   {/* Red delete (×) button at the top-right corner of the selected layer */}
                   {selectedLayer && selectedLayer.type === "image" && (() => {
@@ -3454,14 +3511,15 @@ export default function DesignStudio() {
           )}
 
           {/* ═══════ RIGHT: TABBED PANEL ═══════ */}
-          {/* On desktop: inline sidebar. On mobile: slide-up bottom sheet via mobileToolOpen. */}
-          <div className={`lg:w-[340px] shrink-0 flex flex-col lg:sticky lg:self-start
+          {/* On desktop (md+): sticky inline sidebar. On mobile: slide-up bottom sheet. */}
+          <div className={`md:w-[320px] lg:w-[340px] shrink-0 flex flex-col md:sticky md:self-start
             ${mobileToolOpen
               ? 'fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl max-h-[80vh] overflow-hidden shadow-2xl gap-2'
-              : 'hidden lg:flex gap-4'}`}
+              : 'hidden md:flex gap-4'}`}
+            data-lenis-prevent
             style={mobileToolOpen
               ? { background: "#faf9f6", paddingBottom: "max(16px, env(safe-area-inset-bottom, 16px))" }
-              : { top: "calc(var(--announcement-height, 0px) + 8rem)", maxHeight: "calc(100vh - var(--announcement-height, 0px) - 8rem)", overflowY: "auto" }}
+              : { top: "calc(var(--announcement-height, 0px) + 5rem)", maxHeight: "calc(100vh - var(--announcement-height, 0px) - 5rem)", overflowY: "auto", scrollbarGutter: "stable" }}
           >
             {/* Mobile drag handle */}
             {mobileToolOpen && (
@@ -3510,7 +3568,7 @@ export default function DesignStudio() {
                 ))}
               </div>
 
-              <div className={mobileToolOpen ? 'flex-1 min-h-0 overflow-y-auto' : 'overflow-y-auto'}>
+              <div className={mobileToolOpen ? 'flex-1 min-h-0 overflow-y-auto overscroll-contain' : 'overflow-y-auto overscroll-contain'} style={{ scrollbarWidth: "thin", scrollbarColor: "#e9e5e0 transparent" }}>
               <AnimatePresence mode="wait">
                 {/* ── UPLOAD TAB ── */}
                 {activeTab === "upload" && (

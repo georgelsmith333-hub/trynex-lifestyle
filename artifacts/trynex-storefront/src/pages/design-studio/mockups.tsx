@@ -100,22 +100,22 @@ export interface DesignProduct {
      MUG_PZ         — full 360° wrap
      WATERBOTTLE_PZ — bottle body (cylindrical section)
 ──────────────────────────────────────────────────────── */
-export const TSHIRT_PZ: PrintZone           = { x: 308, y: 225, w: 384, h: 385 };
-export const TSHIRT_BACK_PZ: PrintZone      = { x: 292, y: 192, w: 416, h: 455 };
-export const LONGSLEEVE_PZ: PrintZone       = { x: 314, y: 235, w: 372, h: 390 };
-export const LONGSLEEVE_BACK_PZ: PrintZone  = { x: 298, y: 200, w: 404, h: 448 };
-/** Hoodie front — stops at ~y=530 to clear the kangaroo pocket (pocket starts ~y=565). */
-export const HOODIE_PZ: PrintZone           = { x: 338, y: 258, w: 324, h: 272 };
-export const HOODIE_BACK_PZ: PrintZone      = { x: 298, y: 188, w: 404, h: 440 };
-/** Cap front panel — structured 5-panel cap, panel height ≈ 24% of mockup height. */
-export const CAP_PZ: PrintZone              = { x: 342, y: 305, w: 316, h: 248 };
+export const TSHIRT_PZ: PrintZone           = { x: 305, y: 220, w: 390, h: 395 };
+export const TSHIRT_BACK_PZ: PrintZone      = { x: 288, y: 188, w: 424, h: 465 };
+export const LONGSLEEVE_PZ: PrintZone       = { x: 310, y: 228, w: 380, h: 400 };
+export const LONGSLEEVE_BACK_PZ: PrintZone  = { x: 292, y: 195, w: 416, h: 458 };
+/** Hoodie front — stops at ~y=528 to clear the kangaroo pocket (pocket starts ~y=565). */
+export const HOODIE_PZ: PrintZone           = { x: 332, y: 252, w: 336, h: 278 };
+export const HOODIE_BACK_PZ: PrintZone      = { x: 292, y: 184, w: 416, h: 448 };
+/** Cap front panel — structured 5-panel cap, panel is centred between brim and seam. */
+export const CAP_PZ: PrintZone              = { x: 338, y: 290, w: 324, h: 240 };
 export const MUG_PZ: PrintZone              = { x: 150, y: 180, w: 700, h: 640 };
-/** Mug side — starts below the rim band, stops above the base band. */
-export const MUG_SIDE_PZ: PrintZone         = { x: 188, y: 252, w: 420, h: 478 };
-/** Water bottle — printable front panel on the cylindrical body.
+/** Mug side — printable area on the cylindrical side face, clear of rim band and base ring. */
+export const MUG_SIDE_PZ: PrintZone         = { x: 192, y: 248, w: 410, h: 472 };
+/** Water bottle — printable front label panel on the cylindrical body.
  *  Calibrated to the real 600ml aluminium carabiner bottle (1600×1600 PNG).
- *  Content spans x:[326–660] centre≈493; shoulder ends ~y=275, base ~y=858. */
-export const WATERBOTTLE_PZ: PrintZone      = { x: 348, y: 278, w: 290, h: 575 };
+ *  Content spans x:[336–660] centre≈498; shoulder ends ~y=268, base band ~y=850. */
+export const WATERBOTTLE_PZ: PrintZone      = { x: 345, y: 268, w: 310, h: 582 };
 /** Sleeve print area — roughly square (1228×1087px real-world ratio). */
 export const SLEEVE_PZ: PrintZone           = { x: 175, y: 175, w: 650, h: 650 };
 /** Neck label — wider than tall (1299×945px real-world ratio). */
