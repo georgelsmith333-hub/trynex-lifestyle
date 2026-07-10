@@ -503,14 +503,14 @@ function SystemHealthWidget() {
   }
 
   const services = [
-    { id: "database", name: "Database", icon: Database, status: (health as any)?.database?.status },
+    { id: "database", name: "Database", icon: Database, status: (health as any)?.db?.status },
     { id: "redis", name: "Redis", icon: Wifi, status: (health as any)?.redis?.status },
     { id: "storage", name: "R2 Storage", icon: HardDrive, status: (health as any)?.storage?.status },
     { id: "telegram", name: "Telegram", icon: MessageCircle, status: (health as any)?.telegram?.status },
   ];
 
   const getStatusColor = (status: string) => {
-    if (status === "healthy" || status === "connected" || status === "online") return "bg-green-50 text-green-600 border-green-100";
+    if (status === "ok" || status === "healthy" || status === "connected" || status === "online" || status === "configured") return "bg-green-50 text-green-600 border-green-100";
     if (status === "degraded" || status === "warning") return "bg-yellow-50 text-yellow-600 border-yellow-100";
     return "bg-red-50 text-red-600 border-red-100";
   };

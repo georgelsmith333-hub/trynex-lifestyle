@@ -814,9 +814,12 @@ export default function DesignStudio() {
   // Apparel sleeve/neck zones: use getZonePZ which returns SLEEVE_PZ or NECK_LABEL_PZ.
   // Apparel front/back: product's own printZone.
   const pz = useMemo(() => {
-    if (isMugProduct) return MUG_SIDE_PZ;
+    if (isMugProduct) {
+      // Mug wrap mode uses full 360° wrap zone; side modes use the side zone.
+      return mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ;
+    }
     return getZonePZ(activeFace, selectedProduct);
-  }, [isMugProduct, activeFace, selectedProduct]);
+  }, [isMugProduct, activeFace, selectedProduct, mugMode]);
   const pzRef = useRef(pz);
   useEffect(() => { pzRef.current = pz; }, [pz]);
 
@@ -910,9 +913,8 @@ export default function DesignStudio() {
       let hw: number, hh: number;
       if (l.type === "image") {
         const imgL = l as ImageLayer;
-        const aspect = imgL.naturalH / Math.max(imgL.naturalW, 1);
-        hw = (pz.w * scale * scaleX) / 2;
-        hh = (pz.w * scale * scaleY * aspect) / 2;
+        hw = (imgL.naturalW * scale * scaleX) / 2;
+        hh = (imgL.naturalH * scale * scaleY) / 2;
       } else {
         const txtL = l as TextLayer;
         hw = txtL.fontSize * scale * scaleX * 2.5;
@@ -1037,24 +1039,22 @@ export default function DesignStudio() {
         return;
       }
 
-      // Smart auto-placement: scale the image to fit within the print zone
-      // respecting both width and height, with a comfortable 80% fill.
-      // A small SAFETY_MARGIN keeps the freshly-placed image safely clear of
-      // the bleed-tolerance check so a brand-new upload never immediately
-      // shows the "extends outside print area" warning before the user has
-      // touched anything.
+      // ── Auto-fit uploaded image into the print zone ──────────────────────────────────────────────────────────────────────────
+      // layerGeom computes:
+      //   w = naturalW * scale   (pixel width  → SVG units in the 1000×1000 viewBox)
+      //   h = naturalH * scale   (pixel height → SVG units)
+      // So scale=1 means a 1000×1000px image renders as 1000×1000 SVG units.
+      //
+      // To "contain" the image inside the print zone (fit completely, no overflow):
+      //   maxScaleWidth  = pz.w / img.naturalWidth   (scale that makes width = pz.w)
+      //   maxScaleHeight = pz.h / img.naturalHeight   (scale that makes height = pz.h)
+      // Take the smaller so neither dimension overflows. Then apply 0.92 fill
+      // factor — a small margin so the image is fully inside the zone with a
+      // tiny breathing room, and it NEVER triggers the "outside print area" warning.
       const currentPz = pzRef.current;
-      const aspect = img.naturalWidth / Math.max(img.naturalHeight, 1);
-      // Smart auto-fit: scale=1 means the image fills the print zone WIDTH exactly.
-      // "contain" fit — the image fills as much of the print zone as possible while
-      // keeping both dimensions fully inside the zone (no clipping).
-      //   maxScaleForWidth  = 1.0 (scale=1 → width exactly fills pz.w)
-      //   maxScaleForHeight = scale at which image height exactly equals pz.h
-      //     = pz.h / (pz.w / aspect) = (pz.h * aspect) / pz.w
-      // Take the minimum so neither dimension overflows, then apply 95% so the
-      // placed image has a tiny margin and never triggers the "outside print area" warning.
-      const maxScaleForHeight = (currentPz.h * aspect) / currentPz.w;
-      const initialScale = Math.min(1.0, maxScaleForHeight) * 0.95;
+      const maxScaleWidth = currentPz.w / Math.max(img.naturalWidth, 1);
+      const maxScaleHeight = currentPz.h / Math.max(img.naturalHeight, 1);
+      const initialScale = Math.min(maxScaleWidth, maxScaleHeight) * 0.92;
 
       const layer: ImageLayer = {
         id: uid(), name: file.name.replace(/\.[^.]+$/, "") || "Image",
@@ -1787,11 +1787,11 @@ export default function DesignStudio() {
   }, []);
 
   /* ── Click/tap on empty canvas deselects ────────────────────
-   * filterTaps:true on the gesture means onDragStart only fires on
-   * real drags. This onClick handles deselection for pure taps on
-   * the canvas background.  Layer selection is already handled above
-   * on pointer-down (instant feedback), so we only need to deselect
-   * here when the user taps empty space.
+   * This fires on any tap/click on the SVG canvas that did NOT hit a
+   * layer (the hit-rect rect has pointerEvents="all", so a tap directly on
+   * the SVG background or the <g> wrapping the hit-rect will land here).
+   * We walk up the DOM path and if neither the target nor any ancestor
+   * has a data-layer-id, we deselect the current layer.
    */
   const handleCanvasClick = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
     const target = e.target as Element;
@@ -1799,11 +1799,9 @@ export default function DesignStudio() {
       target.getAttribute?.("data-layer-id") ??
       target.closest?.("[data-layer-id]")?.getAttribute("data-layer-id");
     if (!layerId) {
-      // Tapped empty canvas — deselect
       setSelectedLayerId(null);
       selectedLayerIdRef.current = null;
     }
-    // Layer selection was already done on pointer-down — no need to repeat.
   }, []);
 
   /* ── Keyboard shortcuts: undo/redo, delete ─────────── */
@@ -1884,10 +1882,9 @@ export default function DesignStudio() {
     const cx = pz.x + pz.w / 2 + l.transform.x;
     const cy = pz.y + pz.h / 2 + l.transform.y;
     if (l.type === "image") {
-      const aspect = l.naturalW / Math.max(l.naturalH, 1);
-      const baseW = pz.w * l.transform.scale;
-      const w = baseW * (l.transform.scaleX ?? 1);
-      const h = (baseW / aspect) * (l.transform.scaleY ?? 1);
+      // scale = pixel-to-SVG-unit conversion factor (NOT fraction of print zone).
+      const w = l.naturalW * l.transform.scale * (l.transform.scaleX ?? 1);
+      const h = l.naturalH * l.transform.scale * (l.transform.scaleY ?? 1);
       return { cx, cy, w, h, x: cx - w / 2, y: cy - h / 2 };
     }
     // text — approximate bounding box from font metrics
@@ -2300,9 +2297,8 @@ export default function DesignStudio() {
     const geom = (() => {
       const cx = pz.x + pz.w / 2 + startT.x;
       const cy = pz.y + pz.h / 2 + startT.y;
-      const aspect = (selectedLayer as ImageLayer).naturalW / Math.max((selectedLayer as ImageLayer).naturalH, 1);
-      const baseW = pz.w * startT.scale;
-      return { cx, cy, aspect, baseW };
+      const imgL = selectedLayer as ImageLayer;
+      return { cx, cy, naturalW: imgL.naturalW, naturalH: imgL.naturalH };
     })();
 
     const onMove = (me: PointerEvent) => {
@@ -2312,12 +2308,11 @@ export default function DesignStudio() {
       const lx = dx * Math.cos(rad) - dy * Math.sin(rad);
       const ly = dx * Math.sin(rad) + dy * Math.cos(rad);
       if (edgeKey === "n" || edgeKey === "s") {
-        const baseH = geom.baseW / geom.aspect;
-        const newScaleY = Math.max(0.05, Math.min(10, (Math.abs(ly) * 2) / baseH));
+        const newScaleY = Math.max(0.05, Math.min(10, (Math.abs(ly) * 2) / (geom.naturalH * startT.scale)));
         setLayers(prev => prev.map(l => l.id === selectedLayer.id
           ? { ...l, transform: { ...l.transform, scaleY: newScaleY } } : l));
       } else {
-        const newScaleX = Math.max(0.05, Math.min(10, (Math.abs(lx) * 2) / geom.baseW));
+        const newScaleX = Math.max(0.05, Math.min(10, (Math.abs(lx) * 2) / (geom.naturalW * startT.scale)));
         setLayers(prev => prev.map(l => l.id === selectedLayer.id
           ? { ...l, transform: { ...l.transform, scaleX: newScaleX } } : l));
       }
@@ -3047,7 +3042,7 @@ export default function DesignStudio() {
                             </defs>
                           )}
                           <text
-                            data-layer-id={l.id}
+                            pointerEvents="none"
                             x={l.textAlign === "left" ? g.cx - g.w / 2 : l.textAlign === "right" ? g.cx + g.w / 2 : g.cx}
                             y={g.cy}
                             fill={l.color}
@@ -3066,6 +3061,16 @@ export default function DesignStudio() {
                             filter={shadowFilterId ? `url(#${shadowFilterId})` : undefined}
                             style={{ cursor: l.locked ? "not-allowed" : "grab", userSelect: "none" }}
                           >{l.text}</text>
+                          {/* Transparent hit-rect behind text — ensures reliable
+                              tap/click on mobile where <text> pointerEvents are flaky */}
+                          <rect
+                            data-layer-id={l.id}
+                            x={g.x} y={g.y} width={g.w} height={g.h}
+                            fill="transparent"
+                            pointerEvents="all"
+                            transform={`rotate(${l.transform.rotation}, ${g.cx}, ${g.cy})`}
+                            style={{ cursor: l.locked ? "not-allowed" : "grab" }}
+                          />
                         </g>
                       );
                     })}
@@ -3446,8 +3451,7 @@ export default function DesignStudio() {
                       title="Fit design to print area"
                       onClick={() => {
                         const imgL = selectedLayer as ImageLayer;
-                        const aspect = imgL.naturalW / Math.max(imgL.naturalH, 1);
-                        const fitScale = Math.min(0.90, (pz.h * 0.90 * aspect) / pz.w);
+                        const fitScale = Math.min(pz.w / Math.max(imgL.naturalW, 1), pz.h / Math.max(imgL.naturalH, 1)) * 0.92;
                         updateLayer(selectedLayer.id, l => ({ ...l, transform: { ...l.transform, scale: fitScale, x: 0, y: 0 } }), true);
                       }}
                       className="p-2 rounded-xl active:scale-95 transition-transform"
@@ -4087,8 +4091,7 @@ export default function DesignStudio() {
                                   title="Fit to print area — scales design to fill 90% of the print zone"
                                   onClick={() => {
                                     const imgL = selectedLayer as ImageLayer;
-                                    const aspect = imgL.naturalW / Math.max(imgL.naturalH, 1);
-                                    const fitScale = Math.min(0.90, (pz.h * 0.90 * aspect) / pz.w);
+                                    const fitScale = Math.min(pz.w / Math.max(imgL.naturalW, 1), pz.h / Math.max(imgL.naturalH, 1)) * 0.92;
                                     updateLayer(selectedLayer.id, l => ({ ...l, transform: { ...l.transform, scale: fitScale, x: 0, y: 0 } }), true);
                                   }}
                                   className="flex-1 py-1.5 rounded-lg text-[11px] font-bold border transition-all hover:border-orange-300 hover:text-orange-600"
@@ -4100,8 +4103,7 @@ export default function DesignStudio() {
                                   title="Fill print area — scales design to cover the full print zone (may crop edges)"
                                   onClick={() => {
                                     const imgL = selectedLayer as ImageLayer;
-                                    const aspect = imgL.naturalW / Math.max(imgL.naturalH, 1);
-                                    const fillScale = Math.max(1.0, (pz.h * aspect) / pz.w);
+                                    const fillScale = Math.max(pz.w / Math.max(imgL.naturalW, 1), pz.h / Math.max(imgL.naturalH, 1));
                                     updateLayer(selectedLayer.id, l => ({ ...l, transform: { ...l.transform, scale: fillScale, x: 0, y: 0 } }), true);
                                   }}
                                   className="flex-1 py-1.5 rounded-lg text-[11px] font-bold border transition-all hover:border-orange-300 hover:text-orange-600"
