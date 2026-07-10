@@ -1829,9 +1829,14 @@ export default function DesignStudio() {
    * Prevents default scroll when over the canvas so the page does not
    * scroll while the user is editing their design.
    */
+  // Debounce timer ref for committing wheel-based layer scale to undo history
+  const wheelCommitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const handleCanvasWheel = useCallback((e: React.WheelEvent<SVGSVGElement>) => {
     e.preventDefault();
     const delta = e.deltaY;
+    // Guard: zero delta (common on some trackpads at gesture start/end) = no-op
+    if (delta === 0) return;
     const factor = delta < 0 ? 1.12 : 1 / 1.12;
 
     // Check if the wheel event landed on a layer — if so, scale the layer.
@@ -1841,7 +1846,7 @@ export default function DesignStudio() {
       target.closest?.("[data-layer-id]")?.getAttribute("data-layer-id");
 
     if (layerId && !e.ctrlKey) {
-      // Scale the hovered layer
+      // Scale the hovered layer and route through history after scroll settles
       setLayers(prev =>
         prev.map(l => {
           if (l.id !== layerId) return l;
@@ -1849,6 +1854,11 @@ export default function DesignStudio() {
           return { ...l, transform: { ...l.transform, scale: newScale } };
         })
       );
+      // Debounce the undo-history commit so rapid scroll doesn't flood the stack
+      if (wheelCommitTimerRef.current) clearTimeout(wheelCommitTimerRef.current);
+      wheelCommitTimerRef.current = setTimeout(() => {
+        commitLayers(layersRef.current);
+      }, 350);
       return;
     }
 
@@ -1860,7 +1870,7 @@ export default function DesignStudio() {
       canvasPanRef.current = { x: 0, y: 0 };
       setCanvasPan({ x: 0, y: 0 });
     }
-  }, []);
+  }, [commitLayers]);
 
   /* ── Compute layer SVG geometry ────────────────────── */
   const layerGeom = (l: Layer) => {
