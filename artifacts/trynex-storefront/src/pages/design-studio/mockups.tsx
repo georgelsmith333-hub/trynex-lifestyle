@@ -100,39 +100,22 @@ export interface DesignProduct {
      MUG_PZ         — full 360° wrap
      WATERBOTTLE_PZ — bottle body (cylindrical section)
 ──────────────────────────────────────────────────────── */
-/* ═══════════════════════════════════════════════════════
-   PRINT ZONES — calibrated to real-world garment dimensions
-   and aligned with the actual printable area on each mockup.
-
-   T-Shirt front: chest area from ≈16% below shoulder seam to ≈12%
-   above hem line. Width ≈38% of garment, centred.
-   T-Shirt back: same proportions, shifted for back seam offset.
-
-   Hoodie front: full chest panel from bottom of neck seam to top
-   of kangaroo pocket. Width ≈36% (narrower than t-shirt due to
-   kangaroo pocket shaping). Height ≈42% of visible body.
-
-   Mug side: cylindrical body excluding rim and base. Centre-aligned
-   on the visible front face (no handle overlap).
-
-   Water bottle: cylindrical label area, shoulder-to-base.
-   ═════════════════════════════════════════════════════════ */
-export const TSHIRT_PZ: PrintZone           = { x: 290, y: 215, w: 420, h: 440 };
-export const TSHIRT_BACK_PZ: PrintZone      = { x: 280, y: 195, w: 440, h: 460 };
-export const LONGSLEEVE_PZ: PrintZone       = { x: 300, y: 220, w: 400, h: 430 };
-export const LONGSLEEVE_BACK_PZ: PrintZone  = { x: 286, y: 190, w: 428, h: 464 };
-/** Hoodie front — chest area: bottom of neck seam (y≈280) to top
-    of kangaroo pocket (y≈540). Width ~38%, centred at x=500. */
-export const HOODIE_PZ: PrintZone           = { x: 300, y: 280, w: 400, h: 260 };
-export const HOODIE_BACK_PZ: PrintZone      = { x: 288, y: 195, w: 424, h: 440 };
-/** Cap front panel — centred on the 5-panel front face. */
-export const CAP_PZ: PrintZone              = { x: 330, y: 305, w: 340, h: 210 };
-export const MUG_PZ: PrintZone              = { x: 200, y: 200, w: 600, h: 600 };
-/** Mug side — cylindrical body, x-centred, clear of rim and base bands. */
-export const MUG_SIDE_PZ: PrintZone         = { x: 225, y: 265, w: 350, h: 420 };
-/** Water bottle — cylindrical label panel, shoulder to base band.
-    Calibrated to the real 600ml aluminium carabiner bottle. */
-export const WATERBOTTLE_PZ: PrintZone      = { x: 310, y: 240, w: 380, h: 540 };
+export const TSHIRT_PZ: PrintZone           = { x: 305, y: 220, w: 390, h: 395 };
+export const TSHIRT_BACK_PZ: PrintZone      = { x: 288, y: 188, w: 424, h: 465 };
+export const LONGSLEEVE_PZ: PrintZone       = { x: 310, y: 228, w: 380, h: 400 };
+export const LONGSLEEVE_BACK_PZ: PrintZone  = { x: 292, y: 195, w: 416, h: 458 };
+/** Hoodie front — stops at ~y=528 to clear the kangaroo pocket (pocket starts ~y=565). */
+export const HOODIE_PZ: PrintZone           = { x: 332, y: 252, w: 336, h: 278 };
+export const HOODIE_BACK_PZ: PrintZone      = { x: 292, y: 184, w: 416, h: 448 };
+/** Cap front panel — structured 5-panel cap, panel is centred between brim and seam. */
+export const CAP_PZ: PrintZone              = { x: 338, y: 290, w: 324, h: 240 };
+export const MUG_PZ: PrintZone              = { x: 150, y: 180, w: 700, h: 640 };
+/** Mug side — printable area on the cylindrical side face, clear of rim band and base ring. */
+export const MUG_SIDE_PZ: PrintZone         = { x: 192, y: 248, w: 410, h: 472 };
+/** Water bottle — printable front label panel on the cylindrical body.
+ *  Calibrated to the real 600ml aluminium carabiner bottle (1600×1600 PNG).
+ *  Content spans x:[336–660] centre≈498; shoulder ends ~y=268, base band ~y=850. */
+export const WATERBOTTLE_PZ: PrintZone      = { x: 345, y: 268, w: 310, h: 582 };
 /** Sleeve print area — roughly square (1228×1087px real-world ratio). */
 export const SLEEVE_PZ: PrintZone           = { x: 175, y: 175, w: 650, h: 650 };
 /** Neck label — wider than tall (1299×945px real-world ratio). */
