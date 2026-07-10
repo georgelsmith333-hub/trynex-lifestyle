@@ -7,6 +7,7 @@ import { CartItemThumbnail } from "@/components/CartItemThumbnail";
 import { motion, AnimatePresence } from "framer-motion";
 import { memo, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { lockBodyScroll } from "@/lib/scrollLock";
 
 interface CartLineProps {
   item: CartItem;
@@ -137,17 +138,14 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
   const hasFreeShipping = subtotal >= freeShippingThreshold;
 
   useEffect(() => {
-    if (!open) {
-      document.body.style.overflow = '';
-      return;
-    }
-    document.body.style.overflow = 'hidden';
+    if (!open) return;
+    const unlock = lockBodyScroll();
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
     document.addEventListener('keydown', handleEsc);
     return () => {
-      document.body.style.overflow = '';
+      unlock();
       document.removeEventListener('keydown', handleEsc);
     };
   }, [open, onClose]);
@@ -275,6 +273,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
                 <div
                   className="flex-1 overflow-y-auto px-5 py-3 space-y-3 overscroll-contain"
                   style={{ WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
+                  data-lenis-prevent
                 >
                   <AnimatePresence initial={false}>
                     {items.map((item) => (

@@ -814,8 +814,11 @@ export default function DesignStudio() {
   // Apparel sleeve/neck zones: use getZonePZ which returns SLEEVE_PZ or NECK_LABEL_PZ.
   // Apparel front/back: product's own printZone.
   const pz = useMemo(() => {
+    // mugMode is only ever "side1" | "side2" — the mug wrap-mode print zone
+    // (MUG_PZ) is unused dead code from a removed "full wrap" concept and
+    // isn't even exported from mockups.tsx. Always use the per-side zone.
     if (isMugProduct) {
-      return mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ;
+      return MUG_SIDE_PZ;
     }
     return getZonePZ(activeFace, selectedProduct);
   }, [isMugProduct, activeFace, selectedProduct, mugMode]);
@@ -2951,8 +2954,25 @@ export default function DesignStudio() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.18, ease: "easeInOut" }}
-                  {...(bindCanvasGestures() as Record<string, unknown>)}
-                  onPointerDown={handleSvgPointerDown}
+                  {...(() => {
+                    // IMPORTANT: bindCanvasGestures() returns its own onPointerDown (the
+                    // event that @use-gesture uses to start tracking drag/pinch). A plain
+                    // `onPointerDown={handleSvgPointerDown}` prop declared AFTER this spread
+                    // would silently replace that key — not layer on top of it — because
+                    // JSX props merge by last-key-wins, not by composition. That regression
+                    // is exactly what made layers "stuck": the immediate-selection handler
+                    // ran, but the gesture library's own pointerdown never fired, so its
+                    // internal drag/pinch state machine never started. Compose both here.
+                    const g = bindCanvasGestures() as Record<string, unknown>;
+                    const gPointerDown = g.onPointerDown as ((e: React.PointerEvent<SVGSVGElement>) => void) | undefined;
+                    return {
+                      ...g,
+                      onPointerDown: (e: React.PointerEvent<SVGSVGElement>) => {
+                        handleSvgPointerDown(e);
+                        gPointerDown?.(e);
+                      },
+                    };
+                  })()}
                   onClick={handleCanvasClick}
                   onWheel={handleCanvasWheel}
                 >

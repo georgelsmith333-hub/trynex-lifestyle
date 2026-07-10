@@ -10,6 +10,7 @@ import { prefetchDesignStudio } from "@/lib/prefetch";
 import { motion, AnimatePresence } from "framer-motion";
 import { CartDrawer } from "@/components/CartDrawer";
 import { useListProducts, useListCategories } from "@workspace/api-client-react";
+import { lockBodyScroll } from "@/lib/scrollLock";
 
 const SHOP_CATEGORIES = [
   { label: "All Products", href: "/products", emoji: "🛍️" },
@@ -290,12 +291,9 @@ export function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (mobileOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => { document.body.style.overflow = ''; };
+    if (!mobileOpen) return;
+    const unlock = lockBodyScroll();
+    return unlock;
   }, [mobileOpen]);
 
   const navLinks = [
@@ -514,7 +512,7 @@ export function Navbar() {
                     className="absolute top-full right-0 mt-2 w-[22rem] max-w-[90vw] bg-white rounded-2xl shadow-xl shadow-gray-200/60 border border-gray-100 overflow-hidden z-50"
                   >
                     {!showAutocomplete ? (
-                      <div className="py-2 max-h-[26rem] overflow-y-auto">
+                      <div className="py-2 max-h-[26rem] overflow-y-auto" data-lenis-prevent>
                         {recentSearches.length > 0 && (
                           <div className="px-2 pb-1">
                             <div className="flex items-center justify-between px-2 py-1.5">
@@ -555,7 +553,7 @@ export function Navbar() {
                         </div>
                       </div>
                     ) : hasSuggestions ? (
-                      <div className="py-2 max-h-[26rem] overflow-y-auto">
+                      <div className="py-2 max-h-[26rem] overflow-y-auto" data-lenis-prevent>
                         {matchedCategories.length > 0 && (
                           <div className="px-2 pb-1">
                             <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-2 py-1.5">Categories</div>
@@ -696,7 +694,7 @@ export function Navbar() {
                           </button>
                         )}
                       </div>
-                      <div className="max-h-[360px] overflow-y-auto scrollbar-hide overscroll-contain">
+                      <div className="max-h-[360px] overflow-y-auto scrollbar-hide overscroll-contain" data-lenis-prevent>
                         {notifications.length > 0 ? (
                           <div className="divide-y divide-gray-50">
                             {notifications.map((n) => (
@@ -895,7 +893,7 @@ export function Navbar() {
             transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
             className="md:hidden overflow-hidden bg-white border-t border-gray-100"
           >
-            <div className="px-5 py-5 space-y-1 max-h-[85dvh] overflow-y-auto">
+            <div className="px-5 py-5 space-y-1 max-h-[85dvh] overflow-y-auto" data-lenis-prevent>
               {/* Mobile search */}
               <form onSubmit={handleSearch} className="flex items-center gap-2 mb-3">
                 <div className="flex-1 flex items-center gap-2 px-3 py-2.5 rounded-2xl border border-gray-200 bg-gray-50">

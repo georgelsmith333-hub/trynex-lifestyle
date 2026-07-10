@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Gift, Sparkles, X, Copy, Check } from "lucide-react";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
+import { lockBodyScroll } from "@/lib/scrollLock";
 
 type Prize = {
   id: string;
@@ -194,12 +195,9 @@ export default function SpinWheel({ autoOpen = true, forceOpen = false, onClose 
   }, [open]);
 
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => { document.body.style.overflow = ""; };
+    if (!open) return;
+    const unlock = lockBodyScroll();
+    return unlock;
   }, [open]);
 
   const close = () => {

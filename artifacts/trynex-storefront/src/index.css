@@ -82,7 +82,12 @@
 
 @layer base {
   * { @apply border-border; box-sizing: border-box; }
-  html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+  /* scroll-behavior: smooth removed — Lenis (useLenis hook) already drives
+     smooth scrolling on desktop via requestAnimationFrame. Having both active
+     causes the browser's native smooth-scroll and Lenis's JS-driven scroll to
+     fight over the same scrollTop, which is what caused inconsistent/broken
+     mouse-wheel scrolling in some areas. */
+  html { -webkit-tap-highlight-color: transparent; }
   html, body { overflow-x: hidden; }
   body {
     @apply font-sans antialiased bg-background text-foreground;

@@ -502,11 +502,18 @@ function SystemHealthWidget() {
     );
   }
 
+  // NOTE: /api/admin/system/health nests each service under `services.<name>`
+  // (e.g. `services.database.status`), not top-level `db`/`redis`/etc. Reading
+  // the wrong path silently returns `undefined` for every service, which this
+  // widget rendered as "offline" — while the separate DB Cluster page (a
+  // different endpoint) correctly showed the DB as connected. That mismatch
+  // is what caused "database says not connected in one place, connected in
+  // another." Always read via `services.*`.
   const services = [
-    { id: "database", name: "Database", icon: Database, status: (health as any)?.db?.status },
-    { id: "redis", name: "Redis", icon: Wifi, status: (health as any)?.redis?.status },
-    { id: "storage", name: "R2 Storage", icon: HardDrive, status: (health as any)?.storage?.status },
-    { id: "telegram", name: "Telegram", icon: MessageCircle, status: (health as any)?.telegram?.status },
+    { id: "database", name: "Database", icon: Database, status: (health as any)?.services?.database?.status },
+    { id: "redis", name: "Redis", icon: Wifi, status: (health as any)?.services?.redis?.status },
+    { id: "storage", name: "R2 Storage", icon: HardDrive, status: (health as any)?.services?.storage?.status },
+    { id: "telegram", name: "Telegram", icon: MessageCircle, status: (health as any)?.services?.telegram?.status },
   ];
 
   const getStatusColor = (status: string) => {

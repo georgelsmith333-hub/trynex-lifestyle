@@ -15,6 +15,13 @@ Changed to `drag: { filterTaps: true, threshold: 1, pointer: { buttons: [1] } }`
 
 **How to apply:** Any time `useGesture` drag is touch-only, this is the fix. Do NOT use `pointer: { touch: true }` unless you genuinely want to exclude mouse events.
 
+## JSX prop-spread-override regression (recurring)
+A second, separate drag-breaking bug hit the same canvas element later: `<motion.svg {...bindCanvasGestures()} onPointerDown={handleSvgPointerDown}>` — JSX merges spread props by last-key-wins, so the explicit `onPointerDown` written after the spread completely replaced `useGesture`'s own `onPointerDown` handler (confirmed via `@use-gesture/react` source: that key is what starts its internal drag/pinch state machine). Selection still worked (a separate click handler), but drag/pinch silently never initialized.
+
+**Why:** Easy to reintroduce — anyone adding a new pointer/click handler to the same element as a spread gesture-binding prop object will silently clobber it, with no error, no lint warning, just "drag doesn't work."
+
+**How to apply:** Never add an explicit `onPointerDown`/`onPointerMove`/etc. to an element that also spreads `bind...()` from `@use-gesture/react` (or similar libs). Compose instead: call your own handler, then call the spread object's same-named handler (e.g. `bindCanvasGestures().onPointerDown?.(e)`), or merge props explicitly before spreading.
+
 ## Desktop Wheel Zoom Pattern
 Added `handleCanvasWheel` on the canvas SVG `onWheel` prop:
 - Guard `deltaY === 0` (no-op for zero delta, common on trackpads)

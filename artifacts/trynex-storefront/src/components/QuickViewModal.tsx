@@ -9,6 +9,7 @@ import { useCartActions } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
+import { lockBodyScroll } from "@/lib/scrollLock";
 
 const COLOR_MAP: Record<string, string> = {
   'Black': '#1a1a1a', 'White': '#f0f0f0', 'Grey': '#6b7280', 'Gray': '#6b7280',
@@ -49,11 +50,10 @@ export function QuickViewModal({ product, open, onClose }: QuickViewModalProps) 
     if (!open) return;
     const handleEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     document.addEventListener('keydown', handleEsc);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    const unlock = lockBodyScroll();
     return () => {
       document.removeEventListener('keydown', handleEsc);
-      document.body.style.overflow = prev;
+      unlock();
     };
   }, [open, onClose]);
 
