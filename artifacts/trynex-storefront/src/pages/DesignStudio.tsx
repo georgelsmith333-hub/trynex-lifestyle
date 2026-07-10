@@ -26,7 +26,7 @@ import {
 import {
   PRODUCTS, type DesignProduct, GarmentSVG, FlatZoneSVG,
   STICKERS, BASE_BY_CATEGORY, MUG_SIDE_PZ,
-  getApparelZones, getZonePZ, type ApparelZone, isNearBlack,
+  getApparelZones, getZonePZ, type ApparelZone, isNearBlack, type PrintZone,
 } from "./design-studio/mockups";
 import { composeLayers, composeGarmentMockup, composeDesignTexture, hasWebGL2, type ComposerLayer } from "./design-studio/composer";
 
@@ -871,6 +871,21 @@ export default function DesignStudio() {
     if (isFlatZone && viewMode === "3d") setViewMode("2d");
   }, [isFlatZone, viewMode]);
 
+  // Curved products (mug / water bottle / cap) only look correct — proper
+  // cylindrical/dome blending, no "flat sticker" — in the 3D preview; the flat
+  // 2D SVG canvas intentionally shows the design as a flat rectangle for precise
+  // placement. Default new curved-product selections to 3D so the user sees the
+  // realistic blended result immediately, without hunting for the 3D toggle.
+  // Flat apparel (t-shirt/hoodie/longsleeve) defaults to 2D for precise editing.
+  // Runs only when the selected product itself changes, so a manual toggle made
+  // while staying on the same product is respected.
+  useEffect(() => {
+    if (isMobile || !supports3D) return;
+    const isCurvedProduct = ["mug", "waterbottle", "cap"].includes(selectedProduct.category);
+    setViewMode(isCurvedProduct ? "3d" : "2d");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedProduct.id]);
+
   const displayProduct = selectedProduct;
   // True when the selected garment colour is near-black (e.g. Black #1a1a1a).
   // Used to flip the studio canvas and outer container from dark → light so the
@@ -906,14 +921,18 @@ export default function DesignStudio() {
   // Print-safe warning: true when any layer on the current face extends meaningfully outside the print zone.
   // A small tolerance (BLEED_TOL) prevents false-positive warnings for layers that are just barely
   // touching the edge — normal usage when users drag a design to the boundary.
-  const BLEED_TOL = 14; // SVG units (~1.4% of the 1000-unit canvas)
+  // BLEED_TOL scales with the print zone size (2% of the smaller side) instead of a fixed absolute
+  // value — a fixed 14-unit tolerance was a much smaller *relative* margin on small zones (e.g. the
+  // mug/bottle side print area) than on a large t-shirt zone, causing the warning to fire on those
+  // products even when the design looked safely contained.
   const anyLayerOutsidePZ = useMemo(() => {
     if (!pz || currentFaceLayers.length === 0) return false;
+    const bleedTol = Math.max(10, Math.min(pz.w, pz.h) * 0.02);
     const pzCx = pz.x + pz.w / 2;
     const pzCy = pz.y + pz.h / 2;
     return currentFaceLayers.some(l => {
       if (!l.visible) return false;
-      const { x, y, scale, scaleX = 1, scaleY = 1 } = l.transform;
+      const { x, y, scale, scaleX = 1, scaleY = 1, rotation = 0 } = l.transform;
       let hw: number, hh: number;
       if (l.type === "image") {
         const imgL = l as ImageLayer;
@@ -925,14 +944,23 @@ export default function DesignStudio() {
         hw = txtL.fontSize * scale * scaleX * 2.5;
         hh = txtL.fontSize * scale * scaleY * 1.2;
       }
+      // Account for rotation: a rotated rectangle's true screen-space bounding box
+      // is larger than its unrotated half-width/half-height. Without this, a design
+      // rotated 30-45° could visually poke outside the zone with no warning shown,
+      // or (for a wide layer rotated ~90°) trigger a false warning despite fitting.
+      const rad = (rotation * Math.PI) / 180;
+      const cos = Math.abs(Math.cos(rad));
+      const sin = Math.abs(Math.sin(rad));
+      const rotHw = hw * cos + hh * sin;
+      const rotHh = hw * sin + hh * cos;
       // x/y are relative offsets from the print zone centre; convert to absolute
       const absX = pzCx + x;
       const absY = pzCy + y;
       return (
-        absX - hw < pz.x - BLEED_TOL ||
-        absX + hw > pz.x + pz.w + BLEED_TOL ||
-        absY - hh < pz.y - BLEED_TOL ||
-        absY + hh > pz.y + pz.h + BLEED_TOL
+        absX - rotHw < pz.x - bleedTol ||
+        absX + rotHw > pz.x + pz.w + bleedTol ||
+        absY - rotHh < pz.y - bleedTol ||
+        absY + rotHh > pz.y + pz.h + bleedTol
       );
     });
   }, [currentFaceLayers, pz]);
@@ -1097,18 +1125,29 @@ export default function DesignStudio() {
       // Propagate a scaled copy of this image to every OTHER product so
       // switching products shows the design pre-placed and centred in their
       // print zone. Same-category products get the same face/zone; others get front.
+      //
+      // Scale is recomputed as a "contain fit" for the TARGET zone (same maths as the
+      // initial auto-placement above), preserving the *relative* fill fraction the design
+      // currently has in the source zone. A naive `scale * (targetPZ.w/currentPZ.w)` ratio
+      // (the previous approach) doesn't account for zone aspect-ratio differences, so a
+      // design that fit safely in a wide zone could overflow a narrower one (e.g. mug/bottle
+      // side print areas) — which is what triggered false "outside print area" warnings when
+      // switching products.
       const currentPZ = pzRef.current;
       const currentFace = activeFaceRef.current;
+      const containScale = (zone: PrintZone) => Math.min(1.0, (zone.h * aspect) / zone.w);
+      const currentContain = containScale(currentPZ) || 1;
+      const relativeFill = layer.transform.scale / currentContain;
       PRODUCTS.forEach(prod => {
         if (prod.id === selectedProduct.id) return;
         const targetFace: Face = prod.category === selectedProduct.category ? currentFace : "front";
         const targetPZ = getZonePZ(targetFace, prod);
-        const scaleRatio = Math.min(targetPZ.w / currentPZ.w, targetPZ.h / currentPZ.h);
+        const newScale = containScale(targetPZ) * relativeFill;
         const propagated: ImageLayer = {
           ...layer,
           id: uid(),
           face: targetFace,
-          transform: { x: 0, y: 0, scale: layer.transform.scale * scaleRatio, rotation: 0, opacity: 1 },
+          transform: { x: 0, y: 0, scale: newScale, rotation: 0, opacity: 1 },
         };
         const existing = perProductLayersRef.current[prod.id] ?? { layers: [], stack: [[]], index: 0 };
         const newLayers = [...existing.layers, propagated];

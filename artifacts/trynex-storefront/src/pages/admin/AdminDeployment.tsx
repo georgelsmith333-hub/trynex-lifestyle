@@ -16,15 +16,22 @@ interface PlatformInfo {
   checkedAt: string;
 }
 
+// Matches the response shape of GET /api/admin/system/health in
+// routes/systemHealth.ts — the single source of truth for this endpoint.
+// See that file's header comment before assuming a different shape.
 interface SystemHealth {
-  db: { status: string; latencyMs: number };
-  redis: { status: string };
-  storage: { status: string; backend: string };
-  telegram: { status: string };
+  services: {
+    database: { status: string };
+    redis: { status: string };
+    storage: { status: string; backend: string };
+    telegram: { status: string };
+  };
 }
 
+// Matches GET /api/admin/system/env-status in routes/systemHealth.ts, which
+// returns an array of `{ name, set, ... }` rather than a flat map.
 interface EnvStatus {
-  envVars: Record<string, boolean>;
+  vars: { name: string; label: string; set: boolean }[];
 }
 
 interface DeploymentStatus {
@@ -319,9 +326,9 @@ export default function AdminDeployment() {
             <div className="space-y-4 bg-gray-50 rounded-xl p-4 border border-gray-100">
               <h3 className="text-xs font-black text-gray-500 uppercase tracking-widest">Environment Variables</h3>
               <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-                {envStatus?.envVars && Object.entries(envStatus.envVars).map(([key, set]) => (
-                  <div key={key} className="flex items-center justify-between text-[11px]">
-                    <span className="font-mono text-gray-600 truncate mr-2" title={key}>{key}</span>
+                {envStatus?.vars && envStatus.vars.map(({ name, set }) => (
+                  <div key={name} className="flex items-center justify-between text-[11px]">
+                    <span className="font-mono text-gray-600 truncate mr-2" title={name}>{name}</span>
                     {set ? (
                       <CheckCircle2 className="w-3.5 h-3.5 text-green-500 shrink-0" />
                     ) : (
@@ -345,24 +352,23 @@ export default function AdminDeployment() {
                   <div>
                     <div className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Database</div>
                     <div className="text-sm font-bold text-blue-900 flex items-center gap-1.5">
-                      {health.db.status === "ok" ? "Connected" : "Error"}
-                      <span className="text-[10px] font-normal text-blue-600">{health.db.latencyMs}ms</span>
+                      {health.services.database.status === "ok" ? "Connected" : "Error"}
                     </div>
                   </div>
                   <div>
                     <div className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Redis Cache</div>
-                    <div className="text-sm font-bold text-blue-900 capitalize">{health.redis.status}</div>
+                    <div className="text-sm font-bold text-blue-900 capitalize">{health.services.redis.status}</div>
                   </div>
                   <div>
                     <div className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Object Storage</div>
                     <div className="text-sm font-bold text-blue-900 flex items-center gap-1.5 uppercase">
-                      {health.storage.backend}
-                      <span className="text-[10px] font-normal text-blue-600">{health.storage.status}</span>
+                      {health.services.storage.backend}
+                      <span className="text-[10px] font-normal text-blue-600">{health.services.storage.status}</span>
                     </div>
                   </div>
                   <div>
                     <div className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Telegram Bot</div>
-                    <div className="text-sm font-bold text-blue-900 capitalize">{health.telegram.status}</div>
+                    <div className="text-sm font-bold text-blue-900 capitalize">{health.services.telegram.status}</div>
                   </div>
                 </div>
               </motion.div>

@@ -4,9 +4,6 @@ import { db } from "@workspace/db";
 import { HealthCheckResponse } from "@workspace/api-zod";
 import { getConfiguredGoogleClientId } from "./auth";
 import { ObjectStorageService } from "../lib/objectStorage";
-import { requireAdmin } from "../middlewares/adminAuth";
-import { redisCacheGet, redisCacheSet, redisCacheDel } from "../lib/redis";
-import { tgIsConfigured, tgSend } from "../lib/telegram";
 
 const router: IRouter = Router();
 
@@ -67,77 +64,18 @@ router.get("/health/auth", async (_req, res) => {
   });
 });
 
-router.get("/admin/system/health", requireAdmin, async (req, res) => {
-  try {
-    const results: any = {};
+// NOTE: /admin/system/health and /admin/system/env-status used to also be
+// defined here with a different (flat) response shape than the versions in
+// routes/systemHealth.ts (nested under `services.*`, and an array under
+// `vars`). Because this router is mounted before systemHealthRouter, this
+// flat version always won the route match and the systemHealth.ts handlers
+// were silently dead code — while the admin frontend widgets were split
+// between expecting each shape, so status displays were wrong/blank
+// regardless of which one actually ran. Removed here; routes/systemHealth.ts
+// is now the single source of truth for both endpoints. See its file header
+// comment before reintroducing a duplicate route for either path.
 
-    // DB
-    try {
-      await db.execute(sql`SELECT 1`);
-      results.db = "ok";
-    } catch (e) {
-      results.db = "error";
-      results.dbError = e instanceof Error ? e.message : String(e);
-    }
-
-    // Redis
-    try {
-      await redisCacheSet("_health_test", "1", 5);
-      const val = await redisCacheGet("_health_test");
-      results.redis = val !== null && String(val) === "1" ? "ok" : "mismatch";
-    } catch (e) {
-      results.redis = "error";
-      results.redisError = e instanceof Error ? e.message : String(e);
-    }
-
-    // R2 / Storage
-    const storageSvc = new ObjectStorageService();
-    results.storageBackend = storageSvc.getBackendName();
-    try {
-      await storageSvc.getObjectEntityUploadURL();
-      results.storage = "ok";
-    } catch (e) {
-      results.storage = "error";
-      results.storageError = e instanceof Error ? e.message : String(e);
-    }
-
-    // Telegram
-    results.telegramConfigured = tgIsConfigured();
-    results.telegram = results.telegramConfigured ? "ok" : "not_configured";
-
-    res.json(results);
-  } catch (err) {
-    res.status(500).json({ error: "health_check_failed" });
-  }
-});
-
-// Note: POST /api/admin/system/flush-cache is handled by routes/admin.ts
-// which is mounted correctly at /api and uses redisCacheFlushAll.
-
-router.get("/admin/system/env-status", requireAdmin, async (req, res) => {
-  const vars = [
-    "DATABASE_URL_MAIN",
-    "UPSTASH_REDIS_REST_URL",
-    "UPSTASH_REDIS_REST_TOKEN",
-    "R2_ACCOUNT_ID",
-    "R2_ACCESS_KEY_ID",
-    "R2_SECRET_ACCESS_KEY",
-    "R2_BUCKET",
-    "JWT_SECRET",
-    "ADMIN_JWT_SECRET",
-    "ADMIN_PASSWORD",
-    "TELEGRAM_BOT_TOKEN",
-    "TELEGRAM_CHAT_ID",
-    "GOOGLE_CLIENT_ID",
-    "CLOUDFLARE_API_TOKEN"
-  ];
-
-  const status: Record<string, boolean> = {};
-  for (const v of vars) {
-    status[v] = !!process.env[v];
-  }
-
-  res.json(status);
-});
+// Note: POST /api/admin/system/flush-cache is handled by routes/systemHealth.ts
+// which is mounted correctly at /api and uses redisCacheDel.
 
 export default router;

@@ -299,7 +299,9 @@ export const BASE_BY_CATEGORY: Record<
 };
 
 
-function isLightTint(hex: string): boolean {
+// Exported so DesignStudio's live SVG editor can pick the same multiply/screen
+// blend mode for uploaded designs that composeGarmentMockup() already uses.
+export function isLightTint(hex: string): boolean {
   const h = hex.replace("#", "");
   if (h.length !== 6) return true;
   const r = parseInt(h.slice(0, 2), 16);
