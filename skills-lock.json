@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "skills": {
+    "agent-tools": {
+      "source": "inf-sh/skills",
+      "sourceType": "github",
+      "skillPath": "tools/agent-tools/SKILL.md",
+      "computedHash": "a5d63baacc20eeda0790595fab748a914fd7bb30819ab93eb12482acf2b7747e"
+    },
+    "audit-website": {
+      "source": "squirrelscan/skills",
+      "sourceType": "github",
+      "skillPath": "skills/audit-website/SKILL.md",
+      "computedHash": "da5839252ae281ecc7f56a70cf53850f9686dba51bfae7a2d07be150d6cd7f7f"
+    },
+    "better-auth-best-practices": {
+      "source": "better-auth/skills",
+      "sourceType": "github",
+      "skillPath": "better-auth/best-practices/SKILL.md",
+      "computedHash": "a4c830509e85557b59339d8d93a4e243e9e59c686e7678854d39230e12c2a6dc"
+    },
+    "brainstorming": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "skillPath": "skills/brainstorming/SKILL.md",
+      "computedHash": "253570c46990ea018dd4520dba80cd77c35f9e5a8654057da1812face7be30cd"
+    },
+    "browser-use": {
+      "source": "browser-use/browser-use",
+      "sourceType": "github",
+      "skillPath": "skills/browser-use/SKILL.md",
+      "computedHash": "8447c4adea0d257a75741e65cba3c2196f6295ac1cd59bcc6c4ec9e380df08a0"
+    },
+    "find-skills": {
+      "source": "vercel-labs/skills",
+      "sourceType": "github",
+      "skillPath": "skills/find-skills/SKILL.md",
+      "computedHash": "781bd6d3f9b19f8c9af6b53d8d0e4876d0183841b565db34ca7092ffa412d111"
+    },
+    "frontend-design": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-design/SKILL.md",
+      "computedHash": "4eabc66183767153e404b39d1b839b1c37f2d82d86f0a0d7e880a579d8d62336"
+    },
+    "seo-audit": {
+      "source": "coreyhaines31/marketingskills",
+      "sourceType": "github",
+      "skillPath": "skills/seo-audit/SKILL.md",
+      "computedHash": "f2dc52130189068981f21e1c0bdc4471ac7cd9b08d8a1320604411aa0f950385"
+    },
+    "skill-creator": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "skills/skill-creator/SKILL.md",
+      "computedHash": "5ea13a6d9f0d4bb694405d79acd00cadec0d21bb138c4dd10fcf3c500cb835c2"
+    },
+    "superdesign": {
+      "source": "superdesigndev/superdesign-skill",
+      "sourceType": "github",
+      "skillPath": "skills/superdesign/SKILL.md",
+      "computedHash": "cd776c022221e04adafbd2fb367f99cad7772777bad44b33be74ee8584c1c634"
+    },
+    "typescript-expert": {
+      "source": "sickn33/antigravity-awesome-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typescript-expert/SKILL.md",
+      "computedHash": "525e74a7220ed67832001ca89b46deae8f2bab1abc9d25c56c8716d6550c795f"
+    },
+    "ui-ux-pro-max": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/ui-ux-pro-max/SKILL.md",
+      "computedHash": "a55c93594689ff54fc12a1c40b8c5a418470e306392014667378f8633df105f0"
+    },
+    "web-design-guidelines": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/web-design-guidelines/SKILL.md",
+      "computedHash": "f3bc47f890f42a44db1007ab390709ec368e4b8c089baee6b0007182236ac474"
+    }
+  }
+}
