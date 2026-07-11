@@ -925,12 +925,12 @@ export default function DesignStudio() {
   // value — a fixed 14-unit tolerance was a much smaller *relative* margin on small zones (e.g. the
   // mug/bottle side print area) than on a large t-shirt zone, causing the warning to fire on those
   // products even when the design looked safely contained.
-  const anyLayerOutsidePZ = useMemo(() => {
-    if (!pz || currentFaceLayers.length === 0) return false;
+  const outsidePZLayerId = useMemo(() => {
+    if (!pz || currentFaceLayers.length === 0) return null;
     const bleedTol = Math.max(10, Math.min(pz.w, pz.h) * 0.02);
     const pzCx = pz.x + pz.w / 2;
     const pzCy = pz.y + pz.h / 2;
-    return currentFaceLayers.some(l => {
+    const offender = currentFaceLayers.find(l => {
       if (!l.visible) return false;
       const { x, y, scale, scaleX = 1, scaleY = 1, rotation = 0 } = l.transform;
       let hw: number, hh: number;
@@ -963,7 +963,9 @@ export default function DesignStudio() {
         absY + rotHh > pz.y + pz.h + bleedTol
       );
     });
+    return offender?.id ?? null;
   }, [currentFaceLayers, pz]);
+  const anyLayerOutsidePZ = outsidePZLayerId !== null;
 
   /* ── Coord helpers ─────────────────────────────────── */
   const clientToSVG = useCallback((clientX: number, clientY: number) => {
@@ -1116,9 +1118,12 @@ export default function DesignStudio() {
 
       flushSync(() => {
         commitLayers([...layersRef.current, ...layersToAdd]);
-        // Do NOT auto-select — placed image stays in "rest" state so print-zone
-        // border auto-hides and the client sees a clean design immediately.
-        // User deliberately taps the image on the canvas to enter edit mode.
+        // Auto-select the freshly placed image so the Center/Fit/Fill quick-actions
+        // are immediately visible. Previously nothing was selected after upload, so
+        // a design that needed nudging left users with no visible way to fix it
+        // short of guessing the drag/pinch gesture — this surfaces the fix tools
+        // at the exact moment they're most likely to be needed.
+        setSelectedLayerId(layer.id);
         setActiveTab("layers");
       });
 
@@ -2326,7 +2331,12 @@ export default function DesignStudio() {
     const onMove = (me: PointerEvent) => {
       const pt = clientToSVG(me.clientX, me.clientY);
       // atan2(dx, -dy) gives CW angle from top, matching SVG rotate direction
-      const angle = Math.atan2(pt.x - cx, cy - pt.y) * (180 / Math.PI);
+      let angle = Math.atan2(pt.x - cx, cy - pt.y) * (180 / Math.PI);
+      // Snap to the nearest 0/90/180/270° within a small tolerance — makes it easy
+      // to get a design perfectly straight without fighting the free-rotate handle,
+      // which was a common source of designs ending up visibly tilted.
+      const nearest90 = Math.round(angle / 90) * 90;
+      if (Math.abs(angle - nearest90) < 4) angle = nearest90;
       setLayers(prev => prev.map(l => l.id === selectedLayer.id
         ? { ...l, transform: { ...l.transform, rotation: angle } } : l));
     };
@@ -3435,13 +3445,32 @@ export default function DesignStudio() {
                 </div>
               )}
 
-              {/* Print-safe warning — shown when any layer bleeds outside the print zone */}
+              {/* Print-safe warning — shown when any layer bleeds outside the print zone.
+                  Tapping it is a one-tap fix: selects the offending layer and snaps it back
+                  to a safe fit-and-centre position, instead of leaving the user stuck
+                  hunting for the right drag/pinch gesture to undo the overflow. */}
               {anyLayerOutsidePZ && viewMode === "2d" && (
-                <div className="mx-3 mb-1 flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-bold"
+                <button
+                  type="button"
+                  onClick={() => {
+                    const offender = currentFaceLayers.find(l => l.id === outsidePZLayerId) ?? currentFaceLayers[0];
+                    if (!offender) return;
+                    setSelectedLayerId(offender.id);
+                    if (offender.type === "image") {
+                      const imgL = offender as ImageLayer;
+                      const aspect = imgL.naturalW / Math.max(imgL.naturalH, 1);
+                      const fitScale = Math.min(0.90, (pz.h * 0.90 * aspect) / pz.w);
+                      updateLayer(offender.id, l => ({ ...l, transform: { ...l.transform, scale: fitScale, x: 0, y: 0, rotation: 0 } }), true);
+                    } else {
+                      updateLayer(offender.id, l => ({ ...l, transform: { ...l.transform, x: 0, y: 0, rotation: 0 } }), true);
+                    }
+                  }}
+                  className="mx-3 mb-1 flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-bold text-left active:scale-[0.98] transition-transform"
                   style={{ background: "#fef2f2", border: "1.5px solid #fca5a5", color: "#dc2626" }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                  Design extends outside print area — it will be cropped
-                </div>
+                  <span className="flex-1">Design extends outside print area — it will be cropped</span>
+                  <span className="shrink-0 underline decoration-2 underline-offset-2">Tap to fix</span>
+                </button>
               )}
 
               {/* Interaction hint */}
