@@ -880,9 +880,9 @@ export default function DesignStudio() {
   // Runs only when the selected product itself changes, so a manual toggle made
   // while staying on the same product is respected.
   useEffect(() => {
-    if (isMobile || !supports3D) return;
-    const isCurvedProduct = ["mug", "waterbottle", "cap"].includes(selectedProduct.category);
-    setViewMode(isCurvedProduct ? "3d" : "2d");
+    // Always default to 2D — curved products (mug/cap/bottle) are edited in 2D flat view.
+    // Users can manually toggle to 3D preview from the 2D/3D button if they want.
+    setViewMode("2d");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProduct.id]);
 
@@ -2930,7 +2930,7 @@ export default function DesignStudio() {
                 className="relative w-full"
                 style={{
                   aspectRatio: `${selectedProduct.aspect}`,
-                  touchAction: "none",
+                  touchAction: isMobile && currentFaceLayers.length === 0 ? "pan-y" : "none",
                   transform: `translate(${canvasPan.x}px, ${canvasPan.y}px) scale(${canvasZoom})`,
                   transformOrigin: "center center",
                   transition: gestureRef.current?.mode === "canvas-pinch" ? "none" : "transform 0.2s ease-out",
@@ -3004,7 +3004,7 @@ export default function DesignStudio() {
                   ref={svgRef as any}
                   viewBox={selectedProduct.viewBox}
                   className="absolute inset-0 w-full h-full"
-                  style={{ touchAction: "none", userSelect: "none" }}
+                  style={{ touchAction: isMobile && currentFaceLayers.length === 0 ? "pan-y" : "none", userSelect: "none" }}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
