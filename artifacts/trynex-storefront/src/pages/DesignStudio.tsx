@@ -1566,12 +1566,18 @@ export default function DesignStudio() {
       const img = new Image();
       await new Promise<void>((res, rej) => { img.onload = () => res(); img.onerror = rej; img.src = dataUrl; });
 
+      // Auto-fit to print zone — same contain-fit formula as handleFileUpload.
+      // scale=1.0 → image width fills the zone width exactly; *0.95 adds a small safety margin.
+      const aiPz = pzRef.current;
+      const aiAspect = (img.naturalWidth || 1024) / Math.max(img.naturalHeight || 1024, 1);
+      const aiScale = Math.min(1.0, (aiPz.h * aiAspect) / aiPz.w) * 0.95;
+
       const layer: ImageLayer = {
         id: uid(), name: prompt.slice(0, 30),
         type: "image", src: dataUrl,
         naturalW: img.naturalWidth || 1024, naturalH: img.naturalHeight || 1024,
         visible: true, locked: false,
-        transform: { x: 0, y: 0, scale: 0.85, rotation: 0, opacity: 1 },
+        transform: { x: 0, y: 0, scale: aiScale, rotation: 0, opacity: 1 },
         face: activeFaceRef.current,
       };
 
@@ -4583,13 +4589,16 @@ export default function DesignStudio() {
                               onClick={() => {
                                 const img = new Image();
                                 img.onload = () => {
+                                  const hisPz = pzRef.current;
+                                  const hisAspect = (img.naturalWidth || 512) / Math.max(img.naturalHeight || 512, 1);
+                                  const hisScale = Math.min(1.0, (hisPz.h * hisAspect) / hisPz.w) * 0.95;
                                   const layer: ImageLayer = {
                                     id: uid(), name: h.prompt.slice(0, 30),
                                     type: "image", src: h.url,
                                     naturalW: img.naturalWidth || 512,
                                     naturalH: img.naturalHeight || 512,
                                     visible: true, locked: false,
-                                    transform: { x: 0, y: 0, scale: 0.85, rotation: 0, opacity: 1 },
+                                    transform: { x: 0, y: 0, scale: hisScale, rotation: 0, opacity: 1 },
                                     face: activeFaceRef.current,
                                   };
                                   flushSync(() => {

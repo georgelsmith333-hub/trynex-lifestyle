@@ -34,6 +34,11 @@ function getUploadsDir(): string {
 
 function getPublicBaseUrl(): string {
   if (process.env.API_PUBLIC_URL) return process.env.API_PUBLIC_URL.replace(/\/$/, "");
+  // In Replit dev, the storefront's Vite dev server proxies /api/* to this API server.
+  // The storefront is mounted at /trynex-storefront/ on the shared dev domain, so
+  // reference image URLs routed through it are publicly accessible to Pollinations.
+  const replitDomain = process.env.REPLIT_DEV_DOMAIN;
+  if (replitDomain) return `https://${replitDomain}/trynex-storefront`;
   const port = process.env.PORT || process.env.API_PORT || "5001";
   return `http://localhost:${port}`;
 }
@@ -113,6 +118,35 @@ router.post("/ai/reference", async (req: Request, res: Response) => {
     return res.status(500).json({ error: "Failed to save reference image." });
   }
 
+  // Prefer Imgur for a truly public URL that Pollinations can fetch from anywhere.
+  // Without this, Pollinations gets a localhost URL it cannot reach.
+  const imgurClientId = process.env.IMGUR_CLIENT_ID;
+  if (imgurClientId) {
+    try {
+      const imgurController = new AbortController();
+      const imgurTimeout = setTimeout(() => imgurController.abort(), 15_000);
+      const imgurRes = await fetch("https://api.imgur.com/3/image", {
+        method: "POST",
+        signal: imgurController.signal,
+        headers: {
+          "Authorization": `Client-ID ${imgurClientId}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ image: base64Data, type: "base64", name: filename }),
+      });
+      clearTimeout(imgurTimeout);
+      if (imgurRes.ok) {
+        const imgurJson = await imgurRes.json() as { data?: { link?: string } };
+        if (imgurJson.data?.link) {
+          return res.json({ url: imgurJson.data.link });
+        }
+      }
+    } catch (imgurErr) {
+      console.warn("[ai/reference] Imgur upload failed:", imgurErr instanceof Error ? imgurErr.message : String(imgurErr));
+    }
+  }
+
+  // Fall back to a URL routable via Replit dev domain (via storefront Vite proxy) or API_PUBLIC_URL in production
   const url = `${getPublicBaseUrl()}/api/ai/ref/${filename}`;
   return res.json({ url });
 });

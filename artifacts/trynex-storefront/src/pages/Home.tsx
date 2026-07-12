@@ -930,15 +930,15 @@ export default function Home() {
               if (cat.icon === "custom"      && settings.categoryCustomEnabled    === false) return false;
               return true;
             }).map((cat, i) => {
-              /* Use the realistic HD mockup photos from the Design Studio for category cards */
+              /* Use crisp mockup photos for category cards — clean on any background */
               const imageMap: Record<string, string> = {
-                tshirt:      "/images/cat-tshirt.png",
-                hoodie:      "/images/cat-hoodie.png",
-                cap:         "/images/cat-cap.png",
-                mug:         "/images/cat-mug.png",
-                waterbottle: "/images/cat-waterbottle.png",
-                watertumbler:"/images/cat-waterbottle.png",
-                custom:      "/images/cat-tshirt.png",
+                tshirt:      "/mockups/white-tshirt-front-cutout.png",
+                hoodie:      "/mockups/white-hoodie-front.png",
+                cap:         "/mockups/white-cap-front-cutout.png",
+                mug:         "/mockups/white-mug-front.png",
+                waterbottle: "/mockups/white-waterbottle-front.png",
+                watertumbler:"/mockups/white-waterbottle-front.png",
+                custom:      "/mockups/white-tshirt-front-cutout.png",
               };
 
               return (

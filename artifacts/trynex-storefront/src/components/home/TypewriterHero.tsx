@@ -6,9 +6,9 @@ import {
 } from "lucide-react";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 
-const tshirtSrc = "/images/cat-tshirt.png";
-const mugSrc    = "/images/cat-mug.png";
-const capSrc    = "/images/cat-cap.png";
+const tshirtSrc = "/mockups/white-tshirt-front-cutout.png";
+const mugSrc    = "/mockups/white-mug-front.png";
+const capSrc    = "/mockups/white-cap-front-cutout.png";
 
 const DEFAULT_PHRASES: string[] = [
   "T-Shirts.",
@@ -94,13 +94,14 @@ function useTypewriter(phrases: string[], opts?: {
 // Multi-product grid shown in the hero right column
 const HERO_PRODUCT_GRID = [
   {
-    src: "/images/cat-hoodie.png",
+    src: "/mockups/white-hoodie-front.png",
     label: "Custom Hoodie",
     badge: "Best Seller",
     badgeColor: "#E85D04",
     delay: 0.1,
     floatY: 10,
-    rotate: "-2deg",
+    rotate: "0deg",
+    href: "/products?category=hoodies",
   },
   {
     src: mugSrc,
@@ -109,25 +110,28 @@ const HERO_PRODUCT_GRID = [
     badgeColor: "#0EA5E9",
     delay: 0.25,
     floatY: 8,
-    rotate: "2deg",
+    rotate: "0deg",
+    href: "/products?category=mugs",
   },
   {
-    src: tshirtSrc,
+    src: "/mockups/white-tshirt-front-cutout.png",
     label: "Custom T-Shirt",
     badge: "Top Pick",
     badgeColor: "#10B981",
     delay: 0.15,
     floatY: 12,
-    rotate: "-1deg",
+    rotate: "0deg",
+    href: "/products?category=t-shirts",
   },
   {
-    src: capSrc,
+    src: "/mockups/white-cap-front-cutout.png",
     label: "Custom Cap",
     badge: "Trending",
     badgeColor: "#7C3AED",
     delay: 0.3,
     floatY: 9,
-    rotate: "3deg",
+    rotate: "0deg",
+    href: "/products?category=caps",
   },
 ];
 
@@ -360,19 +364,20 @@ export function TypewriterHero() {
               style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}
             >
               {HERO_PRODUCT_GRID.map((p, i) => (
-                <div
+                <Link
                   key={p.label}
+                  href={p.href}
                   className="flex-none relative rounded-2xl overflow-hidden"
                   style={{
                     width: "130px",
-                    background: "linear-gradient(145deg, #FFF8F3, #FFF2E8)",
-                    border: "1.5px solid rgba(232,93,4,0.12)",
-                    boxShadow: "0 6px 20px rgba(56,30,8,0.10), 0 1px 4px rgba(56,30,8,0.06)",
+                    background: "#1C1C1E",
+                    border: "1.5px solid rgba(255,255,255,0.08)",
+                    boxShadow: "0 8px 24px rgba(0,0,0,0.28), 0 2px 6px rgba(0,0,0,0.16)",
                   }}
                 >
                   <div
                     className="absolute top-2 left-2 z-10 px-2 py-0.5 rounded-full text-[8px] font-black text-white uppercase tracking-wider"
-                    style={{ background: p.badgeColor }}
+                    style={{ background: p.badgeColor, boxShadow: "0 2px 6px rgba(0,0,0,0.3)" }}
                   >
                     {p.badge}
                   </div>
@@ -381,14 +386,14 @@ export function TypewriterHero() {
                     alt={p.label}
                     loading={i < 2 ? "eager" : "lazy"}
                     decoding="async"
-                    className="w-full object-cover select-none pointer-events-none"
+                    className="w-full object-contain select-none pointer-events-none p-2"
                     style={{ height: "100px" }}
                     draggable={false}
                   />
                   <div className="pb-2.5 text-center">
-                    <span className="text-[10px] font-black text-gray-700">{p.label}</span>
+                    <span className="text-[10px] font-black text-gray-200">{p.label}</span>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </motion.div>
@@ -452,21 +457,23 @@ export function TypewriterHero() {
             {HERO_PRODUCT_GRID.slice(0, 2).map((p, i) => (
               <motion.div
                 key={p.label}
-                className="flex-1 relative rounded-2xl lg:rounded-3xl overflow-hidden"
+                className="flex-1 relative rounded-2xl lg:rounded-3xl overflow-hidden cursor-pointer"
                 style={{
-                  background: "linear-gradient(145deg, #FFF8F3, #FFF2E8)",
-                  border: "1.5px solid rgba(232,93,4,0.12)",
-                  boxShadow: "0 8px 24px rgba(56,30,8,0.10), 0 2px 6px rgba(56,30,8,0.05)",
+                  background: "#1C1C1E",
+                  border: "1.5px solid rgba(255,255,255,0.08)",
+                  boxShadow: "0 12px 32px rgba(0,0,0,0.32), 0 2px 8px rgba(0,0,0,0.18)",
                   minHeight: "160px",
                 }}
                 initial={reduced ? false : { opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: p.delay, ease: [0.22, 1, 0.36, 1] }}
+                onClick={() => window.location.href = p.href}
+                whileHover={{ scale: 1.02 }}
               >
                 {/* Badge */}
                 <div
                   className="absolute top-2.5 left-2.5 z-10 px-2 py-0.5 rounded-full text-[8px] lg:text-[9px] font-black text-white uppercase tracking-wider"
-                  style={{ background: p.badgeColor }}
+                  style={{ background: p.badgeColor, boxShadow: "0 2px 8px rgba(0,0,0,0.35)" }}
                 >
                   {p.badge}
                 </div>
@@ -478,9 +485,8 @@ export function TypewriterHero() {
                   fetchPriority="high"
                   decoding="async"
                   onError={(e) => { (e.currentTarget as HTMLImageElement).src = tshirtSrc; }}
-                  className="w-full h-28 md:h-32 lg:h-44 object-cover select-none pointer-events-none"
+                  className="w-full h-28 md:h-32 lg:h-44 object-contain select-none pointer-events-none p-3"
                   draggable={false}
-                  style={{ transform: `rotate(${p.rotate})` }}
                   animate={reduced ? undefined : { y: [0, -(p.floatY / 2), 0] }}
                   transition={reduced ? undefined : {
                     duration: 4 + i * 0.6,
@@ -490,8 +496,8 @@ export function TypewriterHero() {
                   }}
                 />
                 {/* Label */}
-                <div className="pb-2.5 text-center">
-                  <span className="text-[10px] lg:text-xs font-black text-gray-700">{p.label}</span>
+                <div className="pb-3 text-center">
+                  <span className="text-[10px] lg:text-xs font-black text-gray-200">{p.label}</span>
                 </div>
               </motion.div>
             ))}
@@ -502,21 +508,23 @@ export function TypewriterHero() {
             {HERO_PRODUCT_GRID.slice(2, 4).map((p, i) => (
               <motion.div
                 key={p.label}
-                className="flex-1 relative rounded-2xl lg:rounded-3xl overflow-hidden"
+                className="flex-1 relative rounded-2xl lg:rounded-3xl overflow-hidden cursor-pointer"
                 style={{
-                  background: "linear-gradient(145deg, #FFF8F3, #FFF2E8)",
-                  border: "1.5px solid rgba(232,93,4,0.12)",
-                  boxShadow: "0 8px 24px rgba(56,30,8,0.10), 0 2px 6px rgba(56,30,8,0.05)",
+                  background: "#1C1C1E",
+                  border: "1.5px solid rgba(255,255,255,0.08)",
+                  boxShadow: "0 12px 32px rgba(0,0,0,0.32), 0 2px 8px rgba(0,0,0,0.18)",
                   minHeight: "160px",
                 }}
                 initial={reduced ? false : { opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: p.delay, ease: [0.22, 1, 0.36, 1] }}
+                onClick={() => window.location.href = p.href}
+                whileHover={{ scale: 1.02 }}
               >
                 {/* Badge */}
                 <div
                   className="absolute top-2.5 left-2.5 z-10 px-2 py-0.5 rounded-full text-[8px] lg:text-[9px] font-black text-white uppercase tracking-wider"
-                  style={{ background: p.badgeColor }}
+                  style={{ background: p.badgeColor, boxShadow: "0 2px 8px rgba(0,0,0,0.35)" }}
                 >
                   {p.badge}
                 </div>
@@ -527,9 +535,8 @@ export function TypewriterHero() {
                   loading="lazy"
                   decoding="async"
                   onError={(e) => { (e.currentTarget as HTMLImageElement).src = tshirtSrc; }}
-                  className="w-full h-28 md:h-32 lg:h-44 object-cover select-none pointer-events-none"
+                  className="w-full h-28 md:h-32 lg:h-44 object-contain select-none pointer-events-none p-3"
                   draggable={false}
-                  style={{ transform: `rotate(${p.rotate})` }}
                   animate={reduced ? undefined : { y: [0, -(p.floatY / 2), 0] }}
                   transition={reduced ? undefined : {
                     duration: 4.5 + i * 0.5,
@@ -539,8 +546,8 @@ export function TypewriterHero() {
                   }}
                 />
                 {/* Label */}
-                <div className="pb-2.5 text-center">
-                  <span className="text-[10px] lg:text-xs font-black text-gray-700">{p.label}</span>
+                <div className="pb-3 text-center">
+                  <span className="text-[10px] lg:text-xs font-black text-gray-200">{p.label}</span>
                 </div>
               </motion.div>
             ))}
