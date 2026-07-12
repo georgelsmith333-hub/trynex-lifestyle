@@ -279,7 +279,7 @@ export default function AdminDashboard() {
                 paddingAngle={3}
                 dataKey="value"
               >
-                {PAYMENT_DATA.map((entry, i) => (
+                {PAYMENT_DATA.map((entry: { name: string; value: number; color: string }, i: number) => (
                   <Cell key={i} fill={entry.color} />
                 ))}
               </Pie>
@@ -287,7 +287,7 @@ export default function AdminDashboard() {
             </PieChart>
           </ResponsiveContainer>
           <div className="space-y-2 mt-2">
-            {PAYMENT_DATA.map((p) => (
+            {PAYMENT_DATA.map((p: { name: string; value: number; color: string }) => (
               <div key={p.name} className="flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2">
                   <div className="w-2.5 h-2.5 rounded-full" style={{ background: p.color }} />
@@ -355,7 +355,7 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {(stats.recentOrders ?? []).map((order: any, i) => (
+                {(stats.recentOrders ?? []).map((order: import("@workspace/api-client-react").Order, i: number) => (
                   <motion.tr
                     key={order.id}
                     initial={{ opacity: 0, x: -10 }}
@@ -366,14 +366,14 @@ export default function AdminDashboard() {
                     <td className="px-5 py-4 font-mono text-xs font-black text-orange-600">{order.orderNumber}</td>
                     <td className="px-5 py-4 font-semibold text-sm text-gray-900">{order.customerName}</td>
                     <td className="px-5 py-4">
-                      <span className={`px-2.5 py-1 rounded-xl text-xs font-bold capitalize ${getStatusStyle(order.status)}`}>
-                        {order.status}
+                      <span className={`px-2.5 py-1 rounded-xl text-xs font-bold capitalize ${getStatusStyle(order.status ?? "")}`}>
+                        {order.status ?? ""}
                       </span>
                     </td>
                     <td className="px-5 py-4">
-                      <span className="text-xs font-black text-gray-500 uppercase">{order.paymentMethod}</span>
+                      <span className="text-xs font-black text-gray-500 uppercase">{order.paymentMethod ?? ""}</span>
                     </td>
-                    <td className="px-5 py-4 font-black text-orange-600">{formatPrice(order.total)}</td>
+                    <td className="px-5 py-4 font-black text-orange-600">{formatPrice(parseFloat(order.total ?? "0"))}</td>
                   </motion.tr>
                 ))}
                 {(stats.recentOrders ?? []).length === 0 && (
@@ -408,7 +408,7 @@ export default function AdminDashboard() {
             </Link>
           </div>
           <div className="divide-y divide-gray-50">
-            {topProducts.map((product, i) => (
+            {topProducts.map((product: { id: number; name: string; imageUrl?: string | null; totalSold?: number; totalRevenue?: string }, i: number) => (
               <motion.div
                 key={product.id}
                 initial={{ opacity: 0, x: -10 }}

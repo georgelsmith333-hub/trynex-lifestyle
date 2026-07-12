@@ -2,14 +2,103 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { UseQueryOptions } from "@tanstack/react-query";
 import { customFetch } from "./custom-fetch";
 
-// Import shared types from generated API to avoid duplicate exports
-import type {
-  Product,
-  Category,
-  Order,
-  BlogPost,
-  SiteSettings,
-} from "./generated/api";
+// ─── Shared types (generated/api.ts is a skeleton; define types here) ──────
+export interface Product {
+  id: number;
+  slug?: string;
+  name: string;
+  description?: string | null;
+  price: string;
+  originalPrice?: string | null;
+  discountPrice?: string | null;
+  imageUrl?: string | null;
+  images?: string[] | null;
+  categoryId?: number | null;
+  categoryName?: string | null;
+  sizes?: string[] | null;
+  colors?: string[] | null;
+  stock: number;
+  featured?: boolean;
+  active?: boolean;
+  customizable?: boolean;
+  rating?: number | null;
+  reviewCount?: number;
+  tags?: string[] | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  createdAt?: string;
+}
+export interface Category {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string | null;
+  imageUrl?: string | null;
+  parentId?: number | null;
+  sortOrder?: number;
+  productCount?: number;
+  active?: boolean;
+}
+export interface Order {
+  id: number;
+  orderNumber?: string;
+  status?: string;
+  paymentMethod?: string;
+  paymentStatus?: string;
+  customerName?: string;
+  customerPhone?: string;
+  customerEmail?: string | null;
+  shippingAddress?: string;
+  shippingDistrict?: string | null;
+  total?: string;
+  totalAmount?: string;
+  advanceAmount?: string | null;
+  shippingCost?: string | null;
+  promoCode?: string | null;
+  promoDiscount?: string | null;
+  items?: OrderItem[] | null;
+  createdAt?: string;
+  updatedAt?: string | null;
+  notes?: string | null;
+}
+export interface BlogPost {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt?: string | null;
+  content: string;
+  imageUrl?: string | null;
+  author?: string | null;
+  authorBio?: string | null;
+  authorAvatarUrl?: string | null;
+  category?: string | null;
+  tags?: string[] | null;
+  published?: boolean;
+  featured?: boolean;
+  trending?: boolean;
+  readingTime?: number | null;
+  viewCount?: number;
+  createdAt?: string;
+  updatedAt?: string | null;
+}
+export interface SiteSettings {
+  siteName?: string;
+  logoUrl?: string | null;
+  primaryColor?: string;
+  phone?: string | null;
+  email?: string | null;
+  address?: string | null;
+  facebook?: string | null;
+  instagram?: string | null;
+  announcement?: string | null;
+  announcementColor?: string | null;
+  googleAnalyticsId?: string | null;
+  googleAdsId?: string | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  homepage_layout?: string | null;
+  spinWheelEnabled?: boolean;
+}
 
 // ─── Shared option type used by hooks that pass auth headers ────────────────
 interface ReqOpts {
@@ -619,7 +708,7 @@ export const useTrynexGetAdminStats = (opts?: ReqOpts) => {
         todayRevenue?: number;
         lowStockProducts?: number;
         topProducts?: { id: number; name: string; imageUrl?: string | null; totalSold: number }[];
-        recentOrders?: { id: number; orderNumber: string; customerName: string; status: string; paymentMethod: string; total: number }[];
+        recentOrders?: { id: number; orderNumber: string; customerName: string; status: string; paymentMethod: string; total: string }[];
         weeklyData: AdminStatsWeeklyDataItem[];
         paymentDistribution: AdminStatsPaymentDistributionItem[];
       }>("/api/admin/stats", {

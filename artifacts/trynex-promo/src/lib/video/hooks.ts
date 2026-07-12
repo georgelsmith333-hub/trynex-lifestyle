@@ -39,7 +39,7 @@ export function useVideoPlayer(options: UseVideoPlayerOptions): UseVideoPlayerRe
 
   // Start recording on mount
   useEffect(() => {
-    window.startRecording?.();
+    (window as any).startRecording?.();
   }, []);
 
   // Scene advancement -- loops independently of recording
@@ -52,7 +52,7 @@ export function useVideoPlayer(options: UseVideoPlayerOptions): UseVideoPlayerRe
       // Last scene just finished playing
       if (currentScene >= totalScenes - 1) {
         if (!hasEnded) {
-          window.stopRecording?.();
+          (window as any).stopRecording?.();
           setHasEnded(true);
           onVideoEnd?.();
         }

@@ -190,7 +190,7 @@ export const charVariants: Variants = {
   },
 };
 
-export const charContainerVariants: Variants = {
+export const charContainerVariants: any = {
   hidden: {},
   visible: {
     transition: { staggerChildren: 0.03, delayChildren: 0.1 },
@@ -208,7 +208,7 @@ export const staggerConfigs = {
 } as const;
 
 // Common variants
-export const containerVariants: Variants = {
+export const containerVariants: any = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -216,7 +216,7 @@ export const containerVariants: Variants = {
   },
 };
 
-export const itemVariants: Variants = {
+export const itemVariants: any = {
   hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,

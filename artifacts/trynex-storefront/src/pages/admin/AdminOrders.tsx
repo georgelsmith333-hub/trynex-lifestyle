@@ -361,10 +361,10 @@ export default function AdminOrders() {
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-8">
         {[
           { label: "Total", count: data?.total ?? 0, cls: 'text-gray-900' },
-          { label: "Pending", count: (data?.orders ?? []).filter(o => o.status === 'pending').length, cls: 'text-yellow-400' },
-          { label: "Processing", count: (data?.orders ?? []).filter(o => o.status === 'processing').length, cls: 'text-blue-400' },
-          { label: "Shipped", count: (data?.orders ?? []).filter(o => ['shipped', 'ongoing'].includes(o.status)).length, cls: 'text-purple-400' },
-          { label: "Delivered", count: (data?.orders ?? []).filter(o => o.status === 'delivered').length, cls: 'text-green-400' },
+          { label: "Pending", count: (data?.orders ?? []).filter((o: { status?: string }) => o.status === 'pending').length, cls: 'text-yellow-400' },
+          { label: "Processing", count: (data?.orders ?? []).filter((o: { status?: string }) => o.status === 'processing').length, cls: 'text-blue-400' },
+          { label: "Shipped", count: (data?.orders ?? []).filter((o: { status?: string }) => ['shipped', 'ongoing'].includes(o.status ?? '')).length, cls: 'text-purple-400' },
+          { label: "Delivered", count: (data?.orders ?? []).filter((o: { status?: string }) => o.status === 'delivered').length, cls: 'text-green-400' },
         ].map(s => (
           <div key={s.label} className="p-4 rounded-2xl text-center"
             style={{ background: '#f9fafb', border: '1px solid #f3f4f6' }}>
@@ -436,8 +436,8 @@ export default function AdminOrders() {
               </thead>
               <tbody>
                 <AnimatePresence>
-                  {filteredOrders.map((order, i) => {
-                    const Icon = statusIcon(order.status);
+                  {filteredOrders.map((order: import("@workspace/api-client-react").Order, i: number) => {
+                    const Icon = statusIcon(order.status ?? "");
                     const pm = PAYMENT_LABELS[order.paymentMethod ?? ''] || { label: order.paymentMethod, color: '#aaa' };
                     const payColor = getPaymentStatusColor(order.paymentStatus || 'pending');
                     const payLabel = getPaymentStatusLabel(order.paymentStatus || 'pending');
@@ -506,9 +506,9 @@ export default function AdminOrders() {
                           })()}
                         </td>
                         <td className="px-4 py-4">
-                          <p className="font-black text-primary text-sm">{formatPrice(parseFloat(String(order.total)))}</p>
-                          {parseFloat(String(order.shippingCost)) === 0 && <p className="text-[10px] text-green-400">FREE ship</p>}
-                          {order.promoCode && <p className="text-[10px] text-purple-500 font-bold">{order.promoCode} (-{formatPrice(parseFloat(String(order.promoDiscount || "0")) || 0)})</p>}
+                          <p className="font-black text-primary text-sm">{formatPrice(parseFloat(String(order.total ?? "0")))}</p>
+                          {parseFloat(String(order.shippingCost ?? "0")) === 0 && <p className="text-[10px] text-green-400">FREE ship</p>}
+                          {order.promoCode && <p className="text-[10px] text-purple-500 font-bold">{order.promoCode} (-{formatPrice(parseFloat(String(order.promoDiscount ?? "0")))})</p>}
                         </td>
                         <td className="px-4 py-4">
                           <span className="text-xs font-bold px-2 py-1 rounded-lg" style={{ background: `${pm.color}15`, color: pm.color }}>
@@ -533,7 +533,7 @@ export default function AdminOrders() {
                             value={order.status}
                             onChange={e => handleStatusChange(order.id, e.target.value)}
                             disabled={isUpdating}
-                            className={`text-xs font-bold px-2 py-1.5 rounded-xl border border-gray-200 outline-none cursor-pointer capitalize ${statusClass(order.status)}`}
+                            className={`text-xs font-bold px-2 py-1.5 rounded-xl border border-gray-200 outline-none cursor-pointer capitalize ${statusClass(order.status ?? "")}`}
                             style={{ background: 'white' }}
                           >
                             <option value="pending">⏳ Pending</option>

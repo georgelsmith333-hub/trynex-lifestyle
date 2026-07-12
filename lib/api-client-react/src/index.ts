@@ -3,7 +3,13 @@ export * from "./generated/api.schemas";
 export { setBaseUrl, setAuthTokenGetter } from "./custom-fetch";
 export type { AuthTokenGetter } from "./custom-fetch";
 
+// ─── Core domain types (defined in trynex-hooks.ts because generated/api is a skeleton) ───
 export type {
+  Product,
+  Category,
+  Order,
+  BlogPost,
+  SiteSettings,
   Testimonial,
   OrderItem,
   AdminCustomer,
@@ -21,38 +27,83 @@ export type {
   AdminGuestCustomer,
 } from "./trynex-hooks";
 
+// ─── Named hooks from trynex-hooks.ts ───
 export {
   CreateOrderRequestPaymentMethod,
   UpdateOrderStatusRequestStatus,
+  // product
+  getTrynexListProductsQueryKey,
+  useTrynexListProducts,
+  useTrynexGetProduct,
+  useTrynexCreateProduct,
+  useTrynexUpdateProduct,
+  useTrynexDeleteProduct,
   useToggleProductFeatured,
+  // category
+  useTrynexListCategories,
   useCreateCategory,
   useUpdateCategory,
   useDeleteCategory,
+  // order
+  useCreateOrder,
+  useTrackOrder,
+  getTrynexListOrdersQueryKey,
+  useTrynexListOrders,
+  useUpdateOrderStatus,
+  useUpdatePaymentStatus,
+  // settings
+  useGetSettings,
+  useUpdateSettings,
+  useGetDesignerSettings,
+  usePatchDesignerSettings,
+  // testimonial
   useGetTestimonials,
   useAdminListTestimonials,
   useCreateTestimonial,
   useUpdateTestimonial,
   useDeleteTestimonial,
-  useUpdateOrderStatus,
-  useUpdatePaymentStatus,
+  // admin
+  useTrynexAdminLogin,
+  useTrynexAdminLogout,
   useAdminMe,
+  useTrynexGetAdminStats,
+  // customer
   useListAdminCustomers,
   useListAdminGuestCustomers,
   useConvertGuestCustomer,
   useDeleteGuestCustomer,
-  getExportBackupUrl,
-  getExportOrdersCsvUrl,
-  useImportBackup,
-  useGetDesignerSettings,
-  usePatchDesignerSettings,
-  useListAdminReviews,
-  useApproveReview,
-  useDeleteReview,
+  // blog
+  useListBlogPosts,
   useCreateBlogPost,
   useUpdateBlogPost,
   useDeleteBlogPost,
+  useGetBlogSettings,
   usePatchBlogSettings,
+  // backup/export
+  getExportBackupUrl,
+  getExportOrdersCsvUrl,
+  useImportBackup,
+  // review
+  useListAdminReviews,
+  useApproveReview,
+  useDeleteReview,
+  // facebook/social
   useFetchFacebookPosts,
   useFetchSocialUrl,
   useImportFacebookProduct,
+} from "./trynex-hooks";
+
+// ─── Convenience aliases (storefront expects shorter names) ───
+export {
+  useTrynexListProducts as useListProducts,
+  useTrynexGetProduct as useGetProduct,
+  getTrynexListProductsQueryKey as getListProductsQueryKey,
+  useTrynexListCategories as useListCategories,
+  useTrynexListOrders as useListOrders,
+  getTrynexListOrdersQueryKey as getListOrdersQueryKey,
+  useTrynexCreateProduct as useCreateProduct,
+  useTrynexUpdateProduct as useUpdateProduct,
+  useTrynexDeleteProduct as useDeleteProduct,
+  useTrynexGetAdminStats as useGetAdminStats,
+  useTrynexAdminLogout as useAdminLogout,
 } from "./trynex-hooks";

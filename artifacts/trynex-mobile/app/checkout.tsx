@@ -177,7 +177,7 @@ export default function CheckoutScreen() {
         </Pressable>
         <Pressable
           style={[styles.homeBtn, { borderColor: colors.border }]}
-          onPress={() => router.replace("/(tabs)/")}
+          onPress={() => router.replace("/")}
         >
           <Text style={[styles.homeBtnText, { color: colors.foreground }]}>Continue Shopping</Text>
         </Pressable>

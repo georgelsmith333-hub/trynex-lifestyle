@@ -93,7 +93,7 @@ export default function Products() {
 
   const { data: productsData, isLoading } = useListProducts({
     search: search || undefined,
-    categoryId: activeCategory,
+    category: activeCategory ? String(activeCategory) : undefined,
     limit: 48
   });
 

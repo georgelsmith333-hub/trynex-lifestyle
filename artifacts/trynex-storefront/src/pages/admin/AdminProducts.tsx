@@ -267,14 +267,14 @@ export default function AdminProducts() {
     }
   };
 
-  const filteredProducts = (data?.products ?? []).filter(p => {
+  const filteredProducts = (data?.products ?? []).filter((p: Product) => {
     if (showLowStock && p.stock > 5) return false;
     if (!search) return true;
     return p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.slug.toLowerCase().includes(search.toLowerCase());
+      (p.slug ?? "").toLowerCase().includes(search.toLowerCase());
   });
 
-  const lowStockCount = (data?.products ?? []).filter(p => p.stock <= 5).length;
+  const lowStockCount = (data?.products ?? []).filter((p: Product) => p.stock <= 5).length;
   const isSaving = isCreating || isUpdating;
 
   const [bulkModalOpen, setBulkModalOpen] = useState(false);

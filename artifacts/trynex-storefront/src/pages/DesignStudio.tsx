@@ -3097,7 +3097,7 @@ export default function DesignStudio() {
                               opacity={l.transform.opacity}
                               preserveAspectRatio="none"
                               pointerEvents="none"
-                              style={{ filter: userAdj }}
+                              style={{ filter: userAdj, mixBlendMode: 'multiply' }}
                             />
                             {/* Transparent hit-rect — ensures reliable pointer events on every
                                 browser/device regardless of SVG <image> pointer-event quirks */}
@@ -3144,7 +3144,7 @@ export default function DesignStudio() {
                             paintOrder={l.strokeWidth ? "stroke" : undefined}
                             transform={`rotate(${l.transform.rotation}, ${g.cx}, ${g.cy})`}
                             filter={shadowFilterId ? `url(#${shadowFilterId})` : undefined}
-                            style={{ cursor: l.locked ? "not-allowed" : "grab", userSelect: "none" }}
+                            style={{ cursor: l.locked ? "not-allowed" : "grab", userSelect: "none", mixBlendMode: 'multiply' }}
                           >{l.text}</text>
                         </g>
                       );
