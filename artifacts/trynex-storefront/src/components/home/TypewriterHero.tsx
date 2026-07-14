@@ -104,14 +104,14 @@ const HERO_PRODUCT_GRID = [
     href: "/products?category=hoodies",
   },
   {
-    src: mugSrc,
-    label: "Custom Mug",
-    badge: "Fan Fav",
+    src: "/mockups/white-waterbottle-front-cutout.png",
+    label: "Water Bottle",
+    badge: "New",
     badgeColor: "#0EA5E9",
     delay: 0.25,
     floatY: 8,
     rotate: "0deg",
-    href: "/products?category=mugs",
+    href: "/products?category=custom-orders",
   },
   {
     src: "/mockups/white-tshirt-front-cutout.png",
@@ -230,7 +230,7 @@ export function TypewriterHero() {
         />
       </div>
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 lg:px-16 grid grid-cols-1 md:grid-cols-[1.1fr_1fr] gap-6 md:gap-8 lg:gap-12 items-center">
+      <div className="relative z-10 w-full container-wide grid grid-cols-1 md:grid-cols-[1.1fr_1fr] gap-6 md:gap-8 lg:gap-12 items-center">
 
         {/* ── LEFT: copy ── */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left min-w-0 w-full">
@@ -409,7 +409,7 @@ export function TypewriterHero() {
               { icon: Zap, label: "24hr Production" },
               { icon: Truck, label: "64 Districts" },
               { icon: Layers, label: "320GSM Fabric" },
-              { icon: ShieldCheck, label: "COD Available" },
+              { icon: ShieldCheck, label: "25% Advance Only" },
             ].map(({ icon: Icon, label }) => (
               <span
                 key={label}

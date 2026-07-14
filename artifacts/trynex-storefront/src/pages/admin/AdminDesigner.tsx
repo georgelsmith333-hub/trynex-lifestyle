@@ -622,7 +622,7 @@ export default function AdminDesigner() {
                   <ToggleField label="Auto-Hide After 6 Seconds" desc="Slide the bar out automatically. Off by default — bar stays until visitor closes it." value={(watch("announcementAutoHide") as boolean) ?? false} onChange={v => { setValue("announcementAutoHide", v, { shouldDirty: true }); }} />
                 </div>
                 <Field label="Announcement Messages" full>
-                  <textarea {...reg("announcementBar")} className={inputClass} style={inputStyle} rows={3} placeholder="🚚 Free delivery on orders above ৳1,500! | COD available | WhatsApp: 01700-000000" />
+                  <textarea {...reg("announcementBar")} className={inputClass} style={inputStyle} rows={3} placeholder="🚚 Free delivery on orders above ৳1,500! | Pay 25% advance, rest on delivery | WhatsApp: 01700-000000" />
                   <p className="text-xs text-gray-400 mt-1.5">Separate messages with <code>|</code>. Each becomes a ticker item.</p>
                 </Field>
               </SectionCard>

@@ -19,7 +19,8 @@ const STATUS_OPTIONS = ["all", "pending", "processing", "shipped", "ongoing", "d
 type StatusFilter = typeof STATUS_OPTIONS[number];
 
 const PAYMENT_LABELS: Record<string, { label: string; color: string }> = {
-  cod: { label: "Cash on Delivery", color: "#4ade80" },
+  cod: { label: "Legacy COD", color: "#9ca3af" },
+  partial: { label: "25% Advance (COD)", color: "#f59e0b" },
   bkash: { label: "bKash", color: "#e2136e" },
   nagad: { label: "Nagad", color: "#f7941d" },
   upay: { label: "uPay", color: "#0077cc" },
@@ -30,6 +31,7 @@ const PAYMENT_LABELS: Record<string, { label: string; color: string }> = {
 const PAYMENT_STATUS_OPTS = [
   { value: 'pending', label: '✗ Not Paid', color: '#ef4444' },
   { value: 'submitted', label: '⏳ Under Review', color: '#f59e0b' },
+  { value: 'partial', label: '⏳ 25% Advance Paid', color: '#f59e0b' },
   { value: 'verified', label: '✓ Payment Confirmed', color: '#22c55e' },
   { value: 'wrong', label: '⚠ Payment Issue', color: '#ef4444' },
 ];
@@ -212,15 +214,15 @@ export default function AdminOrders() {
   const getPaymentStatusColor = (s: string) => {
     const map: Record<string, string> = {
       pending: '#ef4444', not_paid: '#ef4444',
-      submitted: '#f59e0b', verified: '#22c55e', wrong: '#ef4444', cod: '#4ade80'
+      submitted: '#f59e0b', partial: '#f59e0b', verified: '#22c55e', wrong: '#ef4444', cod: '#9ca3af'
     };
     return map[s] || '#aaa';
   };
 
   const getPaymentStatusLabel = (s: string) => {
     const map: Record<string, string> = {
-      pending: 'Not Paid', not_paid: 'Not Paid', submitted: 'Under Review',
-      verified: 'Confirmed', wrong: 'Issue', cod: 'COD'
+      pending: 'Not Paid', not_paid: 'Not Paid', submitted: 'Under Review', partial: '25% Advance',
+      verified: 'Confirmed', wrong: 'Issue', cod: 'Legacy COD'
     };
     return map[s] || s;
   };

@@ -9,8 +9,7 @@ import { getApiUrl } from "@/lib/utils";
 const PAYMENT_BADGES = [
   { name: "bKash", color: "#e2136e", bg: "#fde8f1" },
   { name: "Nagad", color: "#f7941d", bg: "#fff3e0" },
-  { name: "Rocket", color: "#8b2291", bg: "#f3e5f5" },
-  { name: "COD", color: "#16a34a", bg: "#f0fdf4" },
+  { name: "uPay", color: "#8b2291", bg: "#f3e5f5" },
 ];
 
 export function Footer() {
@@ -78,7 +77,7 @@ export function Footer() {
     <footer className="bg-gray-950 text-gray-300 overflow-hidden relative">
       <div className="footer-glow-strip w-full" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container-wide mx-auto px-4 sm:px-6 lg:px-8">
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 py-12 border-b border-white/5">
           {[

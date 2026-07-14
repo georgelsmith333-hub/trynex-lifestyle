@@ -127,7 +127,7 @@ export default function Contact() {
 
         {/* Contact Info Cards */}
         <section className="py-12 px-4">
-          <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 overflow-hidden">
             {contactItems.map((item, i) => (
               <motion.div key={item.label} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
                 {item.href ? (
@@ -158,11 +158,11 @@ export default function Contact() {
 
         {/* Form + Social */}
         <section className="py-8 pb-20 px-4">
-          <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10">
+          <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10 w-full">
 
             {/* Contact Form */}
-            <motion.div initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-              <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-100/60 p-8">
+            <motion.div initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="w-full">
+              <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-100/60 p-6 sm:p-8 w-full">
                 {submitted ? (
                   <div className="text-center py-12">
                     <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
@@ -219,7 +219,7 @@ export default function Contact() {
                           className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium focus:border-orange-400 focus:ring-2 focus:ring-orange-100 outline-none transition-all resize-none" />
                       </div>
                       <button type="submit" disabled={loading}
-                        className="w-full flex items-center justify-center gap-2 py-4 rounded-xl font-bold text-base text-white transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60"
+                        className="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-xl font-bold text-base text-white transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60 min-h-[48px]"
                         style={{ background: "linear-gradient(135deg,#E85D04,#FB8500)", boxShadow: "0 6px 20px rgba(232,93,4,0.35)" }}>
                         {loading ? (
                           <><div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> Sending...</>

@@ -170,7 +170,7 @@ export default function Products() {
       <main className="flex-1 pt-header pb-20">
         {/* Page Header with Tab Switcher */}
         <div className="bg-white border-b border-gray-100 py-4 sm:py-6">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="container-wide mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
               <div className="flex items-center gap-2 text-xs font-semibold text-gray-400 mb-2">
                 <a href="/" className="hover:text-orange-600 transition-colors cursor-pointer">Home</a>
@@ -252,7 +252,7 @@ export default function Products() {
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
             >
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-8">
+              <div className="container-wide mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-8">
                 <div className="relative mb-2 sm:mb-4">
                   <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400" />
                   <input
@@ -477,8 +477,8 @@ export default function Products() {
                     <AnimatePresence mode="wait">
                       {isLoading ? (
                         <motion.div key="loader" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                          <div className="grid grid-cols-2 lg:grid-cols-3 gap-5" aria-label="Loading products" aria-busy="true">
-                            {Array.from({ length: 6 }).map((_, i) => (
+                          <div className="product-grid-responsive" aria-label="Loading products" aria-busy="true">
+                            {Array.from({ length: 8 }).map((_, i) => (
                               <ProductCardSkeleton key={i} />
                             ))}
                           </div>
@@ -490,9 +490,9 @@ export default function Products() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             className={cn(
-                              "grid gap-5",
+                              "grid gap-4 sm:gap-5",
                               viewMode === "grid"
-                                ? "grid-cols-2 lg:grid-cols-3"
+                                ? "product-grid-responsive"
                                 : "grid-cols-1"
                             )}
                           >

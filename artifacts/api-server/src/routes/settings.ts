@@ -135,7 +135,7 @@ async function buildSettings(map: Record<string, string | null>) {
     primaryColor: map["primaryColor"] ?? "#E85D04",
     announcementColor: map["announcementColor"] ?? "#E85D04",
     trustBadge1Title: map["trustBadge1Title"] ?? "100% Secure Payments",
-    trustBadge1Desc: map["trustBadge1Desc"] ?? "bKash, Nagad, Rocket & COD",
+    trustBadge1Desc: map["trustBadge1Desc"] ?? "bKash, Nagad & uPay — 25% advance",
     trustBadge2Title: map["trustBadge2Title"] ?? "Nationwide Delivery",
     trustBadge2Desc: map["trustBadge2Desc"] ?? "All 64 districts of Bangladesh",
     trustBadge3Title: map["trustBadge3Title"] ?? "Quality Guarantee",
@@ -180,7 +180,7 @@ async function buildSettings(map: Record<string, string | null>) {
     spinWheelCooldownHours: parseInt(map["spinWheelCooldownHours"] ?? "24", 10),
     // SEO defaults (used as fallback when page has no override)
     seoDefaultTitle: map["seoDefaultTitle"] ?? "TryNex Lifestyle — Custom Apparel & Gifts in Bangladesh",
-    seoDefaultDescription: map["seoDefaultDescription"] ?? "Design and order custom T-shirts, hoodies, mugs, caps, and gift hampers in Bangladesh. Premium quality, nationwide delivery, cash on delivery.",
+    seoDefaultDescription: map["seoDefaultDescription"] ?? "Design and order custom T-shirts, hoodies, mugs, caps, and gift hampers in Bangladesh. Premium quality, nationwide delivery, pay just 25% in advance.",
     seoDefaultKeywords: map["seoDefaultKeywords"] ?? "custom t-shirt bangladesh, personalized mug, gift hamper, custom hoodie, design studio, trynex",
     seoOgImage: map["seoOgImage"] ?? "",
     seoTwitterHandle: map["seoTwitterHandle"] ?? "",

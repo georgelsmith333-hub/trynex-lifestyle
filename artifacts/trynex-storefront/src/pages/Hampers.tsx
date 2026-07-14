@@ -67,7 +67,7 @@ export default function Hampers() {
 
       <main className="flex-1 pt-header pb-24">
         {/* Hero */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="container-wide mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center pt-8 pb-12">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
@@ -125,7 +125,7 @@ export default function Hampers() {
               <p className="text-gray-400 font-semibold">No curated hampers yet — try Build Your Own above.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {hampers.map((h, idx) => {
                 const price = h.discountPrice ?? h.basePrice;
                 const hasDiscount = !!h.discountPrice && h.discountPrice < h.basePrice;

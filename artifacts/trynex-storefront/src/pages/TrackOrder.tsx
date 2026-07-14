@@ -38,8 +38,12 @@ const PAYMENT_STATUSES: Record<string, { label: string; color: string; bg: strin
     icon: AlertTriangle, desc: 'Issue with payment — contact us on WhatsApp'
   },
   cod: {
-    label: 'Cash on Delivery', color: '#16a34a', bg: 'rgba(74,222,128,0.08)', border: 'rgba(74,222,128,0.2)',
-    icon: CheckCircle2, desc: 'Pay when you receive your order'
+    label: 'Legacy COD', color: '#9ca3af', bg: 'rgba(156,163,175,0.08)', border: 'rgba(156,163,175,0.2)',
+    icon: CheckCircle2, desc: 'Legacy Cash on Delivery order'
+  },
+  partial: {
+    label: '25% Advance Paid', color: '#f59e0b', bg: 'rgba(245,158,11,0.06)', border: 'rgba(245,158,11,0.15)',
+    icon: CheckCircle2, desc: 'Deposit received. Remaining 75% on delivery.'
   },
 };
 
@@ -248,7 +252,7 @@ export default function TrackOrder() {
     : (settings.phone || "");
 
   const paymentMethodLabel: Record<string, string> = {
-    cod: 'Cash on Delivery', bkash: 'bKash', nagad: 'Nagad', rocket: 'Rocket'
+    cod: 'Legacy COD', bkash: 'bKash', nagad: 'Nagad', rocket: 'Rocket'
   };
 
   const timeline = (displayOrder?.timeline as any[]) || [];
@@ -460,7 +464,7 @@ export default function TrackOrder() {
                               }}
                             />
                           )}
-                          <div className="relative flex justify-between">
+                          <div className="relative flex justify-between flex-wrap gap-y-4 sm:flex-nowrap">
                             {ORDER_STEPS.map((step, i) => {
                               const isActive = stepIdx >= i;
                               const isCurrent = stepIdx === i;
@@ -473,7 +477,7 @@ export default function TrackOrder() {
                                 'Delivered': 'Done',
                               };
                               return (
-                                <div key={step.key} className="flex flex-col items-center gap-1 sm:gap-2 z-10" title={step.label}>
+                                <div key={step.key} className="flex flex-col items-center gap-1 sm:gap-2 z-10 w-1/5 sm:w-auto" title={step.label}>
                                   <motion.div
                                     animate={isCurrent ? { scale: [1, 1.12, 1] } : {}}
                                     transition={{ repeat: Infinity, duration: 2 }}
@@ -487,7 +491,7 @@ export default function TrackOrder() {
                                   >
                                     <Icon className="w-3 h-3 sm:w-4 sm:h-4" />
                                   </motion.div>
-                                  <span className={cn("text-[8px] sm:text-[10px] font-black text-center leading-tight max-w-[40px] sm:max-w-none", isActive ? "text-gray-700" : "text-gray-300")}>
+                                  <span className={cn("text-[8px] sm:text-[10px] font-black text-center leading-tight sm:max-w-none w-full", isActive ? "text-gray-700" : "text-gray-300")}>
                                     <span className="hidden sm:inline">{step.label}</span>
                                     <span className="sm:hidden">{shortLabels[step.label] ?? step.label}</span>
                                   </span>

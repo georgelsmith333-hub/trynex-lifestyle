@@ -819,7 +819,7 @@ export async function autoSeedIfEmpty(): Promise<void> {
       { key: "instagramUrl", value: "https://instagram.com/trynexlifestyle" },
       { key: "heroTitle", value: "Premium Custom Apparel" },
       { key: "heroSubtitle", value: "T-Shirts, Mugs, Caps & More – Made Just For You" },
-      { key: "announcementBar", value: "🎉 Free delivery on orders above ৳1500! | COD available | WhatsApp: 01903426915" },
+      { key: "announcementBar", value: "🎉 Free delivery on orders above ৳1500! | Pay 25% advance, rest on delivery | WhatsApp: 01903426915" },
       { key: "freeShippingThreshold", value: "1500" },
     ];
 

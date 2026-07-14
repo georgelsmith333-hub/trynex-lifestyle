@@ -51,7 +51,7 @@ const inputStyle = { background: 'white', border: '1px solid #e5e7eb', color: '#
 
 type CheckoutStep = 'form' | 'gateway' | 'success';
 type MobileMethod = 'bkash' | 'nagad' | 'upay';
-type PaymentMode = 'cod' | 'full' | 'advance';
+type PaymentMode = 'full' | 'advance';
 
 export default function Checkout() {
   const [, setLocation] = useLocation();
@@ -66,7 +66,7 @@ export default function Checkout() {
   const freeShippingThreshold = settings.freeShippingThreshold || 0;
   const shippingFee = settings.shippingCost || 0;
 
-  const [paymentMode, setPaymentMode] = useState<PaymentMode>('cod');
+  const [paymentMode, setPaymentMode] = useState<PaymentMode>('advance');
   const [walletChoice, setWalletChoice] = useState<MobileMethod>('bkash');
   const [summaryExpanded, setSummaryExpanded] = useState(false);
   const [step, setStep] = useState<number>(1);
@@ -381,7 +381,7 @@ export default function Checkout() {
   }
 
   const effectiveGatewayMethod: MobileMethod = walletChoice;
-  const paymentMethod = (paymentMode === 'full' || paymentMode === 'advance') ? walletChoice : 'cod';
+  const paymentMethod = walletChoice;
 
   const onSubmit = async (data: CheckoutFormData) => {
     const snapSubtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -509,12 +509,8 @@ export default function Checkout() {
         color: i.color,
       }));
       clearCart();
-      // COD orders don't need a payment gateway — go straight to success.
-      if (paymentMode === 'cod') {
-        setCheckoutStatus('success');
-      } else {
-        setCheckoutStatus('gateway');
-      }
+      // Always go to payment gateway (COD removed — digital payment only)
+      setCheckoutStatus('gateway');
     } catch (err: any) {
       if (wakingTimerRef.current) { clearTimeout(wakingTimerRef.current); wakingTimerRef.current = null; }
       setServerWaking(false);
@@ -677,8 +673,6 @@ export default function Checkout() {
           <p className="text-gray-400 mb-6 leading-relaxed text-sm">
             {paymentMode === 'full'
               ? "Full payment submitted! Our team will verify and confirm your order shortly."
-              : paymentMode === 'cod'
-              ? "Your order is confirmed! Pay in cash when your parcel arrives at your door."
               : "25% advance submitted. We'll collect the remaining balance on delivery."}
           </p>
 
@@ -757,16 +751,6 @@ export default function Checkout() {
               <div className="text-xs text-gray-500 space-y-1">
                 <p>Amount sent: <strong className="text-gray-900">{formatPrice(snapshotRef.current.total)}</strong></p>
                 <p>We'll confirm your order once payment is verified.</p>
-              </div>
-            </div>
-          ) : paymentMode === 'cod' ? (
-            <div className="p-4 rounded-2xl mb-4 text-left" style={{ background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.15)' }}>
-              <p className="text-xs font-bold text-blue-600 mb-2 flex items-center gap-1.5">
-                <Info className="w-3.5 h-3.5" /> Cash on Delivery
-              </p>
-              <div className="text-xs text-gray-500 space-y-1">
-                <p>Total due on delivery: <strong className="text-gray-900">{formatPrice(snapshotRef.current.total)}</strong></p>
-                <p>Our team will call you to confirm before dispatching.</p>
               </div>
             </div>
           ) : (
@@ -1355,7 +1339,7 @@ export default function Checkout() {
                     Choose how you'd like to pay — then select your preferred e-wallet below.
                   </p>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
                     <button
                       type="button"
                       onClick={() => setPaymentMode('full')}
@@ -1380,13 +1364,14 @@ export default function Checkout() {
                     <button
                       type="button"
                       onClick={() => setPaymentMode('advance')}
-                      className="text-left p-4 rounded-2xl transition-all duration-200 focus:outline-none"
+                      className="text-left p-4 rounded-2xl transition-all duration-200 focus:outline-none relative"
                       style={{
                         background: paymentMode === 'advance' ? 'rgba(22,163,74,0.05)' : '#f9fafb',
                         border: paymentMode === 'advance' ? '2px solid rgba(22,163,74,0.45)' : '2px solid #e5e7eb',
                         boxShadow: paymentMode === 'advance' ? '0 2px 16px rgba(22,163,74,0.10)' : 'none',
                       }}
                     >
+                      <span className="absolute -top-2.5 right-3 text-[10px] font-black bg-green-500 text-white px-2 py-0.5 rounded-full">RECOMMENDED</span>
                       <div className="flex items-center gap-2 mb-2">
                         <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${paymentMode === 'advance' ? 'border-green-500' : 'border-gray-300'}`}>
                           {paymentMode === 'advance' && <div className="w-2 h-2 rounded-full bg-green-500" />}
@@ -1397,30 +1382,9 @@ export default function Checkout() {
                         Pay <strong className="text-gray-800">{formatPrice(advanceAmount)}</strong> now (25%) via bKash / Nagad, rest on delivery.
                       </p>
                     </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setPaymentMode('cod')}
-                      className="text-left p-4 rounded-2xl transition-all duration-200 focus:outline-none"
-                      style={{
-                        background: paymentMode === 'cod' ? 'rgba(59,130,246,0.05)' : '#f9fafb',
-                        border: paymentMode === 'cod' ? '2px solid rgba(59,130,246,0.45)' : '2px solid #e5e7eb',
-                        boxShadow: paymentMode === 'cod' ? '0 2px 16px rgba(59,130,246,0.10)' : 'none',
-                      }}
-                    >
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${paymentMode === 'cod' ? 'border-blue-500' : 'border-gray-300'}`}>
-                          {paymentMode === 'cod' && <div className="w-2 h-2 rounded-full bg-blue-500" />}
-                        </div>
-                        <span className="font-black text-sm text-gray-900">Cash on Delivery (COD)</span>
-                      </div>
-                      <p className="text-xs text-gray-500 leading-relaxed pl-6">
-                        Pay <strong className="text-gray-800">{formatPrice(total)}</strong> in cash when your order arrives. No advance needed.
-                      </p>
-                    </button>
                   </div>
 
-                  {paymentMode !== 'cod' && (
+                  {(
                   <div className="mb-8">
                     <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Select E-Wallet</p>
                     <div className="grid grid-cols-3 gap-2">
@@ -1494,11 +1458,9 @@ export default function Checkout() {
                         <button type="button" onClick={() => setStep(2)} className="text-[10px] font-black text-orange-600 uppercase">Edit</button>
                       </div>
                       <p className="text-sm font-bold text-gray-900">
-                        {paymentMode === 'full' ? 'Full Payment' : paymentMode === 'advance' ? '25% Advance + COD' : 'Cash on Delivery'}
+                        {paymentMode === 'full' ? 'Full Payment' : '25% Advance + Pay on Delivery'}
                       </p>
-                      {paymentMode !== 'cod' && (
-                        <p className="text-xs text-gray-500 mt-0.5">Via {walletChoice.toUpperCase()}</p>
-                      )}
+                      <p className="text-xs text-gray-500 mt-0.5">Via {walletChoice.toUpperCase()}</p>
                     </div>
                   </div>
 
@@ -1515,7 +1477,7 @@ export default function Checkout() {
                         </>
                       ) : (
                         <>
-                          Place Order ({formatPrice(paymentMode === 'full' ? total : paymentMode === 'cod' ? total : advanceAmount)})
+                          Place Order ({formatPrice(paymentMode === 'full' ? total : advanceAmount)})
                         </>
                       )}
                     </button>

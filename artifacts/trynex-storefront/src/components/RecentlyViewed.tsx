@@ -11,7 +11,7 @@ export function RecentlyViewed() {
 
   return (
     <section className="py-16 px-4" style={{ background: '#FAFAFA' }}>
-      <div className="max-w-7xl mx-auto">
+      <div className="container-wide mx-auto">
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-4"
             style={{ background: 'rgba(232,93,4,0.06)', border: '1px solid rgba(232,93,4,0.12)' }}>

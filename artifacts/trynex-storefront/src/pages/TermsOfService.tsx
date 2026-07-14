@@ -43,7 +43,7 @@ export default function TermsOfService() {
             <section>
               <h2 className="text-xl font-black text-gray-900 mb-3">3. Orders & Payment</h2>
               <p className="text-sm text-gray-600 leading-relaxed">
-                An order is confirmed once we verify the advance payment (25% for COD, full amount for mobile banking). We reserve the right to cancel any order due to stock availability, pricing errors, or suspicious activity. Accepted payment methods include bKash, Nagad, Rocket, and Cash on Delivery (COD).
+                An order is confirmed once we verify the advance payment (minimum 25% deposit required, or full amount for mobile banking). We reserve the right to cancel any order due to stock availability, pricing errors, or suspicious activity. Accepted payment methods include bKash, Nagad, and Rocket. The remaining 75% balance is collected upon delivery.
               </p>
             </section>
 

@@ -318,7 +318,7 @@ export function Navbar() {
       )}
       style={{ top: 'var(--announcement-height, 0px)' }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container-wide mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-[4.25rem]">
 
           <Link href="/" className="flex items-center gap-3 group select-none">
@@ -1009,7 +1009,7 @@ export function Navbar() {
             transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
             className="overflow-hidden bg-white border-t border-gray-100 shadow-lg"
           >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="container-wide mx-auto px-4 sm:px-6 lg:px-8 py-4">
               <form onSubmit={handleSearch} className="flex items-center gap-3">
                 <div className="flex-1 flex items-center gap-3 px-4 py-3 rounded-2xl border-2 border-orange-200 bg-orange-50/40 focus-within:border-orange-400 transition-colors">
                   <Search className="w-4 h-4 text-orange-400 shrink-0" />

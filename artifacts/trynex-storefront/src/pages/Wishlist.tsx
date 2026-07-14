@@ -245,7 +245,7 @@ export default function Wishlist() {
             </div>
             </>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
               <AnimatePresence mode="popLayout">
                 {items.map((item) => (
                   <motion.div
@@ -278,10 +278,10 @@ export default function Wishlist() {
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleAddToCart(item)}
-                          className="flex-1 py-2.5 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2 transition-all hover:opacity-90"
+                          className="flex-1 py-2 sm:py-2.5 rounded-xl font-bold text-[10px] sm:text-sm text-white flex items-center justify-center gap-1.5 sm:gap-2 transition-all hover:opacity-90 min-h-[44px]"
                           style={{ background: 'linear-gradient(135deg, #E85D04, #FB8500)' }}
                         >
-                          <ShoppingCart className="w-4 h-4" /> Add to Cart
+                          <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Add
                         </button>
                         <button
                           onClick={() => {
@@ -289,9 +289,9 @@ export default function Wishlist() {
                             toast({ title: "Removed from wishlist", description: item.name });
                           }}
                           aria-label={`Remove ${item.name} from wishlist`}
-                          className="p-2.5 rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all border border-gray-200 btn-press"
+                          className="p-2 sm:p-2.5 rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all border border-gray-200 btn-press min-h-[44px]"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         </button>
                       </div>
                     </div>

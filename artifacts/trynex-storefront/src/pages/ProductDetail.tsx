@@ -123,28 +123,28 @@ function ReviewsSection({ productId, rating }: { productId: number; rating: numb
 
   return (
     <motion.div key="reviews" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-5">
-      <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 p-5 sm:p-6 bg-white rounded-2xl border border-gray-100 shadow-sm mb-6">
-        <div className="text-center">
-          <div className="text-5xl font-black text-gray-900">{avg}</div>
-          <div className="flex justify-center mt-2">
+      <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 p-4 sm:p-6 bg-white rounded-2xl border border-gray-100 shadow-sm mb-6">
+        <div className="text-center w-full sm:w-auto">
+          <div className="text-4xl sm:text-5xl font-black text-gray-900">{avg}</div>
+          <div className="flex justify-center mt-1 sm:mt-2">
             {Array.from({ length: 5 }).map((_, j) => (
               <Star key={j} className="w-4 h-4" style={{ fill: j < Math.floor(avg) ? '#FB8500' : '#e5e7eb', color: j < Math.floor(avg) ? '#FB8500' : '#e5e7eb' }} />
             ))}
           </div>
           <p className="text-xs text-gray-500 mt-1">{total} review{total !== 1 ? "s" : ""}</p>
         </div>
-        <div className="flex-1 space-y-2">
+        <div className="flex-1 space-y-1.5 w-full">
           {[5, 4, 3, 2, 1].map((s) => {
             const count = stats?.distribution?.[s] || 0;
             const pct = total > 0 ? (count / total) * 100 : 0;
             return (
-              <div key={s} className="flex items-center gap-3">
-                <span className="text-xs font-bold text-gray-500 w-4">{s}</span>
-                <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                <div className="flex-1 h-2 rounded-full bg-gray-100 overflow-hidden">
+              <div key={s} className="flex items-center gap-2 sm:gap-3">
+                <span className="text-[10px] sm:text-xs font-bold text-gray-500 w-3 sm:w-4">{s}</span>
+                <Star className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-amber-400 text-amber-400 shrink-0" />
+                <div className="flex-1 h-1.5 sm:h-2 rounded-full bg-gray-100 overflow-hidden">
                   <div className="h-full rounded-full" style={{ width: `${pct}%`, background: '#FB8500' }} />
                 </div>
-                <span className="text-xs text-gray-400 w-6 text-right">{count}</span>
+                <span className="text-[10px] sm:text-xs text-gray-400 w-5 sm:w-6 text-right shrink-0">{count}</span>
               </div>
             );
           })}
@@ -166,11 +166,11 @@ function ReviewsSection({ productId, rating }: { productId: number; rating: numb
               </button>
             ))}
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <input type="text" placeholder="Your name *" value={submitName} onChange={e => setSubmitName(e.target.value)}
-              className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
+              className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 w-full" />
             <input type="email" placeholder="Your email *" value={submitEmail} onChange={e => setSubmitEmail(e.target.value)}
-              className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
+              className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 w-full" />
           </div>
           <textarea placeholder="Share your experience (optional)" rows={3} value={submitText} onChange={e => setSubmitText(e.target.value)}
             className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none" />
@@ -653,7 +653,7 @@ export default function ProductDetail() {
       <Navbar />
 
       <main className="flex-1 pt-header pb-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+        <div className="container-wide mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
           <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-400 mb-4 sm:mb-8 font-medium">
             <Link href="/" className="hover:text-orange-600 transition-colors">Home</Link>
             <span>/</span>
@@ -901,7 +901,7 @@ export default function ProductDetail() {
                     className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-black uppercase tracking-wide"
                     style={{ background: '#dcfce7', color: '#15803d', border: '1px solid #86efac' }}
                   >
-                    <Truck className="w-3 h-3" /> Cash on Delivery
+                    <Truck className="w-3 h-3" /> 25% Advance, Rest on Delivery
                   </span>
                   <span
                     className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-black uppercase tracking-wide"
@@ -1410,7 +1410,7 @@ export default function ProductDetail() {
       {/* Frequently Bought Together */}
       {fbtProducts.length > 0 && (
         <section className="py-12 px-4 bg-gray-50 border-t border-gray-100">
-          <div className="max-w-7xl mx-auto">
+          <div className="container-wide mx-auto">
             <div className="mb-6">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-3"
                 style={{ background: '#fff4ee', color: '#E85D04' }}>
@@ -1505,7 +1505,7 @@ export default function ProductDetail() {
 
       {relatedProducts.length > 0 && (
         <section className="py-16 px-4 bg-white border-t border-gray-100">
-          <div className="max-w-7xl mx-auto">
+          <div className="container-wide mx-auto">
             <div className="flex items-end justify-between mb-10">
               <div>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-3"

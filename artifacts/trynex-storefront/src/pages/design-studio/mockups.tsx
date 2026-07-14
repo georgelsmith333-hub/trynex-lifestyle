@@ -31,8 +31,8 @@ const mugFrontDarkCutout   = "/mockups/black-mug-front-cutout.png";
 const capFront             = "/mockups/white-cap-front.png";
 // black-cap-front.png has no alpha and is 896×1280 (wrong size) — cap uses SVG tint for all dark colours
 const capFrontCutout       = "/mockups/white-cap-front-cutout.png";
-const waterBottleFront          = "/mockups/white-waterbottle-real.png";
-const waterBottleCutout         = "/mockups/white-waterbottle-real-cutout.png";
+const waterBottleFront          = "/mockups/white-waterbottle-front.png";
+const waterBottleCutout         = "/mockups/white-waterbottle-front-cutout.png";
 const tshirtFrontDarkCutout     = "/mockups/black-tshirt-front-cutout.png";
 const tshirtBackDarkCutout      = "/mockups/black-tshirt-back-cutout.png";
 const hoodieFrontDarkCutout     = "/mockups/black-hoodie-front-cutout-real.png";
@@ -100,22 +100,22 @@ export interface DesignProduct {
      MUG_PZ         — full 360° wrap
      WATERBOTTLE_PZ — bottle body (cylindrical section)
 ──────────────────────────────────────────────────────── */
-export const TSHIRT_PZ: PrintZone           = { x: 305, y: 220, w: 390, h: 395 };
-export const TSHIRT_BACK_PZ: PrintZone      = { x: 288, y: 188, w: 424, h: 465 };
+export const TSHIRT_PZ: PrintZone           = { x: 240, y: 185, w: 520, h: 580 };
+export const TSHIRT_BACK_PZ: PrintZone      = { x: 240, y: 185, w: 520, h: 580 };
 export const LONGSLEEVE_PZ: PrintZone       = { x: 310, y: 228, w: 380, h: 400 };
 export const LONGSLEEVE_BACK_PZ: PrintZone  = { x: 292, y: 195, w: 416, h: 458 };
 /** Hoodie front — stops at ~y=528 to clear the kangaroo pocket (pocket starts ~y=565). */
-export const HOODIE_PZ: PrintZone           = { x: 332, y: 252, w: 336, h: 278 };
+export const HOODIE_PZ: PrintZone           = { x: 240, y: 195, w: 520, h: 510 };
 export const HOODIE_BACK_PZ: PrintZone      = { x: 292, y: 184, w: 416, h: 448 };
 /** Cap front panel — structured 5-panel cap, panel is centred between brim and seam. */
-export const CAP_PZ: PrintZone              = { x: 338, y: 290, w: 324, h: 240 };
-export const MUG_PZ: PrintZone              = { x: 150, y: 180, w: 700, h: 640 };
+export const CAP_PZ: PrintZone              = { x: 300, y: 230, w: 400, h: 240 };
+export const MUG_PZ: PrintZone              = { x: 120, y: 210, w: 760, h: 420 };
 /** Mug side — printable area on the cylindrical side face, clear of rim band and base ring. */
 export const MUG_SIDE_PZ: PrintZone         = { x: 192, y: 248, w: 410, h: 472 };
 /** Water bottle — printable front label panel on the cylindrical body.
  *  Calibrated to the real 600ml aluminium carabiner bottle (1600×1600 PNG).
  *  Content spans x:[336–660] centre≈498; shoulder ends ~y=268, base band ~y=850. */
-export const WATERBOTTLE_PZ: PrintZone      = { x: 345, y: 268, w: 310, h: 582 };
+export const WATERBOTTLE_PZ: PrintZone      = { x: 330, y: 180, w: 340, h: 560 };
 /** Sleeve print area — roughly square (1228×1087px real-world ratio). */
 export const SLEEVE_PZ: PrintZone           = { x: 175, y: 175, w: 650, h: 650 };
 /** Neck label — wider than tall (1299×945px real-world ratio). */
@@ -286,11 +286,7 @@ export const BASE_BY_CATEGORY: Record<
   { front: string; back?: string; darkFront?: string; darkBack?: string; frontCutout?: string; backCutout?: string; darkFrontCutout?: string; darkBackCutout?: string } | undefined
 > = {
   tshirt:      { front: tshirtFront, back: tshirtBack, darkFront: tshirtFrontDark, darkBack: tshirtBackDark, frontCutout: tshirtFrontCutout, backCutout: tshirtBackCutout, darkFrontCutout: tshirtFrontDarkCutout, darkBackCutout: tshirtBackDarkCutout },
-  // Long-sleeve dark assets (black-longsleeve-*.png) are 17-20 KB grayscale stubs with
-  // no colour information — they render as near-white on a dark canvas and look broken.
-  // Removing them from here forces longsleeve to always use the tint path for dark
-  // colours, which correctly multiplies the hue onto the white cutout photo.
-  longsleeve:  { front: longsleeveFront, back: longsleeveBack, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout },
+  longsleeve:  { front: longsleeveFront, back: longsleeveBack, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout, darkFrontCutout: longsleeveFrontDarkCutout, darkBackCutout: longsleeveBackDarkCutout },
   hoodie:      { front: hoodieFront, back: hoodieBack, darkFront: hoodieFrontDark, darkBack: hoodieBackDark, frontCutout: hoodieFrontCutout, backCutout: hoodieBackCutout, darkFrontCutout: hoodieFrontDarkCutout, darkBackCutout: hoodieBackDarkCutout },
   mug:         { front: mugFront, back: mugFront, darkFront: mugFrontDark, darkBack: mugFrontDark, frontCutout: mugFrontCutout, darkFrontCutout: mugFrontDarkCutout, darkBackCutout: mugFrontDarkCutout },
   cap:         { front: capFront, frontCutout: capFrontCutout },

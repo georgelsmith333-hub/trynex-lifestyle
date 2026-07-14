@@ -258,7 +258,7 @@ export default function KeywordLanding({ params }: { params: { slug: string } })
               {
                 step: "02",
                 title: "Place & Pay",
-                desc: "Add to cart, choose your size, and checkout. Pay via bKash, Nagad, Rocket, card, or Cash on Delivery.",
+                desc: "Add to cart, choose your size, and checkout. Pay in full or just 25% in advance via bKash or Nagad — rest on delivery.",
               },
               {
                 step: "03",
@@ -290,7 +290,7 @@ export default function KeywordLanding({ params }: { params: { slug: string } })
               { title: "Premium Materials", desc: "We only use top-grade fabric and printing materials — nothing cheap, nothing that fades." },
               { title: "No Minimum Order", desc: "Whether you need 1 piece or 1,000, we treat every order with the same care." },
               { title: "Fast Nationwide Delivery", desc: "Ships to all 64 districts. Same-day delivery in Dhaka for urgent orders." },
-              { title: "bKash & COD Accepted", desc: "Pay the way you prefer — bKash, Nagad, Rocket, card, or cash on delivery." },
+              { title: "bKash & Nagad Accepted", desc: "Pay in full or just 25% in advance via bKash or Nagad — the rest is collected on delivery." },
               { title: "Free Design Help", desc: "Not a designer? No problem. Our team will help you create the perfect design." },
               { title: "100% Satisfaction Guarantee", desc: "Not happy with your order? We'll reprint or refund — no questions asked." },
             ].map((item, i) => (

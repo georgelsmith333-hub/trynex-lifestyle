@@ -474,7 +474,7 @@ export default function BlogPost() {
           </motion.div>
         )}
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="container-wide mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-12 pt-8 sm:pt-12">
 
             {/* Main content */}

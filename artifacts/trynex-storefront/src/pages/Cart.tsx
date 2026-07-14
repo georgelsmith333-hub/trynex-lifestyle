@@ -287,7 +287,7 @@ export default function Cart() {
       <Navbar />
 
       <main className={`flex-1 pt-header ${items.length > 0 ? 'pb-32 lg:pb-24' : 'pb-24'}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="container-wide mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-6 sm:mb-10 pt-4 sm:pt-0">
             <p className="text-xs font-bold uppercase tracking-widest text-orange-500 mb-1 sm:mb-2">Your Cart</p>
             <h1 className="text-3xl sm:text-5xl font-black font-display tracking-tighter text-gray-900">

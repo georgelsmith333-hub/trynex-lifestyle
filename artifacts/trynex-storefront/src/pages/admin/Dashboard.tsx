@@ -73,47 +73,47 @@ export default function AdminDashboard() {
   const cards = [
     {
       title: "Total Revenue",
-      value: formatPrice(stats.totalRevenue),
+      value: formatPrice(stats.totalRevenue ?? 0),
       icon: TrendingUp,
       color: "#16a34a",
       bg: "#f0fdf4",
       border: "#bbf7d0",
       desc: "All time earnings",
-      trend: stats.totalOrders > 0 ? `Avg ${formatPrice(Math.round(stats.totalRevenue / stats.totalOrders))} / order` : "No orders yet",
-      link: ""
-    },
-    {
-      title: "Today's Revenue",
-      value: formatPrice(stats.todayRevenue ?? 0),
-      icon: TrendingUp,
-      color: "#2563eb",
-      bg: "#eff6ff",
-      border: "#bfdbfe",
-      desc: "Earned today",
-      trend: (stats.todayRevenue ?? 0) > 0 ? `${stats.totalOrders ?? "—"} orders today` : "No revenue yet today",
+      trend: stats.totalOrders > 0 ? `Avg ${formatPrice(Math.round((stats.totalRevenue ?? 0) / stats.totalOrders))} / order` : "No orders yet",
       link: ""
     },
     {
       title: "Total Orders",
-      value: String(stats.totalOrders),
+      value: String(stats.totalOrders ?? 0),
       icon: ShoppingCart,
-      color: "#E85D04",
-      bg: "#fff4ee",
-      border: "#fdd5b4",
+      color: "#2563eb",
+      bg: "#eff6ff",
+      border: "#bfdbfe",
       desc: "All orders placed",
-      trend: `${stats.pendingOrders} pending`,
+      trend: `${stats.pendingOrders ?? 0} pending`,
       link: "/admin/orders"
     },
     {
-      title: "Low Stock Alert",
-      value: String(stats.lowStockProducts ?? 0),
+      title: "Total Products",
+      value: String(stats.totalProducts ?? 0),
+      icon: Package,
+      color: "#E85D04",
+      bg: "#fff4ee",
+      border: "#fdd5b4",
+      desc: "Items in catalog",
+      trend: `${stats.lowStockProducts ?? 0} low stock`,
+      link: "/admin/products"
+    },
+    {
+      title: "Pending Orders",
+      value: String(stats.pendingOrders ?? 0),
       icon: AlertTriangle,
       color: "#d97706",
       bg: "#fffbeb",
       border: "#fde68a",
-      desc: "Products ≤ 5 units",
-      trend: (stats.lowStockProducts ?? 0) > 0 ? "Action needed" : "All good",
-      link: "/admin/products?filter=lowstock"
+      desc: "Awaiting processing",
+      trend: (stats.pendingOrders ?? 0) > 0 ? "Action needed" : "All clear",
+      link: "/admin/orders"
     },
   ];
 

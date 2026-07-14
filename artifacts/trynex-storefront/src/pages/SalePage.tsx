@@ -239,7 +239,7 @@ export default function SalePage() {
           </div>
         )}
 
-        <p className="text-xs text-gray-400 text-center mt-8">Free shipping above ৳{freeShippingThreshold} • Nationwide delivery • COD available</p>
+        <p className="text-xs text-gray-400 text-center mt-8">Free shipping above ৳{freeShippingThreshold} • Nationwide delivery • 25% advance, rest on delivery</p>
       </div>
 
       <div className="bg-white border-t border-gray-100 py-8 px-4">

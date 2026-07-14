@@ -80,12 +80,12 @@ const faqs: FAQItem[] = [
   {
     category: "Payments",
     question: "What payment methods do you accept?",
-    answer: "We accept bKash, Nagad, Rocket (mobile banking), and Cash on Delivery (COD). For COD, a 25% advance payment is required to confirm your order.",
+    answer: "We offer 2 payment options: Full Payment or 25% Advance. We accept bKash, Nagad, and Rocket (mobile banking).",
   },
   {
     category: "Payments",
-    question: "Is Cash on Delivery available?",
-    answer: "Yes, COD is available across Bangladesh. We require a 25% advance via bKash, Nagad, or Rocket to confirm your order. The remaining amount is paid when the product arrives.",
+    question: "Can I pay on delivery?",
+    answer: "We require a 25% advance payment via bKash/Nagad/Rocket to confirm your order. The remaining 75% is collected on delivery.",
   },
   {
     category: "Payments",

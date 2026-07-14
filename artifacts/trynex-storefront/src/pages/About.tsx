@@ -122,7 +122,7 @@ export default function About() {
             ))}
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-20">
             <motion.div
               initial={{ opacity: 0, x: -24 }}
               animate={{ opacity: 1, x: 0 }}
@@ -143,7 +143,7 @@ export default function About() {
               initial={{ opacity: 0, x: 24 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
-              className="grid grid-cols-2 gap-4"
+              className="grid grid-cols-1 sm:grid-cols-2 gap-4"
             >
               {values.map((v) => (
                 <div key={v.title} className="p-5 rounded-2xl border border-gray-100 bg-white shadow-sm">

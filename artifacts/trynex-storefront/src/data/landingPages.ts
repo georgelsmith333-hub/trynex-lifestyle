@@ -32,7 +32,7 @@ export const LANDING_PAGES: Record<string, LandingPageConfig> = {
     h1: "Custom T-Shirt Bangladesh",
     seoTitle: "Custom T-Shirt Bangladesh — Design Your Own Tee | TryNex Lifestyle",
     description:
-      "Design your own custom t-shirt in Bangladesh. Premium cotton, unlimited color & print options. Fast delivery to Dhaka & all 64 districts. bKash, Nagad, COD accepted.",
+      "Design your own custom t-shirt in Bangladesh. Premium cotton, unlimited color & print options. Fast delivery to Dhaka & all 64 districts. Pay via bKash or Nagad — just 25% in advance.",
     keywords:
       "custom t-shirt bangladesh, কাস্টম টি-শার্ট বাংলাদেশ, custom tshirt dhaka, personalized tshirt bd, custom print tshirt bangladesh, design your own tshirt bangladesh, oversized tshirt bangladesh, bulk tshirt printing dhaka",
     heroTag: "Bangladesh's #1 Custom T-Shirt Brand",
@@ -80,7 +80,7 @@ export const LANDING_PAGES: Record<string, LandingPageConfig> = {
     h1: "Custom Hoodie Bangladesh",
     seoTitle: "Custom Hoodie Bangladesh — Premium Oversized Hoodies | TryNex",
     description:
-      "Premium custom hoodies in Bangladesh. Oversized fits, GSM 340+ fleece. Name, logo, or photo printing. Fast delivery Dhaka & all districts. bKash, COD accepted.",
+      "Premium custom hoodies in Bangladesh. Oversized fits, GSM 340+ fleece. Name, logo, or photo printing. Fast delivery Dhaka & all districts. Pay via bKash or Nagad — just 25% in advance.",
     keywords:
       "custom hoodie bangladesh, কাস্টম হুডি বাংলাদেশ, oversized hoodie bangladesh, custom printed hoodie dhaka, couple hoodie bangladesh, corporate hoodie bangladesh, bulk hoodie printing bd",
     heroTag: "Premium Custom Hoodies — Delivered Across Bangladesh",

@@ -432,7 +432,7 @@ Your expertise spans:
 • Analytics interpretation & growth tactics
 
 Store context:
-- Payment: bKash, Nagad, Rocket, COD (25% advance)
+- Payment: bKash, Nagad, uPay — full payment or 25% advance (rest collected on delivery); no separate Cash on Delivery option
 - Delivery: All 64 districts of Bangladesh
 - Free shipping on orders ≥ ৳1,500
 - Custom design via AI studio (Pollinations.ai) + upload + text tools
@@ -692,7 +692,7 @@ const DEVELOPER_SYSTEM_PROMPT = `You are TryNex AI Developer — a senior full-s
 - Storage: Cloudflare R2 / AWS S3 / local fallback via ObjectStorageService
 - Auth: SHA-256 hash admin token in sessionStorage
 - Currency: BDT (৳), Bangladesh market
-- Payments: bKash, Nagad, Rocket (manual), COD
+- Payments: bKash, Nagad, uPay (manual verification) — full payment or 25% advance, rest on delivery
 
 ## Guidelines
 - Lead with working code — explanations after

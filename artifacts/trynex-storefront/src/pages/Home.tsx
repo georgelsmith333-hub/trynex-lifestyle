@@ -115,14 +115,9 @@ const PAYMENT_METHODS = [
     labelStyle: { fontWeight: 900, letterSpacing: "0.02em" },
   },
   {
-    name: "Rocket", shortName: "Rocket",
+    name: "uPay", shortName: "uPay",
     color: "#8b2291", textColor: "#fff", bg: "#8b2291",
     labelStyle: { fontWeight: 900 },
-  },
-  {
-    name: "Cash on Delivery", shortName: "COD",
-    color: "#16a34a", textColor: "#fff", bg: "#16a34a",
-    labelStyle: { fontWeight: 900, letterSpacing: "0.05em" },
   },
   {
     name: "Visa", shortName: "VISA",
@@ -587,7 +582,7 @@ function HomeTopPostsWidget() {
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className="py-14 px-4 bg-white"
     >
-      <div className="max-w-5xl mx-auto">
+      <div className="container-wide">
         <div className="text-center mb-10">
           <motion.span
             initial={{ opacity: 0, scale: 0.9 }}
@@ -680,7 +675,7 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-white">
       <SEOHead
         title="Premium Custom Apparel Bangladesh | Custom T-Shirts, Hoodies & Gifts"
-        description="TryNex Lifestyle — Bangladesh's #1 custom apparel brand. Order custom T-shirts, hoodies, mugs & gift hampers with fast delivery to all 64 districts. COD available."
+        description="TryNex Lifestyle — Bangladesh's #1 custom apparel brand. Order custom T-shirts, hoodies, mugs & gift hampers with fast delivery to all 64 districts. Pay just 25% in advance."
         canonical="/"
         keywords="custom t-shirt bangladesh, premium apparel bangladesh, custom hoodie bd, custom mug bd, custom cap bangladesh, gift hamper dhaka, personalized gifts bd, কাস্টম টি-শার্ট, কাস্টম হুডি বাংলাদেশ, ট্রাইনেক্স"
         jsonLd={[
@@ -704,7 +699,7 @@ export default function Home() {
             },
             "areaServed": { "@type": "Country", "name": "Bangladesh" },
             "currenciesAccepted": "BDT",
-            "paymentAccepted": "Cash on Delivery, bKash, Nagad, Rocket",
+            "paymentAccepted": "bKash, Nagad, uPay (25% advance or full payment; balance on delivery)",
             "priceRange": "৳399 - ৳3,999",
             "openingHoursSpecification": [
               { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "09:00", "closes": "22:00" }
@@ -781,7 +776,7 @@ export default function Home() {
            the Payment Trust Ribbon and Categories grid.)
       ═══════════════════════════════════════ */}
       {settings.sectionFeaturedEnabled !== false && <section className="py-20 px-4 bg-white" data-testid="section-special-offers">
-        <div className="max-w-7xl mx-auto">
+        <div className="container-wide mx-auto">
           {/* Promo banner */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -816,14 +811,14 @@ export default function Home() {
           </motion.div>
 
           {isLoading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-5" aria-label="Loading products" aria-busy="true">
+            <div className="product-grid-responsive" aria-label="Loading products" aria-busy="true">
               {Array.from({ length: 9 }).map((_, i) => (
                 <ProductCardSkeleton key={i} />
               ))}
             </div>
           ) : featuredProducts.length === 0 ? null : (
             <ErrorBoundary section="featured products">
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-5">
+              <div className="product-grid-responsive">
                 {featuredProducts.slice(0, 9).map((product, i) => (
                   <ProductCard key={product.id} product={product} index={i} />
                 ))}
@@ -897,7 +892,7 @@ export default function Home() {
           CATEGORIES GRID
       ═══════════════════════════════════════ */}
       {settings.sectionCategoriesEnabled !== false && <section className="py-20 px-4" style={{ background: '#FAFAFA' }}>
-        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
+        <div className="container-wide mx-auto px-4 md:px-8 lg:px-16">
           <div className="text-center mb-10 md:mb-16">
             <motion.span
               initial={{ opacity: 0, scale: 0.9 }}
@@ -921,7 +916,7 @@ export default function Home() {
             </motion.p>
           </div>
 
-          <div className="flex overflow-x-auto pb-8 md:pb-0 md:grid md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 snap-x snap-mandatory scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+          <div className="flex gap-4 md:gap-6 overflow-x-auto pb-8 md:pb-0 md:grid md:grid-cols-3 lg:grid-cols-6 snap-x snap-mandatory no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
             {CATEGORIES.filter(cat => {
               if (cat.icon === "tshirt"      && settings.categoryTshirtsEnabled   === false) return false;
               if (cat.icon === "hoodie"      && settings.categoryHoodiesEnabled   === false) return false;
@@ -1069,7 +1064,7 @@ export default function Home() {
           FEATURES / WHY CHOOSE US
       ═══════════════════════════════════════ */}
       <section className="py-20 px-4" style={{ background: 'linear-gradient(180deg, #FFF8F3 0%, #FFF4EC 100%)' }}>
-        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
+        <div className="container-wide mx-auto px-4 md:px-8 lg:px-16">
           <div className="text-center mb-16">
             <motion.span
               initial={{ opacity: 0, scale: 0.9 }}
@@ -1198,7 +1193,7 @@ export default function Home() {
       ═══════════════════════════════════════ */}
       <section className="py-14 px-4 overflow-hidden relative" style={{ background: 'linear-gradient(135deg, #1C1917 0%, #2d2116 100%)' }}>
         <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(ellipse 60% 80% at 15% 50%, rgba(232,93,4,0.12) 0%, transparent 70%), radial-gradient(ellipse 40% 60% at 85% 50%, rgba(251,133,0,0.08) 0%, transparent 70%)' }} />
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12 relative">
+        <div className="container-wide flex flex-col md:flex-row items-center gap-8 md:gap-12 relative">
           <div className="flex-1 text-center md:text-left">
             <motion.span
               initial={{ opacity: 0, y: 8 }}
@@ -1288,7 +1283,7 @@ export default function Home() {
           "Most Popular Custom Products"
       ═══════════════════════════════════════ */}
       <section className="py-14 bg-white">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
+        <div className="container-wide mx-auto px-4 md:px-8 lg:px-16">
           <div className="text-center mb-10">
             <motion.span
               initial={{ opacity: 0, scale: 0.9 }}
@@ -1355,7 +1350,7 @@ export default function Home() {
 
       {/* Stats Bar */}
       {settings.sectionStatsEnabled !== false && <section className="py-12 bg-gray-50/50">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
+        <div className="container-wide mx-auto px-4 md:px-8 lg:px-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
             {BASE_STATS.map((stat, i) => {
               // Use live order count for customers stat when API data is available
@@ -1391,7 +1386,7 @@ export default function Home() {
           TESTIMONIALS
       ═══════════════════════════════════════ */}
       {settings.sectionTestimonialsEnabled !== false && <section className="py-20 px-4" style={{ background: 'linear-gradient(180deg, #FAFAFA 0%, #FFF4EC 100%)' }}>
-        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
+        <div className="container-wide mx-auto px-4 md:px-8 lg:px-16">
           <div className="text-center mb-12">
             <motion.span
               initial={{ opacity: 0, scale: 0.9 }}
@@ -1500,10 +1495,10 @@ export default function Home() {
           TRUST BADGES
       ═══════════════════════════════════════ */}
       <section className="py-12 px-4 bg-white border-y border-gray-100">
-        <div className="max-w-5xl mx-auto">
+        <div className="container-wide">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { iconKey: settings.trustBadge1Icon || "shield", title: settings.trustBadge1Title || "100% Secure Payments", desc: settings.trustBadge1Desc || "bKash, Nagad, Rocket & COD", color: "#16a34a", bg: "#f0fdf4" },
+              { iconKey: settings.trustBadge1Icon || "shield", title: settings.trustBadge1Title || "100% Secure Payments", desc: settings.trustBadge1Desc || "bKash, Nagad & uPay — 25% advance", color: "#16a34a", bg: "#f0fdf4" },
               { iconKey: settings.trustBadge2Icon || "truck", title: settings.trustBadge2Title || "Nationwide Delivery", desc: settings.trustBadge2Desc || "All 64 districts of Bangladesh", color: "#2563eb", bg: "#eff6ff" },
               { iconKey: settings.trustBadge3Icon || "award", title: settings.trustBadge3Title || "Quality Guarantee", desc: settings.trustBadge3Desc || "230-320GSM premium fabric", color: 'var(--color-primary)', bg: "#fff4ee" },
               { iconKey: settings.trustBadge4Icon || "users", title: settings.trustBadge4Title || "5,000+ Happy Customers", desc: settings.trustBadge4Desc || "98% satisfaction rate", color: "#9333ea", bg: "#fdf4ff" },

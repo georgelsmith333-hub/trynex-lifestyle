@@ -2434,7 +2434,7 @@ export default function DesignStudio() {
     <div className="min-h-screen flex flex-col" style={{ background: "#F5F3F0" }}>
       <SEOHead
         title="Design Studio | Create Custom Apparel Online — TryNex Lifestyle"
-        description="Design your own custom T-shirts, hoodies, mugs & more. Upload your artwork or add text, preview in 3D, and order with fast delivery across Bangladesh. COD available."
+        description="Design your own custom T-shirts, hoodies, mugs & more. Upload your artwork or add text, preview in 3D, and order with fast delivery across Bangladesh. Pay just 25% in advance."
         canonical="/design-studio"
         keywords="custom t-shirt design online bangladesh, design your own shirt bd, personalized mug design, custom hoodie maker, কাস্টম ডিজাইন টি-শার্ট"
         jsonLd={[
@@ -2479,7 +2479,7 @@ export default function DesignStudio() {
           top: "calc(var(--announcement-height, 0px) + 4.25rem)",
         }}
       >
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3.5 flex items-center justify-between gap-2">
+        <div className="container-wide mx-auto px-3 sm:px-4 py-2.5 sm:py-3.5 flex items-center justify-between gap-2">
           <div className="min-w-0 flex-shrink">
             <h1 className="font-display font-black text-base sm:text-xl text-gray-900 truncate">Design Studio</h1>
             <p className="text-xs text-gray-500 mt-0.5 truncate">
@@ -2575,7 +2575,7 @@ export default function DesignStudio() {
         </div>
       </div>
 
-      <div className="flex-1 max-w-7xl mx-auto w-full px-4 py-6">
+      <div className="flex-1 container-wide mx-auto w-full px-4 py-6">
         <div className="flex flex-col md:flex-row gap-6">
 
           {/* ═══════ LEFT: MOCKUP CANVAS ═══════ */}
