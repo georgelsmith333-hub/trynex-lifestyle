@@ -683,7 +683,6 @@ export default function ProductDetail() {
                     height={800}
                     fetchPriority="high"
                     decoding="async"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                     style={zoomActive ? {
                       transform: 'scale(2)',
                       transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
@@ -771,7 +770,6 @@ export default function ProductDetail() {
                         height="600"
                         fetchPriority="high"
                         draggable={false}
-                        onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-50 to-amber-50">
@@ -879,7 +877,7 @@ export default function ProductDetail() {
                   ))}
                 </div>
                 <span className="font-bold text-sm text-gray-700">{rating}</span>
-                <span className="text-sm text-gray-400">(128 reviews)</span>
+                {total > 0 && <span className="text-sm text-gray-400">({total} review{total === 1 ? "" : "s"})</span>}
               </div>
 
               {/* Price */}

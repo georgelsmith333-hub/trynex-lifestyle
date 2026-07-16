@@ -892,6 +892,19 @@ export default function DesignStudio() {
   // dark garment silhouette remains visible against its background.
   const isBlackGarment = isNearBlack(selectedColor.hex);
 
+  // Smart blend mode: multiply only on light/white garments (lum > 0.92) so designs
+  // blend into the fabric naturally. On coloured or dark garments use 'normal' to
+  // avoid tinting the design with the garment colour ("same shade" bug).
+  const designBlend: React.CSSProperties["mixBlendMode"] = (() => {
+    const h = selectedColor.hex.replace("#", "");
+    if (h.length !== 6) return "normal";
+    const r = parseInt(h.slice(0,2),16)/255;
+    const g = parseInt(h.slice(2,4),16)/255;
+    const b = parseInt(h.slice(4,6),16)/255;
+    const lum = 0.2126*r + 0.7152*g + 0.0722*b;
+    return lum > 0.92 ? "multiply" : "normal";
+  })();
+
   /* ── Per-product price (used in UI + cart serialisation) ── */
   const studioPrice = useMemo(() => {
     // If a real store product is linked, use its price
@@ -3097,7 +3110,7 @@ export default function DesignStudio() {
                               opacity={l.transform.opacity}
                               preserveAspectRatio="none"
                               pointerEvents="none"
-                              style={{ filter: userAdj, mixBlendMode: 'multiply' }}
+                              style={{ filter: userAdj, mixBlendMode: designBlend }}
                             />
                             {/* Transparent hit-rect — ensures reliable pointer events on every
                                 browser/device regardless of SVG <image> pointer-event quirks */}
@@ -3144,7 +3157,7 @@ export default function DesignStudio() {
                             paintOrder={l.strokeWidth ? "stroke" : undefined}
                             transform={`rotate(${l.transform.rotation}, ${g.cx}, ${g.cy})`}
                             filter={shadowFilterId ? `url(#${shadowFilterId})` : undefined}
-                            style={{ cursor: l.locked ? "not-allowed" : "grab", userSelect: "none", mixBlendMode: 'multiply' }}
+                            style={{ cursor: l.locked ? "not-allowed" : "grab", userSelect: "none", mixBlendMode: designBlend }}
                           >{l.text}</text>
                         </g>
                       );
