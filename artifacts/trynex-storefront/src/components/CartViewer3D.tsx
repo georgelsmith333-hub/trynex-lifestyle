@@ -20,18 +20,19 @@ function resolvePhotos(
   const nearBlack = isNearBlack(garmentColor);
 
   const fronts: Record<GarmentCategory, string> = {
-    tshirt:      nearBlack ? "/mockups/black-tshirt-front-cutout.png"       : "/mockups/white-tshirt-front-cutout.png",
-    longsleeve:  "/mockups/white-longsleeve-front-cutout-real.png",
-    hoodie:      nearBlack ? "/mockups/black-hoodie-front-cutout-real.png"  : "/mockups/white-hoodie-front-cutout-real.png",
+    tshirt:      nearBlack ? "/mockups/black-tshirt-front-cutout.png"           : "/mockups/white-tshirt-front-cutout.png",
+    longsleeve:  nearBlack ? "/mockups/black-longsleeve-front-cutout.png"       : "/mockups/white-longsleeve-front-cutout-real.png",
+    hoodie:      nearBlack ? "/mockups/black-hoodie-front-cutout-real.png"      : "/mockups/white-hoodie-front-cutout-real.png",
+    // cap & waterbottle have no dedicated dark-photo asset — always use white cutout + tint
     cap:         "/mockups/white-cap-front-cutout.png",
-    mug:         nearBlack ? "/mockups/black-mug-front-cutout.png"          : "/mockups/white-mug-front-cutout.png",
+    mug:         nearBlack ? "/mockups/black-mug-front-cutout.png"              : "/mockups/white-mug-front-cutout.png",
     waterbottle: "/mockups/white-waterbottle-front-cutout.png",
   };
 
   const backs: Partial<Record<GarmentCategory, string>> = {
-    tshirt:     nearBlack ? "/mockups/black-tshirt-back-cutout.png"      : "/mockups/white-tshirt-back-cutout.png",
-    longsleeve: "/mockups/white-longsleeve-back-cutout-real.png",
-    hoodie:     nearBlack ? "/mockups/black-hoodie-back-cutout-real.png" : "/mockups/white-hoodie-back-cutout-real.png",
+    tshirt:     nearBlack ? "/mockups/black-tshirt-back-cutout.png"         : "/mockups/white-tshirt-back-cutout.png",
+    longsleeve: nearBlack ? "/mockups/black-longsleeve-back-cutout.png"     : "/mockups/white-longsleeve-back-cutout-real.png",
+    hoodie:     nearBlack ? "/mockups/black-hoodie-back-cutout-real.png"    : "/mockups/white-hoodie-back-cutout-real.png",
   };
 
   return { front: fronts[category] ?? fronts.tshirt, back: backs[category] };
@@ -64,12 +65,15 @@ export default function CartViewer3D({
   const designSrc   = face === "front" ? frontTexUrl : (backTexUrl ?? frontTexUrl);
 
   // Determine tinting strategy:
-  //   nearBlack → use dark photo directly, no tint overlay needed
+  //   nearBlack → use dark photo directly (no tint overlay needed) …
+  //               EXCEPT for cap & waterbottle which have no dedicated dark-photo asset;
+  //               for those we always tint so the selected colour is reflected.
   //   lightTint → white garment, no tint overlay needed
   //   else      → apply garmentColor via CSS multiply blend over white cutout
   const nearBlack  = isNearBlack(garmentColor);
   const lightTint  = isLightTint(garmentColor);
-  const needsTint  = !nearBlack && !lightTint;
+  const hasNoDarkAsset = category === "cap" || category === "waterbottle";
+  const needsTint  = !lightTint && (hasNoDarkAsset ? true : !nearBlack);
 
   return (
     <div

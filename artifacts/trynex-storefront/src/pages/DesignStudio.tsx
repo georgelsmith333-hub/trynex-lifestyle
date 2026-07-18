@@ -916,7 +916,9 @@ export default function DesignStudio() {
   // Show print-zone outline ONLY when the canvas is empty (no layers on this face).
   // Once any design is added the zone indicator hides permanently, giving a clean preview.
   // The zone hint disappears even while a layer is selected so there's no visual clutter.
-  const effectiveShowPrintZone = showPrintZone && currentFaceLayers.length === 0;
+  // Always honour the user's Print Zone toggle — the previous condition that hid
+  // the brackets whenever any layer existed made the button non-functional while designing.
+  const effectiveShowPrintZone = showPrintZone;
 
   // Print-safe warning: true when any layer on the current face extends meaningfully outside the print zone.
   // A small tolerance (BLEED_TOL) prevents false-positive warnings for layers that are just barely
