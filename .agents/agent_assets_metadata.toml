@@ -125,3 +125,15 @@ id = "MC6gfx4CAEVELR0DuNTVC"
 uri = "file://trynex-report.tar.gz"
 type = "unspecified"
 title = "TryNex Lifestyle — Comprehensive A-Z Technical Report (HTML)"
+
+[[outputs]]
+id = "t944LzLLmITVlhl1uJ6Aw"
+uri = "file://artifacts/trynex-storefront/public/screenshots/garment-preview.jpg"
+type = "image"
+title = "GarmentSVG Preview — all products × colors"
+
+[[outputs]]
+id = "d2tWF2y13N9HSoXqfhWuF"
+uri = "file://artifacts/trynex-storefront/public/screenshots/design-studio.jpg"
+type = "image"
+title = "Design Studio after fixes"

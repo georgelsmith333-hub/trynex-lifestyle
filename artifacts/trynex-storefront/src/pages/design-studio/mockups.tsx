@@ -386,10 +386,17 @@ export function GarmentSVG({
   const isMugRightSide = isMug && (face === "back" || mugMode === "side2");
   const displayPZ = isMugRightSide ? { ...pz, x: 1000 - pz.x - pz.w } : pz;
 
-  const basePhotoSrc = base
-    ? (face === "back" && base.back ? base.back : base.front)
+  // Source used for the coloured tint path. We always use the transparent cutout PNG
+  // itself, not the full studio photo + a separate mask. The cutout already carries
+  // the garment silhouette in its alpha channel, so using it directly prevents the
+  // ghost/double-image effect that happens when the full photo and cutout are not
+  // perfectly aligned (longsleeve, cap, mug, waterbottle).
+  const tintPhotoSrc = base
+    ? (face === "back" && base.backCutout ? base.backCutout : (base.frontCutout ?? ""))
     : (face === "back" && product.backSrc ? product.backSrc : product.frontSrc);
 
+  // Keep the separate cutout mask source only when we need the shadow pass for the
+  // coloured tint path. For light/white garments the cutout is rendered directly.
   const cutoutMaskSrc = base
     ? (face === "back" && base.backCutout ? base.backCutout : (base.frontCutout ?? ""))
     : "";
@@ -398,9 +405,6 @@ export function GarmentSVG({
   // background — no transparent pixels we need to worry about). Detection relies on
   // the naming convention: files containing "cutout" in their path are transparent
   // PNGs; all other dark-garment files are full opaque studio photos.
-  //
-  // This covers both the primary case (darkFront/darkBack) and back-face fallbacks
-  // where the front full-photo is used instead (no face-strict comparison needed).
   const isFullDarkPhoto = useBlackPhoto && !imageSrc.includes("cutout");
 
   // Canvas background colour:
@@ -435,19 +439,6 @@ export function GarmentSVG({
             <feFlood floodColor={tintHex} result="flood" />
             <feBlend in="flood" in2="SourceGraphic" mode="multiply" />
           </filter>
-        )}
-
-        {/* Garment silhouette mask — clips the tinted photo to the product shape.
-            Inside a flipped <g> the mask coords are automatically re-evaluated
-            in the transformed space, so the same mask id works for both sides. */}
-        {needsTint && cutoutMaskSrc && (
-          <mask id="garment-silhouette">
-            <image
-              href={cutoutMaskSrc}
-              x={0} y={0} width={1000} height={1000}
-              preserveAspectRatio="xMidYMid meet"
-            />
-          </mask>
         )}
 
         {/* ── Shadow-only filter for tinted garments ───────────────────────────
@@ -501,24 +492,22 @@ export function GarmentSVG({
         />
       )}
 
-      {needsTint && cutoutMaskSrc ? (
+      {needsTint && tintPhotoSrc ? (
         isMugRightSide ? (
           <g transform="translate(1000,0) scale(-1,1)">
             <image
-              href={base!.front}
+              href={tintPhotoSrc}
               x={0} y={0} width={1000} height={1000}
               preserveAspectRatio="xMidYMid meet"
-              mask="url(#garment-silhouette)"
               filter="url(#garment-color-tint)"
               style={{ pointerEvents: "none" }}
             />
           </g>
         ) : (
           <image
-            href={basePhotoSrc}
+            href={tintPhotoSrc}
             x={0} y={0} width={1000} height={1000}
             preserveAspectRatio="xMidYMid meet"
-            mask="url(#garment-silhouette)"
             filter="url(#garment-color-tint)"
             style={{ pointerEvents: "none" }}
           />

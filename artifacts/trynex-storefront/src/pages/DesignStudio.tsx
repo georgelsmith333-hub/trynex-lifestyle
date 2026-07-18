@@ -1970,7 +1970,10 @@ export default function DesignStudio() {
     try {
       const canvas = document.createElement("canvas");
       const garmentBase = BASE_BY_CATEGORY[selectedProduct.category];
-      const garmentSrc = garmentBase?.front ?? selectedProduct.frontSrc;
+      // Use the transparent cutout so the garment silhouette is clipped cleanly.
+      // The full studio photo has an opaque background; passing it makes the
+      // destination-in clip keep the entire canvas, leaking the studio bg colour.
+      const garmentSrc = garmentBase?.frontCutout ?? garmentBase?.front ?? selectedProduct.frontSrc;
       await composeGarmentMockup({
         canvas,
         garmentSrc,
@@ -2004,7 +2007,8 @@ export default function DesignStudio() {
     try {
       const canvas = document.createElement("canvas");
       const garmentBase = BASE_BY_CATEGORY[selectedProduct.category];
-      const garmentSrc = garmentBase?.front ?? selectedProduct.frontSrc;
+      // Use the transparent cutout so the garment silhouette is clipped cleanly.
+      const garmentSrc = garmentBase?.frontCutout ?? garmentBase?.front ?? selectedProduct.frontSrc;
       await composeGarmentMockup({
         canvas,
         garmentSrc,
@@ -2098,7 +2102,8 @@ export default function DesignStudio() {
       //    Uses the white-cutout PNG (or cap dark PNG override) so tinting
       //    matches the 2D editor exactly.
       const garmentBase = BASE_BY_CATEGORY[selectedProduct.category];
-      const garmentSrc  = garmentBase?.front ?? displayProduct.frontSrc;
+      // Use the transparent cutout so cart thumbnails match the studio 2D view.
+      const garmentSrc  = garmentBase?.frontCutout ?? garmentBase?.front ?? displayProduct.frontSrc;
       const mockupCanvas = document.createElement("canvas");
       await composeGarmentMockup({
         canvas: mockupCanvas,
