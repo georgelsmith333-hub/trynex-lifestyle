@@ -59,7 +59,7 @@ export default function AdminMessages() {
     try {
       const res = await fetch(getApiUrl(`/api/admin/messages/customers/${selected.customer_id}`), {
         method: "POST",
-        headers: getAuthHeaders(),
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         body: JSON.stringify({ message: draft.trim() }),
       });
       if (res.ok) {

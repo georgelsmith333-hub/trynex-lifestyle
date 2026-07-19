@@ -293,7 +293,7 @@ export const notificationsTable = pgTable("notifications", {
 
 export const supportMessagesTable = pgTable("support_messages", {
   id: serial("id").primaryKey(),
-  customerId: integer("customer_id").notNull(),
+  customerId: integer("customer_id").notNull().references(() => customersTable.id, { onDelete: "cascade" }),
   senderType: text("sender_type").notNull(),
   senderName: text("sender_name"),
   message: text("message").notNull(),

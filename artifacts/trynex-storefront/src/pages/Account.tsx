@@ -273,13 +273,16 @@ export default function Account() {
     const token = localStorage.getItem("trynex_customer_token");
     if (!token) return;
     try {
-      const resp = await fetch(getApiUrl("/api/orders/my/messages/unread-count"), {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (resp.ok) {
-        const data = await resp.json();
-        setUnreadCount(data.count || 0);
-      }
+      const headers = { Authorization: `Bearer ${token}` };
+      const [orderResp, supportResp] = await Promise.all([
+        fetch(getApiUrl("/api/orders/my/messages/unread-count"), { headers }),
+        fetch(getApiUrl("/api/support/messages/unread-count"), { headers }),
+      ]);
+      const [orderData, supportData] = await Promise.all([
+        orderResp.ok ? orderResp.json().catch(() => ({})) : Promise.resolve({}),
+        supportResp.ok ? supportResp.json().catch(() => ({})) : Promise.resolve({}),
+      ]);
+      setUnreadCount(Number(orderData.count || 0) + Number(supportData.count || 0));
     } catch {}
   };
 

@@ -139,6 +139,24 @@ router.post("/admin/messages/customers/:customerId", requireAdmin, messageLimite
 });
 
 /* ── Customer: direct support chat, no order required ──────── */
+router.get("/support/messages/unread-count", requireCustomer, messageLimiter, async (req: any, res) => {
+  try {
+    const customerId = Number(req.customer.id);
+    const result = await db.execute(sql`
+      SELECT COUNT(*) AS count
+      FROM support_messages
+      WHERE customer_id = ${customerId}
+        AND sender_type = 'admin'
+        AND read_by_customer = false
+    `);
+    const rows = (result as any).rows ?? result ?? [];
+    res.json({ count: Number(rows[0]?.count ?? 0) });
+  } catch (err) {
+    logger.error({ err }, "Failed to load customer support unread count");
+    res.status(500).json({ error: "Failed to load unread count" });
+  }
+});
+
 router.get("/support/messages", requireCustomer, messageLimiter, async (req: any, res) => {
   try {
     const customerId = Number(req.customer.id);
