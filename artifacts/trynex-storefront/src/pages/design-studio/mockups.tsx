@@ -407,14 +407,11 @@ export function GarmentSVG({
   // PNGs; all other dark-garment files are full opaque studio photos.
   const isFullDarkPhoto = useBlackPhoto && !imageSrc.includes("cutout");
 
-  // Canvas background colour:
-  //   • Dark/black garments that ARE rendered via the tint path (no full photo):
-  //     use a clean light tone so the dark-tinted silhouette is visible.
-  //   • Everything else (white, coloured, OR dark-with-full-photo): studio charcoal.
-  //     When a full dark photo is used it covers the bg rect anyway, so this only
-  //     matters for the tint-path dark case (e.g. longsleeve black).
-  const needsDarkGarmentLightBg = isNearBlack(tintHex) && !isFullDarkPhoto;
-  const canvasBg = needsDarkGarmentLightBg ? "#f5f5f7" : "#2a2a2e";
+  // Canvas background colour: clean white for all products so the mockup reads
+  // as a premium product shot on a light, neutral studio surface. Cutout garments
+  // get a soft shadow to lift them off the white; dark garments use their own
+  // dark photo or dark cutout and stay visible because of the shadow/contrast.
+  const canvasBg = "#ffffff";
 
   // Drop-shadow filter: only on transparent-bg (cutout) images.
   // Applying it to a full opaque photo creates a box shadow around the rectangle.
@@ -426,8 +423,8 @@ export function GarmentSVG({
         {/* Drop shadow — crisp silhouette lift on the dark studio canvas.
             Applied only to cutout (transparent) images, not full opaque photos. */}
         <filter id="garment-shadow" x="-10%" y="-8%" width="120%" height="120%" colorInterpolationFilters="sRGB">
-          <feDropShadow dx="0" dy="8" stdDeviation="22" floodColor="rgba(0,0,0,0.65)" />
-          <feDropShadow dx="0" dy="2" stdDeviation="6"  floodColor="rgba(0,0,0,0.30)" />
+          <feDropShadow dx="0" dy="12" stdDeviation="28" floodColor="rgba(0,0,0,0.22)" />
+          <feDropShadow dx="0" dy="4" stdDeviation="10"  floodColor="rgba(0,0,0,0.14)" />
         </filter>
 
         {/* ── Colour multiply-tint filter ──────────────────────────────────────
@@ -448,15 +445,15 @@ export function GarmentSVG({
             Rendered before the tinted garment, it sits behind the garment layer. */}
         {needsTint && cutoutMaskSrc && (
           <filter id="garment-tint-shadow" x="-12%" y="-10%" width="124%" height="124%" colorInterpolationFilters="sRGB">
-            {/* Layer 1: soft outer shadow */}
-            <feGaussianBlur in="SourceAlpha" stdDeviation="22" result="blur1" />
-            <feOffset       in="blur1" dx="0" dy="8"  result="off1" />
-            <feFlood        floodColor="rgba(0,0,0,0.65)" floodOpacity="1" result="col1" />
+            {/* Layer 1: soft outer shadow — strong enough to lift tinted garments off white */}
+            <feGaussianBlur in="SourceAlpha" stdDeviation="28" result="blur1" />
+            <feOffset       in="blur1" dx="0" dy="12"  result="off1" />
+            <feFlood        floodColor="rgba(0,0,0,0.22)" floodOpacity="1" result="col1" />
             <feComposite    in="col1"  in2="off1"    operator="in" result="shadow1" />
             {/* Layer 2: tight inner shadow */}
-            <feGaussianBlur in="SourceAlpha" stdDeviation="6"  result="blur2" />
-            <feOffset       in="blur2" dx="0" dy="2"  result="off2" />
-            <feFlood        floodColor="rgba(0,0,0,0.30)" floodOpacity="1" result="col2" />
+            <feGaussianBlur in="SourceAlpha" stdDeviation="10"  result="blur2" />
+            <feOffset       in="blur2" dx="0" dy="4"  result="off2" />
+            <feFlood        floodColor="rgba(0,0,0,0.14)" floodOpacity="1" result="col2" />
             <feComposite    in="col2"  in2="off2"    operator="in" result="shadow2" />
             {/* Merge both shadow layers — output has NO source image */}
             <feMerge>
@@ -591,10 +588,11 @@ export function FlatZoneSVG({
   // • Mid-range              : multiply-tint the white cutout, dark canvas
   const isNearBlackGarment = garmentColor ? isNearBlack(garmentColor) : false;
   const useTint = garmentColor && !isLightTint(garmentColor) && !isNearBlackGarment;
-  // Clean studio for white/coloured; off-white so near-black silhouette stays visible.
-  const canvasBg = isNearBlackGarment ? "#f5f5f7" : "#2a2a2e";
-  // Vignette darkens the canvas edges — invert to a light vignette on the off-white bg.
-  const vigEndColor = isNearBlackGarment ? "rgba(0,0,0,0.14)" : "rgba(0,0,0,0.22)";
+  // Clean white studio for all zones — matches the garment view so the design
+  // tool feels like one coherent surface instead of a dark "blackboard".
+  const canvasBg = "#ffffff";
+  // Very subtle vignette on white so the artboard still has a sense of depth.
+  const vigEndColor = "rgba(0,0,0,0.06)";
 
   return (
     <>

@@ -137,3 +137,15 @@ id = "d2tWF2y13N9HSoXqfhWuF"
 uri = "file://artifacts/trynex-storefront/public/screenshots/design-studio.jpg"
 type = "image"
 title = "Design Studio after usability fixes"
+
+[[outputs]]
+id = "WTezKnuAfRksu6n6icAK-"
+uri = "file://artifacts/trynex-storefront/public/redesign-shots/garment-preview.jpg"
+type = "image"
+title = "All products on clean white background"
+
+[[outputs]]
+id = "qgQ5sueToaqXGbFpYOA9n"
+uri = "file://artifacts/trynex-storefront/public/redesign-shots/design-studio.jpg"
+type = "image"
+title = "Design Studio — white mockups, auto-curve, auto-fix"

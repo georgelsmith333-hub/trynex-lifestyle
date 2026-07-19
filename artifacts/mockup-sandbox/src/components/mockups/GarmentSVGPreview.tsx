@@ -90,7 +90,7 @@ export default function GarmentSVGPreview() {
                   </filter>
                 )}
               </defs>
-              <rect width={1000} height={1000} fill="#2a2a2e" />
+              <rect width={1000} height={1000} fill="#ffffff" />
               <image
                 href={resolveImageSrc(p, c.hex)}
                 x={0} y={0} width={1000} height={1000}

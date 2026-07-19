@@ -28,7 +28,7 @@ import {
   STICKERS, BASE_BY_CATEGORY, MUG_SIDE_PZ,
   getApparelZones, getZonePZ, type ApparelZone, isNearBlack, type PrintZone,
 } from "./design-studio/mockups";
-import { composeLayers, composeGarmentMockup, composeDesignTexture, hasWebGL2, type ComposerLayer } from "./design-studio/composer";
+import { composeLayers, composeGarmentMockup, composeDesignTexture, hasWebGL2, autoFixImage, type ComposerLayer } from "./design-studio/composer";
 
 // Lazy-load the 3D bundle so first-paint stays light.
 const ProductViewer3D = lazy(() => import("./design-studio/ProductViewer3D"));
@@ -880,9 +880,11 @@ export default function DesignStudio() {
   // Runs only when the selected product itself changes, so a manual toggle made
   // while staying on the same product is respected.
   useEffect(() => {
-    // Always default to 2D — curved products (mug/cap/bottle) are edited in 2D flat view.
-    // Users can manually toggle to 3D preview from the 2D/3D button if they want.
-    setViewMode("2d");
+    // Curved products (mug/cap/bottle) default to 3D so the mockup shows the
+    // automatic cylindrical/dome curvature immediately. Flat apparel defaults to
+    // 2D for precise editing. Users can still toggle between views at any time.
+    const isCurved = selectedProduct.category === "mug" || selectedProduct.category === "cap" || selectedProduct.category === "waterbottle";
+    setViewMode(isCurved ? "3d" : "2d");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProduct.id]);
 
@@ -1079,6 +1081,13 @@ export default function DesignStudio() {
         return;
       }
 
+      // Auto-fix: brighten / contrast-correct the uploaded image so logos and
+      // photos look good on fabric without manual tweaking. Runs in-browser.
+      const fixed = await autoFixImage(src);
+      const finalSrc = fixed.src;
+      const finalW = img.naturalWidth;
+      const finalH = img.naturalHeight;
+
       // Smart auto-placement: scale the image to fit within the print zone
       // respecting both width and height, with a comfortable 80% fill.
       // A small SAFETY_MARGIN keeps the freshly-placed image safely clear of
@@ -1086,7 +1095,7 @@ export default function DesignStudio() {
       // shows the "extends outside print area" warning before the user has
       // touched anything.
       const currentPz = pzRef.current;
-      const aspect = img.naturalWidth / Math.max(img.naturalHeight, 1);
+      const aspect = finalW / Math.max(finalH, 1);
       // Smart auto-fit: scale=1 means the image fills the print zone WIDTH exactly.
       // "contain" fit — the image fills as much of the print zone as possible while
       // keeping both dimensions fully inside the zone (no clipping).
@@ -1100,10 +1109,12 @@ export default function DesignStudio() {
 
       const layer: ImageLayer = {
         id: uid(), name: file.name.replace(/\.[^.]+$/, "") || "Image",
-        type: "image", src, naturalW: img.naturalWidth, naturalH: img.naturalHeight,
+        type: "image", src: finalSrc, naturalW: finalW, naturalH: finalH,
         visible: true, locked: false,
         transform: { x: 0, y: 0, scale: initialScale, rotation: 0, opacity: 1 },
         face: activeFaceRef.current,
+        brightness: fixed.brightness,
+        contrast: fixed.contrast,
       };
 
       // flushSync forces React to flush state updates synchronously so the
@@ -2913,11 +2924,9 @@ export default function DesignStudio() {
             <div
               className="relative rounded-3xl overflow-hidden select-none"
               style={{
-                background: isBlackGarment
-                  ? "radial-gradient(ellipse at 50% 35%, #e8e5e0 0%, #d8d5cf 55%, #ccc9c4 100%)"
-                  : "radial-gradient(ellipse at 50% 35%, #2e2e30 0%, #1c1c1e 55%, #111113 100%)",
-                border: "1px solid #3a3a3c",
-                boxShadow: "0 6px 40px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.04)",
+                background: "radial-gradient(ellipse at 50% 35%, #ffffff 0%, #f8f8f8 55%, #f0f0f0 100%)",
+                border: "1px solid #e5e5e7",
+                boxShadow: "0 6px 40px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,1)",
                 isolation: "isolate",
               }}
               onDrop={handleDrop}
@@ -3487,9 +3496,9 @@ export default function DesignStudio() {
               {layers.length > 0 && (
                 <div className="px-4 py-2 text-[10px] font-semibold text-gray-400 flex items-center gap-2"
                   style={{
-                    background: isBlackGarment ? "#f5f5f7" : "#2a2a2e",
-                    borderTop: isBlackGarment ? "1px solid #e5e5e7" : "1px solid #3a3a3e",
-                    color: isBlackGarment ? "#6b7280" : "#9ca3af",
+                    background: "#ffffff",
+                    borderTop: "1px solid #e5e5e7",
+                    color: "#6b7280",
                   }}>
                   <Move className="w-3 h-3 text-gray-500 shrink-0" />
                   Drag · Pinch to scale &amp; rotate · Ctrl+wheel to zoom · +/− to zoom
@@ -3572,6 +3581,20 @@ export default function DesignStudio() {
                     style={{ background: "#f3f4f6" }}>
                     <Copy className="w-4 h-4 text-gray-600" />
                   </button>
+                  {/* Auto-fix — image layers only */}
+                  {selectedLayer.type === "image" && (
+                    <button
+                      aria-label="Auto-fix image"
+                      onClick={async () => {
+                        const fixed = await autoFixImage(selectedLayer.src);
+                        updateLayer(selectedLayer.id, l => l.type === "image" ? ({ ...l, src: fixed.src, brightness: fixed.brightness, contrast: fixed.contrast }) as any : l, true);
+                        toast({ title: "✨ Auto-fix applied", description: `Brightness ${fixed.brightness}% · Contrast ${fixed.contrast}%` });
+                      }}
+                      className="p-2 rounded-xl active:scale-95 transition-transform"
+                      style={{ background: "#ecfdf5" }}>
+                      <Wand2 className="w-4 h-4 text-emerald-600" />
+                    </button>
+                  )}
                   {/* Delete */}
                   <button
                     aria-label="Delete layer"
@@ -3709,6 +3732,19 @@ export default function DesignStudio() {
                             </p>
                           )}
                         </div>
+                        <button
+                          onClick={async () => {
+                            if (!selectedLayer || selectedLayer.type !== "image") return;
+                            const fixed = await autoFixImage(selectedLayer.src);
+                            updateLayer(selectedLayer.id, l => l.type === "image" ? ({ ...l, src: fixed.src, brightness: fixed.brightness, contrast: fixed.contrast }) as any : l, true);
+                            toast({ title: "✨ Auto-fix applied", description: `Brightness ${fixed.brightness}% · Contrast ${fixed.contrast}%` });
+                          }}
+                          disabled={isRemoving || isUpscaling}
+                          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm disabled:opacity-50"
+                          style={{ background: "linear-gradient(135deg,#ECFDF5,#D1FAE5)", color: "#065F46", border: "1px solid #A7F3D0" }}
+                        >
+                          <Wand2 className="w-4 h-4" /> Auto Fix
+                        </button>
                         <button
                           onClick={() => {
                             setCropPct({ x: 0, y: 0, w: 100, h: 100 });

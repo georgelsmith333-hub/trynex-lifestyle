@@ -171,13 +171,11 @@ function textAlignOffset(align: "left" | "center" | "right", halfW: number): num
   return 0;
 }
 
-/** Draw an image warped to fake a cylindrical/dome surface curve.
- *  Slices the image into vertical strips; strips near the left/right edges
- *  are shifted down slightly (barrel bow) and darkened (surface curving away
- *  from the light), while the centre strip is untouched. This is a cheap 2D
- *  approximation — not a true 3D projection — but reads correctly on a
- *  photographed curved surface (mug, bottle, cap dome) instead of looking
- *  like a flat sticker slapped over a round object. */
+/** Draw an image warped to fake a cylindrical / dome surface curve.
+ *  Simulates a round object photographed front-on: the centre faces the camera
+ *  full-size, the edges pinch horizontally, recede vertically, and darken as
+ *  they curve away from the light. A subtle centre highlight adds realism.
+ *  Higher `quality` = more vertical strips for a smoother warp. */
 function drawImageCurved(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement,
@@ -185,30 +183,50 @@ function drawImageCurved(
   h: number,
   curvature: number,
 ) {
-  const STRIPS = 28;
+  const STRIPS = 48;
   const stripW = w / STRIPS;
   for (let i = 0; i < STRIPS; i++) {
-    // u ranges -1 (left edge) .. 0 (centre) .. 1 (right edge)
+    // u ranges -0.5 (left edge) .. 0 (centre) .. 0.5 (right edge)
     const u = (i + 0.5) / STRIPS - 0.5;
     const u2 = 2 * u; // -1..1
-    // Barrel bow: centre sits "closest" to camera, edges recede downward.
-    const bow = (1 - Math.cos((u2 * Math.PI) / 2)) * h * curvature * 0.5;
-    // Edge darkening: surface curving away catches less light.
-    const shade = 1 - Math.abs(u2) * curvature * 1.6;
+    const edgeFactor = Math.abs(u2); // 0..1
 
+    // Cylindrical pinch: edge strips become narrower (foreshortening).
+    const pinch = Math.cos(u2 * Math.PI / 2);
+    const renderStripW = stripW * (0.55 + 0.45 * pinch);
+
+    // Barrel bow: centre sits closest to camera; edges drop away.
+    const bow = (1 - Math.cos((u2 * Math.PI) / 2)) * h * curvature * 0.42;
+
+    // Edge darkening: surface curving away catches less light.
+    const shade = 1 - edgeFactor * curvature * 1.4;
+
+    // Source x keeps the original proportions; we take slightly wider source
+    // strips at the edges so the compressed pixels still map correctly.
     const sx0 = (i / STRIPS) * img.naturalWidth;
     const sw = img.naturalWidth / STRIPS;
-    const dx0 = -w / 2 + i * stripW;
+    const dx0 = -w / 2 + i * stripW + (stripW - renderStripW) * 0.5;
 
     ctx.save();
     ctx.filter = shade < 1 ? `brightness(${Math.max(0.55, shade) * 100}%)` : "none";
     ctx.drawImage(
       img,
       sx0, 0, sw, img.naturalHeight,
-      dx0, -h / 2 + bow, stripW + 0.6, h,
+      dx0, -h / 2 + bow, renderStripW + 0.6, h,
     );
     ctx.restore();
   }
+
+  // Soft vertical highlight down the centre — glossy ceramic/metal reflection.
+  const grad = ctx.createLinearGradient(-w * 0.15, 0, w * 0.15, 0);
+  grad.addColorStop(0, "rgba(255,255,255,0)");
+  grad.addColorStop(0.5, "rgba(255,255,255,0.18)");
+  grad.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.save();
+  ctx.globalCompositeOperation = "overlay";
+  ctx.fillStyle = grad;
+  ctx.fillRect(-w * 0.22, -h / 2, w * 0.44, h);
+  ctx.restore();
 }
 
 export async function composeLayers(opts: ComposeOptions): Promise<HTMLCanvasElement> {
@@ -499,6 +517,60 @@ export async function composeDesignTexture(opts: {
 
   if (clipToPrintZone) ctx.restore();
   return canvas;
+}
+
+/** Analyse a small downscaled copy of the image and return suggested
+ *  brightness / contrast corrections so logos/artwork pop on fabric.
+ *  Returns the original src if no correction is needed. */
+export async function autoFixImage(src: string): Promise<{ src: string; brightness: number; contrast: number }> {
+  const img = new Image();
+  await new Promise<void>((res, rej) => { img.onload = () => res(); img.onerror = rej; img.src = src; });
+  try { await img.decode?.(); } catch {}
+
+  const canvas = document.createElement("canvas");
+  const size = 256;
+  canvas.width = size; canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return { src, brightness: 100, contrast: 100 };
+
+  ctx.drawImage(img, 0, 0, size, size);
+  const data = ctx.getImageData(0, 0, size, size).data;
+
+  // Compute average luminance and a simple contrast metric (std-dev-like).
+  let sum = 0, sumSq = 0, count = 0;
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i], g = data[i + 1], b = data[i + 2];
+    const a = data[i + 3];
+    if (a < 32) continue; // ignore transparent pixels
+    const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+    sum += lum; sumSq += lum * lum; count++;
+  }
+  if (count === 0) return { src, brightness: 100, contrast: 100 };
+  const avg = sum / count;
+  const variance = sumSq / count - avg * avg;
+  const std = Math.sqrt(Math.max(0, variance));
+
+  // Target: average brightness ~ 128, contrast std ~ 60-80.
+  let brightness = 100;
+  let contrast = 100;
+  if (avg < 100) brightness = Math.round(100 + (100 - avg) * 0.45);
+  if (avg > 180) brightness = Math.round(100 - (avg - 180) * 0.45);
+  if (std < 55) contrast = Math.round(100 + (55 - std) * 1.1);
+  if (std > 90) contrast = Math.round(100 - (std - 90) * 0.6);
+
+  brightness = Math.max(80, Math.min(140, brightness));
+  contrast = Math.max(85, Math.min(140, contrast));
+
+  if (brightness === 100 && contrast === 100) return { src, brightness, contrast };
+
+  // Render corrected image at original size.
+  const out = document.createElement("canvas");
+  out.width = img.naturalWidth; out.height = img.naturalHeight;
+  const octx = out.getContext("2d");
+  if (!octx) return { src, brightness, contrast };
+  octx.filter = `brightness(${brightness}%) contrast(${contrast}%)`;
+  octx.drawImage(img, 0, 0, out.width, out.height);
+  return { src: out.toDataURL("image/png"), brightness, contrast };
 }
 
 export function hasWebGL2(): boolean {

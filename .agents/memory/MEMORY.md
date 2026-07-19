@@ -17,3 +17,7 @@
 - [Advance deposit: 25%](advance-deposit.md) — changed from 15% to 25% across Checkout.tsx, orders.ts, email.ts, telegramWebhook.ts, FAQ.tsx, TermsOfService.tsx, AdminOrders.tsx, ai.ts. Use 25% everywhere for advance/COD deposit.
 - [Admin health endpoint shape mismatch](admin-health-endpoint-shape.md) — Dashboard widget and DB Cluster page hit different endpoints with different response shapes; contradictory status = check shape drift before assuming a real outage.
 - [Scroll-lock composition](scroll-lock-composition.md) — route all body-scroll-locking overlays through one ref-counted helper; never set document.body.style.overflow directly per-component.
+- [White-background mockups](white-background-mockups.md) — POD studio canvas must be white for premium look; transparent cutouts need soft drop-shadows to lift off white; dark garments need their own dark photo/cutout to stay visible.
+- [Curved-product default view](curved-product-default-view.md) — mug/cap/waterbottle default to 3D preview so cylindrical curvature shows automatically; 2D stays for precise editing.
+- [Upload auto-fix](upload-auto-fix.md) — auto-adjust uploaded-image brightness/contrast from histogram so designs pop on fabric without manual tuning.
+- [Product-switch auto-fit](product-switch-auto-fit.md) — when switching products, re-fit the design to the target product's print zone instead of preserving relative size.
