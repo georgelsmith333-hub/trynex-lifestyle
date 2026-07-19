@@ -149,3 +149,9 @@ id = "qgQ5sueToaqXGbFpYOA9n"
 uri = "file://artifacts/trynex-storefront/public/redesign-shots/design-studio.jpg"
 type = "image"
 title = "Design Studio — white mockups, auto-curve, auto-fix"
+
+[[outputs]]
+id = "J8ntLumiN0M57tapXbQD-"
+uri = "file://reports/TryNex_Audit_and_Fix_Plan.pdf"
+type = "pdf"
+title = "TryNex Lifestyle — A-to-Z Audit & Fix Plan PDF"
