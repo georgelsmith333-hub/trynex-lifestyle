@@ -409,12 +409,12 @@ export function GarmentSVG({
 
   // Canvas background colour:
   //   • Dark/black garments that ARE rendered via the tint path (no full photo):
-  //     use a warm light tone so the dark-tinted silhouette is visible.
-  //   • Everything else (white, coloured, OR dark-with-full-photo): dark studio.
+  //     use a clean light tone so the dark-tinted silhouette is visible.
+  //   • Everything else (white, coloured, OR dark-with-full-photo): studio charcoal.
   //     When a full dark photo is used it covers the bg rect anyway, so this only
   //     matters for the tint-path dark case (e.g. longsleeve black).
   const needsDarkGarmentLightBg = isNearBlack(tintHex) && !isFullDarkPhoto;
-  const canvasBg = needsDarkGarmentLightBg ? "#EAE8E4" : "#1C1C1E";
+  const canvasBg = needsDarkGarmentLightBg ? "#f5f5f7" : "#2a2a2e";
 
   // Drop-shadow filter: only on transparent-bg (cutout) images.
   // Applying it to a full opaque photo creates a box shadow around the rectangle.
@@ -591,9 +591,9 @@ export function FlatZoneSVG({
   // • Mid-range              : multiply-tint the white cutout, dark canvas
   const isNearBlackGarment = garmentColor ? isNearBlack(garmentColor) : false;
   const useTint = garmentColor && !isLightTint(garmentColor) && !isNearBlackGarment;
-  // Dark-studio for white/coloured; warm-light so near-black silhouette stays visible.
-  const canvasBg = isNearBlackGarment ? "#EAE8E4" : "#1C1C1E";
-  // Vignette darkens the canvas edges — invert to a light vignette on the warm-light bg.
+  // Clean studio for white/coloured; off-white so near-black silhouette stays visible.
+  const canvasBg = isNearBlackGarment ? "#f5f5f7" : "#2a2a2e";
+  // Vignette darkens the canvas edges — invert to a light vignette on the off-white bg.
   const vigEndColor = isNearBlackGarment ? "rgba(0,0,0,0.14)" : "rgba(0,0,0,0.22)";
 
   return (

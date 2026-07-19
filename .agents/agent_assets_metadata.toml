@@ -130,10 +130,10 @@ title = "TryNex Lifestyle — Comprehensive A-Z Technical Report (HTML)"
 id = "t944LzLLmITVlhl1uJ6Aw"
 uri = "file://artifacts/trynex-storefront/public/screenshots/garment-preview.jpg"
 type = "image"
-title = "GarmentSVG Preview — all products × colors"
+title = "GarmentSVG Preview — all products × colors (new background)"
 
 [[outputs]]
 id = "d2tWF2y13N9HSoXqfhWuF"
 uri = "file://artifacts/trynex-storefront/public/screenshots/design-studio.jpg"
 type = "image"
-title = "Design Studio after fixes"
+title = "Design Studio after usability fixes"

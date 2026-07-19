@@ -1133,23 +1133,17 @@ export default function DesignStudio() {
       // switching products shows the design pre-placed and centred in their
       // print zone. Same-category products get the same face/zone; others get front.
       //
-      // Scale is recomputed as a "contain fit" for the TARGET zone (same maths as the
-      // initial auto-placement above), preserving the *relative* fill fraction the design
-      // currently has in the source zone. A naive `scale * (targetPZ.w/currentPZ.w)` ratio
-      // (the previous approach) doesn't account for zone aspect-ratio differences, so a
-      // design that fit safely in a wide zone could overflow a narrower one (e.g. mug/bottle
-      // side print areas) — which is what triggered false "outside print area" warnings when
-      // switching products.
-      const currentPZ = pzRef.current;
+      // Each target product gets a fresh contain-fit for its own print zone — the design
+      // automatically snaps to the new product structure instead of carrying over a
+      // relative size that may overflow narrower zones (mug/bottle) or look tiny on
+      // wider zones (t-shirt/hoodie).
       const currentFace = activeFaceRef.current;
       const containScale = (zone: PrintZone) => Math.min(1.0, (zone.h * aspect) / zone.w);
-      const currentContain = containScale(currentPZ) || 1;
-      const relativeFill = layer.transform.scale / currentContain;
       PRODUCTS.forEach(prod => {
         if (prod.id === selectedProduct.id) return;
         const targetFace: Face = prod.category === selectedProduct.category ? currentFace : "front";
         const targetPZ = getZonePZ(targetFace, prod);
-        const newScale = containScale(targetPZ) * relativeFill;
+        const newScale = containScale(targetPZ) * 0.95;
         const propagated: ImageLayer = {
           ...layer,
           id: uid(),
@@ -1900,20 +1894,31 @@ export default function DesignStudio() {
   const wheelCommitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleCanvasWheel = useCallback((e: React.WheelEvent<SVGSVGElement>) => {
-    e.preventDefault();
     const delta = e.deltaY;
     // Guard: zero delta (common on some trackpads at gesture start/end) = no-op
     if (delta === 0) return;
     const factor = delta < 0 ? 1.12 : 1 / 1.12;
 
-    // Check if the wheel event landed on a layer — if so, scale the layer.
+    // Ctrl/Meta + wheel → zoom canvas (prevent page scroll)
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      const newZoom = Math.max(0.4, Math.min(4, canvasZoomRef.current * factor));
+      canvasZoomRef.current = newZoom;
+      setCanvasZoom(newZoom);
+      if (newZoom <= 1) {
+        canvasPanRef.current = { x: 0, y: 0 };
+        setCanvasPan({ x: 0, y: 0 });
+      }
+      return;
+    }
+
+    // Shift + wheel over a layer → scale the layer (prevent page scroll)
     const target = e.target as Element;
     const layerId =
       target.getAttribute?.("data-layer-id") ??
       target.closest?.("[data-layer-id]")?.getAttribute("data-layer-id");
-
-    if (layerId && !e.ctrlKey) {
-      // Scale the hovered layer and route through history after scroll settles
+    if (layerId && e.shiftKey) {
+      e.preventDefault();
       setLayers(prev =>
         prev.map(l => {
           if (l.id !== layerId) return l;
@@ -1921,7 +1926,6 @@ export default function DesignStudio() {
           return { ...l, transform: { ...l.transform, scale: newScale } };
         })
       );
-      // Debounce the undo-history commit so rapid scroll doesn't flood the stack
       if (wheelCommitTimerRef.current) clearTimeout(wheelCommitTimerRef.current);
       wheelCommitTimerRef.current = setTimeout(() => {
         commitLayers(layersRef.current);
@@ -1929,14 +1933,7 @@ export default function DesignStudio() {
       return;
     }
 
-    // No layer hit (or Ctrl held) → zoom the canvas
-    const newZoom = Math.max(0.4, Math.min(4, canvasZoomRef.current * factor));
-    canvasZoomRef.current = newZoom;
-    setCanvasZoom(newZoom);
-    if (newZoom <= 1) {
-      canvasPanRef.current = { x: 0, y: 0 };
-      setCanvasPan({ x: 0, y: 0 });
-    }
+    // Plain wheel → let the page scroll normally.
   }, [commitLayers]);
 
   /* ── Compute layer SVG geometry ────────────────────── */
@@ -3011,7 +3008,7 @@ export default function DesignStudio() {
                   ref={svgRef as any}
                   viewBox={selectedProduct.viewBox}
                   className="absolute inset-0 w-full h-full"
-                  style={{ touchAction: isMobile && currentFaceLayers.length === 0 ? "pan-y" : "none", userSelect: "none" }}
+                  style={{ touchAction: isMobile ? "pan-y" : "pan-x pan-y", userSelect: "none" }}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -3490,11 +3487,12 @@ export default function DesignStudio() {
               {layers.length > 0 && (
                 <div className="px-4 py-2 text-[10px] font-semibold text-gray-400 flex items-center gap-2"
                   style={{
-                    background: isBlackGarment ? "#d8d5cf" : "#1C1C1E",
-                    borderTop: isBlackGarment ? "1px solid #bbb8b2" : "1px solid #2a2a2c",
+                    background: isBlackGarment ? "#f5f5f7" : "#2a2a2e",
+                    borderTop: isBlackGarment ? "1px solid #e5e5e7" : "1px solid #3a3a3e",
+                    color: isBlackGarment ? "#6b7280" : "#9ca3af",
                   }}>
                   <Move className="w-3 h-3 text-gray-500 shrink-0" />
-                  Drag · Pinch to scale &amp; rotate · +/− to zoom
+                  Drag · Pinch to scale &amp; rotate · Ctrl+wheel to zoom · +/− to zoom
                 </div>
               )}
             </div>
