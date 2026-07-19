@@ -2973,9 +2973,15 @@ export default function DesignStudio() {
                     })}
                   </g>
 
-                  {/* Cylinder edge shadow overlay intentionally removed:
-                      mug/bottle artwork is still curved by cyl-wrap-img, but
-                      uploaded photos no longer get an extra dark strip/shadow. */}
+                  {/* Cylinder edge depth — darkens design at left/right edges via multiply,
+                      reinforcing the wrap-around curvature of the mug/bottle surface. */}
+                  {(isMugProduct || isWaterBottle) && (
+                    <g clipPath="url(#design-clip)" pointerEvents="none">
+                      <rect x={pz.x} y={pz.y} width={pz.w} height={pz.h}
+                        fill="url(#cyl-edge-shadow)"
+                        style={{ mixBlendMode: "multiply" as React.CSSProperties["mixBlendMode"] }} />
+                    </g>
+                  )}
 
                   {/* Fabric grain — subtle fractal noise over print zone makes designs look
                       screen-printed on fabric rather than digitally pasted (apparel only). */}
