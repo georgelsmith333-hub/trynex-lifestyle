@@ -21,7 +21,7 @@ import {
   Image as ImageIcon, Plus, Check, CloudUpload,
   Box, Image as Image2D, Search, X, ChevronRight,
   Palette, Package, FlipHorizontal, Copy, Crosshair, Maximize2,
-  Download, AlignLeft, AlignCenter, AlignRight,
+  Download, AlignLeft, AlignCenter, AlignRight, ShieldCheck,
 } from "lucide-react";
 import {
   PRODUCTS, type DesignProduct, GarmentSVG, FlatZoneSVG,
@@ -2663,6 +2663,42 @@ export default function DesignStudio() {
               </button>
             </div>
 
+            {/* Quality badge strip — product-specific specs, visible below the product selector */}
+            {(() => {
+              const cat = selectedProduct.category;
+              type QBadge = { icon: string; label: string };
+              const specBadges: QBadge[] =
+                cat === "mug"
+                  ? [{ icon: "☕", label: "11oz Ceramic" }, { icon: "✅", label: "Dishwasher-safe" }, { icon: "🎨", label: "Vivid Print" }]
+                  : cat === "cap"
+                  ? [{ icon: "🧢", label: "6-panel structured" }, { icon: "📐", label: "One size fits all" }, { icon: "🎨", label: "DTG Printed" }]
+                  : cat === "waterbottle"
+                  ? [{ icon: "💧", label: "600ml Aluminium" }, { icon: "✅", label: "Leak-proof lid" }, { icon: "🌡️", label: "Thermal coating" }]
+                  : [{ icon: "👕", label: "230GSM Cotton" }, { icon: "🖨️", label: "DTG Printed" }, { icon: "🌊", label: "Wash-safe 30°C" }];
+              return (
+                <div
+                  className="flex items-center gap-1.5 mb-3 overflow-x-auto"
+                  style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" as any }}
+                >
+                  {specBadges.map(b => (
+                    <span
+                      key={b.label}
+                      className="shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold"
+                      style={{ background: "#f0fdf4", color: "#15803d", border: "1px solid #bbf7d0" }}
+                    >
+                      {b.icon} {b.label}
+                    </span>
+                  ))}
+                  <span
+                    className="shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold"
+                    style={{ background: "#fff4ee", color: "#c2410c", border: "1px solid #fdd5b4" }}
+                  >
+                    💳 Pay just 25% now
+                  </span>
+                </div>
+              );
+            })()}
+
             {/* ── Quick product tabs ── T-Shirt · Mug · Bottle (+ "More" opens full picker) */}
             {!linkedStoreProduct && (
               <div className="flex gap-2 mb-3" data-testid="quick-product-tabs">
@@ -3693,7 +3729,13 @@ export default function DesignStudio() {
                     }}
                   >
                     <Icon className="w-4 h-4" />{label}
-                    {id === "ai" && <span className="absolute top-0.5 right-0.5 bg-orange-500 text-white text-[6px] px-1 py-0.5 rounded-full font-black leading-none">AI</span>}
+                    {id === "ai" && <span className="absolute top-0.5 right-0.5 bg-purple-500 text-white text-[6px] px-1 py-0.5 rounded-full font-black leading-none">✨</span>}
+                    {id === "layers" && layers.length > 0 && (
+                      <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 rounded-full flex items-center justify-center text-[7px] font-black text-white leading-none"
+                        style={{ background: "#E85D04" }}>
+                        {layers.length}
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
@@ -4799,6 +4841,17 @@ export default function DesignStudio() {
                 ? <><Loader2 className="w-5 h-5 animate-spin" /> Adding to Cart...</>
                 : <><ShoppingCart className="w-5 h-5" /> Add Custom {selectedProduct.name} to Cart</>}
             </motion.button>
+
+            {/* Trust micro-copy — below the Add to Cart CTA */}
+            <div className="flex items-center justify-center gap-2 text-[10px] font-semibold text-gray-400 -mt-1">
+              <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-green-500" /> Secure</span>
+              <span className="w-px h-3 bg-gray-200" />
+              <span>⚡ Fast dispatch</span>
+              <span className="w-px h-3 bg-gray-200" />
+              <span>🔁 Easy returns</span>
+              <span className="w-px h-3 bg-gray-200" />
+              <span>📦 All 64 districts</span>
+            </div>
 
             {(() => {
               const subtotal = quantity * studioPrice;

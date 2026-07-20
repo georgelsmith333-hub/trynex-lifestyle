@@ -1,7 +1,7 @@
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -14,6 +14,7 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useQuery } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
 import { useCart } from "@/context/CartContext";
 import { api } from "@/lib/api";
@@ -78,7 +79,19 @@ export default function CheckoutScreen() {
 
   const [createdOrder, setCreatedOrder] = useState<{ orderNumber: string; id: number } | null>(null);
 
-  const shipping = subtotal > 1500 ? 0 : 60;
+  // Fetch dynamic site settings (shipping cost, payment numbers, etc.)
+  const { data: siteSettings } = useQuery({
+    queryKey: ["siteSettings"],
+    queryFn: () => api.getSettings(),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const freeShippingThreshold = Number(siteSettings?.freeShippingThreshold ?? 1500);
+  const shippingFee = Number(siteSettings?.shippingCost ?? 60);
+  const bkashNumber = siteSettings?.bkashNumber || "01XXXXXXXXX";
+  const nagadNumber = siteSettings?.nagadNumber || siteSettings?.bkashNumber || "01XXXXXXXXX";
+
+  const shipping = subtotal >= freeShippingThreshold ? 0 : shippingFee;
   const total = Math.max(0, subtotal + shipping - promoDiscount);
 
   const applyPromo = async () => {
@@ -407,9 +420,9 @@ export default function CheckoutScreen() {
                   <Feather name="info" size={16} color={colors.primary} />
                   <Text style={[styles.infoText, { color: colors.foreground }]}>
                     {paymentMethod === "bkash"
-                      ? "Send payment to: 01903426915 (bKash Personal). Include your name in the reference."
+                      ? `Send payment to: ${bkashNumber} (bKash Personal). Include your name in the reference.`
                       : paymentMethod === "nagad"
-                      ? "Send payment to: 01903426915 (Nagad Personal). Include your name in the reference."
+                      ? `Send payment to: ${nagadNumber} (Nagad Personal). Include your name in the reference.`
                       : "Our team will contact you with bank details after order confirmation."}
                   </Text>
                 </View>
