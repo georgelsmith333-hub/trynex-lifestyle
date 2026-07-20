@@ -409,7 +409,15 @@ export async function composeGarmentMockup(opts: {
       ctx.font = `${layer.fontStyle} ${layer.fontWeight} ${fs}px ${layer.fontFamily}`;
       const align = layer.textAlign ?? "center";
       const xOffset = textAlignOffset(align, (geom.w * s) / 2);
-      ctx.globalCompositeOperation = "multiply";
+      // Use multiply blend for text only on light/white garments (lum > 0.92).
+      // On dark/coloured garments (navy, maroon, grey, …) text must use source-over
+      // so white and bright text colours are not swallowed by the garment tint.
+      const gr = parseInt(garmentColor?.slice(1, 3) ?? "ff", 16);
+      const gg = parseInt(garmentColor?.slice(3, 5) ?? "ff", 16);
+      const gb = parseInt(garmentColor?.slice(5, 7) ?? "ff", 16);
+      const glum = (0.299 * gr + 0.587 * gg + 0.114 * gb) / 255;
+      const textBlend = glum > 0.92 ? "multiply" : "source-over";
+      ctx.globalCompositeOperation = textBlend as GlobalCompositeOperation;
       drawText(ctx, layer, fs, xOffset, 0, s, s);
       ctx.globalCompositeOperation = "source-over";
     }

@@ -26,7 +26,7 @@ import {
 import {
   PRODUCTS, type DesignProduct, GarmentSVG, FlatZoneSVG,
   STICKERS, BASE_BY_CATEGORY, MUG_SIDE_PZ,
-  getApparelZones, getZonePZ, type ApparelZone, isNearBlack, type PrintZone,
+  getApparelZones, getZonePZ, type ApparelZone, isNearBlack, isLightTint, type PrintZone,
 } from "./design-studio/mockups";
 import { composeLayers, composeGarmentMockup, composeDesignTexture, hasWebGL2, autoFixImage, type ComposerLayer } from "./design-studio/composer";
 
@@ -893,6 +893,12 @@ export default function DesignStudio() {
   // Used to flip the studio canvas and outer container from dark → light so the
   // dark garment silhouette remains visible against its background.
   const isBlackGarment = isNearBlack(selectedColor.hex);
+  // True when the garment is white/off-white (lum > 0.92).
+  // Design layers use multiply blend ONLY on light garments so transparent areas
+  // of the design show the fabric colour through. On dark/coloured garments
+  // (navy, maroon, grey, olive, …) designs must use normal/source-over so
+  // white and bright colours aren't swallowed by the dark garment.
+  const isLightGarment = isLightTint(selectedColor.hex);
 
   /* ── Per-product price (used in UI + cart serialisation) ── */
   const studioPrice = useMemo(() => {
@@ -3152,7 +3158,7 @@ export default function DesignStudio() {
                               opacity={l.transform.opacity}
                               preserveAspectRatio="none"
                               pointerEvents="none"
-                              style={{ filter: userAdj, mixBlendMode: 'multiply' }}
+                              style={{ filter: userAdj, mixBlendMode: isLightGarment ? 'multiply' : 'normal' }}
                             />
                             {/* Transparent hit-rect — ensures reliable pointer events on every
                                 browser/device regardless of SVG <image> pointer-event quirks */}
@@ -3199,7 +3205,7 @@ export default function DesignStudio() {
                             paintOrder={l.strokeWidth ? "stroke" : undefined}
                             transform={`rotate(${l.transform.rotation}, ${g.cx}, ${g.cy})`}
                             filter={shadowFilterId ? `url(#${shadowFilterId})` : undefined}
-                            style={{ cursor: l.locked ? "not-allowed" : "grab", userSelect: "none", mixBlendMode: 'multiply' }}
+                            style={{ cursor: l.locked ? "not-allowed" : "grab", userSelect: "none", mixBlendMode: isLightGarment ? 'multiply' : 'normal' }}
                           >{l.text}</text>
                         </g>
                       );

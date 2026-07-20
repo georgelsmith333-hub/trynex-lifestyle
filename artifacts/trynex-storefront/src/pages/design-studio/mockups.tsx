@@ -455,11 +455,17 @@ export function GarmentSVG({
         {/* ── Colour multiply-tint filter ──────────────────────────────────────
             Applied DIRECTLY to the <image> element (not a separate rect).
             SVG guarantees: filter is evaluated first, mask second — no
-            isolated-compositing-context issues that break CSS mix-blend-mode. */}
+            isolated-compositing-context issues that break CSS mix-blend-mode.
+
+            IMPORTANT: feBlend multiply sets alpha=1 for transparent pixels
+            (because 1-(1-1)*(1-0)=1), filling the background with tintHex.
+            The final feComposite operator="in" clips the output back to the
+            alpha channel of SourceGraphic so transparent areas stay transparent. */}
         {needsTint && tintHex && (
           <filter id="garment-color-tint" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
             <feFlood floodColor={tintHex} result="flood" />
-            <feBlend in="flood" in2="SourceGraphic" mode="multiply" />
+            <feBlend in="flood" in2="SourceGraphic" mode="multiply" result="blended" />
+            <feComposite in="blended" in2="SourceGraphic" operator="in" />
           </filter>
         )}
 
@@ -634,11 +640,14 @@ export function FlatZoneSVG({
           <rect x={pz.x} y={pz.y} width={pz.w} height={pz.h} rx={10} />
         </clipPath>
         {/* Colour multiply-tint — only defined for mid-range (non-white, non-black) colours.
-            Full opacity (floodOpacity="1") matches GarmentSVG exactly. */}
+            Full opacity (floodOpacity="1") matches GarmentSVG exactly.
+            feComposite operator="in" clips alpha back to SourceGraphic so
+            transparent pixels outside the garment stay transparent (not tintHex). */}
         {useTint && (
           <filter id="flat-color-tint" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
             <feFlood floodColor={garmentColor!} floodOpacity="1" result="flood" />
-            <feBlend in="flood" in2="SourceGraphic" mode="multiply" />
+            <feBlend in="flood" in2="SourceGraphic" mode="multiply" result="blended" />
+            <feComposite in="blended" in2="SourceGraphic" operator="in" />
           </filter>
         )}
       </defs>
