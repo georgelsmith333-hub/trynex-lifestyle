@@ -4,17 +4,26 @@
    The mockup PNGs live in /public/mockups/<id>-<face>.png
 ════════════════════════════════════════════════════════ */
 
-const tshirtFront          = "/mockups/white-tshirt-front.png";
-const tshirtBack           = "/mockups/white-tshirt-back.png";
-const tshirtFrontDark      = "/mockups/black-tshirt-front.png";
-const tshirtBackDark       = "/mockups/black-tshirt-back.png";
-const tshirtFrontCutout    = "/mockups/white-tshirt-front-cutout.png";
-const tshirtBackCutout     = "/mockups/white-tshirt-back-cutout.png";
+// ── T-Shirt: premium AI-generated studio photos (new/ folder = higher quality) ──
+const tshirtFront          = "/mockups/new/white-tshirt-front.png";
+const tshirtBack           = "/mockups/new/white-tshirt-back.png";
+const tshirtFrontDark      = "/mockups/new/black-tshirt-front.png";
+const tshirtBackDark       = "/mockups/new/black-tshirt-back.png";
+const tshirtFrontCutout    = "/mockups/new/white-tshirt-front-cutout.png";
+const tshirtBackCutout     = "/mockups/new/white-tshirt-back-cutout.png";
 // Color-specific photo mockups — used instead of SVG tint for highest realism
-const navyTshirtFront      = "/mockups/navy-tshirt-front.png";
-const navyTshirtBack       = "/mockups/navy-tshirt-back.png";
-const redTshirtFront       = "/mockups/red-tshirt-front.png";
-const redTshirtBack        = "/mockups/red-tshirt-back.png";
+const navyTshirtFront      = "/mockups/new/navy-tshirt-front.png";
+const navyTshirtBack       = "/mockups/new/navy-tshirt-back.png";
+const redTshirtFront       = "/mockups/new/red-tshirt-front.png";
+const redTshirtBack        = "/mockups/new/red-tshirt-back.png";
+const greyTshirtFront      = "/mockups/grey-tshirt-front.png";
+const greyTshirtBack       = "/mockups/grey-tshirt-back.png";
+const maroonTshirtFront    = "/mockups/maroon-tshirt-front.png";
+const maroonTshirtBack     = "/mockups/maroon-tshirt-back.png";
+const oliveTshirtFront     = "/mockups/olive-tshirt-front.png";
+const oliveTshirtBack      = "/mockups/olive-tshirt-back.png";
+const skyblueTshirtFront   = "/mockups/skyblue-tshirt-front.png";
+const skyblueTshirtBack    = "/mockups/skyblue-tshirt-back.png";
 const longsleeveFront          = "/mockups/white-longsleeve-front.png";
 const longsleeveBack           = "/mockups/white-longsleeve-back.png";
 const longsleeveFrontDark      = "/mockups/black-longsleeve-front.png";
@@ -42,6 +51,27 @@ const tshirtFrontDarkCutout     = "/mockups/black-tshirt-front-cutout.png";
 const tshirtBackDarkCutout      = "/mockups/black-tshirt-back-cutout.png";
 const hoodieFrontDarkCutout     = "/mockups/black-hoodie-front-cutout-real.png";
 const hoodieBackDarkCutout      = "/mockups/black-hoodie-back-cutout-real.png";
+
+// ── Hoodie: per-color front photos (real studio shots, no SVG tint needed) ──
+// Back photos for colored hoodies are not available — back falls through to tint path.
+const navyHoodieFront      = "/mockups/navy-hoodie-front.png";
+const greyHoodieFront      = "/mockups/grey-hoodie-front.png";
+const maroonHoodieFront    = "/mockups/maroon-hoodie-front.png";
+const oliveHoodieFront     = "/mockups/olive-hoodie-front.png";
+const redHoodieFront       = "/mockups/red-hoodie-front.png";
+const skyblueHoodieFront   = "/mockups/skyblue-hoodie-front.png";
+const forestHoodieFront    = "/mockups/forest-hoodie-front.png";
+const burgundyHoodieFront  = "/mockups/burgundy-hoodie-front.png";
+
+// ── Long Sleeve: per-color front photos ─────────────────────────────────────
+const navyLongsleeveFront     = "/mockups/navy-longsleeve-front.png";
+const greyLongsleeveFront     = "/mockups/grey-longsleeve-front.png";
+const maroonLongsleeveFront   = "/mockups/maroon-longsleeve-front.png";
+const oliveLongsleeveFront    = "/mockups/olive-longsleeve-front.png";
+const redLongsleeveFront      = "/mockups/red-longsleeve-front.png";
+const skyblueLongsleeveFront  = "/mockups/skyblue-longsleeve-front.png";
+const forestLongsleeveFront   = "/mockups/forest-longsleeve-front.png";
+const burgundyLongsleeveFront = "/mockups/burgundy-longsleeve-front.png";
 
 /** A single available garment colour (name + hex). */
 export interface ProductColor { name: string; hex: string }
@@ -295,15 +325,53 @@ export const BASE_BY_CATEGORY: Record<
 > = {
   tshirt:      { front: tshirtFront, back: tshirtBack, darkFront: tshirtFrontDark, darkBack: tshirtBackDark, frontCutout: tshirtFrontCutout, backCutout: tshirtBackCutout, darkFrontCutout: tshirtFrontDarkCutout, darkBackCutout: tshirtBackDarkCutout,
     colorPhotos: {
+      "#F8F7F4": { front: tshirtFront,     back: tshirtBack     }, // White
+      "#1a1a1a": { front: tshirtFrontDark, back: tshirtBackDark }, // Black
       "#1e3a5f": { front: navyTshirtFront, back: navyTshirtBack },
       "#dc2626": { front: redTshirtFront,  back: redTshirtBack  },
+      "#6b7280": { front: greyTshirtFront, back: greyTshirtBack },
+      "#7f1d1d": { front: maroonTshirtFront, back: maroonTshirtBack },
+      "#4a5240": { front: oliveTshirtFront,  back: oliveTshirtBack  },
+      "#0ea5e9": { front: skyblueTshirtFront, back: skyblueTshirtBack },
     },
   },
-  longsleeve:  { front: longsleeveFront, back: longsleeveBack, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout, darkFrontCutout: longsleeveFrontDarkCutout, darkBackCutout: longsleeveBackDarkCutout },
-  hoodie:      { front: hoodieFront, back: hoodieBack, darkFront: hoodieFrontDark, darkBack: hoodieBackDark, frontCutout: hoodieFrontCutout, backCutout: hoodieBackCutout, darkFrontCutout: hoodieFrontDarkCutout, darkBackCutout: hoodieBackDarkCutout },
+  longsleeve:  { front: longsleeveFront, back: longsleeveBack, darkFront: longsleeveFrontDark, darkBack: longsleeveBackDark, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout, darkFrontCutout: longsleeveFrontDarkCutout, darkBackCutout: longsleeveBackDarkCutout,
+    colorPhotos: {
+      "#1e3a5f": { front: navyLongsleeveFront     },
+      "#6b7280": { front: greyLongsleeveFront     },
+      "#7f1d1d": { front: maroonLongsleeveFront   },
+      "#4a5240": { front: oliveLongsleeveFront    },
+      "#dc2626": { front: redLongsleeveFront      },
+      "#0ea5e9": { front: skyblueLongsleeveFront  },
+      "#166534": { front: forestLongsleeveFront   },
+      "#6b1a2c": { front: burgundyLongsleeveFront },
+    },
+  },
+  hoodie:      { front: hoodieFront, back: hoodieBack, darkFront: hoodieFrontDark, darkBack: hoodieBackDark, frontCutout: hoodieFrontCutout, backCutout: hoodieBackCutout, darkFrontCutout: hoodieFrontDarkCutout, darkBackCutout: hoodieBackDarkCutout,
+    colorPhotos: {
+      "#1e3a5f": { front: navyHoodieFront     },
+      "#6b7280": { front: greyHoodieFront     },
+      "#7f1d1d": { front: maroonHoodieFront   },
+      "#4a5240": { front: oliveHoodieFront    },
+      "#dc2626": { front: redHoodieFront      },
+      "#0ea5e9": { front: skyblueHoodieFront  },
+      "#166534": { front: forestHoodieFront   },
+      "#6b1a2c": { front: burgundyHoodieFront },
+    },
+  },
   mug:         { front: mugFront, back: mugFront, darkFront: mugFrontDark, darkBack: mugFrontDark, frontCutout: mugFrontCutout, darkFrontCutout: mugFrontDarkCutout, darkBackCutout: mugFrontDarkCutout },
   cap:         { front: capFront, frontCutout: capFrontCutout },
-  waterbottle: { front: waterBottleFront, frontCutout: waterBottleCutout },
+  waterbottle: { front: waterBottleFront, frontCutout: waterBottleCutout,
+    colorPhotos: {
+      "#1C1917": { front: "/mockups/black-waterbottle-front.png"   }, // Black
+      "#1e3a5f": { front: "/mockups/navy-waterbottle-front.png"    }, // Navy
+      "#166534": { front: "/mockups/forest-waterbottle-front.png"  }, // Forest
+      "#0ea5e9": { front: "/mockups/skyblue-waterbottle-front.png" }, // Sky Blue
+      "#dc2626": { front: "/mockups/red-waterbottle-front.png"     }, // Red
+      "#f472b6": { front: "/mockups/pink-waterbottle-front.png"    }, // Pink
+      "#0f766e": { front: "/mockups/teal-waterbottle-front.png"    }, // Teal
+    },
+  },
   // watertumbler uses category "waterbottle" — shares the same base entry
 };
 
@@ -359,7 +427,15 @@ export function GarmentSVG({
   // Check if there is a real per-colour photo for this exact hex — if so, use it
   // directly instead of the SVG tint path for maximum photographic realism.
   const colorPhotoEntry = tintHex ? base?.colorPhotos?.[tintHex.toLowerCase()] ?? base?.colorPhotos?.[tintHex] : undefined;
-  const useColorPhoto = !!colorPhotoEntry && !useBlackPhoto && !isLightTint(tintHex ?? "");
+  // Only use a real color photo when:
+  //   1. A colorPhoto entry exists for this hex.
+  //   2. It is NOT a near-black color (handled by the dark-photo path above).
+  //   3. The garment is not light / white (light garments use the white base photo directly).
+  //   4. We have the correct face photo — if the caller wants the back face but only a
+  //      front photo exists in colorPhotos, fall through to the tint path so the back view
+  //      is still coloured correctly (vs. incorrectly showing the front-side photo).
+  const useColorPhoto = !!colorPhotoEntry && !useBlackPhoto && !isLightTint(tintHex ?? "")
+    && (face !== "back" || !!colorPhotoEntry.back);
   const needsTint = !!tintHex && !isLightTint(tintHex) && !useBlackPhoto && !useColorPhoto;
 
   const imageSrc = (() => {
