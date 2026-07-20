@@ -4,26 +4,40 @@
    The mockup PNGs live in /public/mockups/<id>-<face>.png
 ════════════════════════════════════════════════════════ */
 
-const tshirtFront          = "/mockups/white-tshirt-front.png";
-const tshirtBack           = "/mockups/white-tshirt-back.png";
-const tshirtFrontDark      = "/mockups/black-tshirt-front.png";
-const tshirtBackDark       = "/mockups/black-tshirt-back.png";
-const tshirtFrontCutout    = "/mockups/white-tshirt-front-cutout.png";
-const tshirtBackCutout     = "/mockups/white-tshirt-back-cutout.png";
+// ── T-Shirt: premium AI-generated studio photos (new/ folder = higher quality) ──
+const tshirtFront          = "/mockups/new/white-tshirt-front.png";
+const tshirtBack           = "/mockups/new/white-tshirt-back.png";
+const tshirtFrontDark      = "/mockups/new/black-tshirt-front.png";
+const tshirtBackDark       = "/mockups/new/black-tshirt-back.png";
+const tshirtFrontCutout    = "/mockups/new/white-tshirt-front-cutout.png";
+const tshirtBackCutout     = "/mockups/new/white-tshirt-back-cutout.png";
+// Color-specific photo mockups — used instead of SVG tint for highest realism
+const navyTshirtFront      = "/mockups/new/navy-tshirt-front.png";
+const navyTshirtBack       = "/mockups/new/navy-tshirt-back.png";
+const redTshirtFront       = "/mockups/new/red-tshirt-front.png";
+const redTshirtBack        = "/mockups/new/red-tshirt-back.png";
+const greyTshirtFront      = "/mockups/grey-tshirt-front.png";
+const greyTshirtBack       = "/mockups/grey-tshirt-back.png";
+const maroonTshirtFront    = "/mockups/maroon-tshirt-front.png";
+const maroonTshirtBack     = "/mockups/maroon-tshirt-back.png";
+const oliveTshirtFront     = "/mockups/olive-tshirt-front.png";
+const oliveTshirtBack      = "/mockups/olive-tshirt-back.png";
+const skyblueTshirtFront   = "/mockups/skyblue-tshirt-front.png";
+const skyblueTshirtBack    = "/mockups/skyblue-tshirt-back.png";
 const longsleeveFront          = "/mockups/white-longsleeve-front.png";
 const longsleeveBack           = "/mockups/white-longsleeve-back.png";
 const longsleeveFrontDark      = "/mockups/black-longsleeve-front.png";
 const longsleeveBackDark       = "/mockups/black-longsleeve-back.png";
-const longsleeveFrontCutout    = "/mockups/white-longsleeve-front-cutout-new.png";
-const longsleeveBackCutout     = "/mockups/white-longsleeve-back-cutout-new.png";
+const longsleeveFrontCutout    = "/mockups/white-longsleeve-front-cutout-real.png";
+const longsleeveBackCutout     = "/mockups/white-longsleeve-back-cutout-real.png";
 const longsleeveFrontDarkCutout = "/mockups/black-longsleeve-front-cutout.png";
 const longsleeveBackDarkCutout  = "/mockups/black-longsleeve-back-cutout.png";
 const hoodieFront          = "/mockups/white-hoodie-front.png";
 const hoodieBack           = "/mockups/white-hoodie-back.png";
 const hoodieFrontDark      = "/mockups/black-hoodie-front.png";
 const hoodieBackDark       = "/mockups/black-hoodie-back.png";
-const hoodieFrontCutout    = "/mockups/white-hoodie-front-cutout-new.png";
-const hoodieBackCutout     = "/mockups/white-hoodie-back-cutout-new.png";
+const hoodieFrontCutout    = "/mockups/white-hoodie-front-cutout-real.png";
+const hoodieBackCutout     = "/mockups/white-hoodie-back-cutout-real.png";
 const mugFront             = "/mockups/white-mug-front.png";
 const mugFrontDark         = "/mockups/black-mug-front.png";
 const mugFrontCutout       = "/mockups/white-mug-front-cutout.png";
@@ -31,12 +45,33 @@ const mugFrontDarkCutout   = "/mockups/black-mug-front-cutout.png";
 const capFront             = "/mockups/white-cap-front.png";
 // black-cap-front.png has no alpha and is 896×1280 (wrong size) — cap uses SVG tint for all dark colours
 const capFrontCutout       = "/mockups/white-cap-front-cutout.png";
-const waterBottleFront          = "/mockups/white-waterbottle-real.png";
-const waterBottleCutout         = "/mockups/white-waterbottle-real-cutout.png";
-const tshirtFrontDarkCutout     = "/mockups/black-tshirt-front-cutout.png";
-const tshirtBackDarkCutout      = "/mockups/black-tshirt-back-cutout.png";
-const hoodieFrontDarkCutout     = "/mockups/black-hoodie-front-cutout.png";
-const hoodieBackDarkCutout      = "/mockups/black-hoodie-back-cutout.png";
+const waterBottleFront          = "/mockups/white-waterbottle-front.png";
+const waterBottleCutout         = "/mockups/white-waterbottle-front-cutout.png";
+const tshirtFrontDarkCutout     = "/mockups/new/black-tshirt-front-cutout.png";
+const tshirtBackDarkCutout      = "/mockups/new/black-tshirt-back-cutout.png";
+const hoodieFrontDarkCutout     = "/mockups/black-hoodie-front-cutout-real.png";
+const hoodieBackDarkCutout      = "/mockups/black-hoodie-back-cutout-real.png";
+
+// ── Hoodie: per-color front photos (real studio shots, no SVG tint needed) ──
+// Back photos for colored hoodies are not available — back falls through to tint path.
+const navyHoodieFront      = "/mockups/navy-hoodie-front.png";
+const greyHoodieFront      = "/mockups/grey-hoodie-front.png";
+const maroonHoodieFront    = "/mockups/maroon-hoodie-front.png";
+const oliveHoodieFront     = "/mockups/olive-hoodie-front.png";
+const redHoodieFront       = "/mockups/red-hoodie-front.png";
+const skyblueHoodieFront   = "/mockups/skyblue-hoodie-front.png";
+const forestHoodieFront    = "/mockups/forest-hoodie-front.png";
+const burgundyHoodieFront  = "/mockups/burgundy-hoodie-front.png";
+
+// ── Long Sleeve: per-color front photos ─────────────────────────────────────
+const navyLongsleeveFront     = "/mockups/navy-longsleeve-front.png";
+const greyLongsleeveFront     = "/mockups/grey-longsleeve-front.png";
+const maroonLongsleeveFront   = "/mockups/maroon-longsleeve-front.png";
+const oliveLongsleeveFront    = "/mockups/olive-longsleeve-front.png";
+const redLongsleeveFront      = "/mockups/red-longsleeve-front.png";
+const skyblueLongsleeveFront  = "/mockups/skyblue-longsleeve-front.png";
+const forestLongsleeveFront   = "/mockups/forest-longsleeve-front.png";
+const burgundyLongsleeveFront = "/mockups/burgundy-longsleeve-front.png";
 
 /** A single available garment colour (name + hex). */
 export interface ProductColor { name: string; hex: string }
@@ -100,22 +135,22 @@ export interface DesignProduct {
      MUG_PZ         — full 360° wrap
      WATERBOTTLE_PZ — bottle body (cylindrical section)
 ──────────────────────────────────────────────────────── */
-export const TSHIRT_PZ: PrintZone           = { x: 305, y: 220, w: 390, h: 395 };
-export const TSHIRT_BACK_PZ: PrintZone      = { x: 288, y: 188, w: 424, h: 465 };
+export const TSHIRT_PZ: PrintZone           = { x: 240, y: 185, w: 520, h: 580 };
+export const TSHIRT_BACK_PZ: PrintZone      = { x: 240, y: 185, w: 520, h: 580 };
 export const LONGSLEEVE_PZ: PrintZone       = { x: 310, y: 228, w: 380, h: 400 };
 export const LONGSLEEVE_BACK_PZ: PrintZone  = { x: 292, y: 195, w: 416, h: 458 };
 /** Hoodie front — stops at ~y=528 to clear the kangaroo pocket (pocket starts ~y=565). */
-export const HOODIE_PZ: PrintZone           = { x: 332, y: 252, w: 336, h: 278 };
+export const HOODIE_PZ: PrintZone           = { x: 240, y: 195, w: 520, h: 510 };
 export const HOODIE_BACK_PZ: PrintZone      = { x: 292, y: 184, w: 416, h: 448 };
 /** Cap front panel — structured 5-panel cap, panel is centred between brim and seam. */
-export const CAP_PZ: PrintZone              = { x: 338, y: 290, w: 324, h: 240 };
-export const MUG_PZ: PrintZone              = { x: 150, y: 180, w: 700, h: 640 };
+export const CAP_PZ: PrintZone              = { x: 300, y: 230, w: 400, h: 240 };
+export const MUG_PZ: PrintZone              = { x: 120, y: 210, w: 760, h: 420 };
 /** Mug side — printable area on the cylindrical side face, clear of rim band and base ring. */
 export const MUG_SIDE_PZ: PrintZone         = { x: 192, y: 248, w: 410, h: 472 };
 /** Water bottle — printable front label panel on the cylindrical body.
  *  Calibrated to the real 600ml aluminium carabiner bottle (1600×1600 PNG).
  *  Content spans x:[336–660] centre≈498; shoulder ends ~y=268, base band ~y=850. */
-export const WATERBOTTLE_PZ: PrintZone      = { x: 345, y: 268, w: 310, h: 582 };
+export const WATERBOTTLE_PZ: PrintZone      = { x: 330, y: 180, w: 340, h: 560 };
 /** Sleeve print area — roughly square (1228×1087px real-world ratio). */
 export const SLEEVE_PZ: PrintZone           = { x: 175, y: 175, w: 650, h: 650 };
 /** Neck label — wider than tall (1299×945px real-world ratio). */
@@ -135,7 +170,7 @@ export interface ApparelZone {
   isFlat: boolean;
 }
 
-const FRONT_BACK_DIMS = "4606 × 5787 px  ≈ 30 × 38 cm";
+const FRONT_BACK_DIMS = "4606 × 5787 px";
 const SLEEVE_DIMS = "1228 × 1087 px";
 const NECK_DIMS = "1299 × 945 px";
 
@@ -283,18 +318,60 @@ export const PRODUCTS: DesignProduct[] = [
 
 export const BASE_BY_CATEGORY: Record<
   DesignProduct["category"],
-  { front: string; back?: string; darkFront?: string; darkBack?: string; frontCutout?: string; backCutout?: string; darkFrontCutout?: string; darkBackCutout?: string } | undefined
+  { front: string; back?: string; darkFront?: string; darkBack?: string; frontCutout?: string; backCutout?: string; darkFrontCutout?: string; darkBackCutout?: string;
+    /** Map of garment hex colour → real photo {front, back} — bypasses SVG tint for max realism. */
+    colorPhotos?: Record<string, { front: string; back?: string }>;
+  } | undefined
 > = {
-  tshirt:      { front: tshirtFront, back: tshirtBack, darkFront: tshirtFrontDark, darkBack: tshirtBackDark, frontCutout: tshirtFrontCutout, backCutout: tshirtBackCutout, darkFrontCutout: tshirtFrontDarkCutout, darkBackCutout: tshirtBackDarkCutout },
-  // Long-sleeve dark assets (black-longsleeve-*.png) are 17-20 KB grayscale stubs with
-  // no colour information — they render as near-white on a dark canvas and look broken.
-  // Removing them from here forces longsleeve to always use the tint path for dark
-  // colours, which correctly multiplies the hue onto the white cutout photo.
-  longsleeve:  { front: longsleeveFront, back: longsleeveBack, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout },
-  hoodie:      { front: hoodieFront, back: hoodieBack, darkFront: hoodieFrontDark, darkBack: hoodieBackDark, frontCutout: hoodieFrontCutout, backCutout: hoodieBackCutout, darkFrontCutout: hoodieFrontDarkCutout, darkBackCutout: hoodieBackDarkCutout },
+  tshirt:      { front: tshirtFront, back: tshirtBack, darkFront: tshirtFrontDark, darkBack: tshirtBackDark, frontCutout: tshirtFrontCutout, backCutout: tshirtBackCutout, darkFrontCutout: tshirtFrontDarkCutout, darkBackCutout: tshirtBackDarkCutout,
+    colorPhotos: {
+      "#F8F7F4": { front: tshirtFront,     back: tshirtBack     }, // White
+      "#1a1a1a": { front: tshirtFrontDark, back: tshirtBackDark }, // Black
+      "#1e3a5f": { front: navyTshirtFront, back: navyTshirtBack },
+      "#dc2626": { front: redTshirtFront,  back: redTshirtBack  },
+      "#6b7280": { front: greyTshirtFront, back: greyTshirtBack },
+      "#7f1d1d": { front: maroonTshirtFront, back: maroonTshirtBack },
+      "#4a5240": { front: oliveTshirtFront,  back: oliveTshirtBack  },
+      "#0ea5e9": { front: skyblueTshirtFront, back: skyblueTshirtBack },
+    },
+  },
+  longsleeve:  { front: longsleeveFront, back: longsleeveBack, darkFront: longsleeveFrontDark, darkBack: longsleeveBackDark, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout, darkFrontCutout: longsleeveFrontDarkCutout, darkBackCutout: longsleeveBackDarkCutout,
+    colorPhotos: {
+      "#1e3a5f": { front: navyLongsleeveFront     },
+      "#6b7280": { front: greyLongsleeveFront     },
+      "#7f1d1d": { front: maroonLongsleeveFront   },
+      "#4a5240": { front: oliveLongsleeveFront    },
+      "#dc2626": { front: redLongsleeveFront      },
+      "#0ea5e9": { front: skyblueLongsleeveFront  },
+      "#166534": { front: forestLongsleeveFront   },
+      "#6b1a2c": { front: burgundyLongsleeveFront },
+    },
+  },
+  hoodie:      { front: hoodieFront, back: hoodieBack, darkFront: hoodieFrontDark, darkBack: hoodieBackDark, frontCutout: hoodieFrontCutout, backCutout: hoodieBackCutout, darkFrontCutout: hoodieFrontDarkCutout, darkBackCutout: hoodieBackDarkCutout,
+    colorPhotos: {
+      "#1e3a5f": { front: navyHoodieFront     },
+      "#6b7280": { front: greyHoodieFront     },
+      "#7f1d1d": { front: maroonHoodieFront   },
+      "#4a5240": { front: oliveHoodieFront    },
+      "#dc2626": { front: redHoodieFront      },
+      "#0ea5e9": { front: skyblueHoodieFront  },
+      "#166534": { front: forestHoodieFront   },
+      "#6b1a2c": { front: burgundyHoodieFront },
+    },
+  },
   mug:         { front: mugFront, back: mugFront, darkFront: mugFrontDark, darkBack: mugFrontDark, frontCutout: mugFrontCutout, darkFrontCutout: mugFrontDarkCutout, darkBackCutout: mugFrontDarkCutout },
   cap:         { front: capFront, frontCutout: capFrontCutout },
-  waterbottle: { front: waterBottleFront, frontCutout: waterBottleCutout },
+  waterbottle: { front: waterBottleFront, frontCutout: waterBottleCutout,
+    colorPhotos: {
+      "#1C1917": { front: "/mockups/black-waterbottle-front.png"   }, // Black
+      "#1e3a5f": { front: "/mockups/navy-waterbottle-front.png"    }, // Navy
+      "#166534": { front: "/mockups/forest-waterbottle-front.png"  }, // Forest
+      "#0ea5e9": { front: "/mockups/skyblue-waterbottle-front.png" }, // Sky Blue
+      "#dc2626": { front: "/mockups/red-waterbottle-front.png"     }, // Red
+      "#f472b6": { front: "/mockups/pink-waterbottle-front.png"    }, // Pink
+      "#0f766e": { front: "/mockups/teal-waterbottle-front.png"    }, // Teal
+    },
+  },
   // watertumbler uses category "waterbottle" — shares the same base entry
 };
 
@@ -347,10 +424,29 @@ export function GarmentSVG({
   // near-black selection would render as an untinted white cutout (looks white/blank).
   const hasDarkPhotoAsset = !!(base?.darkFrontCutout || base?.darkFront);
   const useBlackPhoto = !!tintHex && isNearBlack(tintHex) && hasDarkPhotoAsset;
-  const needsTint = !!tintHex && !isLightTint(tintHex) && !useBlackPhoto;
+  // Check if there is a real per-colour photo for this exact hex — if so, use it
+  // directly instead of the SVG tint path for maximum photographic realism.
+  const colorPhotoEntry = tintHex ? base?.colorPhotos?.[tintHex.toLowerCase()] ?? base?.colorPhotos?.[tintHex] : undefined;
+  // Only use a real color photo when:
+  //   1. A colorPhoto entry exists for this hex.
+  //   2. It is NOT a near-black color (handled by the dark-photo path above).
+  //   3. The garment is not light / white (light garments use the white base photo directly).
+  //   4. We have the correct face photo — if the caller wants the back face but only a
+  //      front photo exists in colorPhotos, fall through to the tint path so the back view
+  //      is still coloured correctly (vs. incorrectly showing the front-side photo).
+  const useColorPhoto = !!colorPhotoEntry && !useBlackPhoto && !isLightTint(tintHex ?? "")
+    && (face !== "back" || !!colorPhotoEntry.back);
+  const needsTint = !!tintHex && !isLightTint(tintHex) && !useBlackPhoto && !useColorPhoto;
 
   const imageSrc = (() => {
     if (!base) return (face === "back" && product.backSrc) ? product.backSrc : product.frontSrc;
+    // ── Real per-colour photo (e.g. navy, red) ────────────────────────────
+    // Bypasses SVG tint entirely — highest realism, used when a dedicated photo
+    // exists for the selected colour hex.
+    if (useColorPhoto && colorPhotoEntry) {
+      if (face === "back" && colorPhotoEntry.back) return colorPhotoEntry.back;
+      return colorPhotoEntry.front;
+    }
     // ── Dark / near-black garment ─────────────────────────────────────────
     // Prefer the FULL dark photo (RGB, no alpha, has its own studio background)
     // over the dark cutout. A dark-silhouette cutout on the dark studio canvas
@@ -390,31 +486,33 @@ export function GarmentSVG({
   const isMugRightSide = isMug && (face === "back" || mugMode === "side2");
   const displayPZ = isMugRightSide ? { ...pz, x: 1000 - pz.x - pz.w } : pz;
 
-  const basePhotoSrc = base
-    ? (face === "back" && base.back ? base.back : base.front)
+  // Source used for the coloured tint path. We always use the transparent cutout PNG
+  // itself, not the full studio photo + a separate mask. The cutout already carries
+  // the garment silhouette in its alpha channel, so using it directly prevents the
+  // ghost/double-image effect that happens when the full photo and cutout are not
+  // perfectly aligned (longsleeve, cap, mug, waterbottle).
+  const tintPhotoSrc = base
+    ? (face === "back" && base.backCutout ? base.backCutout : (base.frontCutout ?? ""))
     : (face === "back" && product.backSrc ? product.backSrc : product.frontSrc);
 
+  // Keep the separate cutout mask source only when we need the shadow pass for the
+  // coloured tint path. For light/white garments the cutout is rendered directly.
   const cutoutMaskSrc = base
     ? (face === "back" && base.backCutout ? base.backCutout : (base.frontCutout ?? ""))
     : "";
 
-  // True when the selected dark imageSrc is a full studio photo (has its own baked
+  // True when the selected imageSrc is a full studio photo (has its own baked
   // background — no transparent pixels we need to worry about). Detection relies on
   // the naming convention: files containing "cutout" in their path are transparent
-  // PNGs; all other dark-garment files are full opaque studio photos.
-  //
-  // This covers both the primary case (darkFront/darkBack) and back-face fallbacks
-  // where the front full-photo is used instead (no face-strict comparison needed).
-  const isFullDarkPhoto = useBlackPhoto && !imageSrc.includes("cutout");
+  // PNGs; all other garment files are full opaque studio photos.
+  // This covers both near-black photos AND real per-colour photos (navy, red…).
+  const isFullDarkPhoto = (useBlackPhoto || useColorPhoto) && !imageSrc.includes("cutout");
 
-  // Canvas background colour:
-  //   • Dark/black garments that ARE rendered via the tint path (no full photo):
-  //     use a warm light tone so the dark-tinted silhouette is visible.
-  //   • Everything else (white, coloured, OR dark-with-full-photo): dark studio.
-  //     When a full dark photo is used it covers the bg rect anyway, so this only
-  //     matters for the tint-path dark case (e.g. longsleeve black).
-  const needsDarkGarmentLightBg = isNearBlack(tintHex) && !isFullDarkPhoto;
-  const canvasBg = needsDarkGarmentLightBg ? "#EAE8E4" : "#1C1C1E";
+  // Canvas background colour: clean white for all products so the mockup reads
+  // as a premium product shot on a light, neutral studio surface. Cutout garments
+  // get a soft shadow to lift them off the white; full opaque photos cover the
+  // canvas entirely so no background colour shows through.
+  const canvasBg = "#ffffff";
 
   // Drop-shadow filter: only on transparent-bg (cutout) images.
   // Applying it to a full opaque photo creates a box shadow around the rectangle.
@@ -423,35 +521,45 @@ export function GarmentSVG({
   return (
     <>
       <defs>
-        {/* Drop shadow — crisp silhouette lift on the dark studio canvas.
+        {/* Drop shadow — crisp silhouette lift on the white studio canvas.
             Applied only to cutout (transparent) images, not full opaque photos. */}
-        <filter id="garment-shadow" x="-10%" y="-8%" width="120%" height="120%" colorInterpolationFilters="sRGB">
-          <feDropShadow dx="0" dy="8" stdDeviation="22" floodColor="rgba(0,0,0,0.65)" />
-          <feDropShadow dx="0" dy="2" stdDeviation="6"  floodColor="rgba(0,0,0,0.30)" />
+        <filter id="garment-shadow" x="-12%" y="-10%" width="124%" height="124%" colorInterpolationFilters="sRGB">
+          <feDropShadow dx="0" dy="14" stdDeviation="32" floodColor="rgba(0,0,0,0.18)" />
+          <feDropShadow dx="0" dy="5" stdDeviation="12"  floodColor="rgba(0,0,0,0.12)" />
+          <feDropShadow dx="0" dy="1" stdDeviation="3"   floodColor="rgba(0,0,0,0.08)" />
         </filter>
+
+        {/* Fabric grain / subtle noise texture — gives the studio photo a tactile,
+            premium printed-on-fabric feel without overpowering the design. */}
+        <filter id="fabric-grain" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
+          <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch" result="noise" />
+          <feColorMatrix type="matrix" values="0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.06 0" in="noise" result="softNoise" />
+          <feComposite in="softNoise" in2="SourceGraphic" operator="over" />
+        </filter>
+
+        {/* Soft vignette / studio lighting — darkens the corners slightly so the
+            product is the hero and the white canvas doesn't look flat. */}
+        <radialGradient id="studio-vignette" cx="50%" cy="45%" r="75%" fx="50%" fy="40%">
+          <stop offset="0%" stopColor="white" stopOpacity="0" />
+          <stop offset="75%" stopColor="white" stopOpacity="0" />
+          <stop offset="100%" stopColor="rgba(0,0,0,0.06)" stopOpacity="1" />
+        </radialGradient>
 
         {/* ── Colour multiply-tint filter ──────────────────────────────────────
             Applied DIRECTLY to the <image> element (not a separate rect).
             SVG guarantees: filter is evaluated first, mask second — no
-            isolated-compositing-context issues that break CSS mix-blend-mode. */}
+            isolated-compositing-context issues that break CSS mix-blend-mode.
+
+            IMPORTANT: feBlend multiply sets alpha=1 for transparent pixels
+            (because 1-(1-1)*(1-0)=1), filling the background with tintHex.
+            The final feComposite operator="in" clips the output back to the
+            alpha channel of SourceGraphic so transparent areas stay transparent. */}
         {needsTint && tintHex && (
           <filter id="garment-color-tint" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
             <feFlood floodColor={tintHex} result="flood" />
-            <feBlend in="flood" in2="SourceGraphic" mode="multiply" />
+            <feBlend in="flood" in2="SourceGraphic" mode="multiply" result="blended" />
+            <feComposite in="blended" in2="SourceGraphic" operator="in" />
           </filter>
-        )}
-
-        {/* Garment silhouette mask — clips the tinted photo to the product shape.
-            Inside a flipped <g> the mask coords are automatically re-evaluated
-            in the transformed space, so the same mask id works for both sides. */}
-        {needsTint && cutoutMaskSrc && (
-          <mask id="garment-silhouette">
-            <image
-              href={cutoutMaskSrc}
-              x={0} y={0} width={1000} height={1000}
-              preserveAspectRatio="xMidYMid meet"
-            />
-          </mask>
         )}
 
         {/* ── Shadow-only filter for tinted garments ───────────────────────────
@@ -461,15 +569,15 @@ export function GarmentSVG({
             Rendered before the tinted garment, it sits behind the garment layer. */}
         {needsTint && cutoutMaskSrc && (
           <filter id="garment-tint-shadow" x="-12%" y="-10%" width="124%" height="124%" colorInterpolationFilters="sRGB">
-            {/* Layer 1: soft outer shadow */}
-            <feGaussianBlur in="SourceAlpha" stdDeviation="22" result="blur1" />
-            <feOffset       in="blur1" dx="0" dy="8"  result="off1" />
-            <feFlood        floodColor="rgba(0,0,0,0.65)" floodOpacity="1" result="col1" />
+            {/* Layer 1: soft outer shadow — strong enough to lift tinted garments off white */}
+            <feGaussianBlur in="SourceAlpha" stdDeviation="28" result="blur1" />
+            <feOffset       in="blur1" dx="0" dy="12"  result="off1" />
+            <feFlood        floodColor="rgba(0,0,0,0.22)" floodOpacity="1" result="col1" />
             <feComposite    in="col1"  in2="off1"    operator="in" result="shadow1" />
             {/* Layer 2: tight inner shadow */}
-            <feGaussianBlur in="SourceAlpha" stdDeviation="6"  result="blur2" />
-            <feOffset       in="blur2" dx="0" dy="2"  result="off2" />
-            <feFlood        floodColor="rgba(0,0,0,0.30)" floodOpacity="1" result="col2" />
+            <feGaussianBlur in="SourceAlpha" stdDeviation="10"  result="blur2" />
+            <feOffset       in="blur2" dx="0" dy="4"  result="off2" />
+            <feFlood        floodColor="rgba(0,0,0,0.14)" floodOpacity="1" result="col2" />
             <feComposite    in="col2"  in2="off2"    operator="in" result="shadow2" />
             {/* Merge both shadow layers — output has NO source image */}
             <feMerge>
@@ -480,10 +588,12 @@ export function GarmentSVG({
         )}
       </defs>
 
-      {/* Studio canvas background — dark for white/coloured garments (they pop with contrast),
-          warm-light for near-black garments rendered via tint path (silhouette visibility).
-          Full opaque dark photos cover this rect entirely, so the colour is irrelevant there. */}
+      {/* Studio canvas background — clean white for all products so the mockup reads
+          as a premium product shot on a light, neutral studio surface. */}
       <rect width={1000} height={1000} fill={canvasBg} style={{ pointerEvents: "none" }} />
+
+      {/* Soft vignette overlay across the whole canvas for subtle studio lighting. */}
+      <rect width={1000} height={1000} fill="url(#studio-vignette)" style={{ pointerEvents: "none" }} />
 
       {/* ── Garment render ────────────────────────────────────────────────────
           COLOURED  → shadow-only pass (behind), then multiply-tinted photo (in front).
@@ -505,24 +615,22 @@ export function GarmentSVG({
         />
       )}
 
-      {needsTint && cutoutMaskSrc ? (
+      {needsTint && tintPhotoSrc ? (
         isMugRightSide ? (
           <g transform="translate(1000,0) scale(-1,1)">
             <image
-              href={base!.front}
+              href={tintPhotoSrc}
               x={0} y={0} width={1000} height={1000}
               preserveAspectRatio="xMidYMid meet"
-              mask="url(#garment-silhouette)"
               filter="url(#garment-color-tint)"
               style={{ pointerEvents: "none" }}
             />
           </g>
         ) : (
           <image
-            href={basePhotoSrc}
+            href={tintPhotoSrc}
             x={0} y={0} width={1000} height={1000}
             preserveAspectRatio="xMidYMid meet"
-            mask="url(#garment-silhouette)"
             filter="url(#garment-color-tint)"
             style={{ pointerEvents: "none" }}
           />
@@ -606,10 +714,11 @@ export function FlatZoneSVG({
   // • Mid-range              : multiply-tint the white cutout, dark canvas
   const isNearBlackGarment = garmentColor ? isNearBlack(garmentColor) : false;
   const useTint = garmentColor && !isLightTint(garmentColor) && !isNearBlackGarment;
-  // Dark-studio for white/coloured; warm-light so near-black silhouette stays visible.
-  const canvasBg = isNearBlackGarment ? "#EAE8E4" : "#1C1C1E";
-  // Vignette darkens the canvas edges — invert to a light vignette on the warm-light bg.
-  const vigEndColor = isNearBlackGarment ? "rgba(0,0,0,0.14)" : "rgba(0,0,0,0.22)";
+  // Clean white studio for all zones — matches the garment view so the design
+  // tool feels like one coherent surface instead of a dark "blackboard".
+  const canvasBg = "#ffffff";
+  // Very subtle vignette on white so the artboard still has a sense of depth.
+  const vigEndColor = "rgba(0,0,0,0.06)";
 
   return (
     <>
@@ -626,11 +735,14 @@ export function FlatZoneSVG({
           <rect x={pz.x} y={pz.y} width={pz.w} height={pz.h} rx={10} />
         </clipPath>
         {/* Colour multiply-tint — only defined for mid-range (non-white, non-black) colours.
-            Full opacity (floodOpacity="1") matches GarmentSVG exactly. */}
+            Full opacity (floodOpacity="1") matches GarmentSVG exactly.
+            feComposite operator="in" clips alpha back to SourceGraphic so
+            transparent pixels outside the garment stay transparent (not tintHex). */}
         {useTint && (
           <filter id="flat-color-tint" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
             <feFlood floodColor={garmentColor!} floodOpacity="1" result="flood" />
-            <feBlend in="flood" in2="SourceGraphic" mode="multiply" />
+            <feBlend in="flood" in2="SourceGraphic" mode="multiply" result="blended" />
+            <feComposite in="blended" in2="SourceGraphic" operator="in" />
           </filter>
         )}
       </defs>

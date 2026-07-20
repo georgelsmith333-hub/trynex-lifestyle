@@ -21,14 +21,14 @@ import {
   Image as ImageIcon, Plus, Check, CloudUpload,
   Box, Image as Image2D, Search, X, ChevronRight,
   Palette, Package, FlipHorizontal, Copy, Crosshair, Maximize2,
-  Download, AlignLeft, AlignCenter, AlignRight,
+  Download, AlignLeft, AlignCenter, AlignRight, ShieldCheck,
 } from "lucide-react";
 import {
   PRODUCTS, type DesignProduct, GarmentSVG, FlatZoneSVG,
   STICKERS, BASE_BY_CATEGORY, MUG_SIDE_PZ,
-  getApparelZones, getZonePZ, type ApparelZone, isNearBlack, type PrintZone,
+  getApparelZones, getZonePZ, type ApparelZone, isNearBlack, isLightTint, type PrintZone,
 } from "./design-studio/mockups";
-import { composeLayers, composeGarmentMockup, composeDesignTexture, hasWebGL2, type ComposerLayer } from "./design-studio/composer";
+import { composeLayers, composeGarmentMockup, composeDesignTexture, hasWebGL2, autoFixImage, type ComposerLayer } from "./design-studio/composer";
 
 // Lazy-load the 3D bundle so first-paint stays light.
 const ProductViewer3D = lazy(() => import("./design-studio/ProductViewer3D"));
@@ -880,9 +880,11 @@ export default function DesignStudio() {
   // Runs only when the selected product itself changes, so a manual toggle made
   // while staying on the same product is respected.
   useEffect(() => {
-    // Always default to 2D — curved products (mug/cap/bottle) are edited in 2D flat view.
-    // Users can manually toggle to 3D preview from the 2D/3D button if they want.
-    setViewMode("2d");
+    // Curved products (mug/cap/bottle) default to 3D so the mockup shows the
+    // automatic cylindrical/dome curvature immediately. Flat apparel defaults to
+    // 2D for precise editing. Users can still toggle between views at any time.
+    const isCurved = selectedProduct.category === "mug" || selectedProduct.category === "cap" || selectedProduct.category === "waterbottle";
+    setViewMode(isCurved ? "3d" : "2d");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProduct.id]);
 
@@ -891,19 +893,14 @@ export default function DesignStudio() {
   // Used to flip the studio canvas and outer container from dark → light so the
   // dark garment silhouette remains visible against its background.
   const isBlackGarment = isNearBlack(selectedColor.hex);
-
-  // Smart blend mode: multiply only on light/white garments (lum > 0.92) so designs
-  // blend into the fabric naturally. On coloured or dark garments use 'normal' to
-  // avoid tinting the design with the garment colour ("same shade" bug).
-  const designBlend: React.CSSProperties["mixBlendMode"] = (() => {
-    const h = selectedColor.hex.replace("#", "");
-    if (h.length !== 6) return "normal";
-    const r = parseInt(h.slice(0,2),16)/255;
-    const g = parseInt(h.slice(2,4),16)/255;
-    const b = parseInt(h.slice(4,6),16)/255;
-    const lum = 0.2126*r + 0.7152*g + 0.0722*b;
-    return lum > 0.92 ? "multiply" : "normal";
-  })();
+  // True when the garment is white/off-white (lum > 0.92).
+  // Design layers use multiply blend ONLY on light garments so transparent areas
+  // of the design show the fabric colour through. On dark/coloured garments
+  // (navy, maroon, grey, olive, …) designs must use normal/source-over so
+  // white and bright colours aren't swallowed by the dark garment.
+  const isLightGarment = isLightTint(selectedColor.hex);
+  const isDarkGarment = isNearBlack(selectedColor.hex);
+  const isMidGarment = !isLightGarment && !isDarkGarment;
 
   /* ── Per-product price (used in UI + cart serialisation) ── */
   const studioPrice = useMemo(() => {
@@ -926,10 +923,10 @@ export default function DesignStudio() {
   );
   const otherFaceCount = layers.length - currentFaceLayers.length;
 
-  // Show print-zone outline ONLY when the canvas is empty (no layers on this face).
-  // Once any design is added the zone indicator hides permanently, giving a clean preview.
-  // The zone hint disappears even while a layer is selected so there's no visual clutter.
-  const effectiveShowPrintZone = showPrintZone && currentFaceLayers.length === 0;
+  // Show print-zone outline when the user toggles it on, but hide it while a layer
+  // is selected so the selection border is not competing with the print-zone brackets.
+  // Clicking empty canvas deselects the layer and restores the print-zone outline.
+  const effectiveShowPrintZone = showPrintZone && !selectedLayerId;
 
   // Print-safe warning: true when any layer on the current face extends meaningfully outside the print zone.
   // A small tolerance (BLEED_TOL) prevents false-positive warnings for layers that are just barely
@@ -1090,6 +1087,13 @@ export default function DesignStudio() {
         return;
       }
 
+      // Auto-fix: brighten / contrast-correct the uploaded image so logos and
+      // photos look good on fabric without manual tweaking. Runs in-browser.
+      const fixed = await autoFixImage(src);
+      const finalSrc = fixed.src;
+      const finalW = img.naturalWidth;
+      const finalH = img.naturalHeight;
+
       // Smart auto-placement: scale the image to fit within the print zone
       // respecting both width and height, with a comfortable 80% fill.
       // A small SAFETY_MARGIN keeps the freshly-placed image safely clear of
@@ -1097,7 +1101,7 @@ export default function DesignStudio() {
       // shows the "extends outside print area" warning before the user has
       // touched anything.
       const currentPz = pzRef.current;
-      const aspect = img.naturalWidth / Math.max(img.naturalHeight, 1);
+      const aspect = finalW / Math.max(finalH, 1);
       // Smart auto-fit: scale=1 means the image fills the print zone WIDTH exactly.
       // "contain" fit — the image fills as much of the print zone as possible while
       // keeping both dimensions fully inside the zone (no clipping).
@@ -1111,10 +1115,12 @@ export default function DesignStudio() {
 
       const layer: ImageLayer = {
         id: uid(), name: file.name.replace(/\.[^.]+$/, "") || "Image",
-        type: "image", src, naturalW: img.naturalWidth, naturalH: img.naturalHeight,
+        type: "image", src: finalSrc, naturalW: finalW, naturalH: finalH,
         visible: true, locked: false,
         transform: { x: 0, y: 0, scale: initialScale, rotation: 0, opacity: 1 },
         face: activeFaceRef.current,
+        brightness: fixed.brightness,
+        contrast: fixed.contrast,
       };
 
       // flushSync forces React to flush state updates synchronously so the
@@ -1144,23 +1150,17 @@ export default function DesignStudio() {
       // switching products shows the design pre-placed and centred in their
       // print zone. Same-category products get the same face/zone; others get front.
       //
-      // Scale is recomputed as a "contain fit" for the TARGET zone (same maths as the
-      // initial auto-placement above), preserving the *relative* fill fraction the design
-      // currently has in the source zone. A naive `scale * (targetPZ.w/currentPZ.w)` ratio
-      // (the previous approach) doesn't account for zone aspect-ratio differences, so a
-      // design that fit safely in a wide zone could overflow a narrower one (e.g. mug/bottle
-      // side print areas) — which is what triggered false "outside print area" warnings when
-      // switching products.
-      const currentPZ = pzRef.current;
+      // Each target product gets a fresh contain-fit for its own print zone — the design
+      // automatically snaps to the new product structure instead of carrying over a
+      // relative size that may overflow narrower zones (mug/bottle) or look tiny on
+      // wider zones (t-shirt/hoodie).
       const currentFace = activeFaceRef.current;
       const containScale = (zone: PrintZone) => Math.min(1.0, (zone.h * aspect) / zone.w);
-      const currentContain = containScale(currentPZ) || 1;
-      const relativeFill = layer.transform.scale / currentContain;
       PRODUCTS.forEach(prod => {
         if (prod.id === selectedProduct.id) return;
         const targetFace: Face = prod.category === selectedProduct.category ? currentFace : "front";
         const targetPZ = getZonePZ(targetFace, prod);
-        const newScale = containScale(targetPZ) * relativeFill;
+        const newScale = containScale(targetPZ) * 0.95;
         const propagated: ImageLayer = {
           ...layer,
           id: uid(),
@@ -1877,6 +1877,58 @@ export default function DesignStudio() {
     }
   }, []);
 
+  // Deselect layer and hide print-zone border when clicking outside the canvas area
+  // (e.g. on the white workspace background). This fixes the issue where the print-zone
+  // border stays visible after the user clicks outside the design area.
+  useEffect(() => {
+    const onDocDown = (e: MouseEvent) => {
+      const svg = svgRef.current;
+      if (!svg) return;
+      const target = e.target as Node;
+      if (!svg.contains(target)) {
+        setSelectedLayerId(null);
+        selectedLayerIdRef.current = null;
+      }
+    };
+    document.addEventListener("mousedown", onDocDown);
+    return () => document.removeEventListener("mousedown", onDocDown);
+  }, []);
+
+  // Enable mouse-wheel horizontal scrolling on all horizontal scroll strips in the studio.
+  // On Windows/PC with a mouse, wheel events scroll vertically by default; this converts
+  // the vertical wheel delta into horizontal scroll so users can browse products, zones,
+  // colors and AI style tabs without dragging the scrollbar.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handlers = new Map<Element, (e: WheelEvent) => void>();
+    const attach = (el: Element) => {
+      if (handlers.has(el)) return;
+      const onWheel = (e: WheelEvent) => {
+        const hasVerticalScroll = el.scrollHeight > el.clientHeight;
+        const hasHorizontalScroll = el.scrollWidth > el.clientWidth;
+        if (!hasHorizontalScroll) return;
+        // Only hijack vertical wheel when the element can't scroll vertically or
+        // the wheel is clearly horizontal.
+        if (e.deltaY === 0 || (Math.abs(e.deltaX) > Math.abs(e.deltaY))) return;
+        if (hasVerticalScroll && el.scrollTop > 0 && el.scrollTop < el.scrollHeight - el.clientHeight) return;
+        e.preventDefault();
+        el.scrollLeft += e.deltaY;
+      };
+      el.addEventListener("wheel", onWheel, { passive: false });
+      handlers.set(el, onWheel);
+    };
+    const refresh = () => {
+      document.querySelectorAll('[class*="overflow-x-auto"]').forEach(attach);
+    };
+    refresh();
+    const id = setInterval(refresh, 1000);
+    return () => {
+      clearInterval(id);
+      handlers.forEach((fn, el) => el.removeEventListener("wheel", fn));
+      handlers.clear();
+    };
+  }, []);
+
   /* ── Keyboard shortcuts: undo/redo, delete ─────────── */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -1911,20 +1963,31 @@ export default function DesignStudio() {
   const wheelCommitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleCanvasWheel = useCallback((e: React.WheelEvent<SVGSVGElement>) => {
-    e.preventDefault();
     const delta = e.deltaY;
     // Guard: zero delta (common on some trackpads at gesture start/end) = no-op
     if (delta === 0) return;
     const factor = delta < 0 ? 1.12 : 1 / 1.12;
 
-    // Check if the wheel event landed on a layer — if so, scale the layer.
+    // Ctrl/Meta + wheel → zoom canvas (prevent page scroll)
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      const newZoom = Math.max(0.4, Math.min(4, canvasZoomRef.current * factor));
+      canvasZoomRef.current = newZoom;
+      setCanvasZoom(newZoom);
+      if (newZoom <= 1) {
+        canvasPanRef.current = { x: 0, y: 0 };
+        setCanvasPan({ x: 0, y: 0 });
+      }
+      return;
+    }
+
+    // Shift + wheel over a layer → scale the layer (prevent page scroll)
     const target = e.target as Element;
     const layerId =
       target.getAttribute?.("data-layer-id") ??
       target.closest?.("[data-layer-id]")?.getAttribute("data-layer-id");
-
-    if (layerId && !e.ctrlKey) {
-      // Scale the hovered layer and route through history after scroll settles
+    if (layerId && e.shiftKey) {
+      e.preventDefault();
       setLayers(prev =>
         prev.map(l => {
           if (l.id !== layerId) return l;
@@ -1932,7 +1995,6 @@ export default function DesignStudio() {
           return { ...l, transform: { ...l.transform, scale: newScale } };
         })
       );
-      // Debounce the undo-history commit so rapid scroll doesn't flood the stack
       if (wheelCommitTimerRef.current) clearTimeout(wheelCommitTimerRef.current);
       wheelCommitTimerRef.current = setTimeout(() => {
         commitLayers(layersRef.current);
@@ -1940,14 +2002,7 @@ export default function DesignStudio() {
       return;
     }
 
-    // No layer hit (or Ctrl held) → zoom the canvas
-    const newZoom = Math.max(0.4, Math.min(4, canvasZoomRef.current * factor));
-    canvasZoomRef.current = newZoom;
-    setCanvasZoom(newZoom);
-    if (newZoom <= 1) {
-      canvasPanRef.current = { x: 0, y: 0 };
-      setCanvasPan({ x: 0, y: 0 });
-    }
+    // Plain wheel → let the page scroll normally.
   }, [commitLayers]);
 
   /* ── Compute layer SVG geometry ────────────────────── */
@@ -1981,7 +2036,11 @@ export default function DesignStudio() {
     try {
       const canvas = document.createElement("canvas");
       const garmentBase = BASE_BY_CATEGORY[selectedProduct.category];
-      const garmentSrc = garmentBase?.front ?? selectedProduct.frontSrc;
+      // Prefer a real per-colour photo (navy, red…) for highest realism.
+      // Fall back to the transparent cutout for all other colours.
+      const _colorPhotoE1 = garmentBase?.colorPhotos?.[selectedColor.hex];
+      const garmentSrc = _colorPhotoE1?.front ?? garmentBase?.frontCutout ?? garmentBase?.front ?? selectedProduct.frontSrc;
+      const isColorPhoto1 = !!_colorPhotoE1;
       await composeGarmentMockup({
         canvas,
         garmentSrc,
@@ -1989,6 +2048,7 @@ export default function DesignStudio() {
         printZone: isMugProduct ? MUG_SIDE_PZ : selectedProduct.printZone,
         layers: activeLayers,
         outSize: 1200,
+        isColorPhoto: isColorPhoto1,
       });
       const url = canvas.toDataURL("image/png");
       const a = document.createElement("a");
@@ -2015,7 +2075,9 @@ export default function DesignStudio() {
     try {
       const canvas = document.createElement("canvas");
       const garmentBase = BASE_BY_CATEGORY[selectedProduct.category];
-      const garmentSrc = garmentBase?.front ?? selectedProduct.frontSrc;
+      const _colorPhotoE2 = garmentBase?.colorPhotos?.[selectedColor.hex];
+      const garmentSrc = _colorPhotoE2?.front ?? garmentBase?.frontCutout ?? garmentBase?.front ?? selectedProduct.frontSrc;
+      const isColorPhoto2 = !!_colorPhotoE2;
       await composeGarmentMockup({
         canvas,
         garmentSrc,
@@ -2023,6 +2085,7 @@ export default function DesignStudio() {
         printZone: isMugProduct ? MUG_SIDE_PZ : selectedProduct.printZone,
         layers: activeLayers,
         outSize: 1200,
+        isColorPhoto: isColorPhoto2,
       });
       const url = canvas.toDataURL("image/jpeg", 0.93);
       const a = document.createElement("a");
@@ -2106,10 +2169,12 @@ export default function DesignStudio() {
       }
 
       // 1. Full garment + design composite → cart thumbnail (imageUrl)
-      //    Uses the white-cutout PNG (or cap dark PNG override) so tinting
-      //    matches the 2D editor exactly.
+      //    Prefer a real per-colour photo (navy, red…) when available so the
+      //    cart thumbnail matches the 2D editor exactly.
       const garmentBase = BASE_BY_CATEGORY[selectedProduct.category];
-      const garmentSrc  = garmentBase?.front ?? displayProduct.frontSrc;
+      const _colorPhotoCart = garmentBase?.colorPhotos?.[selectedColor.hex];
+      const garmentSrc  = _colorPhotoCart?.front ?? garmentBase?.frontCutout ?? garmentBase?.front ?? displayProduct.frontSrc;
+      const isColorPhotoCart = !!_colorPhotoCart;
       const mockupCanvas = document.createElement("canvas");
       await composeGarmentMockup({
         canvas: mockupCanvas,
@@ -2119,6 +2184,7 @@ export default function DesignStudio() {
         layers: frontLayers,
         outSize: 400,
         imageCache,
+        isColorPhoto: isColorPhotoCart,
       });
       const mockupUrl = mockupCanvas.toDataURL("image/webp", 0.8);
 
@@ -2447,7 +2513,7 @@ export default function DesignStudio() {
     <div className="min-h-screen flex flex-col" style={{ background: "#F5F3F0" }}>
       <SEOHead
         title="Design Studio | Create Custom Apparel Online — TryNex Lifestyle"
-        description="Design your own custom T-shirts, hoodies, mugs & more. Upload your artwork or add text, preview in 3D, and order with fast delivery across Bangladesh. COD available."
+        description="Design your own custom T-shirts, hoodies, mugs & more. Upload your artwork or add text, preview in 3D, and order with fast delivery across Bangladesh. Pay just 25% in advance."
         canonical="/design-studio"
         keywords="custom t-shirt design online bangladesh, design your own shirt bd, personalized mug design, custom hoodie maker, কাস্টম ডিজাইন টি-শার্ট"
         jsonLd={[
@@ -2492,7 +2558,7 @@ export default function DesignStudio() {
           top: "calc(var(--announcement-height, 0px) + 4.25rem)",
         }}
       >
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3.5 flex items-center justify-between gap-2">
+        <div className="container-wide mx-auto px-3 sm:px-4 py-2.5 sm:py-3.5 flex items-center justify-between gap-2">
           <div className="min-w-0 flex-shrink">
             <h1 className="font-display font-black text-base sm:text-xl text-gray-900 truncate">Design Studio</h1>
             <p className="text-xs text-gray-500 mt-0.5 truncate">
@@ -2588,7 +2654,7 @@ export default function DesignStudio() {
         </div>
       </div>
 
-      <div className="flex-1 max-w-7xl mx-auto w-full px-4 py-6">
+      <div className="flex-1 container-wide mx-auto w-full px-4 py-6">
         <div className="flex flex-col md:flex-row gap-6">
 
           {/* ═══════ LEFT: MOCKUP CANVAS ═══════ */}
@@ -2660,6 +2726,42 @@ export default function DesignStudio() {
                 </div>
               </button>
             </div>
+
+            {/* Quality badge strip — product-specific specs, visible below the product selector */}
+            {(() => {
+              const cat = selectedProduct.category;
+              type QBadge = { icon: string; label: string };
+              const specBadges: QBadge[] =
+                cat === "mug"
+                  ? [{ icon: "☕", label: "11oz Ceramic" }, { icon: "✅", label: "Dishwasher-safe" }, { icon: "🎨", label: "Vivid Print" }]
+                  : cat === "cap"
+                  ? [{ icon: "🧢", label: "6-panel structured" }, { icon: "📐", label: "One size fits all" }, { icon: "🎨", label: "DTG Printed" }]
+                  : cat === "waterbottle"
+                  ? [{ icon: "💧", label: "600ml Aluminium" }, { icon: "✅", label: "Leak-proof lid" }, { icon: "🌡️", label: "Thermal coating" }]
+                  : [{ icon: "👕", label: "230GSM Cotton" }, { icon: "🖨️", label: "DTG Printed" }, { icon: "🌊", label: "Wash-safe 30°C" }];
+              return (
+                <div
+                  className="flex items-center gap-1.5 mb-3 overflow-x-auto"
+                  style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" as any }}
+                >
+                  {specBadges.map(b => (
+                    <span
+                      key={b.label}
+                      className="shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold"
+                      style={{ background: "#f0fdf4", color: "#15803d", border: "1px solid #bbf7d0" }}
+                    >
+                      {b.icon} {b.label}
+                    </span>
+                  ))}
+                  <span
+                    className="shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold"
+                    style={{ background: "#fff4ee", color: "#c2410c", border: "1px solid #fdd5b4" }}
+                  >
+                    💳 Pay just 25% now
+                  </span>
+                </div>
+              );
+            })()}
 
             {/* ── Quick product tabs ── T-Shirt · Mug · Bottle (+ "More" opens full picker) */}
             {!linkedStoreProduct && (
@@ -2922,11 +3024,9 @@ export default function DesignStudio() {
             <div
               className="relative rounded-3xl overflow-hidden select-none"
               style={{
-                background: isBlackGarment
-                  ? "radial-gradient(ellipse at 50% 35%, #e8e5e0 0%, #d8d5cf 55%, #ccc9c4 100%)"
-                  : "radial-gradient(ellipse at 50% 35%, #2e2e30 0%, #1c1c1e 55%, #111113 100%)",
-                border: "1px solid #3a3a3c",
-                boxShadow: "0 6px 40px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.04)",
+                background: "radial-gradient(ellipse at 50% 35%, #ffffff 0%, #f8f8f8 55%, #f0f0f0 100%)",
+                border: "1px solid #e5e5e7",
+                boxShadow: "0 6px 40px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,1)",
                 isolation: "isolate",
               }}
               onDrop={handleDrop}
@@ -3017,7 +3117,7 @@ export default function DesignStudio() {
                   ref={svgRef as any}
                   viewBox={selectedProduct.viewBox}
                   className="absolute inset-0 w-full h-full"
-                  style={{ touchAction: isMobile && currentFaceLayers.length === 0 ? "pan-y" : "none", userSelect: "none" }}
+                  style={{ touchAction: isMobile ? "pan-y" : "pan-x pan-y", userSelect: "none" }}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -3110,7 +3210,7 @@ export default function DesignStudio() {
                               opacity={l.transform.opacity}
                               preserveAspectRatio="none"
                               pointerEvents="none"
-                              style={{ filter: userAdj, mixBlendMode: designBlend }}
+                              style={{ filter: userAdj, mixBlendMode: isLightGarment ? 'multiply' : 'normal' }}
                             />
                             {/* Transparent hit-rect — ensures reliable pointer events on every
                                 browser/device regardless of SVG <image> pointer-event quirks */}
@@ -3157,11 +3257,40 @@ export default function DesignStudio() {
                             paintOrder={l.strokeWidth ? "stroke" : undefined}
                             transform={`rotate(${l.transform.rotation}, ${g.cx}, ${g.cy})`}
                             filter={shadowFilterId ? `url(#${shadowFilterId})` : undefined}
-                            style={{ cursor: l.locked ? "not-allowed" : "grab", userSelect: "none", mixBlendMode: designBlend }}
+                            style={{ cursor: l.locked ? "not-allowed" : "grab", userSelect: "none", mixBlendMode: isLightGarment ? 'multiply' : 'normal' }}
                           >{l.text}</text>
                         </g>
                       );
                     })}
+
+                    {/* Garment texture overlay — makes the design look printed onto the fabric
+                        rather than pasted on top. Matches the final cart mockup composition. */}
+                    {currentFaceLayers.some(l => l.visible) && !isFlatZone && (() => {
+                      const base = BASE_BY_CATEGORY[displayProduct.category];
+                      let overlaySrc = base?.frontCutout ?? displayProduct.frontSrc;
+                      if (activeFace === "back" && (base?.backCutout || displayProduct.backSrc)) {
+                        overlaySrc = base?.backCutout ?? displayProduct.backSrc ?? overlaySrc;
+                      }
+                      const colorPhoto = base?.colorPhotos?.[selectedColor.hex.toLowerCase()];
+                      if (colorPhoto && !isLightGarment) overlaySrc = activeFace === "back" && colorPhoto.back ? colorPhoto.back : colorPhoto.front;
+                      else if (isDarkGarment && (base?.darkFront || base?.darkFrontCutout)) {
+                        overlaySrc = activeFace === "back" && (base?.darkBack || base?.darkBackCutout)
+                          ? (base?.darkBack ?? base?.darkBackCutout ?? overlaySrc)
+                          : (base?.darkFront ?? base?.darkFrontCutout ?? overlaySrc);
+                      }
+                      const blend = isLightGarment ? 'multiply' : isDarkGarment ? 'screen' : 'overlay';
+                      const opacity = isLightGarment ? 0.45 : isDarkGarment ? 0.35 : 0.30;
+                      return (
+                        <image
+                          href={overlaySrc}
+                          x={0} y={0} width={1000} height={1000}
+                          preserveAspectRatio="xMidYMid meet"
+                          pointerEvents="none"
+                          opacity={opacity}
+                          style={{ mixBlendMode: blend, pointerEvents: "none" }}
+                        />
+                      );
+                    })()}
                   </g>
                   </g>{/* end product-silhouette-clip outer group */}
 
@@ -3333,16 +3462,19 @@ export default function DesignStudio() {
                     onKeyDown={(e) => e.key === "Enter" && fileInputRef.current?.click()}
                     aria-label="Upload image"
                   >
-                    {/* Subtle dashed print-zone hint at top */}
+                    {/* Upload zone hint — centered on the print zone, matches reference screenshots */}
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <div className="flex flex-col items-center gap-1 opacity-70">
+                      <div className="flex flex-col items-center gap-2 px-5 py-4 rounded-2xl"
+                        style={{ background: "rgba(255,255,255,0.88)", border: "2px dashed rgba(232,93,4,0.45)", backdropFilter: "blur(6px)", boxShadow: "0 2px 16px rgba(0,0,0,0.08)" }}>
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-                          style={{ background: "rgba(232,93,4,0.15)", border: "1.5px dashed rgba(232,93,4,0.6)" }}>
+                          style={{ background: "rgba(232,93,4,0.12)" }}>
                           <Upload className="w-5 h-5 text-orange-500" />
                         </div>
-                        <span className="text-[10px] font-bold text-orange-500 bg-white/80 px-2 py-0.5 rounded-full" style={{ backdropFilter: "blur(4px)" }}>
-                          Tap to add design
-                        </span>
+                        <div className="text-center">
+                          <div className="text-[13px] font-black text-gray-800 leading-tight">Upload Your Design</div>
+                          <div className="text-[10px] font-semibold text-gray-400 mt-0.5">JPG or PNG · Max 10MB</div>
+                          <div className="text-[10px] font-medium text-gray-400">or drag &amp; drop here</div>
+                        </div>
                       </div>
                     </div>
                     {/* Action buttons — compact pill row at bottom, glass style */}
@@ -3496,11 +3628,12 @@ export default function DesignStudio() {
               {layers.length > 0 && (
                 <div className="px-4 py-2 text-[10px] font-semibold text-gray-400 flex items-center gap-2"
                   style={{
-                    background: isBlackGarment ? "#d8d5cf" : "#1C1C1E",
-                    borderTop: isBlackGarment ? "1px solid #bbb8b2" : "1px solid #2a2a2c",
+                    background: "#ffffff",
+                    borderTop: "1px solid #e5e5e7",
+                    color: "#6b7280",
                   }}>
                   <Move className="w-3 h-3 text-gray-500 shrink-0" />
-                  Drag · Pinch to scale &amp; rotate · +/− to zoom
+                  Drag · Pinch to scale &amp; rotate · Ctrl+wheel to zoom · +/− to zoom
                 </div>
               )}
             </div>
@@ -3580,6 +3713,20 @@ export default function DesignStudio() {
                     style={{ background: "#f3f4f6" }}>
                     <Copy className="w-4 h-4 text-gray-600" />
                   </button>
+                  {/* Auto-fix — image layers only */}
+                  {selectedLayer.type === "image" && (
+                    <button
+                      aria-label="Auto-fix image"
+                      onClick={async () => {
+                        const fixed = await autoFixImage(selectedLayer.src);
+                        updateLayer(selectedLayer.id, l => l.type === "image" ? ({ ...l, src: fixed.src, brightness: fixed.brightness, contrast: fixed.contrast }) as any : l, true);
+                        toast({ title: "✨ Auto-fix applied", description: `Brightness ${fixed.brightness}% · Contrast ${fixed.contrast}%` });
+                      }}
+                      className="p-2 rounded-xl active:scale-95 transition-transform"
+                      style={{ background: "#ecfdf5" }}>
+                      <Wand2 className="w-4 h-4 text-emerald-600" />
+                    </button>
+                  )}
                   {/* Delete */}
                   <button
                     aria-label="Delete layer"
@@ -3675,7 +3822,13 @@ export default function DesignStudio() {
                     }}
                   >
                     <Icon className="w-4 h-4" />{label}
-                    {id === "ai" && <span className="absolute top-0.5 right-0.5 bg-orange-500 text-white text-[6px] px-1 py-0.5 rounded-full font-black leading-none">AI</span>}
+                    {id === "ai" && <span className="absolute top-0.5 right-0.5 bg-purple-500 text-white text-[6px] px-1 py-0.5 rounded-full font-black leading-none">✨</span>}
+                    {id === "layers" && layers.length > 0 && (
+                      <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 rounded-full flex items-center justify-center text-[7px] font-black text-white leading-none"
+                        style={{ background: "#E85D04" }}>
+                        {layers.length}
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
@@ -3717,6 +3870,19 @@ export default function DesignStudio() {
                             </p>
                           )}
                         </div>
+                        <button
+                          onClick={async () => {
+                            if (!selectedLayer || selectedLayer.type !== "image") return;
+                            const fixed = await autoFixImage(selectedLayer.src);
+                            updateLayer(selectedLayer.id, l => l.type === "image" ? ({ ...l, src: fixed.src, brightness: fixed.brightness, contrast: fixed.contrast }) as any : l, true);
+                            toast({ title: "✨ Auto-fix applied", description: `Brightness ${fixed.brightness}% · Contrast ${fixed.contrast}%` });
+                          }}
+                          disabled={isRemoving || isUpscaling}
+                          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm disabled:opacity-50"
+                          style={{ background: "linear-gradient(135deg,#ECFDF5,#D1FAE5)", color: "#065F46", border: "1px solid #A7F3D0" }}
+                        >
+                          <Wand2 className="w-4 h-4" /> Auto Fix
+                        </button>
                         <button
                           onClick={() => {
                             setCropPct({ x: 0, y: 0, w: 100, h: 100 });
@@ -4769,9 +4935,21 @@ export default function DesignStudio() {
                 : <><ShoppingCart className="w-5 h-5" /> Add Custom {selectedProduct.name} to Cart</>}
             </motion.button>
 
+            {/* Trust micro-copy — below the Add to Cart CTA */}
+            <div className="flex items-center justify-center gap-2 text-[10px] font-semibold text-gray-400 -mt-1">
+              <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-green-500" /> Secure</span>
+              <span className="w-px h-3 bg-gray-200" />
+              <span>⚡ Fast dispatch</span>
+              <span className="w-px h-3 bg-gray-200" />
+              <span>🔁 Easy returns</span>
+              <span className="w-px h-3 bg-gray-200" />
+              <span>📦 All 64 districts</span>
+            </div>
+
             {(() => {
               const subtotal = quantity * studioPrice;
-              const freeShip = subtotal >= 1500;
+              const threshold = settings.freeShippingThreshold || 1500;
+              const freeShip = threshold > 0 && subtotal >= threshold;
               return (
                 <div className="text-center text-xs space-y-0.5">
                   {!isMug && !isCap && !isWaterBottle && (
@@ -4782,7 +4960,9 @@ export default function DesignStudio() {
                   <div className={freeShip ? "text-green-600 font-bold" : "text-gray-400"}>
                     {freeShip
                       ? "✓ Free shipping included!"
-                      : `Add ৳${(1500 - subtotal).toLocaleString()} more for free shipping`}
+                      : threshold > 0
+                      ? `Add ৳${(threshold - subtotal).toLocaleString()} more for free shipping`
+                      : `Shipping: ৳${settings.shippingCost?.toLocaleString?.() ?? "--"}`}
                   </div>
                 </div>
               );

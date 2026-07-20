@@ -171,13 +171,11 @@ function textAlignOffset(align: "left" | "center" | "right", halfW: number): num
   return 0;
 }
 
-/** Draw an image warped to fake a cylindrical/dome surface curve.
- *  Slices the image into vertical strips; strips near the left/right edges
- *  are shifted down slightly (barrel bow) and darkened (surface curving away
- *  from the light), while the centre strip is untouched. This is a cheap 2D
- *  approximation — not a true 3D projection — but reads correctly on a
- *  photographed curved surface (mug, bottle, cap dome) instead of looking
- *  like a flat sticker slapped over a round object. */
+/** Draw an image warped to fake a cylindrical / dome surface curve.
+ *  Simulates a round object photographed front-on: the centre faces the camera
+ *  full-size, the edges pinch horizontally, recede vertically, and darken as
+ *  they curve away from the light. A subtle centre highlight adds realism.
+ *  Higher `quality` = more vertical strips for a smoother warp. */
 function drawImageCurved(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement,
@@ -185,30 +183,50 @@ function drawImageCurved(
   h: number,
   curvature: number,
 ) {
-  const STRIPS = 28;
+  const STRIPS = 48;
   const stripW = w / STRIPS;
   for (let i = 0; i < STRIPS; i++) {
-    // u ranges -1 (left edge) .. 0 (centre) .. 1 (right edge)
+    // u ranges -0.5 (left edge) .. 0 (centre) .. 0.5 (right edge)
     const u = (i + 0.5) / STRIPS - 0.5;
     const u2 = 2 * u; // -1..1
-    // Barrel bow: centre sits "closest" to camera, edges recede downward.
-    const bow = (1 - Math.cos((u2 * Math.PI) / 2)) * h * curvature * 0.5;
-    // Edge darkening: surface curving away catches less light.
-    const shade = 1 - Math.abs(u2) * curvature * 1.6;
+    const edgeFactor = Math.abs(u2); // 0..1
 
+    // Cylindrical pinch: edge strips become narrower (foreshortening).
+    const pinch = Math.cos(u2 * Math.PI / 2);
+    const renderStripW = stripW * (0.55 + 0.45 * pinch);
+
+    // Barrel bow: centre sits closest to camera; edges drop away.
+    const bow = (1 - Math.cos((u2 * Math.PI) / 2)) * h * curvature * 0.42;
+
+    // Edge darkening: surface curving away catches less light.
+    const shade = 1 - edgeFactor * curvature * 1.4;
+
+    // Source x keeps the original proportions; we take slightly wider source
+    // strips at the edges so the compressed pixels still map correctly.
     const sx0 = (i / STRIPS) * img.naturalWidth;
     const sw = img.naturalWidth / STRIPS;
-    const dx0 = -w / 2 + i * stripW;
+    const dx0 = -w / 2 + i * stripW + (stripW - renderStripW) * 0.5;
 
     ctx.save();
     ctx.filter = shade < 1 ? `brightness(${Math.max(0.55, shade) * 100}%)` : "none";
     ctx.drawImage(
       img,
       sx0, 0, sw, img.naturalHeight,
-      dx0, -h / 2 + bow, stripW + 0.6, h,
+      dx0, -h / 2 + bow, renderStripW + 0.6, h,
     );
     ctx.restore();
   }
+
+  // Soft vertical highlight down the centre — glossy ceramic/metal reflection.
+  const grad = ctx.createLinearGradient(-w * 0.15, 0, w * 0.15, 0);
+  grad.addColorStop(0, "rgba(255,255,255,0)");
+  grad.addColorStop(0.5, "rgba(255,255,255,0.18)");
+  grad.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.save();
+  ctx.globalCompositeOperation = "overlay";
+  ctx.fillStyle = grad;
+  ctx.fillRect(-w * 0.22, -h / 2, w * 0.44, h);
+  ctx.restore();
 }
 
 export async function composeLayers(opts: ComposeOptions): Promise<HTMLCanvasElement> {
@@ -303,8 +321,11 @@ export async function composeGarmentMockup(opts: {
   outSize: number;
   imageCache?: Map<string, HTMLImageElement>;
   curvature?: number;
+  /** Set true when garmentSrc is already the correct-colour photo — skips
+   *  the SVG multiply-tint pass so the real photo is not double-tinted. */
+  isColorPhoto?: boolean;
 }): Promise<HTMLCanvasElement> {
-  const { canvas, garmentSrc, garmentColor, printZone, layers, outSize, imageCache, curvature = 0 } = opts;
+  const { canvas, garmentSrc, garmentColor, printZone, layers, outSize, imageCache, curvature = 0, isColorPhoto = false } = opts;
   canvas.width = outSize;
   canvas.height = outSize;
   const ctx = canvas.getContext("2d");
@@ -317,17 +338,21 @@ export async function composeGarmentMockup(opts: {
     const garmentImg = await loadImage(garmentSrc, imageCache);
     ctx.drawImage(garmentImg, 0, 0, outSize, outSize);
 
-    const r = parseInt(garmentColor.slice(1, 3), 16) || 0;
-    const g = parseInt(garmentColor.slice(3, 5), 16) || 0;
-    const b = parseInt(garmentColor.slice(5, 7), 16) || 0;
-    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    if (luminance < 0.92) {
-      ctx.globalCompositeOperation = "multiply";
-      ctx.fillStyle = garmentColor;
-      ctx.fillRect(0, 0, outSize, outSize);
-      ctx.globalCompositeOperation = "destination-in";
-      ctx.drawImage(garmentImg, 0, 0, outSize, outSize);
-      ctx.globalCompositeOperation = "source-over";
+    // Skip multiply-tint when using a real per-colour photo — the photo already
+    // carries the correct hue; multiplying the tint colour over it darkens it wrong.
+    if (!isColorPhoto) {
+      const r = parseInt(garmentColor.slice(1, 3), 16) || 0;
+      const g = parseInt(garmentColor.slice(3, 5), 16) || 0;
+      const b = parseInt(garmentColor.slice(5, 7), 16) || 0;
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      if (luminance < 0.92) {
+        ctx.globalCompositeOperation = "multiply";
+        ctx.fillStyle = garmentColor;
+        ctx.fillRect(0, 0, outSize, outSize);
+        ctx.globalCompositeOperation = "destination-in";
+        ctx.drawImage(garmentImg, 0, 0, outSize, outSize);
+        ctx.globalCompositeOperation = "source-over";
+      }
     }
   } catch {
     ctx.fillStyle = garmentColor;
@@ -384,7 +409,15 @@ export async function composeGarmentMockup(opts: {
       ctx.font = `${layer.fontStyle} ${layer.fontWeight} ${fs}px ${layer.fontFamily}`;
       const align = layer.textAlign ?? "center";
       const xOffset = textAlignOffset(align, (geom.w * s) / 2);
-      ctx.globalCompositeOperation = "multiply";
+      // Use multiply blend for text only on light/white garments (lum > 0.92).
+      // On dark/coloured garments (navy, maroon, grey, …) text must use source-over
+      // so white and bright text colours are not swallowed by the garment tint.
+      const gr = parseInt(garmentColor?.slice(1, 3) ?? "ff", 16);
+      const gg = parseInt(garmentColor?.slice(3, 5) ?? "ff", 16);
+      const gb = parseInt(garmentColor?.slice(5, 7) ?? "ff", 16);
+      const glum = (0.299 * gr + 0.587 * gg + 0.114 * gb) / 255;
+      const textBlend = glum > 0.92 ? "multiply" : "source-over";
+      ctx.globalCompositeOperation = textBlend as GlobalCompositeOperation;
       drawText(ctx, layer, fs, xOffset, 0, s, s);
       ctx.globalCompositeOperation = "source-over";
     }
@@ -401,28 +434,47 @@ export async function composeGarmentMockup(opts: {
       ctx.rect(printZone.x * s, printZone.y * s, printZone.w * s, printZone.h * s);
       ctx.clip();
 
-      /* ── Premium 3-pass fabric texture blend ──────────────────────────
-         Pass 1 — MULTIPLY at 0.50: garment photo pixels darken the design
-           wherever the fabric has creases, shadow, or woven texture.
-           Pure-white areas of the photo have zero effect (1×dest = dest).
-         Pass 2 — SCREEN at 0.10: lifts the bright studio-light reflections
-           back onto the design so highlights look authentic.
-         Pass 3 — OVERLAY at 0.14: micro-contrast boost that makes the fabric
-           grain feel tactile and separates the print from the substrate.
-         Together these three passes replicate Printful / Printify quality
-         composite output at render time.
-      ─────────────────────────────────────────────────────────────────── */
-      ctx.globalCompositeOperation = "multiply";
-      ctx.globalAlpha = 0.50;
-      ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
+      const isDarkGarment = garmentSrc.includes("black") || garmentSrc.includes("navy") || garmentSrc.includes("maroon") || garmentSrc.includes("forest") || garmentSrc.includes("burgundy");
+      const isMidGarment = garmentSrc.includes("red") || garmentSrc.includes("olive") || garmentSrc.includes("grey") || garmentSrc.includes("skyblue") || garmentSrc.includes("teal") || garmentSrc.includes("pink");
+      const isLightGarment = !isDarkGarment && !isMidGarment;
 
-      ctx.globalCompositeOperation = "screen";
-      ctx.globalAlpha = 0.10;
-      ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
+      if (isLightGarment) {
+        // White/Light base photo: flat areas are near white (255).
+        // Multiply darkens the design using the shadows/creases.
+        // Pure white has no effect. Screen would cause white halos.
+        ctx.globalCompositeOperation = "multiply";
+        ctx.globalAlpha = 0.65;
+        ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
+        
+        ctx.globalCompositeOperation = "linear-burn";
+        ctx.globalAlpha = 0.05;
+        ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
+      } else if (isDarkGarment) {
+        // Dark/Black base photo: flat areas are near black (0-30).
+        // Multiply would black out the design.
+        // Screen lifts the design using the light highlights on the creases.
+        ctx.globalCompositeOperation = "screen";
+        ctx.globalAlpha = 0.45;
+        ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
 
-      ctx.globalCompositeOperation = "overlay";
-      ctx.globalAlpha = 0.14;
-      ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
+        ctx.globalCompositeOperation = "color-dodge";
+        ctx.globalAlpha = 0.15;
+        ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
+      } else {
+        // Mid-tone base photo (Red, Grey, etc.)
+        // Has both distinct shadows and highlights.
+        ctx.globalCompositeOperation = "multiply";
+        ctx.globalAlpha = 0.40;
+        ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
+
+        ctx.globalCompositeOperation = "screen";
+        ctx.globalAlpha = 0.25;
+        ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
+        
+        ctx.globalCompositeOperation = "overlay";
+        ctx.globalAlpha = 0.15;
+        ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
+      }
 
       ctx.restore();
     } catch {}
@@ -499,6 +551,60 @@ export async function composeDesignTexture(opts: {
 
   if (clipToPrintZone) ctx.restore();
   return canvas;
+}
+
+/** Analyse a small downscaled copy of the image and return suggested
+ *  brightness / contrast corrections so logos/artwork pop on fabric.
+ *  Returns the original src if no correction is needed. */
+export async function autoFixImage(src: string): Promise<{ src: string; brightness: number; contrast: number }> {
+  const img = new Image();
+  await new Promise<void>((res, rej) => { img.onload = () => res(); img.onerror = rej; img.src = src; });
+  try { await img.decode?.(); } catch {}
+
+  const canvas = document.createElement("canvas");
+  const size = 256;
+  canvas.width = size; canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return { src, brightness: 100, contrast: 100 };
+
+  ctx.drawImage(img, 0, 0, size, size);
+  const data = ctx.getImageData(0, 0, size, size).data;
+
+  // Compute average luminance and a simple contrast metric (std-dev-like).
+  let sum = 0, sumSq = 0, count = 0;
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i], g = data[i + 1], b = data[i + 2];
+    const a = data[i + 3];
+    if (a < 32) continue; // ignore transparent pixels
+    const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+    sum += lum; sumSq += lum * lum; count++;
+  }
+  if (count === 0) return { src, brightness: 100, contrast: 100 };
+  const avg = sum / count;
+  const variance = sumSq / count - avg * avg;
+  const std = Math.sqrt(Math.max(0, variance));
+
+  // Target: average brightness ~ 128, contrast std ~ 60-80.
+  let brightness = 100;
+  let contrast = 100;
+  if (avg < 100) brightness = Math.round(100 + (100 - avg) * 0.45);
+  if (avg > 180) brightness = Math.round(100 - (avg - 180) * 0.45);
+  if (std < 55) contrast = Math.round(100 + (55 - std) * 1.1);
+  if (std > 90) contrast = Math.round(100 - (std - 90) * 0.6);
+
+  brightness = Math.max(80, Math.min(140, brightness));
+  contrast = Math.max(85, Math.min(140, contrast));
+
+  if (brightness === 100 && contrast === 100) return { src, brightness, contrast };
+
+  // Render corrected image at original size.
+  const out = document.createElement("canvas");
+  out.width = img.naturalWidth; out.height = img.naturalHeight;
+  const octx = out.getContext("2d");
+  if (!octx) return { src, brightness, contrast };
+  octx.filter = `brightness(${brightness}%) contrast(${contrast}%)`;
+  octx.drawImage(img, 0, 0, out.width, out.height);
+  return { src: out.toDataURL("image/png"), brightness, contrast };
 }
 
 export function hasWebGL2(): boolean {
