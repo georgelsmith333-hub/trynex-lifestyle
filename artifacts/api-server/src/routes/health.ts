@@ -1,22 +1,52 @@
 import { Router, type IRouter } from "express";
 import { sql } from "drizzle-orm";
 import { db } from "@workspace/db";
-import { HealthCheckResponse } from "@workspace/api-zod";
 import { getConfiguredGoogleClientId } from "./auth";
 import { ObjectStorageService } from "../lib/objectStorage";
+import { getRedisStatus } from "../lib/redis";
 
 const router: IRouter = Router();
 
 router.get("/healthz", async (_req, res) => {
   res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-  let dbStatus = "ok";
-  try {
-    await db.execute(sql`SELECT 1`);
-  } catch (err) {
-    dbStatus = "error";
+
+  // Run DB + Redis checks concurrently so a slow dependency doesn't block the other.
+  // getRedisStatus() bypasses the in-process fallback so a real Upstash outage
+  // is reported as "error" instead of silently succeeding via in-memory map.
+  const [dbResult, redisResult] = await Promise.allSettled([
+    db.execute(sql`SELECT 1`),
+    getRedisStatus(),
+  ]);
+
+  const dbStatus = dbResult.status === "fulfilled" ? "ok" : "error";
+
+  // Extract Redis mode — default to "error" if the check itself threw (shouldn't happen).
+  const redisMode = redisResult.status === "fulfilled" ? redisResult.value.mode : "error";
+  const redisDetail = redisResult.status === "fulfilled" ? redisResult.value.detail : undefined;
+
+  const storageBackend = new ObjectStorageService().getBackendName();
+
+  // Overall status hierarchy:
+  //   "error"    — DB is unreachable (requests cannot be served)
+  //   "degraded" — Upstash Redis was configured but is unreachable (cache misses, no data loss)
+  //   "ok"       — all configured services healthy (redis "not_configured" is intentional, not a problem)
+  let overallStatus: "ok" | "degraded" | "error";
+  if (dbStatus === "error") {
+    overallStatus = "error";
+  } else if (redisMode === "error") {
+    overallStatus = "degraded";
+  } else {
+    overallStatus = "ok";
   }
-  const data = HealthCheckResponse.parse({ status: "ok", db: dbStatus });
-  res.json(data);
+
+  res.json({
+    status: overallStatus,
+    db: dbStatus,
+    redis: redisMode,
+    ...(redisDetail ? { redis_detail: redisDetail } : {}),
+    storage: storageBackend,
+    ts: new Date().toISOString(),
+  });
 });
 
 // Storage backend health. Reports the active backend, whether it is a

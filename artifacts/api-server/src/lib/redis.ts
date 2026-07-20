@@ -170,3 +170,51 @@ export async function redisCacheFlushAll(): Promise<{ cleared: number; backend: 
   const client = await getClient();
   return { cleared, backend: client ? "upstash" : "in-process" };
 }
+
+export type RedisStatusMode = "ok" | "error" | "not_configured" | "connecting";
+
+/**
+ * Returns the real Upstash Redis connectivity status WITHOUT going through the
+ * in-process fallback. Use this for health checks where the fallback would mask
+ * a genuine infrastructure problem.
+ *
+ * - "ok"             — Upstash is configured and the initial connectivity check passed
+ * - "error"          — Upstash env vars are set but the connection failed (quota, auth, network)
+ * - "not_configured" — UPSTASH_REDIS_REST_URL/TOKEN are absent; in-process cache is intentional
+ * - "connecting"     — initialization is still in flight (first request after startup)
+ */
+export async function getRedisStatus(): Promise<{ mode: RedisStatusMode; detail?: string }> {
+  const url   = (process.env.UPSTASH_REDIS_REST_URL  ?? "").trim();
+  const token = (process.env.UPSTASH_REDIS_REST_TOKEN ?? "").trim();
+
+  if (!url || !token || PLACEHOLDER_RX.test(url)) {
+    return { mode: "not_configured" };
+  }
+
+  // Trigger initialization if not yet attempted.
+  if (_redis === null) {
+    if (!_initPromise) {
+      _initPromise = _initClient().finally(() => { _initPromise = null; });
+    }
+    // Wait briefly (up to 500 ms) so a fast startup doesn't return "connecting".
+    const client = await Promise.race([
+      _initPromise,
+      new Promise<null>((r) => setTimeout(() => r(null), 500)),
+    ]);
+    if (client) return { mode: "ok" };
+    // Still connecting after 500 ms or init resolved to null (failed)
+    return _redis === null ? { mode: "connecting" } : { mode: "error", detail: "Connection failed" };
+  }
+
+  if (_redis === false) {
+    return { mode: "error", detail: "Connection to Upstash Redis failed at startup" };
+  }
+
+  // Client is live — do a lightweight ping to confirm it's still reachable.
+  try {
+    await (_redis as RedisClient).set("_healthz_ping", "1", { ex: 10 });
+    return { mode: "ok" };
+  } catch (err) {
+    return { mode: "error", detail: err instanceof Error ? err.message : String(err) };
+  }
+}
