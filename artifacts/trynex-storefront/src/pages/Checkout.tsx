@@ -317,9 +317,6 @@ export default function Checkout() {
     nagad: "01811-234567",
     upay: "",
   };
-  const effectivePaymentNumber = activePaymentNumber || FALLBACK_PAYMENT_NUMBERS[effectiveGatewayMethod];
-  const paymentNumberReady = !!effectivePaymentNumber;
-
   const validatePromo = async () => {
     if (!promoInput.trim()) return;
     setPromoLoading(true);
@@ -626,6 +623,11 @@ export default function Checkout() {
   };
 
   const activePaymentNumber = getPaymentNumber(effectiveGatewayMethod);
+
+  // Fallback payment numbers — used only when admin settings are not yet loaded
+  // or have been cleared, so the customer is never stuck with an empty number.
+  const effectivePaymentNumber = activePaymentNumber || FALLBACK_PAYMENT_NUMBERS[effectiveGatewayMethod];
+  const paymentNumberReady = !!effectivePaymentNumber;
 
   const copyNumber = async () => {
     if (!effectivePaymentNumber) return;
