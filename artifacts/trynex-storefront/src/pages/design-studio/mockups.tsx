@@ -10,6 +10,11 @@ const tshirtFrontDark      = "/mockups/black-tshirt-front.png";
 const tshirtBackDark       = "/mockups/black-tshirt-back.png";
 const tshirtFrontCutout    = "/mockups/white-tshirt-front-cutout.png";
 const tshirtBackCutout     = "/mockups/white-tshirt-back-cutout.png";
+// Color-specific photo mockups — used instead of SVG tint for highest realism
+const navyTshirtFront      = "/mockups/navy-tshirt-front.png";
+const navyTshirtBack       = "/mockups/navy-tshirt-back.png";
+const redTshirtFront       = "/mockups/red-tshirt-front.png";
+const redTshirtBack        = "/mockups/red-tshirt-back.png";
 const longsleeveFront          = "/mockups/white-longsleeve-front.png";
 const longsleeveBack           = "/mockups/white-longsleeve-back.png";
 const longsleeveFrontDark      = "/mockups/black-longsleeve-front.png";
@@ -283,9 +288,17 @@ export const PRODUCTS: DesignProduct[] = [
 
 export const BASE_BY_CATEGORY: Record<
   DesignProduct["category"],
-  { front: string; back?: string; darkFront?: string; darkBack?: string; frontCutout?: string; backCutout?: string; darkFrontCutout?: string; darkBackCutout?: string } | undefined
+  { front: string; back?: string; darkFront?: string; darkBack?: string; frontCutout?: string; backCutout?: string; darkFrontCutout?: string; darkBackCutout?: string;
+    /** Map of garment hex colour → real photo {front, back} — bypasses SVG tint for max realism. */
+    colorPhotos?: Record<string, { front: string; back?: string }>;
+  } | undefined
 > = {
-  tshirt:      { front: tshirtFront, back: tshirtBack, darkFront: tshirtFrontDark, darkBack: tshirtBackDark, frontCutout: tshirtFrontCutout, backCutout: tshirtBackCutout, darkFrontCutout: tshirtFrontDarkCutout, darkBackCutout: tshirtBackDarkCutout },
+  tshirt:      { front: tshirtFront, back: tshirtBack, darkFront: tshirtFrontDark, darkBack: tshirtBackDark, frontCutout: tshirtFrontCutout, backCutout: tshirtBackCutout, darkFrontCutout: tshirtFrontDarkCutout, darkBackCutout: tshirtBackDarkCutout,
+    colorPhotos: {
+      "#1e3a5f": { front: navyTshirtFront, back: navyTshirtBack },
+      "#dc2626": { front: redTshirtFront,  back: redTshirtBack  },
+    },
+  },
   longsleeve:  { front: longsleeveFront, back: longsleeveBack, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout, darkFrontCutout: longsleeveFrontDarkCutout, darkBackCutout: longsleeveBackDarkCutout },
   hoodie:      { front: hoodieFront, back: hoodieBack, darkFront: hoodieFrontDark, darkBack: hoodieBackDark, frontCutout: hoodieFrontCutout, backCutout: hoodieBackCutout, darkFrontCutout: hoodieFrontDarkCutout, darkBackCutout: hoodieBackDarkCutout },
   mug:         { front: mugFront, back: mugFront, darkFront: mugFrontDark, darkBack: mugFrontDark, frontCutout: mugFrontCutout, darkFrontCutout: mugFrontDarkCutout, darkBackCutout: mugFrontDarkCutout },
@@ -343,10 +356,21 @@ export function GarmentSVG({
   // near-black selection would render as an untinted white cutout (looks white/blank).
   const hasDarkPhotoAsset = !!(base?.darkFrontCutout || base?.darkFront);
   const useBlackPhoto = !!tintHex && isNearBlack(tintHex) && hasDarkPhotoAsset;
-  const needsTint = !!tintHex && !isLightTint(tintHex) && !useBlackPhoto;
+  // Check if there is a real per-colour photo for this exact hex — if so, use it
+  // directly instead of the SVG tint path for maximum photographic realism.
+  const colorPhotoEntry = tintHex ? base?.colorPhotos?.[tintHex.toLowerCase()] ?? base?.colorPhotos?.[tintHex] : undefined;
+  const useColorPhoto = !!colorPhotoEntry && !useBlackPhoto && !isLightTint(tintHex ?? "");
+  const needsTint = !!tintHex && !isLightTint(tintHex) && !useBlackPhoto && !useColorPhoto;
 
   const imageSrc = (() => {
     if (!base) return (face === "back" && product.backSrc) ? product.backSrc : product.frontSrc;
+    // ── Real per-colour photo (e.g. navy, red) ────────────────────────────
+    // Bypasses SVG tint entirely — highest realism, used when a dedicated photo
+    // exists for the selected colour hex.
+    if (useColorPhoto && colorPhotoEntry) {
+      if (face === "back" && colorPhotoEntry.back) return colorPhotoEntry.back;
+      return colorPhotoEntry.front;
+    }
     // ── Dark / near-black garment ─────────────────────────────────────────
     // Prefer the FULL dark photo (RGB, no alpha, has its own studio background)
     // over the dark cutout. A dark-silhouette cutout on the dark studio canvas
@@ -401,16 +425,17 @@ export function GarmentSVG({
     ? (face === "back" && base.backCutout ? base.backCutout : (base.frontCutout ?? ""))
     : "";
 
-  // True when the selected dark imageSrc is a full studio photo (has its own baked
+  // True when the selected imageSrc is a full studio photo (has its own baked
   // background — no transparent pixels we need to worry about). Detection relies on
   // the naming convention: files containing "cutout" in their path are transparent
-  // PNGs; all other dark-garment files are full opaque studio photos.
-  const isFullDarkPhoto = useBlackPhoto && !imageSrc.includes("cutout");
+  // PNGs; all other garment files are full opaque studio photos.
+  // This covers both near-black photos AND real per-colour photos (navy, red…).
+  const isFullDarkPhoto = (useBlackPhoto || useColorPhoto) && !imageSrc.includes("cutout");
 
   // Canvas background colour: clean white for all products so the mockup reads
   // as a premium product shot on a light, neutral studio surface. Cutout garments
-  // get a soft shadow to lift them off the white; dark garments use their own
-  // dark photo or dark cutout and stay visible because of the shadow/contrast.
+  // get a soft shadow to lift them off the white; full opaque photos cover the
+  // canvas entirely so no background colour shows through.
   const canvasBg = "#ffffff";
 
   // Drop-shadow filter: only on transparent-bg (cutout) images.

@@ -1,5 +1,6 @@
 - [TryNex API routes & ports](trynex-api-routes.md) — missing routes fixed, port config, build process, promo/mobile workflow issues
 - [Mockup rendering](mockup-rendering.md) — white garments use two-layer multiply-blend (cutout shadow + full photo with mix-blend-mode:multiply); black garments use full dark photo directly (no cutout); colored use tint filter + cutout. isApparel must be declared BEFORE useMixBlend to avoid TDZ error.
+- [T-shirt color photo mockups](tshirt-color-photos.md) — navy (#1e3a5f) and red (#dc2626) t-shirts use real AI-generated photos via colorPhotos map in BASE_BY_CATEGORY; GarmentSVG sets useColorPhoto flag; composer skips multiply-tint when isColorPhoto:true.
 - [GLB models missing — use PhotoMockupMesh](glb-models.md) — tshirt/hoodie/longsleeve/cap GLBs absent; all replaced with photo-billboard approach; all useGLTF.preload calls commented out.
 - [CF Pages deployment](cf-pages-deploy.md) — static frontend on CF Pages (trynex-lifestyle-shop.pages.dev); API proxied via functions/api/[[path]].ts; set API_URL env var in CF Pages.
 - [Waterbottle cutout file](waterbottle-cutout.md) — use white-waterbottle-front-cutout.png (228KB, proper transparency); NOT white-waterbottle-cutout.png (206KB = same as front photo, no alpha).

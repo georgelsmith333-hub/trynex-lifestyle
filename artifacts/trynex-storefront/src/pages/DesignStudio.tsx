@@ -1978,10 +1978,11 @@ export default function DesignStudio() {
     try {
       const canvas = document.createElement("canvas");
       const garmentBase = BASE_BY_CATEGORY[selectedProduct.category];
-      // Use the transparent cutout so the garment silhouette is clipped cleanly.
-      // The full studio photo has an opaque background; passing it makes the
-      // destination-in clip keep the entire canvas, leaking the studio bg colour.
-      const garmentSrc = garmentBase?.frontCutout ?? garmentBase?.front ?? selectedProduct.frontSrc;
+      // Prefer a real per-colour photo (navy, red…) for highest realism.
+      // Fall back to the transparent cutout for all other colours.
+      const _colorPhotoE1 = garmentBase?.colorPhotos?.[selectedColor.hex];
+      const garmentSrc = _colorPhotoE1?.front ?? garmentBase?.frontCutout ?? garmentBase?.front ?? selectedProduct.frontSrc;
+      const isColorPhoto1 = !!_colorPhotoE1;
       await composeGarmentMockup({
         canvas,
         garmentSrc,
@@ -1989,6 +1990,7 @@ export default function DesignStudio() {
         printZone: isMugProduct ? MUG_SIDE_PZ : selectedProduct.printZone,
         layers: activeLayers,
         outSize: 1200,
+        isColorPhoto: isColorPhoto1,
       });
       const url = canvas.toDataURL("image/png");
       const a = document.createElement("a");
@@ -2015,8 +2017,9 @@ export default function DesignStudio() {
     try {
       const canvas = document.createElement("canvas");
       const garmentBase = BASE_BY_CATEGORY[selectedProduct.category];
-      // Use the transparent cutout so the garment silhouette is clipped cleanly.
-      const garmentSrc = garmentBase?.frontCutout ?? garmentBase?.front ?? selectedProduct.frontSrc;
+      const _colorPhotoE2 = garmentBase?.colorPhotos?.[selectedColor.hex];
+      const garmentSrc = _colorPhotoE2?.front ?? garmentBase?.frontCutout ?? garmentBase?.front ?? selectedProduct.frontSrc;
+      const isColorPhoto2 = !!_colorPhotoE2;
       await composeGarmentMockup({
         canvas,
         garmentSrc,
@@ -2024,6 +2027,7 @@ export default function DesignStudio() {
         printZone: isMugProduct ? MUG_SIDE_PZ : selectedProduct.printZone,
         layers: activeLayers,
         outSize: 1200,
+        isColorPhoto: isColorPhoto2,
       });
       const url = canvas.toDataURL("image/jpeg", 0.93);
       const a = document.createElement("a");
@@ -2107,11 +2111,12 @@ export default function DesignStudio() {
       }
 
       // 1. Full garment + design composite → cart thumbnail (imageUrl)
-      //    Uses the white-cutout PNG (or cap dark PNG override) so tinting
-      //    matches the 2D editor exactly.
+      //    Prefer a real per-colour photo (navy, red…) when available so the
+      //    cart thumbnail matches the 2D editor exactly.
       const garmentBase = BASE_BY_CATEGORY[selectedProduct.category];
-      // Use the transparent cutout so cart thumbnails match the studio 2D view.
-      const garmentSrc  = garmentBase?.frontCutout ?? garmentBase?.front ?? displayProduct.frontSrc;
+      const _colorPhotoCart = garmentBase?.colorPhotos?.[selectedColor.hex];
+      const garmentSrc  = _colorPhotoCart?.front ?? garmentBase?.frontCutout ?? garmentBase?.front ?? displayProduct.frontSrc;
+      const isColorPhotoCart = !!_colorPhotoCart;
       const mockupCanvas = document.createElement("canvas");
       await composeGarmentMockup({
         canvas: mockupCanvas,
@@ -2121,6 +2126,7 @@ export default function DesignStudio() {
         layers: frontLayers,
         outSize: 400,
         imageCache,
+        isColorPhoto: isColorPhotoCart,
       });
       const mockupUrl = mockupCanvas.toDataURL("image/webp", 0.8);
 

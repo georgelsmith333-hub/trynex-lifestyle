@@ -321,8 +321,11 @@ export async function composeGarmentMockup(opts: {
   outSize: number;
   imageCache?: Map<string, HTMLImageElement>;
   curvature?: number;
+  /** Set true when garmentSrc is already the correct-colour photo — skips
+   *  the SVG multiply-tint pass so the real photo is not double-tinted. */
+  isColorPhoto?: boolean;
 }): Promise<HTMLCanvasElement> {
-  const { canvas, garmentSrc, garmentColor, printZone, layers, outSize, imageCache, curvature = 0 } = opts;
+  const { canvas, garmentSrc, garmentColor, printZone, layers, outSize, imageCache, curvature = 0, isColorPhoto = false } = opts;
   canvas.width = outSize;
   canvas.height = outSize;
   const ctx = canvas.getContext("2d");
@@ -335,17 +338,21 @@ export async function composeGarmentMockup(opts: {
     const garmentImg = await loadImage(garmentSrc, imageCache);
     ctx.drawImage(garmentImg, 0, 0, outSize, outSize);
 
-    const r = parseInt(garmentColor.slice(1, 3), 16) || 0;
-    const g = parseInt(garmentColor.slice(3, 5), 16) || 0;
-    const b = parseInt(garmentColor.slice(5, 7), 16) || 0;
-    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    if (luminance < 0.92) {
-      ctx.globalCompositeOperation = "multiply";
-      ctx.fillStyle = garmentColor;
-      ctx.fillRect(0, 0, outSize, outSize);
-      ctx.globalCompositeOperation = "destination-in";
-      ctx.drawImage(garmentImg, 0, 0, outSize, outSize);
-      ctx.globalCompositeOperation = "source-over";
+    // Skip multiply-tint when using a real per-colour photo — the photo already
+    // carries the correct hue; multiplying the tint colour over it darkens it wrong.
+    if (!isColorPhoto) {
+      const r = parseInt(garmentColor.slice(1, 3), 16) || 0;
+      const g = parseInt(garmentColor.slice(3, 5), 16) || 0;
+      const b = parseInt(garmentColor.slice(5, 7), 16) || 0;
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      if (luminance < 0.92) {
+        ctx.globalCompositeOperation = "multiply";
+        ctx.fillStyle = garmentColor;
+        ctx.fillRect(0, 0, outSize, outSize);
+        ctx.globalCompositeOperation = "destination-in";
+        ctx.drawImage(garmentImg, 0, 0, outSize, outSize);
+        ctx.globalCompositeOperation = "source-over";
+      }
     }
   } catch {
     ctx.fillStyle = garmentColor;
