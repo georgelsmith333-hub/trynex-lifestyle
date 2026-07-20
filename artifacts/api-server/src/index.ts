@@ -137,27 +137,12 @@ const server = app.listen(port, "0.0.0.0", async () => {
   await autoSeedIfEmpty();
   await loadSavedChatId();
   startScheduler();
-  // Auto-save GitHub PAT from env → DB settings so admin push works without
-  // manual config. Only saves when the env var is present and DB entry is empty.
-  const ghPat = process.env["GITHUB_PERSONAL_TOKEN"] || process.env["GITHUB_PERSONAL_ACCESS_TOKEN"] || process.env["GITHUB_TOKEN"];
-  if (ghPat && ghPat.length > 10) {
-    try {
-      const { db, settingsTable } = await import("@workspace/db");
-      const { eq } = await import("drizzle-orm");
-      const existing = await db.select().from(settingsTable)
-        .where(eq(settingsTable.key, "github_token")).limit(1);
-      if (!existing[0]?.value) {
-        const { sql } = await import("drizzle-orm");
-        await db.execute(
-          sql`INSERT INTO settings (key, value) VALUES ('github_token', ${ghPat})
-              ON CONFLICT (key) DO UPDATE SET value = ${ghPat}, updated_at = now()`
-        );
-        logger.info("[startup] GitHub PAT saved to DB settings from env");
-      }
-    } catch (e) {
-      logger.warn({ err: e }, "[startup] Could not auto-save GitHub PAT");
-    }
-  }
+  // NOTE: GitHub PAT is intentionally NOT persisted to the database.
+  // It is read at runtime from environment secrets (GITHUB_PERSONAL_ACCESS_TOKEN
+  // or GITHUB_TOKEN) by the code that needs it. Persisting tokens in the DB
+  // creates a secret-sprawl risk — the DB dump, backups, and any DB admin tool
+  // would expose the PAT. If a PAT is found in the DB settings table from a
+  // prior version, it should be removed via: DELETE FROM settings WHERE key='github_token'
 });
 
 // Graceful shutdown — give in-flight requests up to 10 s to drain before

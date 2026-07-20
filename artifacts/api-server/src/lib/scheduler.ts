@@ -213,11 +213,49 @@ async function keepAlive(): Promise<void> {
 // ── Backup / Failover Sync ───────────────────────────────────────────────────
 // Mirrors Neon Main into the Failover, Secondary, Products, and Analytics
 // databases every 30 minutes so a failover never serves stale/missing data.
+//
+// Circuit breaker: after BACKUP_CIRCUIT_OPEN_AFTER consecutive full failures,
+// the scheduler pauses for BACKUP_CIRCUIT_COOLDOWN_MS before retrying.
+// This prevents repeated hammering of the DB when quota is exceeded.
 let lastBackupSyncMs = 0;
 const BACKUP_SYNC_INTERVAL_MS = 30 * 60 * 1000;
+let backupConsecutiveFailures = 0;
+const BACKUP_CIRCUIT_OPEN_AFTER = 3;         // pause after 3 all-failed runs
+const BACKUP_CIRCUIT_COOLDOWN_MS = 2 * 60 * 60 * 1000; // 2-hour cooldown
+let backupCircuitOpenSince = 0;
+
+export interface BackupSyncStatus {
+  lastRunMs: number;
+  consecutiveFailures: number;
+  circuitOpen: boolean;
+  circuitOpenSince: number;
+}
+
+export function getBackupSyncStatus(): BackupSyncStatus {
+  return {
+    lastRunMs: lastBackupSyncMs,
+    consecutiveFailures: backupConsecutiveFailures,
+    circuitOpen: backupCircuitOpenSince > 0,
+    circuitOpenSince: backupCircuitOpenSince,
+  };
+}
 
 async function runScheduledBackupSync(): Promise<void> {
   const now = Date.now();
+
+  // Circuit open: skip until cooldown expires
+  if (backupCircuitOpenSince > 0) {
+    if (now - backupCircuitOpenSince < BACKUP_CIRCUIT_COOLDOWN_MS) {
+      const remainMinutes = Math.ceil((BACKUP_CIRCUIT_COOLDOWN_MS - (now - backupCircuitOpenSince)) / 60_000);
+      logger.warn({ remainMinutes }, "[scheduler] Backup sync circuit open — skipping (quota/error cooldown)");
+      return;
+    }
+    // Cooldown expired — reset circuit and try again
+    logger.info("[scheduler] Backup sync circuit reset — retrying after cooldown");
+    backupCircuitOpenSince = 0;
+    backupConsecutiveFailures = 0;
+  }
+
   if (now - lastBackupSyncMs < BACKUP_SYNC_INTERVAL_MS) return;
   lastBackupSyncMs = now;
 
@@ -226,11 +264,36 @@ async function runScheduledBackupSync(): Promise<void> {
     const ok = results.filter((r) => r.status === "ok").length;
     const failed = results.filter((r) => r.status === "error");
     logger.info({ ok, total: results.length }, "[scheduler] Backup sync complete");
+
     if (failed.length > 0) {
       logger.warn({ failed }, "[scheduler] Some backup targets failed to sync");
     }
+
+    // If ALL configured targets failed, count as a full failure for circuit breaker
+    const configured = results.filter((r) => r.status !== "skipped");
+    if (configured.length > 0 && ok === 0) {
+      backupConsecutiveFailures += 1;
+      if (backupConsecutiveFailures >= BACKUP_CIRCUIT_OPEN_AFTER) {
+        backupCircuitOpenSince = Date.now();
+        logger.error(
+          { failures: backupConsecutiveFailures, cooldownHours: BACKUP_CIRCUIT_COOLDOWN_MS / 3_600_000 },
+          "[scheduler] Backup sync circuit OPENED — too many consecutive full failures; check DB quota",
+        );
+      }
+    } else {
+      // Partial or full success — reset failure counter
+      if (backupConsecutiveFailures > 0) {
+        logger.info("[scheduler] Backup sync recovered — resetting failure counter");
+      }
+      backupConsecutiveFailures = 0;
+    }
   } catch (err) {
-    logger.warn({ err }, "[scheduler] Backup sync failed");
+    backupConsecutiveFailures += 1;
+    logger.warn({ err, failures: backupConsecutiveFailures }, "[scheduler] Backup sync threw unexpectedly");
+    if (backupConsecutiveFailures >= BACKUP_CIRCUIT_OPEN_AFTER) {
+      backupCircuitOpenSince = Date.now();
+      logger.error("[scheduler] Backup sync circuit OPENED after repeated exceptions");
+    }
   }
 }
 

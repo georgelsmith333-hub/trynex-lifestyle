@@ -18,18 +18,24 @@ const SHOP_CATEGORIES = [
   { label: "Hoodies", href: "/products?category=hoodies", emoji: "🧥" },
   { label: "Caps", href: "/products?category=caps", emoji: "🧢" },
   { label: "Mugs", href: "/products?category=mugs", emoji: "☕" },
+  { label: "Gift Hampers", href: "/hampers", emoji: "🎁" },
   { label: "Design Studio", href: "/design-studio", emoji: "🎨" },
 ];
 
-const MORE_LINKS = [
-  { label: "About Us", href: "/about", emoji: "💫" },
-  { label: "Contact Us", href: "/contact", emoji: "💬" },
+const HELP_LINKS = [
   { label: "FAQ", href: "/faq", emoji: "❓" },
   { label: "Size Guide", href: "/size-guide", emoji: "📏" },
+  { label: "Track Order", href: "/track", emoji: "📦" },
+  { label: "Return Policy", href: "/return-policy", emoji: "🔄" },
+  { label: "Contact Us", href: "/contact", emoji: "💬" },
+];
+
+const COMPANY_LINKS = [
+  { label: "About Us", href: "/about", emoji: "💫" },
+  { label: "Blog", href: "/blog", emoji: "📝" },
   { label: "Referral Program", href: "/referral", emoji: "🎁" },
   { label: "Terms of Service", href: "/terms-of-service", emoji: "📄" },
   { label: "Privacy Policy", href: "/privacy-policy", emoji: "🔒" },
-  { label: "Return Policy", href: "/return-policy", emoji: "🔄" },
 ];
 
 const TRENDING_SEARCHES = [
@@ -67,7 +73,8 @@ export function Navbar() {
   const { customer, isAuthenticated, logout } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [shopOpen, setShopOpen] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const [companyOpen, setCompanyOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -103,7 +110,8 @@ export function Navbar() {
   useEffect(() => {
     setMobileOpen(false);
     setShopOpen(false);
-    setMoreOpen(false);
+    setHelpOpen(false);
+    setCompanyOpen(false);
     setProfileOpen(false);
     setSearchOpen(false);
     setDesktopSearchFocused(false);
@@ -300,10 +308,8 @@ export function Navbar() {
     { href: "/", label: "Home" },
     { href: "/products", label: "Shop", dropdown: true },
     { href: "/design-studio", label: "Customize", badge: "NEW" as const },
-    { href: "/hampers", label: "Gift Hampers" },
-    { href: "/blog", label: "Blog" },
-    { href: "/track", label: "Track Order" },
-    { href: "/about", label: "More", moreDropdown: true },
+    { href: "/faq", label: "Help", helpDropdown: true },
+    { href: "/about", label: "Company", companyDropdown: true },
   ];
 
   return (
@@ -394,34 +400,75 @@ export function Navbar() {
                     )}
                   </AnimatePresence>
                 </div>
-              ) : link.moreDropdown ? (
+              ) : link.helpDropdown ? (
                 <div
-                  key="more-dropdown"
+                  key="help-dropdown"
                   className="relative"
-                  onMouseEnter={() => setMoreOpen(true)}
-                  onMouseLeave={() => setMoreOpen(false)}
+                  onMouseEnter={() => setHelpOpen(true)}
+                  onMouseLeave={() => setHelpOpen(false)}
                 >
                   <button
                     className={cn(
                       "flex items-center gap-1 px-4 py-2 rounded-full font-semibold text-[0.8125rem] transition-all",
-                      ["/about", "/contact", "/faq", "/size-guide", "/referral", "/terms-of-service", "/privacy-policy", "/return-policy"].includes(location)
+                      ["/faq", "/size-guide", "/track", "/return-policy", "/contact"].includes(location)
                         ? "text-orange-600 bg-orange-50"
                         : "text-gray-600 hover:text-orange-600 hover:bg-orange-50/60"
                     )}
                   >
                     {link.label}
-                    <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200", moreOpen && "rotate-180")} />
+                    <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200", helpOpen && "rotate-180")} />
                   </button>
                   <AnimatePresence>
-                    {moreOpen && (
+                    {helpOpen && (
                       <motion.div
                         initial={{ opacity: 0, y: 8, scale: 0.96 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 8, scale: 0.96 }}
                         transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
-                        className="absolute top-full right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden p-1.5 z-50"
+                        className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-52 bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden p-1.5 z-50"
                       >
-                        {MORE_LINKS.map((item) => (
+                        {HELP_LINKS.map((item) => (
+                          <Link
+                            key={item.label}
+                            href={item.href}
+                            className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[0.8125rem] font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                          >
+                            <span className="text-base">{item.emoji}</span>
+                            {item.label}
+                          </Link>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ) : link.companyDropdown ? (
+                <div
+                  key="company-dropdown"
+                  className="relative"
+                  onMouseEnter={() => setCompanyOpen(true)}
+                  onMouseLeave={() => setCompanyOpen(false)}
+                >
+                  <button
+                    className={cn(
+                      "flex items-center gap-1 px-4 py-2 rounded-full font-semibold text-[0.8125rem] transition-all",
+                      ["/about", "/blog", "/referral", "/terms-of-service", "/privacy-policy"].includes(location)
+                        ? "text-orange-600 bg-orange-50"
+                        : "text-gray-600 hover:text-orange-600 hover:bg-orange-50/60"
+                    )}
+                  >
+                    {link.label}
+                    <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200", companyOpen && "rotate-180")} />
+                  </button>
+                  <AnimatePresence>
+                    {companyOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                        transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
+                        className="absolute top-full right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden p-1.5 z-50"
+                      >
+                        {COMPANY_LINKS.map((item) => (
                           <Link
                             key={item.label}
                             href={item.href}
@@ -914,7 +961,7 @@ export function Navbar() {
                 </button>
               </form>
 
-              {navLinks.filter(l => !l.moreDropdown).map((link) => (
+              {navLinks.filter(l => !l.helpDropdown && !l.companyDropdown).map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -937,10 +984,20 @@ export function Navbar() {
                   )}
                 </Link>
               ))}
-              {/* More section in mobile */}
+              {/* Help section in mobile */}
               <div className="pt-2 border-t border-gray-100 mt-1">
-                <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-4 mb-1">More</div>
-                {MORE_LINKS.slice(0, 4).map((item) => (
+                <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-4 mb-1">Help</div>
+                {HELP_LINKS.map((item) => (
+                  <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-3 px-4 py-2.5 rounded-2xl font-semibold text-[0.875rem] text-gray-700 hover:text-orange-600 hover:bg-orange-50 transition-all">
+                    <span>{item.emoji}</span>{item.label}
+                  </Link>
+                ))}
+              </div>
+              {/* Company section in mobile */}
+              <div className="pt-2 border-t border-gray-100 mt-1">
+                <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-4 mb-1">Company</div>
+                {COMPANY_LINKS.map((item) => (
                   <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)}
                     className="flex items-center gap-3 px-4 py-2.5 rounded-2xl font-semibold text-[0.875rem] text-gray-700 hover:text-orange-600 hover:bg-orange-50 transition-all">
                     <span>{item.emoji}</span>{item.label}

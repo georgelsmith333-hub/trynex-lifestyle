@@ -3,8 +3,15 @@ import { db, ordersTable, productsTable, categoriesTable, settingsTable, blogPos
 import { desc, sql } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { runBackupSync } from "../lib/dbBackupSync";
+import { getBackupSyncStatus } from "../lib/scheduler";
 
 const router: IRouter = Router();
+
+/** Returns the current DB sync circuit-breaker state so the admin dashboard
+ *  can surface it without digging through server logs. */
+router.get("/admin/backup/sync-status", requireAdmin, (req, res) => {
+  res.json(getBackupSyncStatus());
+});
 
 /**
  * Mirrors Neon Main into every configured backup/shard database right now

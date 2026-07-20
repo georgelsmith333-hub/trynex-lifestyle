@@ -3333,16 +3333,19 @@ export default function DesignStudio() {
                     onKeyDown={(e) => e.key === "Enter" && fileInputRef.current?.click()}
                     aria-label="Upload image"
                   >
-                    {/* Subtle dashed print-zone hint at top */}
+                    {/* Upload zone hint — centered on the print zone, matches reference screenshots */}
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <div className="flex flex-col items-center gap-1 opacity-70">
+                      <div className="flex flex-col items-center gap-2 px-5 py-4 rounded-2xl"
+                        style={{ background: "rgba(255,255,255,0.88)", border: "2px dashed rgba(232,93,4,0.45)", backdropFilter: "blur(6px)", boxShadow: "0 2px 16px rgba(0,0,0,0.08)" }}>
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-                          style={{ background: "rgba(232,93,4,0.15)", border: "1.5px dashed rgba(232,93,4,0.6)" }}>
+                          style={{ background: "rgba(232,93,4,0.12)" }}>
                           <Upload className="w-5 h-5 text-orange-500" />
                         </div>
-                        <span className="text-[10px] font-bold text-orange-500 bg-white/80 px-2 py-0.5 rounded-full" style={{ backdropFilter: "blur(4px)" }}>
-                          Tap to add design
-                        </span>
+                        <div className="text-center">
+                          <div className="text-[13px] font-black text-gray-800 leading-tight">Upload Your Design</div>
+                          <div className="text-[10px] font-semibold text-gray-400 mt-0.5">JPG or PNG · Max 10MB</div>
+                          <div className="text-[10px] font-medium text-gray-400">or drag &amp; drop here</div>
+                        </div>
                       </div>
                     </div>
                     {/* Action buttons — compact pill row at bottom, glass style */}

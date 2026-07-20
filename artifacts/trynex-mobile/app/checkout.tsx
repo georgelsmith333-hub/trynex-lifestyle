@@ -4,7 +4,6 @@ import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -19,6 +18,13 @@ import { useColors } from "@/hooks/useColors";
 import { useCart } from "@/context/CartContext";
 import { api } from "@/lib/api";
 
+// Major districts for quick-select chips (most common delivery destinations)
+const MAJOR_DISTRICTS = [
+  "Dhaka","Chittagong","Rajshahi","Khulna","Sylhet","Barisal","Rangpur","Mymensingh",
+  "Gazipur","Narayanganj","Comilla","Cox's Bazar",
+];
+
+// Full list used for text-input validation/autocomplete
 const BD_DISTRICTS = [
   "Dhaka","Chittagong","Rajshahi","Khulna","Sylhet","Barisal","Rangpur","Mymensingh",
   "Comilla","Narayanganj","Gazipur","Narsingdi","Munshiganj","Manikganj","Tangail",
@@ -26,7 +32,7 @@ const BD_DISTRICTS = [
   "Lakshmipur","Feni","Noakhali","Cox's Bazar","Bandarban","Rangamati","Khagrachhari",
   "Jessore","Satkhira","Bagerhat","Narail","Magura","Jhenaidah","Kushtia","Meherpur",
   "Chuadanga","Pabna","Sirajganj","Bogra","Joypurhat","Chapainawabganj","Naogaon",
-  "Natore","Rajshahi","Dinajpur","Thakurgaon","Panchagarh","Nilphamari","Lalmonirhat",
+  "Natore","Dinajpur","Thakurgaon","Panchagarh","Nilphamari","Lalmonirhat",
   "Kurigram","Gaibandha","Habiganj","Sunamganj","Moulvibazar","Pirojpur","Bhola",
   "Patuakhali","Barguna","Jhalokathi","Madaripur","Gopalganj","Shariatpur",
 ];
@@ -58,6 +64,9 @@ export default function CheckoutScreen() {
   const [district, setDistrict] = useState("Dhaka");
   const [thana, setThana] = useState("");
   const [notes, setNotes] = useState("");
+
+  // Inline field validation errors — avoids Alert popups which feel jarring on mobile
+  const [fieldErrors, setFieldErrors] = useState<{ name?: string; phone?: string; address?: string }>({});
 
   const [promoInput, setPromoInput] = useState("");
   const [promoLoading, setPromoLoading] = useState(false);
@@ -92,9 +101,16 @@ export default function CheckoutScreen() {
   };
 
   const validateStep1 = () => {
-    if (!name.trim()) { Alert.alert("Missing Info", "Please enter your full name"); return false; }
-    if (!phone.trim() || phone.replace(/\D/g, "").length < 10) { Alert.alert("Missing Info", "Please enter a valid phone number"); return false; }
-    if (!address.trim()) { Alert.alert("Missing Info", "Please enter your delivery address"); return false; }
+    const errs: typeof fieldErrors = {};
+    if (!name.trim()) errs.name = "Please enter your full name";
+    if (!phone.trim() || phone.replace(/\D/g, "").length < 10) errs.phone = "Enter a valid 11-digit phone number";
+    if (!address.trim()) errs.address = "Please enter your delivery address";
+    if (Object.keys(errs).length > 0) {
+      setFieldErrors(errs);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      return false;
+    }
+    setFieldErrors({});
     return true;
   };
 
@@ -134,7 +150,7 @@ export default function CheckoutScreen() {
       setStep("success");
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (err: any) {
-      Alert.alert("Order Failed", err.message || "Something went wrong. Please try again.");
+      setFieldErrors({ name: err.message || "Something went wrong. Please try again." });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     } finally {
       setLoading(false);
@@ -225,25 +241,27 @@ export default function CheckoutScreen() {
 
               <Text style={[styles.label, { color: colors.mutedForeground }]}>Full Name *</Text>
               <TextInput
-                style={[styles.input, { color: colors.foreground, backgroundColor: colors.card, borderColor: colors.border }]}
+                style={[styles.input, { color: colors.foreground, backgroundColor: colors.card, borderColor: fieldErrors.name ? "#ef4444" : colors.border }]}
                 value={name}
-                onChangeText={setName}
+                onChangeText={(v) => { setName(v); if (fieldErrors.name) setFieldErrors(e => ({ ...e, name: undefined })); }}
                 placeholder="e.g. Ahmed Hasan"
                 placeholderTextColor={colors.mutedForeground}
                 autoCapitalize="words"
                 returnKeyType="next"
               />
+              {fieldErrors.name && <Text style={styles.fieldError}>{fieldErrors.name}</Text>}
 
               <Text style={[styles.label, { color: colors.mutedForeground }]}>Phone Number *</Text>
               <TextInput
-                style={[styles.input, { color: colors.foreground, backgroundColor: colors.card, borderColor: colors.border }]}
+                style={[styles.input, { color: colors.foreground, backgroundColor: colors.card, borderColor: fieldErrors.phone ? "#ef4444" : colors.border }]}
                 value={phone}
-                onChangeText={setPhone}
+                onChangeText={(v) => { setPhone(v); if (fieldErrors.phone) setFieldErrors(e => ({ ...e, phone: undefined })); }}
                 placeholder="01XXXXXXXXX"
                 placeholderTextColor={colors.mutedForeground}
                 keyboardType="phone-pad"
                 returnKeyType="next"
               />
+              {fieldErrors.phone && <Text style={styles.fieldError}>{fieldErrors.phone}</Text>}
 
               <Text style={[styles.label, { color: colors.mutedForeground }]}>Email (optional)</Text>
               <TextInput
@@ -259,20 +277,21 @@ export default function CheckoutScreen() {
 
               <Text style={[styles.label, { color: colors.mutedForeground }]}>Street Address *</Text>
               <TextInput
-                style={[styles.input, styles.textArea, { color: colors.foreground, backgroundColor: colors.card, borderColor: colors.border }]}
+                style={[styles.input, styles.textArea, { color: colors.foreground, backgroundColor: colors.card, borderColor: fieldErrors.address ? "#ef4444" : colors.border }]}
                 value={address}
-                onChangeText={setAddress}
+                onChangeText={(v) => { setAddress(v); if (fieldErrors.address) setFieldErrors(e => ({ ...e, address: undefined })); }}
                 placeholder="House, Road, Area..."
                 placeholderTextColor={colors.mutedForeground}
                 multiline
                 numberOfLines={2}
                 returnKeyType="next"
               />
+              {fieldErrors.address && <Text style={styles.fieldError}>{fieldErrors.address}</Text>}
 
               <Text style={[styles.label, { color: colors.mutedForeground }]}>District *</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 12 }}>
                 <View style={{ flexDirection: "row", gap: 8, paddingVertical: 4 }}>
-                  {["Dhaka", "Chittagong", "Rajshahi", "Sylhet", "Khulna", "Barisal", "Rangpur", "Mymensingh"].map((d) => (
+                  {MAJOR_DISTRICTS.map((d) => (
                     <Pressable
                       key={d}
                       onPress={() => setDistrict(d)}
@@ -558,6 +577,7 @@ const styles = StyleSheet.create({
   textArea: { minHeight: 72, textAlignVertical: "top", paddingTop: 10 },
   districtChip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1 },
   districtChipText: { fontSize: 13, fontFamily: "Inter_500Medium" },
+  fieldError: { fontSize: 11, fontFamily: "Inter_500Medium", color: "#ef4444", marginTop: -8, marginBottom: 8 },
   promoRow: { flexDirection: "row", gap: 8, marginTop: 4 },
   promoInput: {
     flex: 1,

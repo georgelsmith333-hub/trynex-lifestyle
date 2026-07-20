@@ -1,12 +1,19 @@
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { getAuthHeaders, getApiUrl } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Download, Upload, FileSpreadsheet, Database,
-  HardDrive, AlertTriangle, CheckCircle2, Loader2
+  HardDrive, AlertTriangle, CheckCircle2, Loader2, RefreshCw, ShieldAlert, ShieldCheck
 } from "lucide-react";
 import { useImportBackup, getExportBackupUrl, getExportOrdersCsvUrl } from "@workspace/api-client-react";
+
+interface SyncStatus {
+  lastRunMs: number;
+  consecutiveFailures: number;
+  circuitOpen: boolean;
+  circuitOpenSince: number;
+}
 
 export default function AdminBackup() {
   const { toast } = useToast();
@@ -14,8 +21,38 @@ export default function AdminBackup() {
   const [exportingCsv, setExportingCsv] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState<Record<string, number> | null>(null);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus | null>(null);
+  const [syncNowLoading, setSyncNowLoading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const importMutation = useImportBackup();
+
+  useEffect(() => {
+    fetch(getApiUrl("/api/admin/backup/sync-status"), { headers: getAuthHeaders() })
+      .then(r => r.json())
+      .then(d => setSyncStatus(d))
+      .catch(() => {});
+  }, []);
+
+  const handleSyncNow = async () => {
+    setSyncNowLoading(true);
+    try {
+      const res = await fetch(getApiUrl("/api/admin/backup/sync-now"), {
+        method: "POST",
+        headers: getAuthHeaders(),
+      });
+      const data = await res.json();
+      const ok = data.results?.filter((r: any) => r.status === "ok").length ?? 0;
+      const total = data.results?.length ?? 0;
+      toast({ title: "Sync complete", description: `${ok}/${total} targets synced successfully.` });
+      // Refresh status after sync
+      const statusRes = await fetch(getApiUrl("/api/admin/backup/sync-status"), { headers: getAuthHeaders() });
+      setSyncStatus(await statusRes.json());
+    } catch {
+      toast({ title: "Sync failed", description: "Check server logs.", variant: "destructive" });
+    } finally {
+      setSyncNowLoading(false);
+    }
+  };
 
   const handleExportCSV = async () => {
     setExportingCsv(true);
@@ -97,6 +134,69 @@ export default function AdminBackup() {
         </div>
 
         <div className="space-y-6">
+          {/* DB Sync Circuit-Breaker Status */}
+          <div className="p-6 rounded-2xl bg-white border border-gray-100 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+                  style={{ background: syncStatus?.circuitOpen ? '#fef2f2' : '#f0fdf4' }}>
+                  {syncStatus?.circuitOpen
+                    ? <ShieldAlert className="w-5 h-5 text-red-500" />
+                    : <ShieldCheck className="w-5 h-5 text-green-600" />}
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900">DB Sync Status</h3>
+                  <p className="text-xs text-gray-500">Auto-mirrors every 30 min to backup databases</p>
+                </div>
+              </div>
+              <button
+                onClick={handleSyncNow}
+                disabled={syncNowLoading}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs border transition-all hover:-translate-y-0.5 disabled:opacity-50"
+                style={{ background: '#f9fafb', borderColor: '#e5e7eb', color: '#374151' }}
+              >
+                {syncNowLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+                Sync Now
+              </button>
+            </div>
+            {syncStatus ? (
+              <div className="grid grid-cols-3 gap-3">
+                <div className="p-3 rounded-xl text-center" style={{ background: '#f9fafb' }}>
+                  <div className={`text-base font-black ${syncStatus.circuitOpen ? 'text-red-600' : 'text-green-600'}`}>
+                    {syncStatus.circuitOpen ? 'OPEN' : 'Closed'}
+                  </div>
+                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Circuit</div>
+                </div>
+                <div className="p-3 rounded-xl text-center" style={{ background: '#f9fafb' }}>
+                  <div className={`text-base font-black ${syncStatus.consecutiveFailures > 0 ? 'text-amber-600' : 'text-green-600'}`}>
+                    {syncStatus.consecutiveFailures}
+                  </div>
+                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Failures</div>
+                </div>
+                <div className="p-3 rounded-xl text-center" style={{ background: '#f9fafb' }}>
+                  <div className="text-base font-black text-gray-800">
+                    {syncStatus.lastRunMs > 0
+                      ? `${Math.round((Date.now() - syncStatus.lastRunMs) / 60000)}m ago`
+                      : '—'}
+                  </div>
+                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Last Run</div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 text-sm text-gray-400">
+                <Loader2 className="w-4 h-4 animate-spin" /> Loading sync status…
+              </div>
+            )}
+            {syncStatus?.circuitOpen && (
+              <div className="mt-3 flex items-center gap-2 p-3 rounded-xl" style={{ background: '#fef2f2', border: '1px solid #fecaca' }}>
+                <AlertTriangle className="w-4 h-4 text-red-500 shrink-0" />
+                <p className="text-xs text-red-700 font-medium">
+                  Circuit breaker is open — backup sync paused for 2 hours after {syncStatus.consecutiveFailures} consecutive failures.
+                  Check DB quota or connection. Click "Sync Now" after the cooldown to retry.
+                </p>
+              </div>
+            )}
+          </div>
           <div className="p-6 rounded-2xl bg-white border border-gray-100 shadow-sm">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: '#eff6ff' }}>

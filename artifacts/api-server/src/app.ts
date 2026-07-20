@@ -268,6 +268,29 @@ app.use("/api/blog", publicReadLimiter);
 app.use("/api/reviews", publicReadLimiter);
 app.post("/api/reviews", reviewSubmitLimiter);
 
+// AI generation: expensive inference endpoints — tight limit prevents abuse and cost spikes.
+// 10 requests / 5 min per IP is generous for a design session; a bulk abuser would hit it fast.
+const aiLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "rate_limited", message: "Too many AI generation requests. Please wait a few minutes." },
+});
+app.use("/api/ai", aiLimiter);
+app.use("/api/admin/ai", aiLimiter);
+
+// Storage / upload: prevent bulk upload abuse. 30 uploads / 10 min per IP.
+const uploadLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "rate_limited", message: "Too many uploads from this network. Please wait a few minutes." },
+});
+app.use("/api/storage", uploadLimiter);
+app.use("/api/upload", uploadLimiter);
+
 app.use("/api", (_req, res, next) => {
   const url = _req.originalUrl;
 

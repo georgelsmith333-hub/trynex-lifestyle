@@ -46,11 +46,6 @@ const SIZE_GUIDE = [
   { size: "3XL", chest: "46-48", length: "32", sleeve: "37" },
 ];
 
-const REVIEW_SAMPLES = [
-  { name: "Rakib H.", rating: 5, text: "Amazing quality! The print is sharp and fabric is premium. Delivery was super fast.", date: "2 days ago", location: "Dhaka" },
-  { name: "Priya M.", rating: 5, text: "Exactly what I ordered. The color is vibrant and the stitching is perfect.", date: "1 week ago", location: "Chittagong" },
-  { name: "Tanvir A.", rating: 4, text: "Good quality product. Would recommend TryNex to everyone!", date: "2 weeks ago", location: "Sylhet" },
-];
 
 function ReviewsSection({ productId, rating }: { productId: number; rating: number }) {
   const [reviews, setReviews] = useState<any[]>([]);
@@ -631,13 +626,27 @@ export default function ProductDetail() {
               "itemCondition": "https://schema.org/NewCondition",
               "seller": { "@type": "Organization", "name": "TryNex Lifestyle" }
             },
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": stats?.average || product.rating || 4.9,
-              "reviewCount": stats?.total || 10,
-              "bestRating": "5",
-              "worstRating": "1"
-            }
+            ...(stats?.total > 0
+              ? {
+                  "aggregateRating": {
+                    "@type": "AggregateRating",
+                    "ratingValue": stats.average,
+                    "reviewCount": stats.total,
+                    "bestRating": "5",
+                    "worstRating": "1",
+                  },
+                }
+              : product.rating && product.rating > 0
+              ? {
+                  "aggregateRating": {
+                    "@type": "AggregateRating",
+                    "ratingValue": product.rating,
+                    "reviewCount": product.reviewCount ?? 1,
+                    "bestRating": "5",
+                    "worstRating": "1",
+                  },
+                }
+              : {})
           },
           {
             "@context": "https://schema.org",
@@ -879,7 +888,9 @@ export default function ProductDetail() {
                   ))}
                 </div>
                 <span className="font-bold text-sm text-gray-700">{rating}</span>
-                <span className="text-sm text-gray-400">(128 reviews)</span>
+                {stats?.total > 0 && (
+                  <span className="text-sm text-gray-400">({stats.total} review{stats.total !== 1 ? "s" : ""})</span>
+                )}
               </div>
 
               {/* Price */}
