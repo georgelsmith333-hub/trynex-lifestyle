@@ -38,12 +38,16 @@ const BD_DISTRICTS = [
   "Patuakhali","Barguna","Jhalokathi","Madaripur","Gopalganj","Shariatpur",
 ];
 
-const PAYMENT_METHODS = [
-  { value: "cod", label: "Cash on Delivery", icon: "dollar-sign", desc: "Pay when you receive" },
-  { value: "bkash", label: "bKash", icon: "smartphone", desc: "01XXXXXXXXX (Personal)" },
-  { value: "nagad", label: "Nagad", icon: "smartphone", desc: "01XXXXXXXXX (Personal)" },
-  { value: "bank", label: "Bank Transfer", icon: "credit-card", desc: "Contact us for details" },
-];
+const PAYMENT_METHODS = (siteSettings?: Record<string, string> | null) => {
+  const bkash = siteSettings?.bkashNumber || "01XXXXXXXXX";
+  const nagad = siteSettings?.nagadNumber || siteSettings?.bkashNumber || "01XXXXXXXXX";
+  return [
+    { value: "cod", label: "Cash on Delivery", icon: "dollar-sign", desc: "Pay when you receive" },
+    { value: "bkash", label: "bKash", icon: "smartphone", desc: `${bkash} (Personal)` },
+    { value: "nagad", label: "Nagad", icon: "smartphone", desc: `${nagad} (Personal)` },
+    { value: "bank", label: "Bank Transfer", icon: "credit-card", desc: "Contact us for details" },
+  ];
+};
 
 function formatPrice(p: number) {
   return "৳" + p.toLocaleString("en-BD");
@@ -90,6 +94,7 @@ export default function CheckoutScreen() {
   const shippingFee = Number(siteSettings?.shippingCost ?? 60);
   const bkashNumber = siteSettings?.bkashNumber || "01XXXXXXXXX";
   const nagadNumber = siteSettings?.nagadNumber || siteSettings?.bkashNumber || "01XXXXXXXXX";
+  const paymentOptions = PAYMENT_METHODS(siteSettings);
 
   const shipping = subtotal >= freeShippingThreshold ? 0 : shippingFee;
   const total = Math.max(0, subtotal + shipping - promoDiscount);
@@ -392,7 +397,7 @@ export default function CheckoutScreen() {
           {step === "payment" && (
             <View style={styles.section}>
               <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Payment Method</Text>
-              {PAYMENT_METHODS.map((m) => (
+              {paymentOptions.map((m) => (
                 <Pressable
                   key={m.value}
                   onPress={() => { setPaymentMethod(m.value); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
@@ -449,7 +454,7 @@ export default function CheckoutScreen() {
                 </View>
                 <View style={styles.summaryRow}>
                   <Text style={[styles.summaryLabel, { color: colors.mutedForeground }]}>Payment</Text>
-                  <Text style={[styles.summaryValue, { color: colors.foreground }]}>{PAYMENT_METHODS.find(m => m.value === paymentMethod)?.label}</Text>
+                  <Text style={[styles.summaryValue, { color: colors.foreground }]}>{paymentOptions.find(m => m.value === paymentMethod)?.label}</Text>
                 </View>
               </View>
 

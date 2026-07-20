@@ -4855,7 +4855,8 @@ export default function DesignStudio() {
 
             {(() => {
               const subtotal = quantity * studioPrice;
-              const freeShip = subtotal >= 1500;
+              const threshold = settings.freeShippingThreshold || 1500;
+              const freeShip = threshold > 0 && subtotal >= threshold;
               return (
                 <div className="text-center text-xs space-y-0.5">
                   {!isMug && !isCap && !isWaterBottle && (
@@ -4866,7 +4867,9 @@ export default function DesignStudio() {
                   <div className={freeShip ? "text-green-600 font-bold" : "text-gray-400"}>
                     {freeShip
                       ? "✓ Free shipping included!"
-                      : `Add ৳${(1500 - subtotal).toLocaleString()} more for free shipping`}
+                      : threshold > 0
+                      ? `Add ৳${(threshold - subtotal).toLocaleString()} more for free shipping`
+                      : `Shipping: ৳${settings.shippingCost?.toLocaleString?.() ?? "--"}`}
                   </div>
                 </div>
               );
