@@ -866,9 +866,9 @@ export default function DesignStudio() {
   //   waterbottle → procedural tumbler shape with wrap texture
   //   hoodie / longsleeve / cap → real product PHOTO as 3D billboard (photorealistic)
   // Only flat template zones (sleeve/neck) have no 3D equivalent.
-  // 3D mode is only available on desktop and for non-flat zones.
+  // 3D mode is available on all devices that support WebGL2, not just desktop.
   // When a flat zone (sleeve/neck) is active, automatically force back to 2D.
-  const effectiveSupports3D = supports3D && !isFlatZone && !isMobile;
+  const effectiveSupports3D = supports3D && !isFlatZone;
   // Auto-switch to 2D when navigating to a flat zone in 3D mode
   useEffect(() => {
     if (isFlatZone && viewMode === "3d") setViewMode("2d");
