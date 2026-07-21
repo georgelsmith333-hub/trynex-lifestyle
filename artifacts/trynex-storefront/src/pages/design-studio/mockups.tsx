@@ -137,20 +137,20 @@ export interface DesignProduct {
 ──────────────────────────────────────────────────────── */
 export const TSHIRT_PZ: PrintZone           = { x: 240, y: 185, w: 520, h: 580 };
 export const TSHIRT_BACK_PZ: PrintZone      = { x: 240, y: 185, w: 520, h: 580 };
-export const LONGSLEEVE_PZ: PrintZone       = { x: 310, y: 228, w: 380, h: 400 };
+export const LONGSLEEVE_PZ: PrintZone       = { x: 312, y: 222, w: 376, h: 404 };
 export const LONGSLEEVE_BACK_PZ: PrintZone  = { x: 292, y: 195, w: 416, h: 458 };
 /** Hoodie front — stops at ~y=528 to clear the kangaroo pocket (pocket starts ~y=565). */
-export const HOODIE_PZ: PrintZone           = { x: 240, y: 195, w: 520, h: 510 };
+export const HOODIE_PZ: PrintZone           = { x: 240, y: 222, w: 520, h: 470 };
 export const HOODIE_BACK_PZ: PrintZone      = { x: 292, y: 184, w: 416, h: 448 };
 /** Cap front panel — structured 5-panel cap, panel is centred between brim and seam. */
-export const CAP_PZ: PrintZone              = { x: 300, y: 230, w: 400, h: 240 };
-export const MUG_PZ: PrintZone              = { x: 120, y: 210, w: 760, h: 420 };
+export const CAP_PZ: PrintZone              = { x: 302, y: 222, w: 396, h: 252 };
+export const MUG_PZ: PrintZone              = { x: 126, y: 208, w: 748, h: 434 };
 /** Mug side — printable area on the cylindrical side face, clear of rim band and base ring. */
-export const MUG_SIDE_PZ: PrintZone         = { x: 192, y: 248, w: 410, h: 472 };
+export const MUG_SIDE_PZ: PrintZone         = { x: 206, y: 250, w: 322, h: 426 };
 /** Water bottle — printable front label panel on the cylindrical body.
  *  Calibrated to the real 600ml aluminium carabiner bottle (1600×1600 PNG).
  *  Content spans x:[336–660] centre≈498; shoulder ends ~y=268, base band ~y=850. */
-export const WATERBOTTLE_PZ: PrintZone      = { x: 330, y: 180, w: 340, h: 560 };
+export const WATERBOTTLE_PZ: PrintZone      = { x: 308, y: 214, w: 384, h: 548 };
 /** Sleeve print area — roughly square (1228×1087px real-world ratio). */
 export const SLEEVE_PZ: PrintZone           = { x: 175, y: 175, w: 650, h: 650 };
 /** Neck label — wider than tall (1299×945px real-world ratio). */
