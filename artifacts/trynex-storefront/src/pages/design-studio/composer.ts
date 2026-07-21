@@ -183,23 +183,28 @@ function drawImageCurved(
   h: number,
   curvature: number,
 ) {
-  const STRIPS = 48;
+  const STRIPS = 80;
   const stripW = w / STRIPS;
+  const curve = Math.max(0, curvature);
+  const pinchStrength = Math.min(0.62, 0.34 + curve * 1.9);
+  const bowStrength = 0.05 + curve * 0.22;
+  const edgeShadeStrength = 1.1 + curve * 4.2;
   for (let i = 0; i < STRIPS; i++) {
     // u ranges -0.5 (left edge) .. 0 (centre) .. 0.5 (right edge)
     const u = (i + 0.5) / STRIPS - 0.5;
     const u2 = 2 * u; // -1..1
     const edgeFactor = Math.abs(u2); // 0..1
+    const edgeCurve = Math.pow(edgeFactor, 1.85);
 
     // Cylindrical pinch: edge strips become narrower (foreshortening).
-    const pinch = Math.cos(u2 * Math.PI / 2);
-    const renderStripW = stripW * (0.55 + 0.45 * pinch);
+    const pinch = Math.pow(Math.cos(u2 * Math.PI / 2), 1.55);
+    const renderStripW = stripW * (1 - pinchStrength * edgeCurve) * (0.98 + 0.02 * pinch);
 
     // Barrel bow: centre sits closest to camera; edges drop away.
-    const bow = (1 - Math.cos((u2 * Math.PI) / 2)) * h * curvature * 0.42;
+    const bow = (1 - Math.cos((u2 * Math.PI) / 2)) * h * curve * bowStrength;
 
     // Edge darkening: surface curving away catches less light.
-    const shade = 1 - edgeFactor * curvature * 1.4;
+    const shade = 1 - Math.min(0.62, Math.pow(edgeFactor, 1.2) * edgeShadeStrength);
 
     // Source x keeps the original proportions; we take slightly wider source
     // strips at the edges so the compressed pixels still map correctly.
@@ -208,24 +213,38 @@ function drawImageCurved(
     const dx0 = -w / 2 + i * stripW + (stripW - renderStripW) * 0.5;
 
     ctx.save();
-    ctx.filter = shade < 1 ? `brightness(${Math.max(0.55, shade) * 100}%)` : "none";
+    ctx.filter = `brightness(${Math.max(0.36, shade) * 100}%)`;
     ctx.drawImage(
       img,
       sx0, 0, sw, img.naturalHeight,
-      dx0, -h / 2 + bow, renderStripW + 0.6, h,
+      dx0, -h / 2 + bow, Math.max(0.4, renderStripW + 0.6), h,
     );
     ctx.restore();
   }
 
   // Soft vertical highlight down the centre — glossy ceramic/metal reflection.
-  const grad = ctx.createLinearGradient(-w * 0.15, 0, w * 0.15, 0);
+  const grad = ctx.createLinearGradient(-w * 0.22, 0, w * 0.22, 0);
   grad.addColorStop(0, "rgba(255,255,255,0)");
-  grad.addColorStop(0.5, "rgba(255,255,255,0.18)");
+  grad.addColorStop(0.5, "rgba(255,255,255,0.22)");
   grad.addColorStop(1, "rgba(255,255,255,0)");
   ctx.save();
   ctx.globalCompositeOperation = "overlay";
   ctx.fillStyle = grad;
-  ctx.fillRect(-w * 0.22, -h / 2, w * 0.44, h);
+  ctx.fillRect(-w * 0.26, -h / 2, w * 0.52, h);
+  ctx.restore();
+
+  const edgeShade = ctx.createLinearGradient(-w / 2, 0, -w * 0.12, 0);
+  edgeShade.addColorStop(0, "rgba(0,0,0,0.34)");
+  edgeShade.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.save();
+  ctx.globalCompositeOperation = "multiply";
+  ctx.fillStyle = edgeShade;
+  ctx.fillRect(-w / 2, -h / 2, w * 0.34, h);
+  const edgeShadeR = ctx.createLinearGradient(w * 0.12, 0, w / 2, 0);
+  edgeShadeR.addColorStop(0, "rgba(0,0,0,0)");
+  edgeShadeR.addColorStop(1, "rgba(0,0,0,0.34)");
+  ctx.fillStyle = edgeShadeR;
+  ctx.fillRect(w * 0.16, -h / 2, w * 0.34, h);
   ctx.restore();
 }
 
@@ -434,28 +453,47 @@ export async function composeGarmentMockup(opts: {
       ctx.rect(printZone.x * s, printZone.y * s, printZone.w * s, printZone.h * s);
       ctx.clip();
 
-      /* ── Premium 3-pass fabric texture blend ──────────────────────────
-         Pass 1 — MULTIPLY at 0.50: garment photo pixels darken the design
-           wherever the fabric has creases, shadow, or woven texture.
-           Pure-white areas of the photo have zero effect (1×dest = dest).
-         Pass 2 — SCREEN at 0.10: lifts the bright studio-light reflections
-           back onto the design so highlights look authentic.
-         Pass 3 — OVERLAY at 0.14: micro-contrast boost that makes the fabric
-           grain feel tactile and separates the print from the substrate.
-         Together these three passes replicate Printful / Printify quality
-         composite output at render time.
-      ─────────────────────────────────────────────────────────────────── */
-      ctx.globalCompositeOperation = "multiply";
-      ctx.globalAlpha = 0.50;
-      ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
+      const isDarkGarment = garmentSrc.includes("black") || garmentSrc.includes("navy") || garmentSrc.includes("maroon") || garmentSrc.includes("forest") || garmentSrc.includes("burgundy");
+      const isMidGarment = garmentSrc.includes("red") || garmentSrc.includes("olive") || garmentSrc.includes("grey") || garmentSrc.includes("skyblue") || garmentSrc.includes("teal") || garmentSrc.includes("pink");
+      const isLightGarment = !isDarkGarment && !isMidGarment;
 
-      ctx.globalCompositeOperation = "screen";
-      ctx.globalAlpha = 0.10;
-      ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
+      if (isLightGarment) {
+        // White/Light base photo: flat areas are near white (255).
+        // Multiply darkens the design using the shadows/creases.
+        // Pure white has no effect. Screen would cause white halos.
+        ctx.globalCompositeOperation = "multiply";
+        ctx.globalAlpha = 0.65;
+        ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
+        
+        ctx.globalCompositeOperation = "linear-burn";
+        ctx.globalAlpha = 0.05;
+        ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
+      } else if (isDarkGarment) {
+        // Dark/Black base photo: flat areas are near black (0-30).
+        // Multiply would black out the design.
+        // Screen lifts the design using the light highlights on the creases.
+        ctx.globalCompositeOperation = "screen";
+        ctx.globalAlpha = 0.45;
+        ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
 
-      ctx.globalCompositeOperation = "overlay";
-      ctx.globalAlpha = 0.14;
-      ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
+        ctx.globalCompositeOperation = "color-dodge";
+        ctx.globalAlpha = 0.15;
+        ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
+      } else {
+        // Mid-tone base photo (Red, Grey, etc.)
+        // Has both distinct shadows and highlights.
+        ctx.globalCompositeOperation = "multiply";
+        ctx.globalAlpha = 0.40;
+        ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
+
+        ctx.globalCompositeOperation = "screen";
+        ctx.globalAlpha = 0.25;
+        ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
+        
+        ctx.globalCompositeOperation = "overlay";
+        ctx.globalAlpha = 0.15;
+        ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
+      }
 
       ctx.restore();
     } catch {}

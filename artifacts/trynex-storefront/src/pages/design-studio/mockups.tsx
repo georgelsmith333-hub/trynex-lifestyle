@@ -47,8 +47,8 @@ const capFront             = "/mockups/white-cap-front.png";
 const capFrontCutout       = "/mockups/white-cap-front-cutout.png";
 const waterBottleFront          = "/mockups/white-waterbottle-front.png";
 const waterBottleCutout         = "/mockups/white-waterbottle-front-cutout.png";
-const tshirtFrontDarkCutout     = "/mockups/black-tshirt-front-cutout.png";
-const tshirtBackDarkCutout      = "/mockups/black-tshirt-back-cutout.png";
+const tshirtFrontDarkCutout     = "/mockups/new/black-tshirt-front-cutout.png";
+const tshirtBackDarkCutout      = "/mockups/new/black-tshirt-back-cutout.png";
 const hoodieFrontDarkCutout     = "/mockups/black-hoodie-front-cutout-real.png";
 const hoodieBackDarkCutout      = "/mockups/black-hoodie-back-cutout-real.png";
 
@@ -137,20 +137,20 @@ export interface DesignProduct {
 ──────────────────────────────────────────────────────── */
 export const TSHIRT_PZ: PrintZone           = { x: 240, y: 185, w: 520, h: 580 };
 export const TSHIRT_BACK_PZ: PrintZone      = { x: 240, y: 185, w: 520, h: 580 };
-export const LONGSLEEVE_PZ: PrintZone       = { x: 310, y: 228, w: 380, h: 400 };
+export const LONGSLEEVE_PZ: PrintZone       = { x: 312, y: 222, w: 376, h: 404 };
 export const LONGSLEEVE_BACK_PZ: PrintZone  = { x: 292, y: 195, w: 416, h: 458 };
 /** Hoodie front — stops at ~y=528 to clear the kangaroo pocket (pocket starts ~y=565). */
-export const HOODIE_PZ: PrintZone           = { x: 240, y: 195, w: 520, h: 510 };
+export const HOODIE_PZ: PrintZone           = { x: 240, y: 222, w: 520, h: 470 };
 export const HOODIE_BACK_PZ: PrintZone      = { x: 292, y: 184, w: 416, h: 448 };
 /** Cap front panel — structured 5-panel cap, panel is centred between brim and seam. */
-export const CAP_PZ: PrintZone              = { x: 300, y: 230, w: 400, h: 240 };
-export const MUG_PZ: PrintZone              = { x: 120, y: 210, w: 760, h: 420 };
+export const CAP_PZ: PrintZone              = { x: 302, y: 222, w: 396, h: 252 };
+export const MUG_PZ: PrintZone              = { x: 126, y: 208, w: 748, h: 434 };
 /** Mug side — printable area on the cylindrical side face, clear of rim band and base ring. */
-export const MUG_SIDE_PZ: PrintZone         = { x: 192, y: 248, w: 410, h: 472 };
+export const MUG_SIDE_PZ: PrintZone         = { x: 206, y: 250, w: 322, h: 426 };
 /** Water bottle — printable front label panel on the cylindrical body.
  *  Calibrated to the real 600ml aluminium carabiner bottle (1600×1600 PNG).
  *  Content spans x:[336–660] centre≈498; shoulder ends ~y=268, base band ~y=850. */
-export const WATERBOTTLE_PZ: PrintZone      = { x: 330, y: 180, w: 340, h: 560 };
+export const WATERBOTTLE_PZ: PrintZone      = { x: 308, y: 214, w: 384, h: 548 };
 /** Sleeve print area — roughly square (1228×1087px real-world ratio). */
 export const SLEEVE_PZ: PrintZone           = { x: 175, y: 175, w: 650, h: 650 };
 /** Neck label — wider than tall (1299×945px real-world ratio). */
@@ -521,12 +521,29 @@ export function GarmentSVG({
   return (
     <>
       <defs>
-        {/* Drop shadow — crisp silhouette lift on the dark studio canvas.
+        {/* Drop shadow — crisp silhouette lift on the white studio canvas.
             Applied only to cutout (transparent) images, not full opaque photos. */}
-        <filter id="garment-shadow" x="-10%" y="-8%" width="120%" height="120%" colorInterpolationFilters="sRGB">
-          <feDropShadow dx="0" dy="12" stdDeviation="28" floodColor="rgba(0,0,0,0.22)" />
-          <feDropShadow dx="0" dy="4" stdDeviation="10"  floodColor="rgba(0,0,0,0.14)" />
+        <filter id="garment-shadow" x="-12%" y="-10%" width="124%" height="124%" colorInterpolationFilters="sRGB">
+          <feDropShadow dx="0" dy="14" stdDeviation="32" floodColor="rgba(0,0,0,0.18)" />
+          <feDropShadow dx="0" dy="5" stdDeviation="12"  floodColor="rgba(0,0,0,0.12)" />
+          <feDropShadow dx="0" dy="1" stdDeviation="3"   floodColor="rgba(0,0,0,0.08)" />
         </filter>
+
+        {/* Fabric grain / subtle noise texture — gives the studio photo a tactile,
+            premium printed-on-fabric feel without overpowering the design. */}
+        <filter id="fabric-grain" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
+          <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch" result="noise" />
+          <feColorMatrix type="matrix" values="0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.06 0" in="noise" result="softNoise" />
+          <feComposite in="softNoise" in2="SourceGraphic" operator="over" />
+        </filter>
+
+        {/* Soft vignette / studio lighting — darkens the corners slightly so the
+            product is the hero and the white canvas doesn't look flat. */}
+        <radialGradient id="studio-vignette" cx="50%" cy="45%" r="75%" fx="50%" fy="40%">
+          <stop offset="0%" stopColor="white" stopOpacity="0" />
+          <stop offset="75%" stopColor="white" stopOpacity="0" />
+          <stop offset="100%" stopColor="rgba(0,0,0,0.06)" stopOpacity="1" />
+        </radialGradient>
 
         {/* ── Colour multiply-tint filter ──────────────────────────────────────
             Applied DIRECTLY to the <image> element (not a separate rect).
@@ -571,10 +588,12 @@ export function GarmentSVG({
         )}
       </defs>
 
-      {/* Studio canvas background — dark for white/coloured garments (they pop with contrast),
-          warm-light for near-black garments rendered via tint path (silhouette visibility).
-          Full opaque dark photos cover this rect entirely, so the colour is irrelevant there. */}
+      {/* Studio canvas background — clean white for all products so the mockup reads
+          as a premium product shot on a light, neutral studio surface. */}
       <rect width={1000} height={1000} fill={canvasBg} style={{ pointerEvents: "none" }} />
+
+      {/* Soft vignette overlay across the whole canvas for subtle studio lighting. */}
+      <rect width={1000} height={1000} fill="url(#studio-vignette)" style={{ pointerEvents: "none" }} />
 
       {/* ── Garment render ────────────────────────────────────────────────────
           COLOURED  → shadow-only pass (behind), then multiply-tinted photo (in front).

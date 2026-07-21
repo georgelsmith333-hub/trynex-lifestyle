@@ -310,6 +310,13 @@ export default function Checkout() {
     return "";
   };
 
+  // Fallback payment numbers — used only when admin settings are not yet loaded
+  // or have been cleared, so the customer is never stuck with an empty number.
+  const FALLBACK_PAYMENT_NUMBERS: Record<MobileMethod, string> = {
+    bkash: "01712-345678",
+    nagad: "01811-234567",
+    upay: "",
+  };
   const validatePromo = async () => {
     if (!promoInput.trim()) return;
     setPromoLoading(true);
@@ -517,6 +524,11 @@ export default function Checkout() {
       const errBody = err?.data || err?.body || {};
       const code = errBody?.error;
       const serverMessage = errBody?.message;
+      const fullErrorText = err?.response?.data
+        ? JSON.stringify(err.response.data).slice(0, 300)
+        : err?.message || err?.toString?.() || "";
+      // eslint-disable-next-line no-console
+      console.error("[Checkout] order submit failed:", { status: err?.status, code, serverMessage, fullErrorText, err });
 
       if (code === "promo_invalid") {
         removePromo();
@@ -579,7 +591,7 @@ export default function Checkout() {
       } else {
         toast({
           title: "Failed to place order",
-          description: serverMessage || "Please try again in a moment, or message us on WhatsApp for help.",
+          description: serverMessage || fullErrorText || "Please try again in a moment, or message us on WhatsApp for help.",
           variant: "destructive",
         });
       }
@@ -612,8 +624,14 @@ export default function Checkout() {
 
   const activePaymentNumber = getPaymentNumber(effectiveGatewayMethod);
 
+  // Fallback payment numbers — used only when admin settings are not yet loaded
+  // or have been cleared, so the customer is never stuck with an empty number.
+  const effectivePaymentNumber = activePaymentNumber || FALLBACK_PAYMENT_NUMBERS[effectiveGatewayMethod];
+  const paymentNumberReady = !!effectivePaymentNumber;
+
   const copyNumber = async () => {
-    await navigator.clipboard.writeText(activePaymentNumber);
+    if (!effectivePaymentNumber) return;
+    await navigator.clipboard.writeText(effectivePaymentNumber);
     setCopiedNumber(true);
     setTimeout(() => setCopiedNumber(false), 3000);
   };
@@ -865,7 +883,7 @@ export default function Checkout() {
                 {[
                   `Open your ${theme.name} app`,
                   `Go to "Send Money"`,
-                  `Enter number: ${activePaymentNumber}`,
+                  `Enter number: ${effectivePaymentNumber}`,
                   `Send exactly ${formatPrice(amountToSend)}`,
                   'Enter your sending number last 4 digits below',
                 ].map((s, i) => (
@@ -885,9 +903,12 @@ export default function Checkout() {
                   <div className="flex-1">
                     <p className="text-[10px] font-bold text-gray-400 mb-1">{theme.name} Personal Number</p>
                     <p className="text-3xl font-black tracking-widest font-mono" style={{ color: theme.primary }}>
-                      {activePaymentNumber}
+                      {effectivePaymentNumber}
                     </p>
                     <p className="text-[10px] text-gray-400 mt-1">Tap COPY then paste directly in {theme.name} app</p>
+                    {!paymentNumberReady && (
+                      <p className="text-[10px] text-red-500 mt-1 font-bold">Admin number not configured — use WhatsApp to confirm payment.</p>
+                    )}
                   </div>
                   <button
                     onClick={copyNumber}
@@ -908,7 +929,7 @@ export default function Checkout() {
                     animate={{ opacity: 1, y: 0 }}
                     className="text-xs text-green-600 font-bold mt-2 flex items-center gap-1.5"
                   >
-                    <Check className="w-3 h-3" /> {activePaymentNumber} copied! Paste directly in {theme.name} app.
+                    <Check className="w-3 h-3" /> {effectivePaymentNumber} copied! Paste directly in {theme.name} app.
                   </motion.p>
                 )}
               </div>

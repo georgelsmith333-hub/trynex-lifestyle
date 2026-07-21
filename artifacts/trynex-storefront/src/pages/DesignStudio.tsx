@@ -389,7 +389,7 @@ export default function DesignStudio() {
   // (Side 1 / Side 2 / Wrap) instead of the apparel "Front / Back" tabs.
   // Side 1 → existing front face data, Side 2 → existing back face data,
   // Wrap   → a virtual "back" face used as a continuous 360° body design.
-  type MugMode = "side1" | "side2";
+  type MugMode = "side1" | "side2" | "wrap";
   const [mugMode, setMugMode] = useState<MugMode>("side1");
 
   const isMugProduct = selectedProduct.category === "mug";
@@ -472,7 +472,10 @@ export default function DesignStudio() {
   const isCanvasZoomed = canvasZoom !== 1 || canvasPan.x !== 0 || canvasPan.y !== 0;
 
   /* ── UI state ──────────────────────────────────────────────── */
-  const [showPrintZone, setShowPrintZone] = useState(true);
+  const [showPrintZone, setShowPrintZone] = useState(() => !isMobile);
+  useEffect(() => {
+    if (isMobile) setShowPrintZone(false);
+  }, [isMobile]);
   const [isRemoving, setIsRemoving] = useState(false);
   const [removeBgPhase, setRemoveBgPhase] = useState<string | null>(null);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
@@ -523,7 +526,7 @@ export default function DesignStudio() {
         setSelectedColor(data.color as { name: string; hex: string });
       }
       if (typeof data.size === "string") setSelectedSize(data.size);
-      if (data.mugMode && ["side1", "side2"].includes(data.mugMode as string)) {
+      if (data.mugMode && ["side1", "side2", "wrap"].includes(data.mugMode as string)) {
         setMugMode(data.mugMode as "side1" | "side2");
       }
       if (data.linkedStoreProductId && data.linkedStoreProductName && data.linkedStoreProductPrice) {
@@ -863,9 +866,9 @@ export default function DesignStudio() {
   //   waterbottle → procedural tumbler shape with wrap texture
   //   hoodie / longsleeve / cap → real product PHOTO as 3D billboard (photorealistic)
   // Only flat template zones (sleeve/neck) have no 3D equivalent.
-  // 3D mode is only available on desktop and for non-flat zones.
+  // 3D mode is available on all devices that support WebGL2, not just desktop.
   // When a flat zone (sleeve/neck) is active, automatically force back to 2D.
-  const effectiveSupports3D = supports3D && !isFlatZone && !isMobile;
+  const effectiveSupports3D = supports3D && !isFlatZone;
   // Auto-switch to 2D when navigating to a flat zone in 3D mode
   useEffect(() => {
     if (isFlatZone && viewMode === "3d") setViewMode("2d");
@@ -899,6 +902,8 @@ export default function DesignStudio() {
   // (navy, maroon, grey, olive, …) designs must use normal/source-over so
   // white and bright colours aren't swallowed by the dark garment.
   const isLightGarment = isLightTint(selectedColor.hex);
+  const isDarkGarment = isNearBlack(selectedColor.hex);
+  const isMidGarment = !isLightGarment && !isDarkGarment;
 
   /* ── Per-product price (used in UI + cart serialisation) ── */
   const studioPrice = useMemo(() => {
@@ -921,12 +926,10 @@ export default function DesignStudio() {
   );
   const otherFaceCount = layers.length - currentFaceLayers.length;
 
-  // Show print-zone outline ONLY when the canvas is empty (no layers on this face).
-  // Once any design is added the zone indicator hides permanently, giving a clean preview.
-  // The zone hint disappears even while a layer is selected so there's no visual clutter.
-  // Always honour the user's Print Zone toggle — the previous condition that hid
-  // the brackets whenever any layer existed made the button non-functional while designing.
-  const effectiveShowPrintZone = showPrintZone;
+  // Show print-zone outline when the user toggles it on, but hide it while a layer
+  // is selected so the selection border is not competing with the print-zone brackets.
+  // Clicking empty canvas deselects the layer and restores the print-zone outline.
+  const effectiveShowPrintZone = showPrintZone && !selectedLayerId && !selectedLayerIdRef.current;
 
   // Print-safe warning: true when any layer on the current face extends meaningfully outside the print zone.
   // A small tolerance (BLEED_TOL) prevents false-positive warnings for layers that are just barely
@@ -1877,6 +1880,59 @@ export default function DesignStudio() {
     }
   }, []);
 
+  // Deselect layer and hide print-zone border when clicking outside the canvas area
+  // (e.g. on the white workspace background). This fixes the issue where the print-zone
+  // border stays visible after the user clicks outside the design area.
+  useEffect(() => {
+    const onDocDown = (e: MouseEvent) => {
+      const svg = svgRef.current;
+      if (!svg) return;
+      const target = e.target as Node;
+      if (!svg.contains(target)) {
+        setSelectedLayerId(null);
+        selectedLayerIdRef.current = null;
+        if (isMobile) setShowPrintZone(false);
+      }
+    };
+    document.addEventListener("mousedown", onDocDown);
+    return () => document.removeEventListener("mousedown", onDocDown);
+  }, [isMobile]);
+
+  // Enable mouse-wheel horizontal scrolling on all horizontal scroll strips in the studio.
+  // On Windows/PC with a mouse, wheel events scroll vertically by default; this converts
+  // the vertical wheel delta into horizontal scroll so users can browse products, zones,
+  // colors and AI style tabs without dragging the scrollbar.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handlers = new Map<Element, (e: WheelEvent) => void>();
+    const attach = (el: Element) => {
+      if (handlers.has(el)) return;
+      const onWheel = (e: WheelEvent) => {
+        const hasVerticalScroll = el.scrollHeight > el.clientHeight;
+        const hasHorizontalScroll = el.scrollWidth > el.clientWidth;
+        if (!hasHorizontalScroll) return;
+        // Only hijack vertical wheel when the element can't scroll vertically or
+        // the wheel is clearly horizontal.
+        if (e.deltaY === 0 || (Math.abs(e.deltaX) > Math.abs(e.deltaY))) return;
+        if (hasVerticalScroll && el.scrollTop > 0 && el.scrollTop < el.scrollHeight - el.clientHeight) return;
+        e.preventDefault();
+        el.scrollLeft += e.deltaY;
+      };
+      el.addEventListener("wheel", onWheel, { passive: false });
+      handlers.set(el, onWheel);
+    };
+    const refresh = () => {
+      document.querySelectorAll('[class*="overflow-x-auto"], [data-wheel-horizontal-scroll="true"]').forEach(attach);
+    };
+    refresh();
+    const id = setInterval(refresh, 1000);
+    return () => {
+      clearInterval(id);
+      handlers.forEach((fn, el) => el.removeEventListener("wheel", fn));
+      handlers.clear();
+    };
+  }, []);
+
   /* ── Keyboard shortcuts: undo/redo, delete ─────────── */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -2141,6 +2197,7 @@ export default function DesignStudio() {
       //    Garments use square 1024×1024 for front/back panel UVs.
       const frontTexCanvas = document.createElement("canvas");
       if (isMug) {
+        const curveByCategory = isMug ? 0.16 : isWaterBottle ? 0.16 : isCap ? 0.1 : 0;
         await composeLayers({
           canvas: frontTexCanvas,
           baseHeight: selectedProduct.baseHeight,
@@ -2152,7 +2209,7 @@ export default function DesignStudio() {
           imageCache,
           clipToPrintZone: true,
           blendMode: "multiply",
-          curvature: 0.16,
+          curvature: curveByCategory,
         });
       } else {
         const curveByCategory = isWaterBottle ? 0.16 : isCap ? 0.1 : 0;
@@ -2862,14 +2919,15 @@ export default function DesignStudio() {
                 Wrap            → continuous artwork around the entire mug body.
                 Hidden in 3D mode (use orbit camera instead). */}
             {isMugProduct && viewMode === "2d" && (
-              <div className="flex gap-1.5 mb-3" data-testid="mug-mode-switcher">
+              <div className="flex gap-1.5 mb-3 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible scrollbar-hide" data-testid="mug-mode-switcher" data-wheel-horizontal-scroll="true" style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" }}>
                 {([
                   { v: "side1", label: "Left Side" },
                   { v: "side2", label: "Right Side" },
+                  { v: "wrap", label: "Wrap" },
                 ] as const).map(({ v, label }) => (
                   <button key={v}
                     onClick={() => setMugMode(v)}
-                    className="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-black transition-all"
+                    className="shrink-0 flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap"
                     style={{
                       background: mugMode === v ? "#1C1C1E" : "white",
                       color: mugMode === v ? "white" : "#374151",
@@ -3210,6 +3268,35 @@ export default function DesignStudio() {
                         </g>
                       );
                     })}
+
+                    {/* Garment texture overlay — makes the design look printed onto the fabric
+                        rather than pasted on top. Matches the final cart mockup composition. */}
+                    {currentFaceLayers.some(l => l.visible) && !isFlatZone && (() => {
+                      const base = BASE_BY_CATEGORY[displayProduct.category];
+                      let overlaySrc = base?.frontCutout ?? displayProduct.frontSrc;
+                      if (activeFace === "back" && (base?.backCutout || displayProduct.backSrc)) {
+                        overlaySrc = base?.backCutout ?? displayProduct.backSrc ?? overlaySrc;
+                      }
+                      const colorPhoto = base?.colorPhotos?.[selectedColor.hex.toLowerCase()];
+                      if (colorPhoto && !isLightGarment) overlaySrc = activeFace === "back" && colorPhoto.back ? colorPhoto.back : colorPhoto.front;
+                      else if (isDarkGarment && (base?.darkFront || base?.darkFrontCutout)) {
+                        overlaySrc = activeFace === "back" && (base?.darkBack || base?.darkBackCutout)
+                          ? (base?.darkBack ?? base?.darkBackCutout ?? overlaySrc)
+                          : (base?.darkFront ?? base?.darkFrontCutout ?? overlaySrc);
+                      }
+                      const blend = isLightGarment ? 'multiply' : isDarkGarment ? 'screen' : 'overlay';
+                      const opacity = isLightGarment ? 0.45 : isDarkGarment ? 0.35 : 0.30;
+                      return (
+                        <image
+                          href={overlaySrc}
+                          x={0} y={0} width={1000} height={1000}
+                          preserveAspectRatio="xMidYMid meet"
+                          pointerEvents="none"
+                          opacity={opacity}
+                          style={{ mixBlendMode: blend, pointerEvents: "none" }}
+                        />
+                      );
+                    })()}
                   </g>
                   </g>{/* end product-silhouette-clip outer group */}
 
