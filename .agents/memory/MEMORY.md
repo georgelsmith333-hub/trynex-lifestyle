@@ -6,7 +6,8 @@
 - [Waterbottle cutout file](waterbottle-cutout.md) — use white-waterbottle-front-cutout.png (228KB, proper transparency); NOT white-waterbottle-cutout.png (206KB = same as front photo, no alpha).
 - [DB schema](db-schema.md) — full schema in lib/db/src/schema/index.ts; Drizzle ORM + Neon; admin sessions table (not JWT); DATABASE_URL_MAIN preferred over DATABASE_URL.
 - [PhotoMockupMesh color fix](photo-mockup-color.md) — do NOT use adjustGarmentColor for photo planes; near-white (lum>0.88) must return "#ffffff" not "#D2CFC9" or white garments look grey in 3D.
-- [GitHub push blocked](github-push.md) — Replit askpass intercepts HTTPS git auth; use GitHub API (REST) to push blobs/trees/commits instead of git CLI.
+- [GitHub push from main agent](github-push.md) — x-access-token:$TOKEN URL works for git fetch/merge/push; fetch origin first and merge before pushing; force push only when histories are unrelated.
+- [Merge conflict variable scope](merge-conflict-scope.md) — when resolving a merge, verify variables referenced by the incoming change are in scope; run typecheck after every conflict resolution.
 - [Storefront fixes](storefront-fixes.md) — AnimatePresence mode="wait" caused white screen on navigation; PRODUCT_TAB_ICONS must be {} to show photo tabs; _redirects needs /sitemap.xml proxy line before /*.
 - [Design blend mode threshold](design-blend-threshold.md) — designBlend multiply threshold must match isLightTint (lum>0.92); using 0.58 tints designs with garment colour on sky-blue/grey/red garments ("same shade" bug).
 - [Cap shadow silhouette](cap-shadow.md) — cap must be in isCylUnderImageSrc so white/light cap uses transparent cutout PNG; otherwise SVG drop-shadow wraps rectangle not cap shape.

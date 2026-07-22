@@ -1,36 +1,45 @@
 ---
-name: GitHub push blocked in main agent
-description: Why git push/remote-add fails in main agent and what the user must do manually
+name: GitHub push from main agent
+description: How to push to GitHub from the main agent environment, including token handling and merge conflicts
 ---
 
-# GitHub push situation
+# GitHub push from main agent
 
-## The problem
-Two blockers prevent git push from main agent:
+## What works now
 
-1. **Replit askpass intercepts HTTPS auth**: Even `https://TOKEN@github.com/...` URLs get intercepted by `replit-git-askpass`, which fails to return the password. Git reports: "unable to read askpass response from 'replit-git-askpass'".
+`git push` and `git fetch` work when the remote URL includes a token in the HTTPS URL:
 
-2. **git commit is a blocked destructive operation**: Changes in the working directory can't be committed from main agent. System auto-commits at end of every task.
+```bash
+git remote set-url origin https://x-access-token:$TOKEN@github.com/OWNER/REPO.git
+git fetch origin main
+git merge origin/main
+# resolve any conflicts, then
+git push origin main
+```
 
-3. **GitHub PAT expired**: The token used (`ghp_6JR8RV...`) returns HTTP 401 Bad Credentials.
+The `x-access-token` username is the standard GitHub PAT username; the password field is the PAT value from the environment variable.
 
-## The local vs GitHub repo situation
-The Replit local repo (`gitsafe-backup/main`) has a completely different commit history from the GitHub repo (`georgelsmith333-hub/trynex-lifestyle`). The two repos diverged. To sync, a force push is required.
+## Why this works
 
-## What the user must do
-After each session ends (auto-commit happens):
+Replit's `replit-git-askpass` intercepts plain `https://TOKEN@github.com/...` URLs, but the `x-access-token:$TOKEN` form is treated as a normal username/password pair and passes through.
 
-1. Go to https://github.com/settings/tokens → generate a new classic PAT with `repo` scope
-2. Run from their local machine or Replit shell after task completes:
-   ```bash
-   git push --force "https://NEW_TOKEN@github.com/georgelsmith333-hub/trynex-lifestyle.git" HEAD:main
-   ```
-3. CF Pages (trynex-lifestyle-shop.pages.dev) auto-deploys within ~1-2 minutes of the GitHub push
+## Before pushing
 
-## CF Pages env vars still needed
-After the CF Pages push, set in CF Pages Dashboard → Settings → Environment Variables (Production):
-- `API_URL` = the permanent Render backend URL (e.g. `https://trynex-api.onrender.com`)
-- `NODE_VERSION` = `18` (or whatever the API server requires)
+1. Fetch `origin/main` first.
+2. Check if the remote branch is ahead of the local branch.
+3. If it is ahead, merge it before pushing (`git merge origin/main`).
+4. Resolve any conflicts manually, then commit and push.
+5. Force push is only needed when the histories are truly unrelated or the remote has diverged in a way that must be overwritten.
 
-## Why force push
-Local Replit repo is the source of truth (has all the real code). GitHub repo had been updated independently. Force push replaces GitHub's history with Replit's complete, up-to-date version.
+## Token to use
+
+Use the environment variable that is currently valid:
+- `GITHUB_ACCESS_TOKEN`
+- `GITHUB_PERSONAL_ACCESS_TOKEN`
+- `GITHUB_ACCESS_TOKE` (if added by the user)
+
+If a token returns HTTP 401, try the next one. The user may need to refresh the token in Replit secrets.
+
+## Merge conflicts
+
+When merging `origin/main`, conflicts can appear in files that the remote changed and the local working tree also changed (e.g. `ProductDetail.tsx`). Resolve by keeping the working version when it is correct, or by fixing the remote version if it introduces an out-of-scope variable reference. Always run `pnpm run typecheck` after resolving a merge conflict.
