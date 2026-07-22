@@ -399,13 +399,13 @@ export default function Checkout() {
 
     snapshotRef.current = { total: snapTotal, advance: snapAdvance, shipping: snapShipping };
 
-    const { firstName, lastName, shippingUpazila, shippingUnion, shippingPostCode, ...rest } = data;
+    const { firstName, lastName, shippingUpazila, shippingUnion, shippingPostCode, shippingAddress, ...rest } = data;
     const customerName = `${firstName} ${lastName}`.trim();
-    const addressParts = [rest.shippingAddress];
+    const addressParts = [shippingAddress];
     if (shippingUnion) addressParts.push(shippingUnion);
     if (shippingUpazila) addressParts.push(shippingUpazila);
     if (shippingPostCode) addressParts.push(`PO: ${shippingPostCode}`);
-    rest.shippingAddress = addressParts.join(", ");
+    const formattedAddress = addressParts.join(", ");
 
     if (wakingTimerRef.current) clearTimeout(wakingTimerRef.current);
     // If the very first request is still in flight after 6s, the API is
@@ -416,6 +416,7 @@ export default function Checkout() {
     const utm = getStoredUtm();
     const orderPayload = {
       ...rest,
+      shippingAddress: formattedAddress,
       customerName,
       paymentMethod,
       items: items.map(i => ({

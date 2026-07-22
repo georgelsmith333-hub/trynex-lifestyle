@@ -115,10 +115,10 @@ function getMockupConfig(slug: string) {
 }
 
 const FALLBACK_PRODUCTS = [
-  { id: 1, name: "Custom T-Shirt", slug: "tshirt", price: 799, customizable: true, stock: 99, featured: false, rating: 0, reviewCount: 0, imageUrl: undefined },
-  { id: 2, name: "Custom Hoodie",  slug: "hoodie", price: 1499, customizable: true, stock: 99, featured: false, rating: 0, reviewCount: 0, imageUrl: undefined },
-  { id: 3, name: "Custom Mug",     slug: "mug",    price: 599,  customizable: true, stock: 99, featured: false, rating: 0, reviewCount: 0, imageUrl: undefined },
-  { id: 4, name: "Custom Cap",     slug: "cap",    price: 699,  customizable: true, stock: 99, featured: false, rating: 0, reviewCount: 0, imageUrl: undefined },
+  { id: 1, name: "Custom T-Shirt", slug: "tshirt", price: 799, customizable: true, stock: 99, featured: false, rating: 0, reviewCount: 0, imageUrl: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&q=80" },
+  { id: 2, name: "Custom Hoodie",  slug: "hoodie", price: 1499, customizable: true, stock: 99, featured: false, rating: 0, reviewCount: 0, imageUrl: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&q=80" },
+  { id: 3, name: "Custom Mug",     slug: "mug",    price: 599,  customizable: true, stock: 99, featured: false, rating: 0, reviewCount: 0, imageUrl: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400&q=80" },
+  { id: 4, name: "Custom Cap",     slug: "cap",    price: 699,  customizable: true, stock: 99, featured: false, rating: 0, reviewCount: 0, imageUrl: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400&q=80" },
 ];
 
 export default function DesignScreen() {

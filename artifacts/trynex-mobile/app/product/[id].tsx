@@ -114,7 +114,7 @@ export default function ProductDetailScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Back + Wishlist */}
-      <View style={[styles.navBar, { top: isWeb ? 67 : insets.top }]}>
+      <View style={[styles.navBar, { top: 0, paddingTop: isWeb ? 67 : insets.top }]}>
         <Pressable
           onPress={() => router.back()}
           style={[styles.navBtn, { backgroundColor: "rgba(28,41,81,0.7)" }]}

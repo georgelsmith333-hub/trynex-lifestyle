@@ -18,8 +18,8 @@ export function BrandIntroScene() {
           width: 500,
           height: 500,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(232,93,4,0.18) 0%, transparent 70%)',
-          filter: 'blur(40px)',
+          background: 'radial-gradient(circle, rgba(232,93,4,0.25) 0%, transparent 70%)',
+          filter: 'blur(15px)',
         }}
         initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1.2, opacity: 1 }}

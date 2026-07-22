@@ -139,18 +139,18 @@ export const TSHIRT_PZ: PrintZone           = { x: 240, y: 185, w: 520, h: 580 }
 export const TSHIRT_BACK_PZ: PrintZone      = { x: 240, y: 185, w: 520, h: 580 };
 export const LONGSLEEVE_PZ: PrintZone       = { x: 312, y: 222, w: 376, h: 404 };
 export const LONGSLEEVE_BACK_PZ: PrintZone  = { x: 292, y: 195, w: 416, h: 458 };
-/** Hoodie front — stops at ~y=528 to clear the kangaroo pocket (pocket starts ~y=565). */
-export const HOODIE_PZ: PrintZone           = { x: 240, y: 222, w: 520, h: 470 };
+/** Hoodie front — lowered and sized to sit below the drawstrings and above the kangaroo pocket. */
+export const HOODIE_PZ: PrintZone           = { x: 240, y: 270, w: 520, h: 400 };
 export const HOODIE_BACK_PZ: PrintZone      = { x: 292, y: 184, w: 416, h: 448 };
 /** Cap front panel — structured 5-panel cap, panel is centred between brim and seam. */
 export const CAP_PZ: PrintZone              = { x: 302, y: 222, w: 396, h: 252 };
 export const MUG_PZ: PrintZone              = { x: 126, y: 208, w: 748, h: 434 };
-/** Mug side — printable area on the cylindrical side face, clear of rim band and base ring. */
-export const MUG_SIDE_PZ: PrintZone         = { x: 206, y: 250, w: 322, h: 426 };
-/** Water bottle — printable front label panel on the cylindrical body.
- *  Calibrated to the real 600ml aluminium carabiner bottle (1600×1600 PNG).
- *  Content spans x:[336–660] centre≈498; shoulder ends ~y=268, base band ~y=850. */
-export const WATERBOTTLE_PZ: PrintZone      = { x: 308, y: 214, w: 384, h: 548 };
+/** Mug side — now spans the full cylindrical body width like the wrap zone, so
+ *  user designs fill the visible mug body instead of being squeezed into a narrow panel. */
+export const MUG_SIDE_PZ: PrintZone         = { x: 126, y: 208, w: 748, h: 434 };
+/** Water bottle — wider printable front label panel so designs fill the
+ *  cylindrical body without leaving large blank margins on the sides. */
+export const WATERBOTTLE_PZ: PrintZone      = { x: 260, y: 214, w: 480, h: 548 };
 /** Sleeve print area — roughly square (1228×1087px real-world ratio). */
 export const SLEEVE_PZ: PrintZone           = { x: 175, y: 175, w: 650, h: 650 };
 /** Neck label — wider than tall (1299×945px real-world ratio). */
@@ -479,11 +479,12 @@ export function GarmentSVG({
 
   const pz = (() => {
     if (!isMug) return (face === "back" && product.printZoneBack) ? product.printZoneBack : product.printZone;
-    if (mugMode === "wrap") return MUG_PZ;
-    return MUG_SIDE_PZ;
+    // All mug modes use the same full-body print area so the design always fills the mug.
+    return MUG_PZ;
   })();
 
-  const isMugRightSide = isMug && (face === "back" || mugMode === "side2");
+  // Right-side mode still mirrors the design onto the opposite side of the same mug photo.
+  const isMugRightSide = isMug && mugMode === "side2";
   const displayPZ = isMugRightSide ? { ...pz, x: 1000 - pz.x - pz.w } : pz;
 
   // Source used for the coloured tint path. We always use the transparent cutout PNG
@@ -616,45 +617,22 @@ export function GarmentSVG({
       )}
 
       {needsTint && tintPhotoSrc ? (
-        isMugRightSide ? (
-          <g transform="translate(1000,0) scale(-1,1)">
-            <image
-              href={tintPhotoSrc}
-              x={0} y={0} width={1000} height={1000}
-              preserveAspectRatio="xMidYMid meet"
-              filter="url(#garment-color-tint)"
-              style={{ pointerEvents: "none" }}
-            />
-          </g>
-        ) : (
+        <image
+          href={tintPhotoSrc}
+          x={0} y={0} width={1000} height={1000}
+          preserveAspectRatio="xMidYMid meet"
+          filter="url(#garment-color-tint)"
+          style={{ pointerEvents: "none" }}
+        />
+      ) : (
+        <g filter={shadowFilter}>
           <image
-            href={tintPhotoSrc}
+            href={imageSrc}
             x={0} y={0} width={1000} height={1000}
             preserveAspectRatio="xMidYMid meet"
-            filter="url(#garment-color-tint)"
             style={{ pointerEvents: "none" }}
           />
-        )
-      ) : (
-        isMugRightSide ? (
-          <g transform="translate(1000,0) scale(-1,1)" filter={shadowFilter}>
-            <image
-              href={imageSrc}
-              x={0} y={0} width={1000} height={1000}
-              preserveAspectRatio="xMidYMid meet"
-              style={{ pointerEvents: "none" }}
-            />
-          </g>
-        ) : (
-          <g filter={shadowFilter}>
-            <image
-              href={imageSrc}
-              x={0} y={0} width={1000} height={1000}
-              preserveAspectRatio="xMidYMid meet"
-              style={{ pointerEvents: "none" }}
-            />
-          </g>
-        )
+        </g>
       )}
 
       {showPrintZone && (() => {

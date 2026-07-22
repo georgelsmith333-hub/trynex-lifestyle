@@ -886,7 +886,9 @@ export default function ProductDetail() {
                   ))}
                 </div>
                 <span className="font-bold text-sm text-gray-700">{rating}</span>
-                {total > 0 && <span className="text-sm text-gray-400">({total} review{total === 1 ? "" : "s"})</span>}
+                {stats?.total > 0 && (
+                  <span className="text-sm text-gray-400">({stats.total} review{stats.total !== 1 ? "s" : ""})</span>
+                )}
               </div>
 
               {/* Price */}

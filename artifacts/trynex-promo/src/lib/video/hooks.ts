@@ -1,6 +1,6 @@
 // Video player hook - handles recording lifecycle, scene advancement, and looping
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 
 declare global {
   interface Window {
@@ -29,10 +29,10 @@ export interface UseVideoPlayerReturn {
 export function useVideoPlayer(options: UseVideoPlayerOptions): UseVideoPlayerReturn {
   const { durations, onVideoEnd, loop = true } = options;
 
-  // Captured once on mount -- durations must be a static object
-  const sceneKeys = useRef(Object.keys(durations)).current;
+  // Derive scene keys/durations from the current options so timing updates are respected.
+  const sceneKeys = useMemo(() => Object.keys(durations), [durations]);
   const totalScenes = sceneKeys.length;
-  const durationsArray = useRef(Object.values(durations)).current;
+  const durationsArray = useMemo(() => Object.values(durations), [durations]);
 
   const [currentScene, setCurrentScene] = useState(0);
   const [hasEnded, setHasEnded] = useState(false);

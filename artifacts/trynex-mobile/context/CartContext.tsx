@@ -57,7 +57,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         const id = `${product.id}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
         next = [...prev, { id, product, quantity: 1, ...options }];
       }
-      AsyncStorage.setItem(CART_KEY, JSON.stringify(next));
+      persist(next);
       return next;
     });
   };

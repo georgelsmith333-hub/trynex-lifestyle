@@ -24,7 +24,13 @@ export default function VideoTemplate() {
   return (
     <div
       className="w-full h-screen overflow-hidden relative"
-      style={{ backgroundColor: '#0A1628' }}
+      style={{
+        backgroundColor: '#0A1628',
+        backgroundImage: 'url(/images/texture-bg.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundBlendMode: 'overlay',
+      }}
     >
       <AnimatePresence mode="wait">
         {currentScene === 0 && <BrandIntroScene key="brand-intro" />}

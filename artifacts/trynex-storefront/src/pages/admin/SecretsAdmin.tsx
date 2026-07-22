@@ -23,6 +23,7 @@ export default function SecretsAdmin() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [showSensitive, setShowSensitive] = useState(false);
+  const [totpCode, setTotpCode] = useState("");
   const [onlySensitive, setOnlySensitive] = useState(false);
   const [importModal, setImportModal] = useState(false);
   const [importText, setImportText] = useState("");
@@ -45,13 +46,16 @@ export default function SecretsAdmin() {
     return SENSITIVE_PATTERNS.some(p => p.test(key));
   }
 
-  async function fetchSecrets(raw = false) {
+  async function fetchSecrets(raw = false, totp = "") {
     setLoading(true);
     try {
-      const res = await fetch(getApiUrl(raw ? "/admin/secrets/raw" : "/admin/secrets"), {
-        headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
-      });
-      if (!res.ok) throw new Error("Failed to fetch secrets");
+      const headers: Record<string, string> = { ...getAuthHeaders(), "Content-Type": "application/json" };
+      if (raw && totp) headers["X-Admin-TOTP-Code"] = totp;
+      const res = await fetch(getApiUrl(raw ? "/admin/secrets/raw" : "/admin/secrets"), { headers });
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody.message || "Failed to fetch secrets");
+      }
       const data = await res.json();
       const entries: SecretEntry[] = Object.entries(data.secrets as Record<string, string>).map(
         ([key, value]) => ({
@@ -64,8 +68,10 @@ export default function SecretsAdmin() {
         })
       );
       setSecrets(entries);
-    } catch (err) {
-      toast({ title: "Error", description: "Failed to load secrets", variant: "destructive" });
+      if (raw) setShowSensitive(true);
+    } catch (err: any) {
+      setShowSensitive(false);
+      toast({ title: "Error", description: err.message || "Failed to load secrets", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -243,18 +249,42 @@ export default function SecretsAdmin() {
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => fetchSecrets(showSensitive)}
+              onClick={() => fetchSecrets(showSensitive, totpCode)}
               className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold border border-gray-200 hover:bg-gray-50 transition-colors"
             >
               <RefreshCw className="w-4 h-4" /> Refresh
             </button>
-            <button
-              onClick={() => setShowSensitive(!showSensitive)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold border transition-colors ${showSensitive ? "bg-orange-50 border-orange-200 text-orange-600" : "border-gray-200 hover:bg-gray-50"}`}
-            >
-              {showSensitive ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-              {showSensitive ? "Hide Values" : "Show Values"}
-            </button>
+            {showSensitive ? (
+              <button
+                onClick={() => { setShowSensitive(false); setTotpCode(""); fetchSecrets(false); }}
+                className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold border transition-colors bg-orange-50 border-orange-200 text-orange-600"
+              >
+                <Eye className="w-4 h-4" /> Hide Values
+              </button>
+            ) : (
+              <div className="flex items-center gap-2">
+                <input
+                  value={totpCode}
+                  onChange={e => setTotpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  placeholder="TOTP"
+                  inputMode="numeric"
+                  maxLength={6}
+                  className="w-20 px-2 py-2 rounded-xl text-sm border border-gray-200 outline-none focus:border-orange-400 text-center font-mono tracking-widest"
+                />
+                <button
+                  onClick={() => {
+                    if (!/^\d{6}$/.test(totpCode)) {
+                      toast({ title: "TOTP required", description: "Enter the 6-digit code from your authenticator app", variant: "destructive" });
+                      return;
+                    }
+                    fetchSecrets(true, totpCode);
+                  }}
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold border border-gray-200 hover:bg-gray-50 transition-colors"
+                >
+                  <EyeOff className="w-4 h-4" /> Show Values
+                </button>
+              </div>
+            )}
           </div>
         </div>
 

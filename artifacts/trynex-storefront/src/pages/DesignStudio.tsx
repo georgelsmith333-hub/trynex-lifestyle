@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect, useMemo, lazy, Suspense, Component, type ErrorInfo, type ReactNode } from "react";
+import { useRef, useState, useCallback, useEffect, useMemo } from "react";
 import { flushSync } from "react-dom";
 import { useLocation } from "wouter";
 import { Navbar } from "@/components/layout/Navbar";
@@ -19,7 +19,7 @@ import {
   Type, Layers as LayersIcon, Sparkles,
   Undo2, Redo2, Lock, Unlock, ChevronUp, ChevronDown,
   Image as ImageIcon, Plus, Check, CloudUpload,
-  Box, Image as Image2D, Search, X, ChevronRight,
+  Search, X, ChevronRight,
   Palette, Package, FlipHorizontal, Copy, Crosshair, Maximize2,
   Download, AlignLeft, AlignCenter, AlignRight, ShieldCheck,
 } from "lucide-react";
@@ -28,10 +28,7 @@ import {
   STICKERS, BASE_BY_CATEGORY, MUG_SIDE_PZ,
   getApparelZones, getZonePZ, type ApparelZone, isNearBlack, isLightTint, type PrintZone,
 } from "./design-studio/mockups";
-import { composeLayers, composeGarmentMockup, composeDesignTexture, hasWebGL2, autoFixImage, type ComposerLayer } from "./design-studio/composer";
-
-// Lazy-load the 3D bundle so first-paint stays light.
-const ProductViewer3D = lazy(() => import("./design-studio/ProductViewer3D"));
+import { composeLayers, composeGarmentMockup, composeDesignTexture, autoFixImage, type ComposerLayer } from "./design-studio/composer";
 
 /* ═══════════════════════════════════════════════════════
    LAYER MODEL
@@ -307,41 +304,6 @@ function detectColorFromProduct(prod: any): string {
   return "#F5F5F3";
 }
 
-/* ── 3D ErrorBoundary — catches R3F / WebGL runtime crashes gracefully ── */
-class Viewer3DErrorBoundary extends Component<
-  { children: ReactNode; onReset: () => void },
-  { hasError: boolean; error: string }
-> {
-  constructor(props: { children: ReactNode; onReset: () => void }) {
-    super(props);
-    this.state = { hasError: false, error: "" };
-  }
-  static getDerivedStateFromError(error: Error) {
-    return { hasError: true, error: error?.message ?? "Unknown 3D error" };
-  }
-  componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error("[3D Viewer Error]", error, info.componentStack?.slice(0, 200));
-  }
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center p-6 bg-gray-50 rounded-2xl">
-          <Box className="w-10 h-10 text-gray-300" />
-          <p className="text-sm font-semibold text-gray-600">3D preview unavailable</p>
-          <p className="text-xs text-gray-400 max-w-[200px] leading-relaxed">{this.state.error.slice(0, 100)}</p>
-          <button
-            onClick={() => { this.setState({ hasError: false, error: "" }); this.props.onReset(); }}
-            className="px-3 py-1.5 text-xs font-medium text-orange-600 hover:text-orange-700 border border-orange-200 hover:border-orange-300 rounded-lg transition-colors"
-          >
-            Switch to 2D view
-          </button>
-        </div>
-      );
-    }
-    return this.props.children;
-  }
-}
-
 export default function DesignStudio() {
   const [, navigate] = useLocation();
   const { addToCart } = useCartActions();
@@ -376,11 +338,7 @@ export default function DesignStudio() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  const [viewMode, setViewMode] = useState<"2d" | "3d">("2d");
   const [activeFace, setActiveFace] = useState<Face>("front");
-  const supports3D = useMemo(() => hasWebGL2(), []);
-
-  const effectiveViewMode = isMobile ? "2d" : viewMode;
 
   const [selectedSize, setSelectedSize] = useState("M");
   const [quantity, setQuantity] = useState(1);
@@ -859,37 +817,6 @@ export default function DesignStudio() {
     () => apparelZones.find(z => z.face === activeFace) ?? apparelZones[0],
     [apparelZones, activeFace]
   );
-
-  // All products now support 3D preview:
-  //   tshirt      → real scanned GLB with design overlay
-  //   mug         → generated GLB with cylindrical wrap texture
-  //   waterbottle → procedural tumbler shape with wrap texture
-  //   hoodie / longsleeve / cap → real product PHOTO as 3D billboard (photorealistic)
-  // Only flat template zones (sleeve/neck) have no 3D equivalent.
-  // 3D mode is available on all devices that support WebGL2, not just desktop.
-  // When a flat zone (sleeve/neck) is active, automatically force back to 2D.
-  const effectiveSupports3D = supports3D && !isFlatZone;
-  // Auto-switch to 2D when navigating to a flat zone in 3D mode
-  useEffect(() => {
-    if (isFlatZone && viewMode === "3d") setViewMode("2d");
-  }, [isFlatZone, viewMode]);
-
-  // Curved products (mug / water bottle / cap) only look correct — proper
-  // cylindrical/dome blending, no "flat sticker" — in the 3D preview; the flat
-  // 2D SVG canvas intentionally shows the design as a flat rectangle for precise
-  // placement. Default new curved-product selections to 3D so the user sees the
-  // realistic blended result immediately, without hunting for the 3D toggle.
-  // Flat apparel (t-shirt/hoodie/longsleeve) defaults to 2D for precise editing.
-  // Runs only when the selected product itself changes, so a manual toggle made
-  // while staying on the same product is respected.
-  useEffect(() => {
-    // Curved products (mug/cap/bottle) default to 3D so the mockup shows the
-    // automatic cylindrical/dome curvature immediately. Flat apparel defaults to
-    // 2D for precise editing. Users can still toggle between views at any time.
-    const isCurved = selectedProduct.category === "mug" || selectedProduct.category === "cap" || selectedProduct.category === "waterbottle";
-    setViewMode(isCurved ? "3d" : "2d");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedProduct.id]);
 
   const displayProduct = selectedProduct;
   // True when the selected garment colour is near-black (e.g. Black #1a1a1a).
@@ -1880,23 +1807,29 @@ export default function DesignStudio() {
     }
   }, []);
 
-  // Deselect layer and hide print-zone border when clicking outside the canvas area
-  // (e.g. on the white workspace background). This fixes the issue where the print-zone
-  // border stays visible after the user clicks outside the design area.
+  // Deselect layer and hide print-zone border when clicking/touching outside the canvas area.
+  // Works for both mouse (desktop) and touch (mobile).
   useEffect(() => {
-    const onDocDown = (e: MouseEvent) => {
+    const handleOutside = (target: Node | null) => {
       const svg = svgRef.current;
-      if (!svg) return;
-      const target = e.target as Node;
+      if (!svg || !target) return;
       if (!svg.contains(target)) {
         setSelectedLayerId(null);
         selectedLayerIdRef.current = null;
-        if (isMobile) setShowPrintZone(false);
+        // On mobile: always hide the print-zone border when tapping outside.
+        // On desktop: also hide so the print zone doesn't persist after editing.
+        setShowPrintZone(false);
       }
     };
+    const onDocDown = (e: MouseEvent) => handleOutside(e.target as Node);
+    const onDocTouch = (e: TouchEvent) => handleOutside((e.touches[0]?.target ?? null) as Node | null);
     document.addEventListener("mousedown", onDocDown);
-    return () => document.removeEventListener("mousedown", onDocDown);
-  }, [isMobile]);
+    document.addEventListener("touchstart", onDocTouch, { passive: true });
+    return () => {
+      document.removeEventListener("mousedown", onDocDown);
+      document.removeEventListener("touchstart", onDocTouch);
+    };
+  }, []);
 
   // Enable mouse-wheel horizontal scrolling on all horizontal scroll strips in the studio.
   // On Windows/PC with a mouse, wheel events scroll vertically by default; this converts
@@ -1955,7 +1888,7 @@ export default function DesignStudio() {
     canvasPanRef.current = { x: 0, y: 0 };
     setCanvasZoom(1);
     setCanvasPan({ x: 0, y: 0 });
-  }, [selectedProduct.id, activeFace, viewMode]);
+  }, [selectedProduct.id, activeFace]);
 
   /* ── Desktop mouse-wheel zoom ──────────────────────────────────────
    * Fires on the SVG canvas. Ctrl+Wheel or plain Wheel both zoom the
@@ -2579,7 +2512,7 @@ export default function DesignStudio() {
               }</span>
             </p>
           </div>
-          <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+          <div className="flex items-center justify-end gap-1 sm:gap-2 flex-shrink-0">
             {/* Saved indicator */}
             {(saveStatus !== "idle" || hasDraft) && (
               <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-bold"
@@ -2601,40 +2534,21 @@ export default function DesignStudio() {
                 <Trash2 className="w-3 h-3" /> Clear All
               </button>
             )}
-            {/* Undo / Redo — always visible so mobile users can undo mistakes */}
-            <button onClick={undo} disabled={!canUndo}
-              className="flex p-2 rounded-xl text-gray-600 disabled:opacity-30"
-              style={{ background: "#f3f4f6" }} title="Undo (Ctrl+Z)">
-              <Undo2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </button>
-            <button onClick={redo} disabled={!canRedo}
-              className="flex p-2 rounded-xl text-gray-600 disabled:opacity-30"
-              style={{ background: "#f3f4f6" }} title="Redo (Ctrl+Y)">
-              <Redo2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </button>
-            {/* 2D / 3D toggle — hidden on mobile (shown below product tabs instead) */}
-            {effectiveSupports3D && (
-              <div className="hidden sm:flex items-center rounded-xl overflow-hidden" style={{ border: "1px solid #e5e7eb", background: "white" }} data-testid="view-mode-toggle">
-                <button
-                  onClick={() => setViewMode("2d")}
-                  className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold transition-colors"
-                  style={{ background: viewMode === "2d" ? "#fff4ee" : "white", color: viewMode === "2d" ? "#E85D04" : "#6b7280" }}
-                  title="2D editor"
-                  data-testid="view-mode-2d"
-                >
-                  <Image2D className="w-3.5 h-3.5" /> 2D
-                </button>
-                <button
-                  onClick={() => setViewMode("3d")}
-                  className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold transition-colors"
-                  style={{ background: viewMode === "3d" ? "#fff4ee" : "white", color: viewMode === "3d" ? "#E85D04" : "#6b7280", borderLeft: "1px solid #e5e7eb" }}
-                  title="Realtime 3D preview"
-                  data-testid="view-mode-3d"
-                >
-                  <Box className="w-3.5 h-3.5" /> 3D
-                </button>
-              </div>
-            )}
+            {/* Undo / Redo — compact icon-only on mobile, text labels on desktop */}
+            <div className="flex items-center gap-0.5 sm:gap-1">
+              <button onClick={undo} disabled={!canUndo}
+                className="flex items-center justify-center w-7 h-7 sm:w-auto sm:h-auto sm:px-2.5 sm:py-1.5 rounded-xl text-gray-600 disabled:opacity-30"
+                style={{ background: "#f3f4f6" }} title="Undo (Ctrl+Z)">
+                <Undo2 className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline text-[11px] font-bold ml-1">Undo</span>
+              </button>
+              <button onClick={redo} disabled={!canRedo}
+                className="flex items-center justify-center w-7 h-7 sm:w-auto sm:h-auto sm:px-2.5 sm:py-1.5 rounded-xl text-gray-600 disabled:opacity-30"
+                style={{ background: "#f3f4f6" }} title="Redo (Ctrl+Y)">
+                <Redo2 className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline text-[11px] font-bold ml-1">Redo</span>
+              </button>
+            </div>
             <button
               onClick={() => setShowPrintZone(v => !v)}
               className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all"
@@ -2643,17 +2557,17 @@ export default function DesignStudio() {
               {showPrintZone ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
               Print Zone
             </button>
-            {/* Add to Cart — compact on mobile (icon only + short label) */}
+            {/* Add to Cart — compact on mobile */}
             <motion.button
               onClick={handleAddToCart}
               disabled={isAddingToCart}
               whileTap={{ scale: 0.97 }}
-              className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2.5 rounded-xl font-bold text-sm text-white disabled:opacity-60"
+              className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-5 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm text-white disabled:opacity-60 whitespace-nowrap"
               style={{ background: "linear-gradient(135deg, #E85D04, #FB8500)", boxShadow: "0 4px 12px rgba(232,93,4,0.35)" }}
             >
-              {isAddingToCart ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShoppingCart className="w-4 h-4" />}
+              {isAddingToCart ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShoppingCart className="w-3.5 h-3.5" />}
               <span className="hidden sm:inline">Add to Cart</span>
-              <span className="sm:hidden">Cart</span>
+              <span className="sm:hidden text-[11px] font-black">Cart</span>
             </motion.button>
           </div>
         </div>
@@ -2664,40 +2578,6 @@ export default function DesignStudio() {
 
           {/* ═══════ LEFT: MOCKUP CANVAS ═══════ */}
           <div className="flex-1 min-w-0">
-            {/* Mobile 2D/3D toggle — shown only on small screens above mockup */}
-            {effectiveSupports3D && (
-              <div className="flex sm:hidden items-center justify-between mb-3">
-                <div className="flex items-center rounded-xl overflow-hidden" style={{ border: "1px solid #e5e7eb", background: "white" }}>
-                  <button
-                    onClick={() => setViewMode("2d")}
-                    className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold transition-colors"
-                    style={{ background: viewMode === "2d" ? "#fff4ee" : "white", color: viewMode === "2d" ? "#E85D04" : "#6b7280" }}
-                  >
-                    <Image2D className="w-3.5 h-3.5" /> 2D
-                  </button>
-                  <button
-                    onClick={() => setViewMode("3d")}
-                    className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold transition-colors"
-                    style={{ background: viewMode === "3d" ? "#fff4ee" : "white", color: viewMode === "3d" ? "#E85D04" : "#6b7280", borderLeft: "1px solid #e5e7eb" }}
-                  >
-                    <Box className="w-3.5 h-3.5" /> 3D
-                  </button>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button onClick={undo} disabled={!canUndo}
-                    className="p-2 rounded-xl text-gray-500 disabled:opacity-30"
-                    style={{ background: "#f3f4f6" }} title="Undo">
-                    <Undo2 className="w-3.5 h-3.5" />
-                  </button>
-                  <button onClick={redo} disabled={!canRedo}
-                    className="p-2 rounded-xl text-gray-500 disabled:opacity-30"
-                    style={{ background: "#f3f4f6" }} title="Redo">
-                    <Redo2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-            )}
-
             {/* Product selector bar */}
             <div className="flex items-center gap-2 mb-4">
               {/* Current product card */}
@@ -2833,11 +2713,11 @@ export default function DesignStudio() {
               </div>
             )}
 
-            {/* Zone switcher — hidden in 3D mode.
+            {/* Zone switcher.
                 Apparel (tshirt/longsleeve/hoodie): shows 5 zone tabs (Front, Back,
                 Left Sleeve, Right Sleeve, Neck Label) in a horizontally scrollable row.
                 Mug: shows Side 1 / Side 2 / Full Wrap (handled separately below). */}
-            {isZoneTabs && viewMode === "2d" && (
+            {isZoneTabs && (
               <div className="mb-3" data-testid="zone-switcher">
                 {/* Scrollable zone tab row */}
                 <div
@@ -2917,8 +2797,8 @@ export default function DesignStudio() {
             {/* Mug-only print mode selector — replaces apparel Front/Back tabs.
                 Side 1 / Side 2 → independent print panels (front + back faces);
                 Wrap            → continuous artwork around the entire mug body.
-                Hidden in 3D mode (use orbit camera instead). */}
-            {isMugProduct && viewMode === "2d" && (
+                Always visible so user can pick which side to design on. */}
+            {isMugProduct && (
               <div className="flex gap-1.5 mb-3 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible scrollbar-hide" data-testid="mug-mode-switcher" data-wheel-horizontal-scroll="true" style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" }}>
                 {([
                   { v: "side1", label: "Left Side" },
@@ -3056,47 +2936,6 @@ export default function DesignStudio() {
                   willChange: "transform",
                 }}
               >
-                {effectiveViewMode === "3d" && effectiveSupports3D ? (
-                  <div className="absolute inset-0" data-testid="viewer-3d">
-                    <Viewer3DErrorBoundary onReset={() => setViewMode("2d")}>
-                    <Suspense fallback={
-                      <div className="w-full h-full flex items-center justify-center text-gray-500">
-                        <Loader2 className="w-6 h-6 animate-spin mr-2" /> Loading 3D preview…
-                      </div>
-                    }>
-                      <ProductViewer3D
-                        product={displayProduct}
-                        garmentColor={selectedColor.hex}
-                        front={{
-                          layers: layers.filter(l => (l.face ?? "front") === "front") as unknown as ComposerLayer[],
-                          printZone: isMugProduct ? MUG_SIDE_PZ : selectedProduct.printZone,
-                          baseHeight: selectedProduct.baseHeight,
-                        }}
-                        back={supportsBack ? {
-                          layers: layers.filter(l => (l.face ?? "front") === "back") as unknown as ComposerLayer[],
-                          printZone: isMugProduct ? MUG_SIDE_PZ : (selectedProduct.printZoneBack ?? selectedProduct.printZone),
-                          baseHeight: selectedProduct.baseHeight,
-                        } : undefined}
-                        activeFace={activeFace as "front" | "back" | undefined}
-                        isWrapMode={isWrapMode}
-                      />
-                    </Suspense>
-                    </Viewer3DErrorBoundary>
-                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full text-[11px] font-bold text-white pointer-events-none"
-                      style={{ background: "rgba(0,0,0,0.6)" }}>
-                      Drag to rotate · Scroll to zoom
-                    </div>
-                    {layers.length === 0 && (
-                      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 pointer-events-none">
-                        <div className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold"
-                          style={{ background: "rgba(255,255,255,0.82)", border: "1.5px dashed rgba(232,93,4,0.40)", backdropFilter: "blur(6px)", color: "#6b7280", whiteSpace: "nowrap" }}>
-                          <Upload className="w-3.5 h-3.5 text-orange-400" />
-                          Switch to 2D to add your design
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ) : (
                 <>
                 {/* Floating face label inside the canvas — gives a clear, premium
                     "you are looking at the FRONT" indicator and animates between
@@ -3123,7 +2962,7 @@ export default function DesignStudio() {
                   ref={svgRef as any}
                   viewBox={selectedProduct.viewBox}
                   className="absolute inset-0 w-full h-full"
-                  style={{ touchAction: isMobile ? "pan-y" : "pan-x pan-y", userSelect: "none" }}
+                  style={{ touchAction: isMobile && currentFaceLayers.length === 0 ? "pan-y" : "none", userSelect: "none" }}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -3530,9 +3369,8 @@ export default function DesignStudio() {
                   </span>
                 </div>
                 </>
-                )}
 
-                {/* Processing overlay — shows in-viewport whenever remove-bg or upscale is running.
+              {/* Processing overlay — shows in-viewport whenever remove-bg or upscale is running.
                     Absolute over the canvas so users never need to scroll to see it. */}
                 {(isRemoving || isUpscaling) && (
                   <div
@@ -3557,42 +3395,54 @@ export default function DesignStudio() {
                   easily zoom out after uploading an image on mobile devices. */}
               {layers.length > 0 && (
                 <div className="absolute top-3 right-3 z-20 flex items-center gap-1">
-                  {/* Zoom out */}
+                  {/* When a layer is selected, the +/- buttons scale that layer so
+                      mobile users can resize their uploaded design without relying
+                      on pinch gestures. With no layer selected they zoom the canvas. */}
                   <button
-                    aria-label="Zoom out"
+                    aria-label={selectedLayer ? "Scale design down" : "Zoom out"}
                     onClick={() => {
-                      const next = Math.max(0.4, Math.round((canvasZoom - 0.2) * 10) / 10);
-                      canvasZoomRef.current = next;
-                      setCanvasZoom(next);
+                      if (selectedLayer) {
+                        updateLayer(selectedLayer.id, l => ({ ...l, transform: { ...l.transform, scale: Math.max(0.05, l.transform.scale - 0.05) } }), true);
+                      } else {
+                        const next = Math.max(0.4, Math.round((canvasZoom - 0.2) * 10) / 10);
+                        canvasZoomRef.current = next;
+                        setCanvasZoom(next);
+                      }
                     }}
                     className="flex items-center justify-center w-8 h-8 rounded-full text-sm font-black"
                     style={{ background: "rgba(17,24,39,0.78)", color: "white", backdropFilter: "blur(6px)", boxShadow: "0 2px 8px rgba(0,0,0,0.18)" }}
                   >
                     −
                   </button>
-                  {/* Zoom level / Reset */}
-                  {isCanvasZoomed && (
-                    <button
-                      onClick={() => {
+                  {/* Zoom / Scale level indicator */}
+                  <button
+                    onClick={() => {
+                      if (selectedLayer) {
+                        updateLayer(selectedLayer.id, l => ({ ...l, transform: { ...l.transform, scale: 1, x: 0, y: 0 } }), true);
+                      } else {
                         canvasZoomRef.current = 1;
                         canvasPanRef.current = { x: 0, y: 0 };
                         setCanvasZoom(1);
                         setCanvasPan({ x: 0, y: 0 });
-                      }}
-                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[10px] font-bold"
-                      style={{ background: "rgba(17,24,39,0.78)", color: "white", backdropFilter: "blur(6px)", boxShadow: "0 2px 8px rgba(0,0,0,0.18)" }}
-                    >
-                      <ZoomOut className="w-3 h-3" />
-                      {Math.round(canvasZoom * 100)}%
-                    </button>
-                  )}
+                      }
+                    }}
+                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[10px] font-bold"
+                    style={{ background: "rgba(17,24,39,0.78)", color: "white", backdropFilter: "blur(6px)", boxShadow: "0 2px 8px rgba(0,0,0,0.18)" }}
+                  >
+                    {selectedLayer ? <ZoomIn className="w-3 h-3" /> : <ZoomOut className="w-3 h-3" />}
+                    {selectedLayer ? Math.round(selectedLayer.transform.scale * 100) + "%" : (isCanvasZoomed ? Math.round(canvasZoom * 100) + "%" : "100%")}
+                  </button>
                   {/* Zoom in */}
                   <button
-                    aria-label="Zoom in"
+                    aria-label={selectedLayer ? "Scale design up" : "Zoom in"}
                     onClick={() => {
-                      const next = Math.min(4, Math.round((canvasZoom + 0.2) * 10) / 10);
-                      canvasZoomRef.current = next;
-                      setCanvasZoom(next);
+                      if (selectedLayer) {
+                        updateLayer(selectedLayer.id, l => ({ ...l, transform: { ...l.transform, scale: Math.min(8, l.transform.scale + 0.05) } }), true);
+                      } else {
+                        const next = Math.min(4, Math.round((canvasZoom + 0.2) * 10) / 10);
+                        canvasZoomRef.current = next;
+                        setCanvasZoom(next);
+                      }
                     }}
                     className="flex items-center justify-center w-8 h-8 rounded-full text-sm font-black"
                     style={{ background: "rgba(17,24,39,0.78)", color: "white", backdropFilter: "blur(6px)", boxShadow: "0 2px 8px rgba(0,0,0,0.18)" }}
@@ -3606,7 +3456,7 @@ export default function DesignStudio() {
                   Tapping it is a one-tap fix: selects the offending layer and snaps it back
                   to a safe fit-and-centre position, instead of leaving the user stuck
                   hunting for the right drag/pinch gesture to undo the overflow. */}
-              {anyLayerOutsidePZ && viewMode === "2d" && (
+              {anyLayerOutsidePZ && (
                 <button
                   type="button"
                   onClick={() => {
@@ -3647,7 +3497,7 @@ export default function DesignStudio() {
             {/* ═══════ MOBILE: Quick-actions bar (shown when layer selected) ═══════
                 Lets users rotate, flip, centre, duplicate and delete without opening
                 the full bottom-sheet tool panel. Only rendered on screens < lg. */}
-            {selectedLayer && viewMode === "2d" && (
+            {selectedLayer && (
               <div className="lg:hidden mt-2 flex items-center gap-1.5 px-3 py-2.5 rounded-2xl"
                 style={{ background: "white", border: "1px solid #e9e5e0", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
                 {/* Layer type badge */}
@@ -3754,17 +3604,21 @@ export default function DesignStudio() {
             )}
           </div>
 
-          {/* ═══════ MOBILE: Floating "Edit Tools" FAB ═══════ */}
+          {/* ═══════ MOBILE: Floating "Edit Tools" FAB ═══════
+               Positioned well above the Replit badge / bottom safe-area so it
+               never overlaps system chrome. Smaller icon-only pill on phones. */}
           <button
             onClick={() => setMobileToolOpen(true)}
-            className="lg:hidden fixed right-4 z-40 flex items-center gap-2 px-4 py-3 rounded-2xl font-bold text-sm text-white shadow-2xl"
+            className="lg:hidden fixed right-4 z-40 flex items-center gap-2 rounded-2xl font-bold text-white shadow-2xl"
             style={{
               background: "linear-gradient(135deg,#E85D04,#FB8500)",
               boxShadow: "0 8px 24px rgba(232,93,4,0.45)",
-              bottom: "max(96px, calc(env(safe-area-inset-bottom, 0px) + 88px))",
+              bottom: "max(148px, calc(env(safe-area-inset-bottom, 0px) + 140px))",
+              padding: "10px 14px",
+              fontSize: "13px",
             }}
           >
-            <Wand2 className="w-4 h-4" /> Edit Tools
+            <Wand2 className="w-4 h-4" /> <span className="hidden sm:inline">Edit Tools</span>
           </button>
 
           {/* Mobile bottom-sheet backdrop */}

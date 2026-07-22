@@ -60,7 +60,6 @@ export function ProductShowcaseScene() {
               alignItems: 'center',
               justifyContent: 'center',
               marginBottom: 12,
-              overflow: 'hidden',
             }}>
               <img
                 src={p.img}

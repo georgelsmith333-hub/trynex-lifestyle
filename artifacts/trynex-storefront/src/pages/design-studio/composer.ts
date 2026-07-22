@@ -465,7 +465,9 @@ export async function composeGarmentMockup(opts: {
         ctx.globalAlpha = 0.65;
         ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
         
-        ctx.globalCompositeOperation = "linear-burn";
+        // Intensify shadows slightly with a darker multiply pass (linear-burn is not a
+        // standard typed Canvas composite op, so we use color-burn for a similar effect).
+        ctx.globalCompositeOperation = "color-burn";
         ctx.globalAlpha = 0.05;
         ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
       } else if (isDarkGarment) {

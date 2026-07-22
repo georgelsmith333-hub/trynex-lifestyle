@@ -115,6 +115,7 @@ export interface CreateOrderPayload {
     size?: string;
     color?: string;
     price: number;
+    customNote?: string;
   }[];
   subtotal: number;
   shippingCost: number;

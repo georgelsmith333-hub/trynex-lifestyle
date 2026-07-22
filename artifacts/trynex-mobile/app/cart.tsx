@@ -14,8 +14,10 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useQuery } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
 import { useCart } from "@/context/CartContext";
+import { api } from "@/lib/api";
 
 const WHATSAPP_NUMBER = "8801903426915";
 const WEBSITE_URL = "https://trynex.shop";
@@ -26,7 +28,14 @@ export default function CartScreen() {
   const isWeb = Platform.OS === "web";
   const { items, removeItem, updateQuantity, clearCart, subtotal, totalItems } = useCart();
 
-  const shipping = items.length > 0 ? 60 : 0;
+  const { data: siteSettings } = useQuery({
+    queryKey: ["siteSettings"],
+    queryFn: () => api.getSettings(),
+    staleTime: 5 * 60 * 1000,
+  });
+  const freeShippingThreshold = Number(siteSettings?.freeShippingThreshold ?? 1500);
+  const shippingFee = Number(siteSettings?.shippingCost ?? 60);
+  const shipping = items.length > 0 && subtotal < freeShippingThreshold ? shippingFee : 0;
   const total = subtotal + shipping;
 
   const onCheckout = () => {

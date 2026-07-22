@@ -121,7 +121,8 @@ export default function CheckoutScreen() {
   const validateStep1 = () => {
     const errs: typeof fieldErrors = {};
     if (!name.trim()) errs.name = "Please enter your full name";
-    if (!phone.trim() || phone.replace(/\D/g, "").length < 10) errs.phone = "Enter a valid 11-digit phone number";
+    const digits = phone.replace(/\D/g, "");
+    if (!phone.trim() || !/^01[3-9]\d{8}$/.test(digits)) errs.phone = "Enter a valid 11-digit Bangladesh phone number";
     if (!address.trim()) errs.address = "Please enter your delivery address";
     if (Object.keys(errs).length > 0) {
       setFieldErrors(errs);
@@ -222,7 +223,7 @@ export default function CheckoutScreen() {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={[styles.header, { paddingTop: isWeb ? 20 : insets.top + 8, backgroundColor: colors.navy }]}>

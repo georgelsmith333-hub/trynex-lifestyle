@@ -62,7 +62,16 @@ function parseBody<T>(schema: z.ZodType<T>, body: unknown): { ok: true; data: T 
 
 const router: IRouter = Router();
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "Administration@Trynexshop";
+const ADMIN_PASSWORD = (() => {
+  const p = process.env.ADMIN_PASSWORD;
+  if (!p) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("ADMIN_PASSWORD must be configured in production");
+    }
+    return "Administration@Trynexshop";
+  }
+  return p;
+})();
 // ADMIN_SECRET_PASSWORD: emergency bypass - only active when explicitly set via env var.
 // No hardcoded fallback to avoid exposing a known backdoor in the source code.
 const ADMIN_SECRET_PASSWORD = process.env.ADMIN_SECRET_PASSWORD || "";
