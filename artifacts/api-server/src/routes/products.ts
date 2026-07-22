@@ -384,6 +384,39 @@ router.post("/products/bulk", requireAdmin, async (req, res) => {
   }
 });
 
+/* ── Live Viewer Count ───────────────────────────────────────────────────────
+   Simple in-memory viewer tracker. Clients send a heartbeat every 30s.
+   Viewers expire automatically after 90s without a heartbeat.
+   No DB needed — counts are ephemeral and decorative.
+   ─────────────────────────────────────────────────────────────────────────── */
+const viewerMap = new Map<number, Map<string, number>>(); // productId → {viewerId → expiresAt}
+const VIEWER_TTL_MS = 90_000;
+
+function pruneViewers(productId: number) {
+  const viewers = viewerMap.get(productId);
+  if (!viewers) return;
+  const now = Date.now();
+  for (const [id, exp] of viewers) if (exp < now) viewers.delete(id);
+  if (viewers.size === 0) viewerMap.delete(productId);
+}
+
+router.put("/products/:id/viewers", (req, res) => {
+  const pid = parseInt(String(req.params.id), 10);
+  if (!Number.isFinite(pid) || pid <= 0) { res.status(400).json({ count: 1 }); return; }
+  const viewerId = String(req.body?.viewerId || "").slice(0, 64) || `anon-${Math.random().toString(36).slice(2)}`;
+  pruneViewers(pid);
+  if (!viewerMap.has(pid)) viewerMap.set(pid, new Map());
+  viewerMap.get(pid)!.set(viewerId, Date.now() + VIEWER_TTL_MS);
+  res.json({ count: viewerMap.get(pid)!.size, viewerId });
+});
+
+router.get("/products/:id/viewers", (req, res) => {
+  const pid = parseInt(String(req.params.id), 10);
+  if (!Number.isFinite(pid) || pid <= 0) { res.json({ count: 1 }); return; }
+  pruneViewers(pid);
+  res.json({ count: Math.max(1, viewerMap.get(pid)?.size ?? 1) });
+});
+
 /** Toggle featured flag on a product — used by Admin Visual Designer */
 router.patch("/admin/products/:id/featured", requireAdmin, async (req, res) => {
   try {
