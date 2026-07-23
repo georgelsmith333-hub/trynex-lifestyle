@@ -4,6 +4,7 @@ import { ChevronDown, MessageCircle } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SEOHead } from "@/components/SEOHead";
+import { useSiteSettings } from "@/context/SiteSettingsContext";
 
 interface FAQItem {
   question: string;
@@ -161,6 +162,8 @@ const faqSchema = {
 
 export default function FAQ() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const settings = useSiteSettings();
+  const waNum = (settings.whatsappNumber || settings.phone || "8801903426915").replace(/[^0-9]/g, "");
 
   const filtered = activeCategory
     ? faqs.filter((f) => f.category === activeCategory)
@@ -197,7 +200,7 @@ export default function FAQ() {
             <p className="text-gray-500 text-lg max-w-lg mx-auto">
               Everything you need to know about TryNex. Can't find the answer?{" "}
               <a
-                href="https://wa.me/8801903426915"
+                href={`https://wa.me/${waNum}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-orange-500 font-bold hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 rounded"
@@ -254,7 +257,7 @@ export default function FAQ() {
             <h3 className="font-black text-gray-900 text-xl mb-2">Still have questions?</h3>
             <p className="text-gray-500 mb-5">Our team replies within minutes on WhatsApp</p>
             <a
-              href="https://wa.me/8801903426915?text=Hi%2C%20I%20have%20a%20question%20about%20TryNex"
+              href={`https://wa.me/${waNum}?text=Hi%2C%20I%20have%20a%20question%20about%20TryNex`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-white font-black text-sm shadow-lg transition-transform active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"

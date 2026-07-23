@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect, useMemo } from "react";
+import { useRef, useState, useCallback, useEffect, useMemo, lazy, Suspense } from "react";
 import { flushSync } from "react-dom";
 import { useLocation } from "wouter";
 import { Navbar } from "@/components/layout/Navbar";
@@ -29,6 +29,9 @@ import {
   getApparelZones, getZonePZ, type ApparelZone, isNearBlack, isLightTint, type PrintZone,
 } from "./design-studio/mockups";
 import { composeLayers, composeGarmentMockup, composeDesignTexture, autoFixImage, type ComposerLayer } from "./design-studio/composer";
+
+/* Lazy-loaded 3D preview — heavy R3F bundle only fetched when the user opens it */
+const LazyProductViewer3D = lazy(() => import("./design-studio/ProductViewer3D"));
 
 /* ═══════════════════════════════════════════════════════
    LAYER MODEL
@@ -350,6 +353,9 @@ export default function DesignStudio() {
   type MugMode = "side1" | "side2" | "wrap";
   const [mugMode, setMugMode] = useState<MugMode>("side1");
 
+  /** When true the canvas area shows the live 3D preview instead of the 2D SVG editor. */
+  const [show3D, setShow3D] = useState(false);
+
   const isMugProduct = selectedProduct.category === "mug";
 
   // Tee/longsleeve/hoodie support a back face. Mug also gets back face data
@@ -413,6 +419,17 @@ export default function DesignStudio() {
       && layers.filter(l => (l.face ?? "front") === "front").length > 0
       && layers.filter(l => (l.face ?? "front") === "back").length > 0,
     [isMugProduct, layers]
+  );
+
+  // Component-level front/back layer slices — used by the live 3D preview.
+  // (handleAddToCart has its own local equivalents; these are reactive memos.)
+  const ds3dFrontLayers = useMemo(
+    () => layers.filter(l => (l.face ?? "front") === "front") as unknown as ComposerLayer[],
+    [layers]
+  );
+  const ds3dBackLayers = useMemo(
+    () => layers.filter(l => (l.face ?? "front") === "back") as unknown as ComposerLayer[],
+    [layers]
   );
 
   // Crop state
@@ -2557,6 +2574,22 @@ export default function DesignStudio() {
               {showPrintZone ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
               Print Zone
             </button>
+            {/* 3D Preview toggle — hidden on flat zones (sleeve / neck-label) */}
+            {!isFlatZone && (
+              <button
+                onClick={() => setShow3D(v => !v)}
+                className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all"
+                style={{
+                  background: show3D ? "#eff6ff" : "#f3f4f6",
+                  color: show3D ? "#1d4ed8" : "#6b7280",
+                  border: show3D ? "1.5px solid #bfdbfe" : "1.5px solid transparent",
+                }}
+                title={show3D ? "Switch back to 2D editor" : "See your design on a 3D model"}
+              >
+                <Package className="w-3 h-3" />
+                {show3D ? "2D Edit" : "3D Preview"}
+              </button>
+            )}
             {/* Add to Cart — compact on mobile */}
             <motion.button
               onClick={handleAddToCart}
@@ -2937,6 +2970,48 @@ export default function DesignStudio() {
                 }}
               >
                 <>
+                {/* ── Live 3D Preview — overlays the 2D canvas when show3D is active ── */}
+                {show3D && (
+                  <div
+                    className="absolute inset-0 z-20 rounded-3xl overflow-hidden"
+                    style={{ background: "radial-gradient(ellipse at 50% 40%, #f4f4f4 0%, #e8e8e8 100%)" }}
+                  >
+                    <Suspense fallback={
+                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                        <div className="w-8 h-8 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+                        <p className="text-xs text-gray-400 font-medium">Loading 3D…</p>
+                      </div>
+                    }>
+                      <LazyProductViewer3D
+                        product={selectedProduct}
+                        garmentColor={selectedColor.hex}
+                        front={{
+                          layers: ds3dFrontLayers,
+                          printZone: isMugProduct ? MUG_SIDE_PZ : selectedProduct.printZone,
+                          baseHeight: selectedProduct.baseHeight,
+                        }}
+                        back={supportsBack && ds3dBackLayers.length > 0 ? {
+                          layers: ds3dBackLayers,
+                          printZone: isMugProduct
+                            ? MUG_SIDE_PZ
+                            : (selectedProduct.printZoneBack ?? selectedProduct.printZone),
+                          baseHeight: selectedProduct.baseHeight,
+                        } : undefined}
+                        activeFace={activeFace as "front" | "back"}
+                        isWrapMode={isWrapMode}
+                      />
+                    </Suspense>
+                    {/* "Back to 2D" pill — visible bottom-centre of the 3D viewer */}
+                    <button
+                      onClick={() => setShow3D(false)}
+                      className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold text-white shadow-lg z-10"
+                      style={{ background: "rgba(17,24,39,0.78)", backdropFilter: "blur(8px)" }}
+                    >
+                      <Eye className="w-3 h-3" /> Back to 2D Editor
+                    </button>
+                  </div>
+                )}
+
                 {/* Floating face label inside the canvas — gives a clear, premium
                     "you are looking at the FRONT" indicator and animates between
                     faces. Doesn't affect interaction (pointer-events: none). */}

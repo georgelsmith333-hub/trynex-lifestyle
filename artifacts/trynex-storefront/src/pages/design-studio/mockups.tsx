@@ -144,10 +144,12 @@ export const HOODIE_PZ: PrintZone           = { x: 240, y: 270, w: 520, h: 400 }
 export const HOODIE_BACK_PZ: PrintZone      = { x: 292, y: 184, w: 416, h: 448 };
 /** Cap front panel — structured 5-panel cap, panel is centred between brim and seam. */
 export const CAP_PZ: PrintZone              = { x: 302, y: 222, w: 396, h: 252 };
-export const MUG_PZ: PrintZone              = { x: 300, y: 260, w: 400, h: 360 };
-/** Mug side print zone — centered on the visible mug body, avoiding the handle
- *  and rim so designs look correctly placed and not stretched around the curve. */
-export const MUG_SIDE_PZ: PrintZone         = { x: 300, y: 260, w: 400, h: 360 };
+/** Mug full 360° wrap zone — used by the wrap-mode composer (full body texture). */
+export const MUG_PZ: PrintZone              = { x: 160, y: 195, w: 680, h: 610 };
+/** Mug side print zone — calibrated to the visible front face of the mug body,
+ *  avoiding the handle on the right and leaving breathing room at the rim/base.
+ *  Center (415, 480) aligns with the mug body centre, well clear of the handle. */
+export const MUG_SIDE_PZ: PrintZone         = { x: 225, y: 215, w: 380, h: 530 };
 /** Water bottle — wider printable front label panel so designs fill the
  *  cylindrical body without leaving large blank margins on the sides. */
 export const WATERBOTTLE_PZ: PrintZone      = { x: 260, y: 214, w: 480, h: 548 };

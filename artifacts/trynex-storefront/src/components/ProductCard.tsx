@@ -31,7 +31,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
     const { addToCart } = useCartActions();
     const { toggleWishlist, isWishlisted } = useWishlist();
     const { toast } = useToast();
-    const { scarcityThreshold } = useSiteSettings();
+    const { scarcityThreshold, phone, whatsappNumber } = useSiteSettings();
     const [isAdding, setIsAdding] = useState(false);
     const [hovered, setHovered] = useState(false);
     const [imgLoaded, setImgLoaded] = useState(false);
@@ -58,11 +58,11 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
     const isLowStock = product.stock > 0 && product.stock <= (scarcityThreshold || 10);
 
     // Build WhatsApp order URL
-    const whatsappNumber = "8801903426915";
+    const waNumber = (whatsappNumber || phone || "8801903426915").replace(/[^0-9]/g, "");
     const whatsappMsg = encodeURIComponent(
       `Hello TryNex! I want to order:\n*${product.name}*\nPrice: ${formatPrice(discountPrice || price)}\nProduct link: https://trynexshop.com/product/${product.slug || product.id}`
     );
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMsg}`;
+    const whatsappUrl = `https://wa.me/${waNumber}?text=${whatsappMsg}`;
 
     const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
       if (isMobile) return;

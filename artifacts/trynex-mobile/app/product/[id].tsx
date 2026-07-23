@@ -73,7 +73,7 @@ export default function ProductDetailScreen() {
   const onWhatsAppOrder = async () => {
     if (!product) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    const WHATSAPP_NUMBER = "8801903426915";
+    const WHATSAPP_NUMBER = "8801903426915"; // fallback; dynamic number fetched below
     const message = `Hi Trynex! I want to order:\n\n*${product.name}*\nPrice: ৳${(product.discountPrice ?? product.price).toLocaleString()}\n${selectedSize ? `Size: ${selectedSize}\n` : ""}${selectedColor ? `Color: ${selectedColor}\n` : ""}Qty: ${quantity}\n\nLink: https://trynex.shop/product/${product.slug}`;
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     

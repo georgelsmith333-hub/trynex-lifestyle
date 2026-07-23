@@ -688,8 +688,8 @@ export default function Home() {
             "logo": "https://trynexshop.com/favicon.svg",
             "image": "https://trynexshop.com/opengraph.jpg",
             "description": "Bangladesh's #1 premium custom apparel brand. Custom T-shirts, Hoodies, Mugs & Caps with fast nationwide delivery.",
-            "telephone": "+8801903426915",
-            "email": "support@trynexshop.com",
+            "telephone": settings.phone || "+8801903426915",
+            "email": settings.email || "support@trynexshop.com",
             "address": {
               "@type": "PostalAddress",
               "streetAddress": "Dhaka",
@@ -706,7 +706,7 @@ export default function Home() {
             ],
             "contactPoint": {
               "@type": "ContactPoint",
-              "telephone": "+8801903426915",
+              "telephone": settings.phone || "+8801903426915",
               "contactType": "customer service",
               "areaServed": "BD",
               "availableLanguage": ["English", "Bengali"]
@@ -732,7 +732,7 @@ export default function Home() {
             "name": settings.siteName || "TryNex Lifestyle",
             "url": "https://trynexshop.com",
             "logo": { "@type": "ImageObject", "url": "https://trynexshop.com/favicon.svg", "width": 512, "height": 512 },
-            "contactPoint": { "@type": "ContactPoint", "telephone": "+8801903426915", "contactType": "sales", "areaServed": "BD" },
+            "contactPoint": { "@type": "ContactPoint", "telephone": settings.phone || "+8801903426915", "contactType": "sales", "areaServed": "BD" },
           },
           {
             "@context": "https://schema.org",

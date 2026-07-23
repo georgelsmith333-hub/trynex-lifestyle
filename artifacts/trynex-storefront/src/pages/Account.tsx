@@ -4,6 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SEOHead } from "@/components/SEOHead";
 import { useAuth } from "@/context/AuthContext";
+import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { useToast } from "@/hooks/use-toast";
 import { formatPrice, getApiUrl } from "@/lib/utils";
 import {
@@ -98,6 +99,8 @@ export default function Account() {
   const [, navigate] = useLocation();
   const { customer, isLoading, isAuthenticated, updateProfile, logout } = useAuth();
   const { toast } = useToast();
+  const siteSettings = useSiteSettings();
+  const waNum = (siteSettings.whatsappNumber || siteSettings.phone || "8801903426915").replace(/[^0-9]/g, "");
   const [editing, setEditing] = useState(false);
   const [editName, setEditName] = useState("");
   const [editPhone, setEditPhone] = useState("");
@@ -746,7 +749,7 @@ export default function Account() {
                         </div>
                         {/* Direct contact CTA — always visible */}
                         <a
-                          href="https://wa.me/8801903426915?text=Hi%20TryNex!%20I%20need%20help%20with%20my%20order%20or%20have%20a%20question."
+                          href={`https://wa.me/${waNum}?text=Hi%20TryNex!%20I%20need%20help%20with%20my%20order%20or%20have%20a%20question.`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-3 w-full p-3 rounded-xl mb-4 hover:brightness-95 transition-all"

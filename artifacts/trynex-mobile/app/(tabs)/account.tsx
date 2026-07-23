@@ -15,12 +15,14 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useQuery } from "@tanstack/react-query";
 import { ProductCard } from "@/components/ProductCard";
 import { useColors } from "@/hooks/useColors";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
+import { api } from "@/lib/api";
 
-const WHATSAPP_NUMBER = "8801903426915";
+const FALLBACK_WHATSAPP = "8801903426915";
 const WEBSITE_URL = "https://trynex.shop";
 
 async function handleShareApp() {
@@ -32,8 +34,8 @@ async function handleShareApp() {
   } catch (_) {}
 }
 
-async function handleCustomerSupport() {
-  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hi! I need help with my Trynex order.")}`;
+async function handleCustomerSupport(whatsappNum: string = FALLBACK_WHATSAPP) {
+  const url = `https://wa.me/${whatsappNum}?text=${encodeURIComponent("Hi! I need help with my Trynex order.")}`;
   const canOpen = await Linking.canOpenURL(url);
   if (canOpen) {
     await Linking.openURL(url);
@@ -59,14 +61,6 @@ async function handleLoginRegister() {
   }
 }
 
-const MENU_ITEMS = [
-  { icon: "shopping-bag", label: "My Orders", onPress: () => router.push("/(tabs)/orders") },
-  { icon: "edit-3", label: "Design Studio", onPress: () => router.push("/(tabs)/design") },
-  { icon: "share-2", label: "Share App", onPress: handleShareApp },
-  { icon: "headphones", label: "Customer Support", onPress: handleCustomerSupport },
-  { icon: "info", label: "About Trynex", onPress: handleAboutTrynex },
-];
-
 export default function AccountScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
@@ -74,6 +68,21 @@ export default function AccountScreen() {
   const topPad = isWeb ? 67 : insets.top;
   const { items: wishlistItems } = useWishlist();
   const { totalItems } = useCart();
+
+  const { data: siteSettings } = useQuery({
+    queryKey: ["siteSettings"],
+    queryFn: () => api.getSettings(),
+    staleTime: 5 * 60 * 1000,
+  });
+  const waNum = ((siteSettings?.whatsappNumber || siteSettings?.phone || FALLBACK_WHATSAPP) as string).replace(/[^0-9]/g, "");
+
+  const MENU_ITEMS = [
+    { icon: "shopping-bag", label: "My Orders", onPress: () => router.push("/(tabs)/orders") },
+    { icon: "edit-3", label: "Design Studio", onPress: () => router.push("/(tabs)/design") },
+    { icon: "share-2", label: "Share App", onPress: handleShareApp },
+    { icon: "headphones", label: "Customer Support", onPress: () => handleCustomerSupport(waNum) },
+    { icon: "info", label: "About Trynex", onPress: handleAboutTrynex },
+  ];
 
   return (
     <ScrollView

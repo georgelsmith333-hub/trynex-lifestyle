@@ -6,6 +6,7 @@ import { getLandingPage } from "@/data/landingPages";
 import { getApiUrl } from "@/lib/utils";
 import { ChevronDown, ChevronUp, ArrowRight, CheckCircle2, Truck, ShieldCheck, Headphones } from "lucide-react";
 import { useState } from "react";
+import { useSiteSettings } from "@/context/SiteSettingsContext";
 
 const SITE_URL = "https://trynexshop.com";
 
@@ -47,6 +48,8 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 
 export default function KeywordLanding({ params }: { params: { slug: string } }) {
   const config = getLandingPage(params.slug);
+  const settings = useSiteSettings();
+  const waNum = (settings.whatsappNumber || settings.phone || "8801903426915").replace(/[^0-9]/g, "");
 
   const { data: productsData } = useQuery<{ products: Product[] }>({
     queryKey: ["keyword-landing-products", params.slug],
@@ -130,8 +133,8 @@ export default function KeywordLanding({ params }: { params: { slug: string } })
     name: "TryNex Lifestyle",
     description: "Bangladesh's leading custom apparel, mug, and gifting brand. Design your own t-shirt, hoodie, or mug with fast nationwide delivery.",
     url: SITE_URL,
-    telephone: "+8801903426915",
-    email: "info@trynexshop.com",
+    telephone: settings.phone || "+8801903426915",
+    email: settings.email || "info@trynexshop.com",
     image: `${SITE_URL}/og-image.jpg`,
     logo: `${SITE_URL}/trynex-logo.png`,
     priceRange: "৳৳",
@@ -369,7 +372,7 @@ export default function KeywordLanding({ params }: { params: { slug: string } })
               {config.ctaLabel}
             </Link>
             <a
-              href="https://wa.me/8801903426915?text=Hi%2C%20I%20want%20to%20order%20a%20custom%20gift"
+              href={`https://wa.me/${waNum}?text=Hi%2C%20I%20want%20to%20order%20a%20custom%20gift`}
               target="_blank"
               rel="noopener noreferrer"
               className="bg-green-500 text-white font-bold px-8 py-3.5 rounded-2xl hover:bg-green-600 transition-colors"
