@@ -435,7 +435,7 @@ export function TypewriterHero() {
                 className="flex flex-col items-center md:items-start lg:px-5 lg:border-l lg:border-orange-200 first:lg:border-l-0 first:lg:pl-0 min-w-0"
               >
                 <span
-                  className="font-black text-base sm:text-2xl lg:text-3xl leading-none truncate w-full text-center md:text-left"
+                  className="font-black text-base sm:text-2xl lg:text-3xl leading-none text-center md:text-left whitespace-nowrap"
                   style={{ color: "var(--color-primary)" }}
                 >
                   {s.value}

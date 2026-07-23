@@ -9,12 +9,10 @@ import { formatPrice } from "@/lib/utils";
 import { Minus, Plus, Trash2, ArrowRight, ShoppingBag, ShieldCheck, XCircle, Image as ImageIcon, Gift, ChevronDown, ChevronUp, Heart, Sparkles } from "lucide-react";
 import { CartItemThumbnail } from "@/components/CartItemThumbnail";
 import { useCartItemPreview } from "@/hooks/useCartItemPreview";
-import { memo, useState, useEffect, useCallback, lazy, Suspense } from "react";
+import { memo, useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FreeShippingProgress } from "@/components/FreeShippingProgress";
 import { useToast } from "@/hooks/use-toast";
-
-const CartViewer3D = lazy(() => import("@/components/CartViewer3D"));
 
 interface LineProps {
   item: CartItem;
@@ -97,7 +95,6 @@ const HamperCartLine = memo(function HamperCartLine({ item, onChangeQuantity, on
 });
 
 const CatalogCartLine = memo(function CatalogCartLine({ item, onChangeQuantity, onRemove, removeFromCart }: LineProps) {
-  const [show3D, setShow3D] = useState(false);
   const [, setLocation] = useLocation();
 
   // Single source of truth for both 2D thumbnail and 3D viewer.
@@ -167,16 +164,6 @@ const CatalogCartLine = memo(function CatalogCartLine({ item, onChangeQuantity, 
                     </button>
                   )}
 
-                  {preview.frontTexUrl && (
-                    <button
-                      onClick={() => setShow3D(v => !v)}
-                      className="text-[11px] font-bold flex items-center gap-1 px-2 py-0.5 rounded-md transition-colors"
-                      style={{ background: show3D ? '#fff4ee' : '#f3f4f6', color: show3D ? '#E85D04' : '#374151', border: '1px solid', borderColor: show3D ? '#fdd5b4' : '#e5e7eb' }}
-                    >
-                      <span>View in 3D</span>
-                      {show3D ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                    </button>
-                  )}
                 </div>
               )}
               {!studioMeta && (() => {
@@ -213,22 +200,6 @@ const CatalogCartLine = memo(function CatalogCartLine({ item, onChangeQuantity, 
           </div>
         </div>
       </div>
-      {show3D && preview.frontTexUrl && (
-        <div className="px-4 pb-4 bg-gray-50/50 border-t border-gray-100">
-          <div className="aspect-square w-full max-w-[320px] mx-auto rounded-2xl overflow-hidden mt-4 shadow-inner bg-white border border-gray-200">
-            {/* Fixed-size fallback prevents layout shift when the 3D bundle lazy-loads */}
-            <Suspense fallback={<div className="w-full h-full aspect-square max-w-[320px] flex items-center justify-center bg-gray-50 rounded-2xl"><div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" /></div>}>
-              <CartViewer3D
-                category={preview.category}
-                garmentColor={preview.colorHex}
-                frontTexUrl={preview.frontTexUrl}
-                backTexUrl={preview.backTexUrl}
-              />
-            </Suspense>
-          </div>
-          <p className="text-[10px] text-center text-gray-400 mt-3 font-medium uppercase tracking-widest">3D Design Preview</p>
-        </div>
-      )}
     </motion.div>
   );
 });

@@ -2,6 +2,7 @@ import { Router, type IRouter, type Request, type Response } from "express";
 import { ObjectStorageService, ObjectNotFoundError } from "../lib/objectStorage";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { z } from "zod";
+import sharp from "sharp";
 
 const MAX_UPLOAD_BYTES = 25 * 1024 * 1024;
 
@@ -211,6 +212,57 @@ router.get("/storage/objects/*path", async (req: Request, res: Response) => {
     }
     req.log.error({ err: error }, "Error serving object");
     if (!res.headersSent) res.status(500).json({ error: "Failed to serve object" });
+  }
+});
+
+/**
+ * POST /storage/optimize
+ * Server-side image optimization: convert uploaded images to WebP, resize if
+ * needed, and strip metadata. Returns a buffer the client can upload or the server
+ * can persist. Requires admin auth.
+ */
+const OptimizeSchema = z.object({
+  path: z.string().min(1, "path is required").max(512),
+  width: z.number().int().min(32).max(4096).optional(),
+  height: z.number().int().min(32).max(4096).optional(),
+  quality: z.number().int().min(1).max(100).default(85),
+  format: z.enum(["webp", "avif", "jpeg", "png"]).default("webp"),
+});
+
+router.post("/storage/optimize", requireAdmin, async (req: Request, res: Response) => {
+  const parsed = OptimizeSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: "validation_error", message: parsed.error.errors.map(e => e.message).join("; ") });
+    return;
+  }
+  try {
+    const { path, width, height, quality, format } = parsed.data;
+    if (!path.startsWith("/objects/") && !path.startsWith("/public/")) {
+      res.status(400).json({ error: "validation_error", message: "path must start with /objects/ or /public/" });
+      return;
+    }
+    const buf = await objectStorageService.getObjectBuffer(path);
+    let pipeline = sharp(buf);
+    if (width || height) {
+      pipeline = pipeline.resize(width, height, { fit: "inside", withoutEnlargement: true });
+    }
+    switch (format) {
+      case "webp": pipeline = pipeline.webp({ quality, effort: 4 }); break;
+      case "avif": pipeline = pipeline.avif({ quality, effort: 4 }); break;
+      case "jpeg": pipeline = pipeline.jpeg({ quality, mozjpeg: true }); break;
+      case "png": pipeline = pipeline.png({ quality, effort: 7 }); break;
+    }
+    const outBuf = await pipeline.toBuffer();
+    res.setHeader("Content-Type", `image/${format}`);
+    res.setHeader("Content-Length", outBuf.length);
+    res.send(outBuf);
+  } catch (error) {
+    if (error instanceof ObjectNotFoundError) {
+      res.status(404).json({ error: "Object not found" });
+      return;
+    }
+    req.log.error({ err: error }, "Image optimization failed");
+    res.status(500).json({ error: "Image optimization failed" });
   }
 });
 

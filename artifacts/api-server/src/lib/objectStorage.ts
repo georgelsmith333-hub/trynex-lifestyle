@@ -264,6 +264,45 @@ export class ObjectStorageService {
     await streamLocalFileToResponse(fullPath, res, false);
   }
 
+  /* ── Fetch an object into memory as a buffer ── */
+  async getObjectBuffer(objectPath: string): Promise<Buffer> {
+    if (objectPath.startsWith("/public/")) {
+      const filePath = objectPath.slice("/public/".length).replace(/\.\./g, "").replace(/^\/+/, "");
+      const fullPath = path.join(localPublicDir(), filePath);
+      if (!fs.existsSync(fullPath)) throw new ObjectNotFoundError();
+      return fs.promises.readFile(fullPath);
+    }
+
+    if (!objectPath.startsWith("/objects/")) throw new ObjectNotFoundError();
+    const entityId = objectPath.slice("/objects/".length).replace(/\.\./g, "");
+    if (!entityId) throw new ObjectNotFoundError();
+
+    if (BACKEND === "r2" || BACKEND === "s3") {
+      const { client, bucket } = ensureS3Client();
+      const key = `uploads/${entityId}`;
+      try {
+        const out = await client.send(new GetObjectCommand({ Bucket: bucket, Key: key }));
+        if (!out.Body) throw new ObjectNotFoundError();
+        const chunks: Buffer[] = [];
+        for await (const chunk of out.Body as unknown as AsyncIterable<Buffer>) {
+          chunks.push(chunk);
+        }
+        return Buffer.concat(chunks);
+      } catch (err) {
+        const e = err as { name?: string; $metadata?: { httpStatusCode?: number } };
+        if (e?.name === "NoSuchKey" || e?.$metadata?.httpStatusCode === 404) {
+          throw new ObjectNotFoundError();
+        }
+        throw err;
+      }
+    }
+
+    // Local backend
+    const fullPath = path.join(localUploadsDir(), entityId);
+    if (!fs.existsSync(fullPath)) throw new ObjectNotFoundError();
+    return fs.promises.readFile(fullPath);
+  }
+
   /* ── Issue a temporary download URL ── */
   async getObjectDownloadURL(objectPath: string, ttlSec = 900): Promise<string> {
     if (!objectPath.startsWith("/objects/")) throw new ObjectNotFoundError();

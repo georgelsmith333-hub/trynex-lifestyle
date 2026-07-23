@@ -1,6 +1,7 @@
 import express, { type Express } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import compression from "compression";
 import helmet from "helmet";
 import pinoHttp from "pino-http";
 import rateLimit from "express-rate-limit";
@@ -11,6 +12,9 @@ import { validateAdminSession } from "./lib/adminSessions";
 const app: Express = express();
 
 app.set("trust proxy", 1);
+
+// Compression (gzip/brotli) — reduces bandwidth for JSON responses.
+app.use(compression({ threshold: 1024 }));
 
 // Security headers — protects against clickjacking, MIME sniffing, XSS,
 // referrer leaks, etc. CSP is disabled at the API layer because this
