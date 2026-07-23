@@ -19,3 +19,6 @@ out/
 # TypeScript build info
 *.tsbuildinfo
 
+# Screenshots / local verification artifacts
+screenshots/
+

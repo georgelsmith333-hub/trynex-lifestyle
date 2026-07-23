@@ -29,6 +29,7 @@ import {
   getApparelZones, getZonePZ, type ApparelZone, isNearBlack, isLightTint, type PrintZone,
 } from "./design-studio/mockups";
 import { composeLayers, composeGarmentMockup, composeDesignTexture, autoFixImage, type ComposerLayer } from "./design-studio/composer";
+import ProductViewer3D from "./design-studio/ProductViewer3D";
 
 /* ═══════════════════════════════════════════════════════
    LAYER MODEL
@@ -339,6 +340,7 @@ export default function DesignStudio() {
   }, []);
 
   const [activeFace, setActiveFace] = useState<Face>("front");
+  const [previewMode, setPreviewMode] = useState<"2d" | "3d">("2d");
 
   const [selectedSize, setSelectedSize] = useState("M");
   const [quantity, setQuantity] = useState(1);
@@ -785,6 +787,24 @@ export default function DesignStudio() {
   }, [isMugProduct, activeFace, selectedProduct, mugMode]);
   const pzRef = useRef(pz);
   useEffect(() => { pzRef.current = pz; }, [pz]);
+
+  // Face payloads for the live 3D preview (ProductViewer3D).
+  const facePayloads = useMemo(() => {
+    const frontPZ = isMugProduct ? MUG_SIDE_PZ : selectedProduct.printZone;
+    const backPZ = isMugProduct ? MUG_SIDE_PZ : (selectedProduct.printZoneBack ?? selectedProduct.printZone);
+    const frontLayers = layers.filter(l => (l.face ?? "front") === "front") as unknown as ComposerLayer[];
+    const backLayers = layers.filter(l => (l.face ?? "front") === "back") as unknown as ComposerLayer[];
+    return {
+      front: { layers: frontLayers, printZone: frontPZ, baseHeight: selectedProduct.baseHeight },
+      back: backLayers.length > 0 || supportsBack ? { layers: backLayers, printZone: backPZ, baseHeight: selectedProduct.baseHeight } : undefined,
+    };
+  }, [isMugProduct, selectedProduct, layers, supportsBack]);
+
+  // 3D preview is only meaningful for products that have a 3D viewer (garments, mugs, bottles, caps).
+  const supports3DPreview = useMemo(
+    () => ["tshirt", "longsleeve", "hoodie", "mug", "cap", "waterbottle"].includes(selectedProduct.category),
+    [selectedProduct.category]
+  );
 
   const activeFaceRef = useRef(activeFace);
   useEffect(() => { activeFaceRef.current = activeFace; }, [activeFace]);
@@ -2925,6 +2945,34 @@ export default function DesignStudio() {
                 }
               }}
             >
+              {/* 2D / 3D preview toggle */}
+              {supports3DPreview && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPreviewMode(previewMode === "2d" ? "3d" : "2d");
+                  }}
+                  className="absolute top-3 right-3 z-30 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-widest bg-white/90 backdrop-blur shadow-sm border border-gray-200 text-gray-700 hover:text-orange-600 hover:border-orange-300 transition-colors"
+                >
+                  {previewMode === "2d" ? "3D Preview" : "2D Edit"}
+                </button>
+              )}
+
+              {/* Live 3D preview overlay */}
+              {previewMode === "3d" && supports3DPreview && (
+                <div className="absolute inset-0 w-full h-full z-20" style={{ background: "transparent" }}>
+                  <ProductViewer3D
+                    product={selectedProduct}
+                    garmentColor={selectedColor.hex}
+                    front={facePayloads.front}
+                    back={facePayloads.back}
+                    activeFace={activeFace === "front" || activeFace === "back" ? activeFace : "front"}
+                    isWrapMode={isMugProduct && mugMode === "wrap"}
+                  />
+                </div>
+              )}
+
               <div
                 className="relative w-full"
                 style={{
