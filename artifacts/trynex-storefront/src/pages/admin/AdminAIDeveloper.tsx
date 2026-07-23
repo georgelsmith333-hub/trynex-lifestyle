@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { getAuthHeaders, getApiUrl } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 import {
   Bot, Send, Square, Trash2, Copy, Check, Settings, ChevronDown, Zap,
   Code2, Terminal, FileCode, Sparkles, Download, RefreshCw, AlertCircle,
@@ -222,6 +223,7 @@ function StatCard({ icon: Icon, label, value, sub, color }: { icon: typeof Packa
 
 /* ─────────────────── Main Component ─────────────────── */
 export default function AdminAIDeveloper() {
+  const { toast } = useToast();
   const [providers,       setProviders]       = useState<Provider[]>([]);
   const [selectedProv,    setSelectedProv]    = useState("pollinations");
   const [selectedModel,   setSelectedModel]   = useState("");
@@ -231,7 +233,22 @@ export default function AdminAIDeveloper() {
   const [input,           setInput]           = useState("");
   const [isStreaming,     setIsStreaming]      = useState(false);
   const [temperature,     setTemperature]      = useState(0.7);
+  // Fetch system prompt from DB settings on mount; fall back to hardcoded default
   const [systemPrompt,    setSystemPrompt]    = useState(TRYNEX_SYSTEM);
+  const [promptLoaded,    setPromptLoaded]    = useState(false);
+  useEffect(() => {
+    fetch(getApiUrl("/api/settings/aiSystemPrompt"), {
+      headers: { ...getAuthHeaders() },
+    })
+      .then(r => r.json())
+      .then(d => {
+        if (d.value && d.value.trim()) {
+          setSystemPrompt(d.value);
+        }
+      })
+      .catch(() => { /* fall back to hardcoded default */ })
+      .finally(() => setPromptLoaded(true));
+  }, []);
   const [activeTab,       setActiveTab]       = useState<"chat" | "context" | "tools" | "settings">("chat");
   const [features,        setFeatures]        = useState<FeatureFlags>(DEFAULT_FEATURES);
   const [openAIKey,       setOpenAIKey]       = useState("");
@@ -1138,7 +1155,21 @@ System uptime: ${Math.floor(storeContext.health.uptime / 60)} min, Memory: ${sto
                     <label className="text-xs font-medium text-gray-600 block mb-2">System Prompt</label>
                     <textarea value={systemPrompt} onChange={e => setSystemPrompt(e.target.value)} rows={8}
                       className="w-full text-xs font-mono bg-gray-900 text-gray-100 rounded-xl p-4 resize-none focus:outline-none focus:ring-2 focus:ring-orange-400 leading-relaxed" />
-                    <button onClick={() => setSystemPrompt(TRYNEX_SYSTEM)} className="mt-2 text-xs text-orange-500 hover:underline">Reset to default</button>
+                    <div className="flex items-center gap-2 mt-2">
+                      <button onClick={async () => {
+                        try {
+                          await fetch(getApiUrl("/api/settings"), {
+                            method: "PUT",
+                            headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+                            body: JSON.stringify({ aiSystemPrompt: systemPrompt }),
+                          });
+                          toast({ title: "System prompt saved to settings!" });
+                        } catch {
+                          toast({ title: "Failed to save", variant: "destructive" });
+                        }
+                      }} className="text-xs bg-orange-500 text-white px-3 py-1.5 rounded-lg hover:bg-orange-600 transition-colors font-bold">Save to Settings</button>
+                      <button onClick={() => setSystemPrompt(TRYNEX_SYSTEM)} className="text-xs text-orange-500 hover:underline">Reset to default</button>
+                    </div>
                   </div>
                 </div>
 

@@ -115,6 +115,7 @@ const AdminDatabaseCluster    = lazyWithRetry(() => import("./pages/admin/AdminD
 const AdminPageBuilder      = lazyWithRetry(() => import("./pages/admin/AdminPageBuilder"));
 const AdminMockups          = lazyWithRetry(() => import("./pages/admin/AdminMockups"));
 const AdminAIDeveloper      = lazyWithRetry(() => import("./pages/admin/AdminAIDeveloper"));
+const AdminRoles            = lazyWithRetry(() => import("./pages/admin/AdminRoles"));
 const SecretsAdmin          = lazyWithRetry(() => import("./pages/admin/SecretsAdmin"));
 
 const Hampers        = lazyWithRetry(() => import("./pages/Hampers"));
@@ -228,6 +229,7 @@ function Router() {
             <Route path="/admin/page-builder"  component={AdminPageBuilder} />
             <Route path="/admin/mockups"       component={AdminMockups} />
             <Route path="/admin/ai-developer" component={AdminAIDeveloper} />
+            <Route path="/admin/roles"        component={AdminRoles} />
             <Route path="/admin/secrets"      component={SecretsAdmin} />
             <Route path="/admin"               component={AdminDashboard} />
 

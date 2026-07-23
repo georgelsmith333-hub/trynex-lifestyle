@@ -30,3 +30,8 @@
 - [Mobile checkout dynamic settings](mobile-checkout-dynamic-settings.md) — checkout.tsx uses useQuery(["siteSettings"], api.getSettings) for shipping cost, free-shipping threshold, bkash/nagad numbers; falls back to 1500/60/placeholder if API not ready.
 - [DesignStudio dynamic shipping](design-studio-dynamic-shipping.md) — free-shipping threshold and shipping cost must be read from SiteSettingsContext, not hardcoded 1500, so the studio matches the admin-configured values and the checkout flow.
 - [ProductDetail JSON-LD aggregateRating](product-jsonld-rating.md) — only include aggregateRating in JSON-LD when stats.total > 0 (real reviews from API) or product.rating > 0; never use || 10 fallback as it creates misleading fake review counts for Google.
+- [AI system prompt in DB settings](ai-prompt-db-settings.md) — aiSystemPrompt key in SETTINGS_KEYS; AdminAIDeveloper reads/writes it via settings API instead of hardcoded constant; server still uses hardcoded DEVELOPER_SYSTEM_PROMPT as fallback when no DB override exists.
+- [Production notice per-account](prod-notice-per-account.md) — production notice dismissal stored per-admin-account (API-based) instead of per-device (localStorage).
+- [Admin sidebar naming](admin-sidebar-naming.md) — "Page Builder" renamed to "Layout Builder" in sidebar; page route stays /admin/page-builder.
+- [Admin roles page](admin-roles-page.md) — /admin/roles page for viewing/editing admin roles and permissions; uses adminsTable.role column; sidebar entry "Roles" under System group.
+- [Monitoring endpoints](monitoring-endpoints.md) — /api/health/liveness and /api/health/readiness for K8s/external monitoring; cpu/memory metrics added to system health; GitHub Actions CI/CD for build+lint+typecheck.

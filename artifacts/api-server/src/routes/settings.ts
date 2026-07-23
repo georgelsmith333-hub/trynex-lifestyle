@@ -69,6 +69,10 @@ const SETTINGS_KEYS = [
   // Blog categories (JSON array stored as string)
   "blogCategories",
   "homepage_layout",
+  // AI Developer system prompt — editable in DB, fallback to hardcoded server default
+  "aiSystemPrompt",
+  // Per-account preferences
+  "prodNoticeDismissed",
 ];
 
 // Trim-aware fallback: treats null, undefined, or empty/whitespace-only strings as "missing"
@@ -189,10 +193,14 @@ async function buildSettings(map: Record<string, string | null>) {
     // Hero typewriter phrases — newline-separated string; blank means use frontend defaults
     heroTypewriterPhrases: map["heroTypewriterPhrases"] ?? "",
     homepage_layout: map["homepage_layout"] ?? "[]",
+    prodNoticeDismissed: map["prodNoticeDismissed"] ?? "0",
     // NOTE: removeBgApiKey is intentionally NOT included here — it is server-only secret
     // NOTE: metaCapiToken is intentionally NOT included — server-only
     // Safe boolean flag: tells admin UI whether the token is configured (no secret exposed)
     metaCapiTokenConfigured: !!(map["metaCapiToken"]?.trim()),
+    // AI Developer system prompt (editable from Admin → AI Developer settings panel)
+    // Fallback to empty string = use server-side DEVELOPER_SYSTEM_PROMPT constant
+    aiSystemPrompt: map["aiSystemPrompt"] ?? "",
   };
 }
 

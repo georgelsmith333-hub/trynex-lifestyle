@@ -13,23 +13,6 @@ import {
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useToast } from "@/hooks/use-toast";
 
-const FALLBACK_WEEKLY: AdminStatsWeeklyDataItem[] = [
-  { day: "Mon", revenue: 0, orders: 0 },
-  { day: "Tue", revenue: 0, orders: 0 },
-  { day: "Wed", revenue: 0, orders: 0 },
-  { day: "Thu", revenue: 0, orders: 0 },
-  { day: "Fri", revenue: 0, orders: 0 },
-  { day: "Sat", revenue: 0, orders: 0 },
-  { day: "Sun", revenue: 0, orders: 0 },
-];
-
-const FALLBACK_PAYMENT: AdminStatsPaymentDistributionItem[] = [
-  { name: "bKash", value: 0, color: "#e2136e" },
-  { name: "Nagad", value: 0, color: "#f7941d" },
-  { name: "COD", value: 0, color: "#16a34a" },
-  { name: "Rocket", value: 0, color: "#8b2291" },
-];
-
 interface TooltipPayloadEntry {
   name: string;
   value: number;
@@ -54,11 +37,23 @@ const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?:
 
 export default function AdminDashboard() {
   const { data: rawStats, isLoading, refetch, dataUpdatedAt } = useGetAdminStats({ request: { headers: getAuthHeaders() }, query: { queryKey: ["/api/admin/stats"], staleTime: 0, refetchOnMount: "always", refetchInterval: 15_000 } });
-  const [showProdNotice, setShowProdNotice] = React.useState(
-    () => localStorage.getItem("trynex_prod_notice_dismissed") !== "1"
-  );
-  const dismissProdNotice = () => {
-    localStorage.setItem("trynex_prod_notice_dismissed", "1");
+  const [showProdNotice, setShowProdNotice] = React.useState(true);
+  const [prodNoticeLoaded, setProdNoticeLoaded] = React.useState(false);
+  React.useEffect(() => {
+    fetch(getApiUrl("/api/settings/prodNoticeDismissed"), {
+      headers: getAuthHeaders(),
+    }).then(r => r.json()).then(d => {
+      if (d.value === "1") setShowProdNotice(false);
+    }).catch(() => {}).finally(() => setProdNoticeLoaded(true));
+  }, []);
+  const dismissProdNotice = async () => {
+    try {
+      await fetch(getApiUrl("/api/settings"), {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+        body: JSON.stringify({ prodNoticeDismissed: "1" }),
+      });
+    } catch {}
     setShowProdNotice(false);
   };
 
@@ -66,8 +61,8 @@ export default function AdminDashboard() {
 
   const stats = rawStats;
   const lastRefresh = dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleTimeString('en-BD') : null;
-  const WEEKLY_DATA = stats.weeklyData && stats.weeklyData.length > 0 ? stats.weeklyData : FALLBACK_WEEKLY;
-  const PAYMENT_DATA = stats.paymentDistribution && stats.paymentDistribution.length > 0 ? stats.paymentDistribution : FALLBACK_PAYMENT;
+  const WEEKLY_DATA = stats.weeklyData || [];
+  const PAYMENT_DATA = stats.paymentDistribution || [];
   const topProducts = stats.topProducts || [];
 
   const cards = [
@@ -242,21 +237,28 @@ export default function AdminDashboard() {
               Real-time data
             </span>
           </div>
-          <ResponsiveContainer width="100%" height={220}>
-            <AreaChart data={WEEKLY_DATA} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
-              <defs>
-                <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#E85D04" stopOpacity={0.15} />
-                  <stop offset="95%" stopColor="#E85D04" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
-              <XAxis dataKey="day" tick={{ fontSize: 11, fontWeight: 600, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: '#9ca3af' }} axisLine={false} tickLine={false} tickFormatter={v => `৳${(v/1000).toFixed(0)}K`} />
-              <Tooltip content={<CustomTooltip />} />
-              <Area type="monotone" dataKey="revenue" name="revenue" stroke="#E85D04" strokeWidth={2.5} fill="url(#revenueGrad)" dot={{ fill: '#E85D04', strokeWidth: 2, r: 4 }} activeDot={{ r: 6 }} />
-            </AreaChart>
-          </ResponsiveContainer>
+          {WEEKLY_DATA.length > 0 ? (
+            <ResponsiveContainer width="100%" height={220}>
+              <AreaChart data={WEEKLY_DATA} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#E85D04" stopOpacity={0.15} />
+                    <stop offset="95%" stopColor="#E85D04" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+                <XAxis dataKey="day" tick={{ fontSize: 11, fontWeight: 600, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 10, fill: '#9ca3af' }} axisLine={false} tickLine={false} tickFormatter={v => `৳${(v/1000).toFixed(0)}K`} />
+                <Tooltip content={<CustomTooltip />} />
+                <Area type="monotone" dataKey="revenue" name="revenue" stroke="#E85D04" strokeWidth={2.5} fill="url(#revenueGrad)" dot={{ fill: '#E85D04', strokeWidth: 2, r: 4 }} activeDot={{ r: 6 }} />
+              </AreaChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-[220px] flex flex-col items-center justify-center text-gray-400">
+              <ShoppingCart className="w-8 h-8 mb-2 opacity-40" />
+              <p className="text-sm font-semibold">No orders in the last 7 days</p>
+            </div>
+          )}
         </motion.div>
         </ErrorBoundary>
 
@@ -270,33 +272,42 @@ export default function AdminDashboard() {
         >
           <h2 className="font-black text-gray-900 mb-1">Payment Methods</h2>
           <p className="text-xs text-gray-400 mb-6">Order distribution</p>
-          <ResponsiveContainer width="100%" height={160}>
-            <PieChart>
-              <Pie
-                data={PAYMENT_DATA}
-                cx="50%" cy="50%"
-                innerRadius={45} outerRadius={70}
-                paddingAngle={3}
-                dataKey="value"
-              >
-                {PAYMENT_DATA.map((entry: { name: string; value: number; color: string }, i: number) => (
-                  <Cell key={i} fill={entry.color} />
+          {PAYMENT_DATA.length > 0 ? (
+            <>
+              <ResponsiveContainer width="100%" height={160}>
+                <PieChart>
+                  <Pie
+                    data={PAYMENT_DATA}
+                    cx="50%" cy="50%"
+                    innerRadius={45} outerRadius={70}
+                    paddingAngle={3}
+                    dataKey="value"
+                  >
+                    {PAYMENT_DATA.map((entry: { name: string; value: number; color: string }, i: number) => (
+                      <Cell key={i} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(v: number) => `${v}%`} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="space-y-2 mt-2">
+                {PAYMENT_DATA.map((p: { name: string; value: number; color: string }) => (
+                  <div key={p.name} className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 rounded-full" style={{ background: p.color }} />
+                      <span className="font-semibold text-gray-600">{p.name}</span>
+                    </div>
+                    <span className="font-black text-gray-900">{p.value}%</span>
+                  </div>
                 ))}
-              </Pie>
-              <Tooltip formatter={(v: number) => `${v}%`} />
-            </PieChart>
-          </ResponsiveContainer>
-          <div className="space-y-2 mt-2">
-            {PAYMENT_DATA.map((p: { name: string; value: number; color: string }) => (
-              <div key={p.name} className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full" style={{ background: p.color }} />
-                  <span className="font-semibold text-gray-600">{p.name}</span>
-                </div>
-                <span className="font-black text-gray-900">{p.value}%</span>
               </div>
-            ))}
-          </div>
+            </>
+          ) : (
+            <div className="h-[160px] flex flex-col items-center justify-center text-gray-400">
+              <TrendingUp className="w-8 h-8 mb-2 opacity-40" />
+              <p className="text-sm font-semibold">No payment data yet</p>
+            </div>
+          )}
         </motion.div>
         </ErrorBoundary>
       </div>

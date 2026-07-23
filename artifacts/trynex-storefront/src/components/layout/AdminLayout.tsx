@@ -41,7 +41,7 @@ const MENU_GROUPS: MenuGroup[] = [
     items: [
       { name: "Mockup Gallery", href: "/admin/mockups", icon: Images },
       { name: "Page Designer", href: "/admin/designer", icon: Paintbrush },
-      { name: "Page Builder", href: "/admin/page-builder", icon: LayoutDashboard },
+      { name: "Layout Builder", href: "/admin/page-builder", icon: LayoutDashboard },
       { name: "Blog Posts", href: "/admin/blog", icon: FileText },
       { name: "Reviews", href: "/admin/reviews", icon: Star },
       { name: "SEO", href: "/admin/seo", icon: Search },
@@ -67,6 +67,7 @@ const MENU_GROUPS: MenuGroup[] = [
       { name: "Security", href: "/admin/security", icon: Shield },
       { name: "DB Cluster", href: "/admin/db-cluster", icon: DatabaseZap },
       { name: "Deployment", href: "/admin/deployment", icon: GitBranch },
+      { name: "Roles", href: "/admin/roles", icon: Shield },
       { name: "Tech Stack", href: "/admin/tech-stack", icon: Code2 },
       { name: "FB Import Guide", href: "/admin/facebook-guide", icon: BookOpen },
     ],

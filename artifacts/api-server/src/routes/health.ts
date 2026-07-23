@@ -108,4 +108,44 @@ router.get("/health/auth", async (_req, res) => {
 // Note: POST /api/admin/system/flush-cache is handled by routes/systemHealth.ts
 // which is mounted correctly at /api and uses redisCacheDel.
 
+// ── GET /api/health/liveness ──────────────────────────────────────────────
+// Lightweight liveness probe for external monitoring (K8s, UptimeRobot, etc.).
+// Returns fast 200 with minimal overhead — no DB query needed.
+router.get("/health/liveness", (_req, res) => {
+  res.status(200).json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    uptime: Math.floor(process.uptime()),
+  });
+});
+
+// ── GET /api/health/readiness ─────────────────────────────────────────────
+// Readiness probe — checks that the API can serve real requests by
+// pinging the database. External monitors should hit this endpoint
+// every 30-60 seconds.
+router.get("/health/readiness", async (_req, res) => {
+  let dbOk = false;
+  let dbLatencyMs = 0;
+  try {
+    const t0 = Date.now();
+    await db.execute(sql`SELECT 1 AS ok`);
+    dbLatencyMs = Date.now() - t0;
+    dbOk = true;
+  } catch {
+    // dbOk stays false
+  }
+
+  const overall = dbOk ? "ok" : "error";
+  const httpStatus = dbOk ? 200 : 503;
+
+  res.status(httpStatus).json({
+    status: overall,
+    db: dbOk,
+    dbLatencyMs,
+    uptime: Math.floor(process.uptime()),
+    memoryMB: Math.round(process.memoryUsage().rss / 1024 / 1024),
+    timestamp: new Date().toISOString(),
+  });
+});
+
 export default router;

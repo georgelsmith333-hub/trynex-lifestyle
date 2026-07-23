@@ -6,6 +6,10 @@ import { ObjectStorageService } from "../lib/objectStorage";
 import { tgIsConfigured, tgSend } from "../lib/telegram";
 import { db } from "@workspace/db";
 import { sql } from "drizzle-orm";
+import os from "os";
+function osLoadAvg(): number[] {
+  try { return os.loadavg(); } catch { return [0, 0, 0]; }
+}
 
 const router = Router();
 const storageService = new ObjectStorageService();
@@ -84,6 +88,13 @@ router.get("/admin/system/health", requireAdmin, async (_req, res) => {
     deployment: {
       apiPublicUrl,
       nodeEnv: process.env.NODE_ENV || "development",
+    },
+    performance: {
+      uptime: Math.floor(process.uptime()),
+      memoryMB: Math.round(process.memoryUsage().rss / 1024 / 1024),
+      memoryHeapMB: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+      cpuLoad: osLoadAvg(),
+      nodeVersion: process.version,
     },
   });
 });
