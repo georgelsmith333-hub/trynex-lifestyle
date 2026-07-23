@@ -35,3 +35,4 @@
 - [Admin sidebar naming](admin-sidebar-naming.md) — "Page Builder" renamed to "Layout Builder" in sidebar; page route stays /admin/page-builder.
 - [Admin roles page](admin-roles-page.md) — /admin/roles page for viewing/editing admin roles and permissions; uses adminsTable.role column; sidebar entry "Roles" under System group.
 - [Monitoring endpoints](monitoring-endpoints.md) — /api/health/liveness and /api/health/readiness for K8s/external monitoring; cpu/memory metrics added to system health; GitHub Actions CI/CD for build+lint+typecheck.
+- [WhatsApp/phone number dynamic](whatsapp-settings-dynamic.md) — all customer-facing WA links read from siteSettings; never hardcode 8801903426915 in JSX.
