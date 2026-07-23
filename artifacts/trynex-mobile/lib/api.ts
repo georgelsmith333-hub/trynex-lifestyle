@@ -116,6 +116,7 @@ export interface CreateOrderPayload {
     color?: string;
     price: number;
     customNote?: string;
+    customImages?: string[];
   }[];
   subtotal: number;
   shippingCost: number;
@@ -193,6 +194,32 @@ export const api = {
       headers: { "X-Requested-With": "XMLHttpRequest" },
       body: JSON.stringify(data),
     }),
+
+  requestUploadUrl: (name: string, size: number, contentType: string) =>
+    apiFetch<{ uploadURL: string; objectPath: string }>("/api/storage/uploads/request-url", {
+      method: "POST",
+      body: JSON.stringify({ name, size, contentType }),
+    }),
+
+  base64ToBlob: (base64: string, mime: string): Blob => {
+    const byteString = atob(base64);
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: mime });
+  },
+
+  uploadFile: async (uploadURL: string, blob: Blob, contentType: string) => {
+    const res = await fetch(uploadURL, {
+      method: "PUT",
+      headers: { "Content-Type": contentType },
+      body: blob,
+    });
+    if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
+    return true;
+  },
 
   validatePromo: (code: string, orderTotal: number, customerEmail?: string) =>
     apiFetch<PromoValidateResponse>(`/api/promo-codes/validate`, {

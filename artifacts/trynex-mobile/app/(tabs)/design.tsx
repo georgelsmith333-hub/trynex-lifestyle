@@ -142,7 +142,7 @@ export default function DesignScreen() {
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
   const [selectedColor, setSelectedColor] = useState({ name: "White", hex: "#F5F5F3" });
   const [selectedZone, setSelectedZone] = useState("Front");
-  const [designImage, setDesignImage] = useState<string | null>(null);
+  const [designImage, setDesignImage] = useState<{ uri: string; base64: string } | null>(null);
 
   const selectedProduct = useMemo(
     () => products.find((p) => p.id === selectedProductId) ?? products[0],
@@ -178,30 +178,55 @@ export default function DesignScreen() {
       mediaTypes: ["images"],
       allowsEditing: true,
       quality: 0.9,
+      base64: true,
     });
     if (!result.canceled && result.assets[0]) {
-      setDesignImage(result.assets[0].uri);
+      const asset = result.assets[0];
+      setDesignImage({ uri: asset.uri, base64: asset.base64 ?? "" });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
   };
 
-  const addToCart = () => {
+  const addToCart = async () => {
     if (!selectedProduct) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    // Upload the custom design to object storage so the admin can download it later.
+    // Failures are non-fatal: the order is still created, but admin may need to follow up.
+    let customImages: string[] | undefined;
+    if (designImage?.base64) {
+      try {
+        const base64 = designImage.base64;
+        const mime = designImage.uri.toLowerCase().endsWith(".png") ? "image/png" : "image/jpeg";
+        const ext = mime === "image/png" ? "png" : "jpg";
+        const safeName = `mobile-design-${Date.now()}.${ext}`;
+        // Exact base64 byte count accounting for padding
+        const padding = base64.endsWith("==") ? 2 : base64.endsWith("=") ? 1 : 0;
+        const size = Math.floor((base64.length * 3) / 4) - padding;
+        const { uploadURL, objectPath } = await api.requestUploadUrl(safeName, size, mime);
+        const blob = api.base64ToBlob(base64, mime);
+        await api.uploadFile(uploadURL, blob, mime);
+        customImages = [objectPath];
+      } catch (err) {
+        console.warn("[mobile-design-upload]", err);
+      }
+    }
+
     addItem(
       {
         ...selectedProduct,
         name: selectedProduct.name.startsWith("Custom") ? selectedProduct.name : `Custom ${selectedProduct.name}`,
         customizable: true,
-        imageUrl: designImage ?? selectedProduct.imageUrl ?? undefined,
+        imageUrl: designImage?.uri ?? selectedProduct.imageUrl ?? undefined,
       },
       {
         color: selectedColor.name,
         customNote: JSON.stringify({
           zone: selectedZone,
           color: selectedColor.hex,
-          hasCustomDesign: !!designImage,
+          hasCustomDesign: !!designImage?.base64,
         }),
+        customImages,
       },
     );
     Alert.alert(
@@ -309,7 +334,7 @@ export default function DesignScreen() {
             >
               {designImage ? (
                 <Image
-                  source={{ uri: designImage }}
+                  source={{ uri: designImage.uri }}
                   style={styles.designImg}
                   contentFit="contain"
                 />

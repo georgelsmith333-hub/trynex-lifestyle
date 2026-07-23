@@ -9,11 +9,12 @@ export interface CartItem {
   size?: string;
   color?: string;
   customNote?: string;
+  customImages?: string[];
 }
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (product: Product, options?: { size?: string; color?: string; customNote?: string }) => void;
+  addItem: (product: Product, options?: { size?: string; color?: string; customNote?: string; customImages?: string[] }) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
@@ -42,7 +43,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addItem = (
     product: Product,
-    options?: { size?: string; color?: string; customNote?: string },
+    options?: { size?: string; color?: string; customNote?: string; customImages?: string[] },
   ) => {
     setItems((prev) => {
       const existing = prev.find(

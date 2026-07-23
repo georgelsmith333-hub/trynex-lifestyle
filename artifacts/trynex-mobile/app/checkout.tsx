@@ -152,6 +152,7 @@ export default function CheckoutScreen() {
         color: i.color,
         price: i.product.discountPrice ?? i.product.price,
         customNote: i.customNote,
+        customImages: i.customImages,
       }));
 
       const res = await api.createOrder({
