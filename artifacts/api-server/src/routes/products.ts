@@ -1,10 +1,37 @@
 import { Router, type IRouter } from "express";
+import { z } from "zod";
 import { db, productsTable, categoriesTable } from "@workspace/db";
 import { eq, ilike, or, and, sql, desc, asc } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { logActivity, getAdminId } from "../lib/activityLog";
 import { redisCacheGet, redisCacheSet, redisCacheDel } from "../lib/redis";
 import { pingSitemaps } from "../lib/sitemapPing";
+
+// ── Zod validation schemas ────────────────────────────────────────────────
+const ProductCreateSchema = z.object({
+  name: z.string().min(1, "Name is required").max(255),
+  slug: z.string().min(1, "Slug is required").max(255),
+  description: z.string().optional(),
+  price: z.union([z.string(), z.number()]).transform(v => Number(v)),
+  discountPrice: z.union([z.string(), z.number()]).optional().transform(v => v !== undefined ? Number(v) : undefined),
+  categoryId: z.number().int().positive().optional(),
+  imageUrl: z.string().optional(),
+  images: z.array(z.string()).optional(),
+  sizes: z.array(z.string()).optional(),
+  colors: z.array(z.string()).optional(),
+  colorVariants: z.array(z.object({ name: z.string(), inStock: z.boolean() })).optional(),
+  stock: z.number().int().min(0, "Stock cannot be negative"),
+  featured: z.boolean().optional(),
+  customizable: z.boolean().optional(),
+  tags: z.array(z.string()).optional(),
+});
+
+const ProductUpdateSchema = ProductCreateSchema.partial().extend({
+  name: z.string().min(1).max(255).optional(),
+  slug: z.string().min(1).max(255).optional(),
+  price: z.union([z.string(), z.number()]).transform(v => Number(v)).optional(),
+  stock: z.number().int().min(0).optional(),
+});
 
 const router: IRouter = Router();
 
@@ -216,19 +243,21 @@ router.get("/products/:id", async (req, res) => {
 
 router.post("/products", requireAdmin, async (req, res) => {
   try {
-    const { name, slug, description, price, discountPrice, categoryId, imageUrl, images, sizes, colors, colorVariants, stock, featured, customizable, tags } = req.body;
-    if (!name || !slug || price === undefined || stock === undefined) {
-      res.status(400).json({ error: "validation_error", message: "name, slug, price, stock are required" });
+    const parsed = ProductCreateSchema.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({
+        error: "validation_error",
+        message: "Invalid product data",
+        details: parsed.error.flatten().fieldErrors,
+      });
       return;
     }
+    const { price, discountPrice, ...rest } = parsed.data;
     const [product] = await db.insert(productsTable).values({
-      name, slug, description,
-      price: price.toString(),
-      discountPrice: discountPrice?.toString(),
-      categoryId,
-      imageUrl, images, sizes, colors,
-      colorVariants: colorVariants ?? [],
-      stock, featured, customizable, tags,
+      ...rest,
+      price: String(price),
+      discountPrice: discountPrice !== undefined ? String(discountPrice) : null,
+      colorVariants: rest.colorVariants ?? [],
     }).returning();
 
     if (categoryId) {
@@ -252,7 +281,15 @@ router.put("/products/:id", requireAdmin, async (req, res) => {
       res.status(400).json({ error: "validation_error", message: "Invalid product id" });
       return;
     }
-    const { name, slug, description, price, discountPrice, categoryId, imageUrl, images, sizes, colors, colorVariants, stock, featured, customizable, tags } = req.body;
+    const parsed = ProductUpdateSchema.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({
+        error: "validation_error",
+        message: "Invalid product data",
+        details: parsed.error.flatten().fieldErrors,
+      });
+      return;
+    }
 
     const [existing] = await db.select().from(productsTable).where(eq(productsTable.id, id));
     if (!existing) {
@@ -262,21 +299,22 @@ router.put("/products/:id", requireAdmin, async (req, res) => {
     const oldCategoryId = existing.categoryId;
 
     const updateData: any = { updatedAt: new Date() };
-    if (name !== undefined) updateData.name = name;
-    if (slug !== undefined) updateData.slug = slug;
-    if (description !== undefined) updateData.description = description;
-    if (price !== undefined) updateData.price = price.toString();
-    if (discountPrice !== undefined) updateData.discountPrice = discountPrice?.toString() ?? null;
-    if (categoryId !== undefined) updateData.categoryId = categoryId;
-    if (imageUrl !== undefined) updateData.imageUrl = imageUrl;
-    if (images !== undefined) updateData.images = images;
-    if (sizes !== undefined) updateData.sizes = sizes;
-    if (colors !== undefined) updateData.colors = colors;
-    if (colorVariants !== undefined) updateData.colorVariants = colorVariants;
-    if (stock !== undefined) updateData.stock = stock;
-    if (featured !== undefined) updateData.featured = featured;
-    if (customizable !== undefined) updateData.customizable = customizable;
-    if (tags !== undefined) updateData.tags = tags;
+    const body = parsed.data;
+    if (body.name !== undefined) updateData.name = body.name;
+    if (body.slug !== undefined) updateData.slug = body.slug;
+    if (body.description !== undefined) updateData.description = body.description;
+    if (body.price !== undefined) updateData.price = String(body.price);
+    if (body.discountPrice !== undefined) updateData.discountPrice = body.discountPrice !== undefined ? String(body.discountPrice) : null;
+    if (body.categoryId !== undefined) updateData.categoryId = body.categoryId;
+    if (body.imageUrl !== undefined) updateData.imageUrl = body.imageUrl;
+    if (body.images !== undefined) updateData.images = body.images;
+    if (body.sizes !== undefined) updateData.sizes = body.sizes;
+    if (body.colors !== undefined) updateData.colors = body.colors;
+    if (body.colorVariants !== undefined) updateData.colorVariants = body.colorVariants;
+    if (body.stock !== undefined) updateData.stock = body.stock;
+    if (body.featured !== undefined) updateData.featured = body.featured;
+    if (body.customizable !== undefined) updateData.customizable = body.customizable;
+    if (body.tags !== undefined) updateData.tags = body.tags;
 
     const [product] = await db.update(productsTable).set(updateData).where(eq(productsTable.id, id)).returning();
 

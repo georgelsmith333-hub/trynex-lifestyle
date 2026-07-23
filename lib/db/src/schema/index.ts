@@ -284,6 +284,7 @@ export const adminActivityLogsTable = pgTable("admin_activity_logs", {
 }, (table) => ({
   adminIdIdx: index("admin_activity_logs_admin_id_idx").on(table.adminId),
   createdAtIdx: index("admin_activity_logs_created_at_idx").on(table.createdAt),
+  actionCheck: check("admin_activity_logs_action_check", sql`${table.action} IN ('create', 'update', 'delete', 'rollback')`),
 }));
 
 export const newsletterSubscribersTable = pgTable("newsletter_subscribers", {
@@ -317,6 +318,7 @@ export const orderMessagesTable = pgTable("order_messages", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 }, (table) => ({
   orderIdIdx: index("order_messages_order_id_idx").on(table.orderId),
+  senderTypeCheck: check("order_messages_sender_type_check", sql`${table.senderType} IN ('admin', 'customer', 'system')`),
 }));
 
 export const notificationsTable = pgTable("notifications", {
@@ -332,6 +334,7 @@ export const notificationsTable = pgTable("notifications", {
   customerIdIdx: index("notifications_customer_id_idx").on(table.customerId),
   readIdx: index("notifications_read_idx").on(table.read),
   createdAtIdx: index("notifications_created_at_idx").on(table.createdAt),
+  typeCheck: check("notifications_type_check", sql`${table.type} IN ('general', 'order', 'promo', 'system')`),
 }));
 
 export const mockupsTable = pgTable("mockups", {
