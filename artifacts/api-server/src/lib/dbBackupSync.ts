@@ -9,12 +9,13 @@
  * Runs on a schedule (see scheduler.ts) and can also be triggered on demand
  * via POST /api/admin/backup/sync-now.
  *
- * Strategy per target:
- *   1. Disable FK checks for the session (session_replication_role = replica)
- *      so table order doesn't matter.
- *   2. TRUNCATE every table except `_migrations`.
- *   3. Copy every row from source -> target, table by table.
- *   4. Re-sync any integer sequences (serial/identity primary keys).
+ * Strategy per target (safe full mirror):
+ *   1. Verify the source database is reachable and has data.
+ *   2. Verify the target URL is not the same as the source URL.
+ *   3. Verify source and target schemas match (no silent drift).
+ *   4. Delete existing rows from the target in child-before-parent order.
+ *   5. Insert rows from source in parent-before-child order.
+ *   6. Re-sync any integer sequences (serial/identity primary keys).
  *
  * This is a full mirror (not an incremental diff), which is appropriate here
  * because these targets are cold-standby/failover copies, not independently
@@ -88,30 +89,8 @@ function serializeForColumn(value: unknown, dataType: string): unknown {
 }
 
 /**
- * Adds any columns present on the source table but missing on the target
- * table (schema drift — e.g. a column added directly in production without
- * updating the shared Drizzle schema file). Keeps backups from silently
- * falling behind or failing outright when this happens.
- */
-async function healMissingColumns(
-  targetClient: pg.PoolClient,
-  table: string,
-  sourceColumns: ColumnInfo[],
-  targetColumnNames: Set<string>,
-): Promise<string[]> {
-  const added: string[] = [];
-  for (const col of sourceColumns) {
-    if (targetColumnNames.has(col.name)) continue;
-    await targetClient.query(`ALTER TABLE "${table}" ADD COLUMN IF NOT EXISTS "${col.name}" ${col.dataType}`);
-    added.push(col.name);
-  }
-  return added;
-}
-
-/**
  * Returns { child: parent } foreign key edges so inserts can happen in
- * parent-before-child order (Neon's managed role can't disable FK checks
- * via session_replication_role, unlike a superuser connection).
+ * parent-before-child order and deletes in child-before-parent order.
  */
 async function getForeignKeyEdges(pool: pg.Pool): Promise<Array<{ child: string; parent: string }>> {
   const r = await pool.query(`
@@ -154,6 +133,45 @@ function topoSortTables(tables: string[], edges: Array<{ child: string; parent: 
   return result;
 }
 
+async function countSourceRows(pool: pg.Pool, tables: string[]): Promise<number> {
+  let total = 0;
+  for (const table of tables) {
+    const r = await pool.query(`SELECT COUNT(*)::int AS n FROM "${table}"`);
+    total += Number(r.rows[0]?.n ?? 0);
+  }
+  return total;
+}
+
+async function verifySchemasMatch(
+  sourcePool: pg.Pool,
+  targetPool: pg.Pool,
+  tables: string[],
+): Promise<void> {
+  for (const table of tables) {
+    const sourceColumns = await getColumns(sourcePool, table);
+    const targetColumns = await getColumns(targetPool, table);
+    const sourceMap = new Map(sourceColumns.map((c) => [c.name, c.dataType]));
+    const targetMap = new Map(targetColumns.map((c) => [c.name, c.dataType]));
+
+    if (sourceMap.size !== targetMap.size) {
+      throw new Error(
+        `Schema mismatch for table "${table}": source has ${sourceMap.size} columns, target has ${targetMap.size}. Run migrations on the target first.`,
+      );
+    }
+
+    for (const [name, dataType] of sourceMap) {
+      if (!targetMap.has(name)) {
+        throw new Error(`Schema mismatch for table "${table}": column "${name}" missing on target. Run migrations on the target first.`);
+      }
+      if (targetMap.get(name) !== dataType) {
+        throw new Error(
+          `Schema mismatch for table "${table}": column "${name}" has type ${dataType} on source but ${targetMap.get(name)} on target. Run migrations on the target first.`,
+        );
+      }
+    }
+  }
+}
+
 async function syncOneTarget(
   sourceUrl: string,
   target: BackupTarget,
@@ -165,6 +183,10 @@ async function syncOneTarget(
     return { id: target.id, label: target.label, status: "skipped", message: `${target.envKey} not configured` };
   }
 
+  if (sourceUrl === targetUrl || sourceUrl.replace(/^postgres:\/\/[^:]+:[^@]+@/, "") === targetUrl.replace(/^postgres:\/\/[^:]+:[^@]+@/, "")) {
+    return { id: target.id, label: target.label, status: "skipped", message: "Target URL matches source URL" };
+  }
+
   const sourcePool = new Pool({ connectionString: sourceUrl, max: 2, connectionTimeoutMillis: 10_000 });
   const targetPool = new Pool({ connectionString: targetUrl, max: 2, connectionTimeoutMillis: 10_000 });
 
@@ -173,35 +195,36 @@ async function syncOneTarget(
     const targetTables = new Set(await getTables(targetPool));
     const sharedTables = sourceTables.filter((t) => targetTables.has(t));
     const edges = await getForeignKeyEdges(sourcePool);
-    const tables = topoSortTables(sharedTables, edges);
+    const insertOrder = topoSortTables(sharedTables, edges);
+    const deleteOrder = [...insertOrder].reverse();
+
+    // Safety verification: source must be reachable and have some data.
+    const sourceRows = await countSourceRows(sourcePool, sharedTables);
+    if (sourceTables.length === 0) {
+      throw new Error("Source database has no public tables to sync");
+    }
+    if (sourceRows === 0) {
+      logger.warn({ target: target.label }, "[backupSync] Source database appears empty; skipping sync to avoid wiping target");
+      return { id: target.id, label: target.label, status: "skipped", message: "Source database appears empty" };
+    }
+
+    await verifySchemasMatch(sourcePool, targetPool, insertOrder);
 
     const client = await targetPool.connect();
     let rowsCopied = 0;
     try {
       await client.query("BEGIN");
 
-      // Managed Neon roles can't disable FK checks, so truncate every shared
-      // table in a single statement with CASCADE — order doesn't matter here
-      // because they're all being cleared together in one DDL statement.
-      if (tables.length > 0) {
-        const tableList = tables.map((t) => `"${t}"`).join(", ");
-        await client.query(`TRUNCATE TABLE ${tableList} CASCADE`);
+      // Delete rows in child-before-parent order so FK constraints are satisfied.
+      for (const table of deleteOrder) {
+        await client.query(`DELETE FROM "${table}"`);
       }
 
       // Insert in parent-before-child order so FK constraints are satisfied.
-      // Rows are batched (100 per statement) to minimize network round-trips
-      // to the remote Neon endpoints, which matters when there are hundreds
-      // of rows across many tables.
       const BATCH_SIZE = 100;
-      const healedColumns: Record<string, string[]> = {};
-      for (const table of tables) {
+      for (const table of insertOrder) {
         const columns = await getColumns(sourcePool, table);
         if (columns.length === 0) continue;
-
-        const targetColumns = await getColumns(client, table);
-        const targetColumnNames = new Set(targetColumns.map((c) => c.name));
-        const added = await healMissingColumns(client, table, columns, targetColumnNames);
-        if (added.length > 0) healedColumns[table] = added;
 
         const { rows } = await sourcePool.query(`SELECT * FROM "${table}"`);
         if (rows.length === 0) continue;
@@ -244,10 +267,10 @@ async function syncOneTarget(
 
     const durationMs = Date.now() - start;
     logger.info(
-      { target: target.label, tables: tables.length, rows: rowsCopied, durationMs },
+      { target: target.label, tables: insertOrder.length, rows: rowsCopied, durationMs },
       "[backupSync] Target synced",
     );
-    return { id: target.id, label: target.label, status: "ok", tablesCopied: tables.length, rowsCopied, durationMs };
+    return { id: target.id, label: target.label, status: "ok", tablesCopied: insertOrder.length, rowsCopied, durationMs };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     logger.warn({ target: target.label, err: message }, "[backupSync] Target sync failed");

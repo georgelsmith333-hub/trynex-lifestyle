@@ -38,15 +38,22 @@ const BD_DISTRICTS = [
   "Patuakhali","Barguna","Jhalokathi","Madaripur","Gopalganj","Shariatpur",
 ];
 
+// Only expose mobile wallet methods that the admin has configured in site settings.
+// No hardcoded fallback numbers are shown to customers.
 const PAYMENT_METHODS = (siteSettings?: Record<string, string> | null) => {
-  const bkash = siteSettings?.bkashNumber || "01XXXXXXXXX";
-  const nagad = siteSettings?.nagadNumber || siteSettings?.bkashNumber || "01XXXXXXXXX";
-  return [
+  const options = [
     { value: "cod", label: "Cash on Delivery", icon: "dollar-sign", desc: "Pay when you receive" },
-    { value: "bkash", label: "bKash", icon: "smartphone", desc: `${bkash} (Personal)` },
-    { value: "nagad", label: "Nagad", icon: "smartphone", desc: `${nagad} (Personal)` },
-    { value: "bank", label: "Bank Transfer", icon: "credit-card", desc: "Contact us for details" },
   ];
+  const bkash = siteSettings?.bkashNumber;
+  const nagad = siteSettings?.nagadNumber;
+  if (bkash) {
+    options.push({ value: "bkash", label: "bKash", icon: "smartphone", desc: `${bkash} (Personal)` });
+  }
+  if (nagad) {
+    options.push({ value: "nagad", label: "Nagad", icon: "smartphone", desc: `${nagad} (Personal)` });
+  }
+  options.push({ value: "bank", label: "Bank Transfer", icon: "credit-card", desc: "Contact us for details" });
+  return options;
 };
 
 function formatPrice(p: number) {
@@ -92,8 +99,9 @@ export default function CheckoutScreen() {
 
   const freeShippingThreshold = Number(siteSettings?.freeShippingThreshold ?? 1500);
   const shippingFee = Number(siteSettings?.shippingCost ?? 60);
-  const bkashNumber = siteSettings?.bkashNumber || "01XXXXXXXXX";
-  const nagadNumber = siteSettings?.nagadNumber || siteSettings?.bkashNumber || "01XXXXXXXXX";
+  // Real admin-configured numbers only. No hardcoded fallback.
+  const bkashNumber = siteSettings?.bkashNumber ?? "";
+  const nagadNumber = siteSettings?.nagadNumber ?? siteSettings?.bkashNumber ?? "";
   const paymentOptions = PAYMENT_METHODS(siteSettings);
 
   const shipping = subtotal >= freeShippingThreshold ? 0 : shippingFee;

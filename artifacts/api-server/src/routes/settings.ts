@@ -92,11 +92,13 @@ async function buildSettings(map: Record<string, string | null>) {
     heroSubtitle: map["heroSubtitle"] ?? "",
     announcementBar: map["announcementBar"] ?? "🚚 Free delivery on orders above ৳1,500!",
     freeShippingThreshold: parseFloat(map["freeShippingThreshold"] ?? "1500"),
-    bkashNumber: map["bkashNumber"] ?? "01712-345678",
-    nagadNumber: map["nagadNumber"] ?? "01811-234567",
-    rocketNumber: map["rocketNumber"] ?? "01611-234567",
+    // Payment numbers must be configured by the admin. No hardcoded fallback numbers
+    // are returned to the storefront or mobile app.
+    bkashNumber: map["bkashNumber"] ?? "",
+    nagadNumber: map["nagadNumber"] ?? "",
+    rocketNumber: map["rocketNumber"] ?? "",
     upayNumber: map["upayNumber"] ?? "",
-    whatsappNumber: map["whatsappNumber"] ?? "01700-000000",
+    whatsappNumber: map["whatsappNumber"] ?? "",
     shippingCost: parseFloat(map["shippingCost"] ?? "100"),
     googleAnalyticsId: map["googleAnalyticsId"] ?? "",
     facebookPixelId: map["facebookPixelId"] ?? "",

@@ -90,11 +90,11 @@ export async function getConfiguredGoogleClientId(): Promise<string> {
 
 const router: IRouter = Router();
 
-if (!process.env.JWT_SECRET && process.env.NODE_ENV === "production") {
-  throw new Error("JWT_SECRET environment variable is required in production");
+if (!process.env.JWT_SECRET) {
+  throw new Error("JWT_SECRET environment variable is required. The auth service cannot start without a configured secret.");
 }
-const JWT_SECRET = process.env.JWT_SECRET || "dev_only_secret_not_for_production";
-const CUSTOMER_SALT = process.env.CUSTOMER_SALT || "trynex_customer_2024";
+const JWT_SECRET = process.env.JWT_SECRET;
+const CUSTOMER_SALT = process.env.CUSTOMER_SALT;
 const IS_PROD = process.env.NODE_ENV === "production";
 
 function failureReason(err: unknown, fallback: string): string {

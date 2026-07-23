@@ -15,3 +15,7 @@ out/
 .replit
 *.log
 .DS_Store
+
+# TypeScript build info
+*.tsbuildinfo
+

@@ -8,15 +8,11 @@ import { verifyTotp } from "../lib/totp";
 
 const router: IRouter = Router();
 
-// ── Schemas ──
-const UpdateSecretSchema = z.object({
-  key: z.string().min(1),
-  value: z.string(),
-});
-
-const BulkUpdateSchema = z.object({
-  secrets: z.record(z.string()),
-});
+// NOTE: This router is intentionally READ-ONLY. Updating secrets at runtime via
+// the API creates a split-brain where the running process differs from the cloud
+// provider's configured environment, and it exposes a dangerous attack surface.
+// Secrets must be changed through the hosting platform (Replit/Render/CF Pages)
+// and then the service must be restarted.
 
 // ── SENSITIVE KEY PATTERNS — values are masked in API responses ──
 const SENSITIVE_PATTERNS = [
@@ -98,62 +94,24 @@ router.get("/admin/secrets/raw", requireAdmin, async (req, res) => {
   }
 });
 
-// ── POST /api/admin/secrets/update — update a single secret ──
-router.post("/admin/secrets/update", requireAdmin, async (req, res) => {
-  try {
-    const parsed = UpdateSecretSchema.safeParse(req.body);
-    if (!parsed.success) {
-      res.status(400).json({ ok: false, error: parsed.error.errors.map(e => e.message).join("; ") });
-      return;
-    }
-    const { key, value } = parsed.data;
-
-    // Safety: never allow overwriting NODE_ENV or critical system vars
-    const PROTECTED_KEYS = ["NODE_ENV", "PATH", "HOME", "PWD", "SHELL", "TERM", "USER", "HOSTNAME"];
-    if (PROTECTED_KEYS.includes(key.toUpperCase())) {
-      res.status(403).json({ ok: false, error: `Cannot modify protected variable: ${key}` });
-      return;
-    }
-
-    // Update in-memory process.env
-    process.env[key] = value;
-
-    logger.info({ key, adminId: (req as any).adminSession?.adminId }, "Admin updated environment variable");
-    res.json({ ok: true, key, masked: maskValue(value, key) });
-  } catch (err) {
-    logger.error({ err }, "Failed to update secret");
-    res.status(500).json({ ok: false, error: "Failed to update secret" });
-  }
+// ── Runtime secret updates are intentionally DISABLED ──
+// See the note at the top of this file. If an admin needs to change a secret,
+// they must update the environment variable through the hosting platform and
+// restart the service. Do not re-enable these routes without a security review.
+router.post("/admin/secrets/update", requireAdmin, (_req, res) => {
+  res.status(403).json({
+    ok: false,
+    error: "disabled",
+    message: "Runtime secret updates are disabled. Update the environment variable through your hosting platform and restart the service.",
+  });
 });
 
-// ── POST /api/admin/secrets/bulk-update — update multiple secrets ──
-router.post("/admin/secrets/bulk-update", requireAdmin, async (req, res) => {
-  try {
-    const parsed = BulkUpdateSchema.safeParse(req.body);
-    if (!parsed.success) {
-      res.status(400).json({ ok: false, error: parsed.error.errors.map(e => e.message).join("; ") });
-      return;
-    }
-    const { secrets } = parsed.data;
-    const PROTECTED_KEYS = ["NODE_ENV", "PATH", "HOME", "PWD", "SHELL", "TERM", "USER", "HOSTNAME"];
-
-    const updated: string[] = [];
-    const skipped: string[] = [];
-    for (const [key, value] of Object.entries(secrets)) {
-      if (PROTECTED_KEYS.includes(key.toUpperCase())) {
-        skipped.push(key);
-        continue;
-      }
-      process.env[key] = value;
-      updated.push(key);
-    }
-
-    logger.info({ count: updated.length, adminId: (req as any).adminSession?.adminId }, "Admin bulk-updated environment variables");
-    res.json({ ok: true, updated, skipped, count: updated.length });
-  } catch (err) {
-    logger.error({ err }, "Failed to bulk update secrets");
-    res.status(500).json({ ok: false, error: "Failed to bulk update secrets" });
-  }
+router.post("/admin/secrets/bulk-update", requireAdmin, (_req, res) => {
+  res.status(403).json({
+    ok: false,
+    error: "disabled",
+    message: "Runtime secret updates are disabled. Update the environment variable through your hosting platform and restart the service.",
+  });
 });
 
 export default router;

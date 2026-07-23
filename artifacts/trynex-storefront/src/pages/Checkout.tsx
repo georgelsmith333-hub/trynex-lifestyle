@@ -310,13 +310,11 @@ export default function Checkout() {
     return "";
   };
 
-  // Fallback payment numbers — used only when admin settings are not yet loaded
-  // or have been cleared, so the customer is never stuck with an empty number.
-  const FALLBACK_PAYMENT_NUMBERS: Record<MobileMethod, string> = {
-    bkash: "01712-345678",
-    nagad: "01811-234567",
-    upay: "",
-  };
+  // Only payment methods that the admin has configured are shown to customers.
+  // No hardcoded fallback numbers are used anywhere in the checkout flow.
+  const configuredWallets: MobileMethod[] = (['bkash', 'nagad', 'upay'] as MobileMethod[]).filter(
+    (m) => !!getPaymentNumber(m)
+  );
   const validatePromo = async () => {
     if (!promoInput.trim()) return;
     setPromoLoading(true);
@@ -624,11 +622,13 @@ export default function Checkout() {
   };
 
   const activePaymentNumber = getPaymentNumber(effectiveGatewayMethod);
-
-  // Fallback payment numbers — used only when admin settings are not yet loaded
-  // or have been cleared, so the customer is never stuck with an empty number.
-  const effectivePaymentNumber = activePaymentNumber || FALLBACK_PAYMENT_NUMBERS[effectiveGatewayMethod];
+  const effectivePaymentNumber = activePaymentNumber;
   const paymentNumberReady = !!effectivePaymentNumber;
+
+  // If the currently selected wallet is not configured, switch to the first configured one.
+  if (configuredWallets.length > 0 && !configuredWallets.includes(walletChoice)) {
+    setWalletChoice(configuredWallets[0]);
+  }
 
   const copyNumber = async () => {
     if (!effectivePaymentNumber) return;
@@ -1406,38 +1406,50 @@ export default function Checkout() {
                     </button>
                   </div>
 
-                  {(
-                  <div className="mb-8">
-                    <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Select E-Wallet</p>
-                    <div className="grid grid-cols-3 gap-2">
-                      {([
-                        { id: 'bkash' as MobileMethod, label: 'bKash', color: '#e2136e', bg: 'rgba(226,19,110,0.06)', border: 'rgba(226,19,110,0.25)' },
-                        { id: 'nagad' as MobileMethod, label: 'Nagad', color: '#f7941d', bg: 'rgba(247,148,29,0.06)', border: 'rgba(247,148,29,0.25)' },
-                        { id: 'upay'  as MobileMethod, label: 'uPay',  color: '#0077cc', bg: 'rgba(0,119,204,0.06)',  border: 'rgba(0,119,204,0.25)'  },
-                      ]).map(w => (
-                        <button
-                          key={w.id}
-                          type="button"
-                          onClick={() => setWalletChoice(w.id)}
-                          className="py-3 px-2 rounded-xl font-black text-sm transition-all duration-150 focus:outline-none"
-                          style={{
-                            background: walletChoice === w.id ? w.bg : '#f9fafb',
-                            border: walletChoice === w.id ? `2px solid ${w.border}` : '2px solid #e5e7eb',
-                            color: walletChoice === w.id ? w.color : '#9ca3af',
-                          }}
-                        >
-                          {w.label}
-                        </button>
-                      ))}
+                  {configuredWallets.length > 0 ? (
+                    <div className="mb-8">
+                      <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Select E-Wallet</p>
+                      <div className="grid grid-cols-3 gap-2">
+                        {([
+                          { id: 'bkash' as MobileMethod, label: 'bKash', color: '#e2136e', bg: 'rgba(226,19,110,0.06)', border: 'rgba(226,19,110,0.25)' },
+                          { id: 'nagad' as MobileMethod, label: 'Nagad', color: '#f7941d', bg: 'rgba(247,148,29,0.06)', border: 'rgba(247,148,29,0.25)' },
+                          { id: 'upay'  as MobileMethod, label: 'uPay',  color: '#0077cc', bg: 'rgba(0,119,204,0.06)',  border: 'rgba(0,119,204,0.25)'  },
+                        ])
+                          .filter(w => configuredWallets.includes(w.id))
+                          .map(w => (
+                            <button
+                              key={w.id}
+                              type="button"
+                              onClick={() => setWalletChoice(w.id)}
+                              className="py-3 px-2 rounded-xl font-black text-sm transition-all duration-150 focus:outline-none"
+                              style={{
+                                background: walletChoice === w.id ? w.bg : '#f9fafb',
+                                border: walletChoice === w.id ? `2px solid ${w.border}` : '2px solid #e5e7eb',
+                                color: walletChoice === w.id ? w.color : '#9ca3af',
+                              }}
+                            >
+                              {w.label}
+                            </button>
+                          ))}
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="mb-8 p-4 rounded-2xl bg-red-50 border border-red-100 text-red-700 text-sm">
+                      <p className="font-bold">Payment is not configured yet.</p>
+                      <p className="mt-1">Please contact support or try again later.</p>
+                    </div>
                   )}
 
                   <div className="flex flex-col gap-3">
                     <button
                       type="button"
                       onClick={() => setStep(3)}
-                      className="w-full py-4 rounded-2xl bg-gray-900 text-white font-black flex items-center justify-center gap-2 hover:bg-black transition-all"
+                      disabled={!paymentNumberReady}
+                      className={`w-full py-4 rounded-2xl font-black flex items-center justify-center gap-2 transition-all ${
+                        paymentNumberReady
+                          ? 'bg-gray-900 text-white hover:bg-black'
+                          : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      }`}
                     >
                       Review Order <ArrowRight className="w-5 h-5" />
                     </button>

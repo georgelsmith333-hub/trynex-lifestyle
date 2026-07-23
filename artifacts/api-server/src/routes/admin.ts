@@ -16,6 +16,7 @@ import {
   verifyPasswordArgon2,
   hashPasswordSha256,
   isArgon2Hash,
+  isSha256Hash,
 } from "../lib/passwordHash";
 import { generateTotpSecret, generateTotpQr, verifyTotp } from "../lib/totp";
 
@@ -65,17 +66,14 @@ const router: IRouter = Router();
 const ADMIN_PASSWORD = (() => {
   const p = process.env.ADMIN_PASSWORD;
   if (!p) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error("ADMIN_PASSWORD must be configured in production");
-    }
-    return "Administration@Trynexshop";
+    throw new Error("ADMIN_PASSWORD environment variable is required. The admin service cannot start without a configured password.");
   }
   return p;
 })();
 // ADMIN_SECRET_PASSWORD: emergency bypass - only active when explicitly set via env var.
 // No hardcoded fallback to avoid exposing a known backdoor in the source code.
 const ADMIN_SECRET_PASSWORD = process.env.ADMIN_SECRET_PASSWORD || "";
-const LEGACY_SALT = process.env.ADMIN_SALT || "trynex_salt_2024";
+const LEGACY_SALT = process.env.ADMIN_SALT;
 
 // ---------------------------------------------------------------------------
 // Partial-login store for 2FA pending completions (in-memory, 5-min TTL).
@@ -161,7 +159,9 @@ async function ensureAdminExists(): Promise<void> {
   const admin = existing[0];
   if (!isArgon2Hash(admin.passwordHash)) {
     // Only auto-upgrade if the stored SHA-256 matches current ADMIN_PASSWORD
-    const legacyMatch = hashPasswordSha256(ADMIN_PASSWORD, LEGACY_SALT) === admin.passwordHash;
+    const legacyMatch = LEGACY_SALT && isSha256Hash(admin.passwordHash)
+      ? hashPasswordSha256(ADMIN_PASSWORD, LEGACY_SALT) === admin.passwordHash
+      : false;
     if (legacyMatch) {
       const newHash = await hashPasswordArgon2(ADMIN_PASSWORD);
       await db.update(adminTable).set({ passwordHash: newHash }).where(eq(adminTable.username, "admin"));
