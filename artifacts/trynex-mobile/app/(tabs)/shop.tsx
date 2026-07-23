@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ProductCard } from "@/components/ProductCard";
+import { ProductCardSkeleton } from "@/components/Skeleton";
 import { useColors } from "@/hooks/useColors";
 import { api } from "@/lib/api";
 
@@ -151,7 +152,13 @@ export default function ShopScreen() {
       {/* Products */}
       {isLoading ? (
         <View style={styles.loadingWrap}>
-          <ActivityIndicator size="large" color={colors.primary} />
+          <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", paddingHorizontal: 16 }}>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <View key={i} style={{ width: "48%", marginBottom: 12 }}>
+                <ProductCardSkeleton />
+              </View>
+            ))}
+          </View>
         </View>
       ) : isError ? (
         <View style={styles.emptyWrap}>

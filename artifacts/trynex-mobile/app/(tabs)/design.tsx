@@ -6,7 +6,6 @@ import { router } from "expo-router";
 import React, { useMemo, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Dimensions,
   Platform,
   Pressable,
@@ -19,7 +18,9 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
+import { Skeleton } from "@/components/Skeleton";
 import { useCart } from "@/context/CartContext";
+import { useToast } from "@/context/ToastContext";
 import { api } from "@/lib/api";
 
 const { width } = Dimensions.get("window");
@@ -127,6 +128,7 @@ export default function DesignScreen() {
   const isWeb = Platform.OS === "web";
   const topPad = isWeb ? 67 : insets.top;
   const { addItem } = useCart();
+  const { showToast } = useToast();
 
   const { data: productsData, isLoading: loadingProducts, isError, refetch, isRefetching } = useQuery({
     queryKey: ["products", "customizable"],
@@ -229,20 +231,20 @@ export default function DesignScreen() {
         customImages,
       },
     );
-    Alert.alert(
-      "Added to Cart! 🎉",
-      `${selectedColor.name} ${selectedProduct.name} (${selectedZone}) added.`,
-      [
-        { text: "Keep Designing", style: "cancel" },
-        { text: "View Cart", onPress: () => router.push("/cart") },
-      ],
-    );
+    showToast(`${selectedColor.name} ${selectedProduct.name} added to cart`, "success");
+    // Brief delay so the user sees the success toast before navigating to cart
+    setTimeout(() => router.push("/cart"), 900);
   };
 
   if (loadingProducts && products.length === 0) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background, alignItems: "center", justifyContent: "center" }]}>
-        <ActivityIndicator size="large" color={colors.primary} />
+        <View style={{ gap: 12, width: PREVIEW_SIZE }}>
+          <Skeleton width={PREVIEW_SIZE} height={PREVIEW_SIZE} borderRadius={16} />
+          <Skeleton width={200} height={24} borderRadius={8} />
+          <Skeleton width={PREVIEW_SIZE} height={48} borderRadius={8} />
+          <Skeleton width={PREVIEW_SIZE} height={56} borderRadius={12} />
+        </View>
       </View>
     );
   }

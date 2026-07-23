@@ -6,7 +6,6 @@ import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Dimensions,
   Linking,
   Platform,
@@ -18,7 +17,9 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
+import { Skeleton } from "@/components/Skeleton";
 import { useCart } from "@/context/CartContext";
+import { useToast } from "@/context/ToastContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { api } from "@/lib/api";
 
@@ -30,6 +31,7 @@ export default function ProductDetailScreen() {
   const isWeb = Platform.OS === "web";
   const { id } = useLocalSearchParams<{ id: string }>();
   const { addItem } = useCart();
+  const { showToast } = useToast();
   const { toggle, isWishlisted } = useWishlist();
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
@@ -80,22 +82,33 @@ export default function ProductDetailScreen() {
       if (canOpen) {
         await Linking.openURL(url);
       } else {
-        Alert.alert("WhatsApp Not Found", "Please install WhatsApp to order directly.");
+        showToast("WhatsApp not found. Please install WhatsApp to order directly.", "error");
       }
     } catch (err) {
       // On some platforms canOpenURL might throw if the scheme is not registered
       // Fallback to trying to open it anyway or show alert
       Linking.openURL(url).catch(() => {
-        Alert.alert("Error", "Could not open WhatsApp.");
+        showToast("Could not open WhatsApp.", "error");
       });
     }
   };
 
   if (isLoading) {
     return (
-      <View style={[styles.centered, { backgroundColor: colors.background }]}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
+      <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
+        <View style={[styles.navBar, { top: 0, paddingTop: isWeb ? 67 : insets.top }]}>
+          <View style={[styles.navBtn, { backgroundColor: "rgba(28,41,81,0.7)" }]} />
+          <View style={[styles.navBtn, { backgroundColor: "rgba(28,41,81,0.7)" }]} />
+        </View>
+        <Skeleton width={width} height={width} borderRadius={0} />
+        <View style={{ padding: 20, gap: 12 }}>
+          <Skeleton width={200} height={24} borderRadius={8} />
+          <Skeleton width={120} height={20} borderRadius={6} />
+          <Skeleton width={width - 40} height={80} borderRadius={8} />
+          <Skeleton width={width - 40} height={48} borderRadius={8} />
+          <Skeleton width={width - 40} height={56} borderRadius={12} />
+        </View>
+      </ScrollView>
     );
   }
 

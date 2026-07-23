@@ -18,6 +18,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ProductCard } from "@/components/ProductCard";
+import { Skeleton, ProductCardSkeleton, CategorySkeleton } from "@/components/Skeleton";
 import { useColors } from "@/hooks/useColors";
 import { api, Product } from "@/lib/api";
 
@@ -155,7 +156,7 @@ export default function HomeScreen() {
         </View>
         <View style={styles.categoryGrid}>
           {isCatsLoading ? (
-            <ActivityIndicator color={colors.primary} style={{ marginVertical: 24, width: "100%" }} />
+            Array.from({ length: 8 }).map((_, i) => <CategorySkeleton key={i} />)
           ) : (categoriesData?.categories ?? []).length === 0 ? (
             <Text style={[styles.emptyText, { color: colors.mutedForeground, paddingHorizontal: 20 }]}>No categories found</Text>
           ) : (categoriesData?.categories ?? []).slice(0, 8).map((cat) => {
@@ -191,7 +192,9 @@ export default function HomeScreen() {
           </Pressable>
         </View>
         {isLoading ? (
-          <ActivityIndicator color={colors.primary} style={{ marginVertical: 24 }} />
+          <View style={{ flexDirection: "row", gap: 12, paddingHorizontal: 16 }}>
+            {Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)}
+          </View>
         ) : featured.length === 0 ? (
           <View style={styles.emptyState}>
             <Feather name="package" size={40} color={colors.mutedForeground} />
@@ -222,7 +225,11 @@ export default function HomeScreen() {
         </View>
         <View style={styles.productsGrid}>
           {isNewLoading ? (
-            <ActivityIndicator color={colors.primary} style={{ marginVertical: 24, width: "100%" }} />
+            Array.from({ length: 6 }).map((_, i) => (
+              <View key={i} style={{ width: "48%" }}>
+                <ProductCardSkeleton />
+              </View>
+            ))
           ) : (newProducts.slice(0, 6)).map((product: Product) => (
             <ProductCard key={product.id} product={product} />
           ))}
