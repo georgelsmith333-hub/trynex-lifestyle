@@ -155,3 +155,9 @@ id = "J8ntLumiN0M57tapXbQD-"
 uri = "file://reports/TryNex_Audit_and_Fix_Plan.pdf"
 type = "pdf"
 title = "TryNex Lifestyle — A-to-Z Audit & Fix Plan PDF"
+
+[[outputs]]
+id = "tkoZ-4z41S2eTZNbNaEAr"
+uri = "file://SUPER_COMMAND.txt"
+type = "text"
+title = "TryNex Super Command Briefing"
