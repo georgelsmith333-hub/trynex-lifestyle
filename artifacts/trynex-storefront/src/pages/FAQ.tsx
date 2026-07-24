@@ -76,7 +76,7 @@ const faqs: FAQItem[] = [
   {
     category: "Custom Orders",
     question: "Do you handle bulk corporate orders?",
-    answer: "Yes! We specialize in bulk corporate orders (50+ pieces) with branded packaging, custom labels, and volume discounts. Contact us via WhatsApp at 01903426915 for a bulk quote.",
+    answer: "Yes! We specialize in bulk corporate orders (50+ pieces) with branded packaging, custom labels, and volume discounts. Contact us via WhatsApp for a bulk quote.",
   },
   {
     category: "Payments",

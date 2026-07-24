@@ -6,8 +6,9 @@ import { VitePWA } from "vite-plugin-pwa";
 
 const port = Number(process.env.PORT ?? "5173");
 const basePath = process.env.BASE_PATH ?? "/";
-// API_PORT must point to the API server (default 5001, not 8080 which is this dev server).
-const apiPort = process.env.API_PORT ?? "5001";
+// API_PORT must point to the API server. In this monorepo the API server runs on 8082.
+// Override with API_PORT env var if the port ever changes.
+const apiPort = process.env.API_PORT ?? "8082";
 
 /**
  * Cloudflare Rocket Loader rewrites every `<script>` it sees, including

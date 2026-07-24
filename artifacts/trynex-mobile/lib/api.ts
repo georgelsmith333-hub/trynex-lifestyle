@@ -1,7 +1,14 @@
+// Production domain — always used as the ultimate fallback.
+// The old Render backend (trynex-api.onrender.com) was decommissioned;
+// all traffic now goes through the CF Pages / Vite proxy at trynexshop.com.
+const PROD_DOMAIN = "trynexshop.com";
+const STALE_RENDER_DOMAIN = "trynex-api.onrender.com";
+
 const getBaseUrl = () => {
   const domain = process.env.EXPO_PUBLIC_DOMAIN;
-  if (domain) return `https://${domain}`;
-  return "";
+  // No domain set, or the .env.production still carries the old Render URL → use production
+  if (!domain || domain === STALE_RENDER_DOMAIN) return `https://${PROD_DOMAIN}`;
+  return `https://${domain}`;
 };
 
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
