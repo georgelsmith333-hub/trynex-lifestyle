@@ -29,7 +29,7 @@ const TEMP_REMOTE = "trynex-deploy";
 
 const RENDER_API_KEY = process.env.RENDER_API_KEY || "";
 const RENDER_SERVICE_ID = process.env.RENDER_SERVICE_ID || "";
-const GITHUB_TOKEN_ENV = process.env.GITHUB_PERSONAL_TOKEN || process.env.GITHUB_PERSONAL_ACCESS_TOKEN || process.env.GITHUB_TOKEN || "";
+const GITHUB_TOKEN_ENV = process.env.GITHUB_PERSONAL_TOKEN || process.env.GITHUB_PERSONAL_ACCESS_TOKEN || process.env.GITHUB_PERSON_ACCESS_TOKEN || process.env.GITHUB_TOKEN || "";
 const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || "";
 const CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN || "";
 
