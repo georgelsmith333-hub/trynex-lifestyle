@@ -260,8 +260,8 @@ router.post("/products", requireAdmin, async (req, res) => {
       colorVariants: rest.colorVariants ?? [],
     }).returning();
 
-    if (categoryId) {
-      await db.execute(sql`UPDATE categories SET product_count = product_count + 1 WHERE id = ${categoryId}`);
+    if (rest.categoryId) {
+      await db.execute(sql`UPDATE categories SET product_count = product_count + 1 WHERE id = ${rest.categoryId}`);
     }
 
     logActivity({ action: "create", entity: "product", entityId: product.id, entityName: product.name, after: product as unknown as Record<string, unknown>, adminId: getAdminId(req) });
@@ -318,7 +318,7 @@ router.put("/products/:id", requireAdmin, async (req, res) => {
 
     const [product] = await db.update(productsTable).set(updateData).where(eq(productsTable.id, id)).returning();
 
-    const newCategoryId = categoryId !== undefined ? categoryId : oldCategoryId;
+    const newCategoryId = body.categoryId !== undefined ? body.categoryId : oldCategoryId;
     if (oldCategoryId !== newCategoryId) {
       if (oldCategoryId) {
         await db.execute(sql`UPDATE categories SET product_count = GREATEST(product_count - 1, 0) WHERE id = ${oldCategoryId}`);

@@ -22,7 +22,9 @@ out/
 # Screenshots / local verification artifacts
 screenshots/
 
-# Pasted secret files (never commit raw credential dumps)
+# Pasted notes/files often contain raw credentials, secrets, or deployment
+# details copied from chat. Never commit them; keep them on disk only.
+attached_assets/Pasted-*.txt
 attached_assets/Pasted-Secrets-*.txt
 attached_assets/*_ADMIN-JWT-SECRET_*.txt
 
