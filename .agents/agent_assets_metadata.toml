@@ -161,3 +161,9 @@ id = "tkoZ-4z41S2eTZNbNaEAr"
 uri = "file://SUPER_COMMAND.txt"
 type = "text"
 title = "TryNex Super Command Briefing"
+
+[[outputs]]
+id = "sX3NiHZhNiv6fbpB6cQWr"
+uri = "file://TryNex_DesignStudio_MasterPlan.pdf"
+type = "pdf"
+title = "TryNex Design Studio — Master Rebuild & Fix Plan"

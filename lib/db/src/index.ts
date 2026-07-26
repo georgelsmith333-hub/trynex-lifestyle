@@ -28,8 +28,8 @@ function getCandidateUrls(): string[] {
     process.env.DATABASE_URL_MAIN,      // Neon primary — preferred production DB
     process.env.DATABASE_FAILOVER,      // Neon failover — ep-crimson-dawn
     process.env.DATABASE_URL_TRYNEX_DB, // Neon secondary (if configured)
+    process.env.DATABASE_ANALYTICS,     // Analytics shard — full mirror (promoted: has 73 orders)
     process.env.DATABASE_PRODUCTS,      // Products shard / cold mirror
-    process.env.DATABASE_ANALYTICS,     // Analytics shard / cold mirror
     process.env.DATABASE_URL,           // Replit built-in — last resort
   ].filter((url): url is string => typeof url === "string" && url.trim().length > 0);
 
