@@ -39,3 +39,6 @@
 - [Vite proxy port](vite-proxy-port.md) — storefront vite.config.ts proxies /api/* to API_PORT env var, default was 5001 (wrong); correct default is 8082 (API server port). Root cause of "no products" in dev.
 - [Mobile Render domain fallback](mobile-render-fallback.md) — .env.production had stale trynex-api.onrender.com; lib/api.ts getBaseUrl() + _layout.tsx setBaseUrl() now detect and replace that domain with trynexshop.com automatically.
 - [GitHub tokens all expired](github-tokens-expired.md) — all GITHUB_* secrets return empty/fail; user must refresh PAT in Replit secrets before git push works again.
+- [DB auto-failover re-probe](db-auto-reprobe.md) — periodic 60s re-probe walks the full chain and switches to the first healthy DB; products/analytics added as failover candidates.
+- [Security: untracked secret files](secrets-untracked.md) — `.replit` and `attached_assets/Pasted-*.txt` removed from git index so credentials cannot be committed again.
+- [Neon API unreachable from Replit](neon-api-unreachable.md) — `api.neon.tech` returns HTTP 000 from the Replit container; DB endpoints still connect directly, so failover logic is the in-container strategy.
