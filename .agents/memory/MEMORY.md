@@ -42,3 +42,4 @@
 - [DB auto-failover re-probe](db-auto-reprobe.md) — periodic 60s re-probe walks the full chain and switches to the first healthy DB; products/analytics added as failover candidates.
 - [Security: untracked secret files](secrets-untracked.md) — `.replit` and `attached_assets/Pasted-*.txt` removed from git index so credentials cannot be committed again.
 - [Neon API unreachable from Replit](neon-api-unreachable.md) — `api.neon.tech` returns HTTP 000 from the Replit container; DB endpoints still connect directly, so failover logic is the in-container strategy.
+- [Neon quota + CF token status](neon-quota-cf-token.md) — MAIN + FAILOVER over quota; system runs on PRODUCTS DB; all CF API tokens expired (401); CF Pages auto-deploys from GitHub push.
