@@ -43,16 +43,18 @@ if (urls.length === 0) {
   );
 }
 
+const primaryUrl = urls[0];
+
 /* ─── Internal mutable state (switched on failover) ─────────────────────── */
 let _activePool: pg.Pool = new Pool({
-  connectionString: urls[0],
+  connectionString: primaryUrl,
   max: 10,
   idleTimeoutMillis: 30_000,
   connectionTimeoutMillis: 10_000,
 });
 
 let _activeDb: NodePgDatabase<typeof schema> = drizzle(_activePool, { schema });
-let _activeUrl = urls[0];
+let _activeUrl = primaryUrl;
 
 /* ─── Transparent proxies (callers see a stable reference) ──────────────── */
 export const pool = new Proxy({} as pg.Pool, {

@@ -24,6 +24,7 @@
 
 import pg from "pg";
 import { logger } from "./logger";
+import { getActiveDbUrl } from "@workspace/db";
 
 const { Pool } = pg;
 
@@ -286,7 +287,9 @@ async function syncOneTarget(
  * Safe to call repeatedly (e.g. on a schedule) — always does a full replace.
  */
 export async function runBackupSync(): Promise<TargetSyncResult[]> {
-  const sourceUrl = process.env.DATABASE_URL_MAIN || process.env.DATABASE_URL;
+  // Use the currently active database as the source of truth so that failover
+  // does not break backup sync when the configured primary is over quota.
+  const sourceUrl = await getActiveDbUrl();
   if (!sourceUrl) {
     logger.warn("[backupSync] No source database configured — skipping sync");
     return [];
