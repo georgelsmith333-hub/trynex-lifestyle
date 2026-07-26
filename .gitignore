@@ -22,3 +22,7 @@ out/
 # Screenshots / local verification artifacts
 screenshots/
 
+# Pasted secret files (never commit raw credential dumps)
+attached_assets/Pasted-Secrets-*.txt
+attached_assets/*_ADMIN-JWT-SECRET_*.txt
+
