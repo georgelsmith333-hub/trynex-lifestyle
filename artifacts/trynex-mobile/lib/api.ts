@@ -11,7 +11,7 @@ const getBaseUrl = () => {
   return `https://${domain}`;
 };
 
-async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const base = getBaseUrl();
   const url = `${base}${path}`;
   const res = await fetch(url, {

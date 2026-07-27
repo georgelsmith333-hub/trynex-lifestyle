@@ -60,9 +60,65 @@ interface ComposeOptions {
    *  vertically, and darken to mimic the surface curving away from camera.
    *  Typical values: 0.16 (mug/bottle side curve), 0.10 (cap dome). */
   curvature?: number;
+  /** Add a subtle procedural fabric grain to the design so it looks printed
+   *  on fabric rather than floating on top. Lightweight and cached. */
+  fabricTexture?: boolean;
 }
 
 const IMAGE_CACHE_MAX = 60;
+const fabricTextureCache = new Map<string, HTMLCanvasElement>();
+
+/** Procedural cotton/polyester weave texture — grey-based noise + thread grid.
+ *  Used as a soft-light overlay in the print zone. */
+function createFabricTexture(size: number): HTMLCanvasElement {
+  const key = `fabric-${size}`;
+  if (fabricTextureCache.has(key)) return fabricTextureCache.get(key)!;
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return canvas;
+
+  ctx.fillStyle = "#808080";
+  ctx.fillRect(0, 0, size, size);
+
+  const img = ctx.createImageData(size, size);
+  for (let i = 0; i < img.data.length; i += 4) {
+    const v = 128 + (Math.random() - 0.5) * 40;
+    img.data[i] = v;
+    img.data[i + 1] = v;
+    img.data[i + 2] = v;
+    img.data[i + 3] = 255;
+  }
+  ctx.putImageData(img, 0, 0);
+
+  ctx.globalCompositeOperation = "overlay";
+  ctx.strokeStyle = "rgba(255,255,255,0.10)";
+  ctx.lineWidth = 1;
+  const step = Math.max(2, Math.floor(size / 128));
+  for (let i = 0; i < size; i += step) {
+    ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, size); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(size, i); ctx.stroke();
+  }
+  ctx.globalCompositeOperation = "source-over";
+
+  fabricTextureCache.set(key, canvas);
+  return canvas;
+}
+
+/** Draw a soft fabric-grain overlay over the current drawing region. */
+function applyFabricGrain(ctx: CanvasRenderingContext2D, outW: number, outH: number, strength = 0.10) {
+  const size = 256;
+  const tex = createFabricTexture(size);
+  const pattern = ctx.createPattern(tex, "repeat");
+  if (!pattern) return;
+  ctx.save();
+  ctx.globalCompositeOperation = "soft-light";
+  ctx.globalAlpha = strength;
+  ctx.fillStyle = pattern;
+  ctx.fillRect(0, 0, outW, outH);
+  ctx.restore();
+}
 
 export function loadImage(src: string, cache?: Map<string, HTMLImageElement>): Promise<HTMLImageElement> {
   if (cache?.has(src)) {
@@ -252,7 +308,7 @@ export async function composeLayers(opts: ComposeOptions): Promise<HTMLCanvasEle
   const {
     canvas, baseHeight, printZone, layers, garmentColor,
     outW, outH, imageCache, clipToPrintZone = true, blendMode = "multiply",
-    curvature = 0,
+    curvature = 0, fabricTexture = false,
   } = opts;
   canvas.width = outW;
   canvas.height = outH;
@@ -327,6 +383,10 @@ export async function composeLayers(opts: ComposeOptions): Promise<HTMLCanvasEle
     ctx.restore();
   }
 
+  if (fabricTexture) {
+    applyFabricGrain(ctx, outW, outH, 0.10);
+  }
+
   if (clipToPrintZone) ctx.restore();
   return canvas;
 }
@@ -343,8 +403,9 @@ export async function composeGarmentMockup(opts: {
   /** Set true when garmentSrc is already the correct-colour photo — skips
    *  the SVG multiply-tint pass so the real photo is not double-tinted. */
   isColorPhoto?: boolean;
+  fabricTexture?: boolean;
 }): Promise<HTMLCanvasElement> {
-  const { canvas, garmentSrc, garmentColor, printZone, layers, outSize, imageCache, curvature = 0, isColorPhoto = false } = opts;
+  const { canvas, garmentSrc, garmentColor, printZone, layers, outSize, imageCache, curvature = 0, isColorPhoto = false, fabricTexture = false } = opts;
   canvas.width = outSize;
   canvas.height = outSize;
   const ctx = canvas.getContext("2d");
@@ -497,6 +558,10 @@ export async function composeGarmentMockup(opts: {
         ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
       }
 
+      if (fabricTexture) {
+        applyFabricGrain(ctx, outSize, outSize, 0.10);
+      }
+
       ctx.restore();
     } catch {}
   }
@@ -512,8 +577,9 @@ export async function composeDesignTexture(opts: {
   imageCache?: Map<string, HTMLImageElement>;
   clipToPrintZone?: boolean;
   curvature?: number;
+  fabricTexture?: boolean;
 }): Promise<HTMLCanvasElement> {
-  const { canvas, printZone, layers, outSize, imageCache, clipToPrintZone = true, curvature = 0 } = opts;
+  const { canvas, printZone, layers, outSize, imageCache, clipToPrintZone = true, curvature = 0, fabricTexture = false } = opts;
   canvas.width = outSize;
   canvas.height = outSize;
   const ctx = canvas.getContext("2d");
@@ -568,6 +634,10 @@ export async function composeDesignTexture(opts: {
       drawText(ctx, layer, fs, xOffset, 0, s, s);
     }
     ctx.restore();
+  }
+
+  if (fabricTexture) {
+    applyFabricGrain(ctx, outSize, outSize, 0.10);
   }
 
   if (clipToPrintZone) ctx.restore();

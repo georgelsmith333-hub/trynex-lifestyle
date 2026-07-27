@@ -39,6 +39,7 @@ export interface DesignStoreState {
   panX: number;
   panY: number;
   showPrintZone: boolean;
+  fabricTexture: boolean;
   snapGuides: { v: boolean; h: boolean };
 
   activeTab: RightTab;
@@ -86,6 +87,7 @@ export interface DesignStoreActions {
   setPan: (x: number, y: number) => void;
   resetView: () => void;
   setShowPrintZone: (show: boolean) => void;
+  setFabricTexture: (enabled: boolean) => void;
 
   setActiveTab: (tab: RightTab) => void;
   setShowProductPicker: (show: boolean) => void;
@@ -126,6 +128,7 @@ const initialState: DesignStoreState = {
   panX: 0,
   panY: 0,
   showPrintZone: true,
+  fabricTexture: true,
   snapGuides: { v: false, h: false },
 
   activeTab: "upload",
@@ -347,6 +350,11 @@ export const useDesignStore = create<DesignStore>()(
     setShowPrintZone: (show) => {
       set((state: DS) => {
         state.showPrintZone = show;
+      });
+    },
+    setFabricTexture: (enabled) => {
+      set((state: DS) => {
+        state.fabricTexture = enabled;
       });
     },
 

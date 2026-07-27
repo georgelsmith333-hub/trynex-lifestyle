@@ -9,7 +9,7 @@ export function prefetchDesignStudio(): void {
   if (designStudioPrefetched) return;
   designStudioPrefetched = true;
   // Kick off the lazy chunk download.
-  import("@/pages/DesignStudio").catch(() => {
+  import("@/pages/studio/DesignStudioV2").catch(() => {
     // Ignore — the real navigation will retry via lazyWithRetry.
     designStudioPrefetched = false;
   });

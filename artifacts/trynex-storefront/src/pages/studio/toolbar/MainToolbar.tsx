@@ -1,5 +1,5 @@
 import { useDesignStore } from "@/hooks/useDesignStore";
-import { Undo2, Redo2, ZoomIn, ZoomOut, RotateCw, Move, Ruler, Download, Type, Image as ImageIcon, Shapes, MousePointer2 } from "lucide-react";
+import { Undo2, Redo2, ZoomIn, ZoomOut, RotateCw, Move, Ruler, Download, Type, Image as ImageIcon, Shapes, MousePointer2, Shirt } from "lucide-react";
 import { ToolType } from "../types";
 
 const TOOLS: { id: ToolType; label: string; icon: React.ReactNode }[] = [
@@ -20,6 +20,8 @@ export function MainToolbar() {
   const resetView = useDesignStore((s) => s.resetView);
   const showPrintZone = useDesignStore((s) => s.showPrintZone);
   const setShowPrintZone = useDesignStore((s) => s.setShowPrintZone);
+  const fabricTexture = useDesignStore((s) => s.fabricTexture);
+  const setFabricTexture = useDesignStore((s) => s.setFabricTexture);
 
   return (
     <div className="flex items-center gap-2 p-2 rounded-2xl bg-white border border-gray-200 shadow-sm flex-wrap">
@@ -53,6 +55,12 @@ export function MainToolbar() {
         className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[10px] font-bold transition-all ${showPrintZone ? "bg-orange-50 text-orange-600 border border-orange-200" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
       >
         <Ruler className="w-3.5 h-3.5" /> Print zone
+      </button>
+      <button
+        onClick={() => setFabricTexture(!fabricTexture)}
+        className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[10px] font-bold transition-all ${fabricTexture ? "bg-amber-50 text-amber-700 border border-amber-200" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
+      >
+        <Shirt className="w-3.5 h-3.5" /> Fabric texture
       </button>
       <button className="ml-auto flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[10px] font-bold bg-gray-900 text-white hover:bg-gray-800">
         <Download className="w-3.5 h-3.5" /> Export

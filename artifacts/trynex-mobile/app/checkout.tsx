@@ -17,7 +17,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
 import { useCart } from "@/context/CartContext";
-import { api } from "@/lib/api";
+import { api, apiFetch } from "@/lib/api";
 
 // Major districts for quick-select chips (most common delivery destinations)
 const MAJOR_DISTRICTS = [
@@ -38,23 +38,33 @@ const BD_DISTRICTS = [
   "Patuakhali","Barguna","Jhalokathi","Madaripur","Gopalganj","Shariatpur",
 ];
 
-// Only expose mobile wallet methods that the admin has configured in site settings.
-// No hardcoded fallback numbers are shown to customers.
+type MobilePaymentMethod = "cod" | "bkash" | "nagad" | "upay" | "bank" | "card";
+
 const PAYMENT_METHODS = (siteSettings?: Record<string, string> | null) => {
-  const options = [
-    { value: "cod", label: "Cash on Delivery", icon: "dollar-sign", desc: "Pay when you receive" },
+  const options: { value: MobilePaymentMethod; label: string; icon: any; color: string; desc: string }[] = [
+    { value: "cod", label: "Cash on Delivery", icon: "dollar-sign", color: "#0891b2", desc: "25% advance, rest on delivery" },
   ];
   const bkash = siteSettings?.bkashNumber;
   const nagad = siteSettings?.nagadNumber;
+  const upay = siteSettings?.upayNumber;
   if (bkash) {
-    options.push({ value: "bkash", label: "bKash", icon: "smartphone", desc: `${bkash} (Personal)` });
+    options.push({ value: "bkash", label: "bKash", icon: "smartphone", color: "#e2136e", desc: `${bkash} (Personal)` });
   }
   if (nagad) {
-    options.push({ value: "nagad", label: "Nagad", icon: "smartphone", desc: `${nagad} (Personal)` });
+    options.push({ value: "nagad", label: "Nagad", icon: "smartphone", color: "#f7941d", desc: `${nagad} (Personal)` });
   }
-  options.push({ value: "bank", label: "Bank Transfer", icon: "credit-card", desc: "Contact us for details" });
+  if (upay) {
+    options.push({ value: "upay", label: "uPay", icon: "smartphone", color: "#0077cc", desc: `${upay} (Personal)` });
+  }
+  const bankConfigured = !!(siteSettings?.bankName && siteSettings?.bankAccountNumber && siteSettings?.bankAccountName);
+  if (bankConfigured) {
+    options.push({ value: "bank", label: "Bank Transfer", icon: "briefcase", color: "#16a34a", desc: siteSettings?.bankName || "Bank transfer" });
+  }
+  options.push({ value: "card", label: "Card on Delivery", icon: "credit-card", color: "#7c3aed", desc: "Pay with POS card machine" });
   return options;
 };
+
+const isWallet = (m: string) => m === "bkash" || m === "nagad" || m === "upay";
 
 function formatPrice(p: number) {
   return "৳" + p.toLocaleString("en-BD");
@@ -87,6 +97,13 @@ export default function CheckoutScreen() {
   const [promoError, setPromoError] = useState<string | null>(null);
 
   const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [paymentMode, setPaymentMode] = useState<"full" | "advance" | "cod">("advance");
+  const [lastFour, setLastFour] = useState("");
+  const [transactionId, setTransactionId] = useState("");
+  const [senderNumber, setSenderNumber] = useState("");
+  const [senderName, setSenderName] = useState("");
+  const [bankReference, setBankReference] = useState("");
+  const [paymentError, setPaymentError] = useState<string | null>(null);
 
   const [createdOrder, setCreatedOrder] = useState<{ orderNumber: string; id: number } | null>(null);
 
@@ -141,8 +158,39 @@ export default function CheckoutScreen() {
     return true;
   };
 
+  const validatePayment = () => {
+    setPaymentError(null);
+    if (isWallet(paymentMethod)) {
+      if (senderNumber.replace(/\D/g, "").length < 10) {
+        setPaymentError("Enter your 11-digit sending number.");
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        return false;
+      }
+      if (lastFour.length !== 4) {
+        setPaymentError("Enter the last 4 digits of your sending number.");
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        return false;
+      }
+      const numberAvailable = paymentMethod === "bkash" ? bkashNumber : paymentMethod === "nagad" ? nagadNumber : siteSettings?.upayNumber;
+      if (!numberAvailable) {
+        setPaymentError(`${paymentMethod === "bkash" ? "bKash" : paymentMethod === "nagad" ? "Nagad" : "uPay"} number is not configured. Choose another method or contact support.`);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        return false;
+      }
+    }
+    if (paymentMethod === "bank") {
+      if (!senderName.trim() || !bankReference.trim()) {
+        setPaymentError("Enter your sender name and bank reference number.");
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        return false;
+      }
+    }
+    return true;
+  };
+
   const placeOrder = async () => {
     if (!validateStep1()) return;
+    if (!validatePayment()) return;
     setLoading(true);
     try {
       const orderItems = items.map((i) => ({
@@ -175,6 +223,27 @@ export default function CheckoutScreen() {
 
       setCreatedOrder({ orderNumber: res.order.orderNumber, id: res.order.id });
       clearCart();
+
+      // Auto-submit payment verification for wallet/bank payments.
+      if (isWallet(paymentMethod) || paymentMethod === "bank") {
+        try {
+          await apiFetch(`/api/orders/${res.order.id}/payment-info`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
+            body: JSON.stringify({
+              lastFourDigits: lastFour,
+              senderNumber,
+              transactionId,
+              senderName,
+              bankReference,
+              promoCode: promoApplied || undefined,
+            }),
+          });
+        } catch {
+          // Non-blocking: order is created; payment verification can be retried manually.
+        }
+      }
+
       setStep("success");
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (err: any) {
@@ -406,40 +475,160 @@ export default function CheckoutScreen() {
 
           {step === "payment" && (
             <View style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Payment Method</Text>
+              <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Payment</Text>
+
+              <Text style={[styles.label, { color: colors.mutedForeground }]}>Payment Mode</Text>
+              <View style={{ flexDirection: "row", gap: 8, marginBottom: 16 }}>
+                {(["full", "advance", "cod"] as const).map((mode) => (
+                  <Pressable
+                    key={mode}
+                    onPress={() => {
+                      setPaymentMode(mode);
+                      if (mode === "cod" && !isWallet(paymentMethod) && paymentMethod !== "bank") setPaymentMethod("cod");
+                      else if (mode !== "cod" && paymentMethod === "cod") setPaymentMethod("bkash");
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    }}
+                    style={[styles.modeChip, {
+                      backgroundColor: paymentMode === mode ? colors.primary : colors.card,
+                      borderColor: paymentMode === mode ? colors.primary : colors.border,
+                    }]}
+                  >
+                    <Text style={[styles.modeChipText, { color: paymentMode === mode ? "#fff" : colors.foreground }]}>
+                      {mode === "full" ? "Full" : mode === "advance" ? "25% Advance" : "COD"}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+
+              <Text style={[styles.label, { color: colors.mutedForeground }]}>Payment Method</Text>
               {paymentOptions.map((m) => (
                 <Pressable
                   key={m.value}
-                  onPress={() => { setPaymentMethod(m.value); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+                  onPress={() => {
+                    setPaymentMethod(m.value);
+                    if (m.value === "cod") setPaymentMode("cod");
+                    else if (paymentMode === "cod") setPaymentMode("advance");
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  }}
                   style={[styles.paymentOption, {
                     backgroundColor: colors.card,
-                    borderColor: paymentMethod === m.value ? colors.primary : colors.border,
+                    borderColor: paymentMethod === m.value ? m.color : colors.border,
                     borderWidth: paymentMethod === m.value ? 2 : 1,
                   }]}
                 >
-                  <View style={[styles.paymentIcon, { backgroundColor: paymentMethod === m.value ? colors.primary + "20" : colors.background }]}>
-                    <Feather name={m.icon as any} size={20} color={paymentMethod === m.value ? colors.primary : colors.mutedForeground} />
+                  <View style={[styles.paymentIcon, { backgroundColor: paymentMethod === m.value ? m.color + "20" : colors.background }]}>
+                    <Feather name={m.icon as any} size={20} color={paymentMethod === m.value ? m.color : colors.mutedForeground} />
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={[styles.paymentLabel, { color: colors.foreground }]}>{m.label}</Text>
                     <Text style={[styles.paymentDesc, { color: colors.mutedForeground }]}>{m.desc}</Text>
                   </View>
                   {paymentMethod === m.value && (
-                    <Feather name="check-circle" size={20} color={colors.primary} />
+                    <Feather name="check-circle" size={20} color={m.color} />
                   )}
                 </Pressable>
               ))}
 
-              {paymentMethod !== "cod" && (
-                <View style={[styles.infoBox, { backgroundColor: colors.primary + "10", borderColor: colors.primary + "30" }]}>
-                  <Feather name="info" size={16} color={colors.primary} />
-                  <Text style={[styles.infoText, { color: colors.foreground }]}>
-                    {paymentMethod === "bkash"
-                      ? `Send payment to: ${bkashNumber} (bKash Personal). Include your name in the reference.`
-                      : paymentMethod === "nagad"
-                      ? `Send payment to: ${nagadNumber} (Nagad Personal). Include your name in the reference.`
-                      : "Our team will contact you with bank details after order confirmation."}
+              {paymentError && (
+                <Text style={{ color: "#EF4444", fontSize: 13, marginTop: 12, fontFamily: "Inter_500Medium" }}>{paymentError}</Text>
+              )}
+
+              {isWallet(paymentMethod) && (
+                <View style={[styles.paymentDetailCard, { borderColor: colors.border, backgroundColor: colors.card }]}>
+                  <Text style={[styles.paymentDetailTitle, { color: colors.foreground }]}>
+                    Send {formatPrice(paymentMode === "full" ? total : Math.ceil(total * 0.25))} to {paymentMethod === "bkash" ? "bKash" : paymentMethod === "nagad" ? "Nagad" : "uPay"}
                   </Text>
+                  <Text style={[styles.paymentDetailNumber, { color: paymentMethod === "bkash" ? "#e2136e" : paymentMethod === "nagad" ? "#f7941d" : "#0077cc" }]}>
+                    {paymentMethod === "bkash" ? bkashNumber : paymentMethod === "nagad" ? nagadNumber : siteSettings?.upayNumber || ""}
+                  </Text>
+                  {!siteSettings?.[`${paymentMethod}Number`] && (
+                    <Text style={{ color: "#EF4444", fontSize: 12, marginTop: 4 }}>Admin number not configured.</Text>
+                  )}
+
+                  <Text style={[styles.label, { color: colors.mutedForeground, marginTop: 12 }]}>Your Sending Number *</Text>
+                  <TextInput
+                    style={[styles.input, { color: colors.foreground, backgroundColor: colors.background, borderColor: colors.border }]}
+                    value={senderNumber}
+                    onChangeText={(v) => setSenderNumber(v.replace(/[^0-9]/g, "").slice(0, 11))}
+                    placeholder="01XXXXXXXXX"
+                    placeholderTextColor={colors.mutedForeground}
+                    keyboardType="phone-pad"
+                  />
+
+                  <Text style={[styles.label, { color: colors.mutedForeground }]}>Last 4 Digits *</Text>
+                  <TextInput
+                    style={[styles.input, { color: colors.foreground, backgroundColor: colors.background, borderColor: colors.border, letterSpacing: 8, textAlign: "center", fontSize: 20, fontFamily: "Inter_700Bold" }]}
+                    value={lastFour}
+                    onChangeText={(v) => setLastFour(v.replace(/\D/g, "").slice(0, 4))}
+                    placeholder="5678"
+                    placeholderTextColor={colors.mutedForeground}
+                    keyboardType="number-pad"
+                    maxLength={4}
+                  />
+
+                  <Text style={[styles.label, { color: colors.mutedForeground }]}>Transaction ID (optional)</Text>
+                  <TextInput
+                    style={[styles.input, { color: colors.foreground, backgroundColor: colors.background, borderColor: colors.border }]}
+                    value={transactionId}
+                    onChangeText={(v) => setTransactionId(v.replace(/[^a-zA-Z0-9-]/g, "").slice(0, 30))}
+                    placeholder="e.g. 8X9K2L"
+                    placeholderTextColor={colors.mutedForeground}
+                    autoCapitalize="characters"
+                  />
+                </View>
+              )}
+
+              {paymentMethod === "bank" && (
+                <View style={[styles.paymentDetailCard, { borderColor: colors.border, backgroundColor: colors.card }]}>
+                  <Text style={[styles.paymentDetailTitle, { color: colors.foreground }]}>Bank Transfer</Text>
+                  <View style={{ gap: 4, marginBottom: 12 }}>
+                    <Text style={[styles.paymentDetailMeta, { color: colors.mutedForeground }]}>Bank: <Text style={{ color: colors.foreground, fontFamily: "Inter_600SemiBold" }}>{siteSettings?.bankName || "Not configured"}</Text></Text>
+                    <Text style={[styles.paymentDetailMeta, { color: colors.mutedForeground }]}>Account: <Text style={{ color: colors.foreground, fontFamily: "Inter_600SemiBold" }}>{siteSettings?.bankAccountName || "Not configured"}</Text></Text>
+                    <Text style={[styles.paymentDetailMeta, { color: colors.mutedForeground }]}>Number: <Text style={{ color: colors.foreground, fontFamily: "Inter_600SemiBold" }}>{siteSettings?.bankAccountNumber || "Not configured"}</Text></Text>
+                    {siteSettings?.bankBranch && <Text style={[styles.paymentDetailMeta, { color: colors.mutedForeground }]}>Branch: {siteSettings?.bankBranch}</Text>}
+                  </View>
+                  <Text style={[styles.paymentDetailAmount, { color: "#16a34a" }]}>
+                    Send {formatPrice(paymentMode === "full" ? total : Math.ceil(total * 0.25))}
+                  </Text>
+
+                  <Text style={[styles.label, { color: colors.mutedForeground, marginTop: 12 }]}>Sender Name / Account Name *</Text>
+                  <TextInput
+                    style={[styles.input, { color: colors.foreground, backgroundColor: colors.background, borderColor: colors.border }]}
+                    value={senderName}
+                    onChangeText={(v) => setSenderName(v.slice(0, 100))}
+                    placeholder="Your bank account name"
+                    placeholderTextColor={colors.mutedForeground}
+                  />
+
+                  <Text style={[styles.label, { color: colors.mutedForeground }]}>Reference Number *</Text>
+                  <TextInput
+                    style={[styles.input, { color: colors.foreground, backgroundColor: colors.background, borderColor: colors.border }]}
+                    value={bankReference}
+                    onChangeText={(v) => setBankReference(v.replace(/[^a-zA-Z0-9-]/g, "").slice(0, 50))}
+                    placeholder="e.g. REF123456"
+                    placeholderTextColor={colors.mutedForeground}
+                    autoCapitalize="characters"
+                  />
+                </View>
+              )}
+
+              {paymentMethod === "card" && (
+                <View style={[styles.paymentDetailCard, { borderColor: colors.border, backgroundColor: colors.card }]}>
+                  <Text style={[styles.paymentDetailTitle, { color: colors.foreground }]}>Card on Delivery</Text>
+                  <Text style={[styles.paymentDetailMeta, { color: colors.mutedForeground }]}>
+                    {siteSettings?.cardPaymentNote || "Pay with card on delivery (POS machine available)."}
+                  </Text>
+                  <Text style={[styles.paymentDetailAmount, { color: "#7c3aed", marginTop: 8 }]}>Pay {formatPrice(total)} on delivery</Text>
+                </View>
+              )}
+
+              {paymentMethod === "cod" && (
+                <View style={[styles.paymentDetailCard, { borderColor: colors.border, backgroundColor: colors.card }]}>
+                  <Text style={[styles.paymentDetailTitle, { color: colors.foreground }]}>Cash on Delivery</Text>
+                  <Text style={[styles.paymentDetailMeta, { color: colors.mutedForeground }]}>
+                    A 25% advance of {formatPrice(Math.ceil(total * 0.25))} is required to confirm your order. Our team will contact you with payment instructions.
+                  </Text>
+                  <Text style={[styles.paymentDetailAmount, { color: "#0891b2", marginTop: 8 }]}>Remaining {formatPrice(total - Math.ceil(total * 0.25))} on delivery</Text>
                 </View>
               )}
             </View>
@@ -464,7 +653,10 @@ export default function CheckoutScreen() {
                 </View>
                 <View style={styles.summaryRow}>
                   <Text style={[styles.summaryLabel, { color: colors.mutedForeground }]}>Payment</Text>
-                  <Text style={[styles.summaryValue, { color: colors.foreground }]}>{paymentOptions.find(m => m.value === paymentMethod)?.label}</Text>
+                  <Text style={[styles.summaryValue, { color: colors.foreground, textAlign: "right" }]}>
+                    {paymentOptions.find(m => m.value === paymentMethod)?.label}
+                    {paymentMode !== "full" ? `\n${paymentMode === "cod" ? "25% advance" : "25% advance"} ${formatPrice(Math.ceil(total * 0.25))}` : ""}
+                  </Text>
                 </View>
               </View>
 
@@ -636,6 +828,13 @@ const styles = StyleSheet.create({
   paymentIcon: { width: 44, height: 44, borderRadius: 10, alignItems: "center", justifyContent: "center" },
   paymentLabel: { fontSize: 15, fontFamily: "Inter_600SemiBold" },
   paymentDesc: { fontSize: 12, fontFamily: "Inter_400Regular", marginTop: 2 },
+  modeChip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1 },
+  modeChipText: { fontSize: 13, fontFamily: "Inter_600SemiBold" },
+  paymentDetailCard: { borderRadius: 14, borderWidth: 1, padding: 14, marginTop: 12 },
+  paymentDetailTitle: { fontSize: 15, fontFamily: "Inter_700Bold", marginBottom: 8 },
+  paymentDetailNumber: { fontSize: 22, fontFamily: "Inter_700Bold", letterSpacing: 1 },
+  paymentDetailMeta: { fontSize: 13, fontFamily: "Inter_400Regular" },
+  paymentDetailAmount: { fontSize: 16, fontFamily: "Inter_700Bold", marginTop: 4 },
   infoBox: { flexDirection: "row", gap: 10, padding: 12, borderRadius: 10, borderWidth: 1, marginTop: 8, alignItems: "flex-start" },
   infoText: { flex: 1, fontSize: 13, fontFamily: "Inter_400Regular", lineHeight: 19 },
   summaryCard: { borderRadius: 12, borderWidth: 1, overflow: "hidden", marginBottom: 4 },

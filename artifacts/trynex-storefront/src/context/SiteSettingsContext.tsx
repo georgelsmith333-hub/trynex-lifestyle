@@ -21,6 +21,13 @@ interface SiteSettings {
   nagadNumber: string;
   rocketNumber: string;
   upayNumber: string;
+  bankName: string;
+  bankAccountName: string;
+  bankAccountNumber: string;
+  bankBranch: string;
+  bankRoutingNumber: string;
+  cardPaymentNote: string;
+  codEnabled: boolean;
   facebookUrl: string;
   instagramUrl: string;
   youtubeUrl: string;
@@ -127,6 +134,13 @@ const defaults: SiteSettings = {
   nagadNumber: c("nagadNumber") || "",
   rocketNumber: c("rocketNumber") || "",
   upayNumber: c("upayNumber") || "",
+  bankName: c("bankName") || "",
+  bankAccountName: c("bankAccountName") || "",
+  bankAccountNumber: c("bankAccountNumber") || "",
+  bankBranch: c("bankBranch") || "",
+  bankRoutingNumber: c("bankRoutingNumber") || "",
+  cardPaymentNote: c("cardPaymentNote") || "Pay with card on delivery (POS machine available).",
+  codEnabled: c("codEnabled") ?? true,
   facebookUrl: c("facebookUrl") || "",
   instagramUrl: c("instagramUrl") || "",
   youtubeUrl: c("youtubeUrl") || "",

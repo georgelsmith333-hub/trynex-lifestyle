@@ -100,7 +100,7 @@ export default function DesignStudioV2() {
   const {
     selectedProduct, selectedColor, activeFace, mugMode, selectedSize, quantity,
     layers, selectedIds, linkedStoreProduct, showPrintZone, show3D, activeTab,
-    saveStatus, hasDraft, isMobile,
+    saveStatus, hasDraft, isMobile, fabricTexture,
     setProduct, setColor, setFace, setMugMode, setSize, setQuantity,
     addLayer, updateLayer, deleteLayer, moveLayer, setLayerVisibility, selectLayer, clearSelection, setLayers,
     undo, redo, setShowPrintZone, setActiveTab, setShow3D, setLinkedStoreProduct, setSaveStatus, setHasDraft,
@@ -373,7 +373,7 @@ export default function DesignStudioV2() {
     let mockupUrl: string;
     try {
       const mockupCanvas = document.createElement("canvas");
-      await composeGarmentMockup({ canvas: mockupCanvas, garmentSrc, garmentColor: selectedColor.hex, printZone: frontPZ, layers: frontLayers, outSize: 400, imageCache, isColorPhoto });
+      await composeGarmentMockup({ canvas: mockupCanvas, garmentSrc, garmentColor: selectedColor.hex, printZone: frontPZ, layers: frontLayers, outSize: 400, imageCache, isColorPhoto, fabricTexture });
       mockupUrl = mockupCanvas.toDataURL("image/webp", 0.8);
     } catch (err) {
       console.error("Mockup compose failed", err);
@@ -385,9 +385,9 @@ export default function DesignStudioV2() {
     try {
       const frontTexCanvas = document.createElement("canvas");
       if (isMug) {
-        await composeLayers({ canvas: frontTexCanvas, baseHeight: selectedProduct.baseHeight, printZone: frontPZ, layers: frontLayers, garmentColor: null, outW: 2048, outH: 768, imageCache, clipToPrintZone: true, blendMode: "multiply", curvature: 0.16 });
+        await composeLayers({ canvas: frontTexCanvas, baseHeight: selectedProduct.baseHeight, printZone: frontPZ, layers: frontLayers, garmentColor: null, outW: 2048, outH: 768, imageCache, clipToPrintZone: true, blendMode: "multiply", curvature: 0.16, fabricTexture });
       } else {
-        await composeDesignTexture({ canvas: frontTexCanvas, printZone: frontPZ, layers: frontLayers, outSize: 1024, imageCache, curvature: isWaterBottle ? 0.16 : isCap ? 0.1 : 0 });
+        await composeDesignTexture({ canvas: frontTexCanvas, printZone: frontPZ, layers: frontLayers, outSize: 1024, imageCache, curvature: isWaterBottle ? 0.16 : isCap ? 0.1 : 0, fabricTexture });
       }
       frontTexUrl = frontTexCanvas.toDataURL("image/webp", 0.85);
     } catch (err) {
@@ -399,7 +399,7 @@ export default function DesignStudioV2() {
     let backTexUrl: string | undefined;
     if (!isMug && backLayers.length > 0) {
       const backTexCanvas = document.createElement("canvas");
-      await composeDesignTexture({ canvas: backTexCanvas, printZone: backPZ, layers: backLayers, outSize: 1024, imageCache });
+      await composeDesignTexture({ canvas: backTexCanvas, printZone: backPZ, layers: backLayers, outSize: 1024, imageCache, fabricTexture });
       backTexUrl = backTexCanvas.toDataURL("image/webp", 0.85);
     }
 
@@ -410,17 +410,17 @@ export default function DesignStudioV2() {
       const { SLEEVE_PZ, NECK_LABEL_PZ } = await import("../design-studio/mockups");
       if (leftSleeveLayers.length > 0) {
         const c = document.createElement("canvas");
-        await composeDesignTexture({ canvas: c, printZone: SLEEVE_PZ, layers: leftSleeveLayers, outSize: 1024, imageCache });
+        await composeDesignTexture({ canvas: c, printZone: SLEEVE_PZ, layers: leftSleeveLayers, outSize: 1024, imageCache, fabricTexture });
         leftSleeveTexUrl = c.toDataURL("image/webp", 0.85);
       }
       if (rightSleeveLayers.length > 0) {
         const c = document.createElement("canvas");
-        await composeDesignTexture({ canvas: c, printZone: SLEEVE_PZ, layers: rightSleeveLayers, outSize: 1024, imageCache });
+        await composeDesignTexture({ canvas: c, printZone: SLEEVE_PZ, layers: rightSleeveLayers, outSize: 1024, imageCache, fabricTexture });
         rightSleeveTexUrl = c.toDataURL("image/webp", 0.85);
       }
       if (neckLabelLayers.length > 0) {
         const c = document.createElement("canvas");
-        await composeDesignTexture({ canvas: c, printZone: NECK_LABEL_PZ, layers: neckLabelLayers, outSize: 1024, imageCache });
+        await composeDesignTexture({ canvas: c, printZone: NECK_LABEL_PZ, layers: neckLabelLayers, outSize: 1024, imageCache, fabricTexture });
         neckLabelTexUrl = c.toDataURL("image/webp", 0.85);
       }
     }
@@ -458,7 +458,7 @@ export default function DesignStudioV2() {
     const colorPhoto = garmentBase?.colorPhotos?.[selectedColor.hex];
     const garmentSrc = colorPhoto?.front ?? garmentBase?.frontCutout ?? garmentBase?.front ?? selectedProduct.frontSrc;
     const canvas = document.createElement("canvas");
-    await composeGarmentMockup({ canvas, garmentSrc, garmentColor: selectedColor.hex, printZone: isMug ? MUG_SIDE_PZ : selectedProduct.printZone, layers: activeLayers, outSize: 1200, isColorPhoto: !!colorPhoto });
+    await composeGarmentMockup({ canvas, garmentSrc, garmentColor: selectedColor.hex, printZone: isMug ? MUG_SIDE_PZ : selectedProduct.printZone, layers: activeLayers, outSize: 1200, isColorPhoto: !!colorPhoto, fabricTexture });
     const a = document.createElement("a"); a.href = canvas.toDataURL("image/png"); a.download = `trynex-${selectedProduct.id}-${activeFace}-design.png`; a.click();
     toast({ title: "PNG exported!", description: "High-res PNG saved to your downloads." });
   };

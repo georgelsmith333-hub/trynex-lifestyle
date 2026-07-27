@@ -1279,9 +1279,17 @@ router.put("/orders/:id/payment-info", async (req, res) => {
       return;
     }
     const rawLastFour = String(req.body?.lastFourDigits ?? "").replace(/\D/g, "").slice(0, 8);
+    const rawSenderNumber = String(req.body?.senderNumber ?? "").replace(/[^0-9+\- ]/g, "").slice(0, 20);
+    const rawTransactionId = String(req.body?.transactionId ?? "").replace(/[^a-zA-Z0-9\-]/gi, "").slice(0, 100);
+    const rawSenderName = String(req.body?.senderName ?? "").replace(/[^a-zA-Z0-9.\- ]/gi, "").slice(0, 100);
+    const rawBankReference = String(req.body?.bankReference ?? "").replace(/[^a-zA-Z0-9\-]/gi, "").slice(0, 100);
     const rawPromo = String(req.body?.promoCode ?? "").replace(/[^A-Z0-9_\-]/gi, "").toUpperCase().slice(0, 50);
     const notes = [
       rawLastFour ? `Payment last 4 digits: ${rawLastFour}` : null,
+      rawSenderNumber ? `Sender number: ${rawSenderNumber}` : null,
+      rawTransactionId ? `Transaction ID: ${rawTransactionId}` : null,
+      rawSenderName ? `Sender name: ${rawSenderName}` : null,
+      rawBankReference ? `Bank reference: ${rawBankReference}` : null,
       rawPromo ? `Promo code: ${rawPromo}` : null,
     ].filter(Boolean).join(" | ");
 

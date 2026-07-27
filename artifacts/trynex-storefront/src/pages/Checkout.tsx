@@ -50,8 +50,8 @@ const inputClass = "w-full px-4 py-3.5 rounded-xl text-base sm:text-sm font-medi
 const inputStyle = { background: 'white', border: '1px solid #e5e7eb', color: '#111827' };
 
 type CheckoutStep = 'form' | 'gateway' | 'success';
-type MobileMethod = 'bkash' | 'nagad' | 'upay';
-type PaymentMode = 'full' | 'advance';
+type PaymentMethod = 'bkash' | 'nagad' | 'upay' | 'bank' | 'card' | 'cod';
+type PaymentMode = 'full' | 'advance' | 'cod';
 
 export default function Checkout() {
   const [, setLocation] = useLocation();
@@ -67,12 +67,16 @@ export default function Checkout() {
   const shippingFee = settings.shippingCost || 0;
 
   const [paymentMode, setPaymentMode] = useState<PaymentMode>('advance');
-  const [walletChoice, setWalletChoice] = useState<MobileMethod>('bkash');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('bkash');
   const [summaryExpanded, setSummaryExpanded] = useState(false);
   const [step, setStep] = useState<number>(1);
   const [checkoutStatus, setCheckoutStatus] = useState<CheckoutStep>('form');
   const [createdOrder, setCreatedOrder] = useState<Record<string, unknown> | null>(null);
   const [lastFour, setLastFour] = useState("");
+  const [transactionId, setTransactionId] = useState("");
+  const [senderNumber, setSenderNumber] = useState("");
+  const [senderName, setSenderName] = useState("");
+  const [bankReference, setBankReference] = useState("");
   const [isSubmittingPayment, setIsSubmittingPayment] = useState(false);
   const [copiedNumber, setCopiedNumber] = useState(false);
   const [promoInput, setPromoInput] = useState("");
@@ -303,18 +307,27 @@ export default function Checkout() {
     }
   }, [items, promoApplied]);
 
-  const getPaymentNumber = (method: MobileMethod) => {
+  const getPaymentNumber = (method: PaymentMethod) => {
     if (method === 'bkash') return settings.bkashNumber || "";
     if (method === 'nagad') return settings.nagadNumber || "";
     if (method === 'upay') return settings.upayNumber || "";
     return "";
   };
 
+  const bankConfigured = !!(settings.bankName && settings.bankAccountNumber && settings.bankAccountName);
+  const anyWalletConfigured = !!(settings.bkashNumber || settings.nagadNumber || settings.upayNumber);
+
   // Only payment methods that the admin has configured are shown to customers.
   // No hardcoded fallback numbers are used anywhere in the checkout flow.
-  const configuredWallets: MobileMethod[] = (['bkash', 'nagad', 'upay'] as MobileMethod[]).filter(
-    (m) => !!getPaymentNumber(m)
-  );
+  const configuredPaymentMethods: PaymentMethod[] = ([
+    'bkash', 'nagad', 'upay', 'bank', 'card', 'cod'
+  ] as PaymentMethod[]).filter((m) => {
+    if (m === 'bkash' || m === 'nagad' || m === 'upay') return !!getPaymentNumber(m);
+    if (m === 'bank') return bankConfigured;
+    if (m === 'card') return true; // card is always available as "card on delivery" note
+    if (m === 'cod') return settings.codEnabled !== false;
+    return false;
+  });
   const validatePromo = async () => {
     if (!promoInput.trim()) return;
     setPromoLoading(true);
@@ -359,7 +372,8 @@ export default function Checkout() {
   const qualifiesForFreeShipping = freeShippingThreshold > 0 && liveSubtotal >= freeShippingThreshold;
   const shippingCost = liveSubtotal > 0 && !qualifiesForFreeShipping ? shippingFee : 0;
   const total = Math.max(0, liveSubtotal + shippingCost - promoDiscount);
-  const advanceAmount = Math.ceil(total * 0.25);
+  const advanceAmount = paymentMode === 'cod' ? 0 : Math.ceil(total * 0.25);
+  const codDepositAmount = Math.ceil(total * 0.25); // 25% advance required for COD orders
 
   const displayTotal = checkoutStatus === 'form' ? total : snapshotRef.current.total;
   const displayAdvance = checkoutStatus === 'form' ? advanceAmount : snapshotRef.current.advance;
@@ -385,8 +399,7 @@ export default function Checkout() {
     );
   }
 
-  const effectiveGatewayMethod: MobileMethod = walletChoice;
-  const paymentMethod = walletChoice;
+  const effectiveGatewayMethod: PaymentMethod = paymentMethod;
 
   const onSubmit = async (data: CheckoutFormData) => {
     const snapSubtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -515,8 +528,31 @@ export default function Checkout() {
         color: i.color,
       }));
       clearCart();
-      // Always go to payment gateway (COD removed — digital payment only)
-      setCheckoutStatus('gateway');
+
+      // Auto-submit payment verification collected in step 2.
+      // Wallet and bank payments include the details now; card/COD skip this.
+      if (paymentMethod !== 'card' && paymentMethod !== 'cod') {
+        try {
+          await fetch(getApiUrl(`/api/orders/${orderData.id}/payment-info`), {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            body: JSON.stringify({
+              lastFourDigits: lastFour,
+              senderNumber,
+              transactionId,
+              senderName,
+              bankReference,
+              promoCode: promoApplied || undefined,
+            }),
+          });
+          setCheckoutStatus('success');
+        } catch (paymentErr) {
+          // If payment verification couldn't be saved, show the gateway so the user can retry.
+          setCheckoutStatus('gateway');
+        }
+      } else {
+        setCheckoutStatus('success');
+      }
     } catch (err: any) {
       if (wakingTimerRef.current) { clearTimeout(wakingTimerRef.current); wakingTimerRef.current = null; }
       setServerWaking(false);
@@ -625,9 +661,9 @@ export default function Checkout() {
   const effectivePaymentNumber = activePaymentNumber;
   const paymentNumberReady = !!effectivePaymentNumber;
 
-  // If the currently selected wallet is not configured, switch to the first configured one.
-  if (configuredWallets.length > 0 && !configuredWallets.includes(walletChoice)) {
-    setWalletChoice(configuredWallets[0]);
+  // If the currently selected payment method is not configured, switch to the first configured one.
+  if (configuredPaymentMethods.length > 0 && !configuredPaymentMethods.includes(paymentMethod)) {
+    setPaymentMethod(configuredPaymentMethods[0]);
   }
 
   const copyNumber = async () => {
@@ -637,7 +673,16 @@ export default function Checkout() {
     setTimeout(() => setCopiedNumber(false), 3000);
   };
 
-  const gatewayTheme = {
+  const gatewayTheme: Record<PaymentMethod, {
+    name: string;
+    primary: string;
+    light: string;
+    border: string;
+    glow: string;
+    badge: string;
+    logo: React.ReactNode;
+    icon: React.ReactNode;
+  }> = {
     bkash: {
       name: 'bKash',
       primary: '#e2136e',
@@ -646,6 +691,7 @@ export default function Checkout() {
       glow: '0 4px 30px rgba(226,19,110,0.1)',
       badge: 'linear-gradient(135deg, #e2136e 0%, #c0105c 100%)',
       logo: <span className="text-4xl font-black" style={{ color: '#e2136e' }}>bKash</span>,
+      icon: <Smartphone className="w-5 h-5" />,
     },
     nagad: {
       name: 'Nagad',
@@ -655,6 +701,7 @@ export default function Checkout() {
       glow: '0 4px 30px rgba(247,148,29,0.1)',
       badge: 'linear-gradient(135deg, #f7941d 0%, #e07800 100%)',
       logo: <span className="text-4xl font-black" style={{ color: '#f7941d' }}>Nagad</span>,
+      icon: <Smartphone className="w-5 h-5" />,
     },
     upay: {
       name: 'uPay',
@@ -664,10 +711,52 @@ export default function Checkout() {
       glow: '0 4px 30px rgba(0,119,204,0.1)',
       badge: 'linear-gradient(135deg, #0077cc 0%, #005fa3 100%)',
       logo: <span className="text-4xl font-black" style={{ color: '#0077cc' }}>uPay</span>,
+      icon: <Smartphone className="w-5 h-5" />,
+    },
+    bank: {
+      name: 'Bank Transfer',
+      primary: '#16a34a',
+      light: 'rgba(22,163,74,0.08)',
+      border: 'rgba(22,163,74,0.2)',
+      glow: '0 4px 30px rgba(22,163,74,0.1)',
+      badge: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+      logo: <span className="text-3xl font-black" style={{ color: '#16a34a' }}>Bank</span>,
+      icon: <Banknote className="w-5 h-5" />,
+    },
+    card: {
+      name: 'Card Payment',
+      primary: '#7c3aed',
+      light: 'rgba(124,58,237,0.08)',
+      border: 'rgba(124,58,237,0.2)',
+      glow: '0 4px 30px rgba(124,58,237,0.1)',
+      badge: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
+      logo: <span className="text-3xl font-black" style={{ color: '#7c3aed' }}>Card</span>,
+      icon: <CreditCard className="w-5 h-5" />,
+    },
+    cod: {
+      name: 'Cash on Delivery',
+      primary: '#0891b2',
+      light: 'rgba(8,145,178,0.08)',
+      border: 'rgba(8,145,178,0.2)',
+      glow: '0 4px 30px rgba(8,145,178,0.1)',
+      badge: 'linear-gradient(135deg, #0891b2 0%, #0e7490 100%)',
+      logo: <span className="text-3xl font-black" style={{ color: '#0891b2' }}>COD</span>,
+      icon: <Banknote className="w-5 h-5" />,
     },
   };
 
   const theme = gatewayTheme[effectiveGatewayMethod];
+
+  const canProceed = (() => {
+    if (configuredPaymentMethods.length === 0) return false;
+    if (paymentMethod === 'bkash' || paymentMethod === 'nagad' || paymentMethod === 'upay') {
+      return paymentNumberReady && lastFour.length === 4 && senderNumber.length >= 10;
+    }
+    if (paymentMethod === 'bank') {
+      return bankConfigured && senderName.trim().length > 0 && bankReference.trim().length > 0;
+    }
+    return true; // card, cod
+  })();
 
   if (checkoutStatus === 'success') {
     return (
@@ -1352,16 +1441,16 @@ export default function Checkout() {
                   <h2 className="text-xl font-black font-display flex items-center gap-3 mb-6 text-gray-800">
                     <span className="w-8 h-8 rounded-xl flex items-center justify-center"
                       style={{ background: 'rgba(232,93,4,0.08)', color: '#E85D04' }}>
-                      <Smartphone className="w-4 h-4" />
+                      <CreditCard className="w-4 h-4" />
                     </span>
-                    Step 2: Payment Method
+                    Step 2: Payment
                   </h2>
 
                   <p className="text-xs text-gray-500 mb-5 leading-relaxed">
-                    Choose how you'd like to pay — then select your preferred e-wallet below.
+                    Choose how you pay. For wallets, send the amount to our merchant number and enter your sending details below.
                   </p>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
                     <button
                       type="button"
                       onClick={() => setPaymentMode('full')}
@@ -1376,10 +1465,10 @@ export default function Checkout() {
                         <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${paymentMode === 'full' ? 'border-orange-500' : 'border-gray-300'}`}>
                           {paymentMode === 'full' && <div className="w-2 h-2 rounded-full bg-orange-500" />}
                         </div>
-                        <span className="font-black text-sm text-gray-900">Pay Full Amount Online</span>
+                        <span className="font-black text-sm text-gray-900">Full Payment</span>
                       </div>
                       <p className="text-xs text-gray-500 leading-relaxed pl-6">
-                        Pay entire <strong className="text-gray-800">{formatPrice(total)}</strong> now via bKash / Nagad.
+                        Pay <strong className="text-gray-800">{formatPrice(total)}</strong> now.
                       </p>
                     </button>
 
@@ -1398,39 +1487,72 @@ export default function Checkout() {
                         <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${paymentMode === 'advance' ? 'border-green-500' : 'border-gray-300'}`}>
                           {paymentMode === 'advance' && <div className="w-2 h-2 rounded-full bg-green-500" />}
                         </div>
-                        <span className="font-black text-sm text-gray-900">25% Advance + Pay Rest on Delivery</span>
+                        <span className="font-black text-sm text-gray-900">25% Advance</span>
                       </div>
                       <p className="text-xs text-gray-500 leading-relaxed pl-6">
-                        Pay <strong className="text-gray-800">{formatPrice(advanceAmount)}</strong> now (25%) via bKash / Nagad, rest on delivery.
+                        Pay <strong className="text-gray-800">{formatPrice(advanceAmount)}</strong> now, rest on delivery.
+                      </p>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMode('cod')}
+                      className="text-left p-4 rounded-2xl transition-all duration-200 focus:outline-none relative"
+                      style={{
+                        background: paymentMode === 'cod' ? 'rgba(8,145,178,0.05)' : '#f9fafb',
+                        border: paymentMode === 'cod' ? '2px solid rgba(8,145,178,0.45)' : '2px solid #e5e7eb',
+                        boxShadow: paymentMode === 'cod' ? '0 2px 16px rgba(8,145,178,0.10)' : 'none',
+                      }}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${paymentMode === 'cod' ? 'border-cyan-600' : 'border-gray-300'}`}>
+                          {paymentMode === 'cod' && <div className="w-2 h-2 rounded-full bg-cyan-600" />}
+                        </div>
+                        <span className="font-black text-sm text-gray-900">Cash on Delivery</span>
+                      </div>
+                      <p className="text-xs text-gray-500 leading-relaxed pl-6">
+                        25% advance <strong className="text-gray-800">{formatPrice(codDepositAmount)}</strong>, rest on delivery.
                       </p>
                     </button>
                   </div>
 
-                  {configuredWallets.length > 0 ? (
-                    <div className="mb-8">
-                      <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Select E-Wallet</p>
-                      <div className="grid grid-cols-3 gap-2">
-                        {([
-                          { id: 'bkash' as MobileMethod, label: 'bKash', color: '#e2136e', bg: 'rgba(226,19,110,0.06)', border: 'rgba(226,19,110,0.25)' },
-                          { id: 'nagad' as MobileMethod, label: 'Nagad', color: '#f7941d', bg: 'rgba(247,148,29,0.06)', border: 'rgba(247,148,29,0.25)' },
-                          { id: 'upay'  as MobileMethod, label: 'uPay',  color: '#0077cc', bg: 'rgba(0,119,204,0.06)',  border: 'rgba(0,119,204,0.25)'  },
-                        ])
-                          .filter(w => configuredWallets.includes(w.id))
-                          .map(w => (
+                  {configuredPaymentMethods.length > 0 ? (
+                    <div className="mb-6">
+                      <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Select Payment Method</p>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {configuredPaymentMethods.map((method) => {
+                          const t = gatewayTheme[method];
+                          const isSelected = paymentMethod === method;
+                          const isDisabled = (method === 'bkash' || method === 'nagad' || method === 'upay') && paymentMode === 'cod';
+                          return (
                             <button
-                              key={w.id}
+                              key={method}
                               type="button"
-                              onClick={() => setWalletChoice(w.id)}
-                              className="py-3 px-2 rounded-xl font-black text-sm transition-all duration-150 focus:outline-none"
+                              onClick={() => {
+                                if (isDisabled) return;
+                                setPaymentMethod(method);
+                                if (method === 'cod') setPaymentMode('cod');
+                                else if (paymentMode === 'cod') setPaymentMode('advance');
+                              }}
+                              disabled={isDisabled}
+                              className="relative flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all duration-200 focus:outline-none disabled:opacity-40"
                               style={{
-                                background: walletChoice === w.id ? w.bg : '#f9fafb',
-                                border: walletChoice === w.id ? `2px solid ${w.border}` : '2px solid #e5e7eb',
-                                color: walletChoice === w.id ? w.color : '#9ca3af',
+                                background: isSelected ? t.light : '#f9fafb',
+                                border: isSelected ? `2px solid ${t.border}` : '2px solid #e5e7eb',
+                                color: isSelected ? t.primary : '#9ca3af',
+                                boxShadow: isSelected ? t.glow : 'none',
                               }}
                             >
-                              {w.label}
+                              {isSelected && (
+                                <div className="absolute top-2 right-2" style={{ color: t.primary }}>
+                                  <Check className="w-4 h-4" />
+                                </div>
+                              )}
+                              {t.icon}
+                              <span className="font-black text-sm">{t.name}</span>
                             </button>
-                          ))}
+                          );
+                        })}
                       </div>
                     </div>
                   ) : (
@@ -1440,13 +1562,170 @@ export default function Checkout() {
                     </div>
                   )}
 
+                  {(paymentMethod === 'bkash' || paymentMethod === 'nagad' || paymentMethod === 'upay') && (
+                    <div className="rounded-2xl p-5 mb-6" style={{ background: theme.light, border: `2px solid ${theme.border}` }}>
+                      <div className="flex items-center justify-between mb-4">
+                        <div>{theme.logo}</div>
+                        <div className="text-right">
+                          <p className="text-[10px] font-black uppercase text-gray-400">Send Amount</p>
+                          <p className="text-2xl font-black font-display" style={{ color: theme.primary }}>
+                            {formatPrice(paymentMode === 'full' ? total : (paymentMode === 'cod' ? codDepositAmount : advanceAmount))}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="rounded-xl p-4 bg-white mb-4" style={{ border: `1px solid ${theme.border}` }}>
+                        <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Send Money To</p>
+                        <div className="flex items-center gap-3">
+                          <div className="flex-1">
+                            <p className="text-[10px] text-gray-400 mb-1">{theme.name} Personal Number</p>
+                            <p className="text-2xl font-black tracking-widest font-mono" style={{ color: theme.primary }}>
+                              {effectivePaymentNumber || "Not configured"}
+                            </p>
+                            {!paymentNumberReady && (
+                              <p className="text-[10px] text-red-500 mt-1 font-bold">Admin number not configured — contact us on WhatsApp to confirm payment.</p>
+                            )}
+                          </div>
+                          {paymentNumberReady && (
+                            <button
+                              onClick={copyNumber}
+                              className="flex flex-col items-center gap-1 w-14 h-14 rounded-xl justify-center transition-all duration-300 shrink-0"
+                              style={{
+                                background: copiedNumber ? 'rgba(22,163,74,0.08)' : theme.light,
+                                border: copiedNumber ? '1px solid rgba(22,163,74,0.2)' : `1px solid ${theme.border}`,
+                                color: copiedNumber ? '#16a34a' : theme.primary,
+                              }}
+                            >
+                              {copiedNumber ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                              <span className="text-[8px] font-black">{copiedNumber ? 'COPIED' : 'COPY'}</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2">Your Sending Number *</label>
+                          <input
+                            type="tel"
+                            inputMode="numeric"
+                            placeholder="01XXXXXXXXX"
+                            value={senderNumber}
+                            onChange={e => setSenderNumber(e.target.value.replace(/[^0-9]/g, '').slice(0, 11))}
+                            className={inputClass}
+                            style={{ ...inputStyle, letterSpacing: '0.2em' }}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2">Last 4 Digits of Sending Number *</label>
+                          <input
+                            type="tel"
+                            inputMode="numeric"
+                            maxLength={4}
+                            placeholder="e.g. 5678"
+                            value={lastFour}
+                            onChange={e => setLastFour(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                            className={inputClass}
+                            style={{ ...inputStyle, letterSpacing: '0.5em', textAlign: 'center', fontSize: '1.5rem', fontWeight: 900 }}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2">Transaction ID (optional)</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. 8X9K2L"
+                            value={transactionId}
+                            onChange={e => setTransactionId(e.target.value.replace(/[^a-zA-Z0-9-]/g, '').slice(0, 30))}
+                            className={inputClass}
+                            style={inputStyle}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {paymentMethod === 'bank' && (
+                    <div className="rounded-2xl p-5 mb-6" style={{ background: theme.light, border: `2px solid ${theme.border}` }}>
+                      <div className="flex items-center gap-3 mb-4">
+                        {theme.icon}
+                        <span className="text-xl font-black" style={{ color: theme.primary }}>Bank Transfer</span>
+                      </div>
+                      <div className="rounded-xl p-4 bg-white mb-4" style={{ border: `1px solid ${theme.border}` }}>
+                        <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Transfer To</p>
+                        <div className="space-y-2 text-sm">
+                          <p><span className="text-gray-400">Bank:</span> <strong className="text-gray-900">{settings.bankName || "Not configured"}</strong></p>
+                          <p><span className="text-gray-400">Account Name:</span> <strong className="text-gray-900">{settings.bankAccountName || "Not configured"}</strong></p>
+                          <p><span className="text-gray-400">Account Number:</span> <strong className="text-gray-900">{settings.bankAccountNumber || "Not configured"}</strong></p>
+                          {settings.bankBranch && <p><span className="text-gray-400">Branch:</span> <strong className="text-gray-900">{settings.bankBranch}</strong></p>}
+                          {settings.bankRoutingNumber && <p><span className="text-gray-400">Routing:</span> <strong className="text-gray-900">{settings.bankRoutingNumber}</strong></p>}
+                        </div>
+                        {!bankConfigured && (
+                          <p className="text-xs text-red-500 mt-3 font-bold">Bank details not configured — contact us on WhatsApp.</p>
+                        )}
+                      </div>
+                      <div className="rounded-xl p-4 bg-white mb-4" style={{ border: `1px solid ${theme.border}` }}>
+                        <p className="text-[10px] font-black uppercase text-gray-400 mb-1">Send Amount</p>
+                        <p className="text-2xl font-black font-display" style={{ color: theme.primary }}>{formatPrice(paymentMode === 'full' ? total : advanceAmount)}</p>
+                      </div>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2">Sender Name / Account Name *</label>
+                          <input
+                            type="text"
+                            placeholder="Your bank account name"
+                            value={senderName}
+                            onChange={e => setSenderName(e.target.value.slice(0, 100))}
+                            className={inputClass}
+                            style={inputStyle}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2">Transaction / Reference Number *</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. REF123456"
+                            value={bankReference}
+                            onChange={e => setBankReference(e.target.value.replace(/[^a-zA-Z0-9-]/g, '').slice(0, 50))}
+                            className={inputClass}
+                            style={inputStyle}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {paymentMethod === 'card' && (
+                    <div className="rounded-2xl p-5 mb-6" style={{ background: theme.light, border: `2px solid ${theme.border}` }}>
+                      <div className="flex items-center gap-3 mb-3">
+                        {theme.icon}
+                        <span className="text-xl font-black" style={{ color: theme.primary }}>Card Payment</span>
+                      </div>
+                      <p className="text-sm text-gray-600 leading-relaxed mb-2">{settings.cardPaymentNote}</p>
+                      <p className="text-xs text-gray-400">Pay the full amount <strong>{formatPrice(total)}</strong> to our delivery agent using a POS card machine.</p>
+                    </div>
+                  )}
+
+                  {paymentMethod === 'cod' && (
+                    <div className="rounded-2xl p-5 mb-6" style={{ background: theme.light, border: `2px solid ${theme.border}` }}>
+                      <div className="flex items-center gap-3 mb-3">
+                        {theme.icon}
+                        <span className="text-xl font-black" style={{ color: theme.primary }}>Cash on Delivery</span>
+                      </div>
+                      <p className="text-sm text-gray-600 leading-relaxed mb-3">
+                        A 25% advance of <strong className="text-gray-900">{formatPrice(codDepositAmount)}</strong> is required to confirm your order.
+                        Our team will contact you with payment instructions.
+                      </p>
+                      <p className="text-xs text-gray-400">Remaining balance <strong>{formatPrice(total - codDepositAmount)}</strong> will be collected on delivery.</p>
+                    </div>
+                  )}
+
                   <div className="flex flex-col gap-3">
                     <button
                       type="button"
                       onClick={() => setStep(3)}
-                      disabled={!paymentNumberReady}
+                      disabled={!canProceed}
                       className={`w-full py-4 rounded-2xl font-black flex items-center justify-center gap-2 transition-all ${
-                        paymentNumberReady
+                        canProceed
                           ? 'bg-gray-900 text-white hover:bg-black'
                           : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                       }`}
@@ -1492,9 +1771,9 @@ export default function Checkout() {
                         <button type="button" onClick={() => setStep(2)} className="text-[10px] font-black text-orange-600 uppercase">Edit</button>
                       </div>
                       <p className="text-sm font-bold text-gray-900">
-                        {paymentMode === 'full' ? 'Full Payment' : '25% Advance + Pay on Delivery'}
+                        {paymentMode === 'full' ? 'Full Payment' : paymentMode === 'cod' ? 'Cash on Delivery' : '25% Advance + Pay on Delivery'}
                       </p>
-                      <p className="text-xs text-gray-500 mt-0.5">Via {walletChoice.toUpperCase()}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">Via {theme.name}{paymentMethod === 'cod' ? ` (25% advance ${formatPrice(codDepositAmount)})` : ''}</p>
                     </div>
                   </div>
 
@@ -1609,14 +1888,27 @@ export default function Checkout() {
                     {paymentMode === 'full' ? (
                       <div className="flex justify-between items-center p-3 rounded-xl"
                         style={{ background: 'rgba(232,93,4,0.04)', border: '1px solid rgba(232,93,4,0.12)' }}>
-                        <span className="text-xs font-bold text-orange-600">Pay Now (Full — via {walletChoice === 'bkash' ? 'bKash' : walletChoice === 'nagad' ? 'Nagad' : 'uPay'})</span>
+                        <span className="text-xs font-bold text-orange-600">Pay Now (Full — via {theme.name})</span>
                         <span className="font-black text-orange-600">{formatPrice(total)}</span>
                       </div>
+                    ) : paymentMode === 'cod' ? (
+                      <>
+                        <div className="flex justify-between items-center p-3 rounded-xl"
+                          style={{ background: 'rgba(8,145,178,0.04)', border: '1px solid rgba(8,145,178,0.12)' }}>
+                          <span className="text-xs font-bold text-cyan-600">Advance to Confirm (COD — via {theme.name})</span>
+                          <span className="font-black text-cyan-600">{formatPrice(codDepositAmount)}</span>
+                        </div>
+                        <div className="flex justify-between items-center p-3 rounded-xl"
+                          style={{ background: 'rgba(74,222,128,0.06)', border: '1px solid rgba(74,222,128,0.15)' }}>
+                          <span className="text-xs font-bold text-green-600">Remaining (Paid on Delivery)</span>
+                          <span className="font-black text-green-600">{formatPrice(total - codDepositAmount)}</span>
+                        </div>
+                      </>
                     ) : (
                       <>
                         <div className="flex justify-between items-center p-3 rounded-xl"
                           style={{ background: 'rgba(232,93,4,0.04)', border: '1px solid rgba(232,93,4,0.12)' }}>
-                          <span className="text-xs font-bold text-orange-600">Pay Now (25% Advance via {walletChoice === 'bkash' ? 'bKash' : walletChoice === 'nagad' ? 'Nagad' : 'uPay'})</span>
+                          <span className="text-xs font-bold text-orange-600">Pay Now (25% Advance via {theme.name})</span>
                           <span className="font-black text-orange-600">{formatPrice(advanceAmount)}</span>
                         </div>
                         <div className="flex justify-between items-center p-3 rounded-xl"
