@@ -341,7 +341,7 @@ export default function ProductDetail() {
   const { toast } = useToast();
   const settings = useSiteSettings();
   const { addProduct: trackRecentlyViewed } = useRecentlyViewed();
-  const whatsappNum = (settings.whatsappNumber?.replace(/[^0-9]/g, '') || '8801903426915');
+  const whatsappNum = (settings.whatsappNumber || settings.phone || "").replace(/[^0-9]/g, '');
 
   const prefersReducedMotion = useReducedMotion();
   const [quantity, setQuantity] = useState(1);
@@ -574,6 +574,10 @@ export default function ProductDetail() {
   };
 
   const handleWhatsAppOrder = () => {
+    if (!whatsappNum) {
+      toast({ title: "WhatsApp ordering is unavailable", description: "Please add this item to your cart and continue to checkout." });
+      return;
+    }
     const itemPrice = product.discountPrice || product.price;
     const totalPrice = itemPrice * quantity;
     const lines = [

@@ -3,7 +3,7 @@ import { db, ordersTable, productsTable, categoriesTable, settingsTable, blogPos
 import { desc, sql } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { runBackupSync } from "../lib/dbBackupSync";
-import { getBackupSyncStatus } from "../lib/scheduler";
+import { getBackupSyncStatus, recordBackupSyncResults } from "../lib/scheduler";
 
 const router: IRouter = Router();
 
@@ -22,6 +22,7 @@ router.get("/admin/backup/sync-status", requireAdmin, (req, res) => {
 router.post("/admin/backup/sync-now", requireAdmin, async (req, res) => {
   try {
     const results = await runBackupSync();
+    recordBackupSyncResults(results);
     res.json({ success: true, results });
   } catch (err) {
     req.log.error({ err }, "Failed to run backup sync");

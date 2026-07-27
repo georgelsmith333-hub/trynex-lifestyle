@@ -19,8 +19,6 @@ import { useColors } from "@/hooks/useColors";
 import { useCart } from "@/context/CartContext";
 import { api } from "@/lib/api";
 
-const WEBSITE_URL = "https://trynex.shop";
-
 export default function CartScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();

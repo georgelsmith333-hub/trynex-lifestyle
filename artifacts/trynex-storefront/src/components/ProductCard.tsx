@@ -58,11 +58,14 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
     const isLowStock = product.stock > 0 && product.stock <= (scarcityThreshold || 10);
 
     // Build WhatsApp order URL
-    const waNumber = (whatsappNumber || phone || "8801903426915").replace(/[^0-9]/g, "");
+    const waNumber = (whatsappNumber || phone || "").replace(/[^0-9]/g, "");
+    const productLink = typeof window !== "undefined"
+      ? new URL(`/product/${product.slug || product.id}`, window.location.origin).toString()
+      : `/product/${product.slug || product.id}`;
     const whatsappMsg = encodeURIComponent(
-      `Hello TryNex! I want to order:\n*${product.name}*\nPrice: ${formatPrice(discountPrice || price)}\nProduct link: https://trynexshop.com/product/${product.slug || product.id}`
+      `Hello TryNex! I want to order:\n*${product.name}*\nPrice: ${formatPrice(discountPrice || price)}\nProduct link: ${productLink}`
     );
-    const whatsappUrl = `https://wa.me/${waNumber}?text=${whatsappMsg}`;
+    const whatsappUrl = waNumber ? `https://wa.me/${waNumber}?text=${whatsappMsg}` : "";
 
     const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
       if (isMobile) return;
@@ -457,16 +460,18 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                     <><ShoppingCart className="w-4 h-4" /> Add to Bag</>
                   )}
                 </motion.button>
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Order via WhatsApp"
-                  className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-all active:scale-95"
-                  style={{ background: '#25D366', boxShadow: '0 2px 8px rgba(37,211,102,0.3)', minHeight: '44px' }}
-                >
-                  <MessageCircle className="w-5 h-5 text-white" />
-                </a>
+                {whatsappUrl && (
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Order via WhatsApp"
+                    className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-all active:scale-95"
+                    style={{ background: '#25D366', boxShadow: '0 2px 8px rgba(37,211,102,0.3)', minHeight: '44px' }}
+                  >
+                    <MessageCircle className="w-5 h-5 text-white" />
+                  </a>
+                )}
               </div>
             )}
           </div>

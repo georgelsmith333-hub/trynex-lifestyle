@@ -100,7 +100,7 @@ export default function Account() {
   const { customer, isLoading, isAuthenticated, updateProfile, logout } = useAuth();
   const { toast } = useToast();
   const siteSettings = useSiteSettings();
-  const waNum = (siteSettings.whatsappNumber || siteSettings.phone || "8801903426915").replace(/[^0-9]/g, "");
+  const waNum = (siteSettings.whatsappNumber || siteSettings.phone || "").replace(/[^0-9]/g, "");
   const [editing, setEditing] = useState(false);
   const [editName, setEditName] = useState("");
   const [editPhone, setEditPhone] = useState("");
@@ -747,8 +747,8 @@ export default function Account() {
                           </h3>
                           <p className="text-[10px] text-gray-400">Tap an order to chat</p>
                         </div>
-                        {/* Direct contact CTA — always visible */}
-                        <a
+                        {/* Direct contact CTA — only when admin support contact is configured */}
+                        {waNum && <a
                           href={`https://wa.me/${waNum}?text=Hi%20TryNex!%20I%20need%20help%20with%20my%20order%20or%20have%20a%20question.`}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -763,7 +763,7 @@ export default function Account() {
                             <p className="text-white/80 text-[11px] mt-0.5">Start a new conversation instantly on WhatsApp</p>
                           </div>
                           <ExternalLink className="w-4 h-4 text-white/60 shrink-0" />
-                        </a>
+                        </a>}
 
                         {ordersLoading ? (
                           <div className="space-y-3">

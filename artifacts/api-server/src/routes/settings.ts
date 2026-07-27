@@ -89,9 +89,11 @@ async function buildSettings(map: Record<string, string | null>) {
   return {
     siteName: fallback(map["siteName"], "TryNex Lifestyle"),
     tagline: fallback(map["tagline"], "You imagine, we craft."),
-    phone: map["phone"] ?? "+880 1700-000000",
-    email: map["email"] ?? "hello@trynex.com",
-    address: map["address"] ?? "Banani, Dhaka-1213, Bangladesh",
+    // Contact details are admin-owned. Empty values stay empty so customers
+    // never see invented phone numbers, email addresses, or locations.
+    phone: map["phone"] ?? "",
+    email: map["email"] ?? "",
+    address: map["address"] ?? "",
     facebookUrl: map["facebookUrl"] ?? "",
     instagramUrl: map["instagramUrl"] ?? "",
     youtubeUrl: map["youtubeUrl"] ?? "",

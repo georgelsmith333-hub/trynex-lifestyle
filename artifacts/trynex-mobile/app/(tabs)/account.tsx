@@ -22,25 +22,31 @@ import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { api } from "@/lib/api";
 
-const FALLBACK_WHATSAPP = "8801903426915";
-const WEBSITE_URL = "https://trynex.shop";
+const WEBSITE_URL = "https://trynexshop.com";
 
 async function handleShareApp() {
   try {
     await Share.share({
-      message: "Shop custom fashion at Trynex Lifestyle! T-shirts, hoodies, caps & more — designed by you. 👕✨\n\nhttps://trynex.shop",
+      message: "Shop custom fashion at Trynex Lifestyle! T-shirts, hoodies, caps & more — designed by you. 👕✨\n\nhttps://trynexshop.com",
       title: "Trynex Lifestyle",
     });
   } catch (_) {}
 }
 
-async function handleCustomerSupport(whatsappNum: string = FALLBACK_WHATSAPP) {
+async function handleCustomerSupport(whatsappNum: string) {
+  if (!whatsappNum) {
+    Alert.alert("WhatsApp support unavailable", "WhatsApp support has not been configured yet. You can still visit the TryNex website for help.", [
+      { text: "Open Website", onPress: () => Linking.openURL(WEBSITE_URL) },
+      { text: "Cancel", style: "cancel" },
+    ]);
+    return;
+  }
   const url = `https://wa.me/${whatsappNum}?text=${encodeURIComponent("Hi! I need help with my Trynex order.")}`;
   const canOpen = await Linking.canOpenURL(url);
   if (canOpen) {
     await Linking.openURL(url);
   } else {
-    Alert.alert("WhatsApp Not Found", "Please visit trynex.shop or email us for support.", [
+    Alert.alert("WhatsApp Not Found", "Please visit the TryNex website for support.", [
       { text: "Open Website", onPress: () => Linking.openURL(WEBSITE_URL) },
       { text: "Cancel", style: "cancel" },
     ]);
@@ -74,7 +80,7 @@ export default function AccountScreen() {
     queryFn: () => api.getSettings(),
     staleTime: 5 * 60 * 1000,
   });
-  const waNum = ((siteSettings?.whatsappNumber || siteSettings?.phone || FALLBACK_WHATSAPP) as string).replace(/[^0-9]/g, "");
+  const waNum = ((siteSettings?.whatsappNumber || siteSettings?.phone || "") as string).replace(/[^0-9]/g, "");
 
   const MENU_ITEMS = [
     { icon: "shopping-bag", label: "My Orders", onPress: () => router.push("/(tabs)/orders") },
@@ -113,7 +119,7 @@ export default function AccountScreen() {
           <Text style={styles.loginBtnText}>Login / Register on Website</Text>
         </Pressable>
         <Text style={{ color: colors.mutedForeground, fontSize: 12, textAlign: "center", marginTop: 8 }}>
-          Manage your orders, profile and more at trynex.shop
+           Manage your orders, profile and more at trynexshop.com
         </Text>
       </View>
 

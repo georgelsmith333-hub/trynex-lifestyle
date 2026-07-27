@@ -163,7 +163,7 @@ const faqSchema = {
 export default function FAQ() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const settings = useSiteSettings();
-  const waNum = (settings.whatsappNumber || settings.phone || "8801903426915").replace(/[^0-9]/g, "");
+  const waNum = (settings.whatsappNumber || settings.phone || "").replace(/[^0-9]/g, "");
 
   const filtered = activeCategory
     ? faqs.filter((f) => f.category === activeCategory)
@@ -199,14 +199,20 @@ export default function FAQ() {
             </h1>
             <p className="text-gray-500 text-lg max-w-lg mx-auto">
               Everything you need to know about TryNex. Can't find the answer?{" "}
-              <a
-                href={`https://wa.me/${waNum}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-orange-500 font-bold hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 rounded"
-              >
-                Chat with us on WhatsApp
-              </a>
+              {waNum ? (
+                <a
+                  href={`https://wa.me/${waNum}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-orange-500 font-bold hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 rounded"
+                >
+                  Chat with us on WhatsApp
+                </a>
+              ) : (
+                <a href="/contact" className="text-orange-500 font-bold hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 rounded">
+                  Contact our support team
+                </a>
+              )}
             </p>
           </motion.div>
         </div>
@@ -255,16 +261,22 @@ export default function FAQ() {
           >
             <MessageCircle className="w-10 h-10 text-orange-500 mx-auto mb-3" aria-hidden="true" />
             <h3 className="font-black text-gray-900 text-xl mb-2">Still have questions?</h3>
-            <p className="text-gray-500 mb-5">Our team replies within minutes on WhatsApp</p>
-            <a
-              href={`https://wa.me/${waNum}?text=Hi%2C%20I%20have%20a%20question%20about%20TryNex`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-white font-black text-sm shadow-lg transition-transform active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
-              style={{ background: "#25D366", boxShadow: "0 6px 24px rgba(37,211,102,0.35)" }}
-            >
-              <MessageCircle className="w-4 h-4" aria-hidden="true" /> Chat on WhatsApp
-            </a>
+            <p className="text-gray-500 mb-5">{waNum ? "Our team replies within minutes on WhatsApp" : "Our support team is ready to help."}</p>
+            {waNum ? (
+              <a
+                href={`https://wa.me/${waNum}?text=Hi%2C%20I%20have%20a%20question%20about%20TryNex`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-white font-black text-sm shadow-lg transition-transform active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
+                style={{ background: "#25D366", boxShadow: "0 6px 24px rgba(37,211,102,0.35)" }}
+              >
+                <MessageCircle className="w-4 h-4" aria-hidden="true" /> Chat on WhatsApp
+              </a>
+            ) : (
+              <a href="/contact" className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-white font-black text-sm bg-orange-500 hover:bg-orange-600 transition-colors">
+                Contact support
+              </a>
+            )}
           </motion.div>
         </div>
       </main>

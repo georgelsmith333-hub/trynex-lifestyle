@@ -333,10 +333,13 @@ export default function DesignStudio() {
 
   const [isMobile, setIsMobile] = useState(() => {
     if (typeof window === "undefined") return false;
-    return window.innerWidth < 768;
+    // The editor becomes a bottom-sheet workflow below the large breakpoint.
+    // Keeping this at 1024px prevents a tablet from being squeezed between
+    // the canvas and the desktop tools sidebar.
+    return window.innerWidth < 1024;
   });
   useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth < 768);
+    const onResize = () => setIsMobile(window.innerWidth < 1024);
     window.addEventListener("resize", onResize, { passive: true });
     return () => window.removeEventListener("resize", onResize);
   }, []);
@@ -2606,8 +2609,8 @@ export default function DesignStudio() {
         </div>
       </div>
 
-      <div className="flex-1 container-wide mx-auto w-full px-4 py-6">
-        <div className="flex flex-col md:flex-row gap-6">
+      <div className="flex-1 container-wide mx-auto w-full px-3 sm:px-4 lg:px-6 py-4 sm:py-6 pb-28 lg:pb-6">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
 
           {/* ═══════ LEFT: MOCKUP CANVAS ═══════ */}
           <div className="flex-1 min-w-0">
@@ -3705,15 +3708,15 @@ export default function DesignStudio() {
           )}
 
           {/* ═══════ RIGHT: TABBED PANEL ═══════ */}
-          {/* On desktop (md+): sticky inline sidebar. On mobile: slide-up bottom sheet. */}
-          <div className={`md:w-[320px] lg:w-[340px] shrink-0 flex flex-col md:sticky md:self-start
+          {/* On large screens: sticky inline sidebar. Below lg: slide-up bottom sheet. */}
+          <div className={`lg:w-[340px] xl:w-[360px] shrink-0 flex flex-col lg:sticky lg:self-start
             ${mobileToolOpen
-              ? 'fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl max-h-[80vh] overflow-hidden shadow-2xl gap-2'
-              : 'hidden md:flex gap-4'}`}
+              ? 'fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl max-h-[80dvh] overflow-hidden shadow-2xl gap-2'
+              : 'hidden lg:flex gap-4'}`}
             data-lenis-prevent
             style={mobileToolOpen
-              ? { background: "#faf9f6", paddingBottom: "max(16px, env(safe-area-inset-bottom, 16px))" }
-              : { top: "calc(var(--announcement-height, 0px) + 5rem)", maxHeight: "calc(100vh - var(--announcement-height, 0px) - 5rem)", overflowY: "auto", scrollbarGutter: "stable" }}
+              ? { background: "#faf9f6", paddingBottom: "max(16px, env(safe-area-inset-bottom, 16px))", width: "100%" }
+              : { top: "calc(var(--announcement-height, 0px) + 5rem)", maxHeight: "calc(100dvh - var(--announcement-height, 0px) - 5rem)", overflowY: "auto", scrollbarGutter: "stable" }}
           >
             {/* Mobile drag handle */}
             {mobileToolOpen && (

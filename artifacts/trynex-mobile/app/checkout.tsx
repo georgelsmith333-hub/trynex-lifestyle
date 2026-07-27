@@ -1,7 +1,7 @@
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -41,9 +41,11 @@ const BD_DISTRICTS = [
 type MobilePaymentMethod = "cod" | "bkash" | "nagad" | "upay" | "bank" | "card";
 
 const PAYMENT_METHODS = (siteSettings?: Record<string, string> | null) => {
-  const options: { value: MobilePaymentMethod; label: string; icon: any; color: string; desc: string }[] = [
-    { value: "cod", label: "Cash on Delivery", icon: "dollar-sign", color: "#0891b2", desc: "25% advance, rest on delivery" },
-  ];
+  const options: { value: MobilePaymentMethod; label: string; icon: any; color: string; desc: string }[] = [];
+  const codEnabled = siteSettings?.codEnabled == null || String(siteSettings.codEnabled) !== "false";
+  if (codEnabled) {
+    options.push({ value: "cod", label: "Cash on Delivery", icon: "dollar-sign", color: "#0891b2", desc: "25% advance, rest on delivery" });
+  }
   const bkash = siteSettings?.bkashNumber;
   const nagad = siteSettings?.nagadNumber;
   const upay = siteSettings?.upayNumber;
@@ -96,7 +98,7 @@ export default function CheckoutScreen() {
   const [promoDiscount, setPromoDiscount] = useState(0);
   const [promoError, setPromoError] = useState<string | null>(null);
 
-  const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [paymentMethod, setPaymentMethod] = useState<MobilePaymentMethod>("cod");
   const [paymentMode, setPaymentMode] = useState<"full" | "advance" | "cod">("advance");
   const [lastFour, setLastFour] = useState("");
   const [transactionId, setTransactionId] = useState("");
@@ -118,8 +120,17 @@ export default function CheckoutScreen() {
   const shippingFee = Number(siteSettings?.shippingCost ?? 60);
   // Real admin-configured numbers only. No hardcoded fallback.
   const bkashNumber = siteSettings?.bkashNumber ?? "";
-  const nagadNumber = siteSettings?.nagadNumber ?? siteSettings?.bkashNumber ?? "";
-  const paymentOptions = PAYMENT_METHODS(siteSettings);
+  const nagadNumber = siteSettings?.nagadNumber ?? "";
+  const paymentOptions = useMemo(() => PAYMENT_METHODS(siteSettings), [siteSettings]);
+  const hasWalletOrBankMethod = paymentOptions.some((method) =>
+    method.value === "bkash" || method.value === "nagad" || method.value === "upay" || method.value === "bank",
+  );
+
+  useEffect(() => {
+    if (paymentOptions.length > 0 && !paymentOptions.some((method) => method.value === paymentMethod)) {
+      setPaymentMethod(paymentOptions[0].value);
+    }
+  }, [paymentOptions, paymentMethod]);
 
   const shipping = subtotal >= freeShippingThreshold ? 0 : shippingFee;
   const total = Math.max(0, subtotal + shipping - promoDiscount);
@@ -479,13 +490,17 @@ export default function CheckoutScreen() {
 
               <Text style={[styles.label, { color: colors.mutedForeground }]}>Payment Mode</Text>
               <View style={{ flexDirection: "row", gap: 8, marginBottom: 16 }}>
-                {(["full", "advance", "cod"] as const).map((mode) => (
+                {(["full", "advance", ...(paymentOptions.some((method) => method.value === "cod") ? ["cod" as const] : [])] as const).map((mode) => (
                   <Pressable
                     key={mode}
                     onPress={() => {
                       setPaymentMode(mode);
-                      if (mode === "cod" && !isWallet(paymentMethod) && paymentMethod !== "bank") setPaymentMethod("cod");
-                      else if (mode !== "cod" && paymentMethod === "cod") setPaymentMethod("bkash");
+                      if (mode === "cod") {
+                        if (paymentOptions.some((method) => method.value === "cod")) setPaymentMethod("cod");
+                      } else if (paymentMethod === "cod") {
+                        const replacement = paymentOptions.find((method) => method.value !== "cod");
+                        if (replacement) setPaymentMethod(replacement.value);
+                      }
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                     }}
                     style={[styles.modeChip, {
@@ -501,6 +516,11 @@ export default function CheckoutScreen() {
               </View>
 
               <Text style={[styles.label, { color: colors.mutedForeground }]}>Payment Method</Text>
+              {!hasWalletOrBankMethod && (
+                <Text style={{ color: colors.mutedForeground, fontSize: 12, marginBottom: 10, fontFamily: "Inter_400Regular" }}>
+                  No wallet or bank transfer is configured. Available methods are shown below.
+                </Text>
+              )}
               {paymentOptions.map((m) => (
                 <Pressable
                   key={m.value}

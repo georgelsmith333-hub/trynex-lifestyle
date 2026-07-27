@@ -2,7 +2,7 @@ import { db, ordersTable, productsTable } from "@workspace/db";
 import { eq, and, desc, gte, sql, lte } from "drizzle-orm";
 import { logger } from "./logger";
 import { tgSend, tgIsConfigured } from "./telegram";
-import { runBackupSync } from "./dbBackupSync";
+import { runBackupSync, type TargetSyncResult } from "./dbBackupSync";
 
 const BST_OFFSET_MS = 6 * 60 * 60 * 1000;
 
@@ -229,6 +229,44 @@ export interface BackupSyncStatus {
   consecutiveFailures: number;
   circuitOpen: boolean;
   circuitOpenSince: number;
+  lastResults: TargetSyncResult[];
+}
+
+let lastBackupResults: TargetSyncResult[] = [];
+
+/**
+ * Store the latest per-target outcome and apply the circuit-breaker policy.
+ * Manual syncs use this same path as scheduled syncs so the admin page never
+ * shows a stale "healthy" status after a failed manual attempt.
+ */
+export function recordBackupSyncResults(results: TargetSyncResult[]): void {
+  lastBackupSyncMs = Date.now();
+  lastBackupResults = results;
+
+  const ok = results.filter((r) => r.status === "ok").length;
+  const failed = results.filter((r) => r.status === "error");
+  logger.info({ ok, total: results.length }, "[scheduler] Backup sync complete");
+  if (failed.length > 0) {
+    logger.warn({ failed }, "[scheduler] Some backup targets failed to sync");
+  }
+
+  // If ALL configured targets failed, count as a full failure for the breaker.
+  const configured = results.filter((r) => r.status !== "skipped");
+  if (configured.length > 0 && ok === 0) {
+    backupConsecutiveFailures += 1;
+    if (backupConsecutiveFailures >= BACKUP_CIRCUIT_OPEN_AFTER) {
+      backupCircuitOpenSince = Date.now();
+      logger.error(
+        { failures: backupConsecutiveFailures, cooldownHours: BACKUP_CIRCUIT_COOLDOWN_MS / 3_600_000 },
+        "[scheduler] Backup sync circuit OPENED — too many consecutive full failures; check DB quota",
+      );
+    }
+  } else {
+    if (backupConsecutiveFailures > 0) {
+      logger.info("[scheduler] Backup sync recovered — resetting failure counter");
+    }
+    backupConsecutiveFailures = 0;
+  }
 }
 
 export function getBackupSyncStatus(): BackupSyncStatus {
@@ -237,6 +275,7 @@ export function getBackupSyncStatus(): BackupSyncStatus {
     consecutiveFailures: backupConsecutiveFailures,
     circuitOpen: backupCircuitOpenSince > 0,
     circuitOpenSince: backupCircuitOpenSince,
+    lastResults: lastBackupResults,
   };
 }
 
@@ -257,37 +296,11 @@ async function runScheduledBackupSync(): Promise<void> {
   }
 
   if (now - lastBackupSyncMs < BACKUP_SYNC_INTERVAL_MS) return;
-  lastBackupSyncMs = now;
-
   try {
     const results = await runBackupSync();
-    const ok = results.filter((r) => r.status === "ok").length;
-    const failed = results.filter((r) => r.status === "error");
-    logger.info({ ok, total: results.length }, "[scheduler] Backup sync complete");
-
-    if (failed.length > 0) {
-      logger.warn({ failed }, "[scheduler] Some backup targets failed to sync");
-    }
-
-    // If ALL configured targets failed, count as a full failure for circuit breaker
-    const configured = results.filter((r) => r.status !== "skipped");
-    if (configured.length > 0 && ok === 0) {
-      backupConsecutiveFailures += 1;
-      if (backupConsecutiveFailures >= BACKUP_CIRCUIT_OPEN_AFTER) {
-        backupCircuitOpenSince = Date.now();
-        logger.error(
-          { failures: backupConsecutiveFailures, cooldownHours: BACKUP_CIRCUIT_COOLDOWN_MS / 3_600_000 },
-          "[scheduler] Backup sync circuit OPENED — too many consecutive full failures; check DB quota",
-        );
-      }
-    } else {
-      // Partial or full success — reset failure counter
-      if (backupConsecutiveFailures > 0) {
-        logger.info("[scheduler] Backup sync recovered — resetting failure counter");
-      }
-      backupConsecutiveFailures = 0;
-    }
+    recordBackupSyncResults(results);
   } catch (err) {
+    lastBackupSyncMs = now;
     backupConsecutiveFailures += 1;
     logger.warn({ err, failures: backupConsecutiveFailures }, "[scheduler] Backup sync threw unexpectedly");
     if (backupConsecutiveFailures >= BACKUP_CIRCUIT_OPEN_AFTER) {

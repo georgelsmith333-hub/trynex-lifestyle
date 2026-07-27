@@ -67,7 +67,7 @@ function SizeTable({ title, icon, sizes }: { title: string; icon: React.ReactNod
 
 export default function SizeGuide() {
   const settings = useSiteSettings();
-  const waNum = (settings.whatsappNumber || settings.phone || "8801903426915").replace(/[^0-9]/g, "");
+  const waNum = (settings.whatsappNumber || settings.phone || "").replace(/[^0-9]/g, "");
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <SEOHead
@@ -140,7 +140,9 @@ export default function SizeGuide() {
           >
             <p className="text-gray-700 mb-1 font-semibold">Not sure about your size?</p>
             <p className="text-gray-500 text-sm">
-              Message us on WhatsApp at <strong className="text-orange-600">{waNum}</strong> with your height and weight, and we'll recommend the perfect size for you.
+              {waNum
+                ? <>Message us on WhatsApp at <strong className="text-orange-600">{waNum}</strong> with your height and weight, and we'll recommend the perfect size for you.</>
+                : <>Visit our <a href="/contact" className="font-bold text-orange-600 hover:underline">contact page</a> with your height and weight, and we'll recommend the perfect size for you.</>}
             </p>
           </motion.div>
         </div>

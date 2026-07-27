@@ -51,21 +51,22 @@ export default function Contact() {
     }
   };
 
-  const phone = settings.phone || "+880 1XXX-XXXXXX";
-  const email = settings.email || "hello@trynex.com.bd";
-  const address = settings.address || "Dhaka, Bangladesh";
+  const phone = settings.phone?.trim() || "";
+  const whatsapp = settings.whatsappNumber?.trim() || phone;
+  const email = settings.email?.trim() || "";
+  const address = settings.address?.trim() || "";
 
   const contactItems = [
-    {
+    ...(phone || whatsapp ? [{
       icon: Phone,
       label: "Phone & WhatsApp",
-      value: phone,
+      value: phone || whatsapp,
       sub: "Available 10AM – 8PM (Sat–Thu)",
       color: "#16a34a",
       bg: "#f0fdf4",
-      href: `https://wa.me/${phone.replace(/\D/g, "")}`,
-    },
-    {
+      href: `https://wa.me/${whatsapp.replace(/\D/g, "")}`,
+    }] : []),
+    ...(email ? [{
       icon: Mail,
       label: "Email",
       value: email,
@@ -73,8 +74,8 @@ export default function Contact() {
       color: "#2563eb",
       bg: "#eff6ff",
       href: `mailto:${email}`,
-    },
-    {
+    }] : []),
+    ...(address ? [{
       icon: MapPin,
       label: "Location",
       value: address,
@@ -82,7 +83,7 @@ export default function Contact() {
       color: "#E85D04",
       bg: "#fff4ee",
       href: undefined,
-    },
+    }] : []),
     {
       icon: Clock,
       label: "Business Hours",
@@ -237,7 +238,7 @@ export default function Contact() {
             <motion.div initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.1 }} className="space-y-5">
 
               {/* WhatsApp */}
-              <a href={`https://wa.me/${phone.replace(/\D/g, "")}`} target="_blank" rel="noreferrer"
+              {whatsapp && <a href={`https://wa.me/${whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer"
                 className="flex items-center gap-4 p-5 rounded-2xl border transition-all hover:shadow-lg hover:-translate-y-0.5 block"
                 style={{ background: "linear-gradient(135deg,#f0fdf4,#dcfce7)", borderColor: "#bbf7d0" }}>
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: "#16a34a" }}>
@@ -247,15 +248,15 @@ export default function Contact() {
                   <div className="font-black text-gray-900 text-sm">Chat on WhatsApp</div>
                   <div className="text-xs text-gray-600 mt-0.5">Usually replies within minutes</div>
                 </div>
-              </a>
+              </a>}
 
               {/* Social Links */}
               <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
                 <div className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-4">Follow Us</div>
                 <div className="space-y-3">
                   {[
-                    { icon: Facebook, label: "Facebook Page", sub: "Daily updates & offers", color: "#1877f2", bg: "#eff6ff", href: settings.facebookUrl || "https://facebook.com" },
-                    { icon: Instagram, label: "Instagram", sub: "Behind-the-scenes & designs", color: "#e1306c", bg: "#fff0f6", href: settings.instagramUrl || "https://instagram.com" },
+                    ...(settings.facebookUrl?.trim() ? [{ icon: Facebook, label: "Facebook Page", sub: "Daily updates & offers", color: "#1877f2", bg: "#eff6ff", href: settings.facebookUrl.trim() }] : []),
+                    ...(settings.instagramUrl?.trim() ? [{ icon: Instagram, label: "Instagram", sub: "Behind-the-scenes & designs", color: "#e1306c", bg: "#fff0f6", href: settings.instagramUrl.trim() }] : []),
                   ].map((s) => (
                     <a key={s.label} href={s.href} target="_blank" rel="noreferrer"
                       className="flex items-center gap-3 p-3 rounded-xl transition-all hover:scale-[1.01]"
@@ -269,6 +270,9 @@ export default function Contact() {
                       </div>
                     </a>
                   ))}
+                  {!settings.facebookUrl?.trim() && !settings.instagramUrl?.trim() && (
+                    <p className="text-sm text-gray-500">Social links will appear here when configured.</p>
+                  )}
                 </div>
               </div>
 

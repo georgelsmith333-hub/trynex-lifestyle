@@ -688,8 +688,8 @@ export default function Home() {
             "logo": "https://trynexshop.com/favicon.svg",
             "image": "https://trynexshop.com/opengraph.jpg",
             "description": "Bangladesh's #1 premium custom apparel brand. Custom T-shirts, Hoodies, Mugs & Caps with fast nationwide delivery.",
-            "telephone": settings.phone || "+8801903426915",
-            "email": settings.email || "support@trynexshop.com",
+            ...(settings.phone ? { "telephone": settings.phone } : {}),
+            ...(settings.email ? { "email": settings.email } : {}),
             "address": {
               "@type": "PostalAddress",
               "streetAddress": "Dhaka",
@@ -704,13 +704,15 @@ export default function Home() {
             "openingHoursSpecification": [
               { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "09:00", "closes": "22:00" }
             ],
-            "contactPoint": {
-              "@type": "ContactPoint",
-              "telephone": settings.phone || "+8801903426915",
-              "contactType": "customer service",
-              "areaServed": "BD",
-              "availableLanguage": ["English", "Bengali"]
-            },
+            ...(settings.phone ? {
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": settings.phone,
+                "contactType": "customer service",
+                "areaServed": "BD",
+                "availableLanguage": ["English", "Bengali"]
+              }
+            } : {}),
             "sameAs": [
               "https://www.facebook.com/trynexlifestyle",
               "https://www.instagram.com/trynexlifestyle"
@@ -732,7 +734,7 @@ export default function Home() {
             "name": settings.siteName || "TryNex Lifestyle",
             "url": "https://trynexshop.com",
             "logo": { "@type": "ImageObject", "url": "https://trynexshop.com/favicon.svg", "width": 512, "height": 512 },
-            "contactPoint": { "@type": "ContactPoint", "telephone": settings.phone || "+8801903426915", "contactType": "sales", "areaServed": "BD" },
+             ...(settings.phone ? { "contactPoint": { "@type": "ContactPoint", "telephone": settings.phone, "contactType": "sales", "areaServed": "BD" } } : {}),
           },
           {
             "@context": "https://schema.org",

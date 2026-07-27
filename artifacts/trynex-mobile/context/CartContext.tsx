@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { Product } from "@/lib/api";
 
 export interface CartItem {
@@ -27,19 +27,37 @@ const CART_KEY = "@trynex:cart";
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [hydrated, setHydrated] = useState(false);
+  const writeChainRef = useRef(Promise.resolve());
 
   useEffect(() => {
-    AsyncStorage.getItem(CART_KEY).then((val) => {
-      if (val) {
-        try { setItems(JSON.parse(val)); } catch {}
-      }
-    });
+    let cancelled = false;
+    AsyncStorage.getItem(CART_KEY)
+      .then((val) => {
+        if (cancelled) return;
+        if (val) {
+          try {
+            const parsed = JSON.parse(val);
+            if (Array.isArray(parsed)) setItems(parsed);
+          } catch {}
+        }
+        setHydrated(true);
+      })
+      .catch(() => {
+        if (!cancelled) setHydrated(true);
+      });
+    return () => { cancelled = true; };
   }, []);
 
-  const persist = (nextItems: CartItem[]) => {
-    setItems(nextItems);
-    AsyncStorage.setItem(CART_KEY, JSON.stringify(nextItems));
-  };
+  // AsyncStorage writes are queued so a rapid remove/update sequence cannot
+  // finish out of order and resurrect an older cart snapshot.
+  useEffect(() => {
+    if (!hydrated) return;
+    const snapshot = JSON.stringify(items);
+    writeChainRef.current = writeChainRef.current
+      .catch(() => {})
+      .then(() => AsyncStorage.setItem(CART_KEY, snapshot));
+  }, [items, hydrated]);
 
   const addItem = (
     product: Product,
@@ -58,25 +76,24 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         const id = `${product.id}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
         next = [...prev, { id, product, quantity: 1, ...options }];
       }
-      persist(next);
       return next;
     });
   };
 
   const removeItem = (id: string) => {
-    const next = items.filter((i) => i.id !== id);
-    persist(next);
+    setItems((prev) => prev.filter((i) => i.id !== id));
   };
 
   const updateQuantity = (id: string, quantity: number) => {
-    if (quantity < 1) { removeItem(id); return; }
-    const next = items.map((i) => (i.id === id ? { ...i, quantity } : i));
-    persist(next);
+    setItems((prev) =>
+      quantity < 1
+        ? prev.filter((i) => i.id !== id)
+        : prev.map((i) => (i.id === id ? { ...i, quantity } : i)),
+    );
   };
 
   const clearCart = () => {
     setItems([]);
-    AsyncStorage.removeItem(CART_KEY);
   };
 
   const totalItems = items.reduce((s, i) => s + i.quantity, 0);

@@ -38,6 +38,12 @@ export default function ProductDetailScreen() {
   const [quantity, setQuantity] = useState(1);
   const [imageIdx, setImageIdx] = useState(0);
 
+  const { data: siteSettings } = useQuery({
+    queryKey: ["siteSettings"],
+    queryFn: () => api.getSettings(),
+    staleTime: 5 * 60 * 1000,
+  });
+
   const { data: product, isLoading, isError, refetch } = useQuery({
     queryKey: ["product", id],
     queryFn: () => api.getProduct(id!),
@@ -73,8 +79,12 @@ export default function ProductDetailScreen() {
   const onWhatsAppOrder = async () => {
     if (!product) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    const WHATSAPP_NUMBER = "8801903426915"; // fallback; dynamic number fetched below
-    const message = `Hi Trynex! I want to order:\n\n*${product.name}*\nPrice: ৳${(product.discountPrice ?? product.price).toLocaleString()}\n${selectedSize ? `Size: ${selectedSize}\n` : ""}${selectedColor ? `Color: ${selectedColor}\n` : ""}Qty: ${quantity}\n\nLink: https://trynex.shop/product/${product.slug}`;
+    const WHATSAPP_NUMBER = String(siteSettings?.whatsappNumber || siteSettings?.phone || "").replace(/[^0-9]/g, "");
+    if (!WHATSAPP_NUMBER) {
+      showToast("WhatsApp ordering is not configured. Please use Add to Cart instead.", "error");
+      return;
+    }
+    const message = `Hi Trynex! I want to order:\n\n*${product.name}*\nPrice: ৳${(product.discountPrice ?? product.price).toLocaleString()}\n${selectedSize ? `Size: ${selectedSize}\n` : ""}${selectedColor ? `Color: ${selectedColor}\n` : ""}Qty: ${quantity}\n\nLink: https://trynexshop.com/product/${product.slug}`;
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     
     try {

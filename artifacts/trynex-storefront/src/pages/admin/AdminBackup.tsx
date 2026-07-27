@@ -13,6 +13,14 @@ interface SyncStatus {
   consecutiveFailures: number;
   circuitOpen: boolean;
   circuitOpenSince: number;
+  lastResults?: Array<{
+    id: string;
+    label: string;
+    status: "ok" | "skipped" | "error";
+    message?: string;
+    rowsCopied?: number;
+    durationMs?: number;
+  }>;
 }
 
 export default function AdminBackup() {
@@ -43,7 +51,14 @@ export default function AdminBackup() {
       const data = await res.json();
       const ok = data.results?.filter((r: any) => r.status === "ok").length ?? 0;
       const total = data.results?.length ?? 0;
-      toast({ title: "Sync complete", description: `${ok}/${total} targets synced successfully.` });
+      const failed = data.results?.filter((r: any) => r.status === "error") ?? [];
+      toast({
+        title: failed.length > 0 ? "Sync partially complete" : "Sync complete",
+        description: failed.length > 0
+          ? `${ok}/${total} targets synced. ${failed.map((r: any) => r.label).join(", ")} failed.`
+          : `${ok}/${total} targets synced successfully.`,
+        variant: failed.length > 0 ? "destructive" : undefined,
+      });
       // Refresh status after sync
       const statusRes = await fetch(getApiUrl("/api/admin/backup/sync-status"), { headers: getAuthHeaders() });
       setSyncStatus(await statusRes.json());
@@ -194,6 +209,34 @@ export default function AdminBackup() {
                   Circuit breaker is open — backup sync paused for 2 hours after {syncStatus.consecutiveFailures} consecutive failures.
                   Check DB quota or connection. Click "Sync Now" after the cooldown to retry.
                 </p>
+              </div>
+            )}
+            {syncStatus?.lastResults && syncStatus.lastResults.length > 0 && (
+              <div className="mt-4 space-y-2">
+                <div className="text-[10px] font-black uppercase tracking-widest text-gray-400">Latest target results</div>
+                {syncStatus.lastResults.map((target) => (
+                  <div key={target.id} className="flex items-start gap-2 rounded-xl px-3 py-2"
+                    style={{
+                      background: target.status === "ok" ? "#f0fdf4" : target.status === "error" ? "#fef2f2" : "#f9fafb",
+                      border: `1px solid ${target.status === "ok" ? "#bbf7d0" : target.status === "error" ? "#fecaca" : "#e5e7eb"}`,
+                    }}>
+                    {target.status === "ok"
+                      ? <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0 mt-0.5" />
+                      : target.status === "error"
+                        ? <AlertTriangle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+                        : <ShieldAlert className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />}
+                    <div className="min-w-0">
+                      <div className="text-xs font-bold text-gray-800">{target.label}</div>
+                      <div className={`text-[11px] ${target.status === "error" ? "text-red-700" : "text-gray-500"}`}>
+                        {target.status === "ok"
+                          ? `${target.rowsCopied ?? 0} rows copied`
+                          : target.status === "error"
+                            ? (target.message || "Target failed without a message")
+                            : "Skipped"}
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
