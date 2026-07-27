@@ -122,7 +122,8 @@ const Hampers        = lazyWithRetry(() => import("./pages/Hampers"));
 const HamperDetail   = lazyWithRetry(() => import("./pages/HamperDetail"));
 const HamperBuilder  = lazyWithRetry(() => import("./pages/HamperBuilder"));
 const Referral       = lazyWithRetry(() => import("./pages/Referral"));
-const DesignStudio   = lazyWithRetry(() => import("./pages/DesignStudio"));
+const DesignStudio = lazyWithRetry(() => import("./pages/DesignStudio"));
+const DesignStudioV2 = lazyWithRetry(() => import("./pages/studio/DesignStudioV2"));
 const SalePage       = lazyWithRetry(() => import("./pages/SalePage"));
 const FAQ            = lazyWithRetry(() => import("./pages/FAQ"));
 const About          = lazyWithRetry(() => import("./pages/About"));
@@ -176,6 +177,7 @@ function Router() {
             <Route path="/terms-of-service" component={TermsOfService} />
             <Route path="/referral" component={Referral} />
             <Route path="/design-studio" component={DesignStudio} />
+            <Route path="/design-studio-v2" component={DesignStudioV2} />
             <Route path="/hampers" component={Hampers} />
             <Route path="/hampers/build" component={HamperBuilder} />
             <Route path="/hampers/:slug" component={HamperDetail} />

@@ -9,7 +9,7 @@ export type { DesignProduct, ApparelZone, PrintZone };
 export type Face = "front" | "back" | "left-sleeve" | "right-sleeve" | "neck-label";
 export type MugMode = "side1" | "side2" | "wrap";
 export type ToolType = "select" | "text" | "shape" | "draw" | "eyedrop";
-export type RightTab = "upload" | "text" | "layers" | "templates" | "ai";
+export type RightTab = "upload" | "text" | "layers" | "templates" | "ai" | "qrcode";
 export type SaveStatus = "idle" | "saving" | "saved";
 export type ShapeType = "rect" | "circle" | "star" | "arrow" | "polygon";
 export type GradientType = "linear" | "radial" | "conic";
