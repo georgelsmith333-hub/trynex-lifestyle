@@ -333,7 +333,6 @@ export default function DesignStudioV2() {
       toast({ title: "No design", description: "Add an image or text layer first.", variant: "destructive" });
       return;
     }
-    const token = toast;
     const imageCache = new Map<string, HTMLImageElement>();
     const originalAssets: OriginalAsset[] = [];
     const originalAssetUrls: string[] = [];
@@ -371,17 +370,31 @@ export default function DesignStudioV2() {
     const rightSleeveLayers = layers.filter(l => l.type !== "shape" && l.face === "right-sleeve") as unknown as ComposerLayer[];
     const neckLabelLayers = layers.filter(l => l.type !== "shape" && l.face === "neck-label") as unknown as ComposerLayer[];
 
-    const mockupCanvas = document.createElement("canvas");
-    await composeGarmentMockup({ canvas: mockupCanvas, garmentSrc, garmentColor: selectedColor.hex, printZone: frontPZ, layers: frontLayers, outSize: 400, imageCache, isColorPhoto });
-    const mockupUrl = mockupCanvas.toDataURL("image/webp", 0.8);
-
-    const frontTexCanvas = document.createElement("canvas");
-    if (isMug) {
-      await composeLayers({ canvas: frontTexCanvas, baseHeight: selectedProduct.baseHeight, printZone: frontPZ, layers: frontLayers, garmentColor: null, outW: 2048, outH: 768, imageCache, clipToPrintZone: true, blendMode: "multiply", curvature: 0.16 });
-    } else {
-      await composeDesignTexture({ canvas: frontTexCanvas, printZone: frontPZ, layers: frontLayers, outSize: 1024, imageCache, curvature: isWaterBottle ? 0.16 : isCap ? 0.1 : 0 });
+    let mockupUrl: string;
+    try {
+      const mockupCanvas = document.createElement("canvas");
+      await composeGarmentMockup({ canvas: mockupCanvas, garmentSrc, garmentColor: selectedColor.hex, printZone: frontPZ, layers: frontLayers, outSize: 400, imageCache, isColorPhoto });
+      mockupUrl = mockupCanvas.toDataURL("image/webp", 0.8);
+    } catch (err) {
+      console.error("Mockup compose failed", err);
+      toast({ title: "Preview failed", description: "Could not generate the design preview. Try a different image or refresh.", variant: "destructive" });
+      return;
     }
-    const frontTexUrl = frontTexCanvas.toDataURL("image/webp", 0.85);
+
+    let frontTexUrl: string;
+    try {
+      const frontTexCanvas = document.createElement("canvas");
+      if (isMug) {
+        await composeLayers({ canvas: frontTexCanvas, baseHeight: selectedProduct.baseHeight, printZone: frontPZ, layers: frontLayers, garmentColor: null, outW: 2048, outH: 768, imageCache, clipToPrintZone: true, blendMode: "multiply", curvature: 0.16 });
+      } else {
+        await composeDesignTexture({ canvas: frontTexCanvas, printZone: frontPZ, layers: frontLayers, outSize: 1024, imageCache, curvature: isWaterBottle ? 0.16 : isCap ? 0.1 : 0 });
+      }
+      frontTexUrl = frontTexCanvas.toDataURL("image/webp", 0.85);
+    } catch (err) {
+      console.error("Front texture compose failed", err);
+      toast({ title: "Print preview failed", description: "Could not generate the printable texture. Try a different image or refresh.", variant: "destructive" });
+      return;
+    }
 
     let backTexUrl: string | undefined;
     if (!isMug && backLayers.length > 0) {
@@ -439,7 +452,7 @@ export default function DesignStudioV2() {
   };
 
   const handleExportPNG = async () => {
-    const activeLayers = layers.filter(l => (l.face ?? "front") === activeFace) as unknown as ComposerLayer[];
+    const activeLayers = layers.filter(l => l.type !== "shape" && (l.face ?? "front") === activeFace) as unknown as ComposerLayer[];
     if (activeLayers.length === 0) { toast({ title: "Nothing to export", description: "Add a layer first." }); return; }
     const garmentBase = BASE_BY_CATEGORY[selectedProduct.category];
     const colorPhoto = garmentBase?.colorPhotos?.[selectedColor.hex];
