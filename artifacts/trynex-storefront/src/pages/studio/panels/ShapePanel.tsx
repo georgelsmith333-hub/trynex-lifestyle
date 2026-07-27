@@ -1,6 +1,7 @@
 import { useDesignStore, useSelectedLayer } from "@/hooks/useDesignStore";
 import { Square, Circle, Star, Triangle, Hexagon } from "lucide-react";
-import { ShapeType } from "../types";
+import { GradientEditor } from "../GradientEditor";
+import { ShapeType, GradientConfig } from "../types";
 
 const SHAPE_OPTIONS: { type: ShapeType; icon: React.ReactNode }[] = [
   { type: "rect", icon: <Square className="w-4 h-4" /> },
@@ -53,17 +54,39 @@ export function ShapePanel() {
     );
   }
 
+  const isGradientFill = typeof layer.fill !== "string";
+
   return (
     <div className="p-4 space-y-3">
       <div className="flex items-center gap-2">
         <label className="text-[10px] font-bold text-gray-500">Fill</label>
+        <button
+          onClick={() => updateLayer(layer.id, { fill: typeof layer.fill === "string" ? layer.fill : "#E85D04" })}
+          className={`px-2 py-1 rounded-lg text-[10px] font-bold border ${!isGradientFill ? "bg-orange-50 border-orange-300 text-orange-600" : "bg-white border-gray-200 text-gray-600"}`}
+        >
+          Solid
+        </button>
+        <button
+          onClick={() => updateLayer(layer.id, { fill: { type: "linear", angle: 90, stops: [{ offset: 0, color: "#E85D04" }, { offset: 1, color: "#4F46E5" }] } as GradientConfig })}
+          className={`px-2 py-1 rounded-lg text-[10px] font-bold border ${isGradientFill ? "bg-orange-50 border-orange-300 text-orange-600" : "bg-white border-gray-200 text-gray-600"}`}
+        >
+          Gradient
+        </button>
+      </div>
+      {!isGradientFill && (
         <input
           type="color"
           value={typeof layer.fill === "string" ? layer.fill : "#E85D04"}
           onChange={(e) => updateLayer(layer.id, { fill: e.target.value })}
           className="w-8 h-8 rounded-lg border border-gray-200 cursor-pointer"
         />
-      </div>
+      )}
+      {isGradientFill && (
+        <GradientEditor
+          value={layer.fill as GradientConfig}
+          onChange={(g) => updateLayer(layer.id, { fill: g })}
+        />
+      )}
       <div className="flex items-center gap-2">
         <label className="text-[10px] font-bold text-gray-500">Stroke</label>
         <input

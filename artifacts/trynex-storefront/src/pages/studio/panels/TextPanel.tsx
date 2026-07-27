@@ -1,5 +1,6 @@
 import { useDesignStore, useSelectedLayer } from "@/hooks/useDesignStore";
 import { FONT_FAMILIES } from "../types";
+import { GradientEditor } from "../GradientEditor";
 import { Bold, Italic, AlignLeft, AlignCenter, AlignRight, Type } from "lucide-react";
 
 export function TextPanel() {
@@ -81,6 +82,13 @@ export function TextPanel() {
           value={layer.color}
           onChange={(e) => updateLayer(layer.id, { color: e.target.value })}
           className="w-8 h-8 rounded-lg border border-gray-200 cursor-pointer"
+        />
+      </div>
+      <div className="pt-3 border-t border-gray-100">
+        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 block">Gradient Fill</label>
+        <GradientEditor
+          value={layer.gradient ?? { type: "linear", angle: 90, stops: [{ offset: 0, color: layer.color }, { offset: 1, color: "#E85D04" }] }}
+          onChange={(g) => updateLayer(layer.id, { gradient: g })}
         />
       </div>
     </div>
