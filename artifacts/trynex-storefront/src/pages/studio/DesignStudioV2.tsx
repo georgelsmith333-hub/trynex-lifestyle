@@ -325,8 +325,8 @@ export default function DesignStudioV2() {
     setActiveTab("text");
   };
 
-  const frontLayers = useMemo(() => layers.filter(l => (l.face ?? "front") === "front") as unknown as ComposerLayer[], [layers]);
-  const backLayers = useMemo(() => layers.filter(l => (l.face ?? "front") === "back") as unknown as ComposerLayer[], [layers]);
+  const frontLayers = useMemo(() => layers.filter(l => l.type !== "shape" && (l.face ?? "front") === "front") as unknown as ComposerLayer[], [layers]);
+  const backLayers = useMemo(() => layers.filter(l => l.type !== "shape" && (l.face ?? "front") === "back") as unknown as ComposerLayer[], [layers]);
 
   const handleAddToCart = async () => {
     if (layers.length === 0) {
@@ -367,9 +367,9 @@ export default function DesignStudioV2() {
     const isColorPhoto = !!colorPhoto;
     const frontPZ = isMug ? MUG_SIDE_PZ : selectedProduct.printZone;
     const backPZ = isMug ? MUG_SIDE_PZ : (selectedProduct.printZoneBack ?? selectedProduct.printZone);
-    const leftSleeveLayers = layers.filter(l => l.face === "left-sleeve") as unknown as ComposerLayer[];
-    const rightSleeveLayers = layers.filter(l => l.face === "right-sleeve") as unknown as ComposerLayer[];
-    const neckLabelLayers = layers.filter(l => l.face === "neck-label") as unknown as ComposerLayer[];
+    const leftSleeveLayers = layers.filter(l => l.type !== "shape" && l.face === "left-sleeve") as unknown as ComposerLayer[];
+    const rightSleeveLayers = layers.filter(l => l.type !== "shape" && l.face === "right-sleeve") as unknown as ComposerLayer[];
+    const neckLabelLayers = layers.filter(l => l.type !== "shape" && l.face === "neck-label") as unknown as ComposerLayer[];
 
     const mockupCanvas = document.createElement("canvas");
     await composeGarmentMockup({ canvas: mockupCanvas, garmentSrc, garmentColor: selectedColor.hex, printZone: frontPZ, layers: frontLayers, outSize: 400, imageCache, isColorPhoto });
