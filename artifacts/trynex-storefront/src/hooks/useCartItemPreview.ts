@@ -6,6 +6,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { composeGarmentMockup } from "@/pages/design-studio/composer";
 import type { ComposerPrintZone } from "@/pages/design-studio/composer";
+import { PRODUCTS, resolveMockup } from "@/pages/design-studio/mockups";
 
 export type GarmentCategory = "tshirt" | "longsleeve" | "hoodie" | "mug" | "cap" | "waterbottle";
 
@@ -52,9 +53,18 @@ function parseMeta(note?: string): Record<string, unknown> | null {
 export function useCartItemPreview(item: CartItemPreviewInput): CartItemPreviewPayload {
   const meta = useMemo(() => parseMeta(item.customNote), [item.customNote]);
   const [fallbackSrc, setFallbackSrc] = useState<string | null>(null);
+  const resolvedMockup = useMemo(() => {
+    const category = toCategory(meta?.category);
+    const product = PRODUCTS.find((candidate) => candidate.category === category);
+    if (!product || !meta?.colorHex) return null;
+    return resolveMockup(product, meta.colorHex as string, "front");
+  }, [meta]);
 
   useEffect(() => {
-    if (item.imageUrl || !meta?.mockupSrc || !meta?.colorHex || !meta?.printZone) {
+    const garmentSrc = (meta?.mockupSrc as string | undefined)
+      ?? (resolvedMockup?.isColorPhoto ? resolvedMockup.photoSrc : resolvedMockup?.cutoutSrc);
+    const printZone = (meta?.printZone as ComposerPrintZone | undefined) ?? resolvedMockup?.printZone;
+    if (item.imageUrl || !garmentSrc || !meta?.colorHex || !printZone) {
       setFallbackSrc(null);
       return;
     }
@@ -64,17 +74,19 @@ export function useCartItemPreview(item: CartItemPreviewInput): CartItemPreviewP
         const canvas = document.createElement("canvas");
         await composeGarmentMockup({
           canvas,
-          garmentSrc: meta.mockupSrc as string,
+          garmentSrc,
           garmentColor: meta.colorHex as string,
-          printZone: meta.printZone as ComposerPrintZone,
+          printZone,
           layers: [],
           outSize: 400,
+          isColorPhoto: meta.mockupIsColorPhoto === true
+            || (resolvedMockup?.isColorPhoto === true && !meta.mockupSrc),
         });
         if (!cancelled) setFallbackSrc(canvas.toDataURL("image/png"));
       } catch { /* no-op — component will show its own placeholder */ }
     })();
     return () => { cancelled = true; };
-  }, [item.imageUrl, meta]);
+  }, [item.imageUrl, meta, resolvedMockup]);
 
   return {
     thumbnailSrc: item.imageUrl ?? fallbackSrc,

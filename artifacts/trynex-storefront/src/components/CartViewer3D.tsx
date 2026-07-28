@@ -5,7 +5,7 @@
    the design texture composited on top.
 ════════════════════════════════════════════════════════ */
 import { useState, useMemo } from "react";
-import { isNearBlack, isLightTint } from "../pages/design-studio/mockups";
+import { isLightTint, PRODUCTS, resolveMockup } from "../pages/design-studio/mockups";
 
 type GarmentCategory = "tshirt" | "longsleeve" | "hoodie" | "mug" | "cap" | "waterbottle";
 
@@ -16,26 +16,22 @@ type GarmentCategory = "tshirt" | "longsleeve" | "hoodie" | "mug" | "cap" | "wat
 function resolvePhotos(
   category: GarmentCategory,
   garmentColor: string,
-): { front: string; back?: string } {
-  const nearBlack = isNearBlack(garmentColor);
-
-  const fronts: Record<GarmentCategory, string> = {
-    tshirt:      nearBlack ? "/mockups/black-tshirt-front-cutout.png"           : "/mockups/white-tshirt-front-cutout.png",
-    longsleeve:  nearBlack ? "/mockups/black-longsleeve-front-cutout.png"       : "/mockups/white-longsleeve-front-cutout-real.png",
-    hoodie:      nearBlack ? "/mockups/black-hoodie-front-cutout-real.png"      : "/mockups/white-hoodie-front-cutout-real.png",
-    // cap & waterbottle have no dedicated dark-photo asset — always use white cutout + tint
-    cap:         "/mockups/white-cap-front-cutout.png",
-    mug:         nearBlack ? "/mockups/black-mug-front-cutout.png"              : "/mockups/white-mug-front-cutout.png",
-    waterbottle: "/mockups/white-waterbottle-front-cutout.png",
+): {
+  front: string;
+  back?: string;
+  frontIsColorPhoto: boolean;
+  backIsColorPhoto: boolean;
+} {
+  const product = PRODUCTS.find((candidate) => candidate.category === category);
+  if (!product) throw new Error(`No design product configured for category "${category}"`);
+  const front = resolveMockup(product, garmentColor, "front");
+  const back = resolveMockup(product, garmentColor, "back");
+  return {
+    front: front.isColorPhoto ? front.photoSrc : front.cutoutSrc,
+    back: back.isColorPhoto ? back.photoSrc : back.cutoutSrc,
+    frontIsColorPhoto: front.isColorPhoto,
+    backIsColorPhoto: back.isColorPhoto,
   };
-
-  const backs: Partial<Record<GarmentCategory, string>> = {
-    tshirt:     nearBlack ? "/mockups/black-tshirt-back-cutout.png"         : "/mockups/white-tshirt-back-cutout.png",
-    longsleeve: nearBlack ? "/mockups/black-longsleeve-back-cutout.png"     : "/mockups/white-longsleeve-back-cutout-real.png",
-    hoodie:     nearBlack ? "/mockups/black-hoodie-back-cutout-real.png"    : "/mockups/white-hoodie-back-cutout-real.png",
-  };
-
-  return { front: fronts[category] ?? fronts.tshirt, back: backs[category] };
 }
 
 export interface CartViewer3DProps {
@@ -56,7 +52,7 @@ export default function CartViewer3D({
   const hasFrontBack = category === "tshirt" || category === "longsleeve" || category === "hoodie";
   const [face, setFace] = useState<"front" | "back">("front");
 
-  const { front: frontSrc, back: backSrc } = useMemo(
+  const { front: frontSrc, back: backSrc, frontIsColorPhoto, backIsColorPhoto } = useMemo(
     () => resolvePhotos(category, garmentColor),
     [category, garmentColor],
   );
@@ -70,10 +66,9 @@ export default function CartViewer3D({
   //               for those we always tint so the selected colour is reflected.
   //   lightTint → white garment, no tint overlay needed
   //   else      → apply garmentColor via CSS multiply blend over white cutout
-  const nearBlack  = isNearBlack(garmentColor);
   const lightTint  = isLightTint(garmentColor);
-  const hasNoDarkAsset = category === "cap" || category === "waterbottle";
-  const needsTint  = !lightTint && (hasNoDarkAsset ? true : !nearBlack);
+  const exactPhoto = face === "front" ? frontIsColorPhoto : backIsColorPhoto;
+  const needsTint  = !lightTint && !exactPhoto;
 
   return (
     <div

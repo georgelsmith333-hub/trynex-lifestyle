@@ -13,7 +13,7 @@
  *   1. Verify the source database is reachable and has data.
  *   2. Verify the target URL is not the same as the source URL.
  *   3. Verify source and target schemas match (no silent drift).
- *   4. Delete existing rows from the target in child-before-parent order.
+ *   4. Truncate shared target tables with identity reset and CASCADE.
  *   5. Insert rows from source in parent-before-child order.
  *   6. Re-sync any integer sequences (serial/identity primary keys).
  *
@@ -197,7 +197,6 @@ async function syncOneTarget(
     const sharedTables = sourceTables.filter((t) => targetTables.has(t));
     const edges = await getForeignKeyEdges(sourcePool);
     const insertOrder = topoSortTables(sharedTables, edges);
-    const deleteOrder = [...insertOrder].reverse();
 
     // Safety verification: source must be reachable and have some data.
     const sourceRows = await countSourceRows(sourcePool, sharedTables);
@@ -216,9 +215,13 @@ async function syncOneTarget(
     try {
       await client.query("BEGIN");
 
-      // Delete rows in child-before-parent order so FK constraints are satisfied.
-      for (const table of deleteOrder) {
-        await client.query(`DELETE FROM "${table}"`);
+      // A plain DELETE leaves serial sequences and any trigger-side rows in an
+      // ambiguous state. TRUNCATE is atomic, resets identities, and CASCADE
+      // makes repeated full mirrors idempotent even when a target has stale
+      // child rows from an older schema.
+      const truncateList = insertOrder.map((table) => `"${table}"`).join(", ");
+      if (truncateList) {
+        await client.query(`TRUNCATE TABLE ${truncateList} RESTART IDENTITY CASCADE`);
       }
 
       // Insert in parent-before-child order so FK constraints are satisfied.
@@ -242,7 +245,9 @@ async function syncOneTarget(
             const placeholders = columns.map((_, j) => `$${rowStart + j + 1}`).join(", ");
             valueGroups.push(`(${placeholders})`);
           }
-          const insertSql = `INSERT INTO "${table}" (${colList}) VALUES ${valueGroups.join(", ")}`;
+          // ON CONFLICT DO NOTHING makes the mirror idempotent: if a prior run
+          // committed some rows before crashing, we won't duplicate them.
+          const insertSql = `INSERT INTO "${table}" (${colList}) VALUES ${valueGroups.join(", ")} ON CONFLICT DO NOTHING`;
           await client.query(insertSql, values);
           rowsCopied += batch.length;
         }

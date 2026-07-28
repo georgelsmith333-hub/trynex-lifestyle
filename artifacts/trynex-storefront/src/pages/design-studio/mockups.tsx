@@ -377,6 +377,178 @@ export const BASE_BY_CATEGORY: Record<
   // watertumbler uses category "waterbottle" — shares the same base entry
 };
 
+/**
+ * Runtime catalog generated from the editable source-kit manifest.
+ *
+ * The PSDs stay in attached_assets as source material. The preview PNGs are
+ * deliberately copied into public/mockups/source-kit so the browser can use
+ * the exact color + face pair without loading PSDs. Those previews include a
+ * warm-white studio background, so consumers that require an alpha silhouette
+ * (3D billboards and texture overlays) use `cutoutSrc` from the reviewed
+ * fallback set below.
+ */
+const SOURCE_KIT_COLOR_SLUGS: Record<
+  DesignProduct["category"],
+  Record<string, string>
+> = {
+  tshirt: {
+    "#f8f7f4": "white", "#1a1a1a": "black", "#1e3a5f": "navy",
+    "#7f1d1d": "maroon", "#4a5240": "olive", "#0ea5e9": "sky-blue",
+    "#6b7280": "grey", "#dc2626": "red",
+  },
+  longsleeve: {
+    "#f5f5f3": "white", "#1a1a1a": "black", "#1e3a5f": "navy",
+    "#7f1d1d": "maroon", "#4a5240": "olive", "#6b7280": "grey",
+    "#dc2626": "red", "#0ea5e9": "sky-blue", "#6b1a2c": "burgundy",
+    "#166534": "forest",
+  },
+  hoodie: {
+    "#f2efe9": "white", "#1a1a1a": "black", "#1e3a5f": "navy",
+    "#6b7280": "grey", "#7f1d1d": "maroon", "#4a5240": "olive",
+    "#dc2626": "red", "#0ea5e9": "sky-blue", "#166534": "forest",
+    "#6b1a2c": "burgundy",
+  },
+  mug: {
+    "#f5f5f5": "white", "#1c1917": "black", "#1e3a5f": "navy",
+    "#dc2626": "red", "#16a34a": "green", "#7c3aed": "purple",
+    "#0ea5e9": "sky-blue", "#ec4899": "pink", "#7f1d1d": "maroon",
+    "#ea580c": "orange",
+  },
+  cap: {
+    "#f5f2ec": "white", "#1a1a1a": "black", "#1e3a5f": "navy",
+    "#7f1d1d": "maroon", "#4a5240": "olive", "#dc2626": "red",
+    "#6b7280": "grey", "#166534": "forest",
+  },
+  waterbottle: {
+    "#f4f3f1": "white", "#1c1917": "black", "#1e3a5f": "navy",
+    "#166534": "forest", "#0ea5e9": "sky-blue", "#dc2626": "red",
+    "#f472b6": "pink", "#0f766e": "teal",
+  },
+};
+
+const SOURCE_KIT_PRINT_ZONES: Record<
+  DesignProduct["category"],
+  { front: PrintZone; back: PrintZone }
+> = {
+  tshirt: {
+    front: { x: 240, y: 185, w: 520, h: 580 },
+    back: { x: 240, y: 185, w: 520, h: 580 },
+  },
+  longsleeve: {
+    front: { x: 312, y: 222, w: 376, h: 404 },
+    back: { x: 292, y: 195, w: 416, h: 458 },
+  },
+  hoodie: {
+    front: { x: 240, y: 270, w: 520, h: 400 },
+    back: { x: 292, y: 184, w: 416, h: 448 },
+  },
+  mug: {
+    front: { x: 225, y: 215, w: 380, h: 530 },
+    back: { x: 225, y: 215, w: 380, h: 530 },
+  },
+  cap: {
+    front: { x: 302, y: 222, w: 396, h: 252 },
+    back: { x: 302, y: 222, w: 396, h: 252 },
+  },
+  waterbottle: {
+    front: { x: 260, y: 214, w: 480, h: 548 },
+    back: { x: 260, y: 214, w: 480, h: 548 },
+  },
+};
+
+export interface MockupResolution {
+  /** Best photographic preview for 2D editor/export/cart thumbnails. */
+  photoSrc: string;
+  /** Reviewed transparent fallback for 3D/photo overlays. */
+  cutoutSrc: string;
+  /** True when photoSrc is an exact-color source-kit preview or color photo. */
+  isColorPhoto: boolean;
+  /** Whether the transparent fallback needs the selected colour applied. */
+  cutoutNeedsTint: boolean;
+  /** Exact source-kit print zone when this color/face exists. */
+  printZone: PrintZone;
+  /** Source-kit previews are full studio images, not alpha cutouts. */
+  isOpaquePhoto: boolean;
+  source: "source-kit" | "curated";
+}
+
+function normalizeMockupHex(hex: string): string {
+  return hex.trim().toLowerCase();
+}
+
+function getCuratedMockup(
+  product: DesignProduct,
+  color: string,
+  face: "front" | "back",
+): { photoSrc: string; cutoutSrc: string; isColorPhoto: boolean; cutoutNeedsTint: boolean } {
+  const base = BASE_BY_CATEGORY[product.category];
+  const hex = normalizeMockupHex(color);
+  const colorPhoto = base?.colorPhotos?.[hex] ?? base?.colorPhotos?.[color];
+  const nearBlack = isNearBlack(color);
+  const hasDark = !!(base?.darkFrontCutout || base?.darkFront);
+  const useDark = nearBlack && hasDark;
+  const back = face === "back";
+
+  // Keep the reviewed dark cutout/photo pair for 3D and silhouette contexts.
+  // Some legacy colorPhotos entries point at the dark full photo for black;
+  // choosing them first would pair that photo with a white cutout.
+  if (useDark) {
+    const photoSrc = back
+      ? (base?.darkBack ?? base?.darkBackCutout ?? base?.darkFront ?? product.frontSrc)
+      : (base?.darkFront ?? base?.darkFrontCutout ?? product.frontSrc);
+    const cutoutSrc = back
+      ? (base?.darkBackCutout ?? base?.darkFrontCutout ?? base?.backCutout ?? product.frontSrc)
+      : (base?.darkFrontCutout ?? base?.frontCutout ?? product.frontSrc);
+    return { photoSrc, cutoutSrc, isColorPhoto: true, cutoutNeedsTint: false };
+  }
+
+  if (colorPhoto && (!back || colorPhoto.back)) {
+    const photoSrc = back && colorPhoto.back ? colorPhoto.back : colorPhoto.front;
+    const cutoutSrc = back
+      ? (base?.backCutout ?? base?.frontCutout ?? product.frontSrc)
+      : (base?.frontCutout ?? product.frontSrc);
+    return { photoSrc, cutoutSrc, isColorPhoto: true, cutoutNeedsTint: true };
+  }
+
+  const photoSrc = back
+    ? (base?.back ?? product.backSrc ?? base?.front ?? product.frontSrc)
+    : (base?.front ?? product.frontSrc);
+  const cutoutSrc = back
+    ? (base?.backCutout ?? base?.frontCutout ?? product.backSrc ?? product.frontSrc)
+    : (base?.frontCutout ?? product.frontSrc);
+  return { photoSrc, cutoutSrc, isColorPhoto: false, cutoutNeedsTint: true };
+}
+
+/**
+ * Resolves one canonical mockup key for every customer-facing surface.
+ * Source-kit photos win when the selected color exists in the manifest;
+ * curated transparent assets remain the deliberate fallback for custom
+ * colors and for surfaces that need alpha silhouettes.
+ */
+export function resolveMockup(
+  product: DesignProduct,
+  color: string,
+  face: "front" | "back" = "front",
+): MockupResolution {
+  const category = product.category;
+  const slug = SOURCE_KIT_COLOR_SLUGS[category]?.[normalizeMockupHex(color)];
+  const sourceKitPhoto = slug
+    ? `/mockups/source-kit/${category}-${slug}-${face}.png`
+    : undefined;
+  const curated = getCuratedMockup(product, color, face);
+  const zones = SOURCE_KIT_PRINT_ZONES[category];
+
+  return {
+    photoSrc: sourceKitPhoto ?? curated.photoSrc,
+    cutoutSrc: curated.cutoutSrc,
+    isColorPhoto: !!sourceKitPhoto || curated.isColorPhoto,
+    cutoutNeedsTint: curated.cutoutNeedsTint,
+    isOpaquePhoto: !!sourceKitPhoto || !curated.photoSrc.includes("cutout"),
+    printZone: zones?.[face] ?? (face === "back" && product.printZoneBack ? product.printZoneBack : product.printZone),
+    source: sourceKitPhoto ? "source-kit" : "curated",
+  };
+}
+
 
 // Exported so DesignStudio's live SVG editor can pick the same multiply/screen
 // blend mode for uploaded designs that composeGarmentMockup() already uses.
@@ -424,8 +596,14 @@ export function GarmentSVG({
   // exists for this product (mug, tshirt, hoodie). Products without a dark photo
   // (cap, longsleeve, waterbottle) must fall through to the tint path below, or a
   // near-black selection would render as an untinted white cutout (looks white/blank).
+  const resolvedMockup = resolveMockup(
+    product,
+    tintHex,
+    face === "back" ? "back" : "front",
+  );
   const hasDarkPhotoAsset = !!(base?.darkFrontCutout || base?.darkFront);
-  const useBlackPhoto = !!tintHex && isNearBlack(tintHex) && hasDarkPhotoAsset;
+  const useSourceKitPhoto = resolvedMockup.source === "source-kit";
+  const useBlackPhoto = !!tintHex && isNearBlack(tintHex) && hasDarkPhotoAsset && !useSourceKitPhoto;
   // Check if there is a real per-colour photo for this exact hex — if so, use it
   // directly instead of the SVG tint path for maximum photographic realism.
   const colorPhotoEntry = tintHex ? base?.colorPhotos?.[tintHex.toLowerCase()] ?? base?.colorPhotos?.[tintHex] : undefined;
@@ -436,11 +614,12 @@ export function GarmentSVG({
   //   4. We have the correct face photo — if the caller wants the back face but only a
   //      front photo exists in colorPhotos, fall through to the tint path so the back view
   //      is still coloured correctly (vs. incorrectly showing the front-side photo).
-  const useColorPhoto = !!colorPhotoEntry && !useBlackPhoto && !isLightTint(tintHex ?? "")
-    && (face !== "back" || !!colorPhotoEntry.back);
+  const useColorPhoto = useSourceKitPhoto || (!!colorPhotoEntry && !useBlackPhoto && !isLightTint(tintHex ?? "")
+    && (face !== "back" || !!colorPhotoEntry.back));
   const needsTint = !!tintHex && !isLightTint(tintHex) && !useBlackPhoto && !useColorPhoto;
 
   const imageSrc = (() => {
+    if (useSourceKitPhoto) return resolvedMockup.photoSrc;
     if (!base) return (face === "back" && product.backSrc) ? product.backSrc : product.frontSrc;
     // ── Real per-colour photo (e.g. navy, red) ────────────────────────────
     // Bypasses SVG tint entirely — highest realism, used when a dedicated photo
@@ -494,22 +673,18 @@ export function GarmentSVG({
   // the garment silhouette in its alpha channel, so using it directly prevents the
   // ghost/double-image effect that happens when the full photo and cutout are not
   // perfectly aligned (longsleeve, cap, mug, waterbottle).
-  const tintPhotoSrc = base
-    ? (face === "back" && base.backCutout ? base.backCutout : (base.frontCutout ?? ""))
-    : (face === "back" && product.backSrc ? product.backSrc : product.frontSrc);
+  const tintPhotoSrc = resolvedMockup.cutoutSrc;
 
   // Keep the separate cutout mask source only when we need the shadow pass for the
   // coloured tint path. For light/white garments the cutout is rendered directly.
-  const cutoutMaskSrc = base
-    ? (face === "back" && base.backCutout ? base.backCutout : (base.frontCutout ?? ""))
-    : "";
+  const cutoutMaskSrc = resolvedMockup.cutoutSrc;
 
   // True when the selected imageSrc is a full studio photo (has its own baked
   // background — no transparent pixels we need to worry about). Detection relies on
   // the naming convention: files containing "cutout" in their path are transparent
   // PNGs; all other garment files are full opaque studio photos.
   // This covers both near-black photos AND real per-colour photos (navy, red…).
-  const isFullDarkPhoto = (useBlackPhoto || useColorPhoto) && !imageSrc.includes("cutout");
+  const isFullDarkPhoto = resolvedMockup.isOpaquePhoto;
 
   // Canvas background colour: clean white for all products so the mockup reads
   // as a premium product shot on a light, neutral studio surface. Cutout garments

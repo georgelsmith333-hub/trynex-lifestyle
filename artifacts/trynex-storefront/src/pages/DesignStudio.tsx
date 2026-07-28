@@ -26,7 +26,7 @@ import {
 import {
   PRODUCTS, type DesignProduct, GarmentSVG, FlatZoneSVG,
   STICKERS, BASE_BY_CATEGORY, MUG_SIDE_PZ,
-  getApparelZones, getZonePZ, type ApparelZone, isNearBlack, isLightTint, type PrintZone,
+  getApparelZones, getZonePZ, resolveMockup, type ApparelZone, isNearBlack, isLightTint, type PrintZone,
 } from "./design-studio/mockups";
 import { composeLayers, composeGarmentMockup, composeDesignTexture, autoFixImage, type ComposerLayer } from "./design-studio/composer";
 
@@ -450,6 +450,8 @@ export default function DesignStudio() {
   const isCanvasZoomed = canvasZoom !== 1 || canvasPan.x !== 0 || canvasPan.y !== 0;
 
   /* ── UI state ──────────────────────────────────────────────── */
+  /** Hex being hovered in the colour picker — drives the floating photo preview tooltip. */
+  const [hoveredColorHex, setHoveredColorHex] = useState<string | null>(null);
   const [showPrintZone, setShowPrintZone] = useState(() => !isMobile);
   useEffect(() => {
     if (isMobile) setShowPrintZone(false);
@@ -794,6 +796,14 @@ export default function DesignStudio() {
   // Mug: MUG_PZ in wrap mode, MUG_SIDE_PZ for sides.
   // Apparel sleeve/neck zones: use getZonePZ which returns SLEEVE_PZ or NECK_LABEL_PZ.
   // Apparel front/back: product's own printZone.
+  const frontMockup = useMemo(
+    () => resolveMockup(selectedProduct, selectedColor.hex, "front"),
+    [selectedProduct, selectedColor.hex],
+  );
+  const backMockup = useMemo(
+    () => resolveMockup(selectedProduct, selectedColor.hex, "back"),
+    [selectedProduct, selectedColor.hex],
+  );
   const pz = useMemo(() => {
     // mugMode is only ever "side1" | "side2" — the mug wrap-mode print zone
     // (MUG_PZ) is unused dead code from a removed "full wrap" concept and
@@ -801,8 +811,10 @@ export default function DesignStudio() {
     if (isMugProduct) {
       return MUG_SIDE_PZ;
     }
+    if (activeFace === "back") return backMockup.printZone;
+    if (activeFace === "front") return frontMockup.printZone;
     return getZonePZ(activeFace, selectedProduct);
-  }, [isMugProduct, activeFace, selectedProduct, mugMode]);
+  }, [isMugProduct, activeFace, selectedProduct, mugMode, frontMockup, backMockup]);
   const pzRef = useRef(pz);
   useEffect(() => { pzRef.current = pz; }, [pz]);
 
@@ -1992,20 +2004,16 @@ export default function DesignStudio() {
     }
     try {
       const canvas = document.createElement("canvas");
-      const garmentBase = BASE_BY_CATEGORY[selectedProduct.category];
-      // Prefer a real per-colour photo (navy, red…) for highest realism.
-      // Fall back to the transparent cutout for all other colours.
-      const _colorPhotoE1 = garmentBase?.colorPhotos?.[selectedColor.hex];
-      const garmentSrc = _colorPhotoE1?.front ?? garmentBase?.frontCutout ?? garmentBase?.front ?? selectedProduct.frontSrc;
-      const isColorPhoto1 = !!_colorPhotoE1;
+      const activeMockup = activeFace === "back" ? backMockup : frontMockup;
+      const garmentSrc = isFlatZone ? activeMockup.cutoutSrc : activeMockup.photoSrc;
       await composeGarmentMockup({
         canvas,
         garmentSrc,
         garmentColor: selectedColor.hex,
-        printZone: isMugProduct ? MUG_SIDE_PZ : selectedProduct.printZone,
+        printZone: pz,
         layers: activeLayers,
         outSize: 1200,
-        isColorPhoto: isColorPhoto1,
+        isColorPhoto: !isFlatZone && activeMockup.isColorPhoto,
       });
       const url = canvas.toDataURL("image/png");
       const a = document.createElement("a");
@@ -2016,7 +2024,7 @@ export default function DesignStudio() {
     } catch {
       toast({ title: "Export failed", description: "Could not generate image. Please try again.", variant: "destructive" });
     }
-  }, [layers, selectedProduct, selectedColor, activeFace, isMugProduct, toast]);
+  }, [layers, selectedProduct, selectedColor, activeFace, isMugProduct, isFlatZone, pz, frontMockup, backMockup, toast]);
 
   /* ── Export design as JPG ──────────────────────────── */
   const handleExportJPG = useCallback(async () => {
@@ -2031,18 +2039,16 @@ export default function DesignStudio() {
     }
     try {
       const canvas = document.createElement("canvas");
-      const garmentBase = BASE_BY_CATEGORY[selectedProduct.category];
-      const _colorPhotoE2 = garmentBase?.colorPhotos?.[selectedColor.hex];
-      const garmentSrc = _colorPhotoE2?.front ?? garmentBase?.frontCutout ?? garmentBase?.front ?? selectedProduct.frontSrc;
-      const isColorPhoto2 = !!_colorPhotoE2;
+      const activeMockup = activeFace === "back" ? backMockup : frontMockup;
+      const garmentSrc = isFlatZone ? activeMockup.cutoutSrc : activeMockup.photoSrc;
       await composeGarmentMockup({
         canvas,
         garmentSrc,
         garmentColor: selectedColor.hex,
-        printZone: isMugProduct ? MUG_SIDE_PZ : selectedProduct.printZone,
+        printZone: pz,
         layers: activeLayers,
         outSize: 1200,
-        isColorPhoto: isColorPhoto2,
+        isColorPhoto: !isFlatZone && activeMockup.isColorPhoto,
       });
       const url = canvas.toDataURL("image/jpeg", 0.93);
       const a = document.createElement("a");
@@ -2053,7 +2059,7 @@ export default function DesignStudio() {
     } catch {
       toast({ title: "Export failed", description: "Could not generate image. Please try again.", variant: "destructive" });
     }
-  }, [layers, selectedProduct, selectedColor, activeFace, isMugProduct, toast]);
+  }, [layers, selectedProduct, selectedColor, activeFace, isMugProduct, isFlatZone, pz, frontMockup, backMockup, toast]);
 
   /* ── Add to cart ───────────────────────────────────── */
   const handleAddToCart = useCallback(async () => {
@@ -2063,8 +2069,8 @@ export default function DesignStudio() {
     }
     setIsAddingToCart(true);
     try {
-      const frontPZ         = isMugProduct ? MUG_SIDE_PZ : selectedProduct.printZone;
-      const backPZ          = isMugProduct ? MUG_SIDE_PZ : (selectedProduct.printZoneBack ?? selectedProduct.printZone);
+      const frontPZ         = isMugProduct ? MUG_SIDE_PZ : frontMockup.printZone;
+      const backPZ          = isMugProduct ? MUG_SIDE_PZ : backMockup.printZone;
       const frontLayers     = layers.filter(l => (l.face ?? "front") === "front")        as unknown as ComposerLayer[];
       const backLayers      = layers.filter(l => (l.face ?? "front") === "back")         as unknown as ComposerLayer[];
       const leftSleeveLayers = layers.filter(l => l.face === "left-sleeve")              as unknown as ComposerLayer[];
@@ -2125,13 +2131,12 @@ export default function DesignStudio() {
         }
       }
 
-      // 1. Full garment + design composite → cart thumbnail (imageUrl)
-      //    Prefer a real per-colour photo (navy, red…) when available so the
-      //    cart thumbnail matches the 2D editor exactly.
-      const garmentBase = BASE_BY_CATEGORY[selectedProduct.category];
-      const _colorPhotoCart = garmentBase?.colorPhotos?.[selectedColor.hex];
-      const garmentSrc  = _colorPhotoCart?.front ?? garmentBase?.frontCutout ?? garmentBase?.front ?? displayProduct.frontSrc;
-      const isColorPhotoCart = !!_colorPhotoCart;
+      // 1. Full garment + design composite → cart thumbnail (imageUrl).
+      //    Use the same canonical photo that the 2D editor renders. For
+      //    curated fallbacks, compose from the transparent cutout so the
+      //    colour tint does not bleed into the studio background.
+      const garmentSrc = frontMockup.isColorPhoto ? frontMockup.photoSrc : frontMockup.cutoutSrc;
+      const isColorPhotoCart = frontMockup.isColorPhoto;
       const mockupCanvas = document.createElement("canvas");
       await composeGarmentMockup({
         canvas: mockupCanvas,
@@ -2269,8 +2274,10 @@ export default function DesignStudio() {
           neckLabelLayerCount: neckLabelLayers.length,
           // Garment provenance — used by useCartItemPreview fallback composer
           mockupSrc: garmentSrc,
+          mockupSource: frontMockup.source,
+          mockupPhotoSrc: frontMockup.photoSrc,
           printZone: frontPZ,
-          printZoneBack: selectedProduct.printZoneBack ?? null,
+          printZoneBack: backPZ,
           // NOTE: originalAssets and originalAssetUrls are stored as top-level
           // cart item fields (not here) to keep this JSON well under 2 KB.
         }),
@@ -2285,7 +2292,7 @@ export default function DesignStudio() {
     } finally {
       setIsAddingToCart(false);
     }
-  }, [layers, selectedProduct, displayProduct, selectedColor, selectedSize, quantity, isMug, isCap, isWaterBottle, isZoneTabs, studioPrice, pz, addToCart, toast, navigate, settings, linkedStoreProduct]);
+  }, [layers, selectedProduct, displayProduct, selectedColor, selectedSize, quantity, isMug, isCap, isWaterBottle, isZoneTabs, studioPrice, pz, frontMockup, backMockup, addToCart, toast, navigate, settings, linkedStoreProduct]);
 
   /* ── Studio color palette — driven by the selected product's colors array.
      Admin overrides (settings.studioTshirtColors / studioMugColors) are still
@@ -2626,16 +2633,30 @@ export default function DesignStudio() {
                   boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
                 }}
               >
-                <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 flex items-center justify-center"
-                  style={{ border: "1px solid #f0efee", background: "white" }}>
-                  <img
-                    src={BASE_BY_CATEGORY[displayProduct.category]?.frontCutout ?? displayProduct.frontSrc}
-                    alt={selectedProduct.name}
-                    className="w-full h-full object-contain"
-                    style={{ padding: "2px", filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.18))" }}
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-                  />
-                </div>
+                {(() => {
+                  // Header thumbnail — show the source-kit coloured photo for maximum realism
+                  const hdrResolved = resolveMockup(displayProduct, selectedColor.hex, "front");
+                  const hdrOpaque = hdrResolved.isOpaquePhoto;
+                  return (
+                    <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0"
+                      style={{ border: "1px solid #f0efee", background: hdrOpaque ? "transparent" : "white" }}>
+                      <img
+                        src={hdrResolved.photoSrc}
+                        alt={selectedProduct.name}
+                        className="w-full h-full"
+                        style={{
+                          objectFit: hdrOpaque ? "cover" : "contain",
+                          padding: hdrOpaque ? "0" : "2px",
+                          filter: hdrOpaque ? "none" : "drop-shadow(0 1px 3px rgba(0,0,0,0.18))",
+                        }}
+                        onError={(e) => {
+                          const el = e.target as HTMLImageElement;
+                          if (el.src !== displayProduct.frontSrc) { el.src = displayProduct.frontSrc; el.style.padding = "2px"; el.style.objectFit = "contain"; }
+                        }}
+                      />
+                    </div>
+                  );
+                })()}
                 <div className="min-w-0 flex-1 text-left">
                   <div className="text-xs font-black text-gray-800 truncate">{selectedProduct.name}</div>
                   <div className="text-[10px] text-gray-400 font-semibold">{selectedProduct.description}</div>
@@ -2695,6 +2716,15 @@ export default function DesignStudio() {
                     pid === "hoodie" ? "Hoodie" :
                     pid === "cap" ? "Cap" :
                     "T-Shirt";
+                  // Use the current selectedColor if this product supports it,
+                  // otherwise fall back to the product's default garment colour.
+                  // This makes each tab show a real studio photo in the right hue.
+                  const tabColorHex = prod.colors.some(c => c.hex.toLowerCase() === selectedColor.hex.toLowerCase())
+                    ? selectedColor.hex
+                    : prod.garmentColor;
+                  const tabResolved = resolveMockup(prod, tabColorHex, "front");
+                  // Source-kit photos have their own background; cutouts need a wrapper BG.
+                  const tabIsOpaque = tabResolved.isOpaquePhoto;
                   return (
                     <button
                       key={pid}
@@ -2711,23 +2741,30 @@ export default function DesignStudio() {
                       <div
                         className="w-11 h-11 rounded-xl flex items-center justify-center overflow-hidden"
                         style={{
-                          // Active: dark so white cutout pops. Inactive: warm mid-grey
-                          // so white garment cutouts are visible (not white-on-white).
-                          background: isActive ? "#2c2c2e" : "#dedad5",
-                          padding: "4px",
+                          // Opaque source-kit photos fill their own background.
+                          // Cutout PNGs still need a background so the silhouette is visible.
+                          background: tabIsOpaque ? "transparent" : (isActive ? "#2c2c2e" : "#dedad5"),
+                          padding: tabIsOpaque ? "0px" : "3px",
                         }}
                       >
                         {PRODUCT_TAB_ICONS[pid] ?? (
                           <img
-                            src={BASE_BY_CATEGORY[prod.category]?.frontCutout ?? prod.frontSrc}
+                            src={tabResolved.photoSrc}
                             alt={prod.name}
-                            className="w-full h-full object-contain"
+                            className="w-full h-full"
                             style={{
-                              filter: isActive
+                              objectFit: tabIsOpaque ? "cover" : "contain",
+                              borderRadius: tabIsOpaque ? 10 : 0,
+                              filter: isActive && !tabIsOpaque
                                 ? "drop-shadow(0 1px 6px rgba(255,255,255,0.3)) brightness(1.1)"
-                                : "drop-shadow(0 1px 4px rgba(0,0,0,0.20))",
+                                : isActive ? "brightness(0.92)"
+                                : "none",
                             }}
                             draggable={false}
+                            onError={(e) => {
+                              // Fallback to cutout if source-kit photo 404s
+                              (e.target as HTMLImageElement).src = BASE_BY_CATEGORY[prod.category]?.frontCutout ?? prod.frontSrc;
+                            }}
                           />
                         )}
                       </div>
@@ -2866,22 +2903,66 @@ export default function DesignStudio() {
                   <span className="text-[11px] font-black uppercase tracking-widest text-gray-400">Color</span>
                 </div>
                 <span
-                  className="text-[11px] font-bold px-2.5 py-0.5 rounded-full"
+                  className="text-[11px] font-bold px-2.5 py-0.5 rounded-full transition-all duration-200"
                   style={{ background: selectedColor.hex, color: (0.299 * parseInt(selectedColor.hex.slice(1,3)||"80",16) + 0.587 * parseInt(selectedColor.hex.slice(3,5)||"80",16) + 0.114 * parseInt(selectedColor.hex.slice(5,7)||"80",16)) > 140 ? "#374151" : "white", boxShadow: "0 1px 4px rgba(0,0,0,0.18)", border: selectedColor.hex.toUpperCase() === "#FFFFFF" || selectedColor.hex === "#F5F5F5" ? "1px solid #d1d5db" : "none" }}
                 >
                   {selectedColor.name}
                 </span>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="relative flex flex-wrap gap-2">
+                {/* Floating source-kit photo preview tooltip — appears when hovering a swatch */}
+                {hoveredColorHex && (() => {
+                  const hc = studioColors.find(c => c.hex.toLowerCase() === hoveredColorHex.toLowerCase());
+                  if (!hc) return null;
+                  const resolved = resolveMockup(selectedProduct, hc.hex, "front");
+                  return (
+                    <div
+                      className="absolute bottom-full left-0 mb-3 z-50 pointer-events-none flex items-center gap-2.5 rounded-2xl border"
+                      style={{
+                        background: "white",
+                        border: "1px solid #e5e7eb",
+                        boxShadow: "0 8px 30px rgba(0,0,0,0.16), 0 2px 8px rgba(0,0,0,0.08)",
+                        padding: "8px 12px 8px 8px",
+                        minWidth: 140,
+                      }}
+                    >
+                      <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-gray-50" style={{ border: "1px solid #f0efee" }}>
+                        <img
+                          src={resolved.photoSrc}
+                          alt={hc.name}
+                          className="w-full h-full object-cover"
+                          draggable={false}
+                        />
+                      </div>
+                      <div>
+                        <div className="text-[11px] font-black text-gray-800">{hc.name}</div>
+                        <div className="flex items-center gap-1 mt-0.5">
+                          <span className="inline-block w-3 h-3 rounded-full border border-gray-200 shadow-sm" style={{ background: hc.hex }} />
+                          <span className="text-[10px] font-mono text-gray-400">{hc.hex.toUpperCase()}</span>
+                        </div>
+                        {resolved.source === "source-kit" && (
+                          <span className="mt-1 inline-block text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md" style={{ background: "#f0fdf4", color: "#15803d" }}>✓ Studio Photo</span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()}
                 {studioColors.map(c => {
                   const isSelected = selectedColor.hex.toLowerCase() === c.hex.toLowerCase();
+                  const isHovered = hoveredColorHex?.toLowerCase() === c.hex.toLowerCase();
                   const lum = 0.299 * parseInt(c.hex.slice(1,3)||"80",16) + 0.587 * parseInt(c.hex.slice(3,5)||"80",16) + 0.114 * parseInt(c.hex.slice(5,7)||"80",16);
                   const isNearWhite = lum > 230;
                   return (
                     <button key={c.hex} title={c.name}
-                      onClick={() => setSelectedColor({ name: c.name, hex: c.hex })}
-                      className="relative touch-manipulation flex-shrink-0 transition-transform duration-100 hover:scale-110"
-                      style={{ width: 34, height: 34 }}
+                      onClick={() => { setSelectedColor({ name: c.name, hex: c.hex }); setHoveredColorHex(null); }}
+                      onMouseEnter={() => setHoveredColorHex(c.hex)}
+                      onMouseLeave={() => setHoveredColorHex(null)}
+                      className="relative touch-manipulation flex-shrink-0"
+                      style={{
+                        width: 34, height: 34,
+                        transition: "transform 0.12s ease",
+                        transform: isSelected || isHovered ? "scale(1.12)" : "scale(1)",
+                      }}
                     >
                       {/* Selection ring */}
                       {isSelected && (
@@ -2891,15 +2972,23 @@ export default function DesignStudio() {
                           boxShadow: "0 0 0 2px rgba(232,93,4,0.20)",
                         }} />
                       )}
-                      {/* Swatch circle */}
+                      {/* Hover ring for non-selected */}
+                      {isHovered && !isSelected && (
+                        <span className="absolute inset-0 rounded-full pointer-events-none" style={{
+                          border: "2px solid #9ca3af",
+                          transform: "scale(1.28)",
+                        }} />
+                      )}
+                      {/* Swatch circle — shows source-kit photo as background for realism */}
                       <span
-                        className="absolute rounded-full transition-transform duration-100"
+                        className="absolute rounded-full"
                         style={{
                           inset: 3,
                           background: c.hex,
                           border: isNearWhite ? "1.5px solid #d1d5db" : "1px solid rgba(0,0,0,0.10)",
                           transform: isSelected ? "scale(0.88)" : "scale(1)",
-                          boxShadow: isSelected ? "0 2px 8px rgba(0,0,0,0.28)" : "0 1px 4px rgba(0,0,0,0.14)",
+                          boxShadow: isSelected ? "0 2px 8px rgba(0,0,0,0.28)" : isHovered ? "0 2px 10px rgba(0,0,0,0.20)" : "0 1px 4px rgba(0,0,0,0.14)",
+                          transition: "box-shadow 0.12s ease, transform 0.12s ease",
                         }}
                       />
                       {/* Check mark */}
@@ -5065,21 +5154,32 @@ export default function DesignStudio() {
                               background: isSelected ? "#fff9f6" : "white",
                             }}
                           >
-                            {/* Product photo */}
+                            {/* Product photo — uses source-kit photo for the currently selected colour
+                                  so users see the real coloured garment before picking */}
+                            {(() => {
+                              const pkColorHex = prod.colors.some(c => c.hex.toLowerCase() === selectedColor.hex.toLowerCase())
+                                ? selectedColor.hex : prod.garmentColor;
+                              const pkResolved = resolveMockup(prod, pkColorHex, "front");
+                              const pkOpaque = pkResolved.isOpaquePhoto;
+                              return (
                             <div className="w-full aspect-square relative overflow-hidden"
-                              style={{ background: (["tshirt","hoodie","longsleeve"] as string[]).includes(prod.category)
-                                // Warm mid-tone grey: enough contrast for the white garment photo/cutout
-                                // to read clearly (avoids white-shirt-on-white-bg invisibility).
-                                ? "radial-gradient(ellipse at 50% 40%, #d8d5cf 0%, #c4c1bb 100%)"
-                                : "radial-gradient(ellipse at 50% 40%, #f5f5f3 0%, #e8e5e0 100%)" }}>
+                              style={{
+                                background: pkOpaque ? "transparent"
+                                  : (["tshirt","hoodie","longsleeve"] as string[]).includes(prod.category)
+                                    ? "radial-gradient(ellipse at 50% 40%, #d8d5cf 0%, #c4c1bb 100%)"
+                                    : "radial-gradient(ellipse at 50% 40%, #f5f5f3 0%, #e8e5e0 100%)",
+                              }}>
                               <img
-                                src={prod.frontSrc}
+                                src={pkResolved.photoSrc}
                                 alt={prod.name}
-                                className="w-full h-full object-contain transition-transform group-hover:scale-105"
-                                style={{ padding: "8%" }}
+                                className="w-full h-full transition-transform group-hover:scale-105"
+                                style={{
+                                  objectFit: pkOpaque ? "cover" : "contain",
+                                  padding: pkOpaque ? "0" : "8%",
+                                }}
                                 onError={(e) => {
-                                  (e.target as HTMLImageElement).src = "";
-                                  (e.target as HTMLImageElement).style.display = "none";
+                                  const el = e.target as HTMLImageElement;
+                                  if (el.src !== prod.frontSrc) { el.src = prod.frontSrc; el.style.padding = "8%"; el.style.objectFit = "contain"; }
                                 }}
                               />
                               {prod.badge && (
@@ -5095,6 +5195,8 @@ export default function DesignStudio() {
                                 </div>
                               )}
                             </div>
+                              );
+                            })()}
                             {/* Info */}
                             <div className="px-3 py-2.5">
                               <div className="text-xs font-black text-gray-800 leading-tight truncate">{prod.name}</div>

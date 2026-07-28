@@ -25,7 +25,7 @@ import {
   type ComposerLayer,
   type ComposerPrintZone,
 } from "./composer";
-import { BASE_BY_CATEGORY, isNearBlack, type DesignProduct } from "./mockups";
+import { resolveMockup, type DesignProduct } from "./mockups";
 import {
   RealisticShirt,
   PhotoMockupMesh,
@@ -294,16 +294,14 @@ export default function ProductViewer3D({
    * Products that have a dedicated dark/black photo (cap) switch to it when
    * garmentColor is near-black so the 3D scene uses the real black photo.
    * PhotoMockupMesh already uses transparent:true + alphaTest:0.01. */
-  const nearBlack = isNearBlack(garmentColor);
-  const base = BASE_BY_CATEGORY[product.category as keyof typeof BASE_BY_CATEGORY];
-  const hasDarkPhoto = nearBlack && base && ((base as any).darkFront || (base as any).darkBack);
-  const resolvedFrontPhoto = hasDarkPhoto
-    ? ((base as any)?.darkFrontCutout ?? (base as any)?.darkFront ?? product.frontSrc)
-    : ((base as any)?.frontCutout ?? product.frontSrc);
-  const resolvedBackPhoto  = hasDarkPhoto
-    ? ((base as any)?.darkBackCutout ?? (base as any)?.darkBack ?? product.backSrc ?? product.frontSrc)
-    : ((base as any)?.backCutout ?? product.backSrc ?? product.frontSrc);
-  const photoTint = hasDarkPhoto ? undefined : garmentColor;
+  const frontMockup = resolveMockup(product, garmentColor, "front");
+  const backMockup = resolveMockup(product, garmentColor, "back");
+  // Source-kit previews are opaque studio photos and must not be placed on a
+  // billboard. The reviewed transparent cutout is the 3D source; it is tinted
+  // only when that cutout is the white fallback rather than an exact dark one.
+  const resolvedFrontPhoto = frontMockup.cutoutSrc;
+  const resolvedBackPhoto = backMockup.cutoutSrc;
+  const photoTint = frontMockup.cutoutNeedsTint ? garmentColor : undefined;
 
   const isCap = product.category === "cap";
   const capCurvature = isCap ? 0.1 : 0;
@@ -357,7 +355,7 @@ export default function ProductViewer3D({
 
   /* No WebGL2 → flat 2D photo mockup fallback. */
   if (!supports3D) {
-    const fallbackGarmentSrc = (base as any)?.frontCutout ?? product.frontSrc;
+    const fallbackGarmentSrc = frontMockup.cutoutSrc;
     return (
       <div style={{ position: "relative", width: "100%", height: "100%" }}>
         <NoWebGLFallback
