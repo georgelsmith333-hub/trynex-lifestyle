@@ -26,3 +26,7 @@ All tokens stored in secrets (CLOUDFLARE_API_TOKEN, CLOUDFLARE_API_TOKEN_V2, CLO
 - GitHub push: `NEW_GITHUB_PERSONAL_ACCESS_TOKEN` works; remote updated; push successful
 - Render deploy: srv-d7b774mdqaus73carp70 (trynex-api.onrender.com) — triggered successfully
 - deployment.ts token fallback chain now starts with `NEW_GITHUB_PERSONAL_ACCESS_TOKEN`
+
+## Re-checked 2026-07-28
+
+Same shape, still true: MAIN (data-transfer quota) and FAILOVER (compute-time quota) both still erroring on connect — this is a Neon billing-tier limit, not something fixable from app code. PRODUCTS and ANALYTICS are both healthy, both have 21 tables, and are confirmed in sync with each other (73 orders / 40 customers, same last-order timestamp on both). No action possible without the account owner upgrading a Neon plan or waiting for the monthly quota reset.

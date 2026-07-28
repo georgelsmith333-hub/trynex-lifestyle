@@ -1,7 +1,9 @@
 ---
-name: TryNex production DNS setup
-description: How trynexshop.com DNS is configured and what the correct production setup is
+name: TryNex production DNS setup (SUPERSEDED)
+description: An earlier plan to move trynexshop.com off Cloudflare Pages onto Replit Autoscale — NOT the current architecture, kept for historical context only
 ---
+
+**SUPERSEDED as of 2026-07-28 — do not act on the "correct permanent setup" below.** Current code (`functions/api/[[path]].ts` in the storefront, see `cf-pages-deploy.md`) implements a working Cloudflare Pages Functions proxy for `/api/*`, and `https://trynexshop.com/` resolves through Cloudflare and returns 200 today. The Autoscale migration this file recommended was not carried out (or was reverted); CF Pages + Functions proxy is the live production architecture. Don't change DNS/CNAME records based on this file without first re-confirming current state — verify against `cf-pages-deploy.md` and the live site instead.
 
 **Current (broken) setup:**
 `trynexshop.com` CNAME → `trynex-lifestyle-shop.pages.dev` (Cloudflare Pages, proxied=true)

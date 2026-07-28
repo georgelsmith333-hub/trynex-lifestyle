@@ -10,3 +10,5 @@ Keep large editable mockup bundles outside the storefront's public runtime path.
 **Why:** Editable PSD/source bundles are large and are not runtime assets; early rollout can expose masking, silhouette, or hardware artifacts to customers.
 
 **How to apply:** Generate and validate the source kit separately, inspect representative product/color/view previews, and only wire approved assets into the studio in a later, deliberate migration.
+
+**Status (2026-07-28):** the 108-asset PSD kit under `attached_assets/trynex-mockup-source-kit/` was spot-checked again (mug front/back pair) and looks correct — a plausible mirrored pair for a symmetric blank mug, no visible artifacts. Still deliberately NOT wired into the live Design Studio; wiring in remains a distinct, explicit follow-up decision, not something to do opportunistically during an unrelated audit/fix pass.

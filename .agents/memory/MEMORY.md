@@ -14,7 +14,7 @@
 - [Cap shadow silhouette](cap-shadow.md) — cap must be in isCylUnderImageSrc so white/light cap uses transparent cutout PNG; otherwise SVG drop-shadow wraps rectangle not cap shape.
 - [Product image maintenance](product-image-maintenance.md) — Unsplash photos can go 404; use Bearer token auth for admin API product updates (cookie CSRF blocked)
 - [Storefront missing PWA assets](storefront-favicon.md) — favicon/manifest.json referenced in index.html but absent from public/ caused a silent 404; regenerate from favicon.svg with ImageMagick if missing again.
-- [DB backup sync engine](db-backup-sync.md) — self-healing full-mirror sync (Main→Failover/Products/Analytics); handles json serialization + schema drift auto-heal.
+- [DB backup sync engine](db-backup-sync.md) — full-mirror sync (Main→Failover/Products/Analytics); manual json serialization; fails loud (no auto-heal) on schema drift between source/target.
 - [Hoodie/longsleeve mockup asset naming](mockup-cutout-real-assets.md) — use `*-cutout-real.png`, not `-cutout-new.png`/`-cutout.png` (broken/ghosted); keep mockups.tsx and CartViewer3D.tsx in sync.
 - [DesignStudio drag & rotate](ds-desktop-drag-fix.md) — pointer:{touch:true} breaks mouse; no pointer restriction + filterTaps:true + threshold:1. Rotate handle: handleRotateDown + rotateHandle memo + SVG circle above selection. Image layers use transparent hit-rect overlay (not pointerEvents="bounding-box") for reliable drag. GITHUB_TOKEN must be refreshed via user — old one expires; push via REST API (git CLI blocked).
 - [Advance deposit: 25%](advance-deposit.md) — changed from 15% to 25% across Checkout.tsx, orders.ts, email.ts, telegramWebhook.ts, FAQ.tsx, TermsOfService.tsx, AdminOrders.tsx, ai.ts. Use 25% everywhere for advance/COD deposit.
@@ -39,10 +39,11 @@
 - [WhatsApp/phone number dynamic](whatsapp-settings-dynamic.md) — all customer-facing WA links read from siteSettings; never hardcode 8801903426915 in JSX.
 - [Vite proxy port](vite-proxy-port.md) — storefront vite.config.ts proxies /api/* to API_PORT env var, default was 5001 (wrong); correct default is 8082 (API server port). Root cause of "no products" in dev.
 - [Mobile Render domain fallback](mobile-render-fallback.md) — .env.production had stale trynex-api.onrender.com; lib/api.ts getBaseUrl() + _layout.tsx setBaseUrl() now detect and replace that domain with trynexshop.com automatically.
-- [GitHub tokens all expired](github-tokens-expired.md) — all GITHUB_* secrets return empty/fail; user must refresh PAT in Replit secrets before git push works again.
 - [DB auto-failover re-probe](db-auto-reprobe.md) — periodic 60s re-probe walks the full chain and switches to the first healthy DB; products/analytics added as failover candidates.
 - [Security: untracked secret files](secrets-untracked.md) — `.replit` and `attached_assets/Pasted-*.txt` removed from git index so credentials cannot be committed again.
 - [Neon API unreachable from Replit](neon-api-unreachable.md) — `api.neon.tech` returns HTTP 000 from the Replit container; DB endpoints still connect directly, so failover logic is the in-container strategy.
 - [Neon quota + CF token status](neon-quota-cf-token.md) — MAIN + FAILOVER over quota; ANALYTICS DB active (73 orders, 10 products); CF tokens expired (401); CF Pages auto-deploys from GitHub push.
 - [DB failover priority fix](db-failover-priority.md) — DATABASE_ANALYTICS promoted above DATABASE_PRODUCTS in lib/db/src/index.ts; analytics has 73 orders from last healthy sync; products was empty of orders causing admin to show 0.
 - [V1 studio migration](v1-studio-migration.md) — V1 is the public Design Studio; V2 remains an explicit rollback route while settings-driven customer contact/payment behavior stays authoritative.
+- [Garment SVG tint alpha leak fix](garment-tint-alpha-fix.md) — feBlend multiply on feFlood makes transparent cutout pixels opaque; needs feComposite operator="in" after to clip alpha back.
+- [Security scan baseline](security-scan-baseline.md) — recurring SAST false-positive shapes (UUID filenames, server-generated tokens) + dependency-override-target gotcha; check before re-investigating.

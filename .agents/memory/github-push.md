@@ -40,6 +40,8 @@ Use the environment variable that is currently valid:
 
 If a token returns HTTP 401, try the next one. The user may need to refresh the token in Replit secrets.
 
+Token validity flips over time in this project (tokens have previously all failed, then later worked again after a refresh). Don't assume expired from a stale note — verify with a cheap `git ls-remote origin HEAD` before concluding push is blocked. As of 2026-07-28, the current origin remote's embedded token works fine for fetch/push.
+
 ## Merge conflicts
 
 When merging `origin/main`, conflicts can appear in files that the remote changed and the local working tree also changed (e.g. `ProductDetail.tsx`). Resolve by keeping the working version when it is correct, or by fixing the remote version if it introduces an out-of-scope variable reference. Always run `pnpm run typecheck` after resolving a merge conflict.
