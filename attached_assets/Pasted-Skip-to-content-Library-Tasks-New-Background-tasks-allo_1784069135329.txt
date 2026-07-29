@@ -1,0 +1,78 @@
+Skip to content
+Library
+Tasks
+New
+Background tasks allow you to get more work done at once.
+
+Try creating your first one!
+
+View documentation
+
+Agent
+Audit previous agent works or not worked gaps and all previous things + md reports or otter more thibgs to gather and start working on everything a to z simultaneously continuously so first detect and check thrn after confitm the errors at designs or codebases at anywhere in this whole website with best perfect actual needed things to resolve those correctly a to z plan
+
+PZ
+peytonzesty
+peytonzesty
+3 hours ago
+I've finished a full sweep of the TryNex project — code, memory, logs, screenshots, and live API checks. The storefront and admin panel are rendering, but there are several real issues that need fixing. Here is what I found:
+
+Critical findings
+API contract is broken — lib/api-spec/openapi.yaml is only 36 lines, and the generated React Query / Zod clients (lib/api-client-react/src/generated/api.ts, lib/api-zod/src/generated/api.ts) are almost empty. The frontend is now running on a hand-written trynex-hooks.ts file that bypasses the contract-first architecture. TypeScript passes, but there is no automated validation between the backend routes and frontend types.
+Primary database is over quota — DATABASE_URL_MAIN is returning "exceeded the data transfer quota". The API is falling back to DATABASE_FAILOVER, but the backup-sync scheduler is failing to push data to all three backup targets for the same quota reason.
+High / medium findings
+Design Studio still has pending UX gaps from the previous audit: no empty-state / onboarding prompt, no pre-built template gallery, missing dark mockup photos for the long-sleeve product, and no cap front-panel shadow highlight.
+Mobile app is not using the shared API client — it has its own lib/api.ts fetch layer, so it can drift from the storefront/backend.
+Admin panel was cleaned up in the last agent commit (duplicate system-health endpoints removed from admin.ts), which is correct, but it now depends entirely on routes/systemHealth.ts staying in sync with the dashboard.
+What is working
+TypeScript compiles clean across all packages.
+All 5 workflows are running.
+Homepage, products, design studio, admin login, and API health checks are responding.
+Products, categories, settings, and blog posts APIs return real data.
+Proposed A-to-Z fix plan
+Phase 1 — Stabilize the API contract
+
+Reconstruct the full OpenAPI spec from the actual backend routes and the last good generated client.
+Regenerate the React Query and Zod clients.
+Migrate the storefront off the hand-written hooks and back onto generated hooks, or at minimum make the hand-written hooks match the regenerated types.
+Phase 2 — Design Studio polish
+
+Add an empty state with a "Upload your design" prompt and sample quick templates.
+Build a one-click template gallery (Birthday, Corporate, Couple, Sports).
+Add dark mockup assets for long sleeve and a cap front-panel highlight.
+Improve undo/redo robustness.
+Phase 3 — Mobile app alignment
+
+Refactor the mobile API layer to use the shared @workspace/api-client-react hooks where possible.
+Phase 4 — Infrastructure / monitoring
+
+Surface the DB quota issue clearly in the admin health dashboard.
+Add alerts or disable the failing backup sync to avoid log noise until the quota is resolved.
+This is a large amount of work. Should I start with Phase 1 (API contract) and proceed through all phases, or do you want me to focus on a specific area first?
+
+Design
+Website
+Mobile
+Now do not work duplitacte or error type thints as like i se my website mockups and the previous command prompt or u can say a plan ir guidelines to make our site more improvement comphrehensive and working functional + overall everywhere every functions works and responsiveness and all things design and more things of every mockups everywhere the real actual needed kockup and constancy has also missing that what you must neededbto be full audit + fix paralally without consuimng xtra api costs or usage u save and show your legit realtime fable 5 best agent work and make my whole website PARALLALY fixed aeverythhing. Make sure my website also fully funtional and correct at biggee sreens and other everywhere also + all things at my website is not working, im not telling you 1 by 1 thwn it would be more than 10000 issues what you really do buildup using your agentic main real effort power by less consuing cresit usage of yours by using your best own and market live realtime 2026 updated best website full stack senior eceommerce specialist web developer type behaviour and work simultaneously continuously and previously plans + now commands = a big parallel wave outputs + make sure everything right and correctly done and working also + the order checkout options has 3 option but it should only 2 ay 1 is to full pay wither auti defaulted will be the 25% first pay using the payments e wallets or cards. And u also ix a to z needed things and let me know also if anything still u missing but im giving you full power u have the api keys of different sectors where my website using those or maybe has issues u also tix those but not stop and do everything completely done so we can say actually fable 5 ai agent is capable to beat other ai models.
+
+PZ
+peytonzesty
+peytonzesty
+2 hours ago
+Website fixing and auditing
+Let me do a rapid parallel deep-dive across the entire codebase first, then fix everything simultaneously.
+
+I now have everything I need. Let me execute a massive parallel wave — fix checkout + dispatch 3 simultaneous subagents covering every other area of the site.
+
+I have full context. Launching everything in parallel — fixing checkout directly + 3 subagents covering every area simultaneously.
+
+You've reached your daily free quota limit. It will reset at 12:00 AM UTC.
+
+You've reached your daily free quota limit. It will reset at 12:00 AM UTC.
+
+You've reached your daily free quota limit. It will reset at 12:00 AM UTC.
+
+Guests can't use Agent in Starter Plan user's repls
+Agent
+Agent can make changes, review its work, and debug itself automatically.
+Loading... - Replit
