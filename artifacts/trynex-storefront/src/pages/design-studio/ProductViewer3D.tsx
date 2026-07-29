@@ -296,8 +296,8 @@ export default function ProductViewer3D({
    * PhotoMockupMesh already uses transparent:true + alphaTest:0.01. */
   const frontMockup = resolveMockup(product, garmentColor, "front");
   const backMockup = resolveMockup(product, garmentColor, "back");
-  // Source-kit previews are opaque studio photos and must not be placed on a
-  // billboard. The reviewed transparent cutout is the 3D source; it is tinted
+  // Opaque studio photos must not be placed on a billboard. The reviewed
+  // transparent cutout is the 3D source; it is tinted
   // only when that cutout is the white fallback rather than an exact dark one.
   const resolvedFrontPhoto = frontMockup.cutoutSrc;
   const resolvedBackPhoto = backMockup.cutoutSrc;

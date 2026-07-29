@@ -4,12 +4,12 @@ import { motion } from "framer-motion";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 
 const FEED_IMAGES = [
-  "/products/custom-tshirt-main.jpg",
-  "/products/custom-hoodie-main.jpg",
-  "/products/custom-mug-main.jpg",
-  "/products/custom-cap-main.jpg",
-  "/products/custom-tshirt-blue.jpg",
-  "/products/custom-hoodie-gray.jpg",
+  "/mockups/new/white-tshirt-front.png",
+  "/mockups/white-hoodie-front.png",
+  "/mockups/white-mug-front.png",
+  "/mockups/white-cap-front.png",
+  "/mockups/new/black-tshirt-front.png",
+  "/mockups/grey-hoodie-front.png",
 ];
 
 const FALLBACK_IMAGES = [

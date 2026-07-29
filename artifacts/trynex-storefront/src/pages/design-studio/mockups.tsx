@@ -26,8 +26,12 @@ const skyblueTshirtFront   = "/mockups/skyblue-tshirt-front.png";
 const skyblueTshirtBack    = "/mockups/skyblue-tshirt-back.png";
 const longsleeveFront          = "/mockups/white-longsleeve-front.png";
 const longsleeveBack           = "/mockups/white-longsleeve-back.png";
-const longsleeveFrontDark      = "/mockups/black-longsleeve-front.png";
-const longsleeveBackDark       = "/mockups/black-longsleeve-back.png";
+// NOTE: black-longsleeve-front.png / black-longsleeve-back.png are broken —
+// confirmed flat solid-black RGB (zero variance, alpha-only silhouette), not
+// a photo. front_2 is a genuine, previously-unused studio photo replacement;
+// no equivalent back photo exists, so the back view falls through to the
+// reviewed darkBackCutout below (same pattern already used for hoodie backs).
+const longsleeveFrontDark      = "/mockups/black-longsleeve-front_2.png";
 const longsleeveFrontCutout    = "/mockups/white-longsleeve-front-cutout-real.png";
 const longsleeveBackCutout     = "/mockups/white-longsleeve-back-cutout-real.png";
 const longsleeveFrontDarkCutout = "/mockups/black-longsleeve-front-cutout.png";
@@ -337,7 +341,7 @@ export const BASE_BY_CATEGORY: Record<
       "#0ea5e9": { front: skyblueTshirtFront, back: skyblueTshirtBack },
     },
   },
-  longsleeve:  { front: longsleeveFront, back: longsleeveBack, darkFront: longsleeveFrontDark, darkBack: longsleeveBackDark, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout, darkFrontCutout: longsleeveFrontDarkCutout, darkBackCutout: longsleeveBackDarkCutout,
+  longsleeve:  { front: longsleeveFront, back: longsleeveBack, darkFront: longsleeveFrontDark, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout, darkFrontCutout: longsleeveFrontDarkCutout, darkBackCutout: longsleeveBackDarkCutout,
     colorPhotos: {
       "#1e3a5f": { front: navyLongsleeveFront     },
       "#6b7280": { front: greyLongsleeveFront     },
@@ -521,9 +525,16 @@ function getCuratedMockup(
 
 /**
  * Resolves one canonical mockup key for every customer-facing surface.
- * Source-kit photos win when the selected color exists in the manifest;
- * curated transparent assets remain the deliberate fallback for custom
- * colors and for surfaces that need alpha silhouettes.
+ *
+ * NOTE: The generated source-kit PNGs (public/mockups/source-kit/*) have a
+ * confirmed compositing defect — nearly every non-white color/face shows a
+ * visible ghost silhouette (a lighter halo offset behind the garment, e.g.
+ * hoodie-black-front, longsleeve-black-front, tshirt-grey-front,
+ * waterbottle-black-front). This is the "ghost shadow of the previous
+ * mockup" defect reported in QA. Resolution is pinned to the reviewed
+ * curated assets until the source-kit PNGs are regenerated and re-vetted
+ * image-by-image; do not re-enable sourceKitPhoto below opportunistically.
+ * The manifest/slug/print-zone tables are kept intact for that future pass.
  */
 export function resolveMockup(
   product: DesignProduct,
@@ -531,21 +542,17 @@ export function resolveMockup(
   face: "front" | "back" = "front",
 ): MockupResolution {
   const category = product.category;
-  const slug = SOURCE_KIT_COLOR_SLUGS[category]?.[normalizeMockupHex(color)];
-  const sourceKitPhoto = slug
-    ? `/mockups/source-kit/${category}-${slug}-${face}.png`
-    : undefined;
-  const curated = getCuratedMockup(product, color, face);
   const zones = SOURCE_KIT_PRINT_ZONES[category];
+  const curated = getCuratedMockup(product, color, face);
 
   return {
-    photoSrc: sourceKitPhoto ?? curated.photoSrc,
+    photoSrc: curated.photoSrc,
     cutoutSrc: curated.cutoutSrc,
-    isColorPhoto: !!sourceKitPhoto || curated.isColorPhoto,
+    isColorPhoto: curated.isColorPhoto,
     cutoutNeedsTint: curated.cutoutNeedsTint,
-    isOpaquePhoto: !!sourceKitPhoto || !curated.photoSrc.includes("cutout"),
+    isOpaquePhoto: !curated.photoSrc.includes("cutout"),
     printZone: zones?.[face] ?? (face === "back" && product.printZoneBack ? product.printZoneBack : product.printZone),
-    source: sourceKitPhoto ? "source-kit" : "curated",
+    source: "curated",
   };
 }
 
@@ -602,8 +609,7 @@ export function GarmentSVG({
     face === "back" ? "back" : "front",
   );
   const hasDarkPhotoAsset = !!(base?.darkFrontCutout || base?.darkFront);
-  const useSourceKitPhoto = resolvedMockup.source === "source-kit";
-  const useBlackPhoto = !!tintHex && isNearBlack(tintHex) && hasDarkPhotoAsset && !useSourceKitPhoto;
+  const useBlackPhoto = !!tintHex && isNearBlack(tintHex) && hasDarkPhotoAsset;
   // Check if there is a real per-colour photo for this exact hex — if so, use it
   // directly instead of the SVG tint path for maximum photographic realism.
   const colorPhotoEntry = tintHex ? base?.colorPhotos?.[tintHex.toLowerCase()] ?? base?.colorPhotos?.[tintHex] : undefined;
@@ -614,12 +620,11 @@ export function GarmentSVG({
   //   4. We have the correct face photo — if the caller wants the back face but only a
   //      front photo exists in colorPhotos, fall through to the tint path so the back view
   //      is still coloured correctly (vs. incorrectly showing the front-side photo).
-  const useColorPhoto = useSourceKitPhoto || (!!colorPhotoEntry && !useBlackPhoto && !isLightTint(tintHex ?? "")
-    && (face !== "back" || !!colorPhotoEntry.back));
+  const useColorPhoto = !!colorPhotoEntry && !useBlackPhoto && !isLightTint(tintHex ?? "")
+    && (face !== "back" || !!colorPhotoEntry.back);
   const needsTint = !!tintHex && !isLightTint(tintHex) && !useBlackPhoto && !useColorPhoto;
 
   const imageSrc = (() => {
-    if (useSourceKitPhoto) return resolvedMockup.photoSrc;
     if (!base) return (face === "back" && product.backSrc) ? product.backSrc : product.frontSrc;
     // ── Real per-colour photo (e.g. navy, red) ────────────────────────────
     // Bypasses SVG tint entirely — highest realism, used when a dedicated photo

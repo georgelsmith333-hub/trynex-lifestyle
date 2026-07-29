@@ -47,3 +47,4 @@
 - [V1 studio migration](v1-studio-migration.md) — V1 is the public Design Studio; V2 remains an explicit rollback route while settings-driven customer contact/payment behavior stays authoritative.
 - [Garment SVG tint alpha leak fix](garment-tint-alpha-fix.md) — feBlend multiply on feFlood makes transparent cutout pixels opaque; needs feComposite operator="in" after to clip alpha back.
 - [Security scan baseline](security-scan-baseline.md) — recurring SAST false-positive shapes (UUID filenames, server-generated tokens) + dependency-override-target gotcha; check before re-investigating.
+- [Backup sync idempotency](backup-sync-idempotency.md) — dbBackupSync.ts INSERT must use ON CONFLICT DO NOTHING; otherwise TRUNCATE+INSERT pattern fails on retry with duplicate key error on settings_pkey.

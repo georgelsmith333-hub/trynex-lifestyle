@@ -34,7 +34,7 @@ vi.mock("@workspace/db", () => ({
   db: {
     select: vi.fn().mockImplementation(() => ({
       from: vi.fn().mockImplementation(() => ({
-        where: vi.fn().mockReturnThis(),
+        where: vi.fn().mockImplementation(() => Promise.resolve(mockProductRow ? [mockProductRow] : [])),
         orderBy: vi.fn().mockReturnThis(),
         limit: vi.fn().mockReturnThis(),
         offset: vi.fn().mockReturnThis(),
@@ -134,14 +134,14 @@ describe("Products API", () => {
     });
     expect(res.status).toBe(201);
     expect(res.body.name).toBe("Test Shirt");
-    expect(res.body.price).toBe("599");
+    expect(res.body.price).toBe(599);
   });
 
   it("PUT /api/products/:id validates price coercion", async () => {
     mockProductRow = { id: 1, name: "Old", slug: "old", price: "400", stock: 10 };
     const res = await request(app).put("/api/products/1").send({ price: "799" });
     expect(res.status).toBe(200);
-    expect(res.body.price).toBe("799");
+    expect(res.body.price).toBe(799);
   });
 
   it("PUT /api/products/:id rejects negative stock", async () => {

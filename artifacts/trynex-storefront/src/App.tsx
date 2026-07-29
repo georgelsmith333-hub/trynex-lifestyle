@@ -245,6 +245,7 @@ function Router() {
             <Route path="/returns"><Redirect to="/return-policy" /></Route>
             <Route path="/refund"><Redirect to="/return-policy" /></Route>
             <Route path="/customize"><Redirect to="/design-studio" /></Route>
+            <Route path="/design"><Redirect to="/design-studio" /></Route>
             <Route path="/gift-hampers"><Redirect to="/hampers" /></Route>
             <Route path="/gift-hamper"><Redirect to="/hampers" /></Route>
 

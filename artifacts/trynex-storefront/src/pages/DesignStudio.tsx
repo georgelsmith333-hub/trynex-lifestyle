@@ -2634,7 +2634,7 @@ export default function DesignStudio() {
                 }}
               >
                 {(() => {
-                  // Header thumbnail — show the source-kit coloured photo for maximum realism
+                  // Header thumbnail — use the same reviewed resolver as the main canvas.
                   const hdrResolved = resolveMockup(displayProduct, selectedColor.hex, "front");
                   const hdrOpaque = hdrResolved.isOpaquePhoto;
                   return (
@@ -2741,7 +2741,7 @@ export default function DesignStudio() {
                       <div
                         className="w-11 h-11 rounded-xl flex items-center justify-center overflow-hidden"
                         style={{
-                          // Opaque source-kit photos fill their own background.
+                          // Opaque reviewed photos fill their own background.
                           // Cutout PNGs still need a background so the silhouette is visible.
                           background: tabIsOpaque ? "transparent" : (isActive ? "#2c2c2e" : "#dedad5"),
                           padding: tabIsOpaque ? "0px" : "3px",
@@ -2762,7 +2762,7 @@ export default function DesignStudio() {
                             }}
                             draggable={false}
                             onError={(e) => {
-                              // Fallback to cutout if source-kit photo 404s
+                               // Fall back to the reviewed cutout if the photo is unavailable.
                               (e.target as HTMLImageElement).src = BASE_BY_CATEGORY[prod.category]?.frontCutout ?? prod.frontSrc;
                             }}
                           />
@@ -2910,7 +2910,7 @@ export default function DesignStudio() {
                 </span>
               </div>
               <div className="relative flex flex-wrap gap-2">
-                {/* Floating source-kit photo preview tooltip — appears when hovering a swatch */}
+                 {/* Floating reviewed photo preview tooltip — appears when hovering a swatch */}
                 {hoveredColorHex && (() => {
                   const hc = studioColors.find(c => c.hex.toLowerCase() === hoveredColorHex.toLowerCase());
                   if (!hc) return null;
@@ -2940,9 +2940,6 @@ export default function DesignStudio() {
                           <span className="inline-block w-3 h-3 rounded-full border border-gray-200 shadow-sm" style={{ background: hc.hex }} />
                           <span className="text-[10px] font-mono text-gray-400">{hc.hex.toUpperCase()}</span>
                         </div>
-                        {resolved.source === "source-kit" && (
-                          <span className="mt-1 inline-block text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md" style={{ background: "#f0fdf4", color: "#15803d" }}>✓ Studio Photo</span>
-                        )}
                       </div>
                     </div>
                   );
@@ -2979,7 +2976,7 @@ export default function DesignStudio() {
                           transform: "scale(1.28)",
                         }} />
                       )}
-                      {/* Swatch circle — shows source-kit photo as background for realism */}
+                       {/* Swatch circle — keeps the color itself as the stable preview. */}
                       <span
                         className="absolute rounded-full"
                         style={{
@@ -5154,8 +5151,8 @@ export default function DesignStudio() {
                               background: isSelected ? "#fff9f6" : "white",
                             }}
                           >
-                            {/* Product photo — uses source-kit photo for the currently selected colour
-                                  so users see the real coloured garment before picking */}
+                             {/* Product photo — uses the same reviewed resolver as the canvas
+                                   so users see the real garment before picking. */}
                             {(() => {
                               const pkColorHex = prod.colors.some(c => c.hex.toLowerCase() === selectedColor.hex.toLowerCase())
                                 ? selectedColor.hex : prod.garmentColor;
