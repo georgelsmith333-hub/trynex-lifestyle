@@ -48,8 +48,12 @@ interface PrintZone { left: number; top: number; w: number; h: number; }
 const MOCKUP_CONFIG: Record<string, {
   lightMockup: string;
   darkMockup: string;
+  backLightMockup?: string;
+  backDarkMockup?: string;
   printZone: PrintZone;
+  wrapPrintZone?: PrintZone;
   zones: string[];
+  mugModes?: { value: string; label: string; }[];
   colors: { name: string; hex: string }[];
 }> = {
   tshirt: {
@@ -85,8 +89,16 @@ const MOCKUP_CONFIG: Record<string, {
   mug: {
     lightMockup: "white-mug-front.png",
     darkMockup: "black-mug-front.png",
+    backLightMockup: "white-mug-back.png",
+    backDarkMockup: "black-mug-back.png",
     printZone: { left: 0.21, top: 0.24, w: 0.58, h: 0.52 },
+    wrapPrintZone: { left: 0.12, top: 0.18, w: 0.76, h: 0.64 },
     zones: ["Front"],
+    mugModes: [
+      { value: "side1", label: "Side 1" },
+      { value: "side2", label: "Side 2" },
+      { value: "wrap", label: "Full Wrap" },
+    ],
     colors: [
       { name: "White", hex: "#F5F5F3" },
       { name: "Black", hex: "#1a1a1a" },
@@ -144,6 +156,7 @@ export default function DesignScreen() {
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
   const [selectedColor, setSelectedColor] = useState({ name: "White", hex: "#F5F5F3" });
   const [selectedZone, setSelectedZone] = useState("Front");
+  const [mugMode, setMugMode] = useState<"side1" | "side2" | "wrap">("side1");
   const [designImage, setDesignImage] = useState<{ uri: string; base64: string } | null>(null);
 
   const selectedProduct = useMemo(
@@ -156,12 +169,16 @@ export default function DesignScreen() {
     [selectedProduct],
   );
 
+  const isMug = selectedProduct?.slug?.includes("mug") ?? false;
   const useDarkMockup = !isLightHex(selectedColor.hex);
-  const mockupSrc = useDarkMockup
-    ? mockupUrl(mockupCfg.darkMockup)
-    : mockupUrl(mockupCfg.lightMockup);
+  const isMugBack = isMug && mugMode === "side2";
+  const mockupSrc = isMugBack
+    ? mockupUrl(useDarkMockup ? (mockupCfg.backDarkMockup ?? "black-mug-back.png") : (mockupCfg.backLightMockup ?? "white-mug-back.png"))
+    : useDarkMockup ? mockupUrl(mockupCfg.darkMockup) : mockupUrl(mockupCfg.lightMockup);
 
-  const pz = mockupCfg.printZone;
+  const pz = isMug && mugMode === "wrap" && mockupCfg.wrapPrintZone
+    ? mockupCfg.wrapPrintZone
+    : mockupCfg.printZone;
   const printLeft   = PREVIEW_SIZE * pz.left;
   const printTop    = PREVIEW_SIZE * pz.top;
   const printWidth  = PREVIEW_SIZE * pz.w;
@@ -171,6 +188,7 @@ export default function DesignScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedProductId(p.id);
     const cfg = getMockupConfig(p.slug);
+    setMugMode("side1");
     setSelectedColor(cfg.colors[0]);
     setSelectedZone(cfg.zones[0]);
   };
@@ -226,6 +244,7 @@ export default function DesignScreen() {
         customNote: JSON.stringify({
           studioDesign: true,
           product: selectedProduct.name,
+          ...(isMug ? { mugMode } : {}),
           zone: selectedZone,
           color: selectedColor.hex,
           hasCustomDesign: !!designImage?.base64,
@@ -423,6 +442,31 @@ export default function DesignScreen() {
                     ]}
                   >
                     <Text style={[styles.pillText, { color: active ? colors.primary : colors.mutedForeground }]}>{z}</Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </View>
+        )}
+
+        {/* ── Mug mode selector ──────────────────────────── */}
+        {isMug && mockupCfg.mugModes && (
+          <View style={styles.section}>
+            <Text style={[styles.label, { color: colors.foreground }]}>Mug Side</Text>
+            <View style={styles.pillRow}>
+              {mockupCfg.mugModes.map((m) => {
+                const active = mugMode === m.value;
+                return (
+                  <Pressable
+                    key={m.value}
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      setMugMode(m.value as typeof mugMode);
+                      setSelectedZone(m.value === "wrap" ? "Full Wrap" : m.label);
+                    }}
+                    style={[styles.pill, { backgroundColor: active ? colors.secondary : colors.muted, borderColor: active ? colors.primary : colors.border }]}
+                  >
+                    <Text style={[styles.pillText, { color: active ? colors.primary : colors.mutedForeground }]}>{m.label}</Text>
                   </Pressable>
                 );
               })}
