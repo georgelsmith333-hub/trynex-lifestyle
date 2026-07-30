@@ -224,9 +224,16 @@ export default function DesignScreen() {
       {
         color: selectedColor.name,
         customNote: JSON.stringify({
+          studioDesign: true,
+          product: selectedProduct.name,
           zone: selectedZone,
           color: selectedColor.hex,
           hasCustomDesign: !!designImage?.base64,
+          originalAssets: (customImages ?? []).map((objectPath) => ({
+            objectPath,
+            filename: objectPath.split("/").pop() || "mobile-design",
+            source: "mobile-design-studio",
+          })),
         }),
         customImages,
       },

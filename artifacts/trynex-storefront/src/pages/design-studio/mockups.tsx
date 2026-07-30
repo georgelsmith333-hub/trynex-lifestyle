@@ -44,6 +44,8 @@ const hoodieFrontCutout    = "/mockups/white-hoodie-front-cutout-real.png";
 const hoodieBackCutout     = "/mockups/white-hoodie-back-cutout-real.png";
 const mugFront             = "/mockups/white-mug-front.png";
 const mugFrontDark         = "/mockups/black-mug-front.png";
+const mugBack              = "/mockups/source-kit/mug-white-back.png";
+const mugBackDark          = "/mockups/source-kit/mug-black-back.png";
 const mugFrontCutout       = "/mockups/white-mug-front-cutout.png";
 const mugFrontDarkCutout   = "/mockups/black-mug-front-cutout.png";
 const capFront             = "/mockups/white-cap-front.png";
@@ -365,7 +367,28 @@ export const BASE_BY_CATEGORY: Record<
       "#6b1a2c": { front: burgundyHoodieFront },
     },
   },
-  mug:         { front: mugFront, back: mugFront, darkFront: mugFrontDark, darkBack: mugFrontDark, frontCutout: mugFrontCutout, darkFrontCutout: mugFrontDarkCutout, darkBackCutout: mugFrontDarkCutout },
+  mug:         {
+    front: mugFront,
+    back: mugBack,
+    darkFront: mugFrontDark,
+    darkBack: mugBackDark,
+    frontCutout: mugFrontCutout,
+    backCutout: mugBack,
+    darkFrontCutout: mugFrontDarkCutout,
+    darkBackCutout: mugBackDark,
+    colorPhotos: {
+      "#f5f5f5": { front: "/mockups/source-kit/mug-white-front.png", back: "/mockups/source-kit/mug-white-back.png" },
+      "#1c1917": { front: "/mockups/source-kit/mug-black-front.png", back: "/mockups/source-kit/mug-black-back.png" },
+      "#1e3a5f": { front: "/mockups/source-kit/mug-navy-front.png", back: "/mockups/source-kit/mug-navy-back.png" },
+      "#dc2626": { front: "/mockups/source-kit/mug-red-front.png", back: "/mockups/source-kit/mug-red-back.png" },
+      "#16a34a": { front: "/mockups/source-kit/mug-green-front.png", back: "/mockups/source-kit/mug-green-back.png" },
+      "#7c3aed": { front: "/mockups/source-kit/mug-purple-front.png", back: "/mockups/source-kit/mug-purple-back.png" },
+      "#0ea5e9": { front: "/mockups/source-kit/mug-sky-blue-front.png", back: "/mockups/source-kit/mug-sky-blue-back.png" },
+      "#ec4899": { front: "/mockups/source-kit/mug-pink-front.png", back: "/mockups/source-kit/mug-pink-back.png" },
+      "#7f1d1d": { front: "/mockups/source-kit/mug-maroon-front.png", back: "/mockups/source-kit/mug-maroon-back.png" },
+      "#ea580c": { front: "/mockups/source-kit/mug-orange-front.png", back: "/mockups/source-kit/mug-orange-back.png" },
+    },
+  },
   cap:         { front: capFront, frontCutout: capFrontCutout },
   waterbottle: { front: waterBottleFront, frontCutout: waterBottleCutout,
     colorPhotos: {
@@ -663,15 +686,12 @@ export function GarmentSVG({
     return base.front;
   })();
 
-  const pz = (() => {
-    if (!isMug) return (face === "back" && product.printZoneBack) ? product.printZoneBack : product.printZone;
-    // All mug modes use the same full-body print area so the design always fills the mug.
-    return MUG_PZ;
-  })();
-
-  // Right-side mode still mirrors the design onto the opposite side of the same mug photo.
-  const isMugRightSide = isMug && mugMode === "side2";
-  const displayPZ = isMugRightSide ? { ...pz, x: 1000 - pz.x - pz.w } : pz;
+  const pz = isMug && mugMode === "wrap"
+    ? MUG_PZ
+    : isMug
+      ? MUG_SIDE_PZ
+      : (face === "back" && product.printZoneBack) ? product.printZoneBack : product.printZone;
+  const displayPZ = pz;
 
   // Source used for the coloured tint path. We always use the transparent cutout PNG
   // itself, not the full studio photo + a separate mask. The cutout already carries

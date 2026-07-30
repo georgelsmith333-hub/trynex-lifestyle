@@ -8,12 +8,17 @@ import { redisCacheGet, redisCacheSet, redisCacheDel } from "../lib/redis";
 import { pingSitemaps } from "../lib/sitemapPing";
 
 // ── Zod validation schemas ────────────────────────────────────────────────
-const ProductCreateSchema = z.object({
+const moneyValue = z.union([z.string(), z.number()])
+  .transform(v => Number(v))
+  .refine(Number.isFinite, "Must be a valid number")
+  .refine(v => v >= 0, "Must not be negative");
+
+const ProductFieldsSchema = z.object({
   name: z.string().min(1, "Name is required").max(255),
   slug: z.string().min(1, "Slug is required").max(255),
   description: z.string().optional(),
-  price: z.union([z.string(), z.number()]).transform(v => Number(v)),
-  discountPrice: z.union([z.string(), z.number()]).optional().transform(v => v !== undefined ? Number(v) : undefined),
+  price: moneyValue,
+  discountPrice: moneyValue.optional(),
   categoryId: z.number().int().positive().optional(),
   imageUrl: z.string().optional(),
   images: z.array(z.string()).optional(),
@@ -26,11 +31,33 @@ const ProductCreateSchema = z.object({
   tags: z.array(z.string()).optional(),
 });
 
-const ProductUpdateSchema = ProductCreateSchema.partial().extend({
+const ProductCreateSchema = ProductFieldsSchema.superRefine((value, ctx) => {
+  if (value.discountPrice !== undefined && value.discountPrice > value.price) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["discountPrice"],
+      message: "Discount price cannot exceed the regular price",
+    });
+  }
+});
+
+const ProductUpdateSchema = ProductFieldsSchema.partial().extend({
   name: z.string().min(1).max(255).optional(),
   slug: z.string().min(1).max(255).optional(),
-  price: z.union([z.string(), z.number()]).transform(v => Number(v)).optional(),
+  price: moneyValue.optional(),
   stock: z.number().int().min(0).optional(),
+}).superRefine((value, ctx) => {
+  if (
+    value.discountPrice !== undefined &&
+    value.price !== undefined &&
+    value.discountPrice > value.price
+  ) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["discountPrice"],
+      message: "Discount price cannot exceed the regular price",
+    });
+  }
 });
 
 const router: IRouter = Router();

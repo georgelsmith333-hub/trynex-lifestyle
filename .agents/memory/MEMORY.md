@@ -48,3 +48,4 @@
 - [Garment SVG tint alpha leak fix](garment-tint-alpha-fix.md) — feBlend multiply on feFlood makes transparent cutout pixels opaque; needs feComposite operator="in" after to clip alpha back.
 - [Security scan baseline](security-scan-baseline.md) — recurring SAST false-positive shapes (UUID filenames, server-generated tokens) + dependency-override-target gotcha; check before re-investigating.
 - [Backup sync idempotency](backup-sync-idempotency.md) — dbBackupSync.ts INSERT must use ON CONFLICT DO NOTHING; otherwise TRUNCATE+INSERT pattern fails on retry with duplicate key error on settings_pkey.
+- [Mobile studio order assets](mobile-studio-order-assets.md) — mobile custom designs must preserve studioDesign/originalAssets metadata through cart and checkout.

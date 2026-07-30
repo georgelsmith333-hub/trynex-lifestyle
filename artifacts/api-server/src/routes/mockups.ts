@@ -5,6 +5,24 @@ import { requireAdmin } from "../middlewares/adminAuth";
 
 const router = Router();
 
+function isValidImageUrl(value: unknown): value is string {
+  if (typeof value !== "string" || value.trim().length < 1) return false;
+  if (value.startsWith("/")) return true;
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" || url.protocol === "http:";
+  } catch {
+    return false;
+  }
+}
+
+function parseOptionalPositiveInt(value: unknown): number | null | undefined {
+  if (value === undefined) return undefined;
+  if (value === null || value === "") return null;
+  const parsed = typeof value === "number" ? value : Number(value);
+  return Number.isInteger(parsed) && parsed >= 0 ? parsed : undefined;
+}
+
 router.get("/admin/mockups", requireAdmin, async (req: Request, res: Response) => {
   try {
     const { q, productId, tag, active } = req.query;
@@ -35,20 +53,30 @@ router.get("/admin/mockups", requireAdmin, async (req: Request, res: Response) =
 router.post("/admin/mockups", requireAdmin, async (req: Request, res: Response) => {
   try {
     const { name, description, productId, productName, imageUrl, thumbUrl, tags, isActive, sortOrder } = req.body;
-    if (!name || !imageUrl) {
+    const parsedProductId = parseOptionalPositiveInt(productId);
+    const parsedSortOrder = parseOptionalPositiveInt(sortOrder);
+    if (typeof name !== "string" || !name.trim() || !isValidImageUrl(imageUrl)) {
       res.status(400).json({ error: "validation_error", message: "name and imageUrl are required" });
       return;
     }
+    if ((productId !== undefined && parsedProductId === undefined) || (sortOrder !== undefined && parsedSortOrder === undefined)) {
+      res.status(400).json({ error: "validation_error", message: "productId and sortOrder must be non-negative integers" });
+      return;
+    }
+    if (thumbUrl !== undefined && thumbUrl !== null && !isValidImageUrl(thumbUrl)) {
+      res.status(400).json({ error: "validation_error", message: "thumbUrl must be a valid URL or local path" });
+      return;
+    }
     const [row] = await db.insert(mockupsTable).values({
-      name,
+      name: name.trim(),
       description: description ?? null,
-      productId: productId ? parseInt(productId, 10) : null,
+      productId: parsedProductId ?? null,
       productName: productName ?? null,
       imageUrl,
       thumbUrl: thumbUrl ?? null,
       tags: Array.isArray(tags) ? tags : [],
       isActive: isActive !== false,
-      sortOrder: sortOrder ?? 0,
+      sortOrder: parsedSortOrder ?? 0,
     }).returning();
     res.status(201).json(row);
   } catch (err) {
@@ -66,15 +94,47 @@ router.patch("/admin/mockups/:id", requireAdmin, async (req: Request, res: Respo
     }
     const { name, description, productId, productName, imageUrl, thumbUrl, tags, isActive, sortOrder } = req.body;
     const update: Partial<typeof mockupsTable.$inferInsert> = { updatedAt: new Date() };
-    if (name !== undefined) update.name = name;
+    if (name !== undefined) {
+      if (typeof name !== "string" || !name.trim()) {
+        res.status(400).json({ error: "validation_error", message: "name must be a non-empty string" });
+        return;
+      }
+      update.name = name.trim();
+    }
     if (description !== undefined) update.description = description;
-    if (productId !== undefined) update.productId = productId ? parseInt(productId, 10) : null;
+    if (productId !== undefined) {
+      const parsed = parseOptionalPositiveInt(productId);
+      if (parsed === undefined) {
+        res.status(400).json({ error: "validation_error", message: "productId must be a non-negative integer or null" });
+        return;
+      }
+      update.productId = parsed;
+    }
     if (productName !== undefined) update.productName = productName;
-    if (imageUrl !== undefined) update.imageUrl = imageUrl;
-    if (thumbUrl !== undefined) update.thumbUrl = thumbUrl;
+    if (imageUrl !== undefined) {
+      if (!isValidImageUrl(imageUrl)) {
+        res.status(400).json({ error: "validation_error", message: "imageUrl must be a valid URL or local path" });
+        return;
+      }
+      update.imageUrl = imageUrl;
+    }
+    if (thumbUrl !== undefined) {
+      if (thumbUrl !== null && !isValidImageUrl(thumbUrl)) {
+        res.status(400).json({ error: "validation_error", message: "thumbUrl must be a valid URL or local path" });
+        return;
+      }
+      update.thumbUrl = thumbUrl;
+    }
     if (tags !== undefined) update.tags = Array.isArray(tags) ? tags : [];
     if (isActive !== undefined) update.isActive = isActive;
-    if (sortOrder !== undefined) update.sortOrder = sortOrder;
+    if (sortOrder !== undefined) {
+      const parsed = parseOptionalPositiveInt(sortOrder);
+      if (parsed === undefined || parsed === null) {
+        res.status(400).json({ error: "validation_error", message: "sortOrder must be a non-negative integer" });
+        return;
+      }
+      update.sortOrder = parsed;
+    }
 
     const [row] = await db.update(mockupsTable).set(update).where(eq(mockupsTable.id, id)).returning();
     if (!row) {

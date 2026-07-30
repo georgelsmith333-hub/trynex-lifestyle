@@ -65,7 +65,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   ) => {
     setItems((prev) => {
       const existing = prev.find(
-        (i) => i.product.id === product.id && i.size === options?.size && i.color === options?.color,
+        (i) =>
+          i.product.id === product.id &&
+          i.size === options?.size &&
+          i.color === options?.color &&
+          i.customNote === options?.customNote &&
+          JSON.stringify(i.customImages ?? []) === JSON.stringify(options?.customImages ?? []),
       );
       let next: CartItem[];
       if (existing) {

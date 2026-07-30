@@ -327,8 +327,8 @@ export default function ProductViewer3D({
 
   /* ── Mug: combined 2048×1024 wrap texture (front on left, back on right) ─── */
   const mugWrapTex = useMugWrapTexture(
-    isMug ? front : undefined,
-    isMug && back ? back : undefined,
+    isMug ? (isWrapMode || activeFace === "front" ? front : back) : undefined,
+    isMug && isWrapMode && back ? back : undefined,
     0.16,
   );
 
