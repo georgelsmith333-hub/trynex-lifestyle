@@ -3,7 +3,7 @@ import {
   LayoutDashboard, Package, ShoppingCart, Settings, LogOut, Menu, X,
   FileText, Users, HardDrive, Sparkles, Star, Code2, BookOpen, Paintbrush,
   GitBranch, Gift, Layers, History, Shield, Search, Tag, Share2, Mail,
-  ChevronRight, DatabaseZap, Images, Bot, KeyRound,
+  ChevronRight, DatabaseZap, Images, Bot, KeyRound, ShieldCheck, LayoutGrid,
 } from "lucide-react";
 import { useAdminLogout, useAdminMe } from "@workspace/api-client-react";
 import React, { useEffect, useState } from "react";
