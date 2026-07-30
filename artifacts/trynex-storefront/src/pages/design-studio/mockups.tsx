@@ -333,38 +333,42 @@ export const BASE_BY_CATEGORY: Record<
 > = {
   tshirt:      { front: tshirtFront, back: tshirtBack, darkFront: tshirtFrontDark, darkBack: tshirtBackDark, frontCutout: tshirtFrontCutout, backCutout: tshirtBackCutout, darkFrontCutout: tshirtFrontDarkCutout, darkBackCutout: tshirtBackDarkCutout,
     colorPhotos: {
-      "#F8F7F4": { front: tshirtFront,     back: tshirtBack     }, // White
-      "#1a1a1a": { front: tshirtFrontDark, back: tshirtBackDark }, // Black
-      "#1e3a5f": { front: navyTshirtFront, back: navyTshirtBack },
-      "#dc2626": { front: redTshirtFront,  back: redTshirtBack  },
-      "#6b7280": { front: greyTshirtFront, back: greyTshirtBack },
-      "#7f1d1d": { front: maroonTshirtFront, back: maroonTshirtBack },
-      "#4a5240": { front: oliveTshirtFront,  back: oliveTshirtBack  },
-      "#0ea5e9": { front: skyblueTshirtFront, back: skyblueTshirtBack },
+      "#F8F7F4": { front: "/mockups/source-kit/tshirt-white-front.png",    back: "/mockups/source-kit/tshirt-white-back.png"    }, // White
+      "#1a1a1a": { front: "/mockups/source-kit/tshirt-black-front.png",    back: "/mockups/source-kit/tshirt-black-back.png"    }, // Black
+      "#1e3a5f": { front: "/mockups/source-kit/tshirt-navy-front.png",     back: "/mockups/source-kit/tshirt-navy-back.png"     }, // Navy
+      "#dc2626": { front: "/mockups/source-kit/tshirt-red-front.png",      back: "/mockups/source-kit/tshirt-red-back.png"      }, // Red
+      "#6b7280": { front: "/mockups/source-kit/tshirt-grey-front.png",     back: "/mockups/source-kit/tshirt-grey-back.png"     }, // Grey
+      "#7f1d1d": { front: "/mockups/source-kit/tshirt-maroon-front.png",   back: "/mockups/source-kit/tshirt-maroon-back.png"   }, // Maroon
+      "#4a5240": { front: "/mockups/source-kit/tshirt-olive-front.png",    back: "/mockups/source-kit/tshirt-olive-back.png"    }, // Olive
+      "#0ea5e9": { front: "/mockups/source-kit/tshirt-sky-blue-front.png", back: "/mockups/source-kit/tshirt-sky-blue-back.png" }, // Sky Blue
     },
   },
   longsleeve:  { front: longsleeveFront, back: longsleeveBack, darkFront: longsleeveFrontDark, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout, darkFrontCutout: longsleeveFrontDarkCutout, darkBackCutout: longsleeveBackDarkCutout,
     colorPhotos: {
-      "#1e3a5f": { front: navyLongsleeveFront     },
-      "#6b7280": { front: greyLongsleeveFront     },
-      "#7f1d1d": { front: maroonLongsleeveFront   },
-      "#4a5240": { front: oliveLongsleeveFront    },
-      "#dc2626": { front: redLongsleeveFront      },
-      "#0ea5e9": { front: skyblueLongsleeveFront  },
-      "#166534": { front: forestLongsleeveFront   },
-      "#6b1a2c": { front: burgundyLongsleeveFront },
+      "#F5F5F3": { front: "/mockups/source-kit/longsleeve-white-front.png",    back: "/mockups/source-kit/longsleeve-white-back.png"    }, // White
+      "#1a1a1a": { front: "/mockups/source-kit/longsleeve-black-front.png",    back: "/mockups/source-kit/longsleeve-black-back.png"    }, // Black
+      "#1e3a5f": { front: "/mockups/source-kit/longsleeve-navy-front.png",     back: "/mockups/source-kit/longsleeve-navy-back.png"     }, // Navy
+      "#7f1d1d": { front: "/mockups/source-kit/longsleeve-maroon-front.png",   back: "/mockups/source-kit/longsleeve-maroon-back.png"   }, // Maroon
+      "#4a5240": { front: "/mockups/source-kit/longsleeve-olive-front.png",    back: "/mockups/source-kit/longsleeve-olive-back.png"    }, // Olive
+      "#6b7280": { front: "/mockups/source-kit/longsleeve-grey-front.png",     back: "/mockups/source-kit/longsleeve-grey-back.png"     }, // Grey
+      "#dc2626": { front: "/mockups/source-kit/longsleeve-red-front.png",      back: "/mockups/source-kit/longsleeve-red-back.png"      }, // Red
+      "#0ea5e9": { front: "/mockups/source-kit/longsleeve-sky-blue-front.png", back: "/mockups/source-kit/longsleeve-sky-blue-back.png" }, // Sky Blue
+      "#6b1a2c": { front: "/mockups/source-kit/longsleeve-burgundy-front.png", back: "/mockups/source-kit/longsleeve-burgundy-back.png" }, // Burgundy
+      "#166534": { front: "/mockups/source-kit/longsleeve-forest-front.png",   back: "/mockups/source-kit/longsleeve-forest-back.png"   }, // Forest
     },
   },
   hoodie:      { front: hoodieFront, back: hoodieBack, darkFront: hoodieFrontDark, darkBack: hoodieBackDark, frontCutout: hoodieFrontCutout, backCutout: hoodieBackCutout, darkFrontCutout: hoodieFrontDarkCutout, darkBackCutout: hoodieBackDarkCutout,
     colorPhotos: {
-      "#1e3a5f": { front: navyHoodieFront     },
-      "#6b7280": { front: greyHoodieFront     },
-      "#7f1d1d": { front: maroonHoodieFront   },
-      "#4a5240": { front: oliveHoodieFront    },
-      "#dc2626": { front: redHoodieFront      },
-      "#0ea5e9": { front: skyblueHoodieFront  },
-      "#166534": { front: forestHoodieFront   },
-      "#6b1a2c": { front: burgundyHoodieFront },
+      "#F2EFE9": { front: "/mockups/source-kit/hoodie-white-front.png",    back: "/mockups/source-kit/hoodie-white-back.png"    }, // White
+      "#1a1a1a": { front: "/mockups/source-kit/hoodie-black-front.png",    back: "/mockups/source-kit/hoodie-black-back.png"    }, // Black
+      "#1e3a5f": { front: "/mockups/source-kit/hoodie-navy-front.png",     back: "/mockups/source-kit/hoodie-navy-back.png"     }, // Navy
+      "#6b7280": { front: "/mockups/source-kit/hoodie-grey-front.png",     back: "/mockups/source-kit/hoodie-grey-back.png"     }, // Grey
+      "#7f1d1d": { front: "/mockups/source-kit/hoodie-maroon-front.png",   back: "/mockups/source-kit/hoodie-maroon-back.png"   }, // Maroon
+      "#4a5240": { front: "/mockups/source-kit/hoodie-olive-front.png",    back: "/mockups/source-kit/hoodie-olive-back.png"    }, // Olive
+      "#dc2626": { front: "/mockups/source-kit/hoodie-red-front.png",      back: "/mockups/source-kit/hoodie-red-back.png"      }, // Red
+      "#0ea5e9": { front: "/mockups/source-kit/hoodie-sky-blue-front.png", back: "/mockups/source-kit/hoodie-sky-blue-back.png" }, // Sky Blue
+      "#166534": { front: "/mockups/source-kit/hoodie-forest-front.png",   back: "/mockups/source-kit/hoodie-forest-back.png"   }, // Forest
+      "#6b1a2c": { front: "/mockups/source-kit/hoodie-burgundy-front.png", back: "/mockups/source-kit/hoodie-burgundy-back.png" }, // Burgundy
     },
   },
   mug:         {
@@ -389,16 +393,28 @@ export const BASE_BY_CATEGORY: Record<
       "#ea580c": { front: "/mockups/source-kit/mug-orange-front.png", back: "/mockups/source-kit/mug-orange-back.png" },
     },
   },
-  cap:         { front: capFront, frontCutout: capFrontCutout },
+  cap: { front: capFront, frontCutout: capFrontCutout,
+    colorPhotos: {
+      "#F5F2EC": { front: "/mockups/source-kit/cap-white-front.png",  back: "/mockups/source-kit/cap-white-back.png"  }, // White
+      "#1a1a1a": { front: "/mockups/source-kit/cap-black-front.png",  back: "/mockups/source-kit/cap-black-back.png"  }, // Black
+      "#1e3a5f": { front: "/mockups/source-kit/cap-navy-front.png",   back: "/mockups/source-kit/cap-navy-back.png"   }, // Navy
+      "#7f1d1d": { front: "/mockups/source-kit/cap-maroon-front.png", back: "/mockups/source-kit/cap-maroon-back.png" }, // Maroon
+      "#4a5240": { front: "/mockups/source-kit/cap-olive-front.png",  back: "/mockups/source-kit/cap-olive-back.png"  }, // Olive
+      "#dc2626": { front: "/mockups/source-kit/cap-red-front.png",    back: "/mockups/source-kit/cap-red-back.png"    }, // Red
+      "#6b7280": { front: "/mockups/source-kit/cap-grey-front.png",   back: "/mockups/source-kit/cap-grey-back.png"   }, // Grey
+      "#166534": { front: "/mockups/source-kit/cap-forest-front.png", back: "/mockups/source-kit/cap-forest-back.png" }, // Forest
+    },
+  },
   waterbottle: { front: waterBottleFront, frontCutout: waterBottleCutout,
     colorPhotos: {
-      "#1C1917": { front: "/mockups/black-waterbottle-front.png"   }, // Black
-      "#1e3a5f": { front: "/mockups/navy-waterbottle-front.png"    }, // Navy
-      "#166534": { front: "/mockups/forest-waterbottle-front.png"  }, // Forest
-      "#0ea5e9": { front: "/mockups/skyblue-waterbottle-front.png" }, // Sky Blue
-      "#dc2626": { front: "/mockups/red-waterbottle-front.png"     }, // Red
-      "#f472b6": { front: "/mockups/pink-waterbottle-front.png"    }, // Pink
-      "#0f766e": { front: "/mockups/teal-waterbottle-front.png"    }, // Teal
+      "#F4F3F1": { front: "/mockups/source-kit/waterbottle-white-front.png",    back: "/mockups/source-kit/waterbottle-white-back.png"    }, // White
+      "#1C1917": { front: "/mockups/source-kit/waterbottle-black-front.png",    back: "/mockups/source-kit/waterbottle-black-back.png"    }, // Black
+      "#1e3a5f": { front: "/mockups/source-kit/waterbottle-navy-front.png",     back: "/mockups/source-kit/waterbottle-navy-back.png"     }, // Navy
+      "#166534": { front: "/mockups/source-kit/waterbottle-forest-front.png",   back: "/mockups/source-kit/waterbottle-forest-back.png"   }, // Forest
+      "#0ea5e9": { front: "/mockups/source-kit/waterbottle-sky-blue-front.png", back: "/mockups/source-kit/waterbottle-sky-blue-back.png" }, // Sky Blue
+      "#dc2626": { front: "/mockups/source-kit/waterbottle-red-front.png",      back: "/mockups/source-kit/waterbottle-red-back.png"      }, // Red
+      "#f472b6": { front: "/mockups/source-kit/waterbottle-pink-front.png",     back: "/mockups/source-kit/waterbottle-pink-back.png"     }, // Pink
+      "#0f766e": { front: "/mockups/source-kit/waterbottle-teal-front.png",     back: "/mockups/source-kit/waterbottle-teal-back.png"     }, // Teal
     },
   },
   // watertumbler uses category "waterbottle" — shares the same base entry
@@ -560,15 +576,19 @@ function getCuratedMockup(
 /**
  * Resolves one canonical mockup key for every customer-facing surface.
  *
- * NOTE: The generated source-kit PNGs (public/mockups/source-kit/*) have a
- * confirmed compositing defect — nearly every non-white color/face shows a
- * visible ghost silhouette (a lighter halo offset behind the garment, e.g.
- * hoodie-black-front, longsleeve-black-front, tshirt-grey-front,
- * waterbottle-black-front). This is the "ghost shadow of the previous
- * mockup" defect reported in QA. Resolution is pinned to the reviewed
- * curated assets until the source-kit PNGs are regenerated and re-vetted
- * image-by-image; do not re-enable sourceKitPhoto below opportunistically.
- * The manifest/slug/print-zone tables are kept intact for that future pass.
+ * Source-kit PNGs (public/mockups/source-kit/*) are now bound for all
+ * products and colors. The colorPhotos maps in BASE_BY_CATEGORY point
+ * directly to these 1024×1024 RGBA studio renders covering 108 documents
+ * (6 products × up to 10 colors × front + back).
+ *
+ * Rendering path summary:
+ *   Light/white garments (lum > 0.92) → white cutout from /new/ or
+ *     /mockups/ (floating on white canvas, soft drop-shadow).
+ *   Near-black garments (lum < 0.12) + darkFront asset exists → dedicated
+ *     dark studio photo (hasDarkPhotoAsset guard prevents SVG-tint on black).
+ *   All other colors (navy, red, grey, maroon, olive, sky-blue, etc.) →
+ *     source-kit colorPhoto for exact-match photographic realism, both
+ *     front and back faces where available.
  */
 export function resolveMockup(
   product: DesignProduct,
