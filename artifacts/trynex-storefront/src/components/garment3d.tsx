@@ -518,10 +518,12 @@ export function MugBody({
   wrapTex,
   garmentColor,
   isWrapMode = false,
+  activeFace = "front",
 }: {
   wrapTex?: THREE.Texture | null;
   garmentColor: string;
   isWrapMode?: boolean;
+  activeFace?: "front" | "back";
 }) {
   const H     = 1.80;
   const R_TOP = 0.72;
@@ -614,7 +616,10 @@ export function MugBody({
 
       {/* Single-side: planar front-half overlay */}
       {wrapTex && !isWrapMode && (
-        <mesh geometry={frontOverlayGeo}>
+        <mesh
+          geometry={frontOverlayGeo}
+          rotation-y={activeFace === "back" ? Math.PI : 0}
+        >
           <meshStandardMaterial
             map={wrapTex}
             transparent

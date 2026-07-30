@@ -503,6 +503,17 @@ function normalizeMockupHex(hex: string): string {
   return hex.trim().toLowerCase();
 }
 
+function findColorPhoto(
+  colorPhotos: Record<string, { front: string; back?: string }> | undefined,
+  color: string,
+): { front: string; back?: string } | undefined {
+  if (!colorPhotos) return undefined;
+  const normalized = normalizeMockupHex(color);
+  return Object.entries(colorPhotos).find(
+    ([key]) => normalizeMockupHex(key) === normalized,
+  )?.[1];
+}
+
 function getCuratedMockup(
   product: DesignProduct,
   color: string,
@@ -510,7 +521,7 @@ function getCuratedMockup(
 ): { photoSrc: string; cutoutSrc: string; isColorPhoto: boolean; cutoutNeedsTint: boolean } {
   const base = BASE_BY_CATEGORY[product.category];
   const hex = normalizeMockupHex(color);
-  const colorPhoto = base?.colorPhotos?.[hex] ?? base?.colorPhotos?.[color];
+  const colorPhoto = findColorPhoto(base?.colorPhotos, hex);
   const nearBlack = isNearBlack(color);
   const hasDark = !!(base?.darkFrontCutout || base?.darkFront);
   const useDark = nearBlack && hasDark;
@@ -635,7 +646,7 @@ export function GarmentSVG({
   const useBlackPhoto = !!tintHex && isNearBlack(tintHex) && hasDarkPhotoAsset;
   // Check if there is a real per-colour photo for this exact hex — if so, use it
   // directly instead of the SVG tint path for maximum photographic realism.
-  const colorPhotoEntry = tintHex ? base?.colorPhotos?.[tintHex.toLowerCase()] ?? base?.colorPhotos?.[tintHex] : undefined;
+  const colorPhotoEntry = tintHex ? findColorPhoto(base?.colorPhotos, tintHex) : undefined;
   // Only use a real color photo when:
   //   1. A colorPhoto entry exists for this hex.
   //   2. It is NOT a near-black color (handled by the dark-photo path above).

@@ -918,6 +918,9 @@ export default function AdminOrders() {
                                     <p className="text-xs text-primary/70 mt-1">
                                       Custom studio design · {layers} layer{layers === 1 ? '' : 's'}
                                       {(front || back) ? ` (${front} front, ${back} back)` : ''}
+                                      {parsed.category === "mug" && parsed.mugMode
+                                        ? ` · Mug: ${parsed.mugMode === "side1" ? "Side 1" : parsed.mugMode === "side2" ? "Side 2" : "Full wrap"}`
+                                        : ''}
                                     </p>
                                     {richAssets.length > 0 ? (
                                       <div className="mt-2 space-y-1.5">

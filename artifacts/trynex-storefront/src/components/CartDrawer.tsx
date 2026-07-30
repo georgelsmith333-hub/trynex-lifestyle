@@ -78,6 +78,11 @@ const CartLine = memo(function CartLine({ item, onChangeQuantity, onRemove, onCl
               Custom
             </span>
           )}
+          {studioMeta?.category === "mug" && studioMeta.mugMode && (
+            <span className="text-[10px] inline-flex items-center px-1.5 py-0.5 rounded font-bold bg-gray-100 text-gray-600">
+              Mug: {studioMeta.mugMode === "side1" ? "Side 1" : studioMeta.mugMode === "side2" ? "Side 2" : "Full wrap"}
+            </span>
+          )}
           
           {studioMeta?.sessionId && (
             <button

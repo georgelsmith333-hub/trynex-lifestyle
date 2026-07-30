@@ -154,6 +154,11 @@ const CatalogCartLine = memo(function CatalogCartLine({ item, onChangeQuantity, 
                     <Sparkles className="w-3 h-3" />
                     Custom design{studioMeta.layerCount ? ` · ${studioMeta.layerCount} layer${studioMeta.layerCount === 1 ? '' : 's'}` : ''}
                   </span>
+                  {studioMeta.category === "mug" && studioMeta.mugMode && (
+                    <span className="text-xs inline-flex items-center px-2 py-0.5 rounded-md font-semibold text-gray-600 bg-gray-100">
+                      Mug: {studioMeta.mugMode === "side1" ? "Side 1" : studioMeta.mugMode === "side2" ? "Side 2" : "Full wrap"}
+                    </span>
+                  )}
                   
                   {studioMeta.sessionId && (
                     <button

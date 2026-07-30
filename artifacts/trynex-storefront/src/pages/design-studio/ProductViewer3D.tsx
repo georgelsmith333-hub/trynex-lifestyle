@@ -390,6 +390,7 @@ export default function ProductViewer3D({
               wrapTex={mugWrapTex}
               garmentColor={adjustGarmentColor(garmentColor)}
               isWrapMode={isWrapMode}
+              activeFace={activeFace}
             />
           )}
 

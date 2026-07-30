@@ -49,3 +49,4 @@
 - [Security scan baseline](security-scan-baseline.md) — recurring SAST false-positive shapes (UUID filenames, server-generated tokens) + dependency-override-target gotcha; check before re-investigating.
 - [Backup sync idempotency](backup-sync-idempotency.md) — dbBackupSync.ts INSERT must use ON CONFLICT DO NOTHING; otherwise TRUNCATE+INSERT pattern fails on retry with duplicate key error on settings_pkey.
 - [Mobile studio order assets](mobile-studio-order-assets.md) — mobile custom designs must preserve studioDesign/originalAssets metadata through cart and checkout.
+- [Storefront preview registration](artifact-registry-preview.md) — a valid TryNex manifest/workflow may still be absent from the artifact registry, blocking screenshot verification.

@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import {
   PRODUCTS, type DesignProduct, GarmentSVG, FlatZoneSVG,
-  STICKERS, BASE_BY_CATEGORY, MUG_SIDE_PZ,
+  STICKERS, BASE_BY_CATEGORY, MUG_PZ, MUG_SIDE_PZ,
   getApparelZones, getZonePZ, resolveMockup, type ApparelZone, isNearBlack, isLightTint, type PrintZone,
 } from "./design-studio/mockups";
 import { composeLayers, composeGarmentMockup, composeDesignTexture, autoFixImage, type ComposerLayer } from "./design-studio/composer";
@@ -507,7 +507,7 @@ export default function DesignStudio() {
       }
       if (typeof data.size === "string") setSelectedSize(data.size);
       if (data.mugMode && ["side1", "side2", "wrap"].includes(data.mugMode as string)) {
-        setMugMode(data.mugMode as "side1" | "side2");
+        setMugMode(data.mugMode as MugMode);
       }
       if (data.linkedStoreProductId && data.linkedStoreProductName && data.linkedStoreProductPrice) {
         setLinkedStoreProduct({
@@ -805,11 +805,8 @@ export default function DesignStudio() {
     [selectedProduct, selectedColor.hex],
   );
   const pz = useMemo(() => {
-    // mugMode is only ever "side1" | "side2" — the mug wrap-mode print zone
-    // (MUG_PZ) is unused dead code from a removed "full wrap" concept and
-    // isn't even exported from mockups.tsx. Always use the per-side zone.
     if (isMugProduct) {
-      return MUG_SIDE_PZ;
+      return mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ;
     }
     if (activeFace === "back") return backMockup.printZone;
     if (activeFace === "front") return frontMockup.printZone;
@@ -2069,8 +2066,9 @@ export default function DesignStudio() {
     }
     setIsAddingToCart(true);
     try {
-      const frontPZ         = isMugProduct ? MUG_SIDE_PZ : frontMockup.printZone;
-      const backPZ          = isMugProduct ? MUG_SIDE_PZ : backMockup.printZone;
+      const mugPrintZone    = isMugProduct && mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ;
+      const frontPZ         = isMugProduct ? mugPrintZone : frontMockup.printZone;
+      const backPZ          = isMugProduct ? mugPrintZone : backMockup.printZone;
       const frontLayers     = layers.filter(l => (l.face ?? "front") === "front")        as unknown as ComposerLayer[];
       const backLayers      = layers.filter(l => (l.face ?? "front") === "back")         as unknown as ComposerLayer[];
       const leftSleeveLayers = layers.filter(l => l.face === "left-sleeve")              as unknown as ComposerLayer[];
@@ -2132,18 +2130,20 @@ export default function DesignStudio() {
       }
 
       // 1. Full garment + design composite → cart thumbnail (imageUrl).
-      //    Use the same canonical photo that the 2D editor renders. For
-      //    curated fallbacks, compose from the transparent cutout so the
-      //    colour tint does not bleed into the studio background.
-      const garmentSrc = frontMockup.isColorPhoto ? frontMockup.photoSrc : frontMockup.cutoutSrc;
-      const isColorPhotoCart = frontMockup.isColorPhoto;
+      //    Mug Side 2 must use the opposite-face mockup and layer set;
+      //    otherwise the cart silently shows Side 1 after leaving the Studio.
+      const cartPreviewFace = isMugProduct && mugMode === "side2" ? "back" : "front";
+      const cartPreviewMockup = cartPreviewFace === "back" ? backMockup : frontMockup;
+      const cartPreviewLayers = cartPreviewFace === "back" ? backLayers : frontLayers;
+      const garmentSrc = cartPreviewMockup.isColorPhoto ? cartPreviewMockup.photoSrc : cartPreviewMockup.cutoutSrc;
+      const isColorPhotoCart = cartPreviewMockup.isColorPhoto;
       const mockupCanvas = document.createElement("canvas");
       await composeGarmentMockup({
         canvas: mockupCanvas,
         garmentSrc,
         garmentColor: selectedColor.hex,
         printZone: frontPZ,
-        layers: frontLayers,
+        layers: cartPreviewLayers,
         outSize: 400,
         imageCache,
         isColorPhoto: isColorPhotoCart,
@@ -2154,13 +2154,14 @@ export default function DesignStudio() {
       //    Mug uses wide 2048×768 to match the studio live preview (full 360° wrap band).
       //    Garments use square 1024×1024 for front/back panel UVs.
       const frontTexCanvas = document.createElement("canvas");
+      const mugPrimaryLayers = mugMode === "side2" ? backLayers : frontLayers;
       if (isMug) {
         const curveByCategory = isMug ? 0.16 : isWaterBottle ? 0.16 : isCap ? 0.1 : 0;
         await composeLayers({
           canvas: frontTexCanvas,
           baseHeight: selectedProduct.baseHeight,
           printZone: frontPZ,
-          layers: frontLayers,
+          layers: mugPrimaryLayers,
           garmentColor: null,
           outW: 2048,
           outH: 768,
@@ -2182,17 +2183,34 @@ export default function DesignStudio() {
       }
       const frontTexUrl = frontTexCanvas.toDataURL("image/webp", 0.85);
 
-      // 3. Back-face design texture (garments only — mug has no back face)
+      // 3. Back-face design texture. Mug wrap keeps both face textures so
+      //    downstream cart/admin previews can distinguish the two sides.
       let backTexUrl: string | undefined;
-      if (!isMug && backLayers.length > 0) {
+      if ((!isMug && backLayers.length > 0) || (isMug && mugMode === "wrap" && backLayers.length > 0)) {
         const backTexCanvas = document.createElement("canvas");
-        await composeDesignTexture({
-          canvas: backTexCanvas,
-          printZone: backPZ,
-          layers: backLayers,
-          outSize: 1024,
-          imageCache,
-        });
+        if (isMug) {
+          await composeLayers({
+            canvas: backTexCanvas,
+            baseHeight: selectedProduct.baseHeight,
+            printZone: backPZ,
+            layers: backLayers,
+            garmentColor: null,
+            outW: 2048,
+            outH: 768,
+            imageCache,
+            clipToPrintZone: true,
+            blendMode: "multiply",
+            curvature: 0.16,
+          });
+        } else {
+          await composeDesignTexture({
+            canvas: backTexCanvas,
+            printZone: backPZ,
+            layers: backLayers,
+            outSize: 1024,
+            imageCache,
+          });
+        }
         backTexUrl = backTexCanvas.toDataURL("image/webp", 0.85);
       }
 
@@ -2232,6 +2250,7 @@ export default function DesignStudio() {
           productId: selectedProduct.id,
           color: selectedColor,
           size: selectedSize,
+          mugMode,
           savedAt: Date.now(),
           ...(linkedStoreProduct ? {
             linkedStoreProductId: linkedStoreProduct.id,
@@ -2266,6 +2285,7 @@ export default function DesignStudio() {
           color: selectedColor.name,
           colorHex: selectedColor.hex,
           size: selectedSize,
+          mugMode,
           layerCount: layers.length,
           frontLayerCount: frontLayers.length,
           backLayerCount: backLayers.length,
@@ -2292,7 +2312,7 @@ export default function DesignStudio() {
     } finally {
       setIsAddingToCart(false);
     }
-  }, [layers, selectedProduct, displayProduct, selectedColor, selectedSize, quantity, isMug, isCap, isWaterBottle, isZoneTabs, studioPrice, pz, frontMockup, backMockup, addToCart, toast, navigate, settings, linkedStoreProduct]);
+  }, [layers, selectedProduct, displayProduct, selectedColor, selectedSize, quantity, isMug, isMugProduct, mugMode, isCap, isWaterBottle, isZoneTabs, studioPrice, pz, frontMockup, backMockup, addToCart, toast, navigate, settings, linkedStoreProduct]);
 
   /* ── Studio color palette — driven by the selected product's colors array.
      Admin overrides (settings.studioTshirtColors / studioMugColors) are still
@@ -3076,13 +3096,15 @@ export default function DesignStudio() {
                         garmentColor={selectedColor.hex}
                         front={{
                           layers: ds3dFrontLayers,
-                          printZone: isMugProduct ? MUG_SIDE_PZ : selectedProduct.printZone,
+                          printZone: isMugProduct
+                            ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ)
+                            : selectedProduct.printZone,
                           baseHeight: selectedProduct.baseHeight,
                         }}
                         back={supportsBack && ds3dBackLayers.length > 0 ? {
                           layers: ds3dBackLayers,
                           printZone: isMugProduct
-                            ? MUG_SIDE_PZ
+                            ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ)
                             : (selectedProduct.printZoneBack ?? selectedProduct.printZone),
                           baseHeight: selectedProduct.baseHeight,
                         } : undefined}
