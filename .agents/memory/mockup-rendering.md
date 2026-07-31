@@ -5,12 +5,19 @@ description: How Design Studio GarmentSVG renders product photos and applies col
 
 ## Current approach
 
-GarmentSVG uses real garment photos with SVG-native feBlend multiply for colored garments.
+The canonical resolver distinguishes exact opaque source-kit photos from transparent
+cutouts. Exact-color source-kit photos are used directly for 2D previews, exports,
+thumbnails, carts, and fallback compositions; they are never tinted, alpha-masked, or
+given silhouette shadows. Transparent derivatives are reserved for billboard/3D and
+silhouette rendering, and curated fallback cutouts are tinted only when the resolver
+explicitly says `requiresTint`.
 
 **Photo selection:**
-- Near-black hex (lum < 12%) → dedicated dark photo (`darkFront`/`darkFrontCutout`)
-- Light/white hex (lum > 0.92) → full white garment PHOTO with drop shadow, no tint
-- All other colors → white garment FULL PHOTO + `feBlend multiply` filter + silhouette mask
+- Exact source-kit color/face pair → normalized opaque photo for 2D/export/cart
+- Transparent source-kit derivative → 3D billboard/shadow source, no tint
+- Curated near-black asset → dedicated dark photo/cutout, no tint
+- Curated non-light fallback → transparent cutout + explicit resolver tint
+- Light/white fallback → transparent or exact white source, no tint
 
 **Colored garment rendering (the correct approach):**
 
@@ -35,7 +42,8 @@ SVG guarantees: filter runs first, mask second. No isolation context issues.
 />
 ```
 
-Result: white photo pixels × tint = tint color; shadow pixels × tint = darker tint → photorealistic depth.
+Result: only a transparent fallback's garment pixels are multiplied by the requested
+color; exact source-kit pixels retain their reviewed photographic color and lighting.
 
 **CRITICAL — Do NOT use CSS `mix-blend-mode: multiply` on a `<rect>` in SVG.**
 The `<g filter="url(#...)">` wrapper around the base image creates an isolated compositing
@@ -55,3 +63,7 @@ correctly for both left and right side views — no separate flipped mask needed
 **Why:** CSS mix-blend-mode in SVG is broken whenever a parent has a `filter` attribute — the
 filter creates an isolated compositing layer. SVG-native feBlend on the element itself bypasses
 this completely and is guaranteed cross-browser.
+
+**How to apply:** Keep `resolveMockup()` as the source of photo kind, tint permission,
+shadow permission, normalized frame, and front/back fallback metadata. Do not reintroduce
+filename- or luminance-only heuristics in downstream consumers.
