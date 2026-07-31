@@ -63,7 +63,9 @@ export function useCartItemPreview(item: CartItemPreviewInput): CartItemPreviewP
 
   useEffect(() => {
     const garmentSrc = (meta?.mockupSrc as string | undefined)
-      ?? (resolvedMockup?.isColorPhoto ? resolvedMockup.photoSrc : resolvedMockup?.cutoutSrc);
+      ?? (resolvedMockup?.requiresTint || !resolvedMockup?.isColorPhoto
+        ? resolvedMockup?.cutoutSrc
+        : resolvedMockup?.photoSrc);
     const printZone = (meta?.printZone as ComposerPrintZone | undefined) ?? resolvedMockup?.printZone;
     if (item.imageUrl || !garmentSrc || !meta?.colorHex || !printZone) {
       setFallbackSrc(null);
@@ -82,6 +84,7 @@ export function useCartItemPreview(item: CartItemPreviewInput): CartItemPreviewP
           outSize: 400,
           isColorPhoto: meta.mockupIsColorPhoto === true
             || (resolvedMockup?.isColorPhoto === true && !meta.mockupSrc),
+          requiresTint: resolvedMockup?.requiresTint === true,
         });
         if (!cancelled) setFallbackSrc(canvas.toDataURL("image/png"));
       } catch { /* no-op — component will show its own placeholder */ }

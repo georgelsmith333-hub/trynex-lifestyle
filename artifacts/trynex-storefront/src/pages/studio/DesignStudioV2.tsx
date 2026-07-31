@@ -18,7 +18,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import {
-  PRODUCTS, GarmentSVG, FlatZoneSVG, BASE_BY_CATEGORY, MUG_SIDE_PZ,
+  PRODUCTS, GarmentSVG, FlatZoneSVG, MUG_SIDE_PZ, resolveMockup,
   getApparelZones, getZonePZ, type ApparelZone, isNearBlack, isLightTint,
   type PrintZone, type DesignProduct, type Face,
 } from "../design-studio/mockups";
@@ -114,6 +114,14 @@ export default function DesignStudioV2() {
   const isWaterBottle = selectedProduct.category === "waterbottle";
   const supportsBack = ["tshirt", "longsleeve", "hoodie", "mug"].includes(selectedProduct.category);
   const isZoneTabs = ["tshirt", "longsleeve", "hoodie"].includes(selectedProduct.category);
+  const frontMockup = useMemo(
+    () => resolveMockup(selectedProduct, selectedColor.hex, "front"),
+    [selectedProduct, selectedColor.hex],
+  );
+  const backMockup = useMemo(
+    () => resolveMockup(selectedProduct, selectedColor.hex, "back"),
+    [selectedProduct, selectedColor.hex],
+  );
 
   const apparelZones = useMemo(() => getApparelZones(selectedProduct.category, selectedProduct.printZone, selectedProduct.printZoneBack), [selectedProduct]);
   const activeZoneConfig = useMemo(() => apparelZones.find(z => z.face === activeFace) ?? apparelZones[0], [apparelZones, activeFace]);
@@ -360,10 +368,10 @@ export default function DesignStudioV2() {
       } catch {}
     }
 
-    const garmentBase = BASE_BY_CATEGORY[selectedProduct.category];
-    const colorPhoto = garmentBase?.colorPhotos?.[selectedColor.hex.toLowerCase()] ?? garmentBase?.colorPhotos?.[selectedColor.hex];
-    const garmentSrc = colorPhoto?.front ?? garmentBase?.frontCutout ?? garmentBase?.front ?? selectedProduct.frontSrc;
-    const isColorPhoto = !!colorPhoto;
+    const garmentSrc = frontMockup.photoKind === "opaque-photo" && !frontMockup.requiresTint
+      ? frontMockup.photoSrc
+      : frontMockup.cutoutSrc;
+    const isColorPhoto = frontMockup.isColorPhoto;
     const frontPZ = isMug ? MUG_SIDE_PZ : selectedProduct.printZone;
     const backPZ = isMug ? MUG_SIDE_PZ : (selectedProduct.printZoneBack ?? selectedProduct.printZone);
     const leftSleeveLayers = layers.filter(l => l.type !== "shape" && l.face === "left-sleeve") as unknown as ComposerLayer[];
@@ -373,7 +381,7 @@ export default function DesignStudioV2() {
     let mockupUrl: string;
     try {
       const mockupCanvas = document.createElement("canvas");
-      await composeGarmentMockup({ canvas: mockupCanvas, garmentSrc, garmentColor: selectedColor.hex, printZone: frontPZ, layers: frontLayers, outSize: 400, imageCache, isColorPhoto, fabricTexture });
+      await composeGarmentMockup({ canvas: mockupCanvas, garmentSrc, garmentColor: selectedColor.hex, printZone: frontPZ, layers: frontLayers, outSize: 400, imageCache, isColorPhoto, requiresTint: frontMockup.requiresTint, fabricTexture });
       mockupUrl = mockupCanvas.toDataURL("image/webp", 0.8);
     } catch (err) {
       console.error("Mockup compose failed", err);
@@ -442,7 +450,7 @@ export default function DesignStudioV2() {
       customImages: [frontTexUrl, ...(backTexUrl ? [backTexUrl] : []), ...(leftSleeveTexUrl ? [leftSleeveTexUrl] : []), ...(rightSleeveTexUrl ? [rightSleeveTexUrl] : []), ...(neckLabelTexUrl ? [neckLabelTexUrl] : [])],
       originalAssetUrls,
       originalAssets,
-      customNote: JSON.stringify({ studioDesign: true, sessionId, product: selectedProduct.name, category: selectedProduct.category, color: selectedColor.name, colorHex: selectedColor.hex, size: selectedSize, layerCount: layers.length, frontLayerCount: frontLayers.length, backLayerCount: backLayers.length, mockupSrc: garmentSrc, printZone: frontPZ, printZoneBack: selectedProduct.printZoneBack ?? null }),
+      customNote: JSON.stringify({ studioDesign: true, sessionId, product: selectedProduct.name, category: selectedProduct.category, color: selectedColor.name, colorHex: selectedColor.hex, size: selectedSize, layerCount: layers.length, frontLayerCount: frontLayers.length, backLayerCount: backLayers.length, mockupSrc: garmentSrc, mockupSource: frontMockup.source, mockupPhotoSrc: frontMockup.photoSrc, mockupIsColorPhoto: frontMockup.isColorPhoto, printZone: frontPZ, printZoneBack: backPZ }),
     });
     toast({ title: "✓ Added to cart!", description: `Custom ${selectedProduct.name} (${selectedColor.name}) is ready.` });
     try { localStorage.removeItem(DRAFT_STORAGE_KEY); } catch {}
@@ -454,11 +462,11 @@ export default function DesignStudioV2() {
   const handleExportPNG = async () => {
     const activeLayers = layers.filter(l => l.type !== "shape" && (l.face ?? "front") === activeFace) as unknown as ComposerLayer[];
     if (activeLayers.length === 0) { toast({ title: "Nothing to export", description: "Add a layer first." }); return; }
-    const garmentBase = BASE_BY_CATEGORY[selectedProduct.category];
-    const colorPhoto = garmentBase?.colorPhotos?.[selectedColor.hex];
-    const garmentSrc = colorPhoto?.front ?? garmentBase?.frontCutout ?? garmentBase?.front ?? selectedProduct.frontSrc;
+    const garmentSrc = frontMockup.photoKind === "opaque-photo" && !frontMockup.requiresTint
+      ? frontMockup.photoSrc
+      : frontMockup.cutoutSrc;
     const canvas = document.createElement("canvas");
-    await composeGarmentMockup({ canvas, garmentSrc, garmentColor: selectedColor.hex, printZone: isMug ? MUG_SIDE_PZ : selectedProduct.printZone, layers: activeLayers, outSize: 1200, isColorPhoto: !!colorPhoto, fabricTexture });
+    await composeGarmentMockup({ canvas, garmentSrc, garmentColor: selectedColor.hex, printZone: isMug ? MUG_SIDE_PZ : selectedProduct.printZone, layers: activeLayers, outSize: 1200, isColorPhoto: frontMockup.isColorPhoto, requiresTint: frontMockup.requiresTint, fabricTexture });
     const a = document.createElement("a"); a.href = canvas.toDataURL("image/png"); a.download = `trynex-${selectedProduct.id}-${activeFace}-design.png`; a.click();
     toast({ title: "PNG exported!", description: "High-res PNG saved to your downloads." });
   };
@@ -574,7 +582,7 @@ export default function DesignStudioV2() {
                   printZone={pz}
                   mockup={
                     isFlatZone && activeZoneConfig
-                      ? <FlatZoneSVG zone={activeZoneConfig} showPrintZone={showPrintZone} garmentPhotoSrc={BASE_BY_CATEGORY[selectedProduct.category]?.frontCutout ?? selectedProduct.frontSrc} garmentColor={selectedColor.hex} />
+                      ? <FlatZoneSVG zone={activeZoneConfig} showPrintZone={showPrintZone} mockup={frontMockup} />
                       : <GarmentSVG product={selectedProduct} color={selectedColor.hex} showPrintZone={showPrintZone} face={activeFace} mugMode={isMug ? mugMode : undefined} />
                   }
                 />

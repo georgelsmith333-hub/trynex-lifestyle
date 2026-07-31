@@ -296,12 +296,12 @@ export default function ProductViewer3D({
    * PhotoMockupMesh already uses transparent:true + alphaTest:0.01. */
   const frontMockup = resolveMockup(product, garmentColor, "front");
   const backMockup = resolveMockup(product, garmentColor, "back");
-  // Opaque studio photos must not be placed on a billboard. The reviewed
-  // transparent cutout is the 3D source; it is tinted
-  // only when that cutout is the white fallback rather than an exact dark one.
+  // The billboard always uses the transparent derivative. Exact source-kit
+  // colours arrive pre-rendered, while only curated transparent fallbacks tint.
   const resolvedFrontPhoto = frontMockup.cutoutSrc;
   const resolvedBackPhoto = backMockup.cutoutSrc;
-  const photoTint = frontMockup.cutoutNeedsTint ? garmentColor : undefined;
+  const frontPhotoTint = frontMockup.requiresTint ? garmentColor : undefined;
+  const backPhotoTint = backMockup.requiresTint ? garmentColor : undefined;
 
   const isCap = product.category === "cap";
   const capCurvature = isCap ? 0.1 : 0;
@@ -355,13 +355,16 @@ export default function ProductViewer3D({
 
   /* No WebGL2 → flat 2D photo mockup fallback. */
   if (!supports3D) {
-    const fallbackGarmentSrc = frontMockup.cutoutSrc;
+    const fallbackGarmentSrc = frontMockup.photoKind === "opaque-photo"
+      ? frontMockup.photoSrc
+      : frontMockup.cutoutSrc;
     return (
       <div style={{ position: "relative", width: "100%", height: "100%" }}>
         <NoWebGLFallback
           garmentSrc={fallbackGarmentSrc}
           designSrc={fallbackUrl}
           garmentColor={garmentColor}
+          requiresTint={frontMockup.photoKind === "transparent-cutout" && frontMockup.requiresTint}
         />
       </div>
     );
@@ -401,7 +404,10 @@ export default function ProductViewer3D({
               backPhotoSrc={resolvedBackPhoto}
               frontTex={frontTex}
               backTex={backTex}
-              garmentColor={photoTint}
+              frontTint={frontPhotoTint}
+              backTint={backPhotoTint}
+              frontFrame={frontMockup.normalizedFrame}
+              backFrame={backMockup.normalizedFrame}
               activeFace={activeFace}
             />
           )}
@@ -413,7 +419,10 @@ export default function ProductViewer3D({
               backPhotoSrc={resolvedBackPhoto}
               frontTex={frontTex}
               backTex={backTex}
-              garmentColor={photoTint}
+              frontTint={frontPhotoTint}
+              backTint={backPhotoTint}
+              frontFrame={frontMockup.normalizedFrame}
+              backFrame={backMockup.normalizedFrame}
               activeFace={activeFace}
             />
           )}
@@ -425,7 +434,10 @@ export default function ProductViewer3D({
               backPhotoSrc={resolvedBackPhoto}
               frontTex={frontTex}
               backTex={backTex}
-              garmentColor={photoTint}
+              frontTint={frontPhotoTint}
+              backTint={backPhotoTint}
+              frontFrame={frontMockup.normalizedFrame}
+              backFrame={backMockup.normalizedFrame}
               activeFace={activeFace}
             />
           )}
@@ -435,7 +447,8 @@ export default function ProductViewer3D({
             <PhotoMockupMesh
               frontPhotoSrc={resolvedFrontPhoto}
               frontTex={frontTex}
-              garmentColor={photoTint}
+              frontTint={frontPhotoTint}
+              frontFrame={frontMockup.normalizedFrame}
               activeFace={activeFace}
               planeW={2.2}
               planeH={2.2}

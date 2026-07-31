@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import {
   PRODUCTS, type DesignProduct, GarmentSVG, FlatZoneSVG,
-  STICKERS, BASE_BY_CATEGORY, MUG_PZ, MUG_SIDE_PZ,
+  STICKERS, MUG_PZ, MUG_SIDE_PZ,
   getApparelZones, getZonePZ, resolveMockup, type ApparelZone, isNearBlack, isLightTint, type PrintZone,
 } from "./design-studio/mockups";
 import { composeLayers, composeGarmentMockup, composeDesignTexture, autoFixImage, type ComposerLayer } from "./design-studio/composer";
@@ -2002,7 +2002,9 @@ export default function DesignStudio() {
     try {
       const canvas = document.createElement("canvas");
       const activeMockup = activeFace === "back" ? backMockup : frontMockup;
-      const garmentSrc = isFlatZone ? activeMockup.cutoutSrc : activeMockup.photoSrc;
+      const garmentSrc = isFlatZone || activeMockup.requiresTint
+        ? activeMockup.cutoutSrc
+        : activeMockup.photoSrc;
       await composeGarmentMockup({
         canvas,
         garmentSrc,
@@ -2011,6 +2013,7 @@ export default function DesignStudio() {
         layers: activeLayers,
         outSize: 1200,
         isColorPhoto: !isFlatZone && activeMockup.isColorPhoto,
+        requiresTint: !isFlatZone && activeMockup.requiresTint,
       });
       const url = canvas.toDataURL("image/png");
       const a = document.createElement("a");
@@ -2037,7 +2040,9 @@ export default function DesignStudio() {
     try {
       const canvas = document.createElement("canvas");
       const activeMockup = activeFace === "back" ? backMockup : frontMockup;
-      const garmentSrc = isFlatZone ? activeMockup.cutoutSrc : activeMockup.photoSrc;
+      const garmentSrc = isFlatZone || activeMockup.requiresTint
+        ? activeMockup.cutoutSrc
+        : activeMockup.photoSrc;
       await composeGarmentMockup({
         canvas,
         garmentSrc,
@@ -2046,6 +2051,7 @@ export default function DesignStudio() {
         layers: activeLayers,
         outSize: 1200,
         isColorPhoto: !isFlatZone && activeMockup.isColorPhoto,
+        requiresTint: !isFlatZone && activeMockup.requiresTint,
       });
       const url = canvas.toDataURL("image/jpeg", 0.93);
       const a = document.createElement("a");
@@ -2135,7 +2141,9 @@ export default function DesignStudio() {
       const cartPreviewFace = isMugProduct && mugMode === "side2" ? "back" : "front";
       const cartPreviewMockup = cartPreviewFace === "back" ? backMockup : frontMockup;
       const cartPreviewLayers = cartPreviewFace === "back" ? backLayers : frontLayers;
-      const garmentSrc = cartPreviewMockup.isColorPhoto ? cartPreviewMockup.photoSrc : cartPreviewMockup.cutoutSrc;
+      const garmentSrc = cartPreviewMockup.requiresTint || !cartPreviewMockup.isColorPhoto
+        ? cartPreviewMockup.cutoutSrc
+        : cartPreviewMockup.photoSrc;
       const isColorPhotoCart = cartPreviewMockup.isColorPhoto;
       const mockupCanvas = document.createElement("canvas");
       await composeGarmentMockup({
@@ -2147,6 +2155,7 @@ export default function DesignStudio() {
         outSize: 400,
         imageCache,
         isColorPhoto: isColorPhotoCart,
+        requiresTint: cartPreviewMockup.requiresTint,
       });
       const mockupUrl = mockupCanvas.toDataURL("image/webp", 0.8);
 
@@ -2782,8 +2791,8 @@ export default function DesignStudio() {
                             }}
                             draggable={false}
                             onError={(e) => {
-                               // Fall back to the reviewed cutout if the photo is unavailable.
-                              (e.target as HTMLImageElement).src = BASE_BY_CATEGORY[prod.category]?.frontCutout ?? prod.frontSrc;
+                               // Fall back to the same canonical transparent derivative.
+                              (e.target as HTMLImageElement).src = tabResolved.cutoutSrc;
                             }}
                           />
                         )}
@@ -3176,15 +3185,7 @@ export default function DesignStudio() {
                   onWheel={handleCanvasWheel}
                 >
                   {isFlatZone && activeZoneConfig
-                    ? <FlatZoneSVG zone={activeZoneConfig} showPrintZone={effectiveShowPrintZone} garmentPhotoSrc={(() => {
-                        const base = BASE_BY_CATEGORY[selectedProduct.category];
-                        if (!base) return displayProduct.frontSrc;
-                        // Near-black garments: use the dark cutout (when it exists) so
-                        // the sleeve/neck zone shows the correct dark silhouette on the
-                        // warm-light background. Falls back to white cutout if no dark asset.
-                        if (isBlackGarment && base.darkFrontCutout) return base.darkFrontCutout;
-                        return base.frontCutout ?? displayProduct.frontSrc;
-                      })()} garmentColor={selectedColor.hex} />
+                     ? <FlatZoneSVG zone={activeZoneConfig} showPrintZone={effectiveShowPrintZone} mockup={frontMockup} />
                     : <GarmentSVG product={displayProduct} color={selectedColor.hex} showPrintZone={effectiveShowPrintZone} face={activeFace} mugMode={isMugProduct ? mugMode : undefined} />
                   }
 
@@ -3194,25 +3195,24 @@ export default function DesignStudio() {
                       <rect x={pz.x} y={pz.y} width={pz.w} height={pz.h} rx="4" />
                     </clipPath>
 
-                    {/* ── Product-silhouette clip — prevents designs from visually
-                        overflowing outside the actual mug or bottle body when a layer
-                        is placed near the edge of the rectangular print zone. ────── */}
+                    {/* ── Product-silhouette mask — uses the canonical transparent
+                        cutout alpha instead of a guessed rectangle. This keeps designs
+                        on the real mug/bottle body even when assets are re-framed. ── */}
                     {isMugProduct && (
-                      <clipPath id="product-silhouette-clip">
-                        {/* Mug cylinder body (left+top+bottom, excluding the handle on the right).
-                            Coordinates are in the 1000×1000 SVG viewBox. */}
-                        <rect x="145" y="172" width="575" height="678" rx="18" />
-                      </clipPath>
+                      <mask id="product-silhouette-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000" mask-type="alpha">
+                        <image href={(activeFace === "back" ? backMockup : frontMockup).cutoutSrc}
+                          x="0" y="0" width="1000" height="1000" preserveAspectRatio="xMidYMid meet" />
+                      </mask>
                     )}
                     {isWaterBottle && (
-                      <clipPath id="product-silhouette-clip">
-                        {/* Water bottle cylindrical body — full height of the bottle label area. */}
-                        <rect x="268" y="55" width="464" height="890" rx="38" />
-                      </clipPath>
+                      <mask id="product-silhouette-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000" mask-type="alpha">
+                        <image href={(activeFace === "back" ? backMockup : frontMockup).cutoutSrc}
+                          x="0" y="0" width="1000" height="1000" preserveAspectRatio="xMidYMid meet" />
+                      </mask>
                     )}
 
                   </defs>
-                  <g clipPath={(isMugProduct || isWaterBottle) ? "url(#product-silhouette-clip)" : undefined}>
+                  <g mask={(isMugProduct || isWaterBottle) ? "url(#product-silhouette-mask)" : undefined}>
                   <g clipPath="url(#design-clip)">
                     {layersRender
                       .filter(({ layer }) => (layer.face ?? "front") === activeFace)
@@ -3297,33 +3297,23 @@ export default function DesignStudio() {
                     {/* Garment texture overlay — makes the design look printed onto the fabric
                         rather than pasted on top. Matches the final cart mockup composition. */}
                     {currentFaceLayers.some(l => l.visible) && !isFlatZone && (() => {
-                      const base = BASE_BY_CATEGORY[displayProduct.category];
-                      let overlaySrc = base?.frontCutout ?? displayProduct.frontSrc;
-                      if (activeFace === "back" && (base?.backCutout || displayProduct.backSrc)) {
-                        overlaySrc = base?.backCutout ?? displayProduct.backSrc ?? overlaySrc;
-                      }
-                      const colorPhoto = base?.colorPhotos?.[selectedColor.hex.toLowerCase()];
-                      if (colorPhoto && !isLightGarment) overlaySrc = activeFace === "back" && colorPhoto.back ? colorPhoto.back : colorPhoto.front;
-                      else if (isDarkGarment && (base?.darkFront || base?.darkFrontCutout)) {
-                        overlaySrc = activeFace === "back" && (base?.darkBack || base?.darkBackCutout)
-                          ? (base?.darkBack ?? base?.darkBackCutout ?? overlaySrc)
-                          : (base?.darkFront ?? base?.darkFrontCutout ?? overlaySrc);
-                      }
-                      const blend = isLightGarment ? 'multiply' : isDarkGarment ? 'screen' : 'overlay';
-                      const opacity = isLightGarment ? 0.45 : isDarkGarment ? 0.35 : 0.30;
+                       const overlayMockup = activeFace === "back" ? backMockup : frontMockup;
+                       // Exact-color photos already contain their own lighting.
+                       // Only a transparent, tintable fallback gets a texture pass.
+                       if (overlayMockup.photoKind === "opaque-photo") return null;
                       return (
                         <image
-                          href={overlaySrc}
+                           href={overlayMockup.cutoutSrc}
                           x={0} y={0} width={1000} height={1000}
                           preserveAspectRatio="xMidYMid meet"
                           pointerEvents="none"
-                          opacity={opacity}
-                          style={{ mixBlendMode: blend, pointerEvents: "none" }}
+                           opacity={0.26}
+                           style={{ mixBlendMode: "multiply", pointerEvents: "none" }}
                         />
                       );
                     })()}
                   </g>
-                  </g>{/* end product-silhouette-clip outer group */}
+                  </g>{/* end product-silhouette-mask outer group */}
 
 
 

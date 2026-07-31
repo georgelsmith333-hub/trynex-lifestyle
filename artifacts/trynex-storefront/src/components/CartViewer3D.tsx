@@ -4,8 +4,8 @@
    Shows garment photo tinted to the selected colour, with
    the design texture composited on top.
 ════════════════════════════════════════════════════════ */
-import { useState, useMemo } from "react";
-import { isLightTint, PRODUCTS, resolveMockup } from "../pages/design-studio/mockups";
+import { useState, useMemo, useId } from "react";
+import { PRODUCTS, resolveMockup } from "../pages/design-studio/mockups";
 
 type GarmentCategory = "tshirt" | "longsleeve" | "hoodie" | "mug" | "cap" | "waterbottle";
 
@@ -19,18 +19,18 @@ function resolvePhotos(
 ): {
   front: string;
   back?: string;
-  frontIsColorPhoto: boolean;
-  backIsColorPhoto: boolean;
+  frontRequiresTint: boolean;
+  backRequiresTint: boolean;
 } {
   const product = PRODUCTS.find((candidate) => candidate.category === category);
   if (!product) throw new Error(`No design product configured for category "${category}"`);
   const front = resolveMockup(product, garmentColor, "front");
   const back = resolveMockup(product, garmentColor, "back");
   return {
-    front: front.isColorPhoto ? front.photoSrc : front.cutoutSrc,
-    back: back.isColorPhoto ? back.photoSrc : back.cutoutSrc,
-    frontIsColorPhoto: front.isColorPhoto,
-    backIsColorPhoto: back.isColorPhoto,
+    front: front.photoKind === "opaque-photo" ? front.photoSrc : front.cutoutSrc,
+    back: back.photoKind === "opaque-photo" ? back.photoSrc : back.cutoutSrc,
+    frontRequiresTint: front.photoKind === "transparent-cutout" && front.requiresTint,
+    backRequiresTint: back.photoKind === "transparent-cutout" && back.requiresTint,
   };
 }
 
@@ -52,23 +52,15 @@ export default function CartViewer3D({
   const hasFrontBack = category === "tshirt" || category === "longsleeve" || category === "hoodie";
   const [face, setFace] = useState<"front" | "back">("front");
 
-  const { front: frontSrc, back: backSrc, frontIsColorPhoto, backIsColorPhoto } = useMemo(
+  const { front: frontSrc, back: backSrc, frontRequiresTint, backRequiresTint } = useMemo(
     () => resolvePhotos(category, garmentColor),
     [category, garmentColor],
   );
 
   const garmentSrc  = face === "front" ? frontSrc : (backSrc ?? frontSrc);
   const designSrc   = face === "front" ? frontTexUrl : (backTexUrl ?? frontTexUrl);
-
-  // Determine tinting strategy:
-  //   nearBlack → use dark photo directly (no tint overlay needed) …
-  //               EXCEPT for cap & waterbottle which have no dedicated dark-photo asset;
-  //               for those we always tint so the selected colour is reflected.
-  //   lightTint → white garment, no tint overlay needed
-  //   else      → apply garmentColor via CSS multiply blend over white cutout
-  const lightTint  = isLightTint(garmentColor);
-  const exactPhoto = face === "front" ? frontIsColorPhoto : backIsColorPhoto;
-  const needsTint  = !lightTint && !exactPhoto;
+  const needsTint = face === "front" ? frontRequiresTint : backRequiresTint;
+  const tintFilterId = `cart-garment-tint-${useId().replace(/:/g, "")}`;
 
   return (
     <div
@@ -131,8 +123,35 @@ export default function CartViewer3D({
           isolation: "isolate",
         }}
       >
-        {/* Garment photo */}
-        {garmentSrc && (
+        {/* Garment photo. Exact opaque photos render directly; transparent
+            fallback cutouts use an alpha-clipped SVG tint, never a CSS
+            rectangle over the whole square. */}
+        {garmentSrc && needsTint ? (
+          <svg
+            viewBox="0 0 1024 1024"
+            width="100%"
+            height="100%"
+            style={{ position: "absolute", inset: 0, overflow: "visible", pointerEvents: "none" }}
+            aria-hidden="true"
+          >
+            <defs>
+              <filter id={tintFilterId} x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
+                <feFlood floodColor={garmentColor} result="flood" />
+                <feBlend in="flood" in2="SourceGraphic" mode="multiply" result="blended" />
+                <feComposite in="blended" in2="SourceGraphic" operator="in" />
+              </filter>
+            </defs>
+            <image
+              href={garmentSrc}
+              x="0"
+              y="0"
+              width="1024"
+              height="1024"
+              preserveAspectRatio="xMidYMid meet"
+              filter={`url(#${tintFilterId})`}
+            />
+          </svg>
+        ) : garmentSrc ? (
           <img
             src={garmentSrc}
             alt="Product"
@@ -146,20 +165,7 @@ export default function CartViewer3D({
               userSelect: "none",
             }}
           />
-        )}
-
-        {/* Colour tint overlay (multiply blend) for coloured garments */}
-        {needsTint && (
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background: garmentColor,
-              mixBlendMode: "multiply",
-              pointerEvents: "none",
-            }}
-          />
-        )}
+        ) : null}
 
         {/* Design overlay */}
         {designSrc && (

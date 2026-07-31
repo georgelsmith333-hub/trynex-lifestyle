@@ -400,12 +400,25 @@ export async function composeGarmentMockup(opts: {
   outSize: number;
   imageCache?: Map<string, HTMLImageElement>;
   curvature?: number;
-  /** Set true when garmentSrc is already the correct-colour photo — skips
-   *  the SVG multiply-tint pass so the real photo is not double-tinted. */
+  /** Legacy compatibility flag. Prefer `requiresTint` from resolveMockup. */
   isColorPhoto?: boolean;
+  /** Explicit resolver metadata: only transparent fallback cutouts may need tint. */
+  requiresTint?: boolean;
   fabricTexture?: boolean;
 }): Promise<HTMLCanvasElement> {
-  const { canvas, garmentSrc, garmentColor, printZone, layers, outSize, imageCache, curvature = 0, isColorPhoto = false, fabricTexture = false } = opts;
+  const {
+    canvas,
+    garmentSrc,
+    garmentColor,
+    printZone,
+    layers,
+    outSize,
+    imageCache,
+    curvature = 0,
+    isColorPhoto = false,
+    requiresTint = !isColorPhoto,
+    fabricTexture = false,
+  } = opts;
   canvas.width = outSize;
   canvas.height = outSize;
   const ctx = canvas.getContext("2d");
@@ -418,21 +431,16 @@ export async function composeGarmentMockup(opts: {
     const garmentImg = await loadImage(garmentSrc, imageCache);
     ctx.drawImage(garmentImg, 0, 0, outSize, outSize);
 
-    // Skip multiply-tint when using a real per-colour photo — the photo already
-    // carries the correct hue; multiplying the tint colour over it darkens it wrong.
-    if (!isColorPhoto) {
-      const r = parseInt(garmentColor.slice(1, 3), 16) || 0;
-      const g = parseInt(garmentColor.slice(3, 5), 16) || 0;
-      const b = parseInt(garmentColor.slice(5, 7), 16) || 0;
-      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-      if (luminance < 0.92) {
-        ctx.globalCompositeOperation = "multiply";
-        ctx.fillStyle = garmentColor;
-        ctx.fillRect(0, 0, outSize, outSize);
-        ctx.globalCompositeOperation = "destination-in";
-        ctx.drawImage(garmentImg, 0, 0, outSize, outSize);
-        ctx.globalCompositeOperation = "source-over";
-      }
+    // A transparent fallback is the only source that can be colourized.
+    // Keep the tint inside the source alpha; never paint a full rectangular
+    // colour layer over an opaque photo or a transparent canvas.
+    if (requiresTint && garmentColor) {
+      ctx.globalCompositeOperation = "multiply";
+      ctx.fillStyle = garmentColor;
+      ctx.fillRect(0, 0, outSize, outSize);
+      ctx.globalCompositeOperation = "destination-in";
+      ctx.drawImage(garmentImg, 0, 0, outSize, outSize);
+      ctx.globalCompositeOperation = "source-over";
     }
   } catch {
     ctx.fillStyle = garmentColor;
@@ -506,64 +514,12 @@ export async function composeGarmentMockup(opts: {
 
   ctx.restore();
 
-  if (layers.some(l => l.visible)) {
-    try {
-      const garmentImg2 = await loadImage(garmentSrc, imageCache);
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(printZone.x * s, printZone.y * s, printZone.w * s, printZone.h * s);
-      ctx.clip();
-
-      const isDarkGarment = garmentSrc.includes("black") || garmentSrc.includes("navy") || garmentSrc.includes("maroon") || garmentSrc.includes("forest") || garmentSrc.includes("burgundy");
-      const isMidGarment = garmentSrc.includes("red") || garmentSrc.includes("olive") || garmentSrc.includes("grey") || garmentSrc.includes("skyblue") || garmentSrc.includes("teal") || garmentSrc.includes("pink");
-      const isLightGarment = !isDarkGarment && !isMidGarment;
-
-      if (isLightGarment) {
-        // White/Light base photo: flat areas are near white (255).
-        // Multiply darkens the design using the shadows/creases.
-        // Pure white has no effect. Screen would cause white halos.
-        ctx.globalCompositeOperation = "multiply";
-        ctx.globalAlpha = 0.65;
-        ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
-        
-        // Intensify shadows slightly with a darker multiply pass (linear-burn is not a
-        // standard typed Canvas composite op, so we use color-burn for a similar effect).
-        ctx.globalCompositeOperation = "color-burn";
-        ctx.globalAlpha = 0.05;
-        ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
-      } else if (isDarkGarment) {
-        // Dark/Black base photo: flat areas are near black (0-30).
-        // Multiply would black out the design.
-        // Screen lifts the design using the light highlights on the creases.
-        ctx.globalCompositeOperation = "screen";
-        ctx.globalAlpha = 0.45;
-        ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
-
-        ctx.globalCompositeOperation = "color-dodge";
-        ctx.globalAlpha = 0.15;
-        ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
-      } else {
-        // Mid-tone base photo (Red, Grey, etc.)
-        // Has both distinct shadows and highlights.
-        ctx.globalCompositeOperation = "multiply";
-        ctx.globalAlpha = 0.40;
-        ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
-
-        ctx.globalCompositeOperation = "screen";
-        ctx.globalAlpha = 0.25;
-        ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
-        
-        ctx.globalCompositeOperation = "overlay";
-        ctx.globalAlpha = 0.15;
-        ctx.drawImage(garmentImg2, 0, 0, outSize, outSize);
-      }
-
-      if (fabricTexture) {
-        applyFabricGrain(ctx, outSize, outSize, 0.10);
-      }
-
-      ctx.restore();
-    } catch {}
+  // Do not redraw the garment photo over the print zone. That legacy pass
+  // duplicated shadows and used filename heuristics, producing ghosted folds
+  // and colour-specific surprises. The canonical photo/cutout already carries
+  // the lighting; only the optional fabric grain belongs above the layers.
+  if (fabricTexture && layers.some(l => l.visible)) {
+    applyFabricGrain(ctx, outSize, outSize, 0.10);
   }
 
   return canvas;
