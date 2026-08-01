@@ -9,13 +9,16 @@ the SAME region in the 1024×1024 canvas for every color variant.
 Algorithm:
 1. Read every input photo from the immutable source-kit directory.
 2. Use one reviewed silhouette mask per product family/face, kept separately
-   from runtime output. Apparel masks are derived from the clean navy source-kit
-   photos; curved-product masks come from reviewed alpha templates.
-3. Use one explicit target rectangle per product family and face.
-4. Remap the source-kit photo and silhouette to that exact rectangle (including
-   both axes, so a narrow source cannot render smaller than a wide source).
-5. Composite the original photo through that alpha, which strips any embedded
-   studio/backdrop pixels outside the product silhouette.
+   from runtime output. The mask is the silhouette authority; it is never
+   inferred from a generated mockup.
+3. Use one deterministic source frame per source-kit photo. This aligns that
+   photo to its reviewed mask before masking. Frames are explicit because the
+   supplied product photos have different studio crops, especially for white
+   garments where background-detection is unsafe.
+4. Remap the source-kit photo and silhouette to one explicit target rectangle
+   per product family/face.
+5. Composite source pixels only through the reviewed alpha, which removes
+   embedded studio panels and background ghosts.
 6. Write both the RGB normalized photo and the RGBA cutout.
 
 Requirements: only Pillow (PIL) — no numpy, no scipy.
@@ -79,6 +82,102 @@ TARGET_FRAMES: dict[str, dict[str, tuple[int, int, int, int]]] = {
     },
 }
 
+# The immutable source-kit photos were supplied with different studio crops.
+# These frames identify the product-bearing region in each source photo; after
+# the crop is resized to the reviewed mask's bounding rectangle, the reviewed
+# alpha can safely strip all background pixels. White garments deliberately use
+# explicit frames -- do not derive them with warm-white background detection.
+#
+# A compact family-level default is safe only where all source-kit photos share
+# the same production crop. Per-colour entries override that default when a
+# source photo differs. Values are (left, top, right, bottom) in the original
+# 1024×1024 source canvas.
+SOURCE_FRAMES: dict[str, dict[str, dict[str, tuple[int, int, int, int]]]] = {
+    "tshirt": {
+        "front": {
+            "default": (46, 53, 977, 958),
+            "white": (30, 52, 988, 960), "black": (106, 86, 912, 930),
+            "maroon": (98, 104, 920, 942), "olive": (158, 98, 870, 924),
+            "sky-blue": (148, 74, 880, 912), "grey": (142, 86, 884, 958),
+        },
+        "back": {
+            "default": (147, 86, 883, 912),
+            "white": (36, 62, 982, 964), "black": (126, 64, 898, 934),
+            "maroon": (140, 106, 878, 930), "olive": (112, 92, 924, 952),
+            "sky-blue": (120, 80, 920, 934), "grey": (166, 96, 856, 954),
+            "red": (138, 60, 886, 926),
+        },
+    },
+    "longsleeve": {
+        "front": {
+            "default": (54, 90, 986, 930),
+            "black": (144, 98, 876, 906), "maroon": (156, 90, 894, 930),
+            "olive": (116, 92, 892, 930), "grey": (158, 116, 862, 922),
+            "red": (62, 88, 970, 930), "sky-blue": (178, 88, 846, 880),
+            "burgundy": (152, 90, 866, 930), "forest": (156, 90, 866, 924),
+        },
+        "back": {
+            "default": (92, 140, 926, 882),
+            "black": (24, 52, 1000, 966),
+        },
+    },
+    "hoodie": {
+        "front": {
+            "default": (97, 33, 926, 949),
+            "white": (52, 34, 970, 984), "black": (156, 60, 910, 966),
+            "grey": (180, 84, 844, 942), "maroon": (168, 74, 854, 926),
+            "olive": (156, 56, 868, 886), "red": (52, 46, 970, 968),
+            "sky-blue": (192, 80, 832, 884), "forest": (164, 70, 858, 930),
+            "burgundy": (180, 114, 842, 886),
+        },
+        "back": {
+            "default": (32, 60, 994, 974),
+            "black": (192, 56, 846, 916),
+        },
+    },
+    "mug": {
+        "front": {
+            "default": (228, 208, 958, 822),
+            "black": (266, 222, 946, 828),
+        },
+        "back": {
+            "default": (68, 208, 796, 822),
+            "black": (80, 222, 760, 828),
+            "purple": (66, 208, 796, 822), "sky-blue": (66, 208, 798, 822),
+            "pink": (66, 208, 798, 822),
+        },
+    },
+    "cap": {
+        "front": {
+            "default": (196, 196, 828, 808),
+            "olive": (196, 196, 828, 806), "red": (194, 194, 828, 808),
+        },
+        "back": {
+            "default": (126, 198, 978, 830),
+            "black": (126, 198, 980, 832), "navy": (126, 198, 982, 836),
+            "maroon": (124, 198, 990, 838), "olive": (128, 202, 934, 822),
+            "red": (124, 198, 1012, 862), "grey": (126, 198, 970, 826),
+            "forest": (124, 198, 990, 838),
+        },
+    },
+    "waterbottle": {
+        "front": {
+            "default": (384, 130, 658, 944),
+            "black": (394, 130, 640, 894), "navy": (408, 198, 624, 870),
+            "forest": (390, 188, 642, 914), "sky-blue": (390, 152, 634, 896),
+            "red": (390, 172, 628, 930), "pink": (388, 186, 642, 932),
+            "teal": (398, 160, 644, 852),
+        },
+        "back": {
+            "default": (366, 130, 638, 944),
+            "black": (386, 130, 632, 894), "navy": (400, 198, 616, 870),
+            "forest": (378, 188, 634, 914), "sky-blue": (392, 190, 634, 896),
+            "red": (396, 172, 634, 930), "pink": (390, 186, 636, 932),
+            "teal": (380, 158, 628, 852),
+        },
+    },
+}
+
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 def norm_path(cat: str, color: str, face: str) -> str:
@@ -96,28 +195,37 @@ def cutout_path(cat: str, color: str, face: str) -> str:
     return os.path.join(CUTOUT_DIR, f"{cat}-{color}-{face}.png")
 
 
-def detect_bounds(img: Image.Image) -> tuple[int,int,int,int]:
-    """Fast garment-bounds detection using PIL channel maths."""
-    rgb = img.convert("RGB")
-    bg  = Image.new("RGB", rgb.size, BG_COLOR)
-    diff = ImageChops.difference(rgb, bg)
-    r, g, b = diff.split()
-    # Binary mask: pixel is non-background if ANY channel differs by > BG_THRESH
-    mask = Image.new("L", rgb.size, 0)
-    for ch in (r, g, b):
-        mask = ImageChops.lighter(mask, ch.point(lambda p: 255 if p > BG_THRESH else 0))
-    # Small dilation to close single-pixel gaps at fabric texture noise
-    mask = mask.filter(ImageFilter.MaxFilter(5))
-    bb = mask.getbbox()
-    return bb if bb else (0, 0, img.width, img.height)
+def source_frame(cat: str, color: str, face: str) -> tuple[int, int, int, int]:
+    """Return the reviewed, deterministic product frame for one source photo."""
+    try:
+        frames = SOURCE_FRAMES[cat][face]
+        frame = frames.get(color, frames["default"])
+    except KeyError as exc:
+        raise ValueError(f"No source-frame specification for {cat}/{face}/{color}") from exc
+    x0, y0, x1, y1 = frame
+    if not (0 <= x0 < x1 <= 1024 and 0 <= y0 < y1 <= 1024):
+        raise ValueError(f"Invalid source frame for {cat}/{color}/{face}: {frame}")
+    if (x1 - x0) < 120 or (y1 - y0) < 120:
+        raise ValueError(f"Implausibly small source frame for {cat}/{color}/{face}: {frame}")
+    return frame
 
 
-def remap_clean_photo(
+def align_source_to_mask(
     photo: Image.Image,
-    cutout: Image.Image,
-    src_bb: tuple,
-    dst_bb: tuple,
+    frame: tuple[int, int, int, int],
+    mask_bb: tuple[int, int, int, int],
 ) -> Image.Image:
+    """Place a photo's product frame into the coordinate system of its mask."""
+    mx0, my0, mx1, my1 = mask_bb
+    aligned = Image.new("RGB", (1024, 1024), BG_COLOR)
+    aligned.paste(
+        photo.convert("RGB").crop(frame).resize((mx1 - mx0, my1 - my0), Image.LANCZOS),
+        (mx0, my0),
+    )
+    return aligned
+
+
+def remap_clean_photo(photo: Image.Image, alpha: Image.Image, src_bb: tuple, dst_bb: tuple) -> Image.Image:
     """Place a photo through its alpha silhouette on the stable target frame.
 
     The output is intentionally RGB for 2D/export/cart consumers, but the
@@ -129,16 +237,13 @@ def remap_clean_photo(
     dx0,dy0,dx1,dy1 = dst_bb
     dw, dh = max(1, dx1-dx0), max(1, dy1-dy0)
     photo_crop = photo.convert("RGB").crop(src_bb).resize((dw, dh), Image.LANCZOS)
-    alpha_crop = cutout.convert("RGBA").crop(src_bb).getchannel("A").resize((dw, dh), Image.LANCZOS)
+    alpha_crop = alpha.convert("L").crop(src_bb).resize((dw, dh), Image.LANCZOS)
     canvas = Image.new("RGB", (1024, 1024), BG_COLOR)
     canvas.paste(photo_crop, (dx0, dy0), alpha_crop)
     return canvas
 
 
-def alpha_photo(
-    photo: Image.Image,
-    alpha: Image.Image,
-) -> Image.Image:
+def alpha_photo(photo: Image.Image, alpha: Image.Image) -> Image.Image:
     """Build an RGBA photo from a clean silhouette mask.
 
     This intentionally ignores legacy normalized-cutout files. Some of those
@@ -161,50 +266,6 @@ def remap_rgba(src: Image.Image, src_bb: tuple, dst_bb: tuple) -> Image.Image:
     # paste with mask so alpha is honoured
     canvas.paste(garment, (dx0, dy0), garment)
     return canvas
-
-
-def fast_cutout_from_rgb(rgb_img: Image.Image) -> Image.Image:
-    """Generate an RGBA cutout by flood-filling connected background from edges."""
-    rgba = rgb_img.convert("RGBA")
-    pix  = rgba.load()
-    W, H = rgba.size
-
-    visited = bytearray(W * H)
-    q: deque[tuple[int,int]] = deque()
-
-    def is_bg(x: int, y: int) -> bool:
-        r, g, b, _ = pix[x, y]
-        return max(abs(r - BG_COLOR[0]),
-                   abs(g - BG_COLOR[1]),
-                   abs(b - BG_COLOR[2])) < BG_THRESH + 4   # slightly lenient at edges
-
-    # Seed from all four edges
-    for x in range(W):
-        for y in (0, H-1):
-            idx = y * W + x
-            if not visited[idx] and is_bg(x, y):
-                visited[idx] = 1
-                q.append((x, y))
-    for y in range(1, H-1):
-        for x in (0, W-1):
-            idx = y * W + x
-            if not visited[idx] and is_bg(x, y):
-                visited[idx] = 1
-                q.append((x, y))
-
-    while q:
-        x, y = q.popleft()
-        r, g, b, _ = pix[x, y]
-        pix[x, y] = (r, g, b, 0)
-        for dx, dy in ((-1,0),(1,0),(0,-1),(0,1)):
-            nx, ny = x+dx, y+dy
-            if 0 <= nx < W and 0 <= ny < H:
-                idx = ny * W + nx
-                if not visited[idx] and is_bg(nx, ny):
-                    visited[idx] = 1
-                    q.append((nx, ny))
-
-    return rgba
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
@@ -232,6 +293,11 @@ for cat, slugs in SLUGS.items():
             missing.append(mask)
         else:
             mask_files.append(mask)
+        for color in slugs:
+            try:
+                source_frame(cat, color, face)
+            except ValueError as exc:
+                missing.append(str(exc))
 
 if missing:
     print("\nMissing source-kit inputs:", file=sys.stderr)
@@ -280,16 +346,18 @@ for cat, slugs in SLUGS.items():
             np_  = norm_path(cat, color, face)
             cp_  = cutout_path(cat, color, face)
             try:
-                # ── Use the clean white geometry, never a legacy cutout ────
+                # Align each immutable source photo to the mask coordinate
+                # system before applying alpha. Applying reference_alpha at the
+                # source's original coordinates is the bug that produced the
+                # large pale studio panels behind several product colours.
                 rgb_src = Image.open(source_).convert("RGB")
-                source_bb = reference_bb
-                reference_mask = Image.new("RGBA", (1024, 1024), (0, 0, 0, 0))
-                reference_mask.putalpha(reference_alpha)
-                cutout_source = alpha_photo(rgb_src, reference_alpha)
-                cutout_out = remap_rgba(cutout_source, source_bb, dst_bb)
+                frame = source_frame(cat, color, face)
+                aligned_src = align_source_to_mask(rgb_src, frame, reference_bb)
+                cutout_source = alpha_photo(aligned_src, reference_alpha)
+                cutout_out = remap_rgba(cutout_source, reference_bb, dst_bb)
 
                 # ── Rebuild RGB photo through alpha (no backdrop ghosts) ───
-                rgb_out = remap_clean_photo(rgb_src, reference_mask, source_bb, dst_bb)
+                rgb_out = remap_clean_photo(aligned_src, reference_alpha, reference_bb, dst_bb)
                 rgb_out.save(np_, "PNG")
                 cutout_out.save(cp_, "PNG")
 
