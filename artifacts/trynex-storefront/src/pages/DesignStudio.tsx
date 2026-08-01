@@ -804,6 +804,23 @@ export default function DesignStudio() {
     () => resolveMockup(selectedProduct, selectedColor.hex, "back"),
     [selectedProduct, selectedColor.hex],
   );
+
+  // ── Image preloading ────────────────────────────────────────────────────
+  // When the user selects a product, eagerly fetch every color's front + back
+  // photos and cutout PNGs into the browser cache so that color swaps render
+  // instantly with no flash / ghost-image effect.
+  useEffect(() => {
+    const preload = (src: string) => { if (src) { const img = new window.Image(); img.src = src; } };
+    selectedProduct.colors.forEach(c => {
+      const fm = resolveMockup(selectedProduct, c.hex, "front");
+      const bm = resolveMockup(selectedProduct, c.hex, "back");
+      preload(fm.photoSrc);
+      preload(bm.photoSrc);
+      preload(fm.cutoutSrc);
+      preload(bm.cutoutSrc);
+    });
+  }, [selectedProduct.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const pz = useMemo(() => {
     if (isMugProduct) {
       return mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ;

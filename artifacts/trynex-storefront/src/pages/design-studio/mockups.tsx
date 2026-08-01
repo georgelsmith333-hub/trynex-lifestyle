@@ -377,9 +377,12 @@ export const BASE_BY_CATEGORY: Record<
     darkFront: mugFrontDark,
     darkBack: mugBackDark,
     frontCutout: mugFrontCutout,
-    backCutout: mugBack,
+    // mugBack is an opaque source-kit photo — use the proper white cutout as the
+    // alpha fallback so silhouette masks (mug/waterbottle silhouette-mask SVG filter)
+    // get a transparent image instead of a solid rectangle.
+    backCutout: mugFrontCutout,
     darkFrontCutout: mugFrontDarkCutout,
-    darkBackCutout: mugBackDark,
+    darkBackCutout: mugFrontDarkCutout,
     colorPhotos: {
        "#f5f5f5": { front: "/mockups/normalized/mug-white-front.png", back: "/mockups/normalized/mug-white-back.png" },
        "#1c1917": { front: "/mockups/normalized/mug-black-front.png", back: "/mockups/normalized/mug-black-back.png" },
@@ -503,29 +506,32 @@ const SOURCE_KIT_FRAMES: Record<
   DesignProduct["category"],
   { front: NormalizedMockupFrame; back: NormalizedMockupFrame }
 > = {
+  // Values measured from actual normalized photos (scripts/normalize_mockups_v3.py).
+  // Each product uses one shared frame across faces and colors so switching
+  // view or color cannot change the apparent product scale or position.
   tshirt: {
-    front: { canvasWidth: 1024, canvasHeight: 1024, x: 62, y: 82, w: 900, h: 860 },
-    back: { canvasWidth: 1024, canvasHeight: 1024, x: 62, y: 82, w: 900, h: 860 },
+    front: { canvasWidth: 1024, canvasHeight: 1024, x: 43, y: 66, w: 937, h: 891 },
+    back:  { canvasWidth: 1024, canvasHeight: 1024, x: 43, y: 66, w: 937, h: 891 },
   },
   longsleeve: {
-    front: { canvasWidth: 1024, canvasHeight: 1024, x: 72, y: 112, w: 880, h: 800 },
-    back: { canvasWidth: 1024, canvasHeight: 1024, x: 72, y: 112, w: 880, h: 800 },
+    front: { canvasWidth: 1024, canvasHeight: 1024, x: 53, y: 94, w: 917, h: 836 },
+    back:  { canvasWidth: 1024, canvasHeight: 1024, x: 53, y: 94, w: 917, h: 836 },
   },
   hoodie: {
-    front: { canvasWidth: 1024, canvasHeight: 1024, x: 72, y: 62, w: 880, h: 900 },
-    back: { canvasWidth: 1024, canvasHeight: 1024, x: 72, y: 62, w: 880, h: 900 },
+    front: { canvasWidth: 1024, canvasHeight: 1024, x: 54, y: 43, w: 916, h: 937 },
+    back:  { canvasWidth: 1024, canvasHeight: 1024, x: 54, y: 43, w: 916, h: 937 },
   },
   mug: {
-    front: { canvasWidth: 1024, canvasHeight: 1024, x: 162, y: 212, w: 700, h: 600 },
-    back: { canvasWidth: 1024, canvasHeight: 1024, x: 162, y: 212, w: 700, h: 600 },
+    front: { canvasWidth: 1024, canvasHeight: 1024, x: 143, y: 192, w: 738, h: 637 },
+    back:  { canvasWidth: 1024, canvasHeight: 1024, x: 143, y: 192, w: 738, h: 637 },
   },
   cap: {
-    front: { canvasWidth: 1024, canvasHeight: 1024, x: 162, y: 202, w: 700, h: 620 },
-    back: { canvasWidth: 1024, canvasHeight: 1024, x: 162, y: 202, w: 700, h: 620 },
+    front: { canvasWidth: 1024, canvasHeight: 1024, x: 162, y: 184, w: 700, h: 655 },
+    back:  { canvasWidth: 1024, canvasHeight: 1024, x: 162, y: 184, w: 700, h: 655 },
   },
   waterbottle: {
-    front: { canvasWidth: 1024, canvasHeight: 1024, x: 362, y: 97, w: 300, h: 830 },
-    back: { canvasWidth: 1024, canvasHeight: 1024, x: 362, y: 97, w: 300, h: 830 },
+    front: { canvasWidth: 1024, canvasHeight: 1024, x: 351, y: 78, w: 322, h: 866 },
+    back:  { canvasWidth: 1024, canvasHeight: 1024, x: 351, y: 78, w: 322, h: 866 },
   },
 };
 
@@ -812,6 +818,16 @@ export function GarmentSVG({
   return (
     <>
       <defs>
+        {/* Smooth cross-fade when switching garment color / face.
+            Uses key prop on the image element to retrigger the animation each swap. */}
+        <style>{`
+          @keyframes garmentFadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+          }
+          .garment-img { animation: garmentFadeIn 0.13s ease-in-out; }
+        `}</style>
+
         {/* Drop shadow — crisp silhouette lift on the white studio canvas.
             Applied only to cutout (transparent) images, not full opaque photos. */}
         <filter id="garment-shadow" x="-12%" y="-10%" width="124%" height="124%" colorInterpolationFilters="sRGB">
@@ -908,18 +924,22 @@ export function GarmentSVG({
 
       {needsTint && tintPhotoSrc ? (
         <image
+          key={tintPhotoSrc}
           href={tintPhotoSrc}
           x={0} y={0} width={1000} height={1000}
           preserveAspectRatio="xMidYMid meet"
           filter="url(#garment-color-tint)"
+          className="garment-img"
           style={{ pointerEvents: "none" }}
         />
       ) : (
         <g filter={shadowFilter}>
           <image
+            key={imageSrc}
             href={imageSrc}
             x={0} y={0} width={1000} height={1000}
             preserveAspectRatio="xMidYMid meet"
+            className="garment-img"
             style={{ pointerEvents: "none" }}
           />
         </g>

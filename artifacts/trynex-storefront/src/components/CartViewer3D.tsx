@@ -4,7 +4,7 @@
    Shows garment photo tinted to the selected colour, with
    the design texture composited on top.
 ════════════════════════════════════════════════════════ */
-import { useState, useMemo, useId } from "react";
+ import { useState, useMemo, useId } from "react";
 import { PRODUCTS, resolveMockup } from "../pages/design-studio/mockups";
 
 type GarmentCategory = "tshirt" | "longsleeve" | "hoodie" | "mug" | "cap" | "waterbottle";
@@ -60,7 +60,8 @@ export default function CartViewer3D({
   const garmentSrc  = face === "front" ? frontSrc : (backSrc ?? frontSrc);
   const designSrc   = face === "front" ? frontTexUrl : (backTexUrl ?? frontTexUrl);
   const needsTint = face === "front" ? frontRequiresTint : backRequiresTint;
-  const tintFilterId = `cart-garment-tint-${useId().replace(/:/g, "")}`;
+  const stableId = useId().replace(/:/g, "");
+  const tintFilterId = `cart-garment-tint-${stableId}`;
 
   return (
     <div
@@ -71,7 +72,8 @@ export default function CartViewer3D({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#f5f3f0",
+         // Match the normalized opaque photo canvas so no square edge appears.
+         background: "#faf8f5",
         borderRadius: 12,
         overflow: "hidden",
       }}
@@ -128,6 +130,7 @@ export default function CartViewer3D({
             rectangle over the whole square. */}
         {garmentSrc && needsTint ? (
           <svg
+            key={`${garmentSrc}-${face}-tinted`}
             viewBox="0 0 1024 1024"
             width="100%"
             height="100%"
@@ -153,6 +156,7 @@ export default function CartViewer3D({
           </svg>
         ) : garmentSrc ? (
           <img
+            key={`${garmentSrc}-${face}`}
             src={garmentSrc}
             alt="Product"
             style={{
@@ -170,6 +174,7 @@ export default function CartViewer3D({
         {/* Design overlay */}
         {designSrc && (
           <img
+            key={`${designSrc}-${face}`}
             src={designSrc}
             alt="Design"
             style={{
