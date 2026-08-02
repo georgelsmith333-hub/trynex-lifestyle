@@ -225,6 +225,18 @@ def align_source_to_mask(
     return aligned
 
 
+def clean_alpha_template(alpha: Image.Image) -> Image.Image:
+    """Return a hard, source-shadow-proof product silhouette.
+
+    The source-kit photos contain soft studio shadows close to several garment
+    edges. Semi-transparent template pixels blend those shadows back into the
+    runtime photo and create the false second-product/ghost effect. The
+    template remains the geometry authority, but runtime alpha is intentionally
+    binary so only product pixels are composited.
+    """
+    return alpha.convert("L").point(lambda value: 255 if value >= 128 else 0)
+
+
 def remap_clean_photo(photo: Image.Image, alpha: Image.Image, src_bb: tuple, dst_bb: tuple) -> Image.Image:
     """Place a photo through its alpha silhouette on the stable target frame.
 
@@ -336,7 +348,7 @@ for cat, slugs in SLUGS.items():
         # stored separately from runtime output so reruns cannot recursively
         # normalize an already-normalized image or inherit contaminated pixels.
         reference_path = mask_path(cat, face)
-        reference_alpha = Image.open(reference_path).convert("L")
+        reference_alpha = clean_alpha_template(Image.open(reference_path))
         reference_bb = reference_alpha.point(lambda p: 255 if p > 20 else 0).getbbox()
         if not reference_bb:
             print(f"  EMPTY reference mask {reference_path}")
