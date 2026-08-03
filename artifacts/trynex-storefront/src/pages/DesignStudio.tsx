@@ -608,7 +608,15 @@ export default function DesignStudio() {
         if (urlTab && ["upload", "text", "layers", "templates", "ai"].includes(urlTab)) {
           setActiveTab(urlTab as typeof activeTab);
         }
-        if (sp.get("view") === "back") setActiveFace("back");
+        if (sp.get("view") === "back") {
+          setActiveFace("back");
+          // For mugs, "back" means Side 2 — sync mugMode so the effect at
+          // line ~382 doesn't immediately re-override activeFace to "front".
+          if (PRODUCTS.find(p => p.id === (LEGACY_ID_MAP[sp.get("product") ?? ""] ?? sp.get("product") ?? ""))?.category === "mug"
+            || selectedProduct.category === "mug") {
+            setMugMode("side2");
+          }
+        }
         const urlSize = sp.get("size");
         if (urlSize && ["XS", "S", "M", "L", "XL", "XXL", "XXXL"].includes(urlSize)) {
           setSelectedSize(urlSize);
