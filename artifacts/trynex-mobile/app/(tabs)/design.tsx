@@ -50,7 +50,10 @@ const MOCKUP_CONFIG: Record<string, {
   darkMockup: string;
   backLightMockup?: string;
   backDarkMockup?: string;
+  /** Reviewed exact-colour photo pair. These bypass the tint overlay. */
+  colorPhotos?: Record<string, { front: string; back?: string }>;
   printZone: PrintZone;
+  backPrintZone?: PrintZone;
   wrapPrintZone?: PrintZone;
   zones: string[];
   mugModes?: { value: string; label: string; }[];
@@ -87,12 +90,28 @@ const MOCKUP_CONFIG: Record<string, {
     ],
   },
   mug: {
-    lightMockup: "white-mug-front.png",
-    darkMockup: "black-mug-front.png",
-    backLightMockup: "white-mug-back.png",
-    backDarkMockup: "black-mug-back.png",
-    printZone: { left: 0.21, top: 0.24, w: 0.58, h: 0.52 },
-    wrapPrintZone: { left: 0.12, top: 0.18, w: 0.76, h: 0.64 },
+    lightMockup: "normalized/mug-white-front.png",
+    darkMockup: "normalized/mug-black-front.png",
+    backLightMockup: "normalized/mug-white-back.png",
+    backDarkMockup: "normalized/mug-black-back.png",
+    colorPhotos: {
+      "#f5f5f5": { front: "normalized/mug-white-front.png", back: "normalized/mug-white-back.png" },
+      "#1c1917": { front: "normalized/mug-black-front.png", back: "normalized/mug-black-back.png" },
+      "#1e3a5f": { front: "normalized/mug-navy-front.png", back: "normalized/mug-navy-back.png" },
+      "#dc2626": { front: "normalized/mug-red-front.png", back: "normalized/mug-red-back.png" },
+      "#16a34a": { front: "normalized/mug-green-front.png", back: "normalized/mug-green-back.png" },
+      "#7c3aed": { front: "normalized/mug-purple-front.png", back: "normalized/mug-purple-back.png" },
+      "#0ea5e9": { front: "normalized/mug-sky-blue-front.png", back: "normalized/mug-sky-blue-back.png" },
+      "#ec4899": { front: "normalized/mug-pink-front.png", back: "normalized/mug-pink-back.png" },
+      "#7f1d1d": { front: "normalized/mug-maroon-front.png", back: "normalized/mug-maroon-back.png" },
+      "#ea580c": { front: "normalized/mug-orange-front.png", back: "normalized/mug-orange-back.png" },
+    },
+    // 1000px coordinates scaled from the reviewed 1024px photos.
+    printZone: { left: 0.225, top: 0.22, w: 0.49, h: 0.58 },
+    backPrintZone: { left: 0.285, top: 0.22, w: 0.49, h: 0.58 },
+    // A mobile wrap preview stays inside the visible ceramic body. The
+    // storefront's two-face editor is authoritative for continuous wraps.
+    wrapPrintZone: { left: 0.225, top: 0.22, w: 0.49, h: 0.58 },
     zones: ["Front"],
     mugModes: [
       { value: "side1", label: "Side 1" },
@@ -100,22 +119,77 @@ const MOCKUP_CONFIG: Record<string, {
       { value: "wrap", label: "Full Wrap" },
     ],
     colors: [
-      { name: "White", hex: "#F5F5F3" },
-      { name: "Black", hex: "#1a1a1a" },
+      { name: "White", hex: "#F5F5F5" },
+      { name: "Black", hex: "#1C1917" },
+      { name: "Navy", hex: "#1e3a5f" },
+      { name: "Red", hex: "#dc2626" },
+      { name: "Green", hex: "#16a34a" },
+      { name: "Purple", hex: "#7c3aed" },
+      { name: "Sky Blue", hex: "#0ea5e9" },
+      { name: "Pink", hex: "#ec4899" },
+      { name: "Maroon", hex: "#7f1d1d" },
+      { name: "Orange", hex: "#ea580c" },
     ],
   },
   cap: {
-    lightMockup: "white-cap-front.png",
-    darkMockup: "black-cap-front.png",
-    printZone: { left: 0.27, top: 0.36, w: 0.46, h: 0.34 },
-    zones: ["Front"],
+    lightMockup: "normalized/cap-white-front.png",
+    darkMockup: "normalized/cap-black-front.png",
+    backLightMockup: "normalized/cap-white-back.png",
+    backDarkMockup: "normalized/cap-black-back.png",
+    colorPhotos: {
+      "#f5f2ec": { front: "normalized/cap-white-front.png", back: "normalized/cap-white-back.png" },
+      "#1a1a1a": { front: "normalized/cap-black-front.png", back: "normalized/cap-black-back.png" },
+      "#1e3a5f": { front: "normalized/cap-navy-front.png", back: "normalized/cap-navy-back.png" },
+      "#7f1d1d": { front: "normalized/cap-maroon-front.png", back: "normalized/cap-maroon-back.png" },
+      "#4a5240": { front: "normalized/cap-olive-front.png", back: "normalized/cap-olive-back.png" },
+      "#dc2626": { front: "normalized/cap-red-front.png", back: "normalized/cap-red-back.png" },
+      "#6b7280": { front: "normalized/cap-grey-front.png", back: "normalized/cap-grey-back.png" },
+      "#166534": { front: "normalized/cap-forest-front.png", back: "normalized/cap-forest-back.png" },
+    },
+    printZone: { left: 0.24, top: 0.26, w: 0.54, h: 0.32 },
+    // Keep the rear artwork on the crown and above the adjustment opening/strap.
+    backPrintZone: { left: 0.285, top: 0.27, w: 0.43, h: 0.23 },
+    zones: ["Front", "Back"],
     colors: [
-      { name: "White", hex: "#F5F5F3" },
+      { name: "White", hex: "#F5F2EC" },
       { name: "Black", hex: "#1a1a1a" },
       { name: "Navy", hex: "#1e3a5f" },
+      { name: "Maroon", hex: "#7f1d1d" },
+      { name: "Olive", hex: "#4a5240" },
       { name: "Red", hex: "#dc2626" },
+      { name: "Grey", hex: "#6b7280" },
       { name: "Forest", hex: "#166534" },
-      { name: "Sky", hex: "#0ea5e9" },
+    ],
+  },
+  waterbottle: {
+    lightMockup: "normalized/waterbottle-white-front.png",
+    darkMockup: "normalized/waterbottle-black-front.png",
+    backLightMockup: "normalized/waterbottle-white-back.png",
+    backDarkMockup: "normalized/waterbottle-black-back.png",
+    colorPhotos: {
+      "#f4f3f1": { front: "normalized/waterbottle-white-front.png", back: "normalized/waterbottle-white-back.png" },
+      "#1c1917": { front: "normalized/waterbottle-black-front.png", back: "normalized/waterbottle-black-back.png" },
+      "#1e3a5f": { front: "normalized/waterbottle-navy-front.png", back: "normalized/waterbottle-navy-back.png" },
+      "#166534": { front: "normalized/waterbottle-forest-front.png", back: "normalized/waterbottle-forest-back.png" },
+      "#0ea5e9": { front: "normalized/waterbottle-sky-blue-front.png", back: "normalized/waterbottle-sky-blue-back.png" },
+      "#dc2626": { front: "normalized/waterbottle-red-front.png", back: "normalized/waterbottle-red-back.png" },
+      "#f472b6": { front: "normalized/waterbottle-pink-front.png", back: "normalized/waterbottle-pink-back.png" },
+      "#0f766e": { front: "normalized/waterbottle-teal-front.png", back: "normalized/waterbottle-teal-back.png" },
+    },
+    // Only the straight bottle body is printable; exclude lid, shoulder,
+    // carabiner and rounded base.
+    printZone: { left: 0.39, top: 0.34, w: 0.245, h: 0.555 },
+    backPrintZone: { left: 0.39, top: 0.34, w: 0.245, h: 0.555 },
+    zones: ["Front", "Back"],
+    colors: [
+      { name: "White", hex: "#F4F3F1" },
+      { name: "Black", hex: "#1C1917" },
+      { name: "Navy", hex: "#1e3a5f" },
+      { name: "Forest", hex: "#166534" },
+      { name: "Sky Blue", hex: "#0ea5e9" },
+      { name: "Red", hex: "#dc2626" },
+      { name: "Pink", hex: "#f472b6" },
+      { name: "Teal", hex: "#0f766e" },
     ],
   },
 };
@@ -132,6 +206,7 @@ const FALLBACK_PRODUCTS = [
   { id: 2, name: "Custom Hoodie",  slug: "hoodie", price: 1499, customizable: true, stock: 99, featured: false, rating: 0, reviewCount: 0, imageUrl: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&q=80" },
   { id: 3, name: "Custom Mug",     slug: "mug",    price: 599,  customizable: true, stock: 99, featured: false, rating: 0, reviewCount: 0, imageUrl: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400&q=80" },
   { id: 4, name: "Custom Cap",     slug: "cap",    price: 699,  customizable: true, stock: 99, featured: false, rating: 0, reviewCount: 0, imageUrl: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400&q=80" },
+  { id: 5, name: "Custom Water Bottle", slug: "waterbottle", price: 899, customizable: true, stock: 99, featured: false, rating: 0, reviewCount: 0, imageUrl: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400&q=80" },
 ];
 
 export default function DesignScreen() {
@@ -171,14 +246,20 @@ export default function DesignScreen() {
 
   const isMug = selectedProduct?.slug?.includes("mug") ?? false;
   const useDarkMockup = !isLightHex(selectedColor.hex);
-  const isMugBack = isMug && mugMode === "side2";
-  const mockupSrc = isMugBack
-    ? mockupUrl(useDarkMockup ? (mockupCfg.backDarkMockup ?? "black-mug-back.png") : (mockupCfg.backLightMockup ?? "white-mug-back.png"))
-    : useDarkMockup ? mockupUrl(mockupCfg.darkMockup) : mockupUrl(mockupCfg.lightMockup);
+  const isBackFace = (isMug && mugMode === "side2") || (!isMug && selectedZone === "Back");
+  const colorPhoto = mockupCfg.colorPhotos?.[selectedColor.hex.toLowerCase()];
+  const exactPhotoSrc = isBackFace ? colorPhoto?.back : colorPhoto?.front;
+  const mockupSrc = mockupUrl(exactPhotoSrc ?? (
+    isBackFace
+      ? (useDarkMockup ? (mockupCfg.backDarkMockup ?? mockupCfg.darkMockup) : (mockupCfg.backLightMockup ?? mockupCfg.lightMockup))
+      : (useDarkMockup ? mockupCfg.darkMockup : mockupCfg.lightMockup)
+  ));
 
   const pz = isMug && mugMode === "wrap" && mockupCfg.wrapPrintZone
     ? mockupCfg.wrapPrintZone
-    : mockupCfg.printZone;
+    : isBackFace
+      ? (mockupCfg.backPrintZone ?? mockupCfg.printZone)
+      : mockupCfg.printZone;
   const printLeft   = PREVIEW_SIZE * pz.left;
   const printTop    = PREVIEW_SIZE * pz.top;
   const printWidth  = PREVIEW_SIZE * pz.w;
@@ -338,7 +419,7 @@ export default function DesignScreen() {
             />
 
             {/* Color tint overlay for light-base mockups */}
-            {!useDarkMockup && selectedColor.hex !== "#F5F5F3" && (
+            {!exactPhotoSrc && !useDarkMockup && selectedColor.hex !== "#F5F5F3" && (
               <View
                 style={[
                   StyleSheet.absoluteFill,

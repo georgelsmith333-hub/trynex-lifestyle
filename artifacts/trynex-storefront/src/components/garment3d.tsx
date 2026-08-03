@@ -691,8 +691,8 @@ export function MugBody({
 }
 
 /* ─────────────────────── PHOTO BILLBOARD 3D ─────────
- * Used for Hoodie, Long Sleeve, and Structured Cap — products where
- * the procedurally generated GLB geometry looked flat and unrealistic.
+ * Used for apparel, mugs, caps, and water bottles — products where the
+ * procedurally generated GLB geometry looked flat and unrealistic.
  *
  * Approach: map the REAL product photo as a texture onto a plane in the
  * 3D scene. The R3F environment (city HDRI) adds specular highlights and
@@ -700,7 +700,7 @@ export function MugBody({
  * plane slightly in front carries the design texture overlay.
  *
  * Two planes (front + back) are stacked back-to-back so the camera can
- * orbit 360° and always see the correct face of the garment.
+ * orbit 360° and always see the correct face of the product.
  *────────────────────────────────────────────────────── */
 export function PhotoMockupMesh({
   frontPhotoSrc,

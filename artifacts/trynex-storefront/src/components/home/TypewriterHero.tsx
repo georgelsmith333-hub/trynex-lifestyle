@@ -370,14 +370,14 @@ export function TypewriterHero() {
                   className="flex-none relative rounded-2xl overflow-hidden"
                   style={{
                     width: "130px",
-                    background: "#1C1C1E",
-                    border: "1.5px solid rgba(255,255,255,0.08)",
-                    boxShadow: "0 8px 24px rgba(0,0,0,0.28), 0 2px 6px rgba(0,0,0,0.16)",
+                    background: "rgba(255,253,251,0.94)",
+                    border: "1.5px solid rgba(232,93,4,0.14)",
+                    boxShadow: "0 8px 24px rgba(90,47,20,0.10), 0 2px 6px rgba(232,93,4,0.06)",
                   }}
                 >
                   <div
                     className="absolute top-2 left-2 z-10 px-2 py-0.5 rounded-full text-[8px] font-black text-white uppercase tracking-wider"
-                    style={{ background: p.badgeColor, boxShadow: "0 2px 6px rgba(0,0,0,0.3)" }}
+                     style={{ background: p.badgeColor, boxShadow: "0 2px 6px rgba(90,47,20,0.16)" }}
                   >
                     {p.badge}
                   </div>
@@ -391,7 +391,7 @@ export function TypewriterHero() {
                     draggable={false}
                   />
                   <div className="pb-2.5 text-center">
-                    <span className="text-[10px] font-black text-gray-200">{p.label}</span>
+                     <span className="text-[10px] font-black text-gray-800">{p.label}</span>
                   </div>
                 </Link>
               ))}
@@ -459,9 +459,9 @@ export function TypewriterHero() {
                 key={p.label}
                 className="flex-1 relative rounded-2xl lg:rounded-3xl overflow-hidden cursor-pointer"
                 style={{
-                  background: "#1C1C1E",
-                  border: "1.5px solid rgba(255,255,255,0.08)",
-                  boxShadow: "0 12px 32px rgba(0,0,0,0.32), 0 2px 8px rgba(0,0,0,0.18)",
+                  background: "rgba(255,253,251,0.94)",
+                  border: "1.5px solid rgba(232,93,4,0.14)",
+                  boxShadow: "0 16px 36px rgba(90,47,20,0.12), 0 2px 8px rgba(232,93,4,0.06)",
                   minHeight: "160px",
                 }}
                 initial={reduced ? false : { opacity: 0, y: 20 }}
@@ -473,7 +473,7 @@ export function TypewriterHero() {
                 {/* Badge */}
                 <div
                   className="absolute top-2.5 left-2.5 z-10 px-2 py-0.5 rounded-full text-[8px] lg:text-[9px] font-black text-white uppercase tracking-wider"
-                  style={{ background: p.badgeColor, boxShadow: "0 2px 8px rgba(0,0,0,0.35)" }}
+                  style={{ background: p.badgeColor, boxShadow: "0 2px 8px rgba(90,47,20,0.16)" }}
                 >
                   {p.badge}
                 </div>
@@ -497,7 +497,7 @@ export function TypewriterHero() {
                 />
                 {/* Label */}
                 <div className="pb-3 text-center">
-                  <span className="text-[10px] lg:text-xs font-black text-gray-200">{p.label}</span>
+                  <span className="text-[10px] lg:text-xs font-black text-gray-800">{p.label}</span>
                 </div>
               </motion.div>
             ))}
@@ -510,9 +510,9 @@ export function TypewriterHero() {
                 key={p.label}
                 className="flex-1 relative rounded-2xl lg:rounded-3xl overflow-hidden cursor-pointer"
                 style={{
-                  background: "#1C1C1E",
-                  border: "1.5px solid rgba(255,255,255,0.08)",
-                  boxShadow: "0 12px 32px rgba(0,0,0,0.32), 0 2px 8px rgba(0,0,0,0.18)",
+                  background: "rgba(255,253,251,0.94)",
+                  border: "1.5px solid rgba(232,93,4,0.14)",
+                  boxShadow: "0 16px 36px rgba(90,47,20,0.12), 0 2px 8px rgba(232,93,4,0.06)",
                   minHeight: "160px",
                 }}
                 initial={reduced ? false : { opacity: 0, y: 20 }}
@@ -524,7 +524,7 @@ export function TypewriterHero() {
                 {/* Badge */}
                 <div
                   className="absolute top-2.5 left-2.5 z-10 px-2 py-0.5 rounded-full text-[8px] lg:text-[9px] font-black text-white uppercase tracking-wider"
-                  style={{ background: p.badgeColor, boxShadow: "0 2px 8px rgba(0,0,0,0.35)" }}
+                  style={{ background: p.badgeColor, boxShadow: "0 2px 8px rgba(90,47,20,0.16)" }}
                 >
                   {p.badge}
                 </div>
@@ -547,7 +547,7 @@ export function TypewriterHero() {
                 />
                 {/* Label */}
                 <div className="pb-3 text-center">
-                  <span className="text-[10px] lg:text-xs font-black text-gray-200">{p.label}</span>
+                  <span className="text-[10px] lg:text-xs font-black text-gray-800">{p.label}</span>
                 </div>
               </motion.div>
             ))}

@@ -57,7 +57,10 @@ export function useCartItemPreview(item: CartItemPreviewInput): CartItemPreviewP
     const category = toCategory(meta?.category);
     const product = PRODUCTS.find((candidate) => candidate.category === category);
     if (!product || !meta?.colorHex) return null;
-    const face = category === "mug" && meta.mugMode === "side2" ? "back" : "front";
+    const face = meta.previewFace === "back"
+      || (category === "mug" && meta.mugMode === "side2")
+      ? "back"
+      : "front";
     return resolveMockup(product, meta.colorHex as string, face);
   }, [meta]);
 

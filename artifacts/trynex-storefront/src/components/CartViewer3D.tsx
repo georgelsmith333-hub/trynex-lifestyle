@@ -49,7 +49,9 @@ export default function CartViewer3D({
   frontTexUrl,
   backTexUrl,
 }: CartViewer3DProps) {
-  const hasFrontBack = category === "tshirt" || category === "longsleeve" || category === "hoodie";
+  // All reviewed products have face-specific photos. Let customers inspect
+  // both sides after adding a studio design, not only apparel.
+  const hasFrontBack = true;
   const [face, setFace] = useState<"front" | "back">("front");
 
   const { front: frontSrc, back: backSrc, frontRequiresTint, backRequiresTint } = useMemo(
@@ -58,7 +60,9 @@ export default function CartViewer3D({
   );
 
   const garmentSrc  = face === "front" ? frontSrc : (backSrc ?? frontSrc);
-  const designSrc   = face === "front" ? frontTexUrl : (backTexUrl ?? frontTexUrl);
+  // Do not copy the front artwork onto a product's back photo. A back face
+  // without a dedicated texture is an intentionally blank product face.
+  const designSrc   = face === "front" ? frontTexUrl : backTexUrl;
   const needsTint = face === "front" ? frontRequiresTint : backRequiresTint;
   const stableId = useId().replace(/:/g, "");
   const tintFilterId = `cart-garment-tint-${stableId}`;

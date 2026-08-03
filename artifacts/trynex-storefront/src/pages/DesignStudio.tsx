@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import {
   PRODUCTS, type DesignProduct, GarmentSVG, FlatZoneSVG,
-  STICKERS, MUG_PZ, MUG_SIDE_PZ, MUG_SIDE_BACK_PZ,
+  STICKERS, MUG_PZ, MUG_WRAP_BACK_PZ, MUG_SIDE_PZ, MUG_SIDE_BACK_PZ,
   getApparelZones, getZonePZ, resolveMockup, type ApparelZone, isNearBlack, isLightTint, type PrintZone,
 } from "./design-studio/mockups";
 import { composeLayers, composeGarmentMockup, composeDesignTexture, autoFixImage, type ComposerLayer } from "./design-studio/composer";
@@ -363,10 +363,10 @@ export default function DesignStudio() {
 
   const isMugProduct = selectedProduct.category === "mug";
 
-  // Tee/longsleeve/hoodie support a back face. Mug also gets back face data
-  // for Side 2 / Wrap, but the *apparel* Front/Back UI must stay hidden for it.
+  // Tee/longsleeve/hoodie/cap/water bottle support a back face. Mug also gets
+  // back face data for Side 2 / Wrap, but uses its own mug-mode UI.
   const supportsBack = useMemo(
-    () => ["tshirt", "longsleeve", "hoodie", "mug"].includes(selectedProduct.category),
+    () => ["tshirt", "longsleeve", "hoodie", "cap", "waterbottle", "mug"].includes(selectedProduct.category),
     [selectedProduct.category]
   );
 
@@ -374,11 +374,9 @@ export default function DesignStudio() {
   // Mapping:
   //   side1 → "front"  (front print panel)
   //   side2 → "back"   (back print panel)
-  //   wrap  → "back"   (uses the back face slot too, but the renderer treats
-  //                     wrap differently: when mugMode === "wrap" the design
-  //                     spans the full 360° body via UV-repeat in MugBody).
-  // Distinguishing Side 2 vs Wrap is handled below via `isWrapMode` so the
-  // 3D preview can switch between a localized panel and a continuous body wrap.
+  //   wrap  → "back"   (uses both face slots with the calibrated body zones).
+  // The reviewed front/back photos remain authoritative; wrap mode never
+  // substitutes a procedural mug or silently prints over the handle.
   useEffect(() => {
     if (!isMugProduct) return;
     setActiveFace(mugMode === "side1" ? "front" : "back");
@@ -469,6 +467,9 @@ export default function DesignStudio() {
   // Crop state
   const [cropLayerId, setCropLayerId] = useState<string | null>(null);
   const [cropPct, setCropPct] = useState({ x: 0, y: 0, w: 100, h: 100 });
+  // Touch has no native double-click event. Keep the last layer tap small and
+  // local so a second tap enters crop mode without interfering with drag/pinch.
+  const lastLayerTapRef = useRef<{ id: string; time: number; x: number; y: number } | null>(null);
 
   /* Snap guides */
   const [snapGuides, setSnapGuides] = useState<{ v: boolean; h: boolean }>({ v: false, h: false });
@@ -869,7 +870,7 @@ export default function DesignStudio() {
   const pz = useMemo(() => {
     if (isMugProduct) {
       return mugMode === "wrap"
-        ? MUG_PZ
+        ? (activeFace === "back" ? MUG_WRAP_BACK_PZ : MUG_PZ)
         : (activeFace === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ);
     }
     if (activeFace === "back") return backMockup.printZone;
@@ -909,6 +910,8 @@ export default function DesignStudio() {
     () => ["tshirt", "longsleeve", "hoodie"].includes(selectedProduct.category),
     [selectedProduct.category]
   );
+  /** Curved products use a compact two-face switcher instead of apparel zones. */
+  const isFaceTabs = supportsBack && !isZoneTabs && !isMugProduct;
   /** True when the active zone is a flat template (sleeve / neck-label). */
   const isFlatZone = activeFace === "left-sleeve" || activeFace === "right-sleeve" || activeFace === "neck-label";
   /** Config of the currently active apparel zone. */
@@ -1930,6 +1933,32 @@ export default function DesignStudio() {
     if (!layer || layer.locked) return;
     setSelectedLayerId(layerId);
     selectedLayerIdRef.current = layerId;
+    const now = Date.now();
+    const previous = lastLayerTapRef.current;
+    const isDoubleTap = previous
+      && previous.id === layerId
+      && now - previous.time < 340
+      && Math.hypot(previous.x - e.clientX, previous.y - e.clientY) < 32;
+    lastLayerTapRef.current = { id: layerId, time: now, x: e.clientX, y: e.clientY };
+    if (isDoubleTap && layer.type === "image") {
+      setCropPct({ x: 0, y: 0, w: 100, h: 100 });
+      setCropLayerId(layerId);
+      lastLayerTapRef.current = null;
+    }
+  }, []);
+
+  const handleCanvasDoubleClick = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
+    const target = e.target as Element;
+    const layerId =
+      target.getAttribute?.("data-layer-id") ??
+      target.closest?.("[data-layer-id]")?.getAttribute("data-layer-id");
+    if (!layerId) return;
+    const layer = layersRef.current.find(l => l.id === layerId);
+    if (!layer || layer.locked || layer.type !== "image") return;
+    setSelectedLayerId(layerId);
+    selectedLayerIdRef.current = layerId;
+    setCropPct({ x: 0, y: 0, w: 100, h: 100 });
+    setCropLayerId(layerId);
   }, []);
 
   /* ── Click/tap on empty canvas deselects ────────────────────
@@ -2190,7 +2219,7 @@ export default function DesignStudio() {
          ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ)
          : frontMockup.printZone;
        const backPZ          = isMugProduct
-         ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_BACK_PZ)
+         ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ)
          : backMockup.printZone;
       const frontLayers     = layers.filter(l => (l.face ?? "front") === "front")        as unknown as ComposerLayer[];
       const backLayers      = layers.filter(l => (l.face ?? "front") === "back")         as unknown as ComposerLayer[];
@@ -2260,7 +2289,9 @@ export default function DesignStudio() {
       // 1. Full garment + design composite → cart thumbnail (imageUrl).
       //    Mug Side 2 must use the opposite-face mockup and layer set;
       //    otherwise the cart silently shows Side 1 after leaving the Studio.
-      const cartPreviewFace = isMugProduct && mugMode === "side2" ? "back" : "front";
+       const cartPreviewFace = (isMugProduct && mugMode === "side2") || (!isMugProduct && activeFace === "back")
+         ? "back"
+         : "front";
       const cartPreviewMockup = cartPreviewFace === "back" ? backMockup : frontMockup;
       const cartPreviewLayers = cartPreviewFace === "back" ? backLayers : frontLayers;
        const cartPreviewPZ = cartPreviewFace === "back" ? backPZ : frontPZ;
@@ -2419,6 +2450,7 @@ export default function DesignStudio() {
           colorHex: selectedColor.hex,
           size: selectedSize,
           mugMode,
+           previewFace: cartPreviewFace,
           layerCount: layers.length,
           frontLayerCount: frontLayers.length,
           backLayerCount: backLayers.length,
@@ -2445,7 +2477,7 @@ export default function DesignStudio() {
     } finally {
       setIsAddingToCart(false);
     }
-  }, [layers, selectedProduct, displayProduct, selectedColor, selectedSize, quantity, isMug, isMugProduct, mugMode, isCap, isWaterBottle, isZoneTabs, studioPrice, pz, frontMockup, backMockup, addToCart, toast, navigate, settings, linkedStoreProduct]);
+  }, [layers, selectedProduct, displayProduct, selectedColor, selectedSize, quantity, isMug, isMugProduct, mugMode, activeFace, isCap, isWaterBottle, isZoneTabs, studioPrice, pz, frontMockup, backMockup, addToCart, toast, navigate, settings, linkedStoreProduct]);
 
   /* ── Studio color palette — driven by the selected product's colors array.
      Admin overrides (settings.studioTshirtColors / studioMugColors) are still
@@ -2943,14 +2975,20 @@ export default function DesignStudio() {
                 Apparel (tshirt/longsleeve/hoodie): shows 5 zone tabs (Front, Back,
                 Left Sleeve, Right Sleeve, Neck Label) in a horizontally scrollable row.
                 Mug: shows Side 1 / Side 2 / Full Wrap (handled separately below). */}
-            {isZoneTabs && (
+            {(isZoneTabs || isFaceTabs) && (
               <div className="mb-3" data-testid="zone-switcher">
                 {/* Scrollable zone tab row */}
                 <div
                   className="flex gap-1.5 overflow-x-auto pb-1"
                   style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" }}
                 >
-                  {apparelZones.map(zone => {
+                  {(isFaceTabs
+                    ? [
+                        { face: "front" as Face, label: "Front", shortLabel: "Front", pxDimensions: "", pz: selectedProduct.printZone, isFlat: false },
+                        { face: "back" as Face, label: "Back", shortLabel: "Back", pxDimensions: "", pz: selectedProduct.printZoneBack ?? selectedProduct.printZone, isFlat: false },
+                      ]
+                    : apparelZones
+                  ).map(zone => {
                     const isActive = activeFace === zone.face;
                     const zoneLayerCount = layers.filter(l => (l.face ?? "front") === zone.face).length;
                     return (
@@ -2982,7 +3020,7 @@ export default function DesignStudio() {
                   })}
                 </div>
                 {/* Dimensions hint for flat zones */}
-                {isFlatZone && activeZoneConfig && (
+                {isZoneTabs && isFlatZone && activeZoneConfig && (
                   <div className="mt-1.5 flex items-center gap-1.5">
                     <Ruler className="w-3 h-3 text-gray-400 shrink-0" />
                     <span className="text-[10px] font-semibold text-gray-400">
@@ -3237,7 +3275,7 @@ export default function DesignStudio() {
                         back={supportsBack && ds3dBackLayers.length > 0 ? {
                           layers: ds3dBackLayers,
                           printZone: isMugProduct
-                            ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_BACK_PZ)
+                            ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ)
                             : (selectedProduct.printZoneBack ?? selectedProduct.printZone),
                           baseHeight: selectedProduct.baseHeight,
                         } : undefined}
@@ -3260,7 +3298,7 @@ export default function DesignStudio() {
                     "you are looking at the FRONT" indicator and animates between
                     faces. Doesn't affect interaction (pointer-events: none). */}
                 {(supportsBack || isZoneTabs) && (
-                  <AnimatePresence mode="wait">
+                  <AnimatePresence>
                     <motion.div
                       key={isMugProduct ? mugMode : activeFace}
                       initial={{ opacity: 0, y: -6 }}
@@ -3306,6 +3344,7 @@ export default function DesignStudio() {
                     };
                   })()}
                   onClick={handleCanvasClick}
+                   onDoubleClick={handleCanvasDoubleClick}
                   onWheel={handleCanvasWheel}
                 >
                   {isFlatZone && activeZoneConfig
@@ -3508,7 +3547,38 @@ export default function DesignStudio() {
                     </g>
                   ))}
 
-                  {/* Edge midpoint handles removed — Canva-style: corner handles only */}
+                  {/* Edge midpoint handles — directional resize. The visible knob is
+                      backed by a larger touch target for phone-sized canvases. */}
+                  {selectedLayer && selGeom && !selectedLayer.locked && edgeMidpoints.map(h => (
+                    <g
+                      key={`edge-${h.key}`}
+                      transform={`rotate(${selectedLayer.transform.rotation}, ${selGeom.cx}, ${selGeom.cy})`}
+                    >
+                      <rect
+                        x={h.midX - 6}
+                        y={h.midY - 6}
+                        width={12}
+                        height={12}
+                        rx={3}
+                        fill="white"
+                        stroke="#E85D04"
+                        strokeWidth="1.5"
+                        vectorEffect="non-scaling-stroke"
+                        pointerEvents="none"
+                        style={{ filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.25))" }}
+                      />
+                      <rect
+                        x={h.midX - h.stripW / 2}
+                        y={h.midY - h.stripH / 2}
+                        width={h.stripW}
+                        height={h.stripH}
+                        fill="transparent"
+                        pointerEvents="all"
+                        style={{ cursor: h.cursor, touchAction: "none" }}
+                        onPointerDown={e => handleEdgeResizeDown(e, h.key)}
+                      />
+                    </g>
+                  ))}
 
                   {/* Red delete (×) button at the top-right corner of the selected layer */}
                   {selectedLayer && selectedLayer.type === "image" && (() => {

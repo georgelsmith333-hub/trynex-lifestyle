@@ -44,7 +44,7 @@ const hoodieFrontCutout    = "/mockups/white-hoodie-front-cutout-real.png";
 const hoodieBackCutout     = "/mockups/white-hoodie-back-cutout-real.png";
 const mugFront             = "/mockups/white-mug-front.png";
 const mugFrontDark         = "/mockups/black-mug-front.png";
-const mugBack              = "/mockups/source-kit/mug-white-back.png";
+const mugBack              = "/mockups/white-mug-back.png";
 const mugBackDark          = "/mockups/source-kit/mug-black-back.png";
 const mugFrontCutout       = "/mockups/white-mug-front-cutout.png";
 const mugFrontDarkCutout   = "/mockups/black-mug-front-cutout.png";
@@ -132,7 +132,7 @@ export interface DesignProduct {
      TSHIRT_PZ / _BACK_PZ      — t-shirt front / back
      LONGSLEEVE_PZ / _BACK_PZ  — long-sleeve front / back
      HOODIE_PZ / _BACK_PZ      — hoodie front (above pocket) / back
-     CAP_PZ                    — cap front panel
+     CAP_PZ / CAP_BACK_PZ      — cap front / rear crown panel
    Flat-template zones (no garment image):
      SLEEVE_PZ      — left-sleeve and right-sleeve
      NECK_LABEL_PZ  — neck-label
@@ -150,20 +150,21 @@ export const LONGSLEEVE_BACK_PZ: PrintZone  = { x: 292, y: 195, w: 416, h: 458 }
 export const HOODIE_PZ: PrintZone           = { x: 240, y: 270, w: 520, h: 400 };
 export const HOODIE_BACK_PZ: PrintZone      = { x: 292, y: 184, w: 416, h: 448 };
 /** Cap front panel — structured 5-panel cap, panel is centred between brim and seam. */
-export const CAP_PZ: PrintZone              = { x: 302, y: 222, w: 396, h: 252 };
-/** Mug full 360° wrap zone — used by the wrap-mode composer (full body texture). */
-export const MUG_PZ: PrintZone              = { x: 160, y: 195, w: 680, h: 610 };
-/** Mug side print zone — calibrated to the visible front face of the mug body,
- *  avoiding the handle on the right and leaving breathing room at the rim/base.
- *  Center (415, 480) aligns with the mug body centre, well clear of the handle. */
-export const MUG_SIDE_PZ: PrintZone         = { x: 225, y: 215, w: 380, h: 530 };
-/** Back mug photo mirrors the handle to the left, so the printable panel must
- * mirror horizontally too. Keeping a separate zone prevents artwork from
- * spilling into the handle when Side 2 is selected. */
-export const MUG_SIDE_BACK_PZ: PrintZone    = { x: 419, y: 215, w: 380, h: 530 };
-/** Water bottle — wider printable front label panel so designs fill the
- *  cylindrical body without leaving large blank margins on the sides. */
-export const WATERBOTTLE_PZ: PrintZone      = { x: 260, y: 214, w: 480, h: 548 };
+export const CAP_PZ: PrintZone              = { x: 240, y: 260, w: 540, h: 320 };
+/** Cap rear crown zone — deliberately stops above the adjustment opening and strap. */
+export const CAP_BACK_PZ: PrintZone         = { x: 285, y: 270, w: 430, h: 230 };
+/** Mug front / right-handle body zone. The rectangle follows the ceramic
+ * body from rim to base and stops at the handle attachment. */
+export const MUG_PZ: PrintZone              = { x: 225, y: 220, w: 490, h: 580 };
+/** Back-facing mug photography has the handle on the left. Its ceramic body
+ * is shifted right, so the back face needs its own full-width body zone. */
+export const MUG_WRAP_BACK_PZ: PrintZone    = { x: 285, y: 220, w: 490, h: 580 };
+/** Side 1 and Side 2 use the same measured ceramic body panels as Wrap. */
+export const MUG_SIDE_PZ: PrintZone         = MUG_PZ;
+export const MUG_SIDE_BACK_PZ: PrintZone    = MUG_WRAP_BACK_PZ;
+/** Water bottle label panel: only the straight aluminium body is printable;
+ * the lid, shoulder, carabiner and rounded base are intentionally excluded. */
+export const WATERBOTTLE_PZ: PrintZone      = { x: 390, y: 340, w: 245, h: 555 };
 /** Sleeve print area — roughly square (1228×1087px real-world ratio). */
 export const SLEEVE_PZ: PrintZone           = { x: 175, y: 175, w: 650, h: 650 };
 /** Neck label — wider than tall (1299×945px real-world ratio). */
@@ -297,7 +298,7 @@ export const PRODUCTS: DesignProduct[] = [
     ],
     description: "Cotton Twill",
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
-    printZone: CAP_PZ,
+    printZone: CAP_PZ, printZoneBack: CAP_BACK_PZ,
     frontSrc: capFront,
   },
   {
@@ -385,7 +386,7 @@ export const BASE_BY_CATEGORY: Record<
     // mugBack is an opaque source-kit photo — use the proper white cutout as the
     // alpha fallback so silhouette masks (mug/waterbottle silhouette-mask SVG filter)
     // get a transparent image instead of a solid rectangle.
-    backCutout: mugFrontCutout,
+    backCutout: "/mockups/normalized-cutouts/mug-white-back.png",
     darkFrontCutout: mugFrontDarkCutout,
     darkBackCutout: mugFrontDarkCutout,
     colorPhotos: {
@@ -494,16 +495,16 @@ const SOURCE_KIT_PRINT_ZONES: Record<
     back: { x: 292, y: 184, w: 416, h: 448 },
   },
   mug: {
-    front: { x: 225, y: 215, w: 380, h: 530 },
-    back: { x: 419, y: 215, w: 380, h: 530 },
+    front: { x: 225, y: 220, w: 490, h: 580 },
+    back: { x: 285, y: 220, w: 490, h: 580 },
   },
   cap: {
-    front: { x: 302, y: 222, w: 396, h: 252 },
-    back: { x: 302, y: 222, w: 396, h: 252 },
+    front: { x: 240, y: 260, w: 540, h: 320 },
+    back: { x: 285, y: 270, w: 430, h: 230 },
   },
   waterbottle: {
-    front: { x: 260, y: 214, w: 480, h: 548 },
-    back: { x: 260, y: 214, w: 480, h: 548 },
+    front: { x: 390, y: 340, w: 245, h: 555 },
+    back: { x: 390, y: 340, w: 245, h: 555 },
   },
 };
 
@@ -793,7 +794,7 @@ export function GarmentSVG({
   const needsTint = resolvedMockup.photoKind === "transparent-cutout" && resolvedMockup.requiresTint;
 
   const pz = isMug && mugMode === "wrap"
-    ? MUG_PZ
+    ? (face === "back" ? MUG_WRAP_BACK_PZ : MUG_PZ)
     : isMug
       ? (face === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ)
       : (face === "back" && product.printZoneBack) ? product.printZoneBack : product.printZone;

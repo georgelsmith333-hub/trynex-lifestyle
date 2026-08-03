@@ -98,7 +98,7 @@ export default function HomeScreen() {
         </View>
       )}
       {/* Hero Header */}
-      <View style={[styles.hero, { paddingTop: topPad + 16, backgroundColor: colors.navy }]}>
+      <View style={[styles.hero, { paddingTop: topPad + 16, backgroundColor: "#FFF7EF" }]}>
         <View style={styles.heroTop}>
           <View>
             <Text style={styles.heroGreeting}>Trynex Lifestyle</Text>
@@ -106,18 +106,18 @@ export default function HomeScreen() {
           </View>
           <Pressable
             onPress={() => router.push("/cart")}
-            style={[styles.cartBtn, { backgroundColor: "rgba(255,255,255,0.15)" }]}
+            style={[styles.cartBtn, { backgroundColor: "#fff", borderColor: "#F3D4BE", borderWidth: 1 }]}
           >
-            <Feather name="shopping-bag" size={22} color="#fff" />
+            <Feather name="shopping-bag" size={22} color={colors.primary} />
           </Pressable>
         </View>
 
         {/* Search Bar */}
         <Pressable
           onPress={() => router.push("/(tabs)/shop")}
-          style={[styles.searchBar, { backgroundColor: "rgba(255,255,255,0.12)" }]}
+          style={[styles.searchBar, { backgroundColor: "#fff", borderColor: "#F3D4BE", borderWidth: 1 }]}
         >
-          <Feather name="search" size={16} color="rgba(255,255,255,0.7)" />
+          <Feather name="search" size={16} color={colors.primary} />
           <Text style={styles.searchPlaceholder}>Search products…</Text>
         </Pressable>
 
@@ -245,7 +245,7 @@ export default function HomeScreen() {
       {/* Design CTA Banner */}
       <Pressable
         onPress={() => router.push("/(tabs)/design")}
-        style={[styles.ctaBanner, { backgroundColor: colors.navy }]}
+        style={[styles.ctaBanner, { backgroundColor: "#FFF0E4", borderColor: "#F3D4BE", borderWidth: 1 }]}
       >
         <View style={styles.ctaContent}>
           <Text style={styles.ctaTitle}>Create Your Own Design</Text>
@@ -255,7 +255,7 @@ export default function HomeScreen() {
             <Feather name="arrow-right" size={14} color="#fff" />
           </View>
         </View>
-        <Feather name="edit-3" size={60} color="rgba(255,255,255,0.12)" style={styles.ctaBg} />
+        <Feather name="edit-3" size={60} color="rgba(232,93,4,0.12)" style={styles.ctaBg} />
       </Pressable>
 
       <View style={{ height: isWeb ? 34 : 100 }} />
@@ -276,14 +276,14 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   heroGreeting: {
-    color: "#fff",
+    color: "#21170F",
     fontSize: 22,
     fontWeight: "800",
     fontFamily: "Inter_700Bold",
     letterSpacing: -0.5,
   },
   heroSub: {
-    color: "rgba(255,255,255,0.6)",
+    color: "#806F63",
     fontSize: 13,
     marginTop: 2,
   },
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   searchPlaceholder: {
-    color: "rgba(255,255,255,0.55)",
+    color: "#8A7567",
     fontSize: 14,
   },
   heroImageWrap: {
@@ -314,6 +314,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginBottom: 0,
     position: "relative",
+    borderWidth: 1,
+    borderColor: "#F3D4BE",
   },
   heroImage: {
     width: "100%",
@@ -321,21 +323,27 @@ const styles = StyleSheet.create({
   },
   heroOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(28,41,81,0.55)",
+    backgroundColor: "rgba(255,247,239,0.04)",
   },
   heroCta: {
     position: "absolute",
     bottom: 16,
     left: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 14,
+    backgroundColor: "rgba(255,253,251,0.9)",
+    borderWidth: 1,
+    borderColor: "rgba(232,93,4,0.14)",
   },
   heroCtaTitle: {
-    color: "#fff",
+    color: "#21170F",
     fontSize: 20,
     fontWeight: "800",
     fontFamily: "Inter_700Bold",
   },
   heroCtaSub: {
-    color: "rgba(255,255,255,0.8)",
+    color: "#806F63",
     fontSize: 12,
     marginBottom: 10,
   },
@@ -450,13 +458,13 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   ctaTitle: {
-    color: "#fff",
+    color: "#21170F",
     fontSize: 20,
     fontWeight: "800",
     fontFamily: "Inter_700Bold",
   },
   ctaSub: {
-    color: "rgba(255,255,255,0.7)",
+    color: "#806F63",
     fontSize: 13,
     lineHeight: 18,
     maxWidth: "80%",
