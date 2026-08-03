@@ -3206,30 +3206,17 @@ export default function DesignStudio() {
                     : <GarmentSVG product={displayProduct} color={selectedColor.hex} showPrintZone={effectiveShowPrintZone} face={activeFace} mugMode={isMugProduct ? mugMode : undefined} />
                   }
 
-                  {/* Layers (clipped to print zone + optional product silhouette) */}
+                  {/* Layers are clipped only by the product-specific print zone.
+                      Do not apply a full-product PNG alpha mask here: its raster
+                      frame is independent from the design coordinate system and
+                      clips mug/bottle designs or reveals a ghost edge on another
+                      face. The product photo below is opaque; the print zone is
+                      the single authoritative editor boundary. */}
                   <defs>
                     <clipPath id="design-clip">
                       <rect x={pz.x} y={pz.y} width={pz.w} height={pz.h} rx="4" />
                     </clipPath>
-
-                    {/* ── Product-silhouette mask — uses the canonical transparent
-                        cutout alpha instead of a guessed rectangle. This keeps designs
-                        on the real mug/bottle body even when assets are re-framed. ── */}
-                    {isMugProduct && (
-                      <mask id="product-silhouette-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000" mask-type="alpha">
-                        <image href={(activeFace === "back" ? backMockup : frontMockup).cutoutSrc}
-                          x="0" y="0" width="1000" height="1000" preserveAspectRatio="xMidYMid meet" />
-                      </mask>
-                    )}
-                    {isWaterBottle && (
-                      <mask id="product-silhouette-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000" mask-type="alpha">
-                        <image href={(activeFace === "back" ? backMockup : frontMockup).cutoutSrc}
-                          x="0" y="0" width="1000" height="1000" preserveAspectRatio="xMidYMid meet" />
-                      </mask>
-                    )}
-
                   </defs>
-                  <g mask={(isMugProduct || isWaterBottle) ? "url(#product-silhouette-mask)" : undefined}>
                   <g clipPath="url(#design-clip)">
                     {layersRender
                       .filter(({ layer }) => (layer.face ?? "front") === activeFace)
@@ -3330,8 +3317,6 @@ export default function DesignStudio() {
                       );
                     })()}
                   </g>
-                  </g>{/* end product-silhouette-mask outer group */}
-
 
 
                   {/* ── Canva-style selection: border + corner squares + rotate handle ── */}
