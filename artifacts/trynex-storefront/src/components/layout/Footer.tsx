@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { Facebook, Instagram, Mail, MapPin, Phone, Truck, ShieldCheck, Clock, Youtube, Heart, ExternalLink, Loader2 } from "lucide-react";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { useToast } from "@/hooks/use-toast";
@@ -17,6 +17,13 @@ export function Footer() {
   const [tapCount, setTapCount] = useState(0);
   const [tapTimer, setTapTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [tapFeedback, setTapFeedback] = useState(false);
+
+  // Clean up reset timer on unmount to prevent state update on unmounted component
+  useEffect(() => {
+    return () => {
+      if (tapTimer) clearTimeout(tapTimer);
+    };
+  }, [tapTimer]);
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const [subscribing, setSubscribing] = useState(false);

@@ -51,7 +51,7 @@ const inputStyle = { background: 'white', border: '1px solid #e5e7eb', color: '#
 
 type CheckoutStep = 'form' | 'gateway' | 'success';
 type PaymentMethod = 'bkash' | 'nagad' | 'upay' | 'bank' | 'card' | 'cod';
-type PaymentMode = 'full' | 'advance' | 'cod';
+type PaymentMode = 'full' | 'advance';
 
 export default function Checkout() {
   const [, setLocation] = useLocation();
@@ -148,8 +148,9 @@ export default function Checkout() {
       if (r?.code && !r.usedOn && !promoApplied && !promoInput) {
         spinAutoAppliedRef.current = true;
         setPromoInput(r.code);
-        // Defer one tick so promoInput state is committed before validate reads it
-        setTimeout(() => { void validatePromo(); }, 0);
+        // Pass the code directly — validatePromo would read stale promoInput state
+        // because React batches state updates and the new value isn't flushed yet.
+        setTimeout(() => { void validatePromo(r.code); }, 0);
       }
     } catch { /* ignore */ }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -328,8 +329,9 @@ export default function Checkout() {
     if (m === 'cod') return settings.codEnabled !== false;
     return false;
   });
-  const validatePromo = async () => {
-    if (!promoInput.trim()) return;
+  const validatePromo = async (codeOverride?: string) => {
+    const codeToValidate = codeOverride?.trim() ?? promoInput.trim();
+    if (!codeToValidate) return;
     setPromoLoading(true);
     setPromoError(null);
     try {
@@ -338,7 +340,7 @@ export default function Checkout() {
       const res = await fetch(getApiUrl("/api/promo-codes/validate"), {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
-        body: JSON.stringify({ code: promoInput.trim(), orderTotal: liveTotal, customerEmail: customerEmailVal }),
+        body: JSON.stringify({ code: codeToValidate, orderTotal: liveTotal, customerEmail: customerEmailVal }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -372,8 +374,11 @@ export default function Checkout() {
   const qualifiesForFreeShipping = freeShippingThreshold > 0 && liveSubtotal >= freeShippingThreshold;
   const shippingCost = liveSubtotal > 0 && !qualifiesForFreeShipping ? shippingFee : 0;
   const total = Math.max(0, liveSubtotal + shippingCost - promoDiscount);
-  const advanceAmount = paymentMode === 'cod' ? 0 : Math.ceil(total * 0.25);
-  const codDepositAmount = Math.ceil(total * 0.25); // 25% advance required for COD orders
+  // COD is a payment method, not a separate payment mode. Every non-full
+  // order therefore has the same 25% amount due now; this prevents a COD
+  // selection from ever producing a zero-value "advance" order.
+  const advanceAmount = Math.ceil(total * 0.25);
+  const amountDueNow = paymentMode === 'full' ? total : advanceAmount;
 
   const displayTotal = checkoutStatus === 'form' ? total : snapshotRef.current.total;
   const displayAdvance = checkoutStatus === 'form' ? advanceAmount : snapshotRef.current.advance;
@@ -441,6 +446,10 @@ export default function Checkout() {
           ? JSON.stringify({ hamper: i.hamperPayload, unitPrice: i.price })
           : i.customNote,
         customImages: i.customImages,
+        // Keep print-ready studio uploads in the order payload. These are
+        // storage paths/metadata, not the large preview data URLs.
+        originalAssetUrls: i.originalAssetUrls,
+        originalAssets: i.originalAssets,
       })),
       ...(promoApplied ? { promoCode: promoApplied } : {}),
       ...(utm.utmSource ? { utmSource: utm.utmSource } : {}),
@@ -507,11 +516,9 @@ export default function Checkout() {
       });
 
       if (isReferralCode && promoApplied) {
-        fetch(getApiUrl(`/api/referrals/${promoApplied}/use`), {
-          method: "PUT",
-          headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
-          body: JSON.stringify({ orderTotal: serverTotal }),
-        }).catch(() => {});
+        // NOTE: Do NOT call PUT /api/referrals/:code/use here.
+        // The server already updates usedCount + totalEarnings inside the order
+        // creation DB transaction. Calling it again would double-count earnings.
         localStorage.removeItem("trynex_ref_code");
       }
 
@@ -662,9 +669,15 @@ export default function Checkout() {
   const paymentNumberReady = !!effectivePaymentNumber;
 
   // If the currently selected payment method is not configured, switch to the first configured one.
-  if (configuredPaymentMethods.length > 0 && !configuredPaymentMethods.includes(paymentMethod)) {
-    setPaymentMethod(configuredPaymentMethods[0]);
-  }
+  // Must be in a useEffect — calling setState during render causes an infinite re-render loop.
+  useEffect(() => {
+    if (configuredPaymentMethods.length > 0 && !configuredPaymentMethods.includes(paymentMethod)) {
+      const nextMethod = configuredPaymentMethods[0];
+      setPaymentMethod(nextMethod);
+      setPaymentMode(nextMethod === 'card' ? 'full' : 'advance');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [configuredPaymentMethods.join(",")]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const copyNumber = async () => {
     if (!effectivePaymentNumber) return;
@@ -779,9 +792,11 @@ export default function Checkout() {
 
           <h1 className="text-4xl font-black font-display mb-2 text-gray-900">Order Confirmed!</h1>
           <p className="text-gray-400 mb-6 leading-relaxed text-sm">
-            {paymentMode === 'full'
-              ? "Full payment submitted! Our team will verify and confirm your order shortly."
-              : "25% advance submitted. We'll collect the remaining balance on delivery."}
+             {paymentMode === 'full'
+               ? "Full payment submitted! Our team will verify and confirm your order shortly."
+               : paymentMethod === 'cod'
+                 ? "Your order is reserved. We'll contact you to collect the 25% advance, then deliver the balance by cash on delivery."
+                 : "25% advance submitted. We'll collect the remaining balance on delivery."}
           </p>
 
           <div className="p-5 rounded-2xl mb-4 bg-gray-50 border border-gray-100">
@@ -851,7 +866,17 @@ export default function Checkout() {
             );
           })()}
 
-          {paymentMode === 'full' ? (
+          {paymentMethod === 'cod' ? (
+            <div className="p-4 rounded-2xl mb-4 text-left" style={{ background: 'rgba(8,145,178,0.06)', border: '1px solid rgba(8,145,178,0.18)' }}>
+              <p className="text-xs font-bold text-cyan-700 mb-2 flex items-center gap-1.5">
+                <Info className="w-3.5 h-3.5" /> Advance Required to Confirm
+              </p>
+              <div className="text-xs text-gray-500 space-y-1">
+                <p>Advance due: <strong className="text-gray-900">{formatPrice(snapshotRef.current.advance)}</strong></p>
+                <p>Remaining on delivery: <strong className="text-gray-900">{formatPrice(snapshotRef.current.total - snapshotRef.current.advance)}</strong></p>
+              </div>
+            </div>
+          ) : paymentMode === 'full' ? (
             <div className="p-4 rounded-2xl mb-4 text-left" style={{ background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.15)' }}>
               <p className="text-xs font-bold text-amber-600 mb-2 flex items-center gap-1.5">
                 <Info className="w-3.5 h-3.5" /> Full Payment Under Verification
@@ -1450,10 +1475,17 @@ export default function Checkout() {
                     Choose how you pay. For wallets, send the amount to our merchant number and enter your sending details below.
                   </p>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
                     <button
                       type="button"
-                      onClick={() => setPaymentMode('full')}
+                      onClick={() => {
+                        const fullMethod = configuredPaymentMethods.find(m => m !== 'cod');
+                        if (paymentMethod === 'cod') {
+                          if (!fullMethod) return;
+                          setPaymentMethod(fullMethod);
+                        }
+                        setPaymentMode('full');
+                      }}
                       className="text-left p-4 rounded-2xl transition-all duration-200 focus:outline-none"
                       style={{
                         background: paymentMode === 'full' ? 'rgba(232,93,4,0.05)' : '#f9fafb',
@@ -1474,7 +1506,14 @@ export default function Checkout() {
 
                     <button
                       type="button"
-                      onClick={() => setPaymentMode('advance')}
+                      onClick={() => {
+                        if (paymentMethod === 'card') {
+                          const advanceMethod = configuredPaymentMethods.find(m => m !== 'card');
+                          if (!advanceMethod) return;
+                          setPaymentMethod(advanceMethod);
+                        }
+                        setPaymentMode('advance');
+                      }}
                       className="text-left p-4 rounded-2xl transition-all duration-200 focus:outline-none relative"
                       style={{
                         background: paymentMode === 'advance' ? 'rgba(22,163,74,0.05)' : '#f9fafb',
@@ -1494,26 +1533,6 @@ export default function Checkout() {
                       </p>
                     </button>
 
-                    <button
-                      type="button"
-                      onClick={() => setPaymentMode('cod')}
-                      className="text-left p-4 rounded-2xl transition-all duration-200 focus:outline-none relative"
-                      style={{
-                        background: paymentMode === 'cod' ? 'rgba(8,145,178,0.05)' : '#f9fafb',
-                        border: paymentMode === 'cod' ? '2px solid rgba(8,145,178,0.45)' : '2px solid #e5e7eb',
-                        boxShadow: paymentMode === 'cod' ? '0 2px 16px rgba(8,145,178,0.10)' : 'none',
-                      }}
-                    >
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${paymentMode === 'cod' ? 'border-cyan-600' : 'border-gray-300'}`}>
-                          {paymentMode === 'cod' && <div className="w-2 h-2 rounded-full bg-cyan-600" />}
-                        </div>
-                        <span className="font-black text-sm text-gray-900">Cash on Delivery</span>
-                      </div>
-                      <p className="text-xs text-gray-500 leading-relaxed pl-6">
-                        25% advance <strong className="text-gray-800">{formatPrice(codDepositAmount)}</strong>, rest on delivery.
-                      </p>
-                    </button>
                   </div>
 
                   {configuredPaymentMethods.length > 0 ? (
@@ -1523,18 +1542,17 @@ export default function Checkout() {
                         {configuredPaymentMethods.map((method) => {
                           const t = gatewayTheme[method];
                           const isSelected = paymentMethod === method;
-                          const isDisabled = (method === 'bkash' || method === 'nagad' || method === 'upay') && paymentMode === 'cod';
                           return (
                             <button
                               key={method}
                               type="button"
                               onClick={() => {
-                                if (isDisabled) return;
                                 setPaymentMethod(method);
-                                if (method === 'cod') setPaymentMode('cod');
-                                else if (paymentMode === 'cod') setPaymentMode('advance');
+                                 // COD requires the same 25% advance as every
+                                 // other pay-on-delivery order.
+                                 if (method === 'cod') setPaymentMode('advance');
+                                 if (method === 'card') setPaymentMode('full');
                               }}
-                              disabled={isDisabled}
                               className="relative flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all duration-200 focus:outline-none disabled:opacity-40"
                               style={{
                                 background: isSelected ? t.light : '#f9fafb',
@@ -1569,7 +1587,7 @@ export default function Checkout() {
                         <div className="text-right">
                           <p className="text-[10px] font-black uppercase text-gray-400">Send Amount</p>
                           <p className="text-2xl font-black font-display" style={{ color: theme.primary }}>
-                            {formatPrice(paymentMode === 'full' ? total : (paymentMode === 'cod' ? codDepositAmount : advanceAmount))}
+                            {formatPrice(amountDueNow)}
                           </p>
                         </div>
                       </div>
@@ -1712,10 +1730,10 @@ export default function Checkout() {
                         <span className="text-xl font-black" style={{ color: theme.primary }}>Cash on Delivery</span>
                       </div>
                       <p className="text-sm text-gray-600 leading-relaxed mb-3">
-                        A 25% advance of <strong className="text-gray-900">{formatPrice(codDepositAmount)}</strong> is required to confirm your order.
+                        A 25% advance of <strong className="text-gray-900">{formatPrice(advanceAmount)}</strong> is required to confirm your order.
                         Our team will contact you with payment instructions.
                       </p>
-                      <p className="text-xs text-gray-400">Remaining balance <strong>{formatPrice(total - codDepositAmount)}</strong> will be collected on delivery.</p>
+                      <p className="text-xs text-gray-400">Remaining balance <strong>{formatPrice(total - advanceAmount)}</strong> will be collected on delivery.</p>
                     </div>
                   )}
 
@@ -1771,9 +1789,9 @@ export default function Checkout() {
                         <button type="button" onClick={() => setStep(2)} className="text-[10px] font-black text-orange-600 uppercase">Edit</button>
                       </div>
                       <p className="text-sm font-bold text-gray-900">
-                        {paymentMode === 'full' ? 'Full Payment' : paymentMode === 'cod' ? 'Cash on Delivery' : '25% Advance + Pay on Delivery'}
+                         {paymentMode === 'full' ? 'Full Payment' : '25% Advance + Pay on Delivery'}
                       </p>
-                      <p className="text-xs text-gray-500 mt-0.5">Via {theme.name}{paymentMethod === 'cod' ? ` (25% advance ${formatPrice(codDepositAmount)})` : ''}</p>
+                       <p className="text-xs text-gray-500 mt-0.5">Via {theme.name}{paymentMethod === 'cod' ? ` (25% advance ${formatPrice(advanceAmount)})` : ''}</p>
                     </div>
                   </div>
 
@@ -1790,7 +1808,7 @@ export default function Checkout() {
                         </>
                       ) : (
                         <>
-                          Place Order ({formatPrice(paymentMode === 'full' ? total : advanceAmount)})
+                           Place Order ({formatPrice(amountDueNow)})
                         </>
                       )}
                     </button>
@@ -1843,7 +1861,7 @@ export default function Checkout() {
                       />
                       <button
                         type="button"
-                        onClick={validatePromo}
+                        onClick={() => validatePromo()}
                         disabled={promoLoading || !promoInput.trim()}
                         className="px-4 py-2.5 rounded-xl text-sm font-bold text-white shrink-0 disabled:opacity-40"
                         style={{ background: "linear-gradient(135deg, #E85D04, #FB8500)" }}
@@ -1891,19 +1909,6 @@ export default function Checkout() {
                         <span className="text-xs font-bold text-orange-600">Pay Now (Full — via {theme.name})</span>
                         <span className="font-black text-orange-600">{formatPrice(total)}</span>
                       </div>
-                    ) : paymentMode === 'cod' ? (
-                      <>
-                        <div className="flex justify-between items-center p-3 rounded-xl"
-                          style={{ background: 'rgba(8,145,178,0.04)', border: '1px solid rgba(8,145,178,0.12)' }}>
-                          <span className="text-xs font-bold text-cyan-600">Advance to Confirm (COD — via {theme.name})</span>
-                          <span className="font-black text-cyan-600">{formatPrice(codDepositAmount)}</span>
-                        </div>
-                        <div className="flex justify-between items-center p-3 rounded-xl"
-                          style={{ background: 'rgba(74,222,128,0.06)', border: '1px solid rgba(74,222,128,0.15)' }}>
-                          <span className="text-xs font-bold text-green-600">Remaining (Paid on Delivery)</span>
-                          <span className="font-black text-green-600">{formatPrice(total - codDepositAmount)}</span>
-                        </div>
-                      </>
                     ) : (
                       <>
                         <div className="flex justify-between items-center p-3 rounded-xl"

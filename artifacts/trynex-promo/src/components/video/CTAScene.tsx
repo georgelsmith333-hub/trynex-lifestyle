@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import { sceneTransitions } from '@/lib/video/animations';
 
+const BASE = import.meta.env.BASE_URL;
+
 export function CTAScene() {
   return (
     <motion.div
@@ -25,10 +27,10 @@ export function CTAScene() {
 
       {/* Floating product images */}
       {[
-        { src: '/images/tshirt.png', x: -360, y: -80, size: 120, delay: 0.4, rotate: -15 },
-        { src: '/images/hoodie.png', x: 360, y: -60, size: 130, delay: 0.55, rotate: 12 },
-        { src: '/images/cap.png', x: -300, y: 130, size: 100, delay: 0.7, rotate: -8 },
-        { src: '/images/mug.png', x: 310, y: 140, size: 110, delay: 0.85, rotate: 10 },
+        { src: `${BASE}images/tshirt.png`, x: -360, y: -80, size: 120, delay: 0.4, rotate: -15 },
+        { src: `${BASE}images/hoodie.png`, x: 360, y: -60, size: 130, delay: 0.55, rotate: 12 },
+        { src: `${BASE}images/cap.png`, x: -300, y: 130, size: 100, delay: 0.7, rotate: -8 },
+        { src: `${BASE}images/mug.png`, x: 310, y: 140, size: 110, delay: 0.85, rotate: 10 },
       ].map((p, i) => (
         <motion.img
           key={i}

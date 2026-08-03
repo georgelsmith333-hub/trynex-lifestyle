@@ -129,6 +129,7 @@ router.put("/storage/upload-direct/:objectId", async (req: Request, res: Respons
         req.on("data", (chunk: Buffer) => {
           totalBytes += chunk.length;
           if (totalBytes > MAX_UPLOAD_BYTES) {
+            req.destroy(); // stop incoming data immediately to free memory
             reject(new Error("Upload too large"));
             return;
           }

@@ -22,15 +22,13 @@ export function getAuthHeaders(): Record<string, string> {
 // API base URL — empty means same-origin (Replit proxy or Vite dev proxy handles /api/*).
 // Override at build/deploy time with VITE_API_BASE_URL env var when running frontend
 // on a different domain from the API (e.g. Cloudflare Pages → custom API domain).
-export const PRODUCTION_API_BASE_URL = "";
-
 export function getApiBaseUrl(): string {
   // If VITE_API_BASE_URL is explicitly set at build time, use it.
   // An empty string or absent var means "same-origin" — the proxy handles /api/*.
   const fromEnv = import.meta.env.VITE_API_BASE_URL as string | undefined;
   if (fromEnv) return fromEnv.replace(/\/+$/, '');
-  // Default: same-origin — works in Replit (proxy routes /api → API server port)
-  // and Vite dev mode (dev server proxy handles /api/* → localhost:5001).
+  // Default: same-origin — works in Replit (proxy routes /api → API server port 8082)
+  // and Vite dev mode (dev server proxy handles /api/* → localhost:8082).
   return '';
 }
 

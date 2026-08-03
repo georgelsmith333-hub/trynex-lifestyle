@@ -18,7 +18,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import {
-  PRODUCTS, GarmentSVG, FlatZoneSVG, MUG_SIDE_PZ, resolveMockup,
+  PRODUCTS, GarmentSVG, FlatZoneSVG, MUG_SIDE_PZ, MUG_SIDE_BACK_PZ, resolveMockup,
   getApparelZones, getZonePZ, type ApparelZone, isNearBlack, isLightTint,
   type PrintZone, type DesignProduct, type Face,
 } from "../design-studio/mockups";
@@ -128,7 +128,7 @@ export default function DesignStudioV2() {
   const isFlatZone = activeFace === "left-sleeve" || activeFace === "right-sleeve" || activeFace === "neck-label";
 
   const pz = useMemo(() => {
-    if (isMug) return MUG_SIDE_PZ;
+    if (isMug) return activeFace === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ;
     return getZonePZ(activeFace, selectedProduct);
   }, [isMug, activeFace, selectedProduct]);
 
@@ -373,7 +373,7 @@ export default function DesignStudioV2() {
       : frontMockup.cutoutSrc;
     const isColorPhoto = frontMockup.isColorPhoto;
     const frontPZ = isMug ? MUG_SIDE_PZ : selectedProduct.printZone;
-    const backPZ = isMug ? MUG_SIDE_PZ : (selectedProduct.printZoneBack ?? selectedProduct.printZone);
+    const backPZ = isMug ? MUG_SIDE_BACK_PZ : (selectedProduct.printZoneBack ?? selectedProduct.printZone);
     const leftSleeveLayers = layers.filter(l => l.type !== "shape" && l.face === "left-sleeve") as unknown as ComposerLayer[];
     const rightSleeveLayers = layers.filter(l => l.type !== "shape" && l.face === "right-sleeve") as unknown as ComposerLayer[];
     const neckLabelLayers = layers.filter(l => l.type !== "shape" && l.face === "neck-label") as unknown as ComposerLayer[];
@@ -450,7 +450,7 @@ export default function DesignStudioV2() {
       customImages: [frontTexUrl, ...(backTexUrl ? [backTexUrl] : []), ...(leftSleeveTexUrl ? [leftSleeveTexUrl] : []), ...(rightSleeveTexUrl ? [rightSleeveTexUrl] : []), ...(neckLabelTexUrl ? [neckLabelTexUrl] : [])],
       originalAssetUrls,
       originalAssets,
-      customNote: JSON.stringify({ studioDesign: true, sessionId, product: selectedProduct.name, category: selectedProduct.category, color: selectedColor.name, colorHex: selectedColor.hex, size: selectedSize, layerCount: layers.length, frontLayerCount: frontLayers.length, backLayerCount: backLayers.length, mockupSrc: garmentSrc, mockupSource: frontMockup.source, mockupPhotoSrc: frontMockup.photoSrc, mockupIsColorPhoto: frontMockup.isColorPhoto, printZone: frontPZ, printZoneBack: backPZ }),
+      customNote: JSON.stringify({ studioDesign: true, sessionId, product: selectedProduct.name, category: selectedProduct.category, color: selectedColor.name, colorHex: selectedColor.hex, size: selectedSize, layerCount: layers.length, frontLayerCount: frontLayers.length, backLayerCount: backLayers.length, mockupSrc: garmentSrc, mockupSource: frontMockup.source, mockupPhotoSrc: frontMockup.photoSrc, mockupIsColorPhoto: frontMockup.isColorPhoto, printZone: frontPZ, printZoneBack: backPZ, originalAssets }),
     });
     toast({ title: "✓ Added to cart!", description: `Custom ${selectedProduct.name} (${selectedColor.name}) is ready.` });
     try { localStorage.removeItem(DRAFT_STORAGE_KEY); } catch {}
@@ -466,7 +466,7 @@ export default function DesignStudioV2() {
       ? frontMockup.photoSrc
       : frontMockup.cutoutSrc;
     const canvas = document.createElement("canvas");
-    await composeGarmentMockup({ canvas, garmentSrc, garmentColor: selectedColor.hex, printZone: isMug ? MUG_SIDE_PZ : selectedProduct.printZone, layers: activeLayers, outSize: 1200, isColorPhoto: frontMockup.isColorPhoto, requiresTint: frontMockup.requiresTint, fabricTexture });
+    await composeGarmentMockup({ canvas, garmentSrc, garmentColor: selectedColor.hex, printZone: isMug ? (activeFace === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ) : selectedProduct.printZone, layers: activeLayers, outSize: 1200, isColorPhoto: frontMockup.isColorPhoto, requiresTint: frontMockup.requiresTint, fabricTexture });
     const a = document.createElement("a"); a.href = canvas.toDataURL("image/png"); a.download = `trynex-${selectedProduct.id}-${activeFace}-design.png`; a.click();
     toast({ title: "PNG exported!", description: "High-res PNG saved to your downloads." });
   };
@@ -571,7 +571,7 @@ export default function DesignStudioV2() {
                 {show3D && !isFlatZone && (
                   <div className="absolute inset-0 z-20 rounded-3xl overflow-hidden flex items-center justify-center" style={{ background: "radial-gradient(ellipse at 50% 40%, #f4f4f4 0%, #e8e8e8 100%)" }}>
                     <Suspense fallback={<Loader2 className="w-8 h-8 animate-spin text-blue-400" />}>
-                      <LazyProductViewer3D product={selectedProduct} garmentColor={selectedColor.hex} front={{ layers: frontLayers, printZone: isMug ? MUG_SIDE_PZ : selectedProduct.printZone, baseHeight: selectedProduct.baseHeight }} back={supportsBack && backLayers.length > 0 ? { layers: backLayers, printZone: isMug ? MUG_SIDE_PZ : (selectedProduct.printZoneBack ?? selectedProduct.printZone), baseHeight: selectedProduct.baseHeight } : undefined} activeFace={activeFace as "front" | "back"} isWrapMode={isMug && frontLayers.length > 0 && backLayers.length > 0} />
+                      <LazyProductViewer3D product={selectedProduct} garmentColor={selectedColor.hex} front={{ layers: frontLayers, printZone: isMug ? MUG_SIDE_PZ : selectedProduct.printZone, baseHeight: selectedProduct.baseHeight }} back={supportsBack && backLayers.length > 0 ? { layers: backLayers, printZone: isMug ? MUG_SIDE_BACK_PZ : (selectedProduct.printZoneBack ?? selectedProduct.printZone), baseHeight: selectedProduct.baseHeight } : undefined} activeFace={activeFace as "front" | "back"} isWrapMode={isMug && frontLayers.length > 0 && backLayers.length > 0} />
                     </Suspense>
                     <button onClick={() => setShow3D(false)} className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full text-xs font-bold text-white" style={{ background: "rgba(17,24,39,0.78)" }}><Eye className="w-3 h-3 inline" /> Back to 2D</button>
                   </div>

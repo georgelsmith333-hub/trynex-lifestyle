@@ -26,7 +26,7 @@ export default function VideoTemplate() {
       className="w-full h-screen overflow-hidden relative"
       style={{
         backgroundColor: '#0A1628',
-        backgroundImage: 'url(/images/texture-bg.png)',
+        backgroundImage: `url(${import.meta.env.BASE_URL}images/texture-bg.png)`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundBlendMode: 'overlay',
@@ -41,7 +41,7 @@ export default function VideoTemplate() {
           <ProductHeroScene
             key="tshirt-hero"
             sceneKey="tshirt-hero"
-            img="/images/tshirt.png"
+            img={`${import.meta.env.BASE_URL}images/tshirt.png`}
             badge="Custom Prints"
             title={"Your Design,\nYour T-Shirt"}
             subtitle="Express yourself with a fully custom print. Upload any artwork and we'll bring it to life."
@@ -56,7 +56,7 @@ export default function VideoTemplate() {
           <ProductHeroScene
             key="hoodie-hero"
             sceneKey="hoodie-hero"
-            img="/images/hoodie.png"
+            img={`${import.meta.env.BASE_URL}images/hoodie.png`}
             badge="Premium Quality"
             title={"Premium\nHoodies"}
             subtitle="Heavy-weight, cozy, and built to last. Perfect for custom team wear, gifts, and personal style."

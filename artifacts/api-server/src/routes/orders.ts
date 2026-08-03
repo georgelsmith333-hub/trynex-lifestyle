@@ -28,6 +28,18 @@ const OrderItemSchema = z.object({
   // are far longer than a plain URL — no per-item length cap here; we strip
   // data-URLs before DB storage below.
   customImages: z.array(z.string()).max(20).optional().nullable(),
+  // Studio originals are uploaded to object storage before checkout. Keep
+  // their paths and metadata in the validated order payload so the server can
+  // move them from the staging prefix into the order prefix.
+  originalAssetUrls: z.array(z.string()).max(20).optional().nullable(),
+  originalAssets: z.array(z.object({
+    objectPath: z.string().max(500),
+    filename: z.string().max(300),
+    mime: z.string().max(150),
+    bytes: z.number().nonnegative(),
+    width: z.number().nonnegative(),
+    height: z.number().nonnegative(),
+  })).max(20).optional().nullable(),
   price:        z.number().nonnegative().optional(),
   // No length cap — imageUrl may be a data-URL (base64 mockup preview) which can be 50–200 KB.
   // Data-URLs are stripped server-side before DB storage; only object-storage paths are kept.
@@ -137,14 +149,21 @@ async function sendMetaCAPIEvent(event: {
       }],
     };
 
-    await fetch(
-      `https://graph.facebook.com/v20.0/${pixelId}/events?access_token=${capiToken}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      }
-    );
+    const capiController = new AbortController();
+    const capiTimeout = setTimeout(() => capiController.abort(), 5000);
+    try {
+      await fetch(
+        `https://graph.facebook.com/v20.0/${pixelId}/events?access_token=${capiToken}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+          signal: capiController.signal,
+        }
+      );
+    } finally {
+      clearTimeout(capiTimeout);
+    }
   } catch (err) {
     logger.error({ err }, "Meta CAPI event failed (non-blocking)");
   }
@@ -698,6 +717,15 @@ router.post("/orders", async (req, res) => {
     const studioOrderItems = studioItems.map((item: any, idx: number) => {
       let note: any = {};
       try { note = JSON.parse(item.customNote ?? "{}"); } catch (err) { logger.warn({ err }, "Failed to parse customNote"); }
+      // The cart keeps originals as top-level fields to avoid bloating the
+      // compact customNote. Merge them back before moveStudioOriginals()
+      // relocates the files into this order's durable storage prefix.
+      if (Array.isArray(item.originalAssets) && item.originalAssets.length > 0) {
+        note.originalAssets = item.originalAssets;
+      }
+      if (Array.isArray(item.originalAssetUrls) && item.originalAssetUrls.length > 0 && !Array.isArray(note.originalAssetUrls)) {
+        note.originalAssetUrls = item.originalAssetUrls;
+      }
       // Determine product type from the studio note to apply the correct price
       const productType = (note.product ?? "").toLowerCase();
       let serverPrice: number;
@@ -725,7 +753,7 @@ router.post("/orders", async (req, res) => {
         size: item.size,
         color: item.color,
         price: serverPrice,
-        customNote: item.customNote,
+        customNote: JSON.stringify(note),
         customImages: sanitizeCustomImages(item.customImages),
         imageUrl: savedImageUrl,
         isStudio: true,

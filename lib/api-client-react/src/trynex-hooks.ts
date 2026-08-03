@@ -129,6 +129,15 @@ export interface OrderItem {
   imageUrl?: string;
   customNote?: string | null;
   customImages?: string[] | null;
+  originalAssetUrls?: string[] | null;
+  originalAssets?: Array<{
+    objectPath: string;
+    filename: string;
+    mime: string;
+    bytes: number;
+    width: number;
+    height: number;
+  }> | null;
 }
 
 export enum CreateOrderRequestPaymentMethod {

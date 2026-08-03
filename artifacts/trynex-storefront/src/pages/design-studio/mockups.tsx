@@ -137,7 +137,8 @@ export interface DesignProduct {
      SLEEVE_PZ      — left-sleeve and right-sleeve
      NECK_LABEL_PZ  — neck-label
    Drinkware zones:
-     MUG_SIDE_PZ    — single-side editing (side view)
+     MUG_SIDE_PZ    — single-side editing, front/left-handle view
+     MUG_SIDE_BACK_PZ — mirrored single-side editing, back/right-handle view
      MUG_PZ         — full 360° wrap
      WATERBOTTLE_PZ — bottle body (cylindrical section)
 ──────────────────────────────────────────────────────── */
@@ -156,6 +157,10 @@ export const MUG_PZ: PrintZone              = { x: 160, y: 195, w: 680, h: 610 }
  *  avoiding the handle on the right and leaving breathing room at the rim/base.
  *  Center (415, 480) aligns with the mug body centre, well clear of the handle. */
 export const MUG_SIDE_PZ: PrintZone         = { x: 225, y: 215, w: 380, h: 530 };
+/** Back mug photo mirrors the handle to the left, so the printable panel must
+ * mirror horizontally too. Keeping a separate zone prevents artwork from
+ * spilling into the handle when Side 2 is selected. */
+export const MUG_SIDE_BACK_PZ: PrintZone    = { x: 419, y: 215, w: 380, h: 530 };
 /** Water bottle — wider printable front label panel so designs fill the
  *  cylindrical body without leaving large blank margins on the sides. */
 export const WATERBOTTLE_PZ: PrintZone      = { x: 260, y: 214, w: 480, h: 548 };
@@ -210,7 +215,7 @@ export function getApparelZones(
 
 /** Get the print zone for a given face and product (used by DesignStudio). */
 export function getZonePZ(face: Face, product: DesignProduct): PrintZone {
-  if (product.category === "mug") return MUG_SIDE_PZ;
+  if (product.category === "mug") return face === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ;
   if (face === "left-sleeve" || face === "right-sleeve") return SLEEVE_PZ;
   if (face === "neck-label") return NECK_LABEL_PZ;
   if (face === "back" && product.printZoneBack) return product.printZoneBack;
@@ -490,7 +495,7 @@ const SOURCE_KIT_PRINT_ZONES: Record<
   },
   mug: {
     front: { x: 225, y: 215, w: 380, h: 530 },
-    back: { x: 225, y: 215, w: 380, h: 530 },
+    back: { x: 419, y: 215, w: 380, h: 530 },
   },
   cap: {
     front: { x: 302, y: 222, w: 396, h: 252 },
@@ -790,7 +795,7 @@ export function GarmentSVG({
   const pz = isMug && mugMode === "wrap"
     ? MUG_PZ
     : isMug
-      ? MUG_SIDE_PZ
+      ? (face === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ)
       : (face === "back" && product.printZoneBack) ? product.printZoneBack : product.printZone;
   const displayPZ = pz;
 

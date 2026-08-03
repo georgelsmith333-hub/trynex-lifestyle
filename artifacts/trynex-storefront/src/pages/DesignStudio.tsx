@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import {
   PRODUCTS, type DesignProduct, GarmentSVG, FlatZoneSVG,
-  STICKERS, MUG_PZ, MUG_SIDE_PZ,
+  STICKERS, MUG_PZ, MUG_SIDE_PZ, MUG_SIDE_BACK_PZ,
   getApparelZones, getZonePZ, resolveMockup, type ApparelZone, isNearBlack, isLightTint, type PrintZone,
 } from "./design-studio/mockups";
 import { composeLayers, composeGarmentMockup, composeDesignTexture, autoFixImage, type ComposerLayer } from "./design-studio/composer";
@@ -356,8 +356,10 @@ export default function DesignStudio() {
   type MugMode = "side1" | "side2" | "wrap";
   const [mugMode, setMugMode] = useState<MugMode>("side1");
 
-  /** When true the canvas area shows the live 3D preview instead of the 2D SVG editor. */
-  const [show3D, setShow3D] = useState(false);
+  /** Cylindrical products open on their 3D preview; flat products stay in the editor. */
+  const [show3D, setShow3D] = useState(() =>
+    ["mug", "cap", "waterbottle"].includes(selectedProduct.category)
+  );
 
   const isMugProduct = selectedProduct.category === "mug";
 
@@ -382,7 +384,6 @@ export default function DesignStudio() {
     setActiveFace(mugMode === "side1" ? "front" : "back");
   }, [mugMode, isMugProduct]);
 
-  // isWrapMode is now auto-detected from layers (computed after layers state is declared).
   // Reset face to "front" when switching to a single-face product
   useEffect(() => { if (!supportsBack) setActiveFace("front"); }, [supportsBack]);
 
@@ -390,6 +391,8 @@ export default function DesignStudio() {
   const [layers, setLayers] = useState<Layer[]>([]);
   const layersRef = useRef<Layer[]>([]);
   useEffect(() => { layersRef.current = layers; }, [layers]);
+  const mugModeRef = useRef<MugMode>("side1");
+  useEffect(() => { mugModeRef.current = mugMode; }, [mugMode]);
   const [selectedLayerId, setSelectedLayerId] = useState<string | null>(null);
   const selectedLayerIdRef = useRef<string | null>(null);
   useEffect(() => { selectedLayerIdRef.current = selectedLayerId; }, [selectedLayerId]);
@@ -405,6 +408,34 @@ export default function DesignStudio() {
     setLayers(next);
     forceHistoryTick(t => t + 1);
   }, []);
+
+  const handleMugModeChange = useCallback((nextMode: MugMode) => {
+    if (!isMugProduct) {
+      setMugMode(nextMode);
+      return;
+    }
+
+    // A wrap needs artwork on both faces. If the customer starts with a
+    // single-side design, carry it across when they explicitly choose Wrap.
+    // Side 1 and Side 2 themselves remain independent editing surfaces.
+    if (nextMode === "wrap" && mugMode !== "wrap") {
+      const current = layersRef.current;
+      const front = current.filter(l => (l.face ?? "front") === "front");
+      const back = current.filter(l => (l.face ?? "front") === "back");
+      if (front.length > 0 && back.length === 0) {
+        commitLayers([
+          ...current,
+          ...front.map(l => ({ ...l, id: `${l.id}-wrap-back-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, face: "back" as Face })),
+        ]);
+      } else if (back.length > 0 && front.length === 0) {
+        commitLayers([
+          ...current,
+          ...back.map(l => ({ ...l, id: `${l.id}-wrap-front-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, face: "front" as Face })),
+        ]);
+      }
+    }
+    setMugMode(nextMode);
+  }, [commitLayers, isMugProduct, mugMode]);
   const undo = useCallback(() => {
     const h = historyRef.current;
     if (h.index > 0) { h.index -= 1; setLayers(h.stack[h.index]); forceHistoryTick(t => t + 1); }
@@ -416,12 +447,12 @@ export default function DesignStudio() {
   const canUndo = historyRef.current.index > 0;
   const canRedo = historyRef.current.index < historyRef.current.stack.length - 1;
 
-  // Auto-detected full-wrap: true when both faces have design layers on a mug.
+  // The explicit mug mode is authoritative. An upload is mirrored to both
+  // faces so Side 1/Side 2 can preview the same artwork, but that must not
+  // silently turn a side print into a full-wrap print.
   const isWrapMode = useMemo(
-    () => isMugProduct
-      && layers.filter(l => (l.face ?? "front") === "front").length > 0
-      && layers.filter(l => (l.face ?? "front") === "back").length > 0,
-    [isMugProduct, layers]
+    () => isMugProduct && mugMode === "wrap",
+    [isMugProduct, mugMode]
   );
 
   // Component-level front/back layer slices — used by the live 3D preview.
@@ -500,7 +531,10 @@ export default function DesignStudio() {
       if (typeof data.productId === "string") {
         const resolvedId = LEGACY_ID_MAP[data.productId] ?? data.productId;
         const p = PRODUCTS.find(x => x.id === resolvedId);
-        if (p) setSelectedProduct(p);
+        if (p) {
+          setSelectedProduct(p);
+          setShow3D(["mug", "cap", "waterbottle"].includes(p.category));
+        }
       }
       if (data.color && typeof (data.color as any).hex === "string" && typeof (data.color as any).name === "string") {
         setSelectedColor(data.color as { name: string; hex: string });
@@ -597,6 +631,7 @@ export default function DesignStudio() {
           if (found) {
             setSelectedProduct(found);
             setSelectedColor(found.colors[0]);
+            setShow3D(["mug", "cap", "waterbottle"].includes(found.category));
           }
         }
         const urlStoreProductId = sp.get("storeProductId");
@@ -644,6 +679,7 @@ export default function DesignStudio() {
         const garmentColor = detectColorFromProduct(found);
         const price = parseFloat(String(found.discountPrice || found.price)) || 0;
         setSelectedProduct(template);
+        setShow3D(["mug", "cap", "waterbottle"].includes(template.category));
         const colorMatch = template.colors.find(c => c.hex.toLowerCase() === garmentColor.toLowerCase()) ?? { name: "White", hex: garmentColor };
         setSelectedColor(colorMatch);
         setLinkedStoreProduct({ id: found.id, name: found.name, price, imageUrl: found.imageUrl ?? undefined });
@@ -790,6 +826,7 @@ export default function DesignStudio() {
       setLinkedStoreProduct(null);
       setQuantity(1);
       setActiveFace("front");
+      setShow3D(["mug", "cap", "waterbottle"].includes(prod.category));
       if (prod.category !== "mug") setMugMode("side1");
     });
     forceHistoryTick(t => t + 1);
@@ -831,7 +868,9 @@ export default function DesignStudio() {
 
   const pz = useMemo(() => {
     if (isMugProduct) {
-      return mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ;
+      return mugMode === "wrap"
+        ? MUG_PZ
+        : (activeFace === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ);
     }
     if (activeFace === "back") return backMockup.printZone;
     if (activeFace === "front") return frontMockup.printZone;
@@ -1049,7 +1088,9 @@ export default function DesignStudio() {
       const canvas = document.createElement("canvas");
       canvas.width = Math.round(sw);
       canvas.height = Math.round(sh);
-      canvas.getContext("2d")!.drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
       const newSrc = canvas.toDataURL("image/png");
       updateLayer(cropLayerId!, l => l.type === "image"
         ? { ...l, src: newSrc, naturalW: canvas.width, naturalH: canvas.height }
@@ -1158,10 +1199,11 @@ export default function DesignStudio() {
       // image appears immediately — critical on mobile where async callbacks
       // may otherwise defer rendering until the next user interaction.
 
-      // For mug: also stamp the same image on the OTHER side (front→back or
-      // back→front) so switching between Side 1 / Side 2 shows the design.
+      // A side print belongs only to the side being edited. Wrap mode is the
+      // one explicit mode where a single upload is copied to the opposite face
+      // so the 3D body has artwork for the complete circumference.
       const layersToAdd: Layer[] = [layer];
-      if (isMugProductRef.current) {
+      if (isMugProductRef.current && mugModeRef.current === "wrap") {
         const otherMugFace: Face = activeFaceRef.current === "front" ? "back" : "front";
         layersToAdd.push({ ...layer, id: uid(), face: otherMugFace });
       }
@@ -2144,9 +2186,12 @@ export default function DesignStudio() {
     }
     setIsAddingToCart(true);
     try {
-      const mugPrintZone    = isMugProduct && mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ;
-      const frontPZ         = isMugProduct ? mugPrintZone : frontMockup.printZone;
-      const backPZ          = isMugProduct ? mugPrintZone : backMockup.printZone;
+       const frontPZ         = isMugProduct
+         ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ)
+         : frontMockup.printZone;
+       const backPZ          = isMugProduct
+         ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_BACK_PZ)
+         : backMockup.printZone;
       const frontLayers     = layers.filter(l => (l.face ?? "front") === "front")        as unknown as ComposerLayer[];
       const backLayers      = layers.filter(l => (l.face ?? "front") === "back")         as unknown as ComposerLayer[];
       const leftSleeveLayers = layers.filter(l => l.face === "left-sleeve")              as unknown as ComposerLayer[];
@@ -2161,12 +2206,16 @@ export default function DesignStudio() {
       //    Failures here are non-fatal: cart still works without uploads.
       const originalAssets: OriginalAsset[] = [];
       const originalAssetUrls: string[] = [];
+      const uploadedOriginals = new Map<string, OriginalAsset>();
       const imageLayers = layers.filter(l => l.type === "image" && l.visible);
       for (const layer of imageLayers) {
         try {
           const imgLayer = layer as ImageLayer;
           const src = imgLayer.src;
           if (!src.startsWith("data:")) continue; // skip already-uploaded
+          // A mug upload is mirrored into both side layers. Store one
+          // print-ready original rather than uploading the same source twice.
+          if (uploadedOriginals.has(src)) continue;
           const blob = await (await fetch(src)).blob();
           const mime = blob.type || "image/png";
           const ext = mime === "image/png" ? "png" : mime === "image/jpeg" ? "jpg" : mime === "image/webp" ? "webp" : "png";
@@ -2198,6 +2247,7 @@ export default function DesignStudio() {
               width: imgLayer.naturalW,
               height: imgLayer.naturalH,
             };
+            uploadedOriginals.set(src, asset);
             originalAssets.push(asset);
             originalAssetUrls.push(objectPath);
           }
@@ -2213,6 +2263,7 @@ export default function DesignStudio() {
       const cartPreviewFace = isMugProduct && mugMode === "side2" ? "back" : "front";
       const cartPreviewMockup = cartPreviewFace === "back" ? backMockup : frontMockup;
       const cartPreviewLayers = cartPreviewFace === "back" ? backLayers : frontLayers;
+       const cartPreviewPZ = cartPreviewFace === "back" ? backPZ : frontPZ;
       const garmentSrc = cartPreviewMockup.requiresTint || !cartPreviewMockup.isColorPhoto
         ? cartPreviewMockup.cutoutSrc
         : cartPreviewMockup.photoSrc;
@@ -2222,7 +2273,7 @@ export default function DesignStudio() {
         canvas: mockupCanvas,
         garmentSrc,
         garmentColor: selectedColor.hex,
-        printZone: frontPZ,
+         printZone: cartPreviewPZ,
         layers: cartPreviewLayers,
         outSize: 400,
         imageCache,
@@ -2235,13 +2286,14 @@ export default function DesignStudio() {
       //    Mug uses wide 2048×768 to match the studio live preview (full 360° wrap band).
       //    Garments use square 1024×1024 for front/back panel UVs.
       const frontTexCanvas = document.createElement("canvas");
-      const mugPrimaryLayers = mugMode === "side2" ? backLayers : frontLayers;
+       const mugPrimaryLayers = mugMode === "side2" ? backLayers : frontLayers;
+       const mugPrimaryPZ = mugMode === "side2" ? backPZ : frontPZ;
       if (isMug) {
         const curveByCategory = isMug ? 0.16 : isWaterBottle ? 0.16 : isCap ? 0.1 : 0;
         await composeLayers({
           canvas: frontTexCanvas,
           baseHeight: selectedProduct.baseHeight,
-          printZone: frontPZ,
+           printZone: mugPrimaryPZ,
           layers: mugPrimaryLayers,
           garmentColor: null,
           outW: 2048,
@@ -2980,7 +3032,7 @@ export default function DesignStudio() {
                   { v: "wrap", label: "Wrap" },
                 ] as const).map(({ v, label }) => (
                   <button key={v}
-                    onClick={() => setMugMode(v)}
+                    onClick={() => handleMugModeChange(v)}
                     className="shrink-0 flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap"
                     style={{
                       background: mugMode === v ? "#1C1C1E" : "white",
@@ -3152,7 +3204,7 @@ export default function DesignStudio() {
                 className="relative w-full"
                 style={{
                   aspectRatio: `${selectedProduct.aspect}`,
-                  touchAction: isMobile && currentFaceLayers.length === 0 ? "pan-y" : "none",
+                  touchAction: "pan-y",
                   transform: `translate(${canvasPan.x}px, ${canvasPan.y}px) scale(${canvasZoom})`,
                   transformOrigin: "center center",
                   transition: gestureRef.current?.mode === "canvas-pinch" ? "none" : "transform 0.2s ease-out",
@@ -3185,7 +3237,7 @@ export default function DesignStudio() {
                         back={supportsBack && ds3dBackLayers.length > 0 ? {
                           layers: ds3dBackLayers,
                           printZone: isMugProduct
-                            ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ)
+                            ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_BACK_PZ)
                             : (selectedProduct.printZoneBack ?? selectedProduct.printZone),
                           baseHeight: selectedProduct.baseHeight,
                         } : undefined}
@@ -3284,7 +3336,7 @@ export default function DesignStudio() {
                         x={0} y={0} width={1000} height={1000}
                         preserveAspectRatio="xMidYMid meet"
                         pointerEvents="none"
-                        style={{ mixBlendMode: isLightGarment ? "multiply" : "normal" }}
+                        style={{ mixBlendMode: "normal" }}
                       />
                     )}
                     {layersRender
@@ -3318,7 +3370,7 @@ export default function DesignStudio() {
                               opacity={hiddenByCurvedPreview ? 0 : l.transform.opacity}
                               preserveAspectRatio="none"
                               pointerEvents="none"
-                              style={{ filter: userAdj, mixBlendMode: isLightGarment ? 'multiply' : 'normal' }}
+                              style={{ filter: userAdj }}
                             />
                             {/* Transparent hit-rect — ensures reliable pointer events on every
                                 browser/device regardless of SVG <image> pointer-event quirks */}
@@ -3365,7 +3417,7 @@ export default function DesignStudio() {
                             paintOrder={l.strokeWidth ? "stroke" : undefined}
                             transform={`rotate(${l.transform.rotation}, ${g.cx}, ${g.cy})`}
                             filter={shadowFilterId ? `url(#${shadowFilterId})` : undefined}
-                            style={{ cursor: l.locked ? "not-allowed" : "grab", userSelect: "none", mixBlendMode: isLightGarment ? 'multiply' : 'normal' }}
+                            style={{ cursor: l.locked ? "not-allowed" : "grab", userSelect: "none" }}
                           >{l.text}</text>
                         </g>
                       );
@@ -5244,6 +5296,7 @@ export default function DesignStudio() {
                                 setLinkedStoreProduct(null);
                                 setQuantity(1);
                                 setActiveFace("front");
+                                setShow3D(["mug", "cap", "waterbottle"].includes(prod.category));
                               });
                               forceHistoryTick(t => t + 1);
                               // All products now support 3D — no reset needed when switching

@@ -102,7 +102,7 @@ export default defineConfig({
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
         globIgnores: ["**/mockups/**"],
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
-        additionalManifestEntries: [{ url: "/offline.html", revision: null }],
+        additionalManifestEntries: [{ url: `${basePath}offline.html`, revision: null }],
       },
       devOptions: {
         enabled: false,

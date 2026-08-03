@@ -1,11 +1,13 @@
 import { motion } from 'framer-motion';
 import { sceneTransitions, staggerDelay } from '@/lib/video/animations';
 
+const BASE = import.meta.env.BASE_URL;
+
 const products = [
-  { name: 'Custom T-Shirts', img: '/images/tshirt.png', color: '#F97316', delay: 0 },
-  { name: 'Premium Hoodies', img: '/images/hoodie.png', color: '#3B82F6', delay: 0.15 },
-  { name: 'Printed Caps', img: '/images/cap.png', color: '#10B981', delay: 0.3 },
-  { name: 'Custom Mugs', img: '/images/mug.png', color: '#8B5CF6', delay: 0.45 },
+  { name: 'Custom T-Shirts', img: `${BASE}images/tshirt.png`, color: '#F97316', delay: 0 },
+  { name: 'Premium Hoodies', img: `${BASE}images/hoodie.png`, color: '#3B82F6', delay: 0.15 },
+  { name: 'Printed Caps', img: `${BASE}images/cap.png`, color: '#10B981', delay: 0.3 },
+  { name: 'Custom Mugs', img: `${BASE}images/mug.png`, color: '#8B5CF6', delay: 0.45 },
 ];
 
 export function ProductShowcaseScene() {

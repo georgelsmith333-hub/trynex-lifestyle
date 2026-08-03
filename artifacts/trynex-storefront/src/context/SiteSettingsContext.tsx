@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, type ReactNode } from "react";
+import { createContext, useContext, useEffect, type ReactNode } from "react";
 import { useGetSettings } from "@workspace/api-client-react";
 
 interface SiteSettings {
@@ -217,15 +217,11 @@ const SiteSettingsContext = createContext<SiteSettings>(defaults);
 
 export function SiteSettingsProvider({ children }: { children: ReactNode }) {
   const { data } = useGetSettings();
-  const prevNameRef = useRef<string | null>(null);
   const settings: SiteSettings = { ...defaults, ...(data as Partial<SiteSettings> || {}), isLoaded: !!data };
 
   useEffect(() => {
     if (data) {
       try { localStorage.setItem(CACHE_KEY, JSON.stringify(data)); } catch {}
-      if (prevNameRef.current === null) {
-        prevNameRef.current = (data as any).siteName || "";
-      }
     }
   }, [data]);
 
