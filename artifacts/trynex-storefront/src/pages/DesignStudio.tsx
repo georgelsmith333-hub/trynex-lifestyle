@@ -854,6 +854,12 @@ export default function DesignStudio() {
   const isCap = selectedProduct.category === "cap";
   const isWaterBottle = selectedProduct.category === "waterbottle";
 
+  // Tracks whether the current product has a cylindrical surface so async
+  // upload callbacks can apply the correct safety margin without closing over
+  // a stale value (isMug/isCap/isWaterBottle are declared above this line).
+  const isCylindricalRef = useRef(isMug || isWaterBottle || isCap);
+  useEffect(() => { isCylindricalRef.current = isMug || isWaterBottle || isCap; }, [isMug, isWaterBottle, isCap]);
+
   /** Zones list for apparel (tshirt/longsleeve/hoodie) — 5 tabs. */
   const apparelZones = useMemo(
     () => getApparelZones(selectedProduct.category, selectedProduct.printZone, selectedProduct.printZoneBack ?? undefined),
@@ -960,6 +966,43 @@ export default function DesignStudio() {
     return offender?.id ?? null;
   }, [currentFaceLayers, pz]);
   const anyLayerOutsidePZ = outsidePZLayerId !== null;
+
+  /* ── Curved design preview for cylindrical products ──────────────────────────────
+     Mug, water bottle and cap have a curved surface. To make the design look
+     realistic in the 2D editor — instead of a flat rectangle pasted on a round
+     product — we render the current face's layers to a canvas with the same
+     cylindrical-warp algorithm used by the 3D composer, then display the result
+     as an SVG <image> overlay. The flat SVG image layers are kept (opacity 0) so
+     interaction hit-rects, selection boxes and resize handles all keep working. */
+  const isCylindrical = isMug || isWaterBottle || isCap;
+  const cylindricalCurvature = isMug ? 0.16 : isWaterBottle ? 0.16 : isCap ? 0.10 : 0;
+  const [curvedDesignUrl, setCurvedDesignUrl] = useState<string | null>(null);
+  const curvedPreviewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const curvedPreviewCacheRef = useRef(new Map<string, HTMLImageElement>());
+
+  useEffect(() => {
+    if (!isCylindrical || !currentFaceLayers.length) {
+      setCurvedDesignUrl(null);
+      return;
+    }
+    const t = setTimeout(async () => {
+      try {
+        const canvas = document.createElement("canvas");
+        await composeDesignTexture({
+          canvas,
+          printZone: pz,
+          layers: currentFaceLayers as unknown as ComposerLayer[],
+          outSize: 800,
+          imageCache: curvedPreviewCacheRef.current,
+          clipToPrintZone: true,
+          curvature: cylindricalCurvature,
+        });
+        setCurvedDesignUrl(canvas.toDataURL("image/webp", 0.85));
+      } catch { /* silent – flat layer images remain visible as fallback */ }
+    }, 120);
+    curvedPreviewTimerRef.current = t;
+    return () => clearTimeout(t);
+  }, [currentFaceLayers, isCylindrical, cylindricalCurvature, pz]);
 
   /* ── Coord helpers ─────────────────────────────────── */
   const clientToSVG = useCallback((clientX: number, clientY: number) => {
@@ -1095,7 +1138,11 @@ export default function DesignStudio() {
       // Take the minimum so neither dimension overflows, then apply 95% so the
       // placed image has a tiny margin and never triggers the "outside print area" warning.
       const maxScaleForHeight = (currentPz.h * aspect) / currentPz.w;
-      const initialScale = Math.min(1.0, maxScaleForHeight) * 0.95;
+      // Cylindrical products (mug, waterbottle, cap) use a tighter safety margin
+      // so the freshly-placed design is clearly inside the print zone and the
+      // curved preview renders without any clipped edges.
+      const safetyMargin = isCylindricalRef.current ? 0.88 : 0.95;
+      const initialScale = Math.min(1.0, maxScaleForHeight) * safetyMargin;
 
       const layer: ImageLayer = {
         id: uid(), name: file.name.replace(/\.[^.]+$/, "") || "Image",
@@ -3226,6 +3273,20 @@ export default function DesignStudio() {
                     </clipPath>
                   </defs>
                   <g clipPath="url(#design-clip)">
+                    {/* Curved design preview for cylindrical products (mug / water bottle / cap).
+                        Rendered to a canvas with the same cylindrical-warp algorithm used by
+                        the 3D composer so the design looks wrapped rather than flat-pasted.
+                        The flat SVG image layers below are kept (opacity:0) so interaction
+                        hit-rects, selection boxes, and resize handles all keep working. */}
+                    {isCylindrical && curvedDesignUrl && (
+                      <image
+                        href={curvedDesignUrl}
+                        x={0} y={0} width={1000} height={1000}
+                        preserveAspectRatio="xMidYMid meet"
+                        pointerEvents="none"
+                        style={{ mixBlendMode: isLightGarment ? "multiply" : "normal" }}
+                      />
+                    )}
                     {layersRender
                       .filter(({ layer }) => (layer.face ?? "front") === activeFace)
                       .map(({ layer: l, geom: g }) => {
@@ -3243,6 +3304,10 @@ export default function DesignStudio() {
                         const imgTransform = hasFlip
                           ? `rotate(${l.transform.rotation}, ${g.cx}, ${g.cy}) translate(${g.cx}, ${g.cy}) scale(${flipSX}, ${flipSY}) translate(${-g.cx}, ${-g.cy})`
                           : `rotate(${l.transform.rotation}, ${g.cx}, ${g.cy})`;
+                        // For cylindrical products the curved canvas preview is the primary
+                        // visual — hide the flat <image> but keep the interaction hit-rect so
+                        // selection, drag, resize and delete all keep working as expected.
+                        const hiddenByCurvedPreview = isCylindrical && !!curvedDesignUrl;
                         return (
                           <g key={l.id} data-layer-id={l.id} transform={imgTransform}
                             style={{ cursor: l.locked ? "not-allowed" : "grab" }}>
@@ -3250,7 +3315,7 @@ export default function DesignStudio() {
                               data-layer-id={l.id}
                               href={l.src}
                               x={g.x} y={g.y} width={g.w} height={g.h}
-                              opacity={l.transform.opacity}
+                              opacity={hiddenByCurvedPreview ? 0 : l.transform.opacity}
                               preserveAspectRatio="none"
                               pointerEvents="none"
                               style={{ filter: userAdj, mixBlendMode: isLightGarment ? 'multiply' : 'normal' }}
@@ -3651,9 +3716,27 @@ export default function DesignStudio() {
                     setSelectedLayerId(offender.id);
                     if (offender.type === "image") {
                       const imgL = offender as ImageLayer;
-                      const aspect = imgL.naturalW / Math.max(imgL.naturalH, 1);
-                      const fitScale = Math.min(0.90, (pz.h * 0.90 * aspect) / pz.w);
-                      updateLayer(offender.id, l => ({ ...l, transform: { ...l.transform, scale: fitScale, x: 0, y: 0, rotation: 0 } }), true);
+                      const aspectWH = imgL.naturalW / Math.max(imgL.naturalH, 1); // W/H
+                      // True contain-fit: min of the scale at which width fills 88% of pz.w
+                      // and the scale at which height fills 88% of pz.h — whichever is smaller.
+                      const scaleForWidth  = 0.88;
+                      const scaleForHeight = (pz.h * 0.88 * aspectWH) / pz.w;
+                      const fitScale       = Math.min(scaleForWidth, scaleForHeight);
+                      const newTransform   = { ...offender.transform, scale: fitScale, x: 0, y: 0, rotation: 0 };
+                      // For mug: also fix matching layer on the opposite face (same src, other face)
+                      if (isMugProduct) {
+                        const otherFace = (offender.face ?? "front") === "front" ? "back" : "front";
+                        commitLayers(layers.map(l => {
+                          if (l.id === offender.id) return { ...l, transform: newTransform };
+                          if (l.type === "image" && (l.face ?? "front") === otherFace &&
+                              (l as ImageLayer).src === imgL.src) {
+                            return { ...l, transform: newTransform };
+                          }
+                          return l;
+                        }));
+                      } else {
+                        updateLayer(offender.id, l => ({ ...l, transform: newTransform }), true);
+                      }
                     } else {
                       updateLayer(offender.id, l => ({ ...l, transform: { ...l.transform, x: 0, y: 0, rotation: 0 } }), true);
                     }
