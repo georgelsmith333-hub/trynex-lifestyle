@@ -75,13 +75,13 @@ pausing work, or transferring the project:
 
 ```text
 Status: complete
-Last completed: Project-level Agent handoff protocol setup
-Stopped at: Handoff rules and status reporting are in place
-Files/areas changed: AGENTS.md, AGENT_HANDOFF.md, replit.md
+Last completed: Default Agent instruction added to the automatically read project README
+Stopped at: Default instruction and detailed handoff rules are in place
+Files/areas changed: AGENTS.md, AGENT_HANDOFF.md, replit.md, project memory pointer
 Remaining work: None for the approved setup scope
 Blocker: None
 Next safe action: Read the required files, inspect the latest user request, and submit a plan
-Verification: Documentation consistency and whitespace checks completed
+Verification: Exact default instruction and documentation consistency checks completed
 ```
 
 For future implementation work, replace these values with the real current
@@ -96,6 +96,10 @@ preserving existing work, planning before edits, updating related before/after
 paths together, safely coordinating parallel work, verifying results, and
 updating this handoff before completion.
 
+The exact default instruction is now prominently included in both `AGENTS.md`
+and `replit.md` so Replit Agent receives it automatically in the original
+project and in copies/Remixes that include the project README.
+
 This protocol is file-based and will be included when the project is copied or
 Remixed. A Remix still starts a new private Agent conversation; the original
 chat itself is not transferred. The durable context that has been written into
@@ -106,6 +110,8 @@ these project files is what the next Agent can read.
 The project owner has approved this handoff protocol:
 
 - Future Agents must read the project context first.
+- The exact default instruction must be treated as the first operating request
+  in every new or Remixed Agent chat.
 - Every new chat must clearly report where work was left off and what remains
   before proposing or starting implementation.
 - User instructions and newer explicit decisions remain authoritative.

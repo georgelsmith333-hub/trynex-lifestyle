@@ -3,6 +3,13 @@
 This file is part of the project handoff. It must be read before making changes.
 It applies to the original project and to copies/remixes that include this file.
 
+## Default instruction for every new or Remixed Agent
+
+> Read `AGENTS.md`, `AGENT_HANDOFF.md`, and `replit.md` first. Report what is
+> complete, where work stopped, what remains, blockers, and your plan before
+> editing. Preserve existing work, update the handoff throughout, and provide
+> the next safe action when finished.
+
 ## First priority: understand the project
 
 Before responding with an implementation plan or editing files, every Agent must:

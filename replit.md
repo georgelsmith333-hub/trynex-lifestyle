@@ -4,6 +4,13 @@ TryNex Lifestyle (trynexshop.com) is a print-on-demand e-commerce storefront for
 
 ## Mandatory Agent handoff
 
+### Default instruction for every new or Remixed Agent
+
+> Read `AGENTS.md`, `AGENT_HANDOFF.md`, and `replit.md` first. Report what is
+> complete, where work stopped, what remains, blockers, and your plan before
+> editing. Preserve existing work, update the handoff throughout, and provide
+> the next safe action when finished.
+
 Before any Agent plans or edits work in this project, it must read:
 
 1. `AGENTS.md`
