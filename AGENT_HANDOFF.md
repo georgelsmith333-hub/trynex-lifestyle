@@ -75,13 +75,13 @@ pausing work, or transferring the project:
 
 ```text
 Status: complete
-Last completed: Default Agent instruction added to the automatically read project README
-Stopped at: Default instruction and detailed handoff rules are in place
-Files/areas changed: AGENTS.md, AGENT_HANDOFF.md, replit.md, project memory pointer
+Last completed: Strong startup command added to all project handoff files
+Stopped at: Startup command and detailed handoff rules are in place
+Files/areas changed: AGENTS.md, AGENT_HANDOFF.md, replit.md
 Remaining work: None for the approved setup scope
 Blocker: None
 Next safe action: Read the required files, inspect the latest user request, and submit a plan
-Verification: Exact default instruction and documentation consistency checks completed
+Verification: Startup command locations and documentation consistency checks completed
 ```
 
 For future implementation work, replace these values with the real current
@@ -96,9 +96,10 @@ preserving existing work, planning before edits, updating related before/after
 paths together, safely coordinating parallel work, verifying results, and
 updating this handoff before completion.
 
-The exact default instruction is now prominently included in both `AGENTS.md`
-and `replit.md` so Replit Agent receives it automatically in the original
-project and in copies/Remixes that include the project README.
+The strong startup command is now prominently included in `AGENTS.md`,
+`AGENT_HANDOFF.md`, and `replit.md`. Replit Agent automatically reads
+`replit.md`, so the command is available in the original project and in
+copies/Remixes that include the project README.
 
 This protocol is file-based and will be included when the project is copied or
 Remixed. A Remix still starts a new private Agent conversation; the original
@@ -122,14 +123,16 @@ The project owner has approved this handoff protocol:
 - A completion or pause/blocked handoff summary and updated handoff are required
   before closing.
 
-## Safe next prompt template
+## Best startup command for the next Agent
 
-> Read `AGENTS.md`, `AGENT_HANDOFF.md`, and `replit.md` first. Then inspect the
-> current handoff status and the implementation related to my request. In your
-> first response, state what is complete, where work stopped, what remains, what
-> is blocked, and your plan. Do not rewrite working features. Before editing,
-> submit a concise plan that lists affected files, preserved behavior,
-> dependencies, before/after paths, verification, and any safe parallel work.
-> After implementation, reconcile all changes, verify the result, update
-> `AGENT_HANDOFF.md` with the exact stopping point and next action, and provide
-> a completion note.
+> **START HERE — do not edit anything yet.** Read `AGENTS.md`,
+> `AGENT_HANDOFF.md`, and `replit.md` first. Then inspect the current project
+> state and respond with these headings: **Completed**, **Last stopping point**,
+> **Remaining work**, **Blockers**, **Plan**, **Existing behavior to preserve**,
+> **Verification**, and **Safe parallel work**. Submit the plan before editing.
+> Preserve all working features, update related before/after paths together,
+> keep the handoff current while working, reconcile and verify parallel work,
+> and finish with the exact **Status**, **Last completed**, **Stopped at**,
+> **Files/areas changed**, **Remaining work**, **Blocker**, **Next safe action**,
+> and **Verification** in `AGENT_HANDOFF.md`. If work stops early, provide the
+> same handoff instead of leaving the next Agent to infer anything from chat.

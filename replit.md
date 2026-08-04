@@ -4,12 +4,19 @@ TryNex Lifestyle (trynexshop.com) is a print-on-demand e-commerce storefront for
 
 ## Mandatory Agent handoff
 
-### Default instruction for every new or Remixed Agent
+### Mandatory startup command for every new or Remixed Agent
 
-> Read `AGENTS.md`, `AGENT_HANDOFF.md`, and `replit.md` first. Report what is
-> complete, where work stopped, what remains, blockers, and your plan before
-> editing. Preserve existing work, update the handoff throughout, and provide
-> the next safe action when finished.
+> **START HERE — do not edit anything yet.** Read `AGENTS.md`,
+> `AGENT_HANDOFF.md`, and `replit.md` first. Then inspect the current project
+> state and respond with these headings: **Completed**, **Last stopping point**,
+> **Remaining work**, **Blockers**, **Plan**, **Existing behavior to preserve**,
+> **Verification**, and **Safe parallel work**. Submit the plan before editing.
+> Preserve all working features, update related before/after paths together,
+> keep the handoff current while working, reconcile and verify parallel work,
+> and finish with the exact **Status**, **Last completed**, **Stopped at**,
+> **Files/areas changed**, **Remaining work**, **Blocker**, **Next safe action**,
+> and **Verification** in `AGENT_HANDOFF.md`. If work stops early, provide the
+> same handoff instead of leaving the next Agent to infer anything from chat.
 
 Before any Agent plans or edits work in this project, it must read:
 
