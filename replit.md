@@ -2,6 +2,21 @@
 
 TryNex Lifestyle (trynexshop.com) is a print-on-demand e-commerce storefront for Bangladesh — custom T-shirts, hoodies, mugs, and caps — with a browser-based Design Studio, an admin back office, and a companion mobile app.
 
+## Mandatory Agent handoff
+
+Before any Agent plans or edits work in this project, it must read:
+
+1. `AGENTS.md`
+2. `AGENT_HANDOFF.md`
+3. `replit.md`
+
+These files are the durable project context intended to survive a project copy or
+Remix. The current user's request and newer explicit project-owner decisions remain
+the highest-priority instructions. Agents must preserve existing work, submit a
+plan before implementation, update related before/after paths together, reconcile
+parallel work, verify changes, update `AGENT_HANDOFF.md`, and provide a completion
+note before closing. Do not place secrets or private session values in these files.
+
 ## Run & Operate
 
 - `pnpm --filter @workspace/trynex-storefront run dev` — customer storefront + admin panel (Vite/React)
