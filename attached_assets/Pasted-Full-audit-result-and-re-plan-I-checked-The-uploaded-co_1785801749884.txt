@@ -1,0 +1,647 @@
+Full audit result and re-plan
+I checked:
+
+The uploaded command and requirements file
+The 14-phase rebuild checklist
+The current audit and critical findings
+The current Design Studio and mockup implementation
+The current mobile Design Studio
+Artifact registrations and existing design-system projects
+The latest mockup-related code paths and pending changes
+The project is not missing all artifacts. The current workspace already contains:
+
+Existing web storefront
+Existing mobile app
+Existing mockup sandbox
+Existing TryNex brand system
+Existing TryNex studio design system
+Existing API server
+So we should not create duplicate web, mobile, design, or design-system projects immediately. The correct next step is to audit and upgrade the existing systems, then create new artifacts only if a real gap remains.
+
+Current overall status
+Working or substantially complete
+These areas already have a usable foundation:
+
+Product definitions are centralized.
+Product mockup assets are mapped through one product system.
+T-shirt, hoodie, longsleeve, mug, cap, and water bottle products exist.
+Front/back product behavior exists.
+Mug side 1, side 2, and wrap modes exist in the newer studio route.
+Design layers, positioning, rotation, scaling, undo, and redo exist.
+Print-zone warnings and fit-to-zone logic exist.
+Color rendering has separate behavior for white, black, and colored garments.
+Background removal has server and browser fallback paths.
+AI image generation exists.
+Cart preview composition exists.
+Mobile Design Studio uses real product mockup images.
+Product metadata such as studio design, original assets, color, print zones, and layer counts is being passed in several web flows.
+Database constraints, indexes, backup behavior, rate limiting, health endpoints, and several security findings were already repaired.
+The existing design system and brand-system artifacts are present.
+Still broken or incomplete
+The highest-priority gaps are:
+
+The primary DesignStudio.tsx and the newer DesignStudioV2.tsx need to be treated as one product strategy.
+3D preview exists in the newer studio route, but the primary customer studio integration needs to be verified and unified.
+Mug full-wrap behavior needs real end-to-end validation, not just a mode selector.
+The mockup system still relies on approximations in some places:
+flipped mug-side imagery
+SVG tinting for missing dark variants
+incomplete cap dark assets
+missing dark longsleeve assets
+The Printify-style workflow is not yet fully represented:
+clear product/template selection
+real-time personalization
+variant selection
+print-zone guidance
+front/back/wrap controls
+realistic preview
+final artwork validation
+production-ready asset handoff
+Mobile and web design data are not yet fully identical.
+Some checkout and mobile paths still use placeholder-style payment values.
+Some custom design asset references may still be lost between cart and final order creation.
+Admin mockup/template management is not complete.
+The tracker is stale: many items marked open are already fixed, while important current gaps are not tracked precisely.
+The selected web/mobile/design/design-system outputs should be upgraded from existing projects rather than blindly scaffolded again.
+Recommended execution model
+Lane A — Design Studio and mockup engine
+This is the main product-critical lane.
+
+Work includes:
+
+unify the primary Design Studio and V2 behavior
+repair 3D preview integration
+finish mug rendering
+validate full-wrap behavior
+improve product-specific mockups
+ensure final export matches the editor
+preserve original artwork assets
+eliminate fake or misleading previews
+Lane B — Web/mobile product workflow
+This can run in parallel with Lane A.
+
+Work includes:
+
+web Design Studio UX
+mobile Design Studio UX
+shared product and mockup metadata
+cart handoff
+checkout handoff
+order asset persistence
+responsive behavior
+error and loading states
+Lane C — Backend and asset pipeline
+This can run in parallel after the contract is confirmed.
+
+Work includes:
+
+production asset references
+storage validation
+original artwork persistence
+mockup metadata persistence
+export handling
+template management
+background processing
+AI usage tracking
+safe API validation
+Lane D — Admin and operations
+This can run in parallel after the core data shape is agreed.
+
+Work includes:
+
+mockup/template library
+product variant management
+asset health checks
+order asset inspection
+AI usage dashboard
+role and permission management
+real analytics
+system health
+Lane E — Design system and visual polish
+This should follow the real studio workflow audit, not precede it.
+
+Work includes:
+
+unify the existing TryNex Brand System and Studio Design System
+create shared tokens
+standardize buttons, controls, panels, dialogs, tabs, upload states, and preview states
+establish premium visual language
+ensure web and mobile share the same visual principles
+avoid building a separate design system that duplicates the current one
+Lane F — SEO, AI marketing, and automated content
+This is important, but should not block the mockup rebuild.
+
+Work includes:
+
+product SEO fields
+keyword/tag generation
+alt text
+blog assistance
+internal linking
+content approval workflow
+publishing safeguards
+keyword targeting based on real product inventory
+This should begin after the core product and mockup metadata are reliable.
+
+Revised phase plan
+Phase 0 — Reconciliation and baseline
+Purpose
+Replace the stale checklist with a real status map.
+
+Tasks
+Compare all checklist items against the current code.
+Separate completed work from partially completed work.
+Identify duplicate implementations.
+Define the authoritative Design Studio route.
+Define the authoritative mockup asset contract.
+Define the authoritative product/variant/print-zone contract.
+Record current uncommitted mockup changes before modifying them.
+Create a dependency map.
+Status
+Partially complete.
+
+The audit files exist, but the dependency map and final reconciled status are incomplete.
+
+Can run in parallel
+Read-only code mapping
+Asset inventory
+Web/mobile route inventory
+Existing artifact inventory
+Must happen before
+All implementation lanes.
+
+Phase 1 — Finalize the product contract
+Purpose
+Make web, mobile, cart, checkout, admin, and rendering use the same product model.
+
+Required contract
+Each product should consistently define:
+
+Product ID
+Category
+Variant
+Size
+Color
+Material
+Price
+Inventory
+Front mockup
+Back mockup
+Dark mockup
+Cutout asset
+Print zones
+Wrap zones
+Supported faces
+Supported editor modes
+Export rules
+Template associations
+Main issue
+The current web and mobile implementations have overlapping but separately maintained mockup configuration.
+
+Status
+Partially complete.
+
+Can run in parallel
+API contract cleanup
+Database review
+Web adapter
+Mobile adapter
+Must happen before
+Reliable cross-platform Design Studio behavior.
+
+Phase 2 — Design Studio architecture consolidation
+Purpose
+Stop maintaining competing studio implementations.
+
+Decisions required in implementation
+Select the customer-facing studio route.
+Move the best working behaviors into that route.
+Keep V2 only as a controlled rollback or development route if needed.
+Share:
+layer state
+product selection
+color selection
+face selection
+mug mode
+print zones
+export metadata
+original assets
+preview mode
+Status
+High priority and incomplete.
+
+The newer V2 path already contains working 3D-related logic, while the primary path contains additional mature editing logic. They need to be consolidated instead of maintained separately.
+
+Phase 3 — Mockup rendering rebuild
+Purpose
+Make the output look like a real Printify/Printful-level product mockup system.
+
+Required improvements
+Apparel
+Correct fabric texture preservation
+Correct shadows and highlights
+Correct colored garment behavior
+Accurate front/back placement
+No rectangular artwork appearance
+No stretched artwork
+No incorrect alpha spill
+Mug
+Real side 1 rendering
+Real side 2 rendering
+Real wrap rendering
+Handle-aware print zones
+Correct mirrored artwork behavior
+Correct edge shading
+Correct final export
+No reliance on a simple horizontal flip where a dedicated asset is required
+Cap
+Proper curved front-panel preview
+Correct dark cap rendering
+Correct silhouette shadow
+Correct print-zone perspective
+No rectangular drop shadow
+Water bottle
+Correct curved print zone
+Correct front/back behavior if supported
+Correct highlight and reflection
+Correct white asset transparency
+Longsleeve
+Add dark variants or define a deliberate high-quality fallback
+Ensure sleeves and body zones are separate where needed
+Status
+Partially complete.
+
+The engine has strong composition logic, but product-specific asset gaps and approximation paths remain.
+
+Phase 4 — Real-time 2D and 3D synchronization
+Purpose
+Make the user see the real product while editing.
+
+Required behavior
+2D editor updates instantly.
+3D preview reflects:
+uploaded artwork
+text
+rotation
+scale
+position
+color
+face
+mug mode
+wrap state
+Switching products does not lose designs.
+Switching products refits artwork to the new print zone.
+Preview mode and editing mode remain visibly distinct.
+3D preview is available where the product supports it.
+Curved products default to realistic preview while keeping precise 2D editing available.
+Status
+Partially complete.
+
+The code contains a 3D viewer path, but the primary customer flow must be verified and unified.
+
+Blocking dependency
+Phase 2 architecture consolidation.
+
+Phase 5 — Printify-style customer workflow
+Purpose
+Rebuild the user experience around what customers actually need.
+
+Required flow
+Select product.
+Select variant.
+Choose color.
+Choose size where applicable.
+Upload or generate design.
+Remove background if desired.
+Add text or artwork.
+Position and rotate.
+Select front, back, or wrap.
+See print-zone guidance.
+Preview in 2D.
+Preview in 3D.
+Validate artwork quality and placement.
+Save or add to cart.
+Preserve all source and preview assets.
+Show a trustworthy final product preview.
+Status
+Incomplete as a complete customer journey.
+
+Many individual capabilities exist, but the experience is not yet fully consolidated into one dependable workflow.
+
+Phase 6 — Export and production asset pipeline
+Purpose
+Ensure the order can actually be produced from the customer’s design.
+
+Required outputs
+Final flattened preview
+Original uploaded asset
+Editable layer metadata
+Product and variant metadata
+Print-zone metadata
+Face/wrap metadata
+High-resolution production artwork
+Stable storage references
+Order-linked asset record
+Admin-visible asset inspection
+Critical issue
+Some mobile and checkout paths may still pass metadata without reliably preserving the actual design file reference.
+
+Status
+Incomplete and high priority.
+
+Can run in parallel
+Storage API validation
+Mobile payload work
+Web cart payload work
+Admin order asset inspection
+Phase 7 — Product, variant, and template management
+Purpose
+Make the mockup engine maintainable without editing source code for every product.
+
+Required admin capability
+Create/edit product variants
+Add mockup assets
+Add cutouts
+Define print zones
+Define wrap zones
+Define face behavior
+Assign templates
+Preview template output
+Validate missing assets
+Retire broken assets safely
+Maintain product-specific export settings
+Status
+Partially complete at the catalog level; incomplete for template operations.
+
+Phase 8 — Mobile parity
+Purpose
+Make mobile a true version of the same product, not a separate approximation.
+
+Required work
+Use the same product metadata contract as web.
+Use the same mockup asset naming and selection rules.
+Preserve original artwork through cart and checkout.
+Remove placeholder payment fallbacks.
+Improve mobile error messages.
+Improve touch interactions.
+Verify safe-area behavior.
+Ensure all mug modes are understandable on a small screen.
+Ensure final mobile preview matches web output.
+Status
+Partially complete.
+
+The mobile studio has real mockup rendering, but metadata, fallback behavior, and checkout persistence need completion.
+
+Phase 9 — Backend, storage, and validation
+Purpose
+Make the system fail safely and preserve customer work.
+
+Required work
+Validate every studio payload.
+Reject missing asset references clearly.
+Store original artwork separately from generated previews.
+Verify storage URLs before order creation.
+Add idempotency to uploads and export operations.
+Add asset cleanup rules.
+Add audit logs for admin template changes.
+Avoid silently falling back to fake or stale previews.
+Status
+Partially complete.
+
+The backend has substantial infrastructure, but the full production asset contract still needs to be proven end to end.
+
+Phase 10 — AI design and SEO automation
+Purpose
+Add the AI and marketing system requested in the uploaded plan without allowing it to damage customer trust.
+
+Required AI capabilities
+Prompt generation
+Image generation
+Background removal
+Upscaling
+Mockup creation
+Product titles
+Product descriptions
+SEO descriptions
+Keywords
+Tags
+Alt text
+Asset metadata
+Usage tracking
+Credit limits
+Admin approval
+Important constraint
+AI-generated content must not auto-publish blindly. It should have:
+
+draft state
+preview
+approval
+revision
+publish
+rollback
+Status
+Partially complete.
+
+AI functionality exists, but the full usage, metadata, approval, and publishing lifecycle is not complete.
+
+Can run in parallel
+This lane can proceed while the rendering engine is rebuilt, but it must consume the finalized product metadata contract.
+
+Phase 11 — Admin operations
+Required work
+Real dashboard data
+Staff roles and permissions
+Mockup/template library
+Product asset health
+Order asset inspection
+AI usage
+Storage usage
+Error logs
+Billing/cost visibility
+System health
+Bulk product operations
+Status
+Partially complete.
+
+The admin system is broad, but still contains fallback data and missing operational modules.
+
+Phase 12 — Design system and premium UI
+Purpose
+Create a consistent visual language after the actual product workflow is known.
+
+Existing state
+There are already:
+
+TryNex Brand System
+TryNex Studio Design System
+Mockup sandbox
+Correct approach
+Do not create a disconnected fourth system.
+
+Instead:
+
+Compare the existing systems.
+Choose one source of truth.
+Merge useful tokens and components.
+Add studio-specific components:
+product selector
+color selector
+print-zone controls
+face switcher
+2D/3D switcher
+upload panel
+layer controls
+validation warnings
+export states
+mobile bottom-sheet controls
+Ensure web and mobile visual consistency.
+Status
+Existing foundation; consolidation needed.
+
+Phase 13 — Responsive and accessibility pass
+Required work
+Desktop
+Laptop
+Tablet
+Mobile
+Touch gestures
+Safe areas
+Keyboard navigation
+Focus visibility
+Contrast
+Screen-reader labels
+No horizontal overflow
+Clear error messages
+Usable empty states
+Loading states
+Status
+Partially complete.
+
+Several mobile fixes already exist, but the complete customer workflow must be checked after consolidation.
+
+Phase 14 — Testing and verification
+Required testing groups
+Product selection
+Color selection
+Size selection
+Upload
+Background removal
+AI generation
+Text layers
+Image layers
+Rotation
+Scaling
+Undo/redo
+Front/back
+Mug side 1
+Mug side 2
+Mug wrap
+2D preview
+3D preview
+Cart
+Checkout
+Order creation
+Asset persistence
+Admin asset inspection
+Mobile parity
+Failure and retry states
+Status
+Not complete.
+
+There are some tests, but not the complete Design Studio workflow matrix.
+
+Phase 15 — Deployment and operations
+Required work
+Production build
+Environment validation
+Health checks
+Logging
+Uptime monitoring
+Error monitoring
+Backup verification
+Asset backup
+Staging parity
+Rollback documentation
+CI/CD
+Status
+Partially complete.
+
+Several critical deployment and backup problems were already repaired, but CI/CD, external monitoring, and full verification remain open.
+
+What should happen simultaneously
+Start together
+These can begin at the same time after the plan is accepted:
+
+Track 1: Mockup engine audit
+inspect every product asset
+validate mug, cap, bottle, apparel rendering
+compare editor versus final export
+identify missing or incorrect assets
+Track 2: Web studio workflow audit
+inspect the primary studio
+inspect V2
+map shared and conflicting behavior
+decide the canonical route
+Track 3: Mobile parity audit
+map mobile product configuration
+map mobile asset references
+trace design data into cart and checkout
+identify lost references
+Track 4: Backend asset-flow audit
+trace upload
+trace generated image
+trace preview
+trace cart item
+trace order item
+trace admin order view
+Track 5: Design-system reconciliation
+inspect existing Brand System
+inspect existing Studio Design System
+identify duplicates
+define one shared token/component source
+Track 6: Tracker correction
+update completed items
+split oversized phases
+add exact blockers
+record evidence requirements
+What must remain sequential
+These should not be started in the wrong order:
+
+Finalize product and mockup contract.
+Select the canonical Design Studio architecture.
+Rebuild and verify rendering.
+Connect 2D, 3D, cart, checkout, and order assets.
+Then finalize design-system polish.
+Then run full responsive and accessibility validation.
+Then complete final testing and deployment verification.
+The AI SEO/content system can proceed in parallel, but it must consume the finalized product and asset data instead of inventing its own product definitions.
+
+Artifact decision
+Web
+Use the existing TryNex storefront artifact. Do not create a duplicate web app.
+
+Mobile
+Use the existing TryNex mobile artifact. Do not create a duplicate mobile app.
+
+Design
+Use the existing mockup sandbox for visual variants and isolated component testing. It should be connected to real Design Studio components where appropriate, not used to create a separate fake implementation.
+
+Design system
+Use the existing TryNex Brand System and TryNex Studio Design System as the starting point. Reconcile them into one authoritative system rather than creating a disconnected new one.
+
+Immediate next implementation milestone
+The first implementation milestone should be:
+
+“Design Studio Rendering and Asset Contract Verification”
+Deliverables:
+
+Canonical studio route decision
+Unified product/mockup contract
+Verified 2D rendering for every product
+Verified 3D rendering for supported products
+Verified mug side and wrap behavior
+Verified cart preview
+Verified final export
+Verified original asset persistence
+Verified mobile metadata handoff
+Updated tracker with evidence and blockers

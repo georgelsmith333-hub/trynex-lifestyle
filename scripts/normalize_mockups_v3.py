@@ -27,7 +27,7 @@ Requirements: only Pillow (PIL) — no numpy, no scipy.
 from __future__ import annotations
 import os, sys
 from collections import deque
-from PIL import Image, ImageChops, ImageFilter
+from PIL import Image, ImageChops, ImageFilter, ImageOps
 
 SOURCE_DIR  = "artifacts/trynex-storefront/public/mockups/source-kit"
 MASK_DIR    = "scripts/mockup_mask_templates"
@@ -195,6 +195,21 @@ def cutout_path(cat: str, color: str, face: str) -> str:
     return os.path.join(CUTOUT_DIR, f"{cat}-{color}-{face}.png")
 
 
+def reviewed_alpha_template(cat: str, face: str) -> Image.Image:
+    """Return the immutable alpha authority for one product face.
+
+    The original mug-back template was generated from a low-contrast white
+    photo and has a transparent leak through the right half of the ceramic
+    body.  The reviewed back photo is the horizontal mirror of the reviewed
+    front photo, so derive the back silhouette from the front template instead
+    of trusting the contaminated derivative.
+    """
+    if cat == "mug" and face == "back":
+        source = Image.open(mask_path("mug", "front"))
+        return clean_alpha_template(ImageOps.mirror(source))
+    return clean_alpha_template(Image.open(mask_path(cat, face)))
+
+
 def source_frame(cat: str, color: str, face: str) -> tuple[int, int, int, int]:
     """Return the reviewed, deterministic product frame for one source photo."""
     try:
@@ -348,7 +363,7 @@ for cat, slugs in SLUGS.items():
         # stored separately from runtime output so reruns cannot recursively
         # normalize an already-normalized image or inherit contaminated pixels.
         reference_path = mask_path(cat, face)
-        reference_alpha = clean_alpha_template(Image.open(reference_path))
+        reference_alpha = reviewed_alpha_template(cat, face)
         reference_bb = reference_alpha.point(lambda p: 255 if p > 20 else 0).getbbox()
         if not reference_bb:
             print(f"  EMPTY reference mask {reference_path}")

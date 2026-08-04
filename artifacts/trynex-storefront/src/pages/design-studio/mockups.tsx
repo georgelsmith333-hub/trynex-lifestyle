@@ -153,15 +153,12 @@ export const HOODIE_BACK_PZ: PrintZone      = { x: 292, y: 184, w: 416, h: 448 }
 export const CAP_PZ: PrintZone              = { x: 240, y: 260, w: 540, h: 320 };
 /** Cap rear crown zone — deliberately stops above the adjustment opening and strap. */
 export const CAP_BACK_PZ: PrintZone         = { x: 285, y: 270, w: 430, h: 230 };
-/** Mug front / right-handle body zone. The rectangle follows the ceramic
- * body from rim to base and stops at the handle attachment. */
+/** Full Wrap uses the wider continuous body band and is an explicit mode. */
 export const MUG_PZ: PrintZone              = { x: 225, y: 220, w: 490, h: 580 };
-/** Back-facing mug photography has the handle on the left. Its ceramic body
- * is shifted right, so the back face needs its own full-width body zone. */
 export const MUG_WRAP_BACK_PZ: PrintZone    = { x: 285, y: 220, w: 490, h: 580 };
-/** Side 1 and Side 2 use the same measured ceramic body panels as Wrap. */
-export const MUG_SIDE_PZ: PrintZone         = MUG_PZ;
-export const MUG_SIDE_BACK_PZ: PrintZone    = MUG_WRAP_BACK_PZ;
+/** Side 1 / Side 2 use the exact reviewed PSD print panel, excluding handles. */
+export const MUG_SIDE_PZ: PrintZone         = { x: 225, y: 215, w: 380, h: 530 };
+export const MUG_SIDE_BACK_PZ: PrintZone    = { x: 225, y: 215, w: 380, h: 530 };
 /** Water bottle label panel: only the straight aluminium body is printable;
  * the lid, shoulder, carabiner and rounded base are intentionally excluded. */
 export const WATERBOTTLE_PZ: PrintZone      = { x: 390, y: 340, w: 245, h: 555 };
@@ -495,8 +492,8 @@ const SOURCE_KIT_PRINT_ZONES: Record<
     back: { x: 292, y: 184, w: 416, h: 448 },
   },
   mug: {
-    front: { x: 225, y: 220, w: 490, h: 580 },
-    back: { x: 285, y: 220, w: 490, h: 580 },
+    front: { x: 225, y: 215, w: 380, h: 530 },
+    back: { x: 225, y: 215, w: 380, h: 530 },
   },
   cap: {
     front: { x: 240, y: 260, w: 540, h: 320 },
