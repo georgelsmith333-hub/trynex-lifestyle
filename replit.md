@@ -15,7 +15,11 @@ Remix. The current user's request and newer explicit project-owner decisions rem
 the highest-priority instructions. Agents must preserve existing work, submit a
 plan before implementation, update related before/after paths together, reconcile
 parallel work, verify changes, update `AGENT_HANDOFF.md`, and provide a completion
-note before closing. Do not place secrets or private session values in these files.
+note before closing. In every new chat, the first response must clearly state what
+is complete, where work stopped, what remains, blockers, the proposed plan,
+preserved behavior, verification, and safe parallel work. If work pauses or is
+blocked, the handoff must state the exact stopping point and next safe action.
+Do not place secrets or private session values in these files.
 
 ## Run & Operate
 

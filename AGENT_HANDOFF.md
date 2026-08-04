@@ -49,20 +49,44 @@ mobile app, promotional experience, and brand-system artifact.
 1. Read the current user request and identify the exact requested outcome.
 2. Read the first-priority files listed above.
 3. Inspect the relevant current implementation; do not rely only on this summary.
-4. Submit a plan before editing.
-5. Identify all related paths, including API/client, desktop/mobile, admin/customer,
+4. In the first response, confirm the three required files were read and clearly
+   report completed work, the previous stopping point, remaining work, blockers,
+   the proposed plan, preserved behavior, verification, and safe parallel work.
+5. Submit a plan before editing.
+6. Identify all related paths, including API/client, desktop/mobile, admin/customer,
    persisted/runtime, and old/new or before/after behavior.
-6. Implement only the approved scope.
-7. If independent work is parallelized, reconcile it before completion.
-8. Run the relevant verification, rebuilding/restarting services when required.
-9. Update this file with durable results, decisions, and remaining work.
-10. Submit a completion note before closing or handing off the work.
+7. Implement only the approved scope.
+8. If independent work is parallelized, reconcile it before completion.
+9. Run the relevant verification, rebuilding/restarting services when required.
+10. Update this file with durable results, decisions, and remaining work.
+11. Submit a completion note before closing or a status handoff when pausing,
+    blocking, or transferring the work.
 
 ## Current open work
 
 No open implementation task is recorded by this handoff setup. Agents must
 inspect the current project and the user's latest request rather than assuming
 this section is complete or exhaustive.
+
+## Required status at every handoff
+
+Every Agent must keep the following status fields current before ending a chat,
+pausing work, or transferring the project:
+
+```text
+Status: complete
+Last completed: Project-level Agent handoff protocol setup
+Stopped at: Handoff rules and status reporting are in place
+Files/areas changed: AGENTS.md, AGENT_HANDOFF.md, replit.md
+Remaining work: None for the approved setup scope
+Blocker: None
+Next safe action: Read the required files, inspect the latest user request, and submit a plan
+Verification: Documentation consistency and whitespace checks completed
+```
+
+For future implementation work, replace these values with the real current
+checkpoint. Do not leave the next Agent to reconstruct the state from chat
+history.
 
 ## Completed handoff setup
 
@@ -82,18 +106,24 @@ these project files is what the next Agent can read.
 The project owner has approved this handoff protocol:
 
 - Future Agents must read the project context first.
+- Every new chat must clearly report where work was left off and what remains
+  before proposing or starting implementation.
 - User instructions and newer explicit decisions remain authoritative.
 - Existing work must be preserved and related before/after paths updated together.
 - Plans must be submitted before implementation.
 - Independent parallel work is allowed only with clear boundaries and a final
   reconciliation.
-- A completion summary and updated handoff are required before closing.
+- A completion or pause/blocked handoff summary and updated handoff are required
+  before closing.
 
 ## Safe next prompt template
 
 > Read `AGENTS.md`, `AGENT_HANDOFF.md`, and `replit.md` first. Then inspect the
-> current implementation related to my request. Do not rewrite working features.
-> Before editing, submit a concise plan that lists affected files, preserved
-> behavior, dependencies, before/after paths, verification, and any safe
-> parallel work. After implementation, reconcile all changes, verify the result,
-> update `AGENT_HANDOFF.md`, and provide a completion note.
+> current handoff status and the implementation related to my request. In your
+> first response, state what is complete, where work stopped, what remains, what
+> is blocked, and your plan. Do not rewrite working features. Before editing,
+> submit a concise plan that lists affected files, preserved behavior,
+> dependencies, before/after paths, verification, and any safe parallel work.
+> After implementation, reconcile all changes, verify the result, update
+> `AGENT_HANDOFF.md` with the exact stopping point and next action, and provide
+> a completion note.

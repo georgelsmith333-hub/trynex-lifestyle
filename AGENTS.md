@@ -17,6 +17,21 @@ The project rules in this file and `replit.md` provide context and safety constr
 They do not override the user's current request, platform safety rules, or a newer
 explicit decision made by the project owner.
 
+### Required first response in every new chat
+
+Before any edit, the Agent must clearly state:
+
+- That `AGENTS.md`, `AGENT_HANDOFF.md`, and `replit.md` were read.
+- What the current handoff says is completed.
+- Where previous work stopped.
+- What remains to be done or what is blocked.
+- The proposed plan for the current user request.
+- Which existing behavior will be preserved.
+- What will be checked, and whether any safe parallel work is possible.
+
+The Agent must not claim that work is complete, current, or verified unless the
+current files and relevant workflows support that claim.
+
 ## Preserve the full history of work
 
 - Do not replace, reset, or rewrite working features just because a new Agent is
@@ -56,6 +71,20 @@ completion note containing:
 - Any remaining limitations or follow-up work
 - The updates made to `AGENT_HANDOFF.md`
 
+If the work is paused, blocked, handed to another Agent, or the conversation is
+ending before completion, submit a handoff note instead. It must explicitly state:
+
+- Last completed step
+- Exact point where work stopped
+- Files or areas already changed
+- Work still required
+- Blocker, if any
+- Next safe action
+- Verification status
+
+Update `AGENT_HANDOFF.md` before that note is submitted. Never leave the next
+Agent to infer the stopping point from chat history alone.
+
 ## Parallel work
 
 Parallel work is allowed when tasks are independent and have clear boundaries.
@@ -78,12 +107,32 @@ and useful to the next Agent:
 - Record completed work and current open work.
 - Record durable architecture decisions and important gotchas.
 - Record plans that were approved, rejected, or still pending.
+- Record the latest completed checkpoint, exact stopping point, remaining work,
+  blockers, next safe action, and verification status.
 - Record the next safe recommended prompt.
 - Never record passwords, API keys, session tokens, private keys, database URLs,
   personal data, or any other secret value.
 
 If the current task changes an existing decision, update the handoff instead of
 creating contradictory notes. If a note is stale, correct or remove it.
+
+### Handoff status format
+
+Use this structure in `AGENT_HANDOFF.md` whenever work is in progress or paused:
+
+```text
+Status: <not started | in progress | blocked | ready for review | complete>
+Last completed:
+Stopped at:
+Files/areas changed:
+Remaining work:
+Blocker:
+Next safe action:
+Verification:
+```
+
+When a task is complete, retain the last completed checkpoint and set remaining
+work to `None for the approved scope` unless a real follow-up remains.
 
 ## Secrets and access
 

@@ -1,3 +1,4 @@
+- [Agent handoff protocol](agent-handoff-protocol.md) — new chats must report checkpoint/remaining work, plan before edits, and update the exact next action
 - [TryNex API routes & ports](trynex-api-routes.md) — missing routes fixed, port config, build process, promo/mobile workflow issues
 - [Mockup rendering](mockup-rendering.md) — white garments use two-layer multiply-blend (cutout shadow + full photo with mix-blend-mode:multiply); black garments use full dark photo directly (no cutout); colored use tint filter + cutout. isApparel must be declared BEFORE useMixBlend to avoid TDZ error.
 - [Generated mockup source kits](generated-mockup-source-kit.md) — keep editable PSD bundles outside public runtime; retain photo fallback until visual review approves generated assets.
