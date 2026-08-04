@@ -230,7 +230,7 @@ export default function ProductViewer3D({
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
       <Canvas
-        shadows
+        shadows={{ type: THREE.PCFShadowMap }}
         dpr={VIEWER_DEFAULTS.dpr}
         camera={{ position: VIEWER_DEFAULTS.cameraPosition, fov: VIEWER_DEFAULTS.fov }}
         gl={{ antialias: true, alpha: true, preserveDrawingBuffer: true }}

@@ -4,11 +4,11 @@
    The mockup PNGs live in /public/mockups/<id>-<face>.png
 ════════════════════════════════════════════════════════ */
 
-// ── T-Shirt: premium AI-generated studio photos (new/ folder = higher quality) ──
-const tshirtFront          = "/mockups/new/white-tshirt-front.png";
-const tshirtBack           = "/mockups/new/white-tshirt-back.png";
-const tshirtFrontDark      = "/mockups/new/black-tshirt-front.png";
-const tshirtBackDark       = "/mockups/new/black-tshirt-back.png";
+// ── T-Shirt: unified studio photos from normalized/ folder ──
+const tshirtFront          = "/mockups/normalized/tshirt-white-front.png";
+const tshirtBack           = "/mockups/normalized/tshirt-white-back.png";
+const tshirtFrontDark      = "/mockups/normalized/tshirt-black-front.png";
+const tshirtBackDark       = "/mockups/normalized/tshirt-black-back.png";
 const tshirtFrontCutout    = "/mockups/new/white-tshirt-front-cutout.png";
 const tshirtBackCutout     = "/mockups/new/white-tshirt-back-cutout.png";
 // Color-specific photo mockups — used instead of SVG tint for highest realism
@@ -26,12 +26,7 @@ const skyblueTshirtFront   = "/mockups/skyblue-tshirt-front.png";
 const skyblueTshirtBack    = "/mockups/skyblue-tshirt-back.png";
 const longsleeveFront          = "/mockups/white-longsleeve-front.png";
 const longsleeveBack           = "/mockups/white-longsleeve-back.png";
-// NOTE: black-longsleeve-front.png / black-longsleeve-back.png are broken —
-// confirmed flat solid-black RGB (zero variance, alpha-only silhouette), not
-// a photo. front_2 is a genuine, previously-unused studio photo replacement;
-// no equivalent back photo exists, so the back view falls through to the
-// reviewed darkBackCutout below (same pattern already used for hoodie backs).
-const longsleeveFrontDark      = "/mockups/black-longsleeve-front_2.png";
+const longsleeveFrontDark      = "/mockups/normalized/longsleeve-black-front.png";
 const longsleeveFrontCutout    = "/mockups/white-longsleeve-front-cutout-real.png";
 const longsleeveBackCutout     = "/mockups/white-longsleeve-back-cutout-real.png";
 const longsleeveFrontDarkCutout = "/mockups/black-longsleeve-front-cutout.png";
@@ -45,16 +40,15 @@ const hoodieBackCutout     = "/mockups/white-hoodie-back-cutout-real.png";
 const mugFront             = "/mockups/white-mug-front.png";
 const mugFrontDark         = "/mockups/black-mug-front.png";
 const mugBack              = "/mockups/white-mug-back.png";
-const mugBackDark          = "/mockups/source-kit/mug-black-back.png";
+const mugBackDark          = "/mockups/normalized/mug-black-back.png";
 const mugFrontCutout       = "/mockups/white-mug-front-cutout.png";
 const mugFrontDarkCutout   = "/mockups/black-mug-front-cutout.png";
 const capFront             = "/mockups/white-cap-front.png";
-// black-cap-front.png has no alpha and is 896×1280 (wrong size) — cap uses SVG tint for all dark colours
 const capFrontCutout       = "/mockups/white-cap-front-cutout.png";
 const waterBottleFront          = "/mockups/white-waterbottle-front.png";
 const waterBottleCutout         = "/mockups/white-waterbottle-front-cutout.png";
-const tshirtFrontDarkCutout     = "/mockups/new/black-tshirt-front-cutout.png";
-const tshirtBackDarkCutout      = "/mockups/new/black-tshirt-back-cutout.png";
+const tshirtFrontDarkCutout     = "/mockups/normalized-cutouts/black-tshirt-front-cutout.png";
+const tshirtBackDarkCutout      = "/mockups/normalized-cutouts/black-tshirt-back-cutout.png";
 const hoodieFrontDarkCutout     = "/mockups/black-hoodie-front-cutout-real.png";
 const hoodieBackDarkCutout      = "/mockups/black-hoodie-back-cutout-real.png";
 
