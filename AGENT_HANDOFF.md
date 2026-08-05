@@ -65,8 +65,11 @@ mobile app, promotional experience, and brand-system artifact.
 ## Current open work
 
 The A-to-Z TryNex storefront, Design Studio, mobile, technical, SEO, and
-performance audit is complete and the phased enhancement plan is ready for
-owner review. No product source implementation has started.
+performance audit is complete. The owner approved the full Dhaka Color Spectrum
+direction and the cross-surface implementation contract. The written design
+spec is ready for review at
+`docs/superpowers/specs/2026-08-05-trynex-dhaka-color-spectrum-design.md`.
+No product source implementation has started.
 
 ## Required status at every handoff
 
@@ -75,18 +78,21 @@ pausing work, or transferring the project:
 
 ```text
 Status: ready for review
-Last completed: Read-only A-to-Z product audit and premium enhancement plan
-  prepared
-Stopped at: Audit synthesis is complete; waiting for approval before source edits
-Files/areas changed: AGENT_HANDOFF.md only; audit screenshots are in audit/
-Remaining work: Approve and implement the phased storefront, Design Studio,
-  mobile, SEO, performance, and security improvements
-Blocker: None
-Next safe action: Review the proposed phased plan and approve the first
-  implementation phase
+Last completed: Owner-approved visual direction; parallel read-only architecture
+  reviews; full cross-surface design specification written
+Stopped at: Written spec is ready for owner review; product source implementation
+  has not started
+Files/areas changed: `docs/superpowers/specs/2026-08-05-trynex-dhaka-color-spectrum-design.md`
+  and this handoff; existing audit screenshots remain in `audit/`
+Remaining work: Review the written spec, then implement the approved lanes in
+  the documented reconciliation order; repair/present the existing canonical
+  web artifact rather than creating a duplicate
+Blocker: Owner written-spec review
+Next safe action: Review the design spec and approve it or request specific
+  changes before implementation
 Verification: Required handoff files read; five workflows running; storefront,
-  API, and mobile typechecks passed; live home, products, and Design Studio
-  screenshots captured; no product source files edited
+  API, and mobile typechecks previously passed; eight bounded read-only reviews
+  completed; no product source files edited
 
 ## Latest audit checkpoint
 
