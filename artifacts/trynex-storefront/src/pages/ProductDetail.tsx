@@ -285,7 +285,7 @@ export default function ProductDetail() {
     return undefined;
   }, [queryClient, isNumeric, isSlug, numericId, id]);
 
-  const { data: productFromHook, isLoading: hookLoading, error: hookError } = useGetProduct(isNumeric ? String(numericId) : '0', {
+  const { data: productFromHook, isLoading: hookLoading, error: hookError, refetch: refetchProduct } = useGetProduct(isNumeric ? String(numericId) : '0', {
     query: { enabled: isNumeric, retry: 2, staleTime: 30000, initialData: isNumeric ? cachedProduct : undefined }
   } as any);
 
@@ -440,13 +440,13 @@ export default function ProductDetail() {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
       <div className="flex-1 flex flex-col items-center justify-center gap-6 px-4 py-20">
-        <div className="text-center">
+          <div className="text-center">
           <div className="w-20 h-20 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
             <Search className="w-10 h-10 text-gray-400" />
           </div>
           <h2 className="text-4xl font-black font-display tracking-tight text-gray-900 mb-3">Product Not Found</h2>
           <p className="text-gray-500 mb-8 max-w-sm mx-auto">This product may have been removed or the link is incorrect.</p>
-          <Link href="/products" className="btn-primary inline-flex">
+           <Link href="/products" className="btn-primary inline-flex" data-testid="link-browse-products">
             <ArrowLeft className="w-5 h-5" /> Browse All Products
           </Link>
         </div>
@@ -455,7 +455,33 @@ export default function ProductDetail() {
     </div>
   );
 
-  if (!isValidId || error || !product) return NotFound;
+  if (error && isNumeric) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Navbar />
+        <main className="flex-1 flex items-center justify-center px-4 py-20" role="alert">
+          <div className="max-w-md text-center">
+            <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-orange-50">
+              <Package2 className="h-10 w-10 text-orange-500" aria-hidden="true" />
+            </div>
+            <h1 className="font-display text-3xl font-black text-gray-900">Product details are unavailable</h1>
+            <p className="mt-3 text-sm leading-6 text-gray-600">The product could not be loaded right now. Try again or return to the shop.</p>
+            <div className="mt-7 flex flex-wrap justify-center gap-3">
+              <button type="button" onClick={() => void refetchProduct()} className="min-h-11 rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2" data-testid="button-retry-product">
+                Try again
+              </button>
+              <Link href="/products" className="inline-flex min-h-11 items-center rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-bold text-gray-700 transition hover:border-orange-300 hover:text-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2">
+                Browse products
+              </Link>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!isValidId || !product) return NotFound;
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -563,6 +589,8 @@ export default function ProductDetail() {
   const displayImage = activeImage || product.imageUrl || "";
   const wishlisted = isWishlisted(product.id);
   const rating = product.rating ? parseFloat(String(product.rating)) : 4.9;
+  const itemPrice = Number(product.discountPrice || product.price) || 0;
+  const advanceAmount = Math.round(itemPrice * 0.25);
 
   const handleShare = async () => {
     try {
@@ -679,9 +707,10 @@ export default function ProductDetail() {
             {/* Images Column */}
             <div className="relative flex flex-col gap-4">
               {/* Desktop Image Viewer */}
-              <motion.div
+                 <motion.div
                 ref={imageContainerRef}
-                className="relative aspect-square rounded-3xl overflow-hidden bg-white border border-gray-100 shadow-sm group cursor-zoom-in hidden md:block"
+                 className="relative aspect-square rounded-3xl overflow-hidden bg-white border border-gray-100 shadow-sm group cursor-zoom-in hidden md:block"
+                 aria-label={`${product.name} product image`}
                 layoutId={`product-image-${product.id}`}
                 onMouseEnter={() => setZoomActive(true)}
                 onMouseLeave={() => setZoomActive(false)}
@@ -807,7 +836,7 @@ export default function ProductDetail() {
                       </span>
                     )}
                     {displayImage && (
-                      <button
+                     <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -832,7 +861,11 @@ export default function ProductDetail() {
                   return allImages.map((img, i) => (
                     <button
                       key={i}
-                      onClick={() => { setActiveImage(img); setZoomActive(false); }}
+                       onClick={() => { setActiveImage(img); setZoomActive(false); }}
+                       type="button"
+                       aria-label={`View product image ${i + 1}`}
+                       aria-pressed={activeImage === img || (!activeImage && i === 0)}
+                       data-testid={`button-product-thumbnail-${i + 1}`}
                       className={cn(
                         "relative w-14 sm:w-16 aspect-square shrink-0 rounded-xl overflow-hidden border-2 transition-all",
                         activeImage === img || (!activeImage && i === 0) ? "border-orange-500 scale-95" : "border-gray-100 hover:border-orange-200"
@@ -858,7 +891,11 @@ export default function ProductDetail() {
                   {product.customizable ? "✨ Customizable" : "Ready Made"}
                 </span>
                 <div className="flex items-center gap-2">
-                  <button
+                   <button
+                     type="button"
+                     aria-label={wishlisted ? "Remove product from wishlist" : "Add product to wishlist"}
+                     aria-pressed={wishlisted}
+                     data-testid="button-product-wishlist"
                     onClick={() => toggleWishlist({ id: product.id, name: product.name, price: product.price, discountPrice: product.discountPrice, imageUrl: product.imageUrl })}
                     className="p-2.5 rounded-xl transition-all"
                     style={{
@@ -868,7 +905,10 @@ export default function ProductDetail() {
                   >
                     <Heart className="w-4.5 h-4.5" style={{ width: '1.1rem', height: '1.1rem', color: wishlisted ? '#E85D04' : '#9ca3af', fill: wishlisted ? '#E85D04' : 'none' }} />
                   </button>
-                  <button
+                   <button
+                     type="button"
+                     aria-label="Share product"
+                     data-testid="button-share-product"
                     onClick={handleShare}
                     className="p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 hover:text-gray-700 transition-all"
                   >
@@ -896,7 +936,7 @@ export default function ProductDetail() {
               </div>
 
               {/* Price */}
-              <div className="mb-8 p-5 rounded-2xl" style={{ background: '#fff8f5', border: '1px solid #fde4d0' }}>
+               <div className="mb-8 p-5 rounded-2xl" style={{ background: '#fff8f5', border: '1px solid #fde4d0' }}>
                 <div className="flex items-baseline gap-3 sm:gap-4 mb-3 flex-wrap">
                   {product.discountPrice ? (
                     <>
@@ -909,7 +949,7 @@ export default function ProductDetail() {
                     <span className="text-4xl font-black text-gray-900">{formatPrice(product.price)}</span>
                   )}
                 </div>
-                <div className="flex flex-wrap items-center gap-2 mb-3">
+                 <div className="flex flex-wrap items-center gap-2 mb-3">
                   <span
                     className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-black uppercase tracking-wide"
                     style={{ background: '#dcfce7', color: '#15803d', border: '1px solid #86efac' }}
@@ -923,6 +963,10 @@ export default function ProductDetail() {
                     🇧🇩 5,000+ happy customers
                   </span>
                 </div>
+                 <div className="mt-3 rounded-xl border border-green-200 bg-green-50 px-3 py-2.5 text-xs text-green-800">
+                   <p className="font-black">Pay {formatPrice(advanceAmount)} today (25% advance)</p>
+                   <p className="mt-0.5 font-medium text-green-700">Pay the remaining {formatPrice(Math.max(0, itemPrice - advanceAmount))} when your order is delivered.</p>
+                 </div>
                 <ViewerCount productId={product.id} />
 
                 {/* Estimated Delivery */}
@@ -957,7 +1001,11 @@ export default function ProductDetail() {
                       Size
                       {!selectedSize && <span className="ml-1.5 text-[10px] font-bold text-orange-500 uppercase tracking-wider">· Required</span>}
                     </p>
-                    <button
+                     <button
+                       type="button"
+                       aria-expanded={showSizeGuide}
+                       aria-controls="size-guide-panel"
+                       data-testid="button-size-guide"
                       onClick={() => setShowSizeGuide(!showSizeGuide)}
                       className="flex items-center gap-1.5 text-xs font-bold text-orange-600 hover:text-orange-700 transition-colors"
                     >
@@ -1002,7 +1050,7 @@ export default function ProductDetail() {
                         exit={{ opacity: 0, height: 0 }}
                         className="overflow-hidden mt-4"
                       >
-                        <div className="p-4 rounded-2xl bg-white border border-gray-100 shadow-sm">
+                         <div id="size-guide-panel" className="p-4 rounded-2xl bg-white border border-gray-100 shadow-sm">
                           <p className="font-bold text-sm text-gray-900 mb-3">Size Chart (inches)</p>
                           <table className="w-full text-xs text-center">
                             <thead>
@@ -1051,7 +1099,11 @@ export default function ProductDetail() {
                       const mappedImage = colorImages[color];
 
                       return (
-                        <button
+                         <button
+                           type="button"
+                           aria-label={`${isOutOfStock ? `${color}, out of stock` : `Select ${color} color`}${selectedColor === color ? ", selected" : ""}`}
+                           aria-pressed={selectedColor === color}
+                           data-testid={`button-color-${colorIdx}`}
                           key={color}
                           onClick={() => {
                             if (isOutOfStock) return;
@@ -1135,7 +1187,11 @@ export default function ProductDetail() {
 
                   <p className="text-xs text-gray-400 text-center font-medium">— or describe your idea below —</p>
 
-                  <textarea
+                   <label htmlFor="custom-note" className="sr-only">Describe your design idea</label>
+                   <textarea
+                     id="custom-note"
+                     aria-label="Describe your design idea"
+                     data-testid="textarea-custom-note"
                     value={customNote}
                     onChange={(e) => setCustomNote(e.target.value)}
                     placeholder="Describe your design idea, text, placement, or any instructions..."
@@ -1160,7 +1216,9 @@ export default function ProductDetail() {
                     )}>
                       <Upload className="w-4 h-4" />
                       {uploadingImage ? "Uploading..." : "Choose Files"}
-                      <input
+                       <input
+                         aria-label="Upload design or logo files"
+                         data-testid="input-design-upload"
                         type="file"
                         accept="image/*"
                         multiple
@@ -1175,7 +1233,10 @@ export default function ProductDetail() {
                           <div key={idx} className="relative group">
                             <img src={img} alt={`Design ${idx + 1}`}
                               className="w-16 h-16 rounded-xl object-cover border border-gray-200" />
-                            <button
+                             <button
+                               type="button"
+                               aria-label={`Remove attached design ${idx + 1}`}
+                               data-testid={`button-remove-design-${idx + 1}`}
                               onClick={() => setCustomImages(prev => prev.filter((_, i) => i !== idx))}
                               className="btn-press absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                             >
@@ -1205,7 +1266,7 @@ export default function ProductDetail() {
                   >
                     <Minus className="w-4 h-4" />
                   </motion.button>
-                  <span className="px-5 font-black text-gray-900 text-lg min-w-[3rem] text-center overflow-hidden">
+                   <span className="px-5 font-black text-gray-900 text-lg min-w-[3rem] text-center overflow-hidden" aria-live="polite" aria-label={`Quantity ${quantity}`}>
                     <motion.span
                       key={qtyPulse}
                       initial={prefersReducedMotion ? false : { scale: 0.7, opacity: 0.4 }}
@@ -1231,10 +1292,13 @@ export default function ProductDetail() {
                   </motion.button>
                 </div>
                 <motion.button
+                   type="button"
                   ref={mainAddToCartRef}
                   onClick={handleAddToCart}
                   disabled={product.stock < 1}
                   aria-live="polite"
+                   aria-label={product.stock > 0 ? `Add ${quantity} ${product.name} to cart` : `${product.name} is sold out`}
+                   data-testid="button-add-product-to-cart"
                   animate={
                     prefersReducedMotion || !addedToBag
                       ? { scale: 1 }

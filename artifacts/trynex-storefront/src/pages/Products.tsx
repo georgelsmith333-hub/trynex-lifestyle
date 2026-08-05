@@ -91,7 +91,7 @@ export default function Products() {
     if (match) setActiveCategory(match.id);
   }, [searchString, categories]);
 
-  const { data: productsData, isLoading } = useListProducts({
+  const { data: productsData, isLoading, isError, refetch } = useListProducts({
     search: search || undefined,
     category: activeCategory ? String(activeCategory) : undefined,
     limit: 48
@@ -255,7 +255,11 @@ export default function Products() {
               <div className="container-wide mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-8">
                 <div className="relative mb-2 sm:mb-4">
                   <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400" />
+                  <label htmlFor="product-search" className="sr-only">Search products</label>
                   <input
+                    id="product-search"
+                    aria-label="Search products"
+                    data-testid="input-product-search"
                     type="text"
                     placeholder="Search products..."
                     value={search}
@@ -263,8 +267,10 @@ export default function Products() {
                     className="w-full pl-8 sm:pl-9 pr-7 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium focus:outline-none bg-white border border-gray-200 focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition-all"
                   />
                   {search && (
-                    <button onClick={() => setSearch("")}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                     <button type="button" onClick={() => setSearch("")}
+                       aria-label="Clear product search"
+                       data-testid="button-clear-product-search"
+                       className="absolute right-2 top-1/2 -translate-y-1/2 min-h-11 min-w-11 p-3 text-gray-400 hover:text-gray-600">
                       <X className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                     </button>
                   )}
@@ -272,6 +278,8 @@ export default function Products() {
 
                 <div className="flex items-center gap-2 mb-3 sm:mb-6">
                   <select
+                     aria-label="Sort products"
+                     data-testid="select-product-sort"
                     value={sort}
                     onChange={e => setSort(e.target.value as SortOption)}
                     className="py-2 sm:py-2.5 px-2 sm:px-3 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-semibold focus:outline-none bg-white border border-gray-200 focus:border-orange-400 text-gray-700 cursor-pointer"
@@ -283,13 +291,21 @@ export default function Products() {
 
                   <div className="flex items-center bg-white border border-gray-200 rounded-lg sm:rounded-xl p-0.5 sm:p-1">
                     <button
+                      type="button"
                       onClick={() => setViewMode("grid")}
+                      aria-label="Show products as a grid"
+                      aria-pressed={viewMode === "grid"}
+                      data-testid="button-product-grid-view"
                       className={cn("p-1.5 sm:p-2 rounded-md sm:rounded-lg transition-all", viewMode === "grid" ? "bg-orange-50 text-orange-600" : "text-gray-400 hover:text-gray-600")}
                     >
                       <Grid3X3 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </button>
                     <button
+                      type="button"
                       onClick={() => setViewMode("list")}
+                      aria-label="Show products as a list"
+                      aria-pressed={viewMode === "list"}
+                      data-testid="button-product-list-view"
                       className={cn("p-1.5 sm:p-2 rounded-md sm:rounded-lg transition-all", viewMode === "list" ? "bg-orange-50 text-orange-600" : "text-gray-400 hover:text-gray-600")}
                     >
                       <LayoutList className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -297,7 +313,11 @@ export default function Products() {
                   </div>
 
                   <button
+                    type="button"
                     onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
+                    aria-label={mobileFiltersOpen ? "Close filters" : "Open filters"}
+                    aria-expanded={mobileFiltersOpen}
+                    data-testid="button-mobile-filters"
                     className="md:hidden flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-white border border-gray-200 text-gray-600"
                   >
                     <SlidersHorizontal className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -483,6 +503,15 @@ export default function Products() {
                             ))}
                           </div>
                         </motion.div>
+                      ) : isError ? (
+                        <div className="rounded-3xl border border-dashed border-orange-200 bg-orange-50/60 px-6 py-16 text-center" role="alert">
+                          <Package className="mx-auto mb-3 h-10 w-10 text-orange-400" aria-hidden="true" />
+                          <h2 className="font-display text-xl font-black text-gray-900">We could not load the shop</h2>
+                          <p className="mx-auto mt-2 max-w-md text-sm text-gray-600">Check your connection and try again. Your filters are still here.</p>
+                          <button type="button" onClick={() => void refetch()} className="mt-5 min-h-11 rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2" data-testid="button-retry-products">
+                            Try again
+                          </button>
+                        </div>
                       ) : sortedProducts.length > 0 ? (
                         <ErrorBoundary section="product listing">
                           <motion.div

@@ -367,6 +367,10 @@ export function Navbar() {
                   onMouseLeave={() => setShopOpen(false)}
                 >
                   <button
+                    type="button"
+                    aria-haspopup="menu"
+                    aria-expanded={shopOpen}
+                    aria-label="Open shop menu"
                     className={cn(
                       "flex items-center gap-1 px-4 py-2 rounded-full font-semibold text-[0.8125rem] transition-all",
                       location === link.href
@@ -408,6 +412,10 @@ export function Navbar() {
                   onMouseLeave={() => setHelpOpen(false)}
                 >
                   <button
+                    type="button"
+                    aria-haspopup="menu"
+                    aria-expanded={helpOpen}
+                    aria-label="Open help menu"
                     className={cn(
                       "flex items-center gap-1 px-4 py-2 rounded-full font-semibold text-[0.8125rem] transition-all",
                       ["/faq", "/size-guide", "/track", "/return-policy", "/contact"].includes(location)
@@ -449,6 +457,10 @@ export function Navbar() {
                   onMouseLeave={() => setCompanyOpen(false)}
                 >
                   <button
+                    type="button"
+                    aria-haspopup="menu"
+                    aria-expanded={companyOpen}
+                    aria-label="Open company menu"
                     className={cn(
                       "flex items-center gap-1 px-4 py-2 rounded-full font-semibold text-[0.8125rem] transition-all",
                       ["/about", "/blog", "/referral", "/terms-of-service", "/privacy-policy"].includes(location)
@@ -531,6 +543,9 @@ export function Navbar() {
                     className="flex-1 min-w-0 bg-transparent outline-none text-[0.8125rem] font-medium text-gray-800 placeholder:text-gray-400"
                     autoComplete="off"
                     aria-label="Search products"
+                    aria-controls={showAutocomplete || desktopSearchFocused ? "desktop-search-suggestions" : undefined}
+                    aria-expanded={desktopSearchFocused}
+                    aria-autocomplete="list"
                   />
                   {searchQuery ? (
                     <button
@@ -556,6 +571,9 @@ export function Navbar() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 6 }}
                     transition={{ duration: 0.15 }}
+                    id="desktop-search-suggestions"
+                    role="listbox"
+                    aria-label="Search suggestions"
                     className="absolute top-full right-0 mt-2 w-[22rem] max-w-[90vw] bg-white rounded-2xl shadow-xl shadow-gray-200/60 border border-gray-100 overflow-hidden z-50"
                   >
                     {!showAutocomplete ? (
@@ -566,7 +584,8 @@ export function Navbar() {
                               <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Recent</span>
                               <button
                                 onClick={clearRecentSearches}
-                                className="text-[10px] font-bold text-gray-400 hover:text-red-400 transition-colors"
+                                  type="button"
+                                  className="text-[10px] font-bold text-gray-400 hover:text-red-400 transition-colors"
                               >
                                 Clear
                               </button>
@@ -575,6 +594,7 @@ export function Navbar() {
                               <button
                                 key={`recent-${term}`}
                                 onClick={() => goToSearchTerm(term)}
+                                type="button"
                                 className="w-full flex items-center gap-3 px-2.5 py-2 rounded-xl text-[0.8125rem] font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors text-left"
                               >
                                 <Clock className="w-3.5 h-3.5 text-gray-300 shrink-0" />
@@ -590,6 +610,7 @@ export function Navbar() {
                               <button
                                 key={`trend-${term}`}
                                 onClick={() => goToSearchTerm(term)}
+                                type="button"
                                 className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-orange-600 bg-orange-50 hover:bg-orange-100 border border-orange-100 transition-colors"
                               >
                                 <TrendingUp className="w-3 h-3" />

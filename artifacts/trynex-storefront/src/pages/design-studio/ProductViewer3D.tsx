@@ -166,8 +166,12 @@ export default function ProductViewer3D({
   const backMockup = resolveMockup(product, garmentColor, "back");
   // The billboard always uses the transparent derivative. Exact source-kit
   // colours arrive pre-rendered, while only curated transparent fallbacks tint.
-  const resolvedFrontPhoto = frontMockup.cutoutSrc;
-  const resolvedBackPhoto = backMockup.cutoutSrc;
+  const resolvedFrontPhoto = frontMockup.photoKind === "opaque-photo"
+    ? frontMockup.photoSrc
+    : frontMockup.cutoutSrc;
+  const resolvedBackPhoto = backMockup.photoKind === "opaque-photo"
+    ? backMockup.photoSrc
+    : backMockup.cutoutSrc;
   const frontPhotoTint = frontMockup.requiresTint ? garmentColor : undefined;
   const backPhotoTint = backMockup.requiresTint ? garmentColor : undefined;
 

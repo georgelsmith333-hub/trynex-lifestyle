@@ -300,8 +300,17 @@ export function RealisticShirt({
   const frontGeo = useFrontOverlayGeometry(baseGeo);
   const backGeo = useBackOverlayGeometry(baseGeo);
 
-  // Adjust extreme garment colours so white/black show 3-D form under lighting
-  const renderColor = useMemo(() => adjustGarmentColor(garmentColor), [garmentColor]);
+  const renderColor = useMemo(() => {
+    if (!garmentColor) return "#ffffff";
+    const h = garmentColor.replace("#", "");
+    if (h.length === 6) {
+      const r = parseInt(h.slice(0, 2), 16);
+      const g = parseInt(h.slice(2, 4), 16);
+      const b = parseInt(h.slice(4, 6), 16);
+      if ((0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.88) return "#ffffff";
+    }
+    return garmentColor;
+  }, [garmentColor]);
 
   if (!baseGeo) return null;
 

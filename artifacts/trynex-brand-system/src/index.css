@@ -60,6 +60,18 @@
   --color-orange: hsl(var(--orange));
   --color-orange-light: hsl(var(--orange-light));
   --color-orange-dark: hsl(var(--orange-dark));
+  --color-surface-canvas: hsl(var(--surface-canvas));
+  --color-surface-card: hsl(var(--surface-card));
+  --color-ink-strong: hsl(var(--ink-strong));
+  --color-ink-muted: hsl(var(--ink-muted));
+  --color-action-primary: hsl(var(--action-primary));
+  --color-action-secondary: hsl(var(--action-secondary));
+  --color-trust-success: hsl(var(--trust-success));
+  --color-service-delivery: hsl(var(--service-delivery));
+  --color-creative-violet: hsl(var(--creative-violet));
+  --color-creative-pink: hsl(var(--creative-pink));
+  --color-feedback-warning: hsl(var(--feedback-warning));
+  --color-feedback-danger: hsl(var(--feedback-danger));
 
   --color-sidebar: hsl(var(--sidebar));
   --color-sidebar-foreground: hsl(var(--sidebar-foreground));

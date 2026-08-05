@@ -9,11 +9,20 @@ type Props = KeyboardAwareScrollViewProps & ScrollViewProps;
 export function KeyboardAwareScrollViewCompat({
   children,
   keyboardShouldPersistTaps = "handled",
+  contentContainerStyle,
   ...props
 }: Props) {
+  const mergedContentContainerStyle = [
+    contentContainerStyle,
+    Platform.OS !== "web" ? { flexGrow: 1 } : null,
+  ];
   if (Platform.OS === "web") {
     return (
-      <ScrollView keyboardShouldPersistTaps={keyboardShouldPersistTaps} {...props}>
+      <ScrollView
+        keyboardShouldPersistTaps={keyboardShouldPersistTaps}
+        contentContainerStyle={mergedContentContainerStyle}
+        {...props}
+      >
         {children}
       </ScrollView>
     );
@@ -21,6 +30,7 @@ export function KeyboardAwareScrollViewCompat({
   return (
     <KeyboardAwareScrollView
       keyboardShouldPersistTaps={keyboardShouldPersistTaps}
+      contentContainerStyle={mergedContentContainerStyle}
       {...props}
     >
       {children}

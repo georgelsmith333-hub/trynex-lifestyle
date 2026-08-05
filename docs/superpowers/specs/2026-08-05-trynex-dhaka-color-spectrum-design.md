@@ -1,7 +1,7 @@
 # TryNex Dhaka Color Spectrum — Full-Surface Premium Experience
 
 **Date:** 2026-08-05  
-**Status:** Ready for written-spec review  
+**Status:** Approved for implementation  
 **Owner decision:** Approved visual direction and implementation contract
 
 ## 1. Purpose
@@ -29,14 +29,12 @@ reconciled after implementation rather than duplicating the app.
 
 ### 2.2 Public Design Studio route
 
-The current public entry is `/design-studio` and currently resolves to the
-structured V2 implementation. `/design-studio-v1` remains the addressable
-legacy/rollback route. The implementation must not silently swap these routes.
-Before any migration, the feature matrix and draft payload compatibility must be
-verified. The approved approach is additive: bring V1's proven quality checks and
-smart placement behavior into the public path or make a deliberate, tested
-route decision, while preserving both explicit URLs until retirement is
-approved.
+The approved public entry is `/design-studio` and must resolve to the working V1
+implementation because V1 contains the reviewed mockup and quality-gate
+behavior. `/design-studio-v1` remains an explicit compatibility alias, while
+`/design-studio-v2` is the addressable V2 comparison/rollback route. V2 must not
+silently replace the public path until its feature matrix, mockup rendering,
+quality checks, and draft payload compatibility are verified.
 
 ### 2.3 Existing behavior is authoritative
 

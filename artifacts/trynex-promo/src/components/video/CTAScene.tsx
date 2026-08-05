@@ -8,7 +8,7 @@ export function CTAScene() {
     <motion.div
       key="cta"
       className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden"
-      style={{ background: 'linear-gradient(135deg, #060E1A 0%, #0A1628 40%, #1A0A00 100%)' }}
+      style={{ background: 'linear-gradient(135deg, var(--color-bg-dark) 0%, var(--color-navy) 40%, #321400 100%)' }}
       {...sceneTransitions.morphExpand}
     >
       {/* Large orange radial glow */}
@@ -18,7 +18,7 @@ export function CTAScene() {
           width: 700,
           height: 700,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(232,93,4,0.22) 0%, transparent 60%)',
+          background: 'radial-gradient(circle, color-mix(in srgb, var(--color-primary) 22%, transparent) 0%, transparent 60%)',
           filter: 'blur(60px)',
         }}
         animate={{ scale: [1, 1.1, 1] }}
@@ -73,15 +73,15 @@ export function CTAScene() {
             width: 52,
             height: 52,
             borderRadius: 14,
-            background: 'linear-gradient(135deg, #E85D04, #FF7A2B)',
+            background: 'linear-gradient(135deg, var(--color-primary), var(--color-primary-light))',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 0 40px rgba(232,93,4,0.5)',
+            boxShadow: '0 0 40px color-mix(in srgb, var(--color-primary) 50%, transparent)',
           }}>
-            <span style={{ fontSize: 24, fontWeight: 900, color: '#fff', fontFamily: 'Space Grotesk, sans-serif' }}>T</span>
+            <span style={{ fontSize: 24, fontWeight: 900, color: 'var(--color-text-primary)', fontFamily: 'var(--font-display)' }}>T</span>
           </div>
-          <span style={{ fontSize: 36, fontWeight: 900, color: '#fff', letterSpacing: -1.5, fontFamily: 'Space Grotesk, sans-serif' }}>
+          <span style={{ fontSize: 36, fontWeight: 900, color: 'var(--color-text-primary)', letterSpacing: -1.5, fontFamily: 'var(--font-display)' }}>
             Trynex
           </span>
         </motion.div>
@@ -90,10 +90,10 @@ export function CTAScene() {
           style={{
             fontSize: 64,
             fontWeight: 900,
-            color: '#fff',
+            color: 'var(--color-text-primary)',
             letterSpacing: -3,
             lineHeight: 1.05,
-            fontFamily: 'Space Grotesk, sans-serif',
+            fontFamily: 'var(--font-display)',
             marginBottom: 16,
           }}
           initial={{ opacity: 0, y: 24 }}
@@ -101,7 +101,7 @@ export function CTAScene() {
           transition={{ duration: 0.7, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
         >
           Start Creating <br />
-          <span style={{ color: '#E85D04' }}>Today.</span>
+          <span style={{ color: 'var(--color-primary)' }}>Today.</span>
         </motion.h2>
 
         <motion.p

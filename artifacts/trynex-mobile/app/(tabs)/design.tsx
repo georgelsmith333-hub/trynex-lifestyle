@@ -281,6 +281,7 @@ export default function DesignScreen() {
   const topPad = isWeb ? 67 : insets.top;
   const { addItem } = useCart();
   const { showToast } = useToast();
+  const [loadingState, setLoadingState] = useState<"idle" | "picking" | "uploading" | "saving">("idle");
 
   const { data: productsData, isLoading: loadingProducts, isError, refetch, isRefetching } = useQuery({
     queryKey: ["products", "customizable"],
@@ -340,6 +341,7 @@ export default function DesignScreen() {
   };
 
   const pickImage = async () => {
+    setLoadingState("picking");
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
@@ -351,10 +353,12 @@ export default function DesignScreen() {
       setDesignImage({ uri: asset.uri, base64: asset.base64 ?? "" });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
+    setLoadingState("idle");
   };
 
   const addToCart = async () => {
     if (!selectedProduct) return;
+    setLoadingState("saving");
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     // Upload the custom design to object storage so the admin can download it later.
@@ -362,6 +366,7 @@ export default function DesignScreen() {
     let customImages: string[] | undefined;
     if (designImage?.base64) {
       try {
+        setLoadingState("uploading");
         const base64 = designImage.base64;
         const mime = designImage.uri.toLowerCase().endsWith(".png") ? "image/png" : "image/jpeg";
         const ext = mime === "image/png" ? "png" : "jpg";
@@ -376,6 +381,7 @@ export default function DesignScreen() {
       } catch (err) {
         console.warn("[mobile-design-upload]", err);
       }
+      setLoadingState("saving");
     }
 
     addItem(
@@ -406,6 +412,7 @@ export default function DesignScreen() {
     showToast(`${selectedColor.name} ${selectedProduct.name} added to cart`, "success");
     // Brief delay so the user sees the success toast before navigating to cart
     setTimeout(() => router.push("/cart"), 900);
+    setLoadingState("idle");
   };
 
   if (loadingProducts && products.length === 0) {
@@ -455,6 +462,9 @@ export default function DesignScreen() {
                 <Pressable
                   key={p.id}
                   onPress={() => onSelectProduct(p)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Select product ${p.name.replace(/^Custom\s+/i, "")}`}
+                  accessibilityState={{ selected: active }}
                   style={[
                     styles.pill,
                     { backgroundColor: active ? colors.primary : colors.muted, borderColor: active ? colors.primary : colors.border },
@@ -548,6 +558,9 @@ export default function DesignScreen() {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                     setSelectedColor(c);
                   }}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Select color ${c.name}`}
+                  accessibilityState={{ selected: active }}
                   style={[
                     styles.swatch,
                     { backgroundColor: c.hex },
@@ -579,6 +592,9 @@ export default function DesignScreen() {
                   <Pressable
                     key={z}
                     onPress={() => setSelectedZone(z)}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Select print zone ${z}`}
+                    accessibilityState={{ selected: active }}
                     style={[
                       styles.pill,
                       {
@@ -610,6 +626,9 @@ export default function DesignScreen() {
                       setMugMode(m.value as typeof mugMode);
                       setSelectedZone(m.value === "wrap" ? "Full Wrap" : m.label);
                     }}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Select mug side ${m.label}`}
+                    accessibilityState={{ selected: active }}
                     style={[styles.pill, { backgroundColor: active ? colors.secondary : colors.muted, borderColor: active ? colors.primary : colors.border }]}
                   >
                     <Text style={[styles.pillText, { color: active ? colors.primary : colors.mutedForeground }]}>{m.label}</Text>
@@ -625,6 +644,8 @@ export default function DesignScreen() {
           <Text style={[styles.label, { color: colors.foreground }]}>Your Artwork</Text>
           <Pressable
             onPress={pickImage}
+            accessibilityRole="button"
+            accessibilityLabel={designImage ? "Change artwork image" : "Upload artwork image"}
             style={[styles.uploadBtn, { backgroundColor: colors.muted, borderColor: colors.border }]}
           >
             <Feather name={designImage ? "refresh-cw" : "image"} size={20} color={colors.primary} />
@@ -633,7 +654,7 @@ export default function DesignScreen() {
             </Text>
           </Pressable>
           {designImage && (
-            <Pressable onPress={() => setDesignImage(null)} style={styles.removeBtn}>
+            <Pressable onPress={() => setDesignImage(null)} style={styles.removeBtn} accessibilityRole="button" accessibilityLabel="Remove artwork image">
               <Feather name="trash-2" size={14} color={colors.destructive} />
               <Text style={[styles.removeBtnTxt, { color: colors.destructive }]}>Remove Image</Text>
             </Pressable>
@@ -655,13 +676,20 @@ export default function DesignScreen() {
           </View>
           <Pressable
             onPress={addToCart}
+            accessibilityRole="button"
+            accessibilityLabel={`Add ${selectedColor.name} ${selectedProduct?.name?.replace(/^Custom\s+/i, "") ?? ""} to cart`}
+            accessibilityState={{ disabled: loadingState !== "idle" }}
             style={({ pressed }) => [
               styles.ctaBtn,
               { backgroundColor: colors.primary, opacity: pressed ? 0.88 : 1 },
             ]}
           >
-            <Feather name="shopping-bag" size={18} color="#fff" />
-            <Text style={styles.ctaBtnTxt}>Add to Cart</Text>
+            {loadingState === "saving" || loadingState === "uploading" ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Feather name="shopping-bag" size={18} color="#fff" />
+            )}
+            <Text style={styles.ctaBtnTxt}>{loadingState === "uploading" ? "Uploading..." : loadingState === "saving" ? "Adding..." : "Add to Cart"}</Text>
           </Pressable>
         </View>
 

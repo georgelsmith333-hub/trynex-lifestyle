@@ -8,7 +8,7 @@ export function BrandIntroScene() {
     <motion.div
       key="brand-intro"
       className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden"
-      style={{ background: 'linear-gradient(135deg, #060E1A 0%, #0A1628 50%, #0F2040 100%)' }}
+      style={{ background: 'linear-gradient(135deg, var(--color-bg-dark) 0%, var(--color-navy) 50%, var(--color-bg-muted) 100%)' }}
       {...sceneTransitions.fadeBlur}
     >
       {/* Radial glow behind logo */}
@@ -18,7 +18,7 @@ export function BrandIntroScene() {
           width: 500,
           height: 500,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(232,93,4,0.25) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, color-mix(in srgb, var(--color-primary) 25%, transparent) 0%, transparent 70%)',
           filter: 'blur(15px)',
         }}
         initial={{ scale: 0.5, opacity: 0 }}
@@ -34,9 +34,9 @@ export function BrandIntroScene() {
       >
         <div
           className="w-24 h-24 rounded-3xl flex items-center justify-center"
-          style={{ background: 'linear-gradient(135deg, #E85D04, #FF7A2B)', boxShadow: '0 0 60px rgba(232,93,4,0.5)' }}
+          style={{ background: 'linear-gradient(135deg, var(--color-primary), var(--color-primary-light))', boxShadow: '0 0 60px color-mix(in srgb, var(--color-primary) 50%, transparent)' }}
         >
-          <span style={{ fontSize: 44, fontWeight: 900, color: '#fff', fontFamily: 'Space Grotesk, Inter, sans-serif', letterSpacing: -2 }}>T</span>
+          <span style={{ fontSize: 44, fontWeight: 900, color: 'var(--color-text-primary)', fontFamily: 'var(--font-display)', letterSpacing: -2 }}>T</span>
         </div>
       </motion.div>
 
@@ -46,8 +46,8 @@ export function BrandIntroScene() {
           fontSize: 72,
           fontWeight: 900,
           letterSpacing: -3,
-          color: '#fff',
-          fontFamily: 'Space Grotesk, Inter, sans-serif',
+          color: 'var(--color-text-primary)',
+          fontFamily: 'var(--font-display)',
           lineHeight: 1,
           marginBottom: 16,
         }}
@@ -56,7 +56,7 @@ export function BrandIntroScene() {
         transition={{ duration: 0.7, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
       >
         Trynex
-        <span style={{ color: '#E85D04' }}>.</span>
+        <span style={{ color: 'var(--color-primary)' }}>.</span>
       </motion.h1>
 
       {/* Tagline — character by character */}
@@ -74,8 +74,8 @@ export function BrandIntroScene() {
             style={{
               fontSize: 20,
               fontWeight: 500,
-              color: char === '.' ? '#E85D04' : 'rgba(255,255,255,0.7)',
-              fontFamily: 'DM Sans, Inter, sans-serif',
+              color: char === '.' ? 'var(--color-primary)' : 'var(--color-text-secondary)',
+              fontFamily: 'var(--font-body)',
               letterSpacing: char === ' ' ? 4 : 2,
               whiteSpace: 'pre',
             }}
@@ -87,7 +87,7 @@ export function BrandIntroScene() {
 
       {/* Decorative bottom line */}
       <motion.div
-        style={{ height: 2, background: 'linear-gradient(90deg, transparent, #E85D04, transparent)', marginTop: 40 }}
+        style={{ height: 2, background: 'linear-gradient(90deg, transparent, var(--color-primary), transparent)', marginTop: 40 }}
         initial={{ width: 0, opacity: 0 }}
         animate={{ width: 200, opacity: 1 }}
         transition={{ duration: 1, delay: 1.4, ease: [0.16, 1, 0.3, 1] }}

@@ -710,16 +710,16 @@ router.get("/auth/health", async (_req, res) => {
   } catch {
     // ignore
   }
-  res.json({
-    ok: dbReachable,
-    googleConfigured,
-    jwtSecretPresent,
-    adminJwtSecretPresent,
-    allowedOriginsConfigured,
-    dbReachable,
-    customersTableExists,
-    guestSequenceColumnExists,
-  });
+    res.json({
+      ok: dbReachable,
+      googleConfigured,
+      jwtSecretPresent,
+      adminJwtSecretPresent,
+      allowedOriginsConfigured,
+      dbReachable,
+      customersTableExists,
+      guestSequenceColumnExists,
+    });
 });
 
 // ---------------------------------------------------------------------------

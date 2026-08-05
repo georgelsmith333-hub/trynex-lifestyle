@@ -658,7 +658,7 @@ function HomeTopPostsWidget() {
 }
 
 export default function Home() {
-  const { data: productsData, isLoading } = useListProducts({ limit: 9, featured: true });
+  const { data: productsData, isLoading, isError, refetch } = useListProducts({ limit: 9, featured: true });
   const { data: testimonialsData } = useGetTestimonials();
   const publicStats = usePublicStats();
   const featuredProducts = productsData?.products || [];
@@ -817,6 +817,20 @@ export default function Home() {
               {Array.from({ length: 9 }).map((_, i) => (
                 <ProductCardSkeleton key={i} />
               ))}
+            </div>
+          ) : isError ? (
+            <div className="rounded-3xl border border-dashed border-orange-200 bg-orange-50/60 px-6 py-12 text-center" role="alert">
+              <Package className="mx-auto mb-3 h-10 w-10 text-orange-400" aria-hidden="true" />
+              <h3 className="font-display text-xl font-black text-gray-900">Featured products are taking a moment</h3>
+              <p className="mx-auto mt-2 max-w-md text-sm text-gray-600">The catalogue could not load right now. Try again or browse the full shop.</p>
+              <div className="mt-5 flex flex-wrap justify-center gap-3">
+                <button type="button" onClick={() => void refetch()} className="min-h-11 rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2" data-testid="button-retry-featured-products">
+                  Try again
+                </button>
+                <Link href="/products" className="inline-flex min-h-11 items-center rounded-xl border border-orange-200 bg-white px-5 py-2.5 text-sm font-bold text-orange-700 transition hover:bg-orange-50 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2">
+                  Browse the shop
+                </Link>
+              </div>
             </div>
           ) : featuredProducts.length === 0 ? null : (
             <ErrorBoundary section="featured products">

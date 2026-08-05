@@ -64,12 +64,10 @@ mobile app, promotional experience, and brand-system artifact.
 
 ## Current open work
 
-The A-to-Z TryNex storefront, Design Studio, mobile, technical, SEO, and
-performance audit is complete. The owner approved the full Dhaka Color Spectrum
-direction and the cross-surface implementation contract. The written design
-spec is ready for review at
-`docs/superpowers/specs/2026-08-05-trynex-dhaka-color-spectrum-design.md`.
-No product source implementation has started.
+The TryNex Design Studio audit is in progress. The public `/design-studio` route
+is V1; `/design-studio-v1` is its compatibility alias and `/design-studio-v2`
+remains an explicit comparison/rollback route. The source-kit/runtime mockup
+audit now validates the editable manifest as well as public assets.
 
 ## Required status at every handoff
 
@@ -77,22 +75,14 @@ Every Agent must keep the following status fields current before ending a chat,
 pausing work, or transferring the project:
 
 ```text
-Status: ready for review
-Last completed: Owner-approved visual direction; parallel read-only architecture
-  reviews; full cross-surface design specification written
-Stopped at: Written spec is ready for owner review; product source implementation
-  has not started
-Files/areas changed: `docs/superpowers/specs/2026-08-05-trynex-dhaka-color-spectrum-design.md`
-  and this handoff; existing audit screenshots remain in `audit/`
-Remaining work: Review the written spec, then implement the approved lanes in
-  the documented reconciliation order; repair/present the existing canonical
-  web artifact rather than creating a duplicate
-Blocker: Owner written-spec review
-Next safe action: Review the design spec and approve it or request specific
-  changes before implementation
-Verification: Required handoff files read; five workflows running; storefront,
-  API, and mobile typechecks previously passed; eight bounded read-only reviews
-  completed; no product source files edited
+Status: in progress
+Last completed: Wired the existing V1 first-use guide and print-quality status components into the public Design Studio, added actionable low-resolution image warnings, and corrected the mockup audit to validate all 108 manifest documents against both editable source-kit and flattened runtime roots
+Stopped at: Live storefront verification after restarting the storefront workflow
+Files/areas changed: `artifacts/trynex-storefront/src/pages/DesignStudio.tsx`, `scripts/audit_trynex_mockups.py`, and this handoff; unrelated pre-existing API/mobile/promo/brand-system changes were preserved
+Remaining work: Browser-level interaction and responsive verification across all six product categories, colors, editor tools, save/restore, export, add-to-cart, cart/checkout/admin previews, and the editable PSD visual review
+Blocker: The artifact registry returns no registered artifacts, so the screenshot helper cannot resolve `trynex-storefront`; the browser-use executable is also unavailable in the shell. Direct HTTPS preview checks are available and pass.
+Next safe action: Repair or reconcile the existing storefront artifact registration without creating a duplicate app, then run the six-product responsive browser matrix; if registry repair is unavailable, use an approved browser/preview path or document the manual test gap
+Verification: Storefront typecheck passed; production build passed; `scripts/audit_trynex_mockups.py --json /tmp/trynex-mockups-audit.json` passed with 108 pairs, 108 manifest documents, and 0 errors; storefront workflow restarted cleanly; live routes and representative mockup assets returned HTTP 200
 
 ## Latest audit checkpoint
 

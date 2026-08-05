@@ -29,6 +29,7 @@ import {
   getApparelZones, getZonePZ, resolveMockup, type ApparelZone, isNearBlack, isLightTint, type PrintZone,
 } from "./design-studio/mockups";
 import { composeLayers, composeGarmentMockup, composeDesignTexture, autoFixImage, type ComposerLayer } from "./design-studio/composer";
+import { StudioFirstUseGuide, StudioQualityBanner } from "./studio/v1-components/V1StudioSupport";
 
 /* Lazy-loaded 3D preview — heavy R3F bundle only fetched when the user opens it */
 const LazyProductViewer3D = lazy(() => import("./design-studio/ProductViewer3D"));
@@ -492,6 +493,10 @@ export default function DesignStudio() {
   const [removeBgPhase, setRemoveBgPhase] = useState<string | null>(null);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [removeBgServerConfigured, setRemoveBgServerConfigured] = useState<boolean | undefined>(undefined);
+  const [showStudioGuide, setShowStudioGuide] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return window.localStorage.getItem("trynex-studio-v1-guide-dismissed") !== "1";
+  });
 
   /* ── Draft persistence (localStorage + cloud) ──────────────── */
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
@@ -521,6 +526,61 @@ export default function DesignStudio() {
     && (l.type === "text"
       ? typeof l.text === "string" && typeof l.fontSize === "number"
       : typeof l.src === "string" && typeof l.naturalW === "number" && typeof l.naturalH === "number");
+
+  const qualityIssues = useMemo(() => {
+    const activeFaceLayers = layers.filter((l) => (l.face ?? "front") === activeFace && l.visible);
+    const issues: Array<{ id: string; label: string; detail: string; tone: "warning" | "danger" | "info"; actionLabel?: string; onAction?: () => void }> = [];
+    if (layers.filter((l) => l.visible).length === 0) {
+      issues.push({
+        id: "empty-design",
+        label: "No artwork added yet",
+        detail: "Add an image, text layer, sticker, or template before checkout.",
+        tone: "danger",
+      });
+    } else if (activeFaceLayers.length === 0) {
+      issues.push({
+        id: "empty-face",
+        label: "No artwork on the current face",
+        detail: "This face is empty. Switch to a face with artwork or add a separate design here if you want one.",
+        tone: "info",
+      });
+    }
+    const lowResolutionImages = activeFaceLayers.filter(
+      (layer): layer is ImageLayer =>
+        layer.type === "image" && Math.min(layer.naturalW, layer.naturalH) < 1200,
+    );
+    lowResolutionImages.forEach((layer) => {
+      issues.push({
+        id: `image-resolution-${layer.id}`,
+        label: `${layer.name || "Image"} may print soft`,
+        detail: `${layer.naturalW} × ${layer.naturalH} px is below the recommended 1200 px minimum on its shortest edge. Use a larger source or HD Upscale before ordering.`,
+        tone: "warning",
+      });
+    });
+    if (!showPrintZone) {
+      issues.push({
+        id: "print-zone-hidden",
+        label: "Print zone is hidden",
+        detail: "Turn it on to verify safe placement, bleed, and rotation-aware bounds.",
+        tone: "warning",
+        actionLabel: "Show print zone",
+        onAction: () => setShowPrintZone(true),
+      });
+    }
+    if (isMobile && layers.length > 0) {
+      issues.push({
+        id: "mobile-review",
+        label: "Use a full preview on smaller screens",
+        detail: "Open 3D or expand the canvas if the composition feels crowded.",
+        tone: "info",
+      });
+    }
+    return issues;
+  }, [activeFace, isMobile, layers, showPrintZone]);
+
+  const focusStudioCanvas = useCallback(() => {
+    svgRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, []);
 
   function applyDraftPayload(data: Partial<DraftPayload>, isEdit: boolean, source: "cloud" | "local") {
     const validLayers = Array.isArray(data?.layers) ? (data!.layers as any[]).filter(isValidLayer) as Layer[] : [];
@@ -2889,6 +2949,26 @@ export default function DesignStudio() {
                 </div>
               );
             })()}
+
+            {showStudioGuide && (
+              <div className="mb-4">
+                <StudioFirstUseGuide
+                  onDismiss={() => setShowStudioGuide(false)}
+                  onFocusCanvas={focusStudioCanvas}
+                  steps={[
+                    { id: "product", title: "Choose your blank", description: "Pick a product and color, then confirm the print side or zone." },
+                    { id: "artwork", title: "Add artwork", description: "Upload an image, add text, or start from a template." },
+                    { id: "check", title: "Check and order", description: "Show the print zone, review warnings, preview in 3D, and add to cart." },
+                  ]}
+                />
+              </div>
+            )}
+            <div className="mb-4">
+              <StudioQualityBanner
+                issues={qualityIssues}
+                onShowPrintZone={() => setShowPrintZone(true)}
+              />
+            </div>
 
             {/* ── Quick product tabs ── T-Shirt · Mug · Bottle (+ "More" opens full picker) */}
             {!linkedStoreProduct && (

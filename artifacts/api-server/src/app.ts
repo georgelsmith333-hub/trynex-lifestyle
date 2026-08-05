@@ -85,6 +85,8 @@ const allowedOrigins: string[] = process.env.ALLOWED_ORIGINS
 
 // EXTRA_ORIGINS — optional comma-separated list of additional allowed origins.
 // Use this to add preview or staging URLs without changing ALLOWED_ORIGINS.
+// In production, explicit allowlists are still required and preview patterns are
+// only honored when they are intentionally named operator domains.
 const extraOrigins = process.env.EXTRA_ORIGINS;
 if (extraOrigins) {
   for (const o of extraOrigins.split(",").map(s => s.trim()).filter(Boolean)) {
@@ -108,20 +110,20 @@ app.use(
       if (!origin) return callback(null, true);
       if (allowedOrigins.includes(origin)) return callback(null, true);
       // Allow any *.replit.app origin (user-owned autoscale deployments).
-      if (/^https:\/\/[^/]+\.replit\.app$/.test(origin)) {
+      if (process.env.NODE_ENV !== "production" && /^https:\/\/[^/]+\.replit\.app$/.test(origin)) {
         return callback(null, true);
       }
       // Allow any *.replit.dev origin (Replit preview/dev domains, Expo mobile
       // dev builds, and all Replit-hosted dev environments like *.expo.sisko.replit.dev).
-      if (/^https:\/\/[^/]+\.replit\.dev$/.test(origin)) {
+      if (process.env.NODE_ENV !== "production" && /^https:\/\/[^/]+\.replit\.dev$/.test(origin)) {
         return callback(null, true);
       }
       // Allow Vercel preview and production deployments for TryNex storefront.
-      if (/^https:\/\/trynex[^.]*\.vercel\.app$/.test(origin)) {
+      if (process.env.NODE_ENV !== "production" && /^https:\/\/trynex[^.]*\.vercel\.app$/.test(origin)) {
         return callback(null, true);
       }
       // Allow Cloudflare Pages preview deployments for TryNex.
-      if (/^https:\/\/[^/]*\.trynex-lifestyle-shop\.pages\.dev$/.test(origin)) {
+      if (process.env.NODE_ENV !== "production" && /^https:\/\/[^/]*\.trynex-lifestyle-shop\.pages\.dev$/.test(origin)) {
         return callback(null, true);
       }
       return callback(new Error(`CORS: origin ${origin} not allowed`));

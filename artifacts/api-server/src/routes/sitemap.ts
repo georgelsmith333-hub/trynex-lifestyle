@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { db, productsTable, categoriesTable, blogPostsTable } from "@workspace/db";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, max } from "drizzle-orm";
 import { logger } from "../lib/logger";
 
 const router: IRouter = Router();
@@ -72,6 +72,15 @@ router.get("/sitemap.xml", async (_req, res) => {
     xml += `        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"\n`;
     xml += `        xmlns:xhtml="http://www.w3.org/1999/xhtml">\n\n`;
 
+    const [latestProductRow] = await db.select({ updatedAt: max(productsTable.updatedAt) }).from(productsTable);
+    const latestProductLastmod = formatDate(latestProductRow?.updatedAt) ?? today;
+
+    const [latestCategoryRow] = await db.select({ updatedAt: max(categoriesTable.updatedAt) }).from(categoriesTable);
+    const latestCategoryLastmod = formatDate(latestCategoryRow?.updatedAt) ?? today;
+
+    const [latestBlogRow] = await db.select({ updatedAt: max(blogPostsTable.updatedAt) }).from(blogPostsTable).where(eq(blogPostsTable.published, true));
+    const latestBlogLastmod = formatDate(latestBlogRow?.updatedAt) ?? today;
+
     for (const page of staticPages) {
       xml += `  <url>\n`;
       xml += `    <loc>${SITE_URL}${page.loc}</loc>\n`;
@@ -86,16 +95,14 @@ router.get("/sitemap.xml", async (_req, res) => {
     for (const cat of categories) {
       xml += `  <url>\n`;
       xml += `    <loc>${SITE_URL}/products?category=${encodeURIComponent(cat.slug)}</loc>\n`;
-      xml += `    <lastmod>${today}</lastmod>\n`;
+      xml += `    <lastmod>${latestCategoryLastmod}</lastmod>\n`;
       xml += `    <changefreq>weekly</changefreq>\n`;
       xml += `    <priority>0.8</priority>\n`;
       xml += `  </url>\n`;
     }
 
     for (const product of products) {
-      const lastmod = product.updatedAt
-        ? new Date(product.updatedAt).toISOString().split("T")[0]
-        : today;
+      const lastmod = formatDate(product.updatedAt) ?? latestProductLastmod;
       xml += `  <url>\n`;
       xml += `    <loc>${SITE_URL}/product/${product.slug}</loc>\n`;
       xml += `    <lastmod>${lastmod}</lastmod>\n`;
@@ -111,9 +118,7 @@ router.get("/sitemap.xml", async (_req, res) => {
     }
 
     for (const post of blogPosts) {
-      const lastmod = post.updatedAt
-        ? new Date(post.updatedAt).toISOString().split("T")[0]
-        : today;
+      const lastmod = formatDate(post.updatedAt) ?? latestBlogLastmod;
       xml += `  <url>\n`;
       xml += `    <loc>${SITE_URL}/blog/${post.slug}</loc>\n`;
       xml += `    <lastmod>${lastmod}</lastmod>\n`;
@@ -172,6 +177,12 @@ function escapeXml(str: string): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&apos;");
+}
+
+function formatDate(value: Date | string | null | undefined): string | null {
+  if (!value) return null;
+  const date = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString().split("T")[0];
 }
 
 export default router;

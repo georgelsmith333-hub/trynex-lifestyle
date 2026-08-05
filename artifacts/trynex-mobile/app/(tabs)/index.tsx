@@ -105,6 +105,8 @@ export default function HomeScreen() {
             <Text style={styles.heroSub}>Design. Wear. Express.</Text>
           </View>
           <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Open cart"
             onPress={() => router.push("/cart")}
             style={[styles.cartBtn, { backgroundColor: "#fff", borderColor: "#F3D4BE", borderWidth: 1 }]}
           >
@@ -114,6 +116,8 @@ export default function HomeScreen() {
 
         {/* Search Bar */}
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Search products"
           onPress={() => router.push("/(tabs)/shop")}
           style={[styles.searchBar, { backgroundColor: "#fff", borderColor: "#F3D4BE", borderWidth: 1 }]}
         >
@@ -133,6 +137,8 @@ export default function HomeScreen() {
             <Text style={styles.heroCtaTitle}>Custom Prints</Text>
             <Text style={styles.heroCtaSub}>Starting from ৳299</Text>
             <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Start designing"
               style={[styles.heroCtaBtn, { backgroundColor: colors.primary }]}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -164,6 +170,8 @@ export default function HomeScreen() {
             return (
               <Pressable
                 key={cat.id}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Browse category ${cat.name}`}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                   router.push({ pathname: "/(tabs)/shop", params: { categoryId: cat.id, categoryName: cat.name } });
@@ -188,8 +196,9 @@ export default function HomeScreen() {
         <View style={styles.sectionHeader}>
           <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Featured</Text>
           <Pressable onPress={() => router.push("/(tabs)/shop")}>
-            <Text style={[styles.seeAll, { color: colors.primary }]}>See all</Text>
-          </Pressable>
+            <Pressable accessibilityRole="button" accessibilityLabel="See all products" onPress={() => router.push("/(tabs)/shop")}>
+              <Text style={[styles.seeAll, { color: colors.primary }]}>See all</Text>
+            </Pressable>
         </View>
         {isLoading ? (
           <View style={{ flexDirection: "row", gap: 12, paddingHorizontal: 16 }}>
@@ -219,7 +228,7 @@ export default function HomeScreen() {
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={[styles.sectionTitle, { color: colors.foreground }]}>New Arrivals</Text>
-          <Pressable onPress={() => router.push("/(tabs)/shop")}>
+          <Pressable accessibilityRole="button" accessibilityLabel="See all products" onPress={() => router.push("/(tabs)/shop")}>
             <Text style={[styles.seeAll, { color: colors.primary }]}>See all</Text>
           </Pressable>
         </View>
@@ -243,7 +252,9 @@ export default function HomeScreen() {
       </View>
 
       {/* Design CTA Banner */}
-      <Pressable
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Open design studio"
         onPress={() => router.push("/(tabs)/design")}
         style={[styles.ctaBanner, { backgroundColor: "#FFF0E4", borderColor: "#F3D4BE", borderWidth: 1 }]}
       >

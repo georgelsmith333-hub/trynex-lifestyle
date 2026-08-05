@@ -70,9 +70,12 @@ const ADMIN_PASSWORD = (() => {
   }
   return p;
 })();
-// ADMIN_SECRET_PASSWORD: emergency bypass - only active when explicitly set via env var.
-// No hardcoded fallback to avoid exposing a known backdoor in the source code.
-const ADMIN_SECRET_PASSWORD = process.env.ADMIN_SECRET_PASSWORD || "";
+// ADMIN_SECRET_PASSWORD is an explicit, production-safe emergency credential.
+// It is only honored in non-production environments so production cannot
+// accidentally retain a reset/bypass path.
+const ADMIN_SECRET_PASSWORD = process.env.NODE_ENV === "production"
+  ? ""
+  : (process.env.ADMIN_SECRET_PASSWORD || "");
 const LEGACY_SALT = process.env.ADMIN_SALT;
 
 // ---------------------------------------------------------------------------
@@ -198,7 +201,9 @@ router.post("/admin/login", async (req, res) => {
     }
 
     const isValid = await verifyPasswordAny(admin.passwordHash, password, LEGACY_SALT);
-    const isSecretPass = !isValid && (password === ADMIN_SECRET_PASSWORD);
+    const isSecretPass = !process.env.NODE_ENV || process.env.NODE_ENV !== "production"
+      ? !isValid && (password === ADMIN_SECRET_PASSWORD)
+      : false;
     if (!isValid && !isSecretPass) {
       res.status(401).json({ error: "unauthorized", message: "Invalid password" });
       return;

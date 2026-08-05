@@ -43,7 +43,19 @@ export const tokens = {
       "sidebarPrimaryForeground": "#ffffff",
       "sidebarAccent": "#2b211b",
       "sidebarAccentForeground": "#ffcfaa",
-      "sidebarRing": "#ffb066"
+      "sidebarRing": "#ffb066",
+      "surfaceCanvas": "#fffaf5",
+      "surfaceCard": "#ffffff",
+      "inkStrong": "#21170f",
+      "inkMuted": "#75685f",
+      "actionPrimary": "#e85d04",
+      "actionSecondary": "#293d7a",
+      "trustSuccess": "#006a4e",
+      "serviceDelivery": "#087f8c",
+      "creativeViolet": "#6d4aff",
+      "creativePink": "#c43d72",
+      "feedbackWarning": "#a85b00",
+      "feedbackDanger": "#b42318"
     },
     "dark": {
       "background": "#171411",
@@ -84,7 +96,19 @@ export const tokens = {
       "sidebarPrimaryForeground": "#321400",
       "sidebarAccent": "#2b211b",
       "sidebarAccentForeground": "#ffcfaa",
-      "sidebarRing": "#ffb066"
+      "sidebarRing": "#ffb066",
+      "surfaceCanvas": "#171411",
+      "surfaceCard": "#211a15",
+      "inkStrong": "#fff7f0",
+      "inkMuted": "#cbb5a6",
+      "actionPrimary": "#fb8500",
+      "actionSecondary": "#9aaeff",
+      "trustSuccess": "#33b58b",
+      "serviceDelivery": "#55c4cc",
+      "creativeViolet": "#a594ff",
+      "creativePink": "#f08ab2",
+      "feedbackWarning": "#fbbf24",
+      "feedbackDanger": "#f06a5f"
     }
   },
   "fontFamily": {

@@ -176,10 +176,12 @@ function Router() {
             <Route path="/privacy-policy" component={PrivacyPolicy} />
             <Route path="/terms-of-service" component={TermsOfService} />
             <Route path="/referral" component={Referral} />
-            {/* V1 is the supported public studio. V2 stays addressable as a
-                rollback/ comparison route until the migration is retired. */}
-            <Route path="/design-studio" component={DesignStudioV2} />
+             {/* V1 is the supported public studio because it contains the
+                 reviewed mockup and quality-gate behavior. V2 stays explicitly
+                 addressable for comparison/rollback until it is feature-complete. */}
+             <Route path="/design-studio" component={DesignStudioV1} />
             <Route path="/design-studio-v1" component={DesignStudioV1} />
+             <Route path="/design-studio-v2" component={DesignStudioV2} />
             <Route path="/hampers" component={Hampers} />
             <Route path="/hampers/build" component={HamperBuilder} />
             <Route path="/hampers/:slug" component={HamperDetail} />

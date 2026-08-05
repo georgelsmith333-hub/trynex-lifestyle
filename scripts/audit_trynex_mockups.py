@@ -27,6 +27,8 @@ PUBLIC = ROOT / "artifacts" / "trynex-storefront" / "public" / "mockups"
 SOURCE = PUBLIC / "source-kit"
 NORMALIZED = PUBLIC / "normalized"
 NORMALIZED_CUTOUTS = PUBLIC / "normalized-cutouts"
+SOURCE_KIT_ASSETS = ROOT / "attached_assets" / "trynex-mockup-source-kit"
+MANIFEST_PATH = SOURCE_KIT_ASSETS / "manifest.json"
 
 CATEGORIES = ("tshirt", "longsleeve", "hoodie", "mug", "cap", "waterbottle")
 
@@ -51,7 +53,11 @@ def alpha_bbox(path: Path) -> tuple[int, int, int, int] | None:
 
 
 def report_one(category: str, face: str, stem: str) -> dict[str, Any]:
+    # Runtime source-kit previews are flattened into public/mockups/source-kit.
+    # The editable source contract lives in attached_assets and its manifest
+    # uses paths relative to that source-kit directory.
     source_path = SOURCE / f"{stem}.png"
+    manifest_source_path = SOURCE_KIT_ASSETS / "previews" / f"{stem}.png"
     photo_path = NORMALIZED / f"{stem}.png"
     cutout_path = NORMALIZED_CUTOUTS / f"{stem}.png"
     item: dict[str, Any] = {
@@ -59,13 +65,14 @@ def report_one(category: str, face: str, stem: str) -> dict[str, Any]:
         "face": face,
         "stem": stem,
         "source": str(source_path.relative_to(ROOT)),
+        "manifestSource": str(manifest_source_path.relative_to(ROOT)),
         "photo": str(photo_path.relative_to(ROOT)),
         "cutout": str(cutout_path.relative_to(ROOT)),
         "targetFrame": TARGET_FRAMES[category][face],
         "errors": [],
     }
 
-    if not source_path.is_file():
+    if not source_path.is_file() and not manifest_source_path.is_file():
         item["errors"].append("missing source-kit image")
         return item
     if not photo_path.is_file():
@@ -73,7 +80,8 @@ def report_one(category: str, face: str, stem: str) -> dict[str, Any]:
     if not cutout_path.is_file():
         item["errors"].append("missing normalized cutout")
 
-    with Image.open(source_path) as source:
+    source_for_measurement = source_path if source_path.is_file() else manifest_source_path
+    with Image.open(source_for_measurement) as source:
         item["sourceSize"] = source.size
         item["sourceMode"] = source.mode
     if photo_path.is_file():
@@ -103,6 +111,29 @@ def main() -> int:
     parser.add_argument("--json", type=Path, help="also write the full report to this path")
     args = parser.parse_args()
 
+    manifest_errors: list[str] = []
+    manifest_documents: list[dict[str, Any]] = []
+    if not MANIFEST_PATH.is_file():
+        manifest_errors.append("missing editable source-kit manifest")
+    else:
+        try:
+            manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+            manifest_documents = manifest.get("documents", [])
+            if not isinstance(manifest_documents, list):
+                manifest_errors.append("manifest documents must be an array")
+                manifest_documents = []
+            if manifest.get("documentCount") != len(manifest_documents):
+                manifest_errors.append("manifest documentCount does not match documents length")
+            for document in manifest_documents:
+                for key in ("preview", "psd"):
+                    path_value = document.get(key)
+                    if not isinstance(path_value, str) or not (SOURCE_KIT_ASSETS / path_value).is_file():
+                        manifest_errors.append(
+                            f"manifest {document.get('product')}/{document.get('color')}/{document.get('view')} has missing {key}"
+                        )
+        except (OSError, json.JSONDecodeError) as exc:
+            manifest_errors.append(f"could not read manifest: {exc}")
+
     items: list[dict[str, Any]] = []
     for category in CATEGORIES:
         stems = sorted(p.stem for p in SOURCE.glob(f"{category}-*-front.png"))
@@ -113,11 +144,14 @@ def main() -> int:
 
     errors = [item for item in items if item["errors"]]
     report = {
+        "manifest": str(MANIFEST_PATH.relative_to(ROOT)),
+        "manifestDocumentCount": len(manifest_documents),
+        "manifestErrors": manifest_errors,
         "sourceRoot": str(SOURCE.relative_to(ROOT)),
         "normalizedRoot": str(NORMALIZED.relative_to(ROOT)),
         "cutoutRoot": str(NORMALIZED_CUTOUTS.relative_to(ROOT)),
         "count": len(items),
-        "errorCount": len(errors),
+        "errorCount": len(errors) + len(manifest_errors),
         "items": items,
     }
 
@@ -125,10 +159,16 @@ def main() -> int:
         args.json.parent.mkdir(parents=True, exist_ok=True)
         args.json.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
 
-    print(f"TryNex mockup audit: {len(items)} pairs checked, {len(errors)} with errors")
+    print(
+        f"TryNex mockup audit: {len(items)} pairs checked, "
+        f"{len(errors) + len(manifest_errors)} errors "
+        f"({len(manifest_documents)} manifest documents)"
+    )
+    for error in manifest_errors:
+        print(f"  ERROR manifest: {error}")
     for item in errors:
         print(f"  ERROR {item['stem']}: {', '.join(item['errors'])}")
-    return 1 if errors else 0
+    return 1 if errors or manifest_errors else 0
 
 
 if __name__ == "__main__":

@@ -94,16 +94,9 @@ router.get("/health/auth", async (_req, res) => {
   });
 });
 
-// NOTE: /admin/system/health and /admin/system/env-status used to also be
-// defined here with a different (flat) response shape than the versions in
-// routes/systemHealth.ts (nested under `services.*`, and an array under
-// `vars`). Because this router is mounted before systemHealthRouter, this
-// flat version always won the route match and the systemHealth.ts handlers
-// were silently dead code — while the admin frontend widgets were split
-// between expecting each shape, so status displays were wrong/blank
-// regardless of which one actually ran. Removed here; routes/systemHealth.ts
-// is now the single source of truth for both endpoints. See its file header
-// comment before reintroducing a duplicate route for either path.
+// NOTE: /admin/system/health and /admin/system/env-status must remain defined
+// only in routes/systemHealth.ts. Keep this router free of duplicate handlers so
+// the nested `services.*` and `vars` shapes stay the single source of truth.
 
 // Note: POST /api/admin/system/flush-cache is handled by routes/systemHealth.ts
 // which is mounted correctly at /api and uses redisCacheDel.
