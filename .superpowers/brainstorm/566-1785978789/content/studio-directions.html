@@ -1,0 +1,103 @@
+<style>
+  :root {
+    --ink: #f4f1ea;
+    --muted: #a6a5a0;
+    --line: rgba(255,255,255,.12);
+    --panel: #121315;
+    --panel-2: #191b1e;
+    --accent: #d9ff65;
+    --warm: #ffb56b;
+    --blue: #7dd3fc;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background:
+      radial-gradient(circle at 12% 0%, rgba(217,255,101,.08), transparent 28rem),
+      radial-gradient(circle at 88% 10%, rgba(125,211,252,.08), transparent 24rem),
+      #090a0b;
+    color: var(--ink);
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  }
+  .intro { max-width: 1160px; margin: 0 auto 26px; }
+  .eyebrow { color: var(--accent); letter-spacing: .16em; text-transform: uppercase; font-size: 11px; font-weight: 800; }
+  .intro h2 { font-size: clamp(28px, 4vw, 50px); line-height: .98; letter-spacing: -.055em; margin: 10px 0 12px; max-width: 720px; }
+  .intro p { color: var(--muted); max-width: 720px; line-height: 1.6; margin: 0; }
+  .options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; max-width: 1160px; margin: 0 auto; }
+  .option {
+    display: block; padding: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 22px; background: rgba(18,19,21,.88);
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+  .option:hover { transform: translateY(-4px); border-color: rgba(217,255,101,.42); box-shadow: 0 20px 60px rgba(0,0,0,.28); }
+  .option.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 24px 70px rgba(217,255,101,.1); }
+  .scene { height: 330px; position: relative; overflow: hidden; background: #111315; }
+  .scene:after { content:""; position:absolute; inset:0; pointer-events:none; background: linear-gradient(135deg, rgba(255,255,255,.08), transparent 28%, transparent 72%, rgba(0,0,0,.25)); }
+  .stage {
+    position:absolute; left: 15%; right: 15%; top: 26px; bottom: 24px; display:flex; align-items:center; justify-content:center;
+    border-radius: 18px; background: radial-gradient(circle at 50% 28%, rgba(255,255,255,.08), transparent 52%), linear-gradient(135deg,#25282c,#101113);
+    box-shadow: 0 22px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.1);
+  }
+  .garment { width: 55%; aspect-ratio: 1 / 1.16; position: relative; filter: drop-shadow(0 26px 18px rgba(0,0,0,.48)); }
+  .garment:before { content:""; position:absolute; inset: 11% 8% 8%; border-radius: 25% 25% 9% 9% / 10% 10% 6% 6%; background: linear-gradient(110deg,#f3f0e9 5%,#bbb8b0 43%,#f8f6f2 72%,#aaa9a4 100%); clip-path: polygon(22% 0, 37% 8%, 50% 15%, 63% 8%, 78% 0, 100% 18%, 85% 35%, 83% 100%, 17% 100%, 15% 35%, 0 18%); }
+  .garment:after { content:"PRINT AREA"; position:absolute; left: 31%; top: 32%; width: 38%; height: 26%; border: 1px dashed rgba(217,255,101,.9); color: rgba(217,255,101,.95); display:grid; place-items:center; font-size:7px; letter-spacing:.12em; font-weight:800; background:rgba(217,255,101,.08); }
+  .light-orb { position:absolute; width: 230px; height:230px; border-radius:50%; filter: blur(18px); opacity:.52; }
+  .option-copy { padding: 18px 18px 20px; }
+  .option-copy h3 { font-size: 19px; margin: 0 0 7px; letter-spacing: -.025em; }
+  .option-copy p { color: var(--muted); font-size: 13px; line-height: 1.5; margin: 0 0 14px; }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; }
+  .chip { border:1px solid var(--line); border-radius:999px; color:#d5d5d1; padding:5px 8px; font-size:10px; }
+  .micro { position:absolute; z-index:2; left:14px; top:14px; display:flex; align-items:center; gap:7px; color:#d8d8d2; font-size:10px; letter-spacing:.1em; text-transform:uppercase; }
+  .dot { width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 14px var(--accent); }
+  .a .stage { background: radial-gradient(circle at 50% 22%, rgba(217,255,101,.16), transparent 50%), linear-gradient(135deg,#252b25,#101311); }
+  .a .light-orb { right:-40px; top:-60px; background:var(--accent); }
+  .a .garment { transform: rotate(-3deg); }
+  .a .garment:before { background: linear-gradient(110deg,#f7f4eb 5%,#b9c0af 43%,#f9f8ef 72%,#7d8879 100%); }
+  .b .stage { left: 7%; right: 7%; top: 16px; bottom: 16px; border-radius: 50% 50% 18px 18px; background: radial-gradient(ellipse at 50% 28%, rgba(255,181,107,.35), transparent 38%), linear-gradient(160deg,#473129,#171111 67%); }
+  .b .light-orb { left: -60px; top: 30px; background:var(--warm); }
+  .b .garment { transform: perspective(600px) rotateY(-12deg) rotateZ(2deg); }
+  .b .garment:before { background: linear-gradient(105deg,#f5f0e8,#b7a99c 44%,#fdf7ed 76%,#8e7467); }
+  .b .garment:after { border-color: rgba(255,220,180,.92); color: rgba(255,220,180,.96); background:rgba(255,181,107,.1); }
+  .c .stage { background: linear-gradient(140deg,#182734,#0d1117); box-shadow: 0 22px 40px rgba(0,0,0,.45), inset 0 0 50px rgba(125,211,252,.08); }
+  .c .light-orb { right:-60px; bottom:-80px; background:var(--blue); }
+  .c .garment { transform: rotate(2deg) scale(.97); }
+  .c .garment:before { background: linear-gradient(110deg,#e6e8e8 4%,#87939b 44%,#eef5f6 72%,#59666e); }
+  .c .garment:after { border-color: rgba(125,211,252,.95); color:rgba(180,235,255,.98); background:rgba(125,211,252,.08); }
+  .notes { max-width:1160px; margin: 20px auto 0; display:flex; gap:10px; flex-wrap:wrap; color:#898b89; font-size:11px; }
+  .notes span { border-left: 2px solid var(--accent); padding-left:8px; }
+  @media (max-width: 850px) { .options { grid-template-columns: 1fr; } .scene { height: 250px; } .intro { margin-bottom:18px; } }
+</style>
+
+<div class="intro">
+  <div class="eyebrow">TryNex Design Studio · visual direction</div>
+  <h2>Make the product feel tangible before the customer presses add to cart.</h2>
+  <p>Choose the atmosphere that should guide the production pass. All three directions preserve reviewed mockups, exact print zones, and clear artwork controls—the difference is how the stage creates confidence and delight.</p>
+</div>
+
+<div class="options">
+  <div class="option a" data-choice="aurora" onclick="toggleSelect(this)">
+    <div class="scene">
+      <div class="micro"><i class="dot"></i> Aurora material stage</div>
+      <div class="light-orb"></div><div class="stage"><div class="garment"></div></div>
+    </div>
+    <div class="option-copy"><h3>A · Aurora material stage</h3><p>Quiet, premium, and tactile. A soft lime studio light reveals weave, folds, and the active print zone without turning the editor into a spectacle.</p><div class="chips"><span class="chip">best for apparel</span><span class="chip">premium feel</span><span class="chip">calm motion</span></div></div>
+  </div>
+  <div class="option b" data-choice="atelier" onclick="toggleSelect(this)">
+    <div class="scene">
+      <div class="micro"><i class="dot" style="background:var(--warm);box-shadow:0 0 14px var(--warm)"></i> Atelier reveal</div>
+      <div class="light-orb"></div><div class="stage"><div class="garment"></div></div>
+    </div>
+    <div class="option-copy"><h3>B · Atelier reveal</h3><p>Warm, editorial, and giftable. A moving key light gives mugs, caps, and bottles a hero moment while the print boundary stays visible.</p><div class="chips"><span class="chip">best for curved goods</span><span class="chip">giftable</span><span class="chip">cinematic</span></div></div>
+  </div>
+  <div class="option c" data-choice="signal" onclick="toggleSelect(this)">
+    <div class="scene">
+      <div class="micro"><i class="dot" style="background:var(--blue);box-shadow:0 0 14px var(--blue)"></i> Signal precision stage</div>
+      <div class="light-orb"></div><div class="stage"><div class="garment"></div></div>
+    </div>
+    <div class="option-copy"><h3>C · Signal precision stage</h3><p>Confident, crisp, and fast. A cool technical glow makes dimensions, safe areas, and layer status feel like part of the craft—not warnings added later.</p><div class="chips"><span class="chip">best for power users</span><span class="chip">clear specs</span><span class="chip">fast workflow</span></div></div>
+  </div>
+</div>
+
+<div class="notes">
+  <span>All directions include an explicit mockup loading state</span>
+  <span>Print zones remain source-of-truth geometry</span>
+  <span>Mobile controls collapse into a bottom action rail</span>
+</div>
