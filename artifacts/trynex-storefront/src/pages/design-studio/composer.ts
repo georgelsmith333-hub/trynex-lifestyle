@@ -42,7 +42,48 @@ export interface ComposerTextLayer {
 }
 export type ComposerLayer = ComposerImageLayer | ComposerTextLayer;
 
-export interface ComposerPrintZone { x: number; y: number; w: number; h: number; }
+export interface ComposerPrintZone {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  shape?: "rect" | "mug-front-body" | "mug-back-body" | "mug-wrap-body";
+}
+
+export function tracePrintZone(
+  ctx: CanvasRenderingContext2D,
+  zone: ComposerPrintZone,
+  sx: number,
+  sy: number,
+) {
+  const shape = zone.shape;
+  const x = zone.x * sx;
+  const y = zone.y * sy;
+  const w = zone.w * sx;
+  const h = zone.h * sy;
+  if (!shape || shape === "rect") {
+    ctx.rect(x, y, w, h);
+    return;
+  }
+
+  const topInset = Math.min(18 * sx, w * 0.04);
+  const sideRadius = Math.min(24 * sx, w * 0.06);
+  const left = x + topInset;
+  const right = x + w - topInset;
+  const top = y + 10 * sy;
+  const bottom = y + h - 10 * sy;
+  const cx = x + w / 2;
+  ctx.moveTo(left, top);
+  ctx.quadraticCurveTo(cx, y - 4 * sy, right, top);
+  ctx.quadraticCurveTo(x + w, top + 4 * sy, x + w, top + sideRadius);
+  ctx.lineTo(x + w, bottom - sideRadius);
+  ctx.quadraticCurveTo(x + w, bottom - 2 * sy, right, bottom);
+  ctx.quadraticCurveTo(cx, y + h + 4 * sy, left, bottom);
+  ctx.quadraticCurveTo(x, bottom - 2 * sy, x, bottom - sideRadius);
+  ctx.lineTo(x, top + sideRadius);
+  ctx.quadraticCurveTo(x, top + 4 * sy, left, top);
+  ctx.closePath();
+}
 
 interface ComposeOptions {
   canvas: HTMLCanvasElement;
@@ -327,7 +368,7 @@ export async function composeLayers(opts: ComposeOptions): Promise<HTMLCanvasEle
   if (clipToPrintZone) {
     ctx.save();
     ctx.beginPath();
-    ctx.rect(printZone.x * sx, printZone.y * sy, printZone.w * sx, printZone.h * sy);
+    tracePrintZone(ctx, printZone, sx, sy);
     ctx.clip();
   }
 
@@ -458,7 +499,7 @@ export async function composeGarmentMockup(opts: {
 
   ctx.save();
   ctx.beginPath();
-  ctx.rect(printZone.x * s, printZone.y * s, printZone.w * s, printZone.h * s);
+  tracePrintZone(ctx, printZone, s, s);
   ctx.clip();
 
   for (const layer of layers) {
@@ -547,7 +588,7 @@ export async function composeDesignTexture(opts: {
   if (clipToPrintZone) {
     ctx.save();
     ctx.beginPath();
-    ctx.rect(printZone.x * s, printZone.y * s, printZone.w * s, printZone.h * s);
+    tracePrintZone(ctx, printZone, s, s);
     ctx.clip();
   }
 

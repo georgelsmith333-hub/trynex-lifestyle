@@ -75,14 +75,14 @@ Every Agent must keep the following status fields current before ending a chat,
 pausing work, or transferring the project:
 
 ```text
-Status: in progress
-Last completed: Wired the existing V1 first-use guide and print-quality status components into the public Design Studio, added actionable low-resolution image warnings, and corrected the mockup audit to validate all 108 manifest documents against both editable source-kit and flattened runtime roots
-Stopped at: Live storefront verification after restarting the storefront workflow
-Files/areas changed: `artifacts/trynex-storefront/src/pages/DesignStudio.tsx`, `scripts/audit_trynex_mockups.py`, and this handoff; unrelated pre-existing API/mobile/promo/brand-system changes were preserved
-Remaining work: Browser-level interaction and responsive verification across all six product categories, colors, editor tools, save/restore, export, add-to-cart, cart/checkout/admin previews, and the editable PSD visual review
-Blocker: The artifact registry returns no registered artifacts, so the screenshot helper cannot resolve `trynex-storefront`; the browser-use executable is also unavailable in the shell. Direct HTTPS preview checks are available and pass.
-Next safe action: Repair or reconcile the existing storefront artifact registration without creating a duplicate app, then run the six-product responsive browser matrix; if registry repair is unavailable, use an approved browser/preview path or document the manual test gap
-Verification: Storefront typecheck passed; production build passed; `scripts/audit_trynex_mockups.py --json /tmp/trynex-mockups-audit.json` passed with 108 pairs, 108 manifest documents, and 0 errors; storefront workflow restarted cleanly; live routes and representative mockup assets returned HTTP 200
+Status: ready for publish; interactive verification pending
+Last completed: Reconciled shape-aware mug geometry across the V1 editor, print-safe warnings, SVG mask/guide, canvas compositor, export/cart texture paths, and live 3D preview; Full Wrap now uses one continuous cylindrical MugBody texture, while Side 1/Side 2 remain independent reviewed photo views; removed orbit controls from the Design Studio viewer
+Stopped at: Final storefront restart, health/asset route checks, deployment metadata check, and automated verification
+Files/areas changed: `artifacts/trynex-storefront/src/pages/DesignStudio.tsx`, `artifacts/trynex-storefront/src/pages/design-studio/mockups.tsx`, `artifacts/trynex-storefront/src/pages/design-studio/composer.ts`, `artifacts/trynex-storefront/src/pages/design-studio/ProductViewer3D.tsx`, `.agents/memory/mug-print-zones.md`, and this handoff; unrelated API/mobile/promo/brand-system changes were preserved
+Remaining work: Run the browser-level responsive interaction matrix across all six product categories, colors, editor tools, save/restore, export, add-to-cart, cart/checkout/admin previews, and the editable PSD visual review; then publish the storefront
+Blocker: The artifact registry reports no registered artifacts, the screenshot helper cannot resolve `trynex-storefront`, and the `browser-use` executable is unavailable in the shell. Direct HTTP and workflow checks are available and pass. Deployment metadata reports `isDeployed: false` with no production URL.
+Next safe action: Use an approved browser/preview path for the six-product responsive matrix, then publish the validated storefront; do not create a duplicate artifact or weaken the valid storefront manifest to work around the registry state
+Verification: Storefront typecheck passed; production build passed; mockup audit passed with 108 pairs and 0 errors; diff check passed; storefront workflow restarted cleanly; `/`, `/design-studio`, `/api/healthz`, `/api/products`, and reviewed mug assets returned successfully; API/database/Redis/R2 health is green; browser console showed only normal Vite/API startup messages. Screenshot/CDP interaction verification remains unperformed because the registry is empty and the browser executable is unavailable.
 
 ## Latest audit checkpoint
 

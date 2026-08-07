@@ -17,7 +17,7 @@ import {
 import { resolveMockup, type DesignProduct } from "./mockups";
 import {
   PhotoMockupMesh,
-  ResettableOrbitControls,
+  MugBody,
   ViewerLoadingOverlay,
   NoWebGLFallback,
   StudioLightRig,
@@ -115,6 +115,93 @@ function useFaceTexture(
   return face ? textureRef.current : null;
 }
 
+/**
+ * Full Wrap is the one mug mode that needs a real 360° surface. The two
+ * edited mug faces are composed into the left and right halves of one
+ * equirectangular texture, then mapped onto MugBody's cylindrical body.
+ * Side 1/Side 2 continue using the reviewed photographic face mockups.
+ */
+function useMugWrapTexture(
+  front: FacePayload | undefined,
+  back: FacePayload | undefined,
+): THREE.CanvasTexture | null {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const cacheRef = useRef<Map<string, HTMLImageElement>>(new Map());
+  const textureRef = useRef<THREE.CanvasTexture | null>(null);
+  const [, setVersion] = useState(0);
+
+  if (!canvasRef.current) canvasRef.current = document.createElement("canvas");
+  if (!textureRef.current) {
+    const tex = new THREE.CanvasTexture(canvasRef.current);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 8;
+    textureRef.current = tex;
+  }
+
+  const sig = JSON.stringify({
+    front: front
+      ? [front.baseHeight, front.printZone, front.layers]
+      : null,
+    back: back
+      ? [back.baseHeight, back.printZone, back.layers]
+      : null,
+  });
+
+  useEffect(() => {
+    let cancelled = false;
+    const wrapCanvas = canvasRef.current!;
+    wrapCanvas.width = 2048;
+    wrapCanvas.height = 768;
+    const wrapCtx = wrapCanvas.getContext("2d");
+    if (!wrapCtx) return;
+    wrapCtx.clearRect(0, 0, wrapCanvas.width, wrapCanvas.height);
+
+    (async () => {
+      const composeFace = async (face: FacePayload | undefined) => {
+        const faceCanvas = document.createElement("canvas");
+        if (!face) return faceCanvas;
+        await composeLayers({
+          canvas: faceCanvas,
+          baseHeight: face.baseHeight,
+          printZone: face.printZone,
+          layers: face.layers,
+          garmentColor: null,
+          outW: 1024,
+          outH: 1024,
+          imageCache: cacheRef.current,
+          clipToPrintZone: true,
+          blendMode: "multiply",
+          curvature: 0.16,
+        });
+        return faceCanvas;
+      };
+
+      const frontCanvas = await composeFace(front);
+      const backCanvas = await composeFace(back);
+      if (cancelled) return;
+
+      // Each edited face owns one half of the cylindrical print band. This
+      // keeps side-specific edits independent while preserving a continuous
+      // body surface in the Wrap preview.
+      wrapCtx.drawImage(frontCanvas, 0, 0, 1024, 1024, 0, 0, 1024, 768);
+      wrapCtx.drawImage(backCanvas, 0, 0, 1024, 1024, 1024, 0, 1024, 768);
+      textureRef.current!.wrapS = THREE.RepeatWrapping;
+      textureRef.current!.wrapT = THREE.ClampToEdgeWrapping;
+      textureRef.current!.repeat.set(1, 1);
+      textureRef.current!.offset.set(0.25, 0);
+      textureRef.current!.flipY = true;
+      textureRef.current!.needsUpdate = true;
+      setVersion((v) => v + 1);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [sig, front, back]);
+
+  return textureRef.current;
+}
+
 /* ── Camera rig: smooth orbit to the active face ─────────────────────────── */
 function CameraRig({
   activeFace,
@@ -154,6 +241,7 @@ export default function ProductViewer3D({
   front,
   back,
   activeFace = "front",
+  isWrapMode = false,
 }: ProductViewer3DProps) {
   const isMug         = product.category === "mug";
   const isWaterBottle = product.category === "waterbottle";
@@ -191,6 +279,10 @@ export default function ProductViewer3D({
     back,
     null,
     { outW: 1024, outH: 1024, clipToPrintZone: true, curvature: surfaceCurvature }
+  );
+  const mugWrapTex = useMugWrapTexture(
+    isMug && isWrapMode ? front : undefined,
+    isMug && isWrapMode ? back : undefined,
   );
 
   const supports3D = useMemo(() => hasWebGL2(), []);
@@ -248,7 +340,16 @@ export default function ProductViewer3D({
           {/* ── MUG — reviewed front/back photo mockup ─────────────────────
               Do not replace this with a procedural cylinder: the customer
               selected these exact product photos as the source of truth. */}
-          {product.category === "mug" && (
+          {product.category === "mug" && isWrapMode && (
+            <MugBody
+              wrapTex={mugWrapTex}
+              garmentColor={garmentColor}
+              isWrapMode
+              activeFace={activeFace}
+            />
+          )}
+
+          {product.category === "mug" && !isWrapMode && (
             <PhotoMockupMesh
               frontPhotoSrc={resolvedFrontPhoto}
               backPhotoSrc={resolvedBackPhoto}
@@ -352,19 +453,9 @@ export default function ProductViewer3D({
             color="#1a0a00"
           />
 
-          <ResettableOrbitControls
-            enablePan={false}
-            enableZoom={true}
-            enableDamping
-            dampingFactor={0.08}
-            rotateSpeed={0.7}
-            zoomSpeed={0.8}
-            minDistance={VIEWER_FRAMING[product.category as keyof typeof VIEWER_FRAMING].minDistance}
-            maxDistance={VIEWER_FRAMING[product.category as keyof typeof VIEWER_FRAMING].maxDistance}
-            minPolarAngle={isMug ? Math.PI * 0.32 : Math.PI * 0.25}
-            maxPolarAngle={isMug ? Math.PI * 0.72 : Math.PI * 0.65}
-            touches={{ ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN }}
-          />
+          {/* The product is intentionally static. Face changes are explicit in
+              the Studio controls; orbit/auto-motion made the visible face and
+              the edited face diverge on touch devices. */}
         </Suspense>
       </Canvas>
       <ViewerLoadingOverlay />

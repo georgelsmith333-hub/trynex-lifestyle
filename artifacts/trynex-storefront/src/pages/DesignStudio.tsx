@@ -26,7 +26,8 @@ import {
 import {
   PRODUCTS, type DesignProduct, GarmentSVG, FlatZoneSVG,
   STICKERS, MUG_PZ, MUG_WRAP_BACK_PZ, MUG_SIDE_PZ, MUG_SIDE_BACK_PZ,
-  getApparelZones, getZonePZ, resolveMockup, type ApparelZone, isNearBlack, isLightTint, type PrintZone,
+  getApparelZones, getZonePZ, resolveMockup, printZonePath, isPrintZonePointInside,
+  type ApparelZone, isNearBlack, isLightTint, type PrintZone,
 } from "./design-studio/mockups";
 import { composeLayers, composeGarmentMockup, composeDesignTexture, autoFixImage, type ComposerLayer } from "./design-studio/composer";
 import { StudioFirstUseGuide, StudioQualityBanner } from "./studio/v1-components/V1StudioSupport";
@@ -1046,10 +1047,9 @@ export default function DesignStudio() {
         hw = txtL.fontSize * scale * scaleX * 2.5;
         hh = txtL.fontSize * scale * scaleY * 1.2;
       }
-      // Account for rotation: a rotated rectangle's true screen-space bounding box
-      // is larger than its unrotated half-width/half-height. Without this, a design
-      // rotated 30-45° could visually poke outside the zone with no warning shown,
-      // or (for a wide layer rotated ~90°) trigger a false warning despite fitting.
+      // Check all four rotated corners against the canonical shape, rather than
+      // only the rectangular bounds. This catches designs entering the mug's
+      // rounded rim/base margin while preserving the existing edge tolerance.
       const rad = (rotation * Math.PI) / 180;
       const cos = Math.abs(Math.cos(rad));
       const sin = Math.abs(Math.sin(rad));
@@ -1058,12 +1058,19 @@ export default function DesignStudio() {
       // x/y are relative offsets from the print zone centre; convert to absolute
       const absX = pzCx + x;
       const absY = pzCy + y;
-      return (
-        absX - rotHw < pz.x - bleedTol ||
-        absX + rotHw > pz.x + pz.w + bleedTol ||
-        absY - rotHh < pz.y - bleedTol ||
-        absY + rotHh > pz.y + pz.h + bleedTol
-      );
+      const corners = [
+        [-hw, -hh], [hw, -hh], [hw, hh], [-hw, hh],
+      ].map(([dx, dy]) => [
+        absX + dx * Math.cos(rad) - dy * Math.sin(rad),
+        absY + dx * Math.sin(rad) + dy * Math.cos(rad),
+      ] as const);
+      // Include the axis-aligned extents for a conservative check when a
+      // rotated edge crosses a curved boundary between two corners.
+      return corners.some(([px, py]) => !isPrintZonePointInside(pz, px, py, bleedTol)) ||
+        !isPrintZonePointInside(pz, absX - rotHw, absY, bleedTol) ||
+        !isPrintZonePointInside(pz, absX + rotHw, absY, bleedTol) ||
+        !isPrintZonePointInside(pz, absX, absY - rotHh, bleedTol) ||
+        !isPrintZonePointInside(pz, absX, absY + rotHh, bleedTol);
     });
     return offender?.id ?? null;
   }, [currentFaceLayers, pz]);
@@ -3440,7 +3447,7 @@ export default function DesignStudio() {
                       the single authoritative editor boundary. */}
                   <defs>
                     <clipPath id="design-clip">
-                      <rect x={pz.x} y={pz.y} width={pz.w} height={pz.h} rx="4" />
+                      <path d={printZonePath(pz)} />
                     </clipPath>
                   </defs>
                   <g clipPath="url(#design-clip)">

@@ -93,7 +93,19 @@ export type Face =
   | "right-sleeve"
   | "neck-label";
 
-export interface PrintZone { x: number; y: number; w: number; h: number }
+export type PrintZoneShape = "rect" | "mug-front-body" | "mug-back-body" | "mug-wrap-body";
+
+export interface PrintZone {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  /**
+   * Optional silhouette-aware clipping path. The rectangle remains the
+   * placement/warning bounds; the shape is the final printable boundary.
+   */
+  shape?: PrintZoneShape;
+}
 
 export interface DesignProduct {
   id: ProductType;
@@ -147,12 +159,17 @@ export const HOODIE_BACK_PZ: PrintZone      = { x: 292, y: 184, w: 416, h: 448 }
 export const CAP_PZ: PrintZone              = { x: 240, y: 260, w: 540, h: 320 };
 /** Cap rear crown zone — deliberately stops above the adjustment opening and strap. */
 export const CAP_BACK_PZ: PrintZone         = { x: 285, y: 270, w: 430, h: 230 };
-/** Full Wrap uses the wider continuous body band and is an explicit mode. */
-export const MUG_PZ: PrintZone              = { x: 225, y: 220, w: 490, h: 580 };
-export const MUG_WRAP_BACK_PZ: PrintZone    = { x: 285, y: 220, w: 490, h: 580 };
-/** Side 1 / Side 2 use the exact reviewed PSD print panel, excluding handles. */
-export const MUG_SIDE_PZ: PrintZone         = { x: 225, y: 215, w: 380, h: 530 };
-export const MUG_SIDE_BACK_PZ: PrintZone    = { x: 225, y: 215, w: 380, h: 530 };
+/** Full Wrap uses the continuous printable body band and is an explicit mode. */
+export const MUG_PZ: PrintZone              = { x: 165, y: 220, w: 670, h: 580, shape: "mug-wrap-body" };
+export const MUG_WRAP_BACK_PZ: PrintZone    = MUG_PZ;
+/**
+ * Side 1 / Side 2 use mirrored body-safe geometry. The reviewed mug photos
+ * place the handle on opposite sides, so each side has its own body boundary.
+ * This keeps the larger sublimation area while stopping at the actual handle
+ * wall instead of relying on a colour-dependent arbitrary inset.
+ */
+export const MUG_SIDE_PZ: PrintZone         = { x: 165, y: 220, w: 475, h: 580, shape: "mug-front-body" };
+export const MUG_SIDE_BACK_PZ: PrintZone    = { x: 384, y: 220, w: 451, h: 580, shape: "mug-back-body" };
 /** Water bottle label panel: only the straight aluminium body is printable;
  * the lid, shoulder, carabiner and rounded base are intentionally excluded. */
 export const WATERBOTTLE_PZ: PrintZone      = { x: 390, y: 340, w: 245, h: 555 };
@@ -486,8 +503,8 @@ const SOURCE_KIT_PRINT_ZONES: Record<
     back: { x: 292, y: 184, w: 416, h: 448 },
   },
   mug: {
-    front: { x: 225, y: 215, w: 380, h: 530 },
-    back: { x: 225, y: 215, w: 380, h: 530 },
+    front: MUG_SIDE_PZ,
+    back: MUG_SIDE_BACK_PZ,
   },
   cap: {
     front: { x: 240, y: 260, w: 540, h: 320 },
@@ -565,6 +582,96 @@ export interface NormalizedMockupFrame {
   y: number;
   w: number;
   h: number;
+}
+
+/**
+ * Return the canonical printable silhouette in the same 1000×1000
+ * coordinate system used by the editor and SVG mockups.
+ *
+ * Mug side panels are deliberately asymmetric because the source photos put
+ * the handle on opposite sides. The upper and lower curves preserve a stable
+ * ceramic-body margin instead of cutting artwork with a hard horizontal edge.
+ */
+export function printZonePath(zone: PrintZone): string {
+  const { x, y, w, h } = zone;
+  if (!zone.shape || zone.shape === "rect") {
+    return `M${x} ${y}H${x + w}V${y + h}H${x}Z`;
+  }
+
+  const topInset = Math.min(18, w * 0.04);
+  const bottomInset = Math.min(22, w * 0.05);
+  const sideRadius = Math.min(24, w * 0.06);
+  const top = y + 10;
+  const bottom = y + h - 10;
+  const left = x + topInset;
+  const right = x + w - topInset;
+  const cx = x + w / 2;
+  const isMugSide = zone.shape === "mug-front-body" || zone.shape === "mug-back-body";
+
+  if (isMugSide) {
+    return [
+      `M${left} ${top}`,
+      `Q${cx} ${y - 4} ${right} ${top}`,
+      `Q${x + w} ${top + 4} ${x + w} ${top + sideRadius}`,
+      `L${x + w} ${bottom - sideRadius}`,
+      `Q${x + w} ${bottom - 2} ${right} ${bottom}`,
+      `Q${cx} ${y + h + 4} ${left} ${bottom}`,
+      `Q${x} ${bottom - 2} ${x} ${bottom - sideRadius}`,
+      `L${x} ${top + sideRadius}`,
+      `Q${x} ${top + 4} ${left} ${top}`,
+      "Z",
+    ].join(" ");
+  }
+
+  // Wrap is a continuous body band. Keep the explicit wide mode, but retain
+  // rounded ceramic top/bottom margins so the texture does not reach the rim
+  // or base when it is used by the final compositor and 3D preview.
+  return [
+    `M${left} ${top}`,
+    `Q${cx} ${y - 4} ${right} ${top}`,
+    `Q${x + w} ${top + 4} ${x + w} ${top + sideRadius}`,
+    `L${x + w} ${bottom - sideRadius}`,
+    `Q${x + w} ${bottom - 2} ${right} ${bottom}`,
+    `Q${cx} ${y + h + 4} ${left} ${bottom}`,
+    `Q${x} ${bottom - 2} ${x} ${bottom - sideRadius}`,
+    `L${x} ${top + sideRadius}`,
+    `Q${x} ${top + 4} ${left} ${top}`,
+    "Z",
+  ].join(" ");
+}
+
+/**
+ * Shared point-in-zone test for print warnings and other non-SVG consumers.
+ * The tolerance is intentionally applied outside the shape so the warning
+ * remains forgiving at the edge without making the printable body larger.
+ */
+export function isPrintZonePointInside(zone: PrintZone, px: number, py: number, tolerance = 0): boolean {
+  if (
+    px < zone.x - tolerance ||
+    px > zone.x + zone.w + tolerance ||
+    py < zone.y - tolerance ||
+    py > zone.y + zone.h + tolerance
+  ) {
+    return false;
+  }
+  if (!zone.shape || zone.shape === "rect") return true;
+
+  const top = zone.y + 10;
+  const bottom = zone.y + zone.h - 10;
+  const sideRadius = Math.min(24, zone.w * 0.06);
+  const topInset = Math.min(18, zone.w * 0.04);
+  const bottomInset = Math.min(22, zone.w * 0.05);
+  const topProgress = Math.max(0, Math.min(1, (py - top) / Math.max(sideRadius, 1)));
+  const bottomProgress = Math.max(0, Math.min(1, (bottom - py) / Math.max(sideRadius, 1)));
+  const edgeInset = Math.max(
+    topInset * (1 - topProgress),
+    bottomInset * (1 - bottomProgress),
+  );
+
+  return (
+    px >= zone.x + edgeInset - tolerance &&
+    px <= zone.x + zone.w - edgeInset + tolerance
+  );
 }
 
 function normalizeMockupHex(hex: string): string {
@@ -943,22 +1050,12 @@ export function GarmentSVG({
       )}
 
       {showPrintZone && (() => {
-        const { x, y, w, h } = displayPZ;
-        const x2 = x + w, y2 = y + h;
-        const L = 32;
         return (
           <g style={{ pointerEvents: "none" }}>
-            <path d={`M${x} ${y+L} L${x} ${y} L${x+L} ${y}`}
-              stroke="rgba(232,93,4,0.80)" strokeWidth={3.5} fill="none" strokeLinecap="round" strokeLinejoin="round"
-              vectorEffect="non-scaling-stroke" />
-            <path d={`M${x2-L} ${y} L${x2} ${y} L${x2} ${y+L}`}
-              stroke="rgba(232,93,4,0.80)" strokeWidth={3.5} fill="none" strokeLinecap="round" strokeLinejoin="round"
-              vectorEffect="non-scaling-stroke" />
-            <path d={`M${x} ${y2-L} L${x} ${y2} L${x+L} ${y2}`}
-              stroke="rgba(232,93,4,0.80)" strokeWidth={3.5} fill="none" strokeLinecap="round" strokeLinejoin="round"
-              vectorEffect="non-scaling-stroke" />
-            <path d={`M${x2-L} ${y2} L${x2} ${y2} L${x2} ${y2-L}`}
-              stroke="rgba(232,93,4,0.80)" strokeWidth={3.5} fill="none" strokeLinecap="round" strokeLinejoin="round"
+            <path d={printZonePath(displayPZ)}
+              stroke="rgba(232,93,4,0.80)" strokeWidth={3.5} fill="rgba(232,93,4,0.05)"
+              strokeDasharray={displayPZ.shape && displayPZ.shape !== "rect" ? "10 7" : undefined}
+              strokeLinecap="round" strokeLinejoin="round"
               vectorEffect="non-scaling-stroke" />
           </g>
         );
