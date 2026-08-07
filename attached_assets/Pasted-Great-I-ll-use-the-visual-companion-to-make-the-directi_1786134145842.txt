@@ -1,0 +1,102 @@
+Great — I’ll use the visual companion to make the direction concrete before touching the implementation. I’m going to prepare three distinct Studio directions around the same product truth: the garment/product remains the hero, lighting communicates material and depth, and print areas stay precise and trustworthy.
+
+I’ve confirmed the current Studio already has the right foundations: all six product categories, reviewed print zones, source-kit assets, 2D/3D switching, and a real composition pipeline. The upgrade should focus on the “magical” layer without compromising print accuracy: a cinematic product stage, responsive controls, explicit loading/failure states, and a print-zone lens that makes safe areas obvious. I’m opening the visual companion now with three directions to choose from.
+
+The visual companion script is in a different workspace location than the skill page documents, so the first launch attempt did not modify the app or create any mockup. I’m locating the installed companion launcher and will use the same project-backed session once found.
+
+The companion session is live. I’m putting three visual hypotheses on screen now—each keeps the real product and print zone as the source of truth, but changes how the stage communicates material, lighting, and confidence. The comparison will include desktop composition and the mobile control strategy so we choose a direction that can actually ship.
+
+The visual direction board is ready in the companion session. It shows:
+
+A — Aurora material stage: premium, calm, apparel-first lighting
+B — Atelier reveal: warm, cinematic, strongest for mugs/caps/bottles
+C — Signal precision stage: technical, fast, strongest for print specs and power users
+Each option keeps reviewed mockups and exact print-zone geometry, while also showing the intended loading state and mobile bottom action rail.
+
+Please take a look in the opened companion browser and click the direction you want to guide the production pass.
+
+The visual companion is open with three Design Studio directions:
+
+Aurora material stage — premium and calm
+Atelier reveal — warm and cinematic
+Signal precision stage — technical and workflow-focused
+Choose one in the browser companion, then I’ll use that direction for the full implementation pass.
+
+The warning of 3d zones or print zones and 3d mockups and also the others mockups like mug: u can see i added an image at the right side mug and when going to left sides mug its not showing correctly that apply the last latest design that side too. And also u can see which is a major work that is print zones of each mug mockup or each other every product has also same problem that is u can see at my different color mugs using that photo i took screenshots u can see different sizes coming at different colors so print zones also humilating and print area or i mean where the photo was firstly adjusted but for just changing color its changing its structure and so on... Also major work is that u can see its some curved but u can see from upper side it should maintain correctly the mug structure or other all mockup structure first same, and then color coding correctly, and then make sure no ghost or no another sized mockup and then ensure me everything 1 by 1 do everything paralally, this is a complex work so dont take easily and dont do generally, its an advance senior web developer work. U do as like more pro than that. So be the right decider and work deciding to the best options codetacks designs everything correctly, device any kind of but website should act very correctly responsibly and very scroll r touch responsive too but not make any wrong and make sure issues get out. Also make sure that the major another thing is u can see my default mug uoloaded image at right side mug also shows me that from the handle of the mug to the body there is a lots or gaps allowed to be non used the picture so uploaded picture not visibling correctly whether printify and other compared sites has more great outcomes and working things which u should know and do our improvements as well as needed everywhere and also see for this same issues for other sides and other mockups too. Kindly make sure you have done everything and also updated all to your memory md and also all mockups has no issues left, any exisiting hidden issues u see also need attention so avaeragley u need to do a full authenticity of parallel waves agentic work with proper knowledge works and uses 100000% of your brains to brainstorm outputs for your work. Ive showing some mockups after uploading picture how printify shows the mockup and how ours one🤣, so just not leave or not do anyhow, make sure to do everything correctly as needed to do work like that type mockups blendings, and also 3d routing extra keeping is maybe not needed so remove that logistic as its still 3d privew already so right now not needed that kinds of issues attached 3d motioned mockup view system so remove thst too and correctly make sure all mockups render also correctly, psd mockups added, all mockups has no more ghost mockup, structure, uploaded picture or sizes, or any kinds of issues not left anymore and specially for mug u look this too much + also for other things too. Have a good day. This is your Marathon work to prove yourself.
+
+I understand the screenshots and the core defects: the mug artwork is being treated like a flat side panel, color changes alter the visual geometry, the handle gap consumes too much of the printable composition, and the right-side design is not reliably carried into the opposite-side preview. The same class of problem can affect every product where preview geometry, print-zone coordinates, and color assets are not one immutable contract.
+
+Before editing, I’m tracing the current source-of-truth paths and the exact mug/other-product composition flow. I’ll preserve the canonical storefront and existing V1/V2 route behavior; I will not create duplicate web or data-app artifacts.
+
+I’ve read AGENTS.md, AGENT_HANDOFF.md, and replit.md, and I inspected all five supplied screenshots. The previous audit completed the source-kit/runtime asset audit and V1 quality guidance, but stopped before browser-level product verification. Your screenshots add a concrete blocker: mug geometry and print-zone coordinates are not stable across color assets, and side switching is not preserving the intended artwork contract.
+
+Completed context
+Public /design-studio remains V1.
+/design-studio-v1 remains the compatibility alias.
+/design-studio-v2 remains the explicit comparison/rollback route.
+Six product categories and reviewed source-kit/runtime assets exist.
+Curved products already default to 3D.
+Existing checkout, cart, API, admin, mobile, database, and settings behavior must remain intact.
+What I will change
+Establish one immutable product geometry contract per category/face:
+normalized frame
+silhouette/cutout
+print-zone coordinates
+artwork safe area
+color photo mapping
+Fix mug side propagation so Left Side, Right Side, and Wrap each use the correct face payload and do not lose the latest artwork.
+Stop color changes from changing geometry or print-area scale.
+Rework curved-product compositing so artwork follows the visible body rather than wasting the handle gap or appearing as a flat rectangle.
+Audit the same contract for T-shirt, long sleeve, hoodie, cap, and bottle.
+Add explicit loading/error states and eliminate ghost, stale, or mismatched mockups.
+Keep 3D preview, but remove only the unnecessary extra motion/routing behavior you identified—not the accurate 3D preview itself.
+Verify mobile touch/scroll behavior, print warnings, export/cart composition, and all source/runtime assets.
+Update AGENT_HANDOFF.md and durable memory with non-obvious decisions.
+Preserved behavior
+Existing V1/V2 routing
+Reviewed PSD/source-kit asset contract
+Product-specific colors
+2D precision editing
+3D preview for curved products
+Product switching and print-zone refit
+Cart, checkout, admin previews, API, mobile, and deployment behavior
+Verification plan
+Targeted unit-level geometry/composition checks
+Source-kit/runtime mockup audit
+Storefront typecheck and production build
+Workflow restart and clean logs
+Direct responsive preview checks
+Browser-level verification if the supported browser path is available
+Representative screenshots for every product category, both mug sides, wrap, color changes, and mobile widths
+Safe parallel work
+I can safely split read-only audits by asset pipeline, editor face propagation, and 3D/composer behavior. Implementation must then be reconciled centrally because the geometry contract is shared. I will not have parallel agents edit the same shared mockup/composer files independently.
+
+Before implementation, I need one precise decision about the 3D behavior you want removed: should the curved-product preview keep a static 3D object with only deliberate Left/Right/Wrap face switching, or should it become a non-interactive 3D render with no user orbit/drag at all?
+
+How should curved-product 3D behave after the cleanup?
+Choose 3D interaction
+Static 3D with only deliberate Left / Right / Wrap switching
+Additional comments
+Checkup the other competitors : printify.com and gearlaunch.com and see the printify how perfectly their mockup generator works easily and how accurately shows also, so dont take it as a little text. Do the whole codebase all developments plans and implementation before that do the audit for the competitors working things how they do and using what and then improve at ours or clone the system then make more working than theirs. And make sure mug has the print area available to full mug as u know we will provide sublimations printed mug so the handle their 2inch at right and 2 inch at left will just remain the mug color and other everywhere correctly it must show the photo uploaded ones with correct curveness and also curveness should work at mug upper side, below side too and make sure its blended correctly too, so u need a deep dive audit plan and implementation so do first checking using the mockupgenerator sites or print on demand sites or actually the printify site.
+BR
+brrr5
+brrr5
+I’ll do the competitor deep dive first, before changing code. I’ll inspect Printify and GearLaunch’s public mockup-generation flow and documentation, compare their treatment of curved products, printable areas, face switching, color variants, and artwork fitting, then map the useful patterns against TryNex’s current geometry/composer pipeline. I’ll return with an implementation plan for approval before making the risky shared-contract changes.
+
+The interaction decision is set: curved products will use a static 3D preview with only deliberate Left / Right / Wrap switching—no orbit drag and no auto-motion. I’m now doing the requested competitor audit across public Printify and GearLaunch materials plus direct site inspection. I’ll separate verified behavior from inference, because competitor implementation details are not fully public and I won’t pretend to know their internal code.
+
+The first research pass confirms Printify’s public workflow is template/print-area driven, not freeform photo placement: their own help materials explicitly distinguish print areas, safe zones, bleed, provider-specific dimensions, and downloadable templates. GearLaunch publicly emphasizes production-ready artwork requirements and photorealistic mockups, but its internal editor implementation is less exposed. I’m fetching the authoritative pages and capturing the public create flows next so the plan is based on observed behavior, not imitation by guesswork.
+
+You've reached your daily free quota limit. It will reset at 12:00 AM UTC.
+
+Daily time is already out.
+
+You've reached your daily free quota limit. It will reset at 12:00 AM UTC.
+
+Ok?
+
+You've reached your daily free quota limit. It will reset at 12:00 AM UTC.
+
+Mobile App
+Mobile
+Open Mobile App
