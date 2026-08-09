@@ -812,30 +812,44 @@ export function PhotoMockupMesh({
 
   return (
     <group>
-      {/* ── FRONT face ─────────────────────────────────── */}
-      <mesh geometry={planeGeo} position={[0, 0, 0.006]} castShadow receiveShadow>
-        <meshPhysicalMaterial {...baseMat(frontBillboardTex, frontTint)} />
-      </mesh>
-      {frontDesignTex && (
-        <mesh geometry={planeGeo} position={[0, 0, 0.012]}>
-          <meshStandardMaterial
-            map={frontDesignTex} transparent roughness={0.72} metalness={0}
-            depthWrite={false} alphaTest={0.02} side={THREE.FrontSide}
-          />
-        </mesh>
+      {/*
+       * Render only the active face. Rendering front and back transparent
+       * billboards at the same time lets the inactive silhouette bleed through
+       * alpha pixels, especially on dark colour assets, and the shadow map then
+       * creates the old "ghost mockup" reported in the studio. The camera rig
+       * already rotates to the selected face, so the inactive pair is not
+       * needed for the current preview.
+       */}
+      {activeFace === "front" && (
+        <>
+          <mesh geometry={planeGeo} position={[0, 0, 0.006]}>
+            <meshPhysicalMaterial {...baseMat(frontBillboardTex, frontTint)} />
+          </mesh>
+          {frontDesignTex && (
+            <mesh geometry={planeGeo} position={[0, 0, 0.012]}>
+              <meshStandardMaterial
+                map={frontDesignTex} transparent roughness={0.72} metalness={0}
+                depthWrite={false} alphaTest={0.02} side={THREE.FrontSide}
+              />
+            </mesh>
+          )}
+        </>
       )}
 
-      {/* ── BACK face (rotated 180° around Y) ──────────── */}
-      <mesh geometry={planeGeo} position={[0, 0, -0.006]} rotation={[0, Math.PI, 0]} castShadow receiveShadow>
-        <meshPhysicalMaterial {...baseMat(backBillboardTex, backTint ?? frontTint)} />
-      </mesh>
-      {backDesignTexMirrored && (
-        <mesh geometry={planeGeo} position={[0, 0, -0.012]} rotation={[0, Math.PI, 0]}>
-          <meshStandardMaterial
-            map={backDesignTexMirrored} transparent roughness={0.72} metalness={0}
-            depthWrite={false} alphaTest={0.02} side={THREE.FrontSide}
-          />
-        </mesh>
+      {activeFace === "back" && (
+        <>
+          <mesh geometry={planeGeo} position={[0, 0, -0.006]} rotation={[0, Math.PI, 0]}>
+            <meshPhysicalMaterial {...baseMat(backBillboardTex, backTint ?? frontTint)} />
+          </mesh>
+          {backDesignTexMirrored && (
+            <mesh geometry={planeGeo} position={[0, 0, -0.012]} rotation={[0, Math.PI, 0]}>
+              <meshStandardMaterial
+                map={backDesignTexMirrored} transparent roughness={0.72} metalness={0}
+                depthWrite={false} alphaTest={0.02} side={THREE.FrontSide}
+              />
+            </mesh>
+          )}
+        </>
       )}
     </group>
   );
