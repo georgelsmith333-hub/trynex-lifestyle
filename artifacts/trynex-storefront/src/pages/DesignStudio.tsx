@@ -2376,9 +2376,9 @@ export default function DesignStudio() {
         isColorPhoto: isColorPhotoCart,
         requiresTint: cartPreviewMockup.requiresTint,
       });
-      const mockupUrl = mockupCanvas.toDataURL("image/webp", 0.8);
-
+      let mockupUrl = mockupCanvas.toDataURL("image/webp", 0.8);
       // 2. Design-only UV texture (transparent bg) — used by CartViewer3D.
+
       //    Mug uses wide 2048×768 to match the studio live preview (full 360° wrap band).
       //    Garments use square 1024×1024 for front/back panel UVs.
       const frontTexCanvas = document.createElement("canvas");
@@ -2411,6 +2411,40 @@ export default function DesignStudio() {
         });
       }
       const frontTexUrl = frontTexCanvas.toDataURL("image/webp", 0.85);
+      // Prefer the server compositor for the final cart preview. It receives
+      // the transparent UV texture and applies the production render path.
+      try {
+        const toDataUrl = async (src: string) => {
+          if (src.startsWith("data:")) return src;
+          const response = await fetch(src, { signal: AbortSignal.timeout(8000) });
+          if (!response.ok) throw new Error(`mockup_fetch_${response.status}`);
+          const blob = await response.blob();
+          return await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(String(reader.result));
+            reader.onerror = () => reject(reader.error ?? new Error("mockup_read_failed"));
+            reader.readAsDataURL(blob);
+          });
+        };
+        const serverResponse = await fetch(getApiUrl("/api/mockup/render"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          signal: AbortSignal.timeout(12000),
+          body: JSON.stringify({
+            baseImage: await toDataUrl(garmentSrc),
+            artwork: frontTexCanvas.toDataURL("image/png"),
+            zone: { x: 0, y: 0, w: 400, h: 400 },
+            fit: "contain",
+            opacity: 1,
+          }),
+        });
+        if (serverResponse.ok) {
+          const renderedBlob = await serverResponse.blob();
+          mockupUrl = URL.createObjectURL(renderedBlob);
+        }
+      } catch (renderError) {
+        console.warn("[mockup-render] falling back to browser composite", renderError);
+      }
 
       // 3. Back-face design texture. Mug wrap keeps both face textures so
       //    downstream cart/admin previews can distinguish the two sides.

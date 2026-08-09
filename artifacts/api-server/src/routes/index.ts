@@ -32,6 +32,7 @@ import dbClusterRouter from "./dbCluster";
 import orderMessagesRouter from "./orderMessages";
 import notificationsRouter from "./notifications";
 import mockupsRouter from "./mockups";
+import mockupRenderRouter from "./mockupRender";
 import systemHealthRouter from "./systemHealth";
 import secretsRouter from "./secrets";
 
@@ -70,6 +71,7 @@ router.use(dbClusterRouter);
 router.use(orderMessagesRouter);
 router.use(notificationsRouter);
 router.use(mockupsRouter);
+router.use(mockupRenderRouter);
 router.use(systemHealthRouter);
 router.use(secretsRouter);
 
