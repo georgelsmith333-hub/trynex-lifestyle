@@ -359,10 +359,8 @@ export default function DesignStudio() {
   type MugMode = "side1" | "side2" | "wrap";
   const [mugMode, setMugMode] = useState<MugMode>("side1");
 
-  /** Cylindrical products open on their 3D preview; flat products stay in the editor. */
-  const [show3D, setShow3D] = useState(() =>
-    ["mug", "cap", "waterbottle"].includes(selectedProduct.category)
-  );
+  /** The customer-facing Design Studio is intentionally 2D-first for every product. */
+  const [show3D, setShow3D] = useState(false);
 
   const isMugProduct = selectedProduct.category === "mug";
 
@@ -596,7 +594,7 @@ export default function DesignStudio() {
         const p = PRODUCTS.find(x => x.id === resolvedId);
         if (p) {
           setSelectedProduct(p);
-          setShow3D(["mug", "cap", "waterbottle"].includes(p.category));
+          setShow3D(false);
         }
       }
       if (data.color && typeof (data.color as any).hex === "string" && typeof (data.color as any).name === "string") {
@@ -694,7 +692,7 @@ export default function DesignStudio() {
           if (found) {
             setSelectedProduct(found);
             setSelectedColor(found.colors[0]);
-            setShow3D(["mug", "cap", "waterbottle"].includes(found.category));
+            setShow3D(false);
           }
         }
         const urlStoreProductId = sp.get("storeProductId");
@@ -742,7 +740,7 @@ export default function DesignStudio() {
         const garmentColor = detectColorFromProduct(found);
         const price = parseFloat(String(found.discountPrice || found.price)) || 0;
         setSelectedProduct(template);
-        setShow3D(["mug", "cap", "waterbottle"].includes(template.category));
+        setShow3D(false);
         const colorMatch = template.colors.find(c => c.hex.toLowerCase() === garmentColor.toLowerCase()) ?? { name: "White", hex: garmentColor };
         setSelectedColor(colorMatch);
         setLinkedStoreProduct({ id: found.id, name: found.name, price, imageUrl: found.imageUrl ?? undefined });
@@ -889,7 +887,7 @@ export default function DesignStudio() {
       setLinkedStoreProduct(null);
       setQuantity(1);
       setActiveFace("front");
-      setShow3D(["mug", "cap", "waterbottle"].includes(prod.category));
+      setShow3D(false);
       if (prod.category !== "mug") setMugMode("side1");
     });
     forceHistoryTick(t => t + 1);
@@ -2868,22 +2866,6 @@ export default function DesignStudio() {
               {showPrintZone ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
               Print Zone
             </button>
-            {/* 3D Preview toggle — hidden on flat zones (sleeve / neck-label) */}
-            {!isFlatZone && (
-              <button
-                onClick={() => setShow3D(v => !v)}
-                className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all"
-                style={{
-                  background: show3D ? "#eff6ff" : "#f3f4f6",
-                  color: show3D ? "#1d4ed8" : "#6b7280",
-                  border: show3D ? "1.5px solid #bfdbfe" : "1.5px solid transparent",
-                }}
-                title={show3D ? "Switch back to 2D editor" : "See your design on a 3D model"}
-              >
-                <Package className="w-3 h-3" />
-                {show3D ? "2D Edit" : "3D Preview"}
-              </button>
-            )}
             {/* Add to Cart — compact on mobile */}
             <motion.button
               onClick={handleAddToCart}
@@ -5494,10 +5476,10 @@ export default function DesignStudio() {
                                 setLinkedStoreProduct(null);
                                 setQuantity(1);
                                 setActiveFace("front");
-                                setShow3D(["mug", "cap", "waterbottle"].includes(prod.category));
+                                setShow3D(false);
                               });
                               forceHistoryTick(t => t + 1);
-                              // All products now support 3D — no reset needed when switching
+                              // Keep the 2D editor active when switching products.
                               setShowProductPicker(false);
                             }}
                             className="flex flex-col rounded-2xl overflow-hidden transition-all text-left group"
