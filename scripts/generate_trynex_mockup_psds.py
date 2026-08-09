@@ -55,7 +55,7 @@ def _add_nix_python_paths() -> None:
     for pattern in preferred:
         candidates = sorted(nix.glob(pattern), key=str)
         if not candidates:
-            raise RuntimeError(f"Missing required Nix dependency matching {pattern}")
+            continue
         site = candidates[-1] / "lib" / "python3.11" / "site-packages"
         if site.exists() and str(site) not in sys.path:
             sys.path.insert(0, str(site))

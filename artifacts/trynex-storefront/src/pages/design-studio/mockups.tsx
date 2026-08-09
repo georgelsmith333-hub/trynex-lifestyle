@@ -440,12 +440,11 @@ export const BASE_BY_CATEGORY: Record<
 /**
  * Runtime catalog generated from the editable source-kit manifest.
  *
- * The PSDs stay in attached_assets as source material. The preview PNGs are
- * deliberately copied into public/mockups/source-kit so the browser can use
- * the exact color + face pair without loading PSDs. Those previews include a
- * warm-white studio background, so consumers that require an alpha silhouette
- * (3D billboards and texture overlays) use `cutoutSrc` from the reviewed
- * fallback set below.
+ * Editable PSD masters stay in attached_assets as source material. The
+ * browser deliberately uses the linked PNG preview/cutout pair because PSDs
+ * are not browser-renderable. Every source-kit resolution carries the exact
+ * master path and manifest key so export/admin tooling can round-trip the
+ * same product, color, face, and print-zone contract without guessing.
  */
 const SOURCE_KIT_COLOR_SLUGS: Record<
   DesignProduct["category"],
@@ -572,6 +571,10 @@ export interface MockupResolution {
   normalizedFrame: NormalizedMockupFrame;
   /** Source-kit previews are full studio images, not alpha cutouts. */
   isOpaquePhoto: boolean;
+  /** Repository-relative editable master generated from the same source kit. */
+  editableMasterPath?: string;
+  /** Stable source-kit document key used by export/admin tooling. */
+  sourceKitKey?: string;
   source: "source-kit" | "curated";
 }
 
@@ -821,6 +824,8 @@ export function resolveMockup(
       printZone: zones?.[face] ?? (face === "back" && product.printZoneBack ? product.printZoneBack : product.printZone),
       normalizedFrame,
       isOpaquePhoto: true,
+      editableMasterPath: `attached_assets/trynex-mockup-source-kit/psd/${stem}.psd`,
+      sourceKitKey: stem,
       source: "source-kit",
     };
   }
