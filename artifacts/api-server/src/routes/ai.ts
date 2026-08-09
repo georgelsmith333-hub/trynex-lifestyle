@@ -84,6 +84,65 @@ router.get("/ai/models", (_req: Request, res: Response) => {
 });
 
 /* ════════════════════════════════════════════════════
+   POST /api/ai/fit
+   Product-aware artwork fit planner.
+
+   This endpoint deliberately has a deterministic local fallback: fitting
+   uploaded artwork must remain reliable even when an external AI provider is
+   unavailable. Clients may provide visible subject bounds for transparent
+   artwork; the response is a normalized placement plan for the active zone.
+════════════════════════════════════════════════════ */
+router.post("/ai/fit", (req: Request, res: Response) => {
+  const ip = req.ip ?? req.socket.remoteAddress ?? "unknown";
+  if (!checkRateLimit(ip, 240)) {
+    return res.status(429).json({ error: "Too many fit requests — please wait a moment." });
+  }
+
+  const body = req.body as {
+    imageWidth?: number;
+    imageHeight?: number;
+    zoneWidth?: number;
+    zoneHeight?: number;
+    margin?: number;
+    mode?: "contain" | "cover";
+    subjectBounds?: { x?: number; y?: number; width?: number; height?: number };
+  };
+  const values = [body.imageWidth, body.imageHeight, body.zoneWidth, body.zoneHeight];
+  if (!values.every(v => typeof v === "number" && Number.isFinite(v) && v > 0)) {
+    return res.status(400).json({ error: "imageWidth, imageHeight, zoneWidth, and zoneHeight must be positive numbers." });
+  }
+
+  const imageWidth = Math.min(100_000, body.imageWidth!);
+  const imageHeight = Math.min(100_000, body.imageHeight!);
+  const zoneWidth = Math.min(100_000, body.zoneWidth!);
+  const zoneHeight = Math.min(100_000, body.zoneHeight!);
+  const margin = Math.max(0.5, Math.min(1, body.margin ?? 0.94));
+  const mode = body.mode === "cover" ? "cover" : "contain";
+  const subject = body.subjectBounds;
+  const subjectWidth = subject && Number.isFinite(subject.width) && subject.width! > 0 ? Math.min(imageWidth, subject.width!) : imageWidth;
+  const subjectHeight = subject && Number.isFinite(subject.height) && subject.height! > 0 ? Math.min(imageHeight, subject.height!) : imageHeight;
+  const widthScale = zoneWidth / subjectWidth;
+  const heightScale = zoneHeight / subjectHeight;
+  const scale = Math.max(0.01, Math.min(5, (mode === "cover" ? Math.max(widthScale, heightScale) : Math.min(widthScale, heightScale)) * margin));
+
+  return res.json({
+    provider: "deterministic-fallback",
+    aiUsed: false,
+    mode,
+    scale,
+    center: { x: 0, y: 0 },
+    subjectBounds: {
+      x: Number.isFinite(subject?.x) ? subject?.x : 0,
+      y: Number.isFinite(subject?.y) ? subject?.y : 0,
+      width: subjectWidth,
+      height: subjectHeight,
+    },
+    zone: { width: zoneWidth, height: zoneHeight },
+    margin,
+  });
+});
+
+/* ════════════════════════════════════════════════════
    POST /api/ai/reference
    Upload a reference image for img2img editing.
    Returns a public URL for Pollinations to fetch.

@@ -31,7 +31,7 @@ import {
 } from "./design-studio/mockups";
 import { composeLayers, composeGarmentMockup, composeDesignTexture, autoFixImage, type ComposerLayer } from "./design-studio/composer";
 import { StudioFirstUseGuide, StudioQualityBanner } from "./studio/v1-components/V1StudioSupport";
-import { prepareImageForPrintZone } from "./design-studio/autoFit";
+import { fitImageToPrintZone, prepareImageForPrintZone } from "./design-studio/autoFit";
 
 /* Lazy-loaded 3D preview — heavy R3F bundle only fetched when the user opens it */
 const LazyProductViewer3D = lazy(() => import("./design-studio/ProductViewer3D"));
@@ -1170,6 +1170,15 @@ export default function DesignStudio() {
     };
     img.src = src;
   }, [cropLayerId, cropPct, layers, updateLayer]);
+
+  const autoFitSelectedImage = useCallback(() => {
+    if (!selectedLayer || selectedLayer.type !== "image") return;
+    const fit = fitImageToPrintZone(selectedLayer.naturalW, selectedLayer.naturalH, pz, "contain", isCylindricalRef.current ? 0.88 : 0.94);
+    updateLayer(selectedLayer.id, layer => layer.type === "image"
+      ? { ...layer, transform: { ...layer.transform, x: 0, y: 0, scale: fit.scale, scaleX: 1, scaleY: 1, rotation: 0 } }
+      : layer, true);
+    toast({ title: "Artwork fitted", description: "Centered safely inside this product's printable area." });
+  }, [selectedLayer, pz, updateLayer, toast]);
 
   const moveLayer = useCallback((id: string, dir: -1 | 1) => {
     const idx = layers.findIndex(l => l.id === id);
@@ -4868,8 +4877,17 @@ export default function DesignStudio() {
                           />
                           <span className="text-[11px] font-semibold text-purple-700 truncate flex-1">{selectedLayer.name}</span>
                         </div>
-                        {/* Three action buttons */}
-                        <div className="grid grid-cols-3 gap-1.5">
+                        {/* One-tap recovery actions */}
+                        <div className="grid grid-cols-4 gap-1.5">
+                          <button
+                            onClick={autoFitSelectedImage}
+                            className="py-2 rounded-lg text-[10px] font-black flex flex-col items-center gap-0.5 transition-all hover:scale-[1.02]"
+                            style={{ background: "white", color: "#2563eb", border: "1.5px solid #bfdbfe" }}
+                            title="Center and fit this artwork to the active product zone"
+                          >
+                            <Maximize2 className="w-3.5 h-3.5" />
+                            Auto Fit
+                          </button>
                           <button
                             onClick={() => {
                               // Convert data URL → Blob → File so the existing
