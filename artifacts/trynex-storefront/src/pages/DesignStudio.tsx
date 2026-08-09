@@ -1718,11 +1718,11 @@ export default function DesignStudio() {
       const img = new Image();
       await new Promise<void>((res, rej) => { img.onload = () => res(); img.onerror = rej; img.src = dataUrl; });
 
-      // Auto-fit to print zone — same contain-fit formula as handleFileUpload.
-      // scale=1.0 → image width fills the zone width exactly; *0.95 adds a small safety margin.
+      // Use the same product-aware fitter as uploaded artwork so AI output and
+      // user uploads share identical print-zone geometry in real time.
       const aiPz = pzRef.current;
-      const aiAspect = (img.naturalWidth || 1024) / Math.max(img.naturalHeight || 1024, 1);
-      const aiScale = Math.min(1.0, (aiPz.h * aiAspect) / aiPz.w) * 0.95;
+      const aiFit = fitImageToPrintZone(img.naturalWidth || 1024, img.naturalHeight || 1024, aiPz, "contain", isCylindricalRef.current ? 0.88 : 0.94);
+      const aiScale = aiFit.scale;
 
       const layer: ImageLayer = {
         id: uid(), name: prompt.slice(0, 30),
@@ -2867,7 +2867,8 @@ export default function DesignStudio() {
               Print Zone
             </button>
             {/* Add to Cart — compact on mobile */}
-            <motion.button
+            <motion.button type="button"
+              onPointerDown={e => e.stopPropagation()}
               onClick={handleAddToCart}
               disabled={isAddingToCart}
               whileTap={{ scale: 0.97 }}
@@ -3420,7 +3421,7 @@ export default function DesignStudio() {
                   ref={svgRef as any}
                   viewBox={selectedProduct.viewBox}
                   className="absolute inset-0 w-full h-full"
-                  style={{ touchAction: isMobile && currentFaceLayers.length === 0 ? "pan-y" : "none", userSelect: "none" }}
+                  style={{ touchAction: isMobile ? "pan-y" : "none", userSelect: "none", WebkitUserSelect: "none", overscrollBehavior: "contain" }}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -3502,7 +3503,7 @@ export default function DesignStudio() {
                         const hiddenByCurvedPreview = isCylindrical && !!curvedDesignUrl;
                         return (
                           <g key={l.id} data-layer-id={l.id} transform={imgTransform}
-                            style={{ cursor: l.locked ? "not-allowed" : "grab" }}>
+                            style={{ cursor: l.locked ? "not-allowed" : "grab", touchAction: "none", WebkitUserSelect: "none" }}>
                             <image
                               data-layer-id={l.id}
                               href={l.src}
@@ -3519,6 +3520,7 @@ export default function DesignStudio() {
                               x={g.x} y={g.y} width={g.w} height={g.h}
                               fill="transparent"
                               pointerEvents="all"
+                              style={{ touchAction: "none" }}
                             />
                           </g>
                         );
@@ -4123,7 +4125,7 @@ export default function DesignStudio() {
 
           {/* ═══════ RIGHT: TABBED PANEL ═══════ */}
           {/* On large screens: sticky inline sidebar. Below lg: slide-up bottom sheet. */}
-          <div className={`lg:w-[340px] xl:w-[360px] shrink-0 flex flex-col lg:sticky lg:self-start
+          <div className={`relative z-50 pointer-events-auto lg:w-[340px] xl:w-[360px] shrink-0 flex flex-col lg:sticky lg:self-start
             ${mobileToolOpen
               ? 'fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl max-h-[80dvh] overflow-hidden shadow-2xl gap-2'
               : 'hidden lg:flex gap-4'}`}
@@ -4139,8 +4141,8 @@ export default function DesignStudio() {
                 <div className="w-10 h-1 rounded-full bg-gray-300 mb-2" />
                 <div className="w-full flex items-center justify-between px-4 pb-2">
                   <span className="text-sm font-black text-gray-800">Design Tools</span>
-                  <button onClick={() => setMobileToolOpen(false)}
-                    className="p-1.5 rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-100">
+                  <button type="button" onPointerDown={e => e.stopPropagation()} onClick={() => setMobileToolOpen(false)}
+                    className="p-2 rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-100 touch-manipulation">
                     <X className="w-4 h-4" />
                   </button>
                 </div>
@@ -4165,8 +4167,8 @@ export default function DesignStudio() {
                   { id: "layers" as const,    label: "Layers",    icon: LayersIcon },
                   { id: "templates" as const, label: "Templates", icon: Sparkles },
                 ].map(({ id, label, icon: Icon }) => (
-                  <button key={id} onClick={() => setActiveTab(id)}
-                    className="relative flex-1 flex flex-col items-center justify-center gap-0.5 py-2 rounded-xl text-[9px] font-black transition-all"
+                  <button type="button" key={id} onPointerDown={e => e.stopPropagation()} onClick={() => setActiveTab(id)}
+                    className="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 py-2 rounded-xl text-[9px] font-black transition-all touch-manipulation"
                     style={{
                       background: activeTab === id ? "white" : "transparent",
                       color: activeTab === id ? "#E85D04" : "#9ca3af",
@@ -4206,7 +4208,7 @@ export default function DesignStudio() {
                             style={{ background: "repeating-conic-gradient(#ccc 0% 25%,#f0f0f0 0% 50%) 0 0/16px 16px" }} />
                         </div>
                         <div>
-                          <button onClick={handleRemoveBg} disabled={isRemoving || isUpscaling}
+                          <button type="button" onPointerDown={e => e.stopPropagation()} onClick={handleRemoveBg} disabled={isRemoving || isUpscaling}
                             className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm disabled:opacity-50"
                             style={{ background: "#f3f4f6", color: "#374151", border: "1px solid #e5e7eb" }}
                             title={removeBgServerConfigured === false ? "No remove.bg API key — will use in-browser AI (slower)" : undefined}
@@ -4222,7 +4224,8 @@ export default function DesignStudio() {
                             </p>
                           )}
                         </div>
-                        <button
+                        <button type="button"
+                          onPointerDown={e => e.stopPropagation()}
                           onClick={async () => {
                             if (!selectedLayer || selectedLayer.type !== "image") return;
                             const fixed = await autoFixImage(selectedLayer.src);
@@ -4235,7 +4238,8 @@ export default function DesignStudio() {
                         >
                           <Wand2 className="w-4 h-4" /> Auto Fix
                         </button>
-                        <button
+                        <button type="button"
+                          onPointerDown={e => e.stopPropagation()}
                           onClick={() => {
                             setCropPct({ x: 0, y: 0, w: 100, h: 100 });
                             setCropLayerId(selectedLayer.id);
@@ -4562,7 +4566,7 @@ export default function DesignStudio() {
                     {selectedLayer?.type === 'image' && (
                       <div className='pt-3 border-t border-gray-100 space-y-2'>
                         <div className='text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2'>✨ AI Image Tools</div>
-                        <button onClick={handleRemoveBg} disabled={isRemoving || isUpscaling}
+                        <button type="button" onPointerDown={e => e.stopPropagation()} onClick={handleRemoveBg} disabled={isRemoving || isUpscaling}
                           className='w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm disabled:opacity-50 transition-all hover:scale-[1.01]'
                           style={{ background: 'linear-gradient(135deg,#fff4ee,#ffe4cc)', color: '#E85D04', border: '1.5px solid #fdd5b4', boxShadow: '0 2px 8px rgba(232,93,4,0.15)' }}
                         >
@@ -5284,7 +5288,8 @@ export default function DesignStudio() {
             </div>
 
             {/* Add to cart */}
-            <motion.button
+            <motion.button type="button"
+              onPointerDown={e => e.stopPropagation()}
               onClick={handleAddToCart}
               disabled={isAddingToCart}
               whileTap={{ scale: 0.97 }}
@@ -5690,6 +5695,16 @@ export default function DesignStudio() {
           </div>
         );
       })()}
+
+      {/* Persistent mobile checkout action: the editor remains usable while the CTA stays within thumb reach. */}
+      <div className="lg:hidden fixed inset-x-0 bottom-0 z-40 px-3 pt-2 pointer-events-none"
+        style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))", background: "linear-gradient(to top, rgba(250,249,246,0.98) 72%, rgba(250,249,246,0))" }}>
+        <button type="button" onPointerDown={e => e.stopPropagation()} onClick={handleAddToCart} disabled={isAddingToCart}
+          className="pointer-events-auto w-full min-h-12 rounded-2xl font-black text-white text-base flex items-center justify-center gap-2.5 disabled:opacity-60 shadow-xl touch-manipulation"
+          style={{ background: "linear-gradient(135deg,#E85D04,#FB8500)", boxShadow: "0 8px 24px rgba(232,93,4,0.35)" }}>
+          {isAddingToCart ? <><Loader2 className="w-5 h-5 animate-spin" /> Adding to Cart...</> : <><ShoppingCart className="w-5 h-5" /> Add to Cart · ৳{(quantity * studioPrice).toLocaleString()}</>}
+        </button>
+      </div>
     </div>
   );
 }
