@@ -68,7 +68,7 @@ function getSEOAdvice(topic: string): string {
 **1. Google Search Console (Most Important)**
 - Go to [search.google.com/search-console](https://search.google.com/search-console) and add \`trynexshop.com\`
 - Verify ownership by adding the Google Site Verification meta tag in Admin → Settings → SEO
-- Submit your sitemap: \`https://trynexshop.com/sitemap.xml\`
+- Submit your sitemap: \`https://trynex-lifestyle-shop.pages.dev/sitemap.xml\`
 
 **2. Brand Name Signals**
 - Your site title already includes "TryNex Lifestyle" — good ✓
@@ -86,7 +86,7 @@ function getSEOAdvice(topic: string): string {
 - Build social proof: Facebook page, Instagram with consistent branding
 
 **5. Technical**
-- Ensure \`https://trynexshop.com\` is live and fast
+- Ensure \`https://trynex-lifestyle-shop.pages.dev\` is live and fast
 - All pages have unique title tags with "TryNex" prefix
 - Mobile-friendly design ✓ (already done)
 
@@ -142,7 +142,7 @@ Your site uses Vite + React — already a fast stack. Key optimizations:
 
 **Top 5 Actions Right Now:**
 
-1. **Google Search Console** — Submit sitemap at \`https://trynexshop.com/sitemap.xml\` + verify ownership
+1. **Google Search Console** — Submit sitemap at \`https://trynex-lifestyle-shop.pages.dev/sitemap.xml\` + verify ownership
 2. **Google Business Profile** — Set up at business.google.com for local Dhaka presence
 3. **Get backlinks** — List on Bangladeshi business directories (Bikroy, Yellow Pages BD)
 4. **Blog consistently** — 1-2 posts/week on custom apparel, gift ideas, BD fashion trends

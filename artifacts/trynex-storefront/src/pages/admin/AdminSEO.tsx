@@ -315,7 +315,7 @@ export default function AdminSEO() {
                 step: 4,
                 title: "Enter the sitemap URL and submit",
                 desc: 'In the "Add a new sitemap" box enter:',
-                code: "https://trynexshop.com/sitemap.xml",
+                code: "https://trynex-lifestyle-shop.pages.dev/sitemap.xml",
               },
               {
                 step: 5,
@@ -424,7 +424,7 @@ export default function AdminSEO() {
               { slug: "custom-mug-bangladesh",      keyword: "custom mug Bangladesh",       priority: "0.8", badge: null },
               { slug: "birthday-gift-bangladesh",   keyword: "birthday gift Bangladesh",    priority: "0.8", badge: null },
             ].map(({ slug, keyword, priority, badge }) => {
-              const liveUrl = `https://trynexshop.com/${slug}`;
+              const liveUrl = `https://trynex-lifestyle-shop.pages.dev/${slug}`;
               const gscUrl  = `https://search.google.com/search-console/inspect?resource_id=https%3A%2F%2Ftrynexshop.com%2F&id=${encodeURIComponent(liveUrl)}`;
               return (
                 <div key={slug} className="flex items-center gap-3 px-6 py-3.5 hover:bg-orange-50/30 transition-colors group">

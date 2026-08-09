@@ -5,7 +5,7 @@ import { logger } from "../lib/logger";
 
 const router: IRouter = Router();
 
-const SITE_URL = process.env.API_PUBLIC_URL || "https://trynexshop.com";
+const SITE_URL = process.env.API_PUBLIC_URL || "https://trynex-lifestyle-shop.pages.dev";
 
 router.get("/sitemap.xml", async (_req, res) => {
   try {

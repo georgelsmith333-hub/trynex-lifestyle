@@ -134,7 +134,7 @@ async function sendMetaCAPIEvent(event: {
         event_time: Math.floor(Date.now() / 1000),
         event_id: event.orderId,
         action_source: "website",
-        event_source_url: event.sourceUrl || `${process.env.API_PUBLIC_URL || "https://trynexshop.com"}/checkout`,
+        event_source_url: event.sourceUrl || `${process.env.API_PUBLIC_URL || "https://trynex-lifestyle-shop.pages.dev"}/checkout`,
         user_data: {
           em: hashedEmail ? [hashedEmail] : undefined,
           ph: hashedPhone ? [hashedPhone] : undefined,

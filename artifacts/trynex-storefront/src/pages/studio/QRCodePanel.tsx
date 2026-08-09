@@ -4,7 +4,7 @@ import QRCode from "qrcode";
 import { QrCode } from "lucide-react";
 
 export function QRCodePanel() {
-  const [url, setUrl] = useState("https://trynexshop.com");
+  const [url, setUrl] = useState("https://trynex-lifestyle-shop.pages.dev");
   const [size, setSize] = useState(120);
   const [color, setColor] = useState("#111111");
   const [bg, setBg] = useState("#ffffff");

@@ -556,7 +556,7 @@ function SystemHealthWidget() {
             {actionLoading === "test-telegram" ? "Testing..." : "Test Telegram"}
           </button>
           <button
-            onClick={() => window.open('https://trynexshop.com', '_blank')}
+            onClick={() => window.open('https://trynex-lifestyle-shop.pages.dev', '_blank')}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-orange-50 text-orange-600 hover:bg-orange-100 border border-orange-100 transition-colors"
           >
             <Globe className="w-3.5 h-3.5" /> View Live Site

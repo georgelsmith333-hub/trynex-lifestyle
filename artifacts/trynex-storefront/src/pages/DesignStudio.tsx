@@ -2738,7 +2738,7 @@ export default function DesignStudio() {
             "@context": "https://schema.org",
             "@type": "WebApplication",
             "name": "TryNex Design Studio",
-            "url": "https://trynexshop.com/design-studio",
+            "url": "https://trynex-lifestyle-shop.pages.dev/design-studio",
             "description": "Free online tool to design custom T-shirts, hoodies, mugs and caps. Upload artwork, add text and order with fast delivery across Bangladesh.",
             "applicationCategory": "DesignApplication",
             "operatingSystem": "All",
@@ -2748,8 +2748,8 @@ export default function DesignStudio() {
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             "itemListElement": [
-              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://trynexshop.com/" },
-              { "@type": "ListItem", "position": 2, "name": "Design Studio", "item": "https://trynexshop.com/design-studio" },
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://trynex-lifestyle-shop.pages.dev/" },
+              { "@type": "ListItem", "position": 2, "name": "Design Studio", "item": "https://trynex-lifestyle-shop.pages.dev/design-studio" },
             ],
           },
         ]}

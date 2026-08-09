@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
@@ -32,12 +32,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 9
+          version: 11.20.0
 
       - name: Get pnpm store
         id: pnpm-cache
@@ -53,14 +53,17 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Build workspace libraries
+        run: pnpm run typecheck:libs
 
       - name: TypeScript check (all packages)
-        run: pnpm -r exec tsc --noEmit
-        continue-on-error: true
+        run: pnpm --filter @workspace/trynex-storefront run typecheck && pnpm --filter @workspace/api-server run typecheck
+        continue-on-error: false
 
       - name: Lint check
-        run: pnpm -r exec eslint --max-warnings=50 . || true
+        run: pnpm -r exec eslint --max-warnings=50 .
 
       - name: Build all packages
         run: pnpm -r build
@@ -88,15 +91,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 9
+          version: 11.20.0
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Audit vulnerabilities
-        run: pnpm audit --audit-level=high || true
+        run: pnpm audit --audit-level=high

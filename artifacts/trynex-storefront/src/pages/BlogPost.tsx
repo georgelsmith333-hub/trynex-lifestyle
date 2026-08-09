@@ -399,7 +399,7 @@ export default function BlogPost() {
     </div>
   );
 
-  const pageUrl = `https://trynexshop.com/blog/${post.slug}`;
+  const pageUrl = `https://trynex-lifestyle-shop.pages.dev/blog/${post.slug}`;
 
   const faqEntries = extractFaqSchema(post.content, isHtmlContent);
 
@@ -419,7 +419,7 @@ export default function BlogPost() {
       "publisher": {
         "@type": "Organization",
         "name": "TryNex Lifestyle",
-        "logo": { "@type": "ImageObject", "url": "https://trynexshop.com/logo.png" },
+        "logo": { "@type": "ImageObject", "url": "https://trynex-lifestyle-shop.pages.dev/logo.png" },
       },
       "image": post.imageUrl || undefined,
       "url": pageUrl,
@@ -430,8 +430,8 @@ export default function BlogPost() {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://trynexshop.com/" },
-        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://trynexshop.com/blog" },
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://trynex-lifestyle-shop.pages.dev/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://trynex-lifestyle-shop.pages.dev/blog" },
         { "@type": "ListItem", "position": 3, "name": post.title, "item": pageUrl },
       ],
     },

@@ -586,7 +586,7 @@ export default function AdminSettings() {
               Required for <strong>Google Sign-In</strong>. Get it from{" "}
               <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" className="text-orange-500 underline">console.cloud.google.com</a>{" "}
               → Create OAuth 2.0 Client ID → Web Application.
-              Add <strong>https://trynexshop.com</strong> as an Authorized JavaScript Origin.
+              Add <strong>https://trynex-lifestyle-shop.pages.dev</strong> as an Authorized JavaScript Origin.
             </p>
           </Field>
           <Field label="Facebook App ID" full>
@@ -787,7 +787,7 @@ export default function AdminSettings() {
             <p className="text-xs text-gray-400 mt-1">Comma-separated. Modern Google ignores these but Bing & Yandex still use them.</p>
           </Field>
           <Field label="Default Social Share Image (URL)" full>
-            <input {...register("seoOgImage")} className={inputClass} style={inputStyle} placeholder="https://trynexshop.com/og.jpg" />
+            <input {...register("seoOgImage")} className={inputClass} style={inputStyle} placeholder="https://trynex-lifestyle-shop.pages.dev/og.jpg" />
             <p className="text-xs text-gray-400 mt-1">Shown when someone shares your link on Facebook, WhatsApp, Twitter, LinkedIn. Recommended: 1200×630 PNG/JPG.</p>
           </Field>
           <Field label="Twitter / X Handle" full={false}>

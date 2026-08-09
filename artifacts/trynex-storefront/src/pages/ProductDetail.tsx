@@ -654,7 +654,7 @@ export default function ProductDetail() {
               "priceCurrency": "BDT",
               "price": product.discountPrice || product.price,
               "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-              "url": `https://trynexshop.com/product/${product.slug || product.id}`,
+              "url": `https://trynex-lifestyle-shop.pages.dev/product/${product.slug || product.id}`,
               "itemCondition": "https://schema.org/NewCondition",
               "seller": { "@type": "Organization", "name": "TryNex Lifestyle" }
             },
@@ -684,9 +684,9 @@ export default function ProductDetail() {
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             "itemListElement": [
-              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://trynexshop.com/" },
-              { "@type": "ListItem", "position": 2, "name": "Shop", "item": "https://trynexshop.com/products" },
-              { "@type": "ListItem", "position": 3, "name": product.name, "item": `https://trynexshop.com/product/${product.slug || product.id}` },
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://trynex-lifestyle-shop.pages.dev/" },
+              { "@type": "ListItem", "position": 2, "name": "Shop", "item": "https://trynex-lifestyle-shop.pages.dev/products" },
+              { "@type": "ListItem", "position": 3, "name": product.name, "item": `https://trynex-lifestyle-shop.pages.dev/product/${product.slug || product.id}` },
             ],
           },
         ]}

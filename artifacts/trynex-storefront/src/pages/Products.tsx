@@ -136,7 +136,7 @@ export default function Products() {
   }, [activeCategory, categories]);
 
   const jsonLd = useMemo(() => {
-    const origin = typeof window !== "undefined" ? window.location.origin : "https://trynexshop.com";
+    const origin = typeof window !== "undefined" ? window.location.origin : "https://trynex-lifestyle-shop.pages.dev";
     const items = [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": `${origin}/` },
       { "@type": "ListItem", "position": 2, "name": "Shop", "item": `${origin}/products` },

@@ -263,8 +263,8 @@ export default function Blog() {
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             "itemListElement": [
-              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://trynexshop.com/" },
-              { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://trynexshop.com/blog" },
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://trynex-lifestyle-shop.pages.dev/" },
+              { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://trynex-lifestyle-shop.pages.dev/blog" },
             ],
           },
         ]}

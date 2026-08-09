@@ -46,8 +46,8 @@ export default function Hampers() {
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             "itemListElement": [
-              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://trynexshop.com/" },
-              { "@type": "ListItem", "position": 2, "name": "Gift Hampers", "item": "https://trynexshop.com/hampers" },
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://trynex-lifestyle-shop.pages.dev/" },
+              { "@type": "ListItem", "position": 2, "name": "Gift Hampers", "item": "https://trynex-lifestyle-shop.pages.dev/hampers" },
             ],
           },
           ...(hampers.length > 0 ? [{
@@ -57,7 +57,7 @@ export default function Hampers() {
             "itemListElement": hampers.slice(0, 20).map((h, i) => ({
               "@type": "ListItem",
               "position": i + 1,
-              "url": `https://trynexshop.com/hampers/${h.slug}`,
+              "url": `https://trynex-lifestyle-shop.pages.dev/hampers/${h.slug}`,
               "name": h.name,
             })),
           }] : []),

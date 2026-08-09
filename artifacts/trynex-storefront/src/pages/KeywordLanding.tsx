@@ -8,7 +8,7 @@ import { ChevronDown, ChevronUp, ArrowRight, CheckCircle2, Truck, ShieldCheck, H
 import { useState } from "react";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 
-const SITE_URL = "https://trynexshop.com";
+const SITE_URL = "https://trynex-lifestyle-shop.pages.dev";
 
 interface Product {
   id: number;
