@@ -31,6 +31,7 @@ import {
 } from "./design-studio/mockups";
 import { composeLayers, composeGarmentMockup, composeDesignTexture, autoFixImage, type ComposerLayer } from "./design-studio/composer";
 import { StudioFirstUseGuide, StudioQualityBanner } from "./studio/v1-components/V1StudioSupport";
+import { prepareImageForPrintZone } from "./design-studio/autoFit";
 
 /* Lazy-loaded 3D preview — heavy R3F bundle only fetched when the user opens it */
 const LazyProductViewer3D = lazy(() => import("./design-studio/ProductViewer3D"));
@@ -1228,32 +1229,19 @@ export default function DesignStudio() {
       // Auto-fix: brighten / contrast-correct the uploaded image so logos and
       // photos look good on fabric without manual tweaking. Runs in-browser.
       const fixed = await autoFixImage(src);
-      const finalSrc = fixed.src;
-      const finalW = img.naturalWidth;
-      const finalH = img.naturalHeight;
+      // Normalize transparent exports before fitting. Many logo/PNG files are
+      // delivered on a large transparent canvas, so fitting the raw dimensions
+      // makes the visible artwork look too small inside the mockup.
+      const prepared = await prepareImageForPrintZone(fixed.src, pzRef.current, "contain", isCylindricalRef.current ? 0.88 : 0.94);
+      const finalSrc = prepared.src;
+      const finalW = prepared.naturalW;
+      const finalH = prepared.naturalH;
 
-      // Smart auto-placement: scale the image to fit within the print zone
-      // respecting both width and height, with a comfortable 80% fill.
-      // A small SAFETY_MARGIN keeps the freshly-placed image safely clear of
-      // the bleed-tolerance check so a brand-new upload never immediately
-      // shows the "extends outside print area" warning before the user has
-      // touched anything.
-      const currentPz = pzRef.current;
-      const aspect = finalW / Math.max(finalH, 1);
-      // Smart auto-fit: scale=1 means the image fills the print zone WIDTH exactly.
-      // "contain" fit — the image fills as much of the print zone as possible while
-      // keeping both dimensions fully inside the zone (no clipping).
-      //   maxScaleForWidth  = 1.0 (scale=1 → width exactly fills pz.w)
-      //   maxScaleForHeight = scale at which image height exactly equals pz.h
-      //     = pz.h / (pz.w / aspect) = (pz.h * aspect) / pz.w
-      // Take the minimum so neither dimension overflows, then apply 95% so the
-      // placed image has a tiny margin and never triggers the "outside print area" warning.
-      const maxScaleForHeight = (currentPz.h * aspect) / currentPz.w;
-      // Cylindrical products (mug, waterbottle, cap) use a tighter safety margin
-      // so the freshly-placed design is clearly inside the print zone and the
-      // curved preview renders without any clipped edges.
-      const safetyMargin = isCylindricalRef.current ? 0.88 : 0.95;
-      const initialScale = Math.min(1.0, maxScaleForHeight) * safetyMargin;
+      // The shared fitter has already trimmed transparent padding and computed
+      // the contain-fit against the active product/face print zone. Keep this
+      // value as the only placement authority so a later mockup switch cannot
+      // reintroduce generic width-only scaling.
+      const initialScale = prepared.scale;
 
       const layer: ImageLayer = {
         id: uid(), name: file.name.replace(/\.[^.]+$/, "") || "Image",
@@ -1298,6 +1286,7 @@ export default function DesignStudio() {
       // relative size that may overflow narrower zones (mug/bottle) or look tiny on
       // wider zones (t-shirt/hoodie).
       const currentFace = activeFaceRef.current;
+      const aspect = finalW / Math.max(finalH, 1);
       const containScale = (zone: PrintZone) => Math.min(1.0, (zone.h * aspect) / zone.w);
       PRODUCTS.forEach(prod => {
         if (prod.id === selectedProduct.id) return;
