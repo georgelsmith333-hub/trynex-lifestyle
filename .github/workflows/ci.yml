@@ -79,6 +79,7 @@ jobs:
           path: |
             artifacts/*/dist/
             artifacts/*/.next/
+          if-no-files-found: ignore
           retention-days: 3
 
   security-scan:
