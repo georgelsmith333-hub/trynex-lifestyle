@@ -70,9 +70,18 @@ autoInstallPeers: false
 
 onlyBuiltDependencies:
   - '@swc/core'
+  - compression
+  - core-js
   - esbuild
   - msw
+  - protobufjs
+  - sharp
   - unrs-resolver
+
+peerDependencyRules:
+  allowedVersions:
+    react: 19.1.0
+    react-dom: 19.1.0
 
 overrides:
   # replit uses linux-x64 only, we can exclude all other platforms
