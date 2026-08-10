@@ -1012,40 +1012,52 @@ export function GarmentSVG({
       <rect width={1000} height={1000} fill="url(#studio-vignette)" style={{ pointerEvents: "none" }} />
 
       {/* ── Garment render ────────────────────────────────────────────────────
-          COLOURED  → shadow-only pass (behind), then multiply-tinted photo (in front).
-                      Both use the cutout PNG: shadow-only filter emits only the
-                      shadow from the alpha channel; the tint filter blends hue onto
-                      the white studio photo, clipped to garment silhouette mask.
-          WHITE     → full product photo with drop shadow (no tint needed).
-          NEAR-BLACK → dedicated dark photo with drop shadow.
+          Strictly mutually exclusive rendering paths to prevent ghosting:
+          1. TINTED → shadow pass + multiply-tinted cutout.
+          2. OPAQUE → single opaque studio photo (no shadow, no tint).
+          3. CUTOUT → single transparent cutout with soft drop-shadow.
       ───────────────────────────────────────────────────────────────────────── */}
 
-      {/* Shadow pass for coloured garments — rendered first so it sits BEHIND the garment */}
-      {needsTint && cutoutMaskSrc && (
+      {needsTint ? (
+        <>
+          {/* Shadow pass for coloured garments — rendered first so it sits BEHIND the garment */}
+          {cutoutMaskSrc && (
+            <image
+              href={cutoutMaskSrc}
+              x={0} y={0} width={1000} height={1000}
+              preserveAspectRatio="xMidYMid meet"
+              filter="url(#garment-tint-shadow)"
+              style={{ pointerEvents: "none" }}
+            />
+          )}
+          {tintPhotoSrc && (
+            <image
+              key={tintPhotoSrc}
+              href={tintPhotoSrc}
+              x={0} y={0} width={1000} height={1000}
+              preserveAspectRatio="xMidYMid meet"
+              filter="url(#garment-color-tint)"
+              className="garment-img"
+              style={{ pointerEvents: "none" }}
+            />
+          )}
+        </>
+      ) : resolvedMockup.photoKind === "opaque-photo" ? (
+        /* Case 2: Opaque photo (white/black/exact-color source-kit). Render ONLY the photo. */
         <image
-          href={cutoutMaskSrc}
+          key={resolvedMockup.photoSrc}
+          href={resolvedMockup.photoSrc}
           x={0} y={0} width={1000} height={1000}
           preserveAspectRatio="xMidYMid meet"
-          filter="url(#garment-tint-shadow)"
-          style={{ pointerEvents: "none" }}
-        />
-      )}
-
-      {needsTint && tintPhotoSrc ? (
-        <image
-          key={tintPhotoSrc}
-          href={tintPhotoSrc}
-          x={0} y={0} width={1000} height={1000}
-          preserveAspectRatio="xMidYMid meet"
-          filter="url(#garment-color-tint)"
           className="garment-img"
           style={{ pointerEvents: "none" }}
         />
       ) : (
+        /* Case 3: Transparent cutout (non-tinted white/light). Render cutout + shadow. */
         <g filter={shadowFilter}>
           <image
-            key={imageSrc}
-            href={imageSrc}
+            key={resolvedMockup.cutoutSrc}
+            href={resolvedMockup.cutoutSrc}
             x={0} y={0} width={1000} height={1000}
             preserveAspectRatio="xMidYMid meet"
             className="garment-img"
@@ -1126,35 +1138,12 @@ export function FlatZoneSVG({
         )}
       </defs>
 
-      {/* Canvas background:
-          • dark studio (#1C1C1E) for white and mid-range garments (they pop with contrast)
-          • warm light (#EAE8E4) for near-black garments (dark silhouette needs light bg) */}
+      {/* Canvas background: Clean white studio for all flat zones. */}
       <rect width={1000} height={1000} fill={canvasBg} />
-      {garmentPhotoSrc ? (
-        useTint ? (
-          /* Mid-range colour (navy, red, sky-blue, etc.) — full multiply-tint.
-             Matches GarmentSVG so sleeve zone colour is identical to the main view. */
-          <image
-            href={garmentPhotoSrc}
-            x={0} y={0} width={1000} height={1000}
-            preserveAspectRatio="xMidYMid meet"
-            filter="url(#flat-color-tint)"
-            style={{ pointerEvents: "none" }}
-          />
-        ) : (
-          /* White/light OR near-black garment — show the photo as-is at high opacity.
-             For white: transparent cutout floats on dark studio canvas.
-             For near-black: dark cutout photo (passed by DesignStudio) floats on warm
-             light canvas — silhouette clearly visible, no tint multiplication. */
-          <image
-            href={garmentPhotoSrc}
-            x={0} y={0} width={1000} height={1000}
-            preserveAspectRatio="xMidYMid meet"
-            opacity={mockup.isOpaquePhoto ? 1 : 0.92}
-            style={{ pointerEvents: "none" }}
-          />
-        )
-      ) : (
+
+      {/* Flat zones (sleeve, neck) show a blank template canvas.
+          The garment photo is removed to provide a clean, focused editing surface. */}
+      {!garmentPhotoSrc && (
         <rect width={1000} height={1000} fill="#d4d0ca" />
       )}
 

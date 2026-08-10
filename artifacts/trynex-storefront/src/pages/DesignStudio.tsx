@@ -3417,7 +3417,7 @@ export default function DesignStudio() {
                   </AnimatePresence>
                 )}
                 <motion.svg
-                  key={`${selectedProduct.id}-${isMugProduct ? mugMode : activeFace}`}
+                  key={`${selectedProduct.id}-${selectedColor.hex}-${isMugProduct ? mugMode : activeFace}`}
                   ref={svgRef as any}
                   viewBox={selectedProduct.viewBox}
                   className="absolute inset-0 w-full h-full"
@@ -3559,7 +3559,7 @@ export default function DesignStudio() {
                             paintOrder={l.strokeWidth ? "stroke" : undefined}
                             transform={`rotate(${l.transform.rotation}, ${g.cx}, ${g.cy})`}
                             filter={shadowFilterId ? `url(#${shadowFilterId})` : undefined}
-                            style={{ cursor: l.locked ? "not-allowed" : "grab", userSelect: "none" }}
+                            style={{ cursor: l.locked ? "not-allowed" : "grab", userSelect: "none", WebkitUserSelect: "none", touchAction: "none" }}
                           >{l.text}</text>
                         </g>
                       );
@@ -4574,8 +4574,8 @@ export default function DesignStudio() {
                             ? <><Loader2 className='w-4 h-4 animate-spin' /> Removing background...</>
                             : <><Scissors className='w-4 h-4' /> Remove Background</>}
                         </button>
-                        <button onClick={handleUpscale} disabled={isRemoving || isUpscaling}
-                          className='w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm disabled:opacity-50 transition-all hover:scale-[1.01]'
+                        <button type="button" onPointerDown={e => e.stopPropagation()} onClick={handleUpscale} disabled={isRemoving || isUpscaling}
+                          className='w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm disabled:opacity-50 transition-all hover:scale-[1.01] touch-manipulation'
                           style={{ background: 'linear-gradient(135deg,#FEF3C7,#FDE68A)', color: '#92400E', border: '1.5px solid #FCD34D', boxShadow: '0 2px 8px rgba(146,64,14,0.15)' }}
                         >
                           {isUpscaling
@@ -4710,35 +4710,34 @@ export default function DesignStudio() {
                               <div className="text-[11px] font-bold text-gray-500 mb-1.5">Position &amp; Fit</div>
                               <div className="flex gap-1.5">
                                 <button
+                                  type="button" onPointerDown={e => e.stopPropagation()}
                                   title="Center in print area"
                                   onClick={() => updateLayer(selectedLayer.id, l => ({ ...l, transform: { ...l.transform, x: 0, y: 0 } }), true)}
-                                  className="flex-1 py-1.5 rounded-lg text-[11px] font-bold border transition-all hover:border-orange-300 hover:text-orange-600"
+                                  className="flex-1 py-1.5 rounded-lg text-[11px] font-bold border transition-all hover:border-orange-300 hover:text-orange-600 touch-manipulation"
                                   style={{ background: "white", borderColor: "#e5e7eb", color: "#6b7280" }}
                                 >
                                   Center
                                 </button>
                                 <button
-                                  title="Fit to print area — scales design to fill 90% of the print zone"
+                                  type="button" onPointerDown={e => e.stopPropagation()}
+                                  title="Fit to print area — scales design to fill the print zone"
                                   onClick={() => {
-                                    const imgL = selectedLayer as ImageLayer;
-                                    const aspect = imgL.naturalW / Math.max(imgL.naturalH, 1);
-                                    const fitScale = Math.min(0.90, (pz.h * 0.90 * aspect) / pz.w);
-                                    updateLayer(selectedLayer.id, l => ({ ...l, transform: { ...l.transform, scale: fitScale, x: 0, y: 0 } }), true);
+                                    const fit = fitImageToPrintZone(selectedLayer.naturalW, selectedLayer.naturalH, pz, "contain", isCylindrical ? 0.88 : 0.94);
+                                    updateLayer(selectedLayer.id, l => ({ ...l, transform: { ...l.transform, scale: fit.scale, x: 0, y: 0 } }), true);
                                   }}
-                                  className="flex-1 py-1.5 rounded-lg text-[11px] font-bold border transition-all hover:border-orange-300 hover:text-orange-600"
+                                  className="flex-1 py-1.5 rounded-lg text-[11px] font-bold border transition-all hover:border-orange-300 hover:text-orange-600 touch-manipulation"
                                   style={{ background: "white", borderColor: "#e5e7eb", color: "#6b7280" }}
                                 >
                                   Fit
                                 </button>
                                 <button
+                                  type="button" onPointerDown={e => e.stopPropagation()}
                                   title="Fill print area — scales design to cover the full print zone (may crop edges)"
                                   onClick={() => {
-                                    const imgL = selectedLayer as ImageLayer;
-                                    const aspect = imgL.naturalW / Math.max(imgL.naturalH, 1);
-                                    const fillScale = Math.max(1.0, (pz.h * aspect) / pz.w);
-                                    updateLayer(selectedLayer.id, l => ({ ...l, transform: { ...l.transform, scale: fillScale, x: 0, y: 0 } }), true);
+                                    const fit = fitImageToPrintZone(selectedLayer.naturalW, selectedLayer.naturalH, pz, "cover", 1.0);
+                                    updateLayer(selectedLayer.id, l => ({ ...l, transform: { ...l.transform, scale: fit.scale, x: 0, y: 0 } }), true);
                                   }}
-                                  className="flex-1 py-1.5 rounded-lg text-[11px] font-bold border transition-all hover:border-orange-300 hover:text-orange-600"
+                                  className="flex-1 py-1.5 rounded-lg text-[11px] font-bold border transition-all hover:border-orange-300 hover:text-orange-600 touch-manipulation"
                                   style={{ background: "white", borderColor: "#e5e7eb", color: "#6b7280" }}
                                 >
                                   Fill
