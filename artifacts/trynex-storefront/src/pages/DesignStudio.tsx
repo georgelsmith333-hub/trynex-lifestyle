@@ -326,6 +326,21 @@ export default function DesignStudio() {
   );
   const [activeTab, setActiveTab] = useState<RightTab>("upload");
 
+  const switchTab = useCallback((tab: RightTab) => {
+    setActiveTab(tab);
+    if (isMobile) {
+      setMobileToolOpen(true);
+    } else {
+      // On desktop, ensure the sidebar is visible and highlight it briefly
+      const panel = document.querySelector('[data-testid="studio-right-panel"]');
+      if (panel) {
+        panel.scrollTo({ top: 0, behavior: "smooth" });
+        panel.classList.add('ring-4', 'ring-orange-500/20', 'ring-offset-2');
+        setTimeout(() => panel.classList.remove('ring-4', 'ring-orange-500/20', 'ring-offset-2'), 1000);
+      }
+    }
+  }, [isMobile]);
+
   /* Product catalog picker */
   const [showProductPicker, setShowProductPicker] = useState(false);
   const [productSearch, setProductSearch] = useState("");
@@ -2883,11 +2898,11 @@ export default function DesignStudio() {
         </div>
       </div>
 
-      <div className="flex-1 container-wide mx-auto w-full px-3 sm:px-4 lg:px-6 py-4 sm:py-6 pb-28 lg:pb-6">
-        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
+      <div className="flex-1 container-wide mx-auto w-full px-3 sm:px-4 lg:px-8 py-4 sm:py-6 pb-32 lg:pb-8">
+        <div className="flex flex-col lg:flex-row gap-6 xl:gap-10">
 
           {/* ═══════ LEFT: MOCKUP CANVAS ═══════ */}
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 space-y-6">
             {/* Product selector bar */}
             <div className="flex items-center gap-2 mb-4">
               {/* Current product card */}
@@ -3720,56 +3735,59 @@ export default function DesignStudio() {
                 </motion.svg>
 
                 {/* ── MAIN HORIZONTAL TOOLBAR ── */}
-                {!isMobile && (
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1 p-1.5 rounded-2xl border border-gray-200 shadow-xl z-30"
-                    style={{ background: "rgba(255,255,255,0.9)", backdropFilter: "blur(12px)" }}>
-                    <button onClick={() => fileInputRef.current?.click()} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Upload Image">
-                      <Upload className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
-                      <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600">Upload</span>
-                    </button>
-                    <button onClick={() => {
-                        const layer: TextLayer = {
-                          id: uid(), name: "New text", type: "text", visible: true, locked: false,
-                          transform: { ...ZERO_TRANSFORM },
-                          text: "Your text", fontFamily: FONT_FAMILIES[0].value,
-                          fontWeight: 700, fontStyle: "normal", fontSize: 40, color: "#111111",
-                        };
-                        addLayer(layer);
-                        setActiveTab("text");
-                      }} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Add Text">
-                      <Type className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
-                      <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600">Text</span>
-                    </button>
-                    <button onClick={() => setActiveTab("templates")} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Templates">
-                      <Sparkles className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
-                      <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600">Templates</span>
-                    </button>
-                    <button onClick={() => setActiveTab("layers")} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Layers">
-                      <LayersIcon className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
-                      <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600">Layers</span>
-                    </button>
-                    <div className="w-px h-8 bg-gray-200 mx-1" />
-                    <button onClick={undo} disabled={!canUndo} className="p-2 rounded-xl hover:bg-white transition-colors disabled:opacity-30 group" title="Undo">
-                      <Undo2 className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
-                    </button>
-                    <button onClick={redo} disabled={!canRedo} className="p-2 rounded-xl hover:bg-white transition-colors disabled:opacity-30 group" title="Redo">
-                      <Redo2 className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
-                    </button>
-                    <div className="w-px h-8 bg-gray-200 mx-1" />
-                    <button onClick={handleExportPNG} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Export PNG (high quality)">
-                      <Download className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
-                      <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600">PNG</span>
-                    </button>
-                    <button onClick={handleExportJPG} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Export JPG (compressed)">
-                      <Download className="w-4 h-4 text-gray-500 group-hover:text-blue-500" />
-                      <span className="text-[10px] font-bold text-gray-500 group-hover:text-blue-600">JPG</span>
-                    </button>
-                    <button onClick={clearDraft} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-red-50 transition-colors group" title="Clear All">
-                      <Trash2 className="w-4 h-4 text-gray-400 group-hover:text-red-500" />
-                      <span className="text-[10px] font-bold text-gray-400 group-hover:text-red-600">Clear</span>
-                    </button>
-                  </div>
-                )}
+                <div className={`absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1 p-1.5 rounded-2xl border border-gray-200 shadow-xl z-30 transition-all duration-300
+                  ${isMobile ? 'scale-90 opacity-90' : 'scale-100 opacity-100'}`}
+                  style={{ background: "rgba(255,255,255,0.92)", backdropFilter: "blur(12px)" }}>
+                  <button onClick={() => fileInputRef.current?.click()} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Upload Image">
+                    <Upload className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
+                    {!isMobile && <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600">Upload</span>}
+                  </button>
+                  <button onClick={() => {
+                      const layer: TextLayer = {
+                        id: uid(), name: "New text", type: "text", visible: true, locked: false,
+                        transform: { ...ZERO_TRANSFORM },
+                        text: "Your text", fontFamily: FONT_FAMILIES[0].value,
+                        fontWeight: 700, fontStyle: "normal", fontSize: 40, color: "#111111",
+                      };
+                      addLayer(layer);
+                      switchTab("text");
+                    }} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Add Text">
+                    <Type className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
+                    {!isMobile && <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600">Text</span>}
+                  </button>
+                  <button onClick={() => switchTab("templates")} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Templates">
+                    <Sparkles className={`w-4 h-4 ${activeTab === "templates" ? "text-orange-500" : "text-gray-500"} group-hover:text-orange-500`} />
+                    {!isMobile && <span className={`text-[10px] font-bold ${activeTab === "templates" ? "text-orange-600" : "text-gray-500"} group-hover:text-orange-600`}>Templates</span>}
+                  </button>
+                  <button onClick={() => switchTab("layers")} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Layers">
+                    <LayersIcon className={`w-4 h-4 ${activeTab === "layers" ? "text-orange-500" : "text-gray-500"} group-hover:text-orange-500`} />
+                    {!isMobile && <span className={`text-[10px] font-bold ${activeTab === "layers" ? "text-orange-600" : "text-gray-500"} group-hover:text-orange-600`}>Layers</span>}
+                  </button>
+                  <div className="w-px h-8 bg-gray-200 mx-1" />
+                  <button onClick={undo} disabled={!canUndo} className="p-2 rounded-xl hover:bg-white transition-colors disabled:opacity-30 group" title="Undo">
+                    <Undo2 className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
+                  </button>
+                  <button onClick={redo} disabled={!canRedo} className="p-2 rounded-xl hover:bg-white transition-colors disabled:opacity-30 group" title="Redo">
+                    <Redo2 className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
+                  </button>
+                  {!isMobile && (
+                    <>
+                      <div className="w-px h-8 bg-gray-200 mx-1" />
+                      <button onClick={handleExportPNG} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Export PNG (high quality)">
+                        <Download className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
+                        <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600">PNG</span>
+                      </button>
+                      <button onClick={handleExportJPG} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Export JPG (compressed)">
+                        <Download className="w-4 h-4 text-gray-500 group-hover:text-blue-500" />
+                        <span className="text-[10px] font-bold text-gray-500 group-hover:text-blue-600">JPG</span>
+                      </button>
+                      <button onClick={clearDraft} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-red-50 transition-colors group" title="Clear All">
+                        <Trash2 className="w-4 h-4 text-gray-400 group-hover:text-red-500" />
+                        <span className="text-[10px] font-bold text-gray-400 group-hover:text-red-600">Clear</span>
+                      </button>
+                    </>
+                  )}
+                </div>
 
                 {/* Empty state — transparent overlay so garment stays fully visible */}
                 {layers.length === 0 && (
@@ -3807,28 +3825,28 @@ export default function DesignStudio() {
                     >
                       <button
                         onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all hover:scale-105 active:scale-95"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all hover:scale-105 active:scale-95 touch-manipulation"
                         style={{ background: "rgba(255,255,255,0.92)", color: "#374151", boxShadow: "0 2px 8px rgba(0,0,0,0.14)", backdropFilter: "blur(6px)" }}
                       >
                         <Upload className="w-3 h-3" /> Upload
                       </button>
                       <button
-                        onClick={(e) => { e.stopPropagation(); setActiveTab("text"); setMobileToolOpen(true); }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all hover:scale-105 active:scale-95"
+                        onClick={(e) => { e.stopPropagation(); switchTab("text"); }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all hover:scale-105 active:scale-95 touch-manipulation"
                         style={{ background: "rgba(255,255,255,0.92)", color: "#374151", boxShadow: "0 2px 8px rgba(0,0,0,0.14)", backdropFilter: "blur(6px)" }}
                       >
                         <Type className="w-3 h-3" /> Text
                       </button>
                       <button
-                        onClick={(e) => { e.stopPropagation(); setActiveTab("ai"); setMobileToolOpen(true); }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all hover:scale-105 active:scale-95"
+                        onClick={(e) => { e.stopPropagation(); switchTab("ai"); }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all hover:scale-105 active:scale-95 touch-manipulation"
                         style={{ background: "linear-gradient(135deg,#E85D04,#FB8500)", color: "white", boxShadow: "0 2px 12px rgba(232,93,4,0.4)" }}
                       >
                         <Wand2 className="w-3 h-3" /> AI Art
                       </button>
                       <button
-                        onClick={(e) => { e.stopPropagation(); setActiveTab("templates"); setMobileToolOpen(true); }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all hover:scale-105 active:scale-95"
+                        onClick={(e) => { e.stopPropagation(); switchTab("templates"); }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all hover:scale-105 active:scale-95 touch-manipulation"
                         style={{ background: "rgba(255,255,255,0.92)", color: "#374151", boxShadow: "0 2px 8px rgba(0,0,0,0.14)", backdropFilter: "blur(6px)" }}
                       >
                         <Sparkles className="w-3 h-3" /> Templates
@@ -4125,9 +4143,11 @@ export default function DesignStudio() {
 
           {/* ═══════ RIGHT: TABBED PANEL ═══════ */}
           {/* On large screens: sticky inline sidebar. Below lg: slide-up bottom sheet. */}
-          <div className={`relative z-50 pointer-events-auto lg:w-[340px] xl:w-[360px] shrink-0 flex flex-col lg:sticky lg:self-start
+          <div
+            data-testid="studio-right-panel"
+            className={`relative z-50 pointer-events-auto lg:w-[340px] xl:w-[380px] shrink-0 flex flex-col lg:sticky lg:self-start transition-all duration-300
             ${mobileToolOpen
-              ? 'fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl max-h-[80dvh] overflow-hidden shadow-2xl gap-2'
+              ? 'fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl max-h-[85dvh] overflow-hidden shadow-2xl gap-2'
               : 'hidden lg:flex gap-4'}`}
             data-lenis-prevent
             style={mobileToolOpen
@@ -5174,8 +5194,15 @@ export default function DesignStudio() {
                 {/* ── TEMPLATES TAB ── */}
                 {activeTab === "templates" && (
                   <motion.div key="templates" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="p-4">
-                    <p className="text-[11px] text-gray-500 mb-3">Pick a starter — adds editable text layers you can tweak.</p>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <h3 className="text-sm font-black text-gray-800">Design Starters</h3>
+                        <p className="text-[10px] text-gray-500">Tap to add editable layouts</p>
+                      </div>
+                      <Sparkles className="w-4 h-4 text-orange-400" />
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3">
                       {TEMPLATES.map(t => (
                         <button key={t.id}
                           onClick={() => {
@@ -5183,12 +5210,20 @@ export default function DesignStudio() {
                             commitLayers([...layers, ...newLayers]);
                             setSelectedLayerId(newLayers[newLayers.length - 1].id);
                             setActiveTab("layers");
+                            toast({ title: "Template applied", description: `${t.name} added to your design.` });
                           }}
-                          className="aspect-square rounded-xl flex flex-col items-center justify-center p-3 text-center border transition-all hover:border-orange-300 hover:shadow-sm"
-                          style={{ background: "#fafaf8", borderColor: "#eee" }}
+                          className="group relative aspect-square rounded-2xl flex flex-col items-center justify-center p-4 text-center border-2 transition-all hover:border-orange-400 hover:shadow-md active:scale-95"
+                          style={{ background: "white", borderColor: "#f3f4f6" }}
                         >
-                          <div className="text-base font-black text-gray-800 leading-tight whitespace-pre">{t.preview}</div>
-                          <div className="text-[10px] mt-2 text-gray-500 font-semibold">{t.name}</div>
+                          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Plus className="w-3 h-3 text-orange-500" />
+                          </div>
+                          <div className="flex-1 flex items-center justify-center">
+                            <div className="text-lg font-black text-gray-900 leading-tight whitespace-pre transform group-hover:scale-110 transition-transform">{t.preview}</div>
+                          </div>
+                          <div className="w-full mt-3 pt-2 border-t border-gray-50">
+                            <div className="text-[10px] text-gray-600 font-bold truncate">{t.name}</div>
+                          </div>
                         </button>
                       ))}
                     </div>
@@ -5254,51 +5289,52 @@ export default function DesignStudio() {
               </div>
             </div>
 
-            {/* Quantity + price summary */}
-            <div
-              className="rounded-2xl px-4 py-3 flex items-center justify-between gap-3 shrink-0"
-              style={{ background: "white", border: "1px solid #e9e5e0" }}
-            >
-              <div className="min-w-0">
-                <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-0.5">
-                  {quantity > 1 ? `${quantity} × ৳${studioPrice.toLocaleString()}` : `৳${studioPrice.toLocaleString()} each`}
+            {/* Action Bar: Quantity + Add to Cart */}
+            <div className="sticky bottom-0 lg:relative bg-[#faf9f6] lg:bg-transparent -mx-4 px-4 py-4 lg:mx-0 lg:px-0 lg:py-0 space-y-3 z-30">
+              <div
+                className="rounded-2xl px-4 py-3 flex items-center justify-between gap-3 shrink-0 shadow-sm"
+                style={{ background: "white", border: "1px solid #e9e5e0" }}
+              >
+                <div className="min-w-0">
+                  <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-0.5">
+                    {quantity > 1 ? `${quantity} × ৳${studioPrice.toLocaleString()}` : `৳${studioPrice.toLocaleString()} each`}
+                  </div>
+                  <div className="text-sm font-black text-gray-900">
+                    Subtotal: <span className="text-orange-500">৳{(quantity * studioPrice).toLocaleString()}</span>
+                  </div>
                 </div>
-                <div className="text-sm font-black text-gray-900">
-                  Subtotal: <span className="text-orange-500">৳{(quantity * studioPrice).toLocaleString()}</span>
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                    disabled={quantity <= 1}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-lg text-gray-700 disabled:opacity-40 transition-colors hover:bg-orange-50 hover:text-orange-600 touch-manipulation"
+                    style={{ background: "#f3f4f6", border: "1px solid #e5e7eb" }}
+                    aria-label="Decrease quantity"
+                  >−</button>
+                  <span className="text-sm font-black text-gray-800 w-6 text-center">{quantity}</span>
+                  <button
+                    onClick={() => setQuantity(q => Math.min(50, q + 1))}
+                    disabled={quantity >= 50}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-lg text-gray-700 disabled:opacity-40 transition-colors hover:bg-orange-50 hover:text-orange-600 touch-manipulation"
+                    style={{ background: "#f3f4f6", border: "1px solid #e5e7eb" }}
+                    aria-label="Increase quantity"
+                  >+</button>
                 </div>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <button
-                  onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                  disabled={quantity <= 1}
-                  className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-lg text-gray-700 disabled:opacity-40 transition-colors hover:bg-orange-50 hover:text-orange-600"
-                  style={{ background: "#f3f4f6", border: "1px solid #e5e7eb" }}
-                  aria-label="Decrease quantity"
-                >−</button>
-                <span className="text-sm font-black text-gray-800 w-6 text-center">{quantity}</span>
-                <button
-                  onClick={() => setQuantity(q => Math.min(50, q + 1))}
-                  disabled={quantity >= 50}
-                  className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-lg text-gray-700 disabled:opacity-40 transition-colors hover:bg-orange-50 hover:text-orange-600"
-                  style={{ background: "#f3f4f6", border: "1px solid #e5e7eb" }}
-                  aria-label="Increase quantity"
-                >+</button>
-              </div>
-            </div>
 
-            {/* Add to cart */}
-            <motion.button type="button"
-              onPointerDown={e => e.stopPropagation()}
-              onClick={handleAddToCart}
-              disabled={isAddingToCart}
-              whileTap={{ scale: 0.97 }}
-              className="w-full py-4 rounded-2xl font-black text-white text-base flex items-center justify-center gap-2.5 disabled:opacity-60 shrink-0"
-              style={{ background: "linear-gradient(135deg,#E85D04,#FB8500)", boxShadow: "0 8px 24px rgba(232,93,4,0.35)" }}
-            >
-              {isAddingToCart
-                ? <><Loader2 className="w-5 h-5 animate-spin" /> Adding to Cart...</>
-                : <><ShoppingCart className="w-5 h-5" /> Add Custom {selectedProduct.name} to Cart</>}
-            </motion.button>
+              <motion.button type="button"
+                onPointerDown={e => e.stopPropagation()}
+                onClick={handleAddToCart}
+                disabled={isAddingToCart}
+                whileTap={{ scale: 0.98 }}
+                className="w-full py-4 rounded-2xl font-black text-white text-base flex items-center justify-center gap-2.5 disabled:opacity-60 shadow-lg touch-manipulation"
+                style={{ background: "linear-gradient(135deg,#E85D04,#FB8500)", boxShadow: "0 8px 24px rgba(232,93,4,0.35)" }}
+              >
+                {isAddingToCart
+                  ? <><Loader2 className="w-5 h-5 animate-spin" /> Adding to Cart...</>
+                  : <><ShoppingCart className="w-5 h-5" /> Add to Cart</>}
+              </motion.button>
+            </div>
 
             {/* Trust micro-copy — below the Add to Cart CTA */}
             <div className="flex items-center justify-center gap-2 text-[10px] font-semibold text-gray-400 -mt-1">
