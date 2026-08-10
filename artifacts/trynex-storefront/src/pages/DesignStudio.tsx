@@ -325,6 +325,21 @@ export default function DesignStudio() {
     PRODUCTS[0].colors[0]
   );
   const [activeTab, setActiveTab] = useState<RightTab>("upload");
+  const [mobileToolOpen, setMobileToolOpen] = useState(false);
+  const [mobileTab, setMobileTab] = useState<"product" | "color" | "edit">("product");
+
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === "undefined") return false;
+    // The editor becomes a bottom-sheet workflow below the large breakpoint.
+    // Keeping this at 1024px prevents a tablet from being squeezed between
+    // the canvas and the desktop tools sidebar.
+    return window.innerWidth < 1024;
+  });
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", onResize, { passive: true });
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   const switchTab = useCallback((tab: RightTab) => {
     setActiveTab(tab);
@@ -345,22 +360,6 @@ export default function DesignStudio() {
   const [showProductPicker, setShowProductPicker] = useState(false);
   const [productSearch, setProductSearch] = useState("");
   const [productPickerCategory, setProductPickerCategory] = useState<"all" | DesignProduct["category"]>("all");
-
-  const [mobileToolOpen, setMobileToolOpen] = useState(false);
-  const [mobileTab, setMobileTab] = useState<"product" | "color" | "edit">("product");
-
-  const [isMobile, setIsMobile] = useState(() => {
-    if (typeof window === "undefined") return false;
-    // The editor becomes a bottom-sheet workflow below the large breakpoint.
-    // Keeping this at 1024px prevents a tablet from being squeezed between
-    // the canvas and the desktop tools sidebar.
-    return window.innerWidth < 1024;
-  });
-  useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth < 1024);
-    window.addEventListener("resize", onResize, { passive: true });
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
 
   const [activeFace, setActiveFace] = useState<Face>("front");
 
