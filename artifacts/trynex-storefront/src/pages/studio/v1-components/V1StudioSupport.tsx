@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { ChevronRight, Eye, ShieldAlert, Sparkles, X } from "lucide-react";
 
 type GuidanceStep = {

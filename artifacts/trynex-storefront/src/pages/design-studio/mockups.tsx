@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════
    GARMENT MOCKUPS — photographic templates
    All products use a unified 1000×1000 coordinate space.
-   The mockup PNGs live in /public/mockups/<id>-<face>.png
+   The mockup PNGs live in /public/mockups/<id>-?face?.png
 ════════════════════════════════════════════════════════ */
 
 // ── T-Shirt: unified studio photos from normalized/ folder ──

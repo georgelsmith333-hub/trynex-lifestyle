@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect, useMemo, lazy, Suspense } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef, lazy, Suspense } from "react";
 import { flushSync } from "react-dom";
 import { useLocation } from "wouter";
 import { Navbar } from "@/components/layout/Navbar";
@@ -311,6 +311,16 @@ function detectColorFromProduct(prod: any): string {
 }
 
 export default function DesignStudio() {
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.innerWidth < 1024;
+  });
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const [, navigate] = useLocation();
   const { addToCart } = useCartActions();
   const settings = useSiteSettings();
@@ -328,25 +338,9 @@ export default function DesignStudio() {
   const [mobileToolOpen, setMobileToolOpen] = useState(false);
   const [mobileTab, setMobileTab] = useState<"product" | "color" | "edit">("product");
 
-  const [isMobile, setIsMobile] = useState(() => {
-    if (typeof window === "undefined") return false;
-    // The editor becomes a bottom-sheet workflow below the large breakpoint.
-    // Keeping this at 1024px prevents a tablet from being squeezed between
-    // the canvas and the desktop tools sidebar.
-    return window.innerWidth < 1024;
-  });
+  // Auto-scroll the tools panel when the active tab changes on desktop
   useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth < 1024);
-    window.addEventListener("resize", onResize, { passive: true });
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-
-  const switchTab = useCallback((tab: RightTab) => {
-    setActiveTab(tab);
-    if (isMobile) {
-      setMobileToolOpen(true);
-    } else {
-      // On desktop, ensure the sidebar is visible and highlight it briefly
+    if (!isMobile) {
       const panel = document.querySelector('[data-testid="studio-right-panel"]');
       if (panel) {
         panel.scrollTo({ top: 0, behavior: "smooth" });
@@ -354,7 +348,7 @@ export default function DesignStudio() {
         setTimeout(() => panel.classList.remove('ring-4', 'ring-orange-500/20', 'ring-offset-2'), 1000);
       }
     }
-  }, [isMobile]);
+  }, [activeTab, isMobile]);
 
   /* Product catalog picker */
   const [showProductPicker, setShowProductPicker] = useState(false);
@@ -3749,16 +3743,16 @@ export default function DesignStudio() {
                         fontWeight: 700, fontStyle: "normal", fontSize: 40, color: "#111111",
                       };
                       addLayer(layer);
-                      switchTab("text");
+                      setActiveTab("text"); if(isMobile) setMobileToolOpen(true);
                     }} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Add Text">
                     <Type className="w-4 h-4 text-gray-500 group-hover:text-orange-500" />
                     {!isMobile && <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600">Text</span>}
                   </button>
-                  <button onClick={() => switchTab("templates")} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Templates">
+                  <button onClick={() => { setActiveTab("templates"); if(isMobile) setMobileToolOpen(true); }} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Templates">
                     <Sparkles className={`w-4 h-4 ${activeTab === "templates" ? "text-orange-500" : "text-gray-500"} group-hover:text-orange-500`} />
                     {!isMobile && <span className={`text-[10px] font-bold ${activeTab === "templates" ? "text-orange-600" : "text-gray-500"} group-hover:text-orange-600`}>Templates</span>}
                   </button>
-                  <button onClick={() => switchTab("layers")} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Layers">
+                  <button onClick={() => { setActiveTab("layers"); if(isMobile) setMobileToolOpen(true); }} className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white transition-colors group" title="Layers">
                     <LayersIcon className={`w-4 h-4 ${activeTab === "layers" ? "text-orange-500" : "text-gray-500"} group-hover:text-orange-500`} />
                     {!isMobile && <span className={`text-[10px] font-bold ${activeTab === "layers" ? "text-orange-600" : "text-gray-500"} group-hover:text-orange-600`}>Layers</span>}
                   </button>
@@ -3830,21 +3824,21 @@ export default function DesignStudio() {
                         <Upload className="w-3 h-3" /> Upload
                       </button>
                       <button
-                        onClick={(e) => { e.stopPropagation(); switchTab("text"); }}
+                        onClick={(e) => { e.stopPropagation(); setActiveTab("text"); if(isMobile) setMobileToolOpen(true); }}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all hover:scale-105 active:scale-95 touch-manipulation"
                         style={{ background: "rgba(255,255,255,0.92)", color: "#374151", boxShadow: "0 2px 8px rgba(0,0,0,0.14)", backdropFilter: "blur(6px)" }}
                       >
                         <Type className="w-3 h-3" /> Text
                       </button>
                       <button
-                        onClick={(e) => { e.stopPropagation(); switchTab("ai"); }}
+                        onClick={(e) => { e.stopPropagation(); setActiveTab("ai"); if(isMobile) setMobileToolOpen(true); }}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all hover:scale-105 active:scale-95 touch-manipulation"
                         style={{ background: "linear-gradient(135deg,#E85D04,#FB8500)", color: "white", boxShadow: "0 2px 12px rgba(232,93,4,0.4)" }}
                       >
                         <Wand2 className="w-3 h-3" /> AI Art
                       </button>
                       <button
-                        onClick={(e) => { e.stopPropagation(); switchTab("templates"); }}
+                        onClick={(e) => { e.stopPropagation(); setActiveTab("templates"); if(isMobile) setMobileToolOpen(true); }}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all hover:scale-105 active:scale-95 touch-manipulation"
                         style={{ background: "rgba(255,255,255,0.92)", color: "#374151", boxShadow: "0 2px 8px rgba(0,0,0,0.14)", backdropFilter: "blur(6px)" }}
                       >
