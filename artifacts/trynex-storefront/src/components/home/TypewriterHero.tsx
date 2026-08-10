@@ -101,7 +101,7 @@ const HERO_PRODUCT_GRID = [
     delay: 0.1,
     floatY: 10,
     rotate: "0deg",
-    href: "/products?category=hoodies",
+    href: "/products?category=hoodies&sort=bestsellers",
   },
   {
     src: "/mockups/white-waterbottle-front-cutout.png",
@@ -111,7 +111,7 @@ const HERO_PRODUCT_GRID = [
     delay: 0.25,
     floatY: 8,
     rotate: "0deg",
-    href: "/products?category=custom-orders",
+    href: "/products?category=custom-orders&sort=newest",
   },
   {
     src: "/mockups/white-tshirt-front-cutout.png",
@@ -121,7 +121,7 @@ const HERO_PRODUCT_GRID = [
     delay: 0.15,
     floatY: 12,
     rotate: "0deg",
-    href: "/products?category=t-shirts",
+    href: "/products?category=t-shirts&sort=bestsellers",
   },
   {
     src: "/mockups/white-cap-front-cutout.png",
@@ -131,7 +131,7 @@ const HERO_PRODUCT_GRID = [
     delay: 0.3,
     floatY: 9,
     rotate: "0deg",
-    href: "/products?category=caps",
+    href: "/products?category=caps&sort=newest",
   },
 ];
 

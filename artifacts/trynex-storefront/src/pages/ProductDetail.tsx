@@ -1,6 +1,7 @@
 import { useParams, Link, useLocation } from "wouter";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { TrustBadges } from "@/components/TrustBadges";
 import { SEOHead } from "@/components/SEOHead";
 import { Loader } from "@/components/ui/Loader";
 import { ProductDetailSkeleton } from "@/components/ui/skeleton";
@@ -1605,6 +1606,13 @@ export default function ProductDetail() {
       )}
 
       <RecentlyViewed />
+
+      {/* Trust Badges */}
+      <section className="py-12 px-4 bg-white border-t border-gray-100">
+        <div className="container-wide">
+          <TrustBadges />
+        </div>
+      </section>
 
       <Footer />
 
