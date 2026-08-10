@@ -891,9 +891,6 @@ export function GarmentSVG({
   const isMug = product.category === "mug";
   const tintHex = color || product.garmentColor;
   const resolvedMockup = resolveMockup(product, tintHex, face === "back" ? "back" : "front");
-  const imageSrc = resolvedMockup.photoKind === "opaque-photo"
-    ? resolvedMockup.photoSrc
-    : resolvedMockup.cutoutSrc;
   const needsTint = resolvedMockup.photoKind === "transparent-cutout" && resolvedMockup.requiresTint;
 
   const pz = isMug && mugMode === "wrap"
@@ -1019,10 +1016,11 @@ export function GarmentSVG({
       ───────────────────────────────────────────────────────────────────────── */}
 
       {needsTint ? (
+        /* Path 1 (TINTED): shadow pass + multiply-tinted cutout image */
         <>
-          {/* Shadow pass for coloured garments — rendered first so it sits BEHIND the garment */}
           {cutoutMaskSrc && (
             <image
+              key={`shadow-${cutoutMaskSrc}`}
               href={cutoutMaskSrc}
               x={0} y={0} width={1000} height={1000}
               preserveAspectRatio="xMidYMid meet"
@@ -1032,7 +1030,7 @@ export function GarmentSVG({
           )}
           {tintPhotoSrc && (
             <image
-              key={tintPhotoSrc}
+              key={`tint-${tintPhotoSrc}`}
               href={tintPhotoSrc}
               x={0} y={0} width={1000} height={1000}
               preserveAspectRatio="xMidYMid meet"
@@ -1043,7 +1041,7 @@ export function GarmentSVG({
           )}
         </>
       ) : resolvedMockup.photoKind === "opaque-photo" ? (
-        /* Case 2: Opaque photo (white/black/exact-color source-kit). Render ONLY the photo. */
+        /* Path 2 (OPAQUE PHOTO): ONLY the opaque studio photo */
         <image
           key={resolvedMockup.photoSrc}
           href={resolvedMockup.photoSrc}
@@ -1053,7 +1051,7 @@ export function GarmentSVG({
           style={{ pointerEvents: "none" }}
         />
       ) : (
-        /* Case 3: Transparent cutout (non-tinted white/light). Render cutout + shadow. */
+        /* Path 3 (CUTOUT): ONLY the transparent cutout with drop-shadow */
         <g filter={shadowFilter}>
           <image
             key={resolvedMockup.cutoutSrc}
