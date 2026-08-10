@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
+import React, { useState, useCallback, useEffect } from "react";
 import { Facebook, Instagram, Mail, MapPin, Phone, Truck, ShieldCheck, Clock, Youtube, Heart, ExternalLink, Loader2 } from "lucide-react";
-import { useState, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { useToast } from "@/hooks/use-toast";

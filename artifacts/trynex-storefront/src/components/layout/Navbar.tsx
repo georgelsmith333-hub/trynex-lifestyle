@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { Menu, X, ChevronDown, Heart, ShoppingCart, User, LogIn, LogOut, Package, ShoppingBag, Gift, Search, Tag, Clock, TrendingUp, MessageSquare, Bell, Check, ExternalLink } from "lucide-react";
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
