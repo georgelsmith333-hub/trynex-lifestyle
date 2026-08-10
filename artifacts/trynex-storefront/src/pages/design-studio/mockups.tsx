@@ -347,42 +347,42 @@ export const BASE_BY_CATEGORY: Record<
 > = {
   tshirt:      { front: tshirtFront, back: tshirtBack, darkFront: tshirtFrontDark, darkBack: tshirtBackDark, frontCutout: tshirtFrontCutout, backCutout: tshirtBackCutout, darkFrontCutout: tshirtFrontDarkCutout, darkBackCutout: tshirtBackDarkCutout,
     colorPhotos: {
-      "#F8F7F4": { front: "/mockups/normalized/tshirt-white-front.png",    back: "/mockups/normalized/tshirt-white-back.png"    }, // White
-      "#1a1a1a": { front: "/mockups/normalized/tshirt-black-front.png",    back: "/mockups/normalized/tshirt-black-back.png"    }, // Black
-      "#1e3a5f": { front: "/mockups/normalized/tshirt-navy-front.png",     back: "/mockups/normalized/tshirt-navy-back.png"     }, // Navy
-      "#dc2626": { front: "/mockups/normalized/tshirt-red-front.png",      back: "/mockups/normalized/tshirt-red-back.png"      }, // Red
-      "#6b7280": { front: "/mockups/normalized/tshirt-grey-front.png",     back: "/mockups/normalized/tshirt-grey-back.png"     }, // Grey
-      "#7f1d1d": { front: "/mockups/normalized/tshirt-maroon-front.png",   back: "/mockups/normalized/tshirt-maroon-back.png"   }, // Maroon
-      "#4a5240": { front: "/mockups/normalized/tshirt-olive-front.png",    back: "/mockups/normalized/tshirt-olive-back.png"    }, // Olive
-      "#0ea5e9": { front: "/mockups/normalized/tshirt-sky-blue-front.png", back: "/mockups/normalized/tshirt-sky-blue-back.png" }, // Sky Blue
+      "#F8F7F4": { front: "/mockups/normalized/tshirt-white-front.png",    back: "/mockups/normalized/tshirt-white-back.png"    }, // White - clean
+      "#1a1a1a": { front: "/mockups/normalized/tshirt-black-front.png",    back: "/mockups/normalized/tshirt-black-back.png"    }, // Black - clean
+      "#1e3a5f": { front: "/mockups/normalized/tshirt-navy-front.png",     back: "/mockups/normalized/tshirt-navy-back.png"     }, // Navy - clean
+      "#dc2626": { front: "/mockups/normalized/tshirt-red-front.png",      back: "/mockups/normalized/tshirt-red-back.png"      }, // Red - clean
+      "#6b7280": { front: "/mockups/normalized/tshirt-grey-front.png",     back: "/mockups/normalized/tshirt-grey-back.png"     }, // Grey - clean
+      "#7f1d1d": { front: "/mockups/normalized/tshirt-maroon-front.png",   back: "/mockups/normalized/tshirt-maroon-back.png"   }, // Maroon - clean
+      "#4a5240": { front: "/mockups/normalized/tshirt-olive-front.png",    back: "/mockups/normalized/tshirt-olive-back.png"    }, // Olive - clean
+      "#0ea5e9": { front: "/mockups/normalized/tshirt-sky-blue-front.png", back: "/mockups/normalized/tshirt-sky-blue-back.png" }, // Sky Blue - clean
     },
   },
   longsleeve:  { front: longsleeveFront, back: longsleeveBack, darkFront: longsleeveFrontDark, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout, darkFrontCutout: longsleeveFrontDarkCutout, darkBackCutout: longsleeveBackDarkCutout,
     colorPhotos: {
-      "#F5F5F3": { front: "/mockups/normalized/longsleeve-white-front.png",    back: "/mockups/normalized/longsleeve-white-back.png"    }, // White
-      "#1a1a1a": { front: "/mockups/normalized/longsleeve-black-front.png",    back: "/mockups/normalized/longsleeve-black-back.png"    }, // Black
-      "#1e3a5f": { front: "/mockups/normalized/longsleeve-navy-front.png",     back: "/mockups/normalized/longsleeve-navy-back.png"     }, // Navy
-      "#7f1d1d": { front: "/mockups/normalized/longsleeve-maroon-front.png",   back: "/mockups/normalized/longsleeve-maroon-back.png"   }, // Maroon
-      "#4a5240": { front: "/mockups/normalized/longsleeve-olive-front.png",    back: "/mockups/normalized/longsleeve-olive-back.png"    }, // Olive
-      "#6b7280": { front: "/mockups/normalized/longsleeve-grey-front.png",     back: "/mockups/normalized/longsleeve-grey-back.png"     }, // Grey
-      "#dc2626": { front: "/mockups/normalized/longsleeve-red-front.png",      back: "/mockups/normalized/longsleeve-red-back.png"      }, // Red
-      "#0ea5e9": { front: "/mockups/normalized/longsleeve-sky-blue-front.png", back: "/mockups/normalized/longsleeve-sky-blue-back.png" }, // Sky Blue
-      "#6b1a2c": { front: "/mockups/normalized/longsleeve-burgundy-front.png", back: "/mockups/normalized/longsleeve-burgundy-back.png" }, // Burgundy
-      "#166534": { front: "/mockups/normalized/longsleeve-forest-front.png",   back: "/mockups/normalized/longsleeve-forest-back.png"   }, // Forest
+      "#F5F5F3": { front: "/mockups/normalized/longsleeve-white-front.png",    back: "/mockups/normalized/longsleeve-white-back.png"    }, // White - clean
+      "#1a1a1a": { front: "/mockups/normalized/longsleeve-black-front.png",    back: "/mockups/normalized/longsleeve-black-back.png"    }, // Black - clean
+      "#1e3a5f": { front: "/mockups/normalized/longsleeve-navy-front.png",     back: "/mockups/normalized/longsleeve-navy-back.png"     }, // Navy - clean
+      "#7f1d1d": { front: "/mockups/normalized/longsleeve-maroon-front.png",   back: "/mockups/normalized/longsleeve-maroon-back.png"   }, // Maroon - clean
+      "#4a5240": { front: "/mockups/normalized/longsleeve-olive-front.png",    back: "/mockups/normalized/longsleeve-olive-back.png"    }, // Olive - clean
+      "#6b7280": { front: "/mockups/normalized/longsleeve-grey-front.png",     back: "/mockups/normalized/longsleeve-grey-back.png"     }, // Grey - clean
+      "#dc2626": { front: "/mockups/normalized/longsleeve-red-front.png",      back: "/mockups/normalized/longsleeve-red-back.png"      }, // Red - clean
+      "#0ea5e9": { front: "/mockups/normalized/longsleeve-sky-blue-front.png", back: "/mockups/normalized/longsleeve-sky-blue-back.png" }, // Sky Blue - clean
+      "#6b1a2c": { front: "/mockups/normalized/longsleeve-burgundy-front.png", back: "/mockups/normalized/longsleeve-burgundy-back.png" }, // Burgundy - clean
+      "#166534": { front: "/mockups/normalized/longsleeve-forest-front.png",   back: "/mockups/normalized/longsleeve-forest-back.png"   }, // Forest - clean
     },
   },
   hoodie:      { front: hoodieFront, back: hoodieBack, darkFront: hoodieFrontDark, darkBack: hoodieBackDark, frontCutout: hoodieFrontCutout, backCutout: hoodieBackCutout, darkFrontCutout: hoodieFrontDarkCutout, darkBackCutout: hoodieBackDarkCutout,
     colorPhotos: {
-      "#F2EFE9": { front: "/mockups/normalized/hoodie-white-front.png",    back: "/mockups/normalized/hoodie-white-back.png"    }, // White
-      "#1a1a1a": { front: "/mockups/normalized/hoodie-black-front.png",    back: "/mockups/normalized/hoodie-black-back.png"    }, // Black
-      "#1e3a5f": { front: "/mockups/normalized/hoodie-navy-front.png",     back: "/mockups/normalized/hoodie-navy-back.png"     }, // Navy
-      "#6b7280": { front: "/mockups/normalized/hoodie-grey-front.png",     back: "/mockups/normalized/hoodie-grey-back.png"     }, // Grey
-      "#7f1d1d": { front: "/mockups/normalized/hoodie-maroon-front.png",   back: "/mockups/normalized/hoodie-maroon-back.png"   }, // Maroon
-      "#4a5240": { front: "/mockups/normalized/hoodie-olive-front.png",    back: "/mockups/normalized/hoodie-olive-back.png"    }, // Olive
-      "#dc2626": { front: "/mockups/normalized/hoodie-red-front.png",      back: "/mockups/normalized/hoodie-red-back.png"      }, // Red
-      "#0ea5e9": { front: "/mockups/normalized/hoodie-sky-blue-front.png", back: "/mockups/normalized/hoodie-sky-blue-back.png" }, // Sky Blue
-      "#166534": { front: "/mockups/normalized/hoodie-forest-front.png",   back: "/mockups/normalized/hoodie-forest-back.png"   }, // Forest
-      "#6b1a2c": { front: "/mockups/normalized/hoodie-burgundy-front.png", back: "/mockups/normalized/hoodie-burgundy-back.png" }, // Burgundy
+      "#F2EFE9": { front: "/mockups/normalized/hoodie-white-front.png",    back: "/mockups/normalized/hoodie-white-back.png"    }, // White - clean
+      "#1a1a1a": { front: "/mockups/normalized/hoodie-black-front.png",    back: "/mockups/normalized/hoodie-black-back.png"    }, // Black - clean
+      "#1e3a5f": { front: "/mockups/normalized/hoodie-navy-front.png",     back: "/mockups/normalized/hoodie-navy-back.png"     }, // Navy - clean
+      "#6b7280": { front: "/mockups/normalized/hoodie-grey-front.png",     back: "/mockups/normalized/hoodie-grey-back.png"     }, // Grey - clean
+      "#7f1d1d": { front: "/mockups/normalized/hoodie-maroon-front.png",   back: "/mockups/normalized/hoodie-maroon-back.png"   }, // Maroon - clean
+      "#4a5240": { front: "/mockups/normalized/hoodie-olive-front.png",    back: "/mockups/normalized/hoodie-olive-back.png"    }, // Olive - clean
+      "#dc2626": { front: "/mockups/normalized/hoodie-red-front.png",      back: "/mockups/normalized/hoodie-red-back.png"      }, // Red - clean
+      "#0ea5e9": { front: "/mockups/normalized/hoodie-sky-blue-front.png", back: "/mockups/normalized/hoodie-sky-blue-back.png" }, // Sky Blue - clean
+      "#166534": { front: "/mockups/normalized/hoodie-forest-front.png",   back: "/mockups/normalized/hoodie-forest-back.png"   }, // Forest - clean
+      "#6b1a2c": { front: "/mockups/normalized/hoodie-burgundy-front.png", back: "/mockups/normalized/hoodie-burgundy-back.png" }, // Burgundy - clean
     },
   },
   mug:         {
@@ -398,40 +398,40 @@ export const BASE_BY_CATEGORY: Record<
     darkFrontCutout: mugFrontDarkCutout,
     darkBackCutout: mugFrontDarkCutout,
     colorPhotos: {
-       "#f5f5f5": { front: "/mockups/normalized/mug-white-front.png", back: "/mockups/normalized/mug-white-back.png" },
-       "#1c1917": { front: "/mockups/normalized/mug-black-front.png", back: "/mockups/normalized/mug-black-back.png" },
-       "#1e3a5f": { front: "/mockups/normalized/mug-navy-front.png", back: "/mockups/normalized/mug-navy-back.png" },
-       "#dc2626": { front: "/mockups/normalized/mug-red-front.png", back: "/mockups/normalized/mug-red-back.png" },
-       "#16a34a": { front: "/mockups/normalized/mug-green-front.png", back: "/mockups/normalized/mug-green-back.png" },
-       "#7c3aed": { front: "/mockups/normalized/mug-purple-front.png", back: "/mockups/normalized/mug-purple-back.png" },
-       "#0ea5e9": { front: "/mockups/normalized/mug-sky-blue-front.png", back: "/mockups/normalized/mug-sky-blue-back.png" },
-       "#ec4899": { front: "/mockups/normalized/mug-pink-front.png", back: "/mockups/normalized/mug-pink-back.png" },
-       "#7f1d1d": { front: "/mockups/normalized/mug-maroon-front.png", back: "/mockups/normalized/mug-maroon-back.png" },
-       "#ea580c": { front: "/mockups/normalized/mug-orange-front.png", back: "/mockups/normalized/mug-orange-back.png" },
+       "#f5f5f5": { front: "/mockups/normalized/mug-white-front.png", back: "/mockups/normalized/mug-white-back.png" }, // White - clean
+       "#1c1917": { front: "/mockups/normalized/mug-black-front.png", back: "/mockups/normalized/mug-black-back.png" }, // Black - clean
+       "#1e3a5f": { front: "/mockups/normalized/mug-navy-front.png", back: "/mockups/normalized/mug-navy-back.png" }, // Navy - clean
+       "#dc2626": { front: "/mockups/normalized/mug-red-front.png", back: "/mockups/normalized/mug-red-back.png" }, // Red - clean
+       "#16a34a": { front: "/mockups/normalized/mug-green-front.png", back: "/mockups/normalized/mug-green-back.png" }, // Green - clean
+       "#7c3aed": { front: "/mockups/normalized/mug-purple-front.png", back: "/mockups/normalized/mug-purple-back.png" }, // Purple - clean
+       "#0ea5e9": { front: "/mockups/normalized/mug-sky-blue-front.png", back: "/mockups/normalized/mug-sky-blue-back.png" }, // Sky Blue - clean
+       "#ec4899": { front: "/mockups/normalized/mug-pink-front.png", back: "/mockups/normalized/mug-pink-back.png" }, // Pink - clean
+       "#7f1d1d": { front: "/mockups/normalized/mug-maroon-front.png", back: "/mockups/normalized/mug-maroon-back.png" }, // Maroon - clean
+       "#ea580c": { front: "/mockups/normalized/mug-orange-front.png", back: "/mockups/normalized/mug-orange-back.png" }, // Orange - clean
     },
   },
   cap: { front: capFront, frontCutout: capFrontCutout,
     colorPhotos: {
-       "#F5F2EC": { front: "/mockups/normalized/cap-white-front.png",  back: "/mockups/normalized/cap-white-back.png"  }, // White
-       "#1a1a1a": { front: "/mockups/normalized/cap-black-front.png",  back: "/mockups/normalized/cap-black-back.png"  }, // Black
-       "#1e3a5f": { front: "/mockups/normalized/cap-navy-front.png",   back: "/mockups/normalized/cap-navy-back.png"   }, // Navy
-       "#7f1d1d": { front: "/mockups/normalized/cap-maroon-front.png", back: "/mockups/normalized/cap-maroon-back.png" }, // Maroon
-       "#4a5240": { front: "/mockups/normalized/cap-olive-front.png",  back: "/mockups/normalized/cap-olive-back.png"  }, // Olive
-       "#dc2626": { front: "/mockups/normalized/cap-red-front.png",    back: "/mockups/normalized/cap-red-back.png"    }, // Red
-       "#6b7280": { front: "/mockups/normalized/cap-grey-front.png",   back: "/mockups/normalized/cap-grey-back.png"   }, // Grey
-       "#166534": { front: "/mockups/normalized/cap-forest-front.png", back: "/mockups/normalized/cap-forest-back.png" }, // Forest
+       "#F5F2EC": { front: "/mockups/normalized/cap-white-front.png",  back: "/mockups/normalized/cap-white-back.png"  }, // White - clean
+       "#1a1a1a": { front: "/mockups/normalized/cap-black-front.png",  back: "/mockups/normalized/cap-black-back.png"  }, // Black - clean
+       "#1e3a5f": { front: "/mockups/normalized/cap-navy-front.png",   back: "/mockups/normalized/cap-navy-back.png"   }, // Navy - clean
+       "#7f1d1d": { front: "/mockups/normalized/cap-maroon-front.png", back: "/mockups/normalized/cap-maroon-back.png" }, // Maroon - clean
+       "#4a5240": { front: "/mockups/normalized/cap-olive-front.png",  back: "/mockups/normalized/cap-olive-back.png"  }, // Olive - clean
+       "#dc2626": { front: "/mockups/normalized/cap-red-front.png",    back: "/mockups/normalized/cap-red-back.png"    }, // Red - clean
+       "#6b7280": { front: "/mockups/normalized/cap-grey-front.png",   back: "/mockups/normalized/cap-grey-back.png"   }, // Grey - clean
+       "#166534": { front: "/mockups/normalized/cap-forest-front.png", back: "/mockups/normalized/cap-forest-back.png" }, // Forest - clean
     },
   },
   waterbottle: { front: waterBottleFront, frontCutout: waterBottleCutout,
     colorPhotos: {
-       "#F4F3F1": { front: "/mockups/normalized/waterbottle-white-front.png",    back: "/mockups/normalized/waterbottle-white-back.png"    }, // White
-       "#1C1917": { front: "/mockups/normalized/waterbottle-black-front.png",    back: "/mockups/normalized/waterbottle-black-back.png"    }, // Black
-       "#1e3a5f": { front: "/mockups/normalized/waterbottle-navy-front.png",     back: "/mockups/normalized/waterbottle-navy-back.png"     }, // Navy
-       "#166534": { front: "/mockups/normalized/waterbottle-forest-front.png",   back: "/mockups/normalized/waterbottle-forest-back.png"   }, // Forest
-       "#0ea5e9": { front: "/mockups/normalized/waterbottle-sky-blue-front.png", back: "/mockups/normalized/waterbottle-sky-blue-back.png" }, // Sky Blue
-       "#dc2626": { front: "/mockups/normalized/waterbottle-red-front.png",      back: "/mockups/normalized/waterbottle-red-back.png"      }, // Red
-       "#f472b6": { front: "/mockups/normalized/waterbottle-pink-front.png",     back: "/mockups/normalized/waterbottle-pink-back.png"     }, // Pink
-       "#0f766e": { front: "/mockups/normalized/waterbottle-teal-front.png",     back: "/mockups/normalized/waterbottle-teal-back.png"     }, // Teal
+       "#F4F3F1": { front: "/mockups/normalized/waterbottle-white-front.png",    back: "/mockups/normalized/waterbottle-white-back.png"    }, // White - clean
+       "#1C1917": { front: "/mockups/normalized/waterbottle-black-front.png",    back: "/mockups/normalized/waterbottle-black-back.png"    }, // Black - clean
+       "#1e3a5f": { front: "/mockups/normalized/waterbottle-navy-front.png",     back: "/mockups/normalized/waterbottle-navy-back.png"     }, // Navy - clean
+       "#166534": { front: "/mockups/normalized/waterbottle-forest-front.png",   back: "/mockups/normalized/waterbottle-forest-back.png"   }, // Forest - clean
+       "#0ea5e9": { front: "/mockups/normalized/waterbottle-sky-blue-front.png", back: "/mockups/normalized/waterbottle-sky-blue-back.png" }, // Sky Blue - clean
+       "#dc2626": { front: "/mockups/normalized/waterbottle-red-front.png",      back: "/mockups/normalized/waterbottle-red-back.png"      }, // Red - clean
+       "#f472b6": { front: "/mockups/normalized/waterbottle-pink-front.png",     back: "/mockups/normalized/waterbottle-pink-back.png"     }, // Pink - clean
+       "#0f766e": { front: "/mockups/normalized/waterbottle-teal-front.png",     back: "/mockups/normalized/waterbottle-teal-back.png"     }, // Teal - clean
     },
   },
   // watertumbler uses category "waterbottle" — shares the same base entry
