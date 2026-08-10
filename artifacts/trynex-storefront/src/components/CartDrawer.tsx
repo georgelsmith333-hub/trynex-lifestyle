@@ -296,6 +296,11 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
 
                 {/* Footer */}
                 <div className="border-t border-gray-100 px-5 py-4 space-y-3 shrink-0 pb-safe">
+                  {/* Hint about editing quantities */}
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-orange-50 border border-orange-100">
+                    <span className="text-[10px] font-bold text-orange-600">💡 Tip:</span>
+                    <span className="text-[10px] text-orange-700">Edit quantities above, then checkout</span>
+                  </div>
                   {(() => {
                     const totalSavings = items.reduce((acc, item) => {
                       if (item.originalPrice && item.originalPrice > item.price) {
@@ -347,10 +352,10 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
 
                   <button
                     onClick={handleViewCart}
-                    className="w-full py-2 rounded-xl font-semibold text-sm text-gray-500 hover:text-gray-700 transition-colors text-center"
-                    style={{ minHeight: '40px' }}
+                    className="w-full py-2.5 rounded-xl font-bold text-sm text-orange-600 hover:text-orange-700 hover:bg-orange-50 transition-colors text-center border border-orange-200"
+                    style={{ minHeight: '44px' }}
                   >
-                    View Full Cart
+                    View & Edit Full Cart
                   </button>
                 </div>
               </>

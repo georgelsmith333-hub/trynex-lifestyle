@@ -31,16 +31,16 @@ import { DeliveryAreaPicker } from "@/components/DeliveryAreaPicker";
 
 const checkoutSchema = z.object({
   firstName: z.string().min(2, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  customerEmail: z.string().email("Invalid email address").optional().or(z.literal("")),
-  customerPhone: z.string().min(11, "Valid phone number required"),
+  lastName: z.string().min(1, "Last name is required").optional(),
+  customerEmail: z.string().email("Invalid email address").optional().or(z.literal("")).nullable(),
+  customerPhone: z.string().min(10, "Valid phone number required (10-11 digits)"),
   shippingAddress: z.string().min(5, "Street address required (House / Road / Area)"),
   shippingDistrict: z.string().min(2, "District is required"),
-  shippingUpazila: z.string().min(2, "Upazila is required"),
-  shippingUnion: z.string().optional(),
-  shippingPostCode: z.string().optional(),
-  shippingCity: z.string().optional(),
-  notes: z.string().optional()
+  shippingUpazila: z.string().min(2, "Upazila is required").optional(),
+  shippingUnion: z.string().optional().or(z.literal("")),
+  shippingPostCode: z.string().optional().or(z.literal("")),
+  shippingCity: z.string().optional().or(z.literal("")),
+  notes: z.string().optional().or(z.literal(""))
 });
 type CheckoutFormData = z.infer<typeof checkoutSchema>;
 
