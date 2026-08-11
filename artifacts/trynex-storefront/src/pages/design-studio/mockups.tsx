@@ -911,23 +911,7 @@ export function GarmentSVG({
           />
         )}
 
-        {/* Layer 2: Shadow Mask (extracted from real photo) */}
-        <image
-          key={`shadow-mask-${resolvedMockup.photoSrc}`}
-          href={getShadowMask(resolvedMockup.photoSrc || resolvedMockup.cutoutSrc || "")}
-          x={0} y={0} width={1000} height={1000}
-          preserveAspectRatio="xMidYMid meet"
-          style={{ mixBlendMode: "multiply", opacity: 0.8 }}
-        />
 
-        {/* Layer 3: Highlight Mask (extracted from real photo) */}
-        <image
-          key={`highlight-mask-${resolvedMockup.photoSrc}`}
-          href={getHighlightMask(resolvedMockup.photoSrc || resolvedMockup.cutoutSrc || "")}
-          x={0} y={0} width={1000} height={1000}
-          preserveAspectRatio="xMidYMid meet"
-          style={{ mixBlendMode: "screen", opacity: 0.4 }}
-        />
       </g>
 
       {showPrintZone && (() => {

@@ -553,7 +553,7 @@ export default function DesignStudioV2() {
                 <div className="flex items-center gap-2"><Palette className="w-3.5 h-3.5 text-gray-400" /><span className="text-[11px] font-black uppercase tracking-widest text-gray-400">Color</span></div>
                 <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full" style={{ background: selectedColor.hex, color: isLightTint(selectedColor.hex) ? "#374151" : "white" }}>{selectedColor.name}</span>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex overflow-x-auto pb-1.5 gap-2.5 items-center no-scrollbar">
                 {studioColors.map((c: any) => {
                   const isSelected = selectedColor.hex.toLowerCase() === c.hex.toLowerCase();
                   return (
