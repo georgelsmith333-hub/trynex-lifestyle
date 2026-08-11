@@ -623,19 +623,17 @@ function getCuratedMockup(
   requiresTint: boolean;
   allowSilhouetteShadow: boolean;
 } {
-  const base = BASE_BY_CATEGORY[product.category];
-  const back = face === "back";
-
-  const photoSrc = back ? (base?.back || base?.front || "") : (base?.front || "");
-  const cutoutSrc = back ? (base?.backCutout || base?.frontCutout || "") : (base?.frontCutout || "");
-  
+  const category = product.category;
+  const hex = normalizeMockupHex(color);
+  const slug = SOURCE_KIT_COLOR_SLUGS[category]?.[hex] || "white";
+  const photoSrc = `/mockups/normalized/${category}-${slug}-${face}.png`;
   return {
     photoSrc,
-    cutoutSrc,
-    isColorPhoto: false,
-    cutoutNeedsTint: true,
-    photoKind: "transparent-cutout",
-    requiresTint: true,
+    cutoutSrc: photoSrc,
+    isColorPhoto: true,
+    cutoutNeedsTint: false,
+    photoKind: "opaque-photo",
+    requiresTint: false,
     allowSilhouetteShadow: true,
   };
 }
