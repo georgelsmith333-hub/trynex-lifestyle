@@ -958,6 +958,34 @@ export function GarmentSVG({
           <stop offset="100%" stopColor="rgba(0,0,0,0.06)" stopOpacity="1" />
         </radialGradient>
 
+        {/* ── Smart Mockup Luminosity Filters ────────────────────────────────
+            Keep shadows and highlights as separate passes. The shadow pass is
+            neutral-white in bright regions for Multiply; the highlight pass is
+            neutral-black in dark regions for Screen. This avoids the ghosted
+            duplicate-garment effect caused by painting a second full mockup. */}
+        <filter id="smart-shadow-overlay" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
+          <feColorMatrix type="matrix" values="0.299 0.587 0.114 0 0
+                                              0.299 0.587 0.114 0 0
+                                              0.299 0.587 0.114 0 0
+                                              0 0 0 1 0" result="luma" />
+          <feComponentTransfer in="luma">
+            <feFuncR type="table" tableValues="1 1 0.94 0.76 0.42 0.16" />
+            <feFuncG type="table" tableValues="1 1 0.94 0.76 0.42 0.16" />
+            <feFuncB type="table" tableValues="1 1 0.94 0.76 0.42 0.16" />
+          </feComponentTransfer>
+        </filter>
+        <filter id="smart-highlight-overlay" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
+          <feColorMatrix type="matrix" values="0.299 0.587 0.114 0 0
+                                              0.299 0.587 0.114 0 0
+                                              0.299 0.587 0.114 0 0
+                                              0 0 0 1 0" result="luma" />
+          <feComponentTransfer in="luma">
+            <feFuncR type="table" tableValues="0 0 0.04 0.18 0.58 1" />
+            <feFuncG type="table" tableValues="0 0 0.04 0.18 0.58 1" />
+            <feFuncB type="table" tableValues="0 0 0.04 0.18 0.58 1" />
+          </feComponentTransfer>
+        </filter>
+
         {/* ── Colour multiply-tint filter ──────────────────────────────────────
             Applied DIRECTLY to the <image> element (not a separate rect).
             SVG guarantees: filter is evaluated first, mask second — no

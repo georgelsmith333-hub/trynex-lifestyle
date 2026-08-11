@@ -104,6 +104,10 @@ interface ComposeOptions {
   /** Add a subtle procedural fabric grain to the design so it looks printed
    *  on fabric rather than floating on top. Lightweight and cached. */
   fabricTexture?: boolean;
+  /** Use the garment photo's luminosity to shade the design (real smart mockup). */
+  smartShading?: boolean;
+  /** Strength of the smart shading (0-1). */
+  shadingStrength?: number;
 }
 
 const IMAGE_CACHE_MAX = 60;
@@ -446,6 +450,10 @@ export async function composeGarmentMockup(opts: {
   /** Explicit resolver metadata: only transparent fallback cutouts may need tint. */
   requiresTint?: boolean;
   fabricTexture?: boolean;
+  /** Reapply garment luminosity over artwork to simulate a PSD smart object. */
+  smartShading?: boolean;
+  /** Shading opacity for the multiply/screen passes. */
+  shadingStrength?: number;
 }): Promise<HTMLCanvasElement> {
   const {
     canvas,
@@ -459,6 +467,8 @@ export async function composeGarmentMockup(opts: {
     isColorPhoto = false,
     requiresTint = !isColorPhoto,
     fabricTexture = false,
+    smartShading = true,
+    shadingStrength = 0.22,
   } = opts;
   canvas.width = outSize;
   canvas.height = outSize;
@@ -571,7 +581,86 @@ export async function composeGarmentMockup(opts: {
   }
 
   if (fabricTexture && layers.some(l => l.visible)) {
+    ctx.save();
+    ctx.beginPath();
+    tracePrintZone(ctx, printZone, s, s);
+    ctx.clip();
     applyFabricGrain(ctx, outSize, outSize, 0.10);
+    ctx.restore();
+  }
+
+  // --- SMART SHADING (Luminosity Masking) ---
+  // Build separate shadow and highlight masks from the actual garment pixels.
+  // Applying the entire grayscale garment twice makes artwork muddy; splitting
+  // the masks keeps only dark folds for Multiply and only bright folds for Screen.
+  if (smartShading && layers.some(l => l.visible)) {
+    try {
+      const garmentImg = await loadImage(garmentSrc, imageCache);
+      const source = document.createElement("canvas");
+      source.width = outSize;
+      source.height = outSize;
+      const sourceCtx = source.getContext("2d", { willReadFrequently: true });
+      if (sourceCtx) {
+        sourceCtx.drawImage(garmentImg, 0, 0, outSize, outSize);
+        if (requiresTint && garmentColor) {
+          sourceCtx.globalCompositeOperation = "multiply";
+          sourceCtx.fillStyle = garmentColor;
+          sourceCtx.fillRect(0, 0, outSize, outSize);
+          sourceCtx.globalCompositeOperation = "destination-in";
+          sourceCtx.drawImage(garmentImg, 0, 0, outSize, outSize);
+          sourceCtx.globalCompositeOperation = "source-over";
+        }
+
+        const pixels = sourceCtx.getImageData(0, 0, outSize, outSize).data;
+        const shadowCanvas = document.createElement("canvas");
+        const highlightCanvas = document.createElement("canvas");
+        shadowCanvas.width = highlightCanvas.width = outSize;
+        shadowCanvas.height = highlightCanvas.height = outSize;
+        const shadowCtx = shadowCanvas.getContext("2d");
+        const highlightCtx = highlightCanvas.getContext("2d");
+        if (shadowCtx && highlightCtx) {
+          const shadow = shadowCtx.createImageData(outSize, outSize);
+          const highlight = highlightCtx.createImageData(outSize, outSize);
+          const strength = Math.max(0, Math.min(1, shadingStrength));
+
+          for (let i = 0; i < pixels.length; i += 4) {
+            const alpha = pixels[i + 3] / 255;
+            const luminance = (0.299 * pixels[i] + 0.587 * pixels[i + 1] + 0.114 * pixels[i + 2]) / 255;
+            const shadowAmount = Math.max(0, (0.52 - luminance) / 0.52) * strength * alpha;
+            const highlightAmount = Math.max(0, (luminance - 0.48) / 0.52) * strength * 0.55 * alpha;
+
+            // Black with variable alpha becomes a controlled Multiply shadow.
+            shadow.data[i] = 0;
+            shadow.data[i + 1] = 0;
+            shadow.data[i + 2] = 0;
+            shadow.data[i + 3] = Math.round(shadowAmount * 255);
+
+            // White with variable alpha becomes a controlled Screen highlight.
+            highlight.data[i] = 255;
+            highlight.data[i + 1] = 255;
+            highlight.data[i + 2] = 255;
+            highlight.data[i + 3] = Math.round(highlightAmount * 255);
+          }
+
+          shadowCtx.putImageData(shadow, 0, 0);
+          highlightCtx.putImageData(highlight, 0, 0);
+
+          ctx.save();
+          ctx.beginPath();
+          tracePrintZone(ctx, printZone, s, s);
+          ctx.clip();
+          ctx.globalCompositeOperation = "multiply";
+          ctx.globalAlpha = 1;
+          ctx.drawImage(shadowCanvas, 0, 0);
+          ctx.globalCompositeOperation = "screen";
+          ctx.drawImage(highlightCanvas, 0, 0);
+          ctx.restore();
+        }
+      }
+    } catch (err) {
+      // A CORS-tainted or unsupported source must never block cart/export.
+      console.warn("[composer] Smart shading skipped:", err);
+    }
   }
 
   return canvas;

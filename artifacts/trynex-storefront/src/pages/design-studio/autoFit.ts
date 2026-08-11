@@ -9,20 +9,30 @@ export interface ImageFitResult {
   scale: number;
   crop: { x: number; y: number; w: number; h: number };
   trimmed: boolean;
+  /** Final artwork dimensions in the editor's 1000×1000 coordinate system. */
+  renderedW: number;
+  renderedH: number;
+  /** Useful diagnostics for the editor, QA, and future print-resolution checks. */
+  imageAspect: number;
+  zoneAspect: number;
+  mode: FitMode;
 }
 
 const MAX_CANVAS_SIDE = 4096;
 const ALPHA_THRESHOLD = 8;
+const MIN_SCALE = 0.05;
+const MAX_SCALE = 5;
+const DEFAULT_MARGIN = 0.94;
 
 function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
 }
 
-/**
- * Trims transparent PNG padding in-browser. Opaque photos keep their full
- * bounds, while logos exported with a large transparent canvas become the
- * actual visible mark before they are fitted to the product zone.
- */
+function safeDimension(value: number) {
+  return Number.isFinite(value) && value > 0 ? value : 1;
+}
+
+/** Trim only transparent padding, never opaque photo content. */
 export async function trimTransparentPadding(src: string): Promise<{
   src: string;
   naturalW: number;
@@ -42,24 +52,30 @@ export async function trimTransparentPadding(src: string): Promise<{
   const height = image.naturalHeight;
   if (!width || !height) throw new Error("The uploaded image has no readable dimensions.");
 
-  const scale = Math.min(1, MAX_CANVAS_SIDE / Math.max(width, height));
-  const scanW = Math.max(1, Math.round(width * scale));
-  const scanH = Math.max(1, Math.round(height * scale));
+  const scanScale = Math.min(1, MAX_CANVAS_SIDE / Math.max(width, height));
+  const scanW = Math.max(1, Math.round(width * scanScale));
+  const scanH = Math.max(1, Math.round(height * scanScale));
   const scan = document.createElement("canvas");
   scan.width = scanW;
   scan.height = scanH;
   const scanCtx = scan.getContext("2d", { willReadFrequently: true });
   if (!scanCtx) return { src, naturalW: width, naturalH: height, trimmed: false };
+
   scanCtx.clearRect(0, 0, scanW, scanH);
   scanCtx.drawImage(image, 0, 0, scanW, scanH);
-  const pixels = scanCtx.getImageData(0, 0, scanW, scanH).data;
+  let pixels: Uint8ClampedArray;
+  try {
+    pixels = scanCtx.getImageData(0, 0, scanW, scanH).data;
+  } catch {
+    return { src, naturalW: width, naturalH: height, trimmed: false };
+  }
 
   let minX = scanW;
   let minY = scanH;
   let maxX = -1;
   let maxY = -1;
-  for (let y = 0; y < scanH; y++) {
-    for (let x = 0; x < scanW; x++) {
+  for (let y = 0; y < scanH; y += 1) {
+    for (let x = 0; x < scanW; x += 1) {
       const alpha = pixels[(y * scanW + x) * 4 + 3];
       if (alpha > ALPHA_THRESHOLD) {
         minX = Math.min(minX, x);
@@ -70,15 +86,19 @@ export async function trimTransparentPadding(src: string): Promise<{
     }
   }
 
-  // Opaque images and fully transparent images should retain their source.
   if (maxX < 0 || (minX === 0 && minY === 0 && maxX === scanW - 1 && maxY === scanH - 1)) {
     return { src, naturalW: width, naturalH: height, trimmed: false };
   }
 
-  const sourceX = Math.floor(minX / scale);
-  const sourceY = Math.floor(minY / scale);
-  const sourceW = Math.max(1, Math.ceil((maxX - minX + 1) / scale));
-  const sourceH = Math.max(1, Math.ceil((maxY - minY + 1) / scale));
+  minX = Math.max(0, minX - 1);
+  minY = Math.max(0, minY - 1);
+  maxX = Math.min(scanW - 1, maxX + 1);
+  maxY = Math.min(scanH - 1, maxY + 1);
+
+  const sourceX = Math.max(0, Math.floor(minX / scanScale));
+  const sourceY = Math.max(0, Math.floor(minY / scanScale));
+  const sourceW = Math.min(width - sourceX, Math.max(1, Math.ceil((maxX - minX + 1) / scanScale)));
+  const sourceH = Math.min(height - sourceY, Math.max(1, Math.ceil((maxY - minY + 1) / scanScale)));
   const out = document.createElement("canvas");
   out.width = sourceW;
   out.height = sourceH;
@@ -88,32 +108,61 @@ export async function trimTransparentPadding(src: string): Promise<{
   return { src: out.toDataURL("image/png"), naturalW: sourceW, naturalH: sourceH, trimmed: true };
 }
 
-/** Compute a centered product-zone fit in the editor's 1000×1000 coordinate system. */
+/**
+ * Calculate an editor-space smart-object fit. The layer renderer defines image
+ * width as `zone.w × scale` and derives height from the natural aspect ratio.
+ */
 export function fitImageToPrintZone(
   naturalW: number,
   naturalH: number,
   zone: PrintZone,
   mode: FitMode = "contain",
-  margin = 0.94,
-): Pick<ImageFitResult, "scale" | "crop"> {
-  const aspect = Math.max(naturalW, 1) / Math.max(naturalH, 1);
-  const zoneAspect = zone.w / zone.h;
+  margin = DEFAULT_MARGIN,
+): Pick<ImageFitResult, "scale" | "crop" | "renderedW" | "renderedH" | "imageAspect" | "zoneAspect" | "mode"> {
+  const imageW = safeDimension(naturalW);
+  const imageH = safeDimension(naturalH);
+  const zoneW = safeDimension(zone.w);
+  const zoneH = safeDimension(zone.h);
+  const imageAspect = imageW / imageH;
+  const zoneAspect = zoneW / zoneH;
+  const safeMargin = clamp(Number.isFinite(margin) ? margin : DEFAULT_MARGIN, 0.5, 1);
 
-  let scale = 1;
+  // Width-normalized scale used by layerGeom(): width = zoneW × scale.
+  const heightScale = (zoneH * imageAspect) / zoneW;
+  const unconstrainedScale = mode === "cover"
+    ? Math.max(1, heightScale)
+    : Math.min(1, heightScale);
+  const scale = clamp(unconstrainedScale * safeMargin, MIN_SCALE, MAX_SCALE);
+  const renderedW = zoneW * scale;
+  const renderedH = renderedW / imageAspect;
+
   if (mode === "contain") {
-    // Fits the entire image within the zone, keeping aspect ratio
-    scale = aspect > zoneAspect ? (zone.w / naturalW) : (zone.h / naturalH);
-  } else {
-    // Covers the entire zone, potentially cropping the image
-    scale = aspect > zoneAspect ? (zone.h / naturalH) : (zone.w / naturalW);
+    return {
+      scale,
+      crop: { x: 0, y: 0, w: 100, h: 100 },
+      renderedW,
+      renderedH,
+      imageAspect,
+      zoneAspect,
+      mode,
+    };
   }
 
-  // Convert to DesignStudio scale (relative to zone.w)
-  const designScale = (scale * naturalW) / zone.w;
-
+  const visibleSourceW = Math.min(100, (zoneW / renderedW) * 100);
+  const visibleSourceH = Math.min(100, (zoneH / renderedH) * 100);
   return {
-    scale: clamp(designScale * margin, 0.05, 5),
-    crop: { x: 0, y: 0, w: 100, h: 100 },
+    scale,
+    crop: {
+      x: (100 - visibleSourceW) / 2,
+      y: (100 - visibleSourceH) / 2,
+      w: visibleSourceW,
+      h: visibleSourceH,
+    },
+    renderedW,
+    renderedH,
+    imageAspect,
+    zoneAspect,
+    mode,
   };
 }
 
@@ -121,7 +170,7 @@ export async function prepareImageForPrintZone(
   src: string,
   zone: PrintZone,
   mode: FitMode = "contain",
-  margin = 0.94,
+  margin = DEFAULT_MARGIN,
 ): Promise<ImageFitResult> {
   const trimmed = await trimTransparentPadding(src);
   const fit = fitImageToPrintZone(trimmed.naturalW, trimmed.naturalH, zone, mode, margin);

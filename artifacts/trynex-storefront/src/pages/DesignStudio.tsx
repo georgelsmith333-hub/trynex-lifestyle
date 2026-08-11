@@ -1302,12 +1302,24 @@ export default function DesignStudio() {
       // wider zones (t-shirt/hoodie).
       const currentFace = activeFaceRef.current;
       const aspect = finalW / Math.max(finalH, 1);
-      const containScale = (zone: PrintZone) => Math.min(1.0, (zone.h * aspect) / zone.w);
+
+      // Improved smart auto-fit: Calculate the best scale for each product's print zone
+      const calculateSmartScale = (zone: PrintZone) => {
+        const zoneAspect = zone.w / zone.h;
+        if (aspect > zoneAspect) {
+          // Image is wider than zone -> fit to width
+          return 1.0;
+        } else {
+          // Image is taller than zone -> fit to height
+          return (zone.h * aspect) / zone.w;
+        }
+      };
+
       PRODUCTS.forEach(prod => {
         if (prod.id === selectedProduct.id) return;
         const targetFace: Face = prod.category === selectedProduct.category ? currentFace : "front";
         const targetPZ = getZonePZ(targetFace, prod);
-        const newScale = containScale(targetPZ) * 0.95;
+        const newScale = calculateSmartScale(targetPZ) * 0.94; // 94% to allow small margin
         const propagated: ImageLayer = {
           ...layer,
           id: uid(),
@@ -2228,6 +2240,9 @@ export default function DesignStudio() {
         outSize: 1200,
         isColorPhoto: !isFlatZone && activeMockup.isColorPhoto,
         requiresTint: !isFlatZone && activeMockup.requiresTint,
+        smartShading: true,
+        shadingStrength: 0.22,
+        fabricTexture: true,
       });
       const url = canvas.toDataURL("image/png");
       const a = document.createElement("a");
@@ -2266,6 +2281,9 @@ export default function DesignStudio() {
         outSize: 1200,
         isColorPhoto: !isFlatZone && activeMockup.isColorPhoto,
         requiresTint: !isFlatZone && activeMockup.requiresTint,
+        smartShading: true,
+        shadingStrength: 0.22,
+        fabricTexture: true,
       });
       const url = canvas.toDataURL("image/jpeg", 0.93);
       const a = document.createElement("a");
@@ -2381,6 +2399,9 @@ export default function DesignStudio() {
         imageCache,
         isColorPhoto: isColorPhotoCart,
         requiresTint: cartPreviewMockup.requiresTint,
+        smartShading: true,
+        shadingStrength: 0.22,
+        fabricTexture: true,
       });
       let mockupUrl = mockupCanvas.toDataURL("image/webp", 0.8);
       // 2. Design-only UV texture (transparent bg) — used by CartViewer3D.
@@ -3488,6 +3509,7 @@ export default function DesignStudio() {
                         style={{ mixBlendMode: "normal" }}
                       />
                     )}
+
                     {layersRender
                       .filter(({ layer }) => (layer.face ?? "front") === activeFace)
                       .map(({ layer: l, geom: g }) => {
@@ -3573,29 +3595,35 @@ export default function DesignStudio() {
                       );
                     })}
 
-                    {/* ── Smart Mockup Overlay Pass ──
-                        This pass applies the "top layer" of the mockup (drawstrings, collar edges, 
-                        fabric highlights) OVER the design layers to create total realism.
-                        Uses multiply blend mode to let the design show through fabric shadows 
-                        while drawstrings and highlights realistically sit on top. */}
+                    {/* Smart Mockup shading is painted AFTER the artwork. This is the
+                        critical order: folds must affect the design, not sit behind it. */}
                     {currentFaceLayers.some(l => l.visible) && !isFlatZone && (() => {
-                       const overlayMockup = activeFace === "back" ? backMockup : frontMockup;
-                       
-                       // For hoodies, we use the cutout as a smart mask for drawstrings and depth.
-                       // For all other products, it provides the fabric grain and shadow interaction.
-                       const isHoodie = selectedProduct.category === "hoodie";
-                       const overlayOpacity = isHoodie ? 0.85 : 0.32;
-                       const blendMode = isHoodie ? "multiply" : "multiply";
-
+                      const overlayMockup = activeFace === "back" ? backMockup : frontMockup;
+                      // Always shade from the aligned transparent cutout. Using an
+                      // opaque studio photo here would bring its white background into
+                      // Screen blending and create a washed-out rectangle/ghost edge.
+                      const textureSrc = overlayMockup.cutoutSrc;
                       return (
-                        <image
-                          href={overlayMockup.cutoutSrc}
-                          x={0} y={0} width={1000} height={1000}
-                          preserveAspectRatio="xMidYMid meet"
-                          pointerEvents="none"
-                          opacity={overlayOpacity}
-                          style={{ mixBlendMode: blendMode, pointerEvents: "none" }}
-                        />
+                        <>
+                          <image
+                            href={textureSrc}
+                            x={0} y={0} width={1000} height={1000}
+                            preserveAspectRatio="xMidYMid meet"
+                            pointerEvents="none"
+                            filter="url(#smart-shadow-overlay)"
+                            opacity={0.34}
+                            style={{ mixBlendMode: "multiply", pointerEvents: "none" }}
+                          />
+                          <image
+                            href={textureSrc}
+                            x={0} y={0} width={1000} height={1000}
+                            preserveAspectRatio="xMidYMid meet"
+                            pointerEvents="none"
+                            filter="url(#smart-highlight-overlay)"
+                            opacity={0.18}
+                            style={{ mixBlendMode: "screen", pointerEvents: "none" }}
+                          />
+                        </>
                       );
                     })()}
                   </g>
