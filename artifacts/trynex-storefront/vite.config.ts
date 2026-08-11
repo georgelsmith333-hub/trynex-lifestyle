@@ -101,7 +101,7 @@ export default defineConfig({
       injectManifest: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
         globIgnores: ["**/mockups/**"],
-        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
+        maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
         additionalManifestEntries: [{ url: `${basePath}offline.html`, revision: null }],
       },
       devOptions: {
