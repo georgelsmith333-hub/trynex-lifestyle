@@ -188,6 +188,6 @@ overrides:
   uuid: "^11.1.1"
 
 allowBuilds:
-  core-js: set this to true or false
-  esbuild: set this to true or false
-  protobufjs: set this to true or false
+  core-js: true
+  esbuild: true
+  protobufjs: true

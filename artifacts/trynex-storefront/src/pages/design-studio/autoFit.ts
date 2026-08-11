@@ -97,11 +97,22 @@ export function fitImageToPrintZone(
   margin = 0.94,
 ): Pick<ImageFitResult, "scale" | "crop"> {
   const aspect = Math.max(naturalW, 1) / Math.max(naturalH, 1);
-  const widthScale = 1;
-  const heightScale = (zone.h * aspect) / Math.max(zone.w, 1);
-  const scale = clamp((mode === "cover" ? Math.max(widthScale, heightScale) : Math.min(widthScale, heightScale)) * margin, 0.05, 5);
+  const zoneAspect = zone.w / zone.h;
+
+  let scale = 1;
+  if (mode === "contain") {
+    // Fits the entire image within the zone, keeping aspect ratio
+    scale = aspect > zoneAspect ? (zone.w / naturalW) : (zone.h / naturalH);
+  } else {
+    // Covers the entire zone, potentially cropping the image
+    scale = aspect > zoneAspect ? (zone.h / naturalH) : (zone.w / naturalW);
+  }
+
+  // Convert to DesignStudio scale (relative to zone.w)
+  const designScale = (scale * naturalW) / zone.w;
+
   return {
-    scale,
+    scale: clamp(designScale * margin, 0.05, 5),
     crop: { x: 0, y: 0, w: 100, h: 100 },
   };
 }

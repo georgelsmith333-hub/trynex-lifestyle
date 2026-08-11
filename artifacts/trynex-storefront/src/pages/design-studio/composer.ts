@@ -555,10 +555,21 @@ export async function composeGarmentMockup(opts: {
 
   ctx.restore();
 
-  // Do not redraw the garment photo over the print zone. That legacy pass
-  // duplicated shadows and used filename heuristics, producing ghosted folds
-  // and colour-specific surprises. The canonical photo/cutout already carries
-  // the lighting; only the optional fabric grain belongs above the layers.
+  // ── Smart Mockup Overlay Pass ──
+  // Redraw the garment highlights and occlusion (drawstrings, folds) over the design.
+  // For hoodies, this ensures drawstrings realistically sit ON TOP of the logo.
+  if (layers.some(l => l.visible)) {
+    try {
+      const overlayImg = await loadImage(garmentSrc, imageCache);
+      const isHoodie = garmentSrc.includes("hoodie");
+      ctx.save();
+      ctx.globalAlpha = isHoodie ? 0.85 : 0.32;
+      ctx.globalCompositeOperation = "multiply";
+      ctx.drawImage(overlayImg, 0, 0, outSize, outSize);
+      ctx.restore();
+    } catch {}
+  }
+
   if (fabricTexture && layers.some(l => l.visible)) {
     applyFabricGrain(ctx, outSize, outSize, 0.10);
   }

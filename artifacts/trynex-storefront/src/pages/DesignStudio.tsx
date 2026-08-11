@@ -3573,21 +3573,28 @@ export default function DesignStudio() {
                       );
                     })}
 
-                    {/* Garment texture overlay — makes the design look printed onto the fabric
-                        rather than pasted on top. Matches the final cart mockup composition. */}
+                    {/* ── Smart Mockup Overlay Pass ──
+                        This pass applies the "top layer" of the mockup (drawstrings, collar edges, 
+                        fabric highlights) OVER the design layers to create total realism.
+                        Uses multiply blend mode to let the design show through fabric shadows 
+                        while drawstrings and highlights realistically sit on top. */}
                     {currentFaceLayers.some(l => l.visible) && !isFlatZone && (() => {
                        const overlayMockup = activeFace === "back" ? backMockup : frontMockup;
-                       // Exact-color photos already contain their own lighting.
-                       // Only a transparent, tintable fallback gets a texture pass.
-                       if (overlayMockup.photoKind === "opaque-photo") return null;
+                       
+                       // For hoodies, we use the cutout as a smart mask for drawstrings and depth.
+                       // For all other products, it provides the fabric grain and shadow interaction.
+                       const isHoodie = selectedProduct.category === "hoodie";
+                       const overlayOpacity = isHoodie ? 0.85 : 0.32;
+                       const blendMode = isHoodie ? "multiply" : "multiply";
+
                       return (
                         <image
-                           href={overlayMockup.cutoutSrc}
+                          href={overlayMockup.cutoutSrc}
                           x={0} y={0} width={1000} height={1000}
                           preserveAspectRatio="xMidYMid meet"
                           pointerEvents="none"
-                           opacity={0.26}
-                           style={{ mixBlendMode: "multiply", pointerEvents: "none" }}
+                          opacity={overlayOpacity}
+                          style={{ mixBlendMode: blendMode, pointerEvents: "none" }}
                         />
                       );
                     })()}
