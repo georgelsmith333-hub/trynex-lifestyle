@@ -5,12 +5,16 @@
 ════════════════════════════════════════════════════════ */
 
 // ── T-Shirt: unified studio photos from normalized/ folder ──
-const tshirtFront          = "/mockups/normalized/tshirt-white-front.png";
-const tshirtBack           = "/mockups/normalized/tshirt-white-back.png";
-const tshirtFrontDark      = "/mockups/normalized/tshirt-black-front.png";
-const tshirtBackDark       = "/mockups/normalized/tshirt-black-back.png";
-const tshirtFrontCutout    = "/mockups/new/white-tshirt-front-cutout.png";
-const tshirtBackCutout     = "/mockups/new/white-tshirt-back-cutout.png";
+const tshirtFront          = "/assets/mockups/tshirt_1.png";
+const tshirtBack           = "/assets/mockups/tshirt_6.png";
+const tshirtFrontDark      = "/assets/mockups/tshirt_1.png"; // Will be tinted
+const tshirtBackDark       = "/assets/mockups/tshirt_6.png";
+const tshirtFrontCutout    = "/assets/mockups/tshirt_1.png";
+const tshirtBackCutout     = "/assets/mockups/tshirt_6.png";
+
+// Smart Mockup Mask Paths
+const getShadowMask = (path: string) => path.replace("/assets/mockups/", "/assets/mockups/processed/").replace(".png", "_shadow.png");
+const getHighlightMask = (path: string) => path.replace("/assets/mockups/", "/assets/mockups/processed/").replace(".png", "_highlight.png");
 // Color-specific photo mockups — used instead of SVG tint for highest realism
 const navyTshirtFront      = "/mockups/new/navy-tshirt-front.png";
 const navyTshirtBack       = "/mockups/new/navy-tshirt-back.png";
@@ -24,29 +28,29 @@ const oliveTshirtFront     = "/mockups/olive-tshirt-front.png";
 const oliveTshirtBack      = "/mockups/olive-tshirt-back.png";
 const skyblueTshirtFront   = "/mockups/skyblue-tshirt-front.png";
 const skyblueTshirtBack    = "/mockups/skyblue-tshirt-back.png";
-const longsleeveFront          = "/mockups/white-longsleeve-front.png";
-const longsleeveBack           = "/mockups/white-longsleeve-back.png";
-const longsleeveFrontDark      = "/mockups/normalized/longsleeve-black-front.png";
-const longsleeveFrontCutout    = "/mockups/white-longsleeve-front-cutout-real.png";
-const longsleeveBackCutout     = "/mockups/white-longsleeve-back-cutout-real.png";
-const longsleeveFrontDarkCutout = "/mockups/black-longsleeve-front-cutout.png";
-const longsleeveBackDarkCutout  = "/mockups/black-longsleeve-back-cutout.png";
-const hoodieFront          = "/mockups/white-hoodie-front.png";
-const hoodieBack           = "/mockups/white-hoodie-back.png";
-const hoodieFrontDark      = "/mockups/black-hoodie-front.png";
-const hoodieBackDark       = "/mockups/black-hoodie-back.png";
-const hoodieFrontCutout    = "/mockups/white-hoodie-front-cutout-real.png";
-const hoodieBackCutout     = "/mockups/white-hoodie-back-cutout-real.png";
-const mugFront             = "/mockups/white-mug-front.png";
-const mugFrontDark         = "/mockups/black-mug-front.png";
-const mugBack              = "/mockups/white-mug-back.png";
-const mugBackDark          = "/mockups/normalized/mug-black-back.png";
-const mugFrontCutout       = "/mockups/white-mug-front-cutout.png";
-const mugFrontDarkCutout   = "/mockups/black-mug-front-cutout.png";
-const capFront             = "/mockups/white-cap-front.png";
-const capFrontCutout       = "/mockups/white-cap-front-cutout.png";
-const waterBottleFront          = "/mockups/white-waterbottle-front.png";
-const waterBottleCutout         = "/mockups/white-waterbottle-front-cutout.png";
+const longsleeveFront          = "/assets/mockups/longsleeve_1.png";
+const longsleeveBack           = "/assets/mockups/longsleeve_6.png";
+const longsleeveFrontDark      = "/assets/mockups/longsleeve_1.png";
+const longsleeveFrontCutout    = "/assets/mockups/longsleeve_1.png";
+const longsleeveBackCutout     = "/assets/mockups/longsleeve_6.png";
+const longsleeveFrontDarkCutout = "/assets/mockups/longsleeve_1.png";
+const longsleeveBackDarkCutout  = "/assets/mockups/longsleeve_6.png";
+const hoodieFront          = "/assets/mockups/hoodie_1.png";
+const hoodieBack           = "/assets/mockups/hoodie_6.png";
+const hoodieFrontDark      = "/assets/mockups/hoodie_1.png";
+const hoodieBackDark       = "/assets/mockups/hoodie_6.png";
+const hoodieFrontCutout    = "/assets/mockups/hoodie_1.png";
+const hoodieBackCutout     = "/assets/mockups/hoodie_6.png";
+const mugFront             = "/assets/mockups/mug_1.png";
+const mugFrontDark         = "/assets/mockups/mug_1.png";
+const mugBack              = "/assets/mockups/mug_6.png";
+const mugBackDark          = "/assets/mockups/mug_6.png";
+const mugFrontCutout       = "/assets/mockups/mug_1.png";
+const mugFrontDarkCutout   = "/assets/mockups/mug_1.png";
+const capFront             = "/assets/mockups/cap_1.png";
+const capFrontCutout       = "/assets/mockups/cap_1.png";
+const waterBottleFront          = "/assets/mockups/bottle_1.png";
+const waterBottleCutout         = "/assets/mockups/bottle_1.png";
 const tshirtFrontDarkCutout     = "/mockups/normalized-cutouts/black-tshirt-front-cutout.png";
 const tshirtBackDarkCutout      = "/mockups/normalized-cutouts/black-tshirt-back-cutout.png";
 const hoodieFrontDarkCutout     = "/mockups/black-hoodie-front-cutout-real.png";
@@ -340,100 +344,14 @@ export const PRODUCTS: DesignProduct[] = [
 
 export const BASE_BY_CATEGORY: Record<
   DesignProduct["category"],
-  { front: string; back?: string; darkFront?: string; darkBack?: string; frontCutout?: string; backCutout?: string; darkFrontCutout?: string; darkBackCutout?: string;
-    /** Map of garment hex colour → real photo {front, back} — bypasses SVG tint for max realism. */
-    colorPhotos?: Record<string, { front: string; back?: string }>;
-  } | undefined
+  { front: string; back?: string; frontCutout?: string; backCutout?: string; } | undefined
 > = {
-  tshirt:      { front: tshirtFront, back: tshirtBack, darkFront: tshirtFrontDark, darkBack: tshirtBackDark, frontCutout: tshirtFrontCutout, backCutout: tshirtBackCutout, darkFrontCutout: tshirtFrontDarkCutout, darkBackCutout: tshirtBackDarkCutout,
-    colorPhotos: {
-      "#F8F7F4": { front: "/mockups/normalized/tshirt-white-front.png",    back: "/mockups/normalized/tshirt-white-back.png"    }, // White - clean
-      "#1a1a1a": { front: "/mockups/normalized/tshirt-black-front.png",    back: "/mockups/normalized/tshirt-black-back.png"    }, // Black - clean
-      "#1e3a5f": { front: "/mockups/normalized/tshirt-navy-front.png",     back: "/mockups/normalized/tshirt-navy-back.png"     }, // Navy - clean
-      "#dc2626": { front: "/mockups/normalized/tshirt-red-front.png",      back: "/mockups/normalized/tshirt-red-back.png"      }, // Red - clean
-      "#6b7280": { front: "/mockups/normalized/tshirt-grey-front.png",     back: "/mockups/normalized/tshirt-grey-back.png"     }, // Grey - clean
-      "#7f1d1d": { front: "/mockups/normalized/tshirt-maroon-front.png",   back: "/mockups/normalized/tshirt-maroon-back.png"   }, // Maroon - clean
-      "#4a5240": { front: "/mockups/normalized/tshirt-olive-front.png",    back: "/mockups/normalized/tshirt-olive-back.png"    }, // Olive - clean
-      "#0ea5e9": { front: "/mockups/normalized/tshirt-sky-blue-front.png", back: "/mockups/normalized/tshirt-sky-blue-back.png" }, // Sky Blue - clean
-    },
-  },
-  longsleeve:  { front: longsleeveFront, back: longsleeveBack, darkFront: longsleeveFrontDark, frontCutout: longsleeveFrontCutout, backCutout: longsleeveBackCutout, darkFrontCutout: longsleeveFrontDarkCutout, darkBackCutout: longsleeveBackDarkCutout,
-    colorPhotos: {
-      "#F5F5F3": { front: "/mockups/normalized/longsleeve-white-front.png",    back: "/mockups/normalized/longsleeve-white-back.png"    }, // White - clean
-      "#1a1a1a": { front: "/mockups/normalized/longsleeve-black-front.png",    back: "/mockups/normalized/longsleeve-black-back.png"    }, // Black - clean
-      "#1e3a5f": { front: "/mockups/normalized/longsleeve-navy-front.png",     back: "/mockups/normalized/longsleeve-navy-back.png"     }, // Navy - clean
-      "#7f1d1d": { front: "/mockups/normalized/longsleeve-maroon-front.png",   back: "/mockups/normalized/longsleeve-maroon-back.png"   }, // Maroon - clean
-      "#4a5240": { front: "/mockups/normalized/longsleeve-olive-front.png",    back: "/mockups/normalized/longsleeve-olive-back.png"    }, // Olive - clean
-      "#6b7280": { front: "/mockups/normalized/longsleeve-grey-front.png",     back: "/mockups/normalized/longsleeve-grey-back.png"     }, // Grey - clean
-      "#dc2626": { front: "/mockups/normalized/longsleeve-red-front.png",      back: "/mockups/normalized/longsleeve-red-back.png"      }, // Red - clean
-      "#0ea5e9": { front: "/mockups/normalized/longsleeve-sky-blue-front.png", back: "/mockups/normalized/longsleeve-sky-blue-back.png" }, // Sky Blue - clean
-      "#6b1a2c": { front: "/mockups/normalized/longsleeve-burgundy-front.png", back: "/mockups/normalized/longsleeve-burgundy-back.png" }, // Burgundy - clean
-      "#166534": { front: "/mockups/normalized/longsleeve-forest-front.png",   back: "/mockups/normalized/longsleeve-forest-back.png"   }, // Forest - clean
-    },
-  },
-  hoodie:      { front: hoodieFront, back: hoodieBack, darkFront: hoodieFrontDark, darkBack: hoodieBackDark, frontCutout: hoodieFrontCutout, backCutout: hoodieBackCutout, darkFrontCutout: hoodieFrontDarkCutout, darkBackCutout: hoodieBackDarkCutout,
-    colorPhotos: {
-      "#F2EFE9": { front: "/mockups/normalized/hoodie-white-front.png",    back: "/mockups/normalized/hoodie-white-back.png"    }, // White - clean
-      "#1a1a1a": { front: "/mockups/normalized/hoodie-black-front.png",    back: "/mockups/normalized/hoodie-black-back.png"    }, // Black - clean
-      "#1e3a5f": { front: "/mockups/normalized/hoodie-navy-front.png",     back: "/mockups/normalized/hoodie-navy-back.png"     }, // Navy - clean
-      "#6b7280": { front: "/mockups/normalized/hoodie-grey-front.png",     back: "/mockups/normalized/hoodie-grey-back.png"     }, // Grey - clean
-      "#7f1d1d": { front: "/mockups/normalized/hoodie-maroon-front.png",   back: "/mockups/normalized/hoodie-maroon-back.png"   }, // Maroon - clean
-      "#4a5240": { front: "/mockups/normalized/hoodie-olive-front.png",    back: "/mockups/normalized/hoodie-olive-back.png"    }, // Olive - clean
-      "#dc2626": { front: "/mockups/normalized/hoodie-red-front.png",      back: "/mockups/normalized/hoodie-red-back.png"      }, // Red - clean
-      "#0ea5e9": { front: "/mockups/normalized/hoodie-sky-blue-front.png", back: "/mockups/normalized/hoodie-sky-blue-back.png" }, // Sky Blue - clean
-      "#166534": { front: "/mockups/normalized/hoodie-forest-front.png",   back: "/mockups/normalized/hoodie-forest-back.png"   }, // Forest - clean
-      "#6b1a2c": { front: "/mockups/normalized/hoodie-burgundy-front.png", back: "/mockups/normalized/hoodie-burgundy-back.png" }, // Burgundy - clean
-    },
-  },
-  mug:         {
-    front: mugFront,
-    back: mugBack,
-    darkFront: mugFrontDark,
-    darkBack: mugBackDark,
-    frontCutout: mugFrontCutout,
-    // mugBack is an opaque source-kit photo — use the proper white cutout as the
-    // alpha fallback so silhouette masks (mug/waterbottle silhouette-mask SVG filter)
-    // get a transparent image instead of a solid rectangle.
-    backCutout: "/mockups/normalized-cutouts/mug-white-back.png",
-    darkFrontCutout: mugFrontDarkCutout,
-    darkBackCutout: mugFrontDarkCutout,
-    colorPhotos: {
-       "#f5f5f5": { front: "/mockups/normalized/mug-white-front.png", back: "/mockups/normalized/mug-white-back.png" }, // White - clean
-       "#1c1917": { front: "/mockups/normalized/mug-black-front.png", back: "/mockups/normalized/mug-black-back.png" }, // Black - clean
-       "#1e3a5f": { front: "/mockups/normalized/mug-navy-front.png", back: "/mockups/normalized/mug-navy-back.png" }, // Navy - clean
-       "#dc2626": { front: "/mockups/normalized/mug-red-front.png", back: "/mockups/normalized/mug-red-back.png" }, // Red - clean
-       "#16a34a": { front: "/mockups/normalized/mug-green-front.png", back: "/mockups/normalized/mug-green-back.png" }, // Green - clean
-       "#7c3aed": { front: "/mockups/normalized/mug-purple-front.png", back: "/mockups/normalized/mug-purple-back.png" }, // Purple - clean
-       "#0ea5e9": { front: "/mockups/normalized/mug-sky-blue-front.png", back: "/mockups/normalized/mug-sky-blue-back.png" }, // Sky Blue - clean
-       "#ec4899": { front: "/mockups/normalized/mug-pink-front.png", back: "/mockups/normalized/mug-pink-back.png" }, // Pink - clean
-       "#7f1d1d": { front: "/mockups/normalized/mug-maroon-front.png", back: "/mockups/normalized/mug-maroon-back.png" }, // Maroon - clean
-       "#ea580c": { front: "/mockups/normalized/mug-orange-front.png", back: "/mockups/normalized/mug-orange-back.png" }, // Orange - clean
-    },
-  },
-  cap: { front: capFront, frontCutout: capFrontCutout,
-    colorPhotos: {
-       "#F5F2EC": { front: "/mockups/normalized/cap-white-front.png",  back: "/mockups/normalized/cap-white-back.png"  }, // White - clean
-       "#1a1a1a": { front: "/mockups/normalized/cap-black-front.png",  back: "/mockups/normalized/cap-black-back.png"  }, // Black - clean
-       "#1e3a5f": { front: "/mockups/normalized/cap-navy-front.png",   back: "/mockups/normalized/cap-navy-back.png"   }, // Navy - clean
-       "#7f1d1d": { front: "/mockups/normalized/cap-maroon-front.png", back: "/mockups/normalized/cap-maroon-back.png" }, // Maroon - clean
-       "#4a5240": { front: "/mockups/normalized/cap-olive-front.png",  back: "/mockups/normalized/cap-olive-back.png"  }, // Olive - clean
-       "#dc2626": { front: "/mockups/normalized/cap-red-front.png",    back: "/mockups/normalized/cap-red-back.png"    }, // Red - clean
-       "#6b7280": { front: "/mockups/normalized/cap-grey-front.png",   back: "/mockups/normalized/cap-grey-back.png"   }, // Grey - clean
-       "#166534": { front: "/mockups/normalized/cap-forest-front.png", back: "/mockups/normalized/cap-forest-back.png" }, // Forest - clean
-    },
-  },
-  waterbottle: { front: waterBottleFront, frontCutout: waterBottleCutout,
-    colorPhotos: {
-       "#F4F3F1": { front: "/mockups/normalized/waterbottle-white-front.png",    back: "/mockups/normalized/waterbottle-white-back.png"    }, // White - clean
-       "#1C1917": { front: "/mockups/normalized/waterbottle-black-front.png",    back: "/mockups/normalized/waterbottle-black-back.png"    }, // Black - clean
-       "#1e3a5f": { front: "/mockups/normalized/waterbottle-navy-front.png",     back: "/mockups/normalized/waterbottle-navy-back.png"     }, // Navy - clean
-       "#166534": { front: "/mockups/normalized/waterbottle-forest-front.png",   back: "/mockups/normalized/waterbottle-forest-back.png"   }, // Forest - clean
-       "#0ea5e9": { front: "/mockups/normalized/waterbottle-sky-blue-front.png", back: "/mockups/normalized/waterbottle-sky-blue-back.png" }, // Sky Blue - clean
-       "#dc2626": { front: "/mockups/normalized/waterbottle-red-front.png",      back: "/mockups/normalized/waterbottle-red-back.png"      }, // Red - clean
-       "#f472b6": { front: "/mockups/normalized/waterbottle-pink-front.png",     back: "/mockups/normalized/waterbottle-pink-back.png"     }, // Pink - clean
-       "#0f766e": { front: "/mockups/normalized/waterbottle-teal-front.png",     back: "/mockups/normalized/waterbottle-teal-back.png"     }, // Teal - clean
-    },
-  },
+  tshirt:      { front: tshirtFront, back: tshirtBack, frontCutout: tshirtFront, backCutout: tshirtBack },
+  longsleeve:  { front: longsleeveFront, back: longsleeveBack, frontCutout: longsleeveFront, backCutout: longsleeveBack },
+  hoodie:      { front: hoodieFront, back: hoodieBack, frontCutout: hoodieFront, backCutout: hoodieBack },
+  mug:         { front: mugFront, back: mugBack, frontCutout: mugFront, backCutout: mugBack },
+  cap:         { front: capFront, frontCutout: capFront },
+  waterbottle: { front: waterBottleFront, frontCutout: waterBottleFront },
   // watertumbler uses category "waterbottle" — shares the same base entry
 };
 
@@ -706,68 +624,19 @@ function getCuratedMockup(
   allowSilhouetteShadow: boolean;
 } {
   const base = BASE_BY_CATEGORY[product.category];
-  const hex = normalizeMockupHex(color);
-  const colorPhoto = findColorPhoto(base?.colorPhotos, hex);
-  const nearBlack = isNearBlack(color);
-  const hasDark = !!(base?.darkFrontCutout || base?.darkFront);
-  const useDark = nearBlack && hasDark;
   const back = face === "back";
 
-  // Keep the reviewed dark cutout/photo pair for 3D and silhouette contexts.
-  // Some legacy colorPhotos entries point at the dark full photo for black;
-  // choosing them first would pair that photo with a white cutout.
-  if (useDark) {
-    const photoSrc = back
-      ? (base?.darkBack ?? base?.darkBackCutout ?? base?.darkFront ?? product.frontSrc)
-      : (base?.darkFront ?? base?.darkFrontCutout ?? product.frontSrc);
-    const cutoutSrc = back
-      ? (base?.darkBackCutout ?? base?.darkFrontCutout ?? base?.backCutout ?? product.frontSrc)
-      : (base?.darkFrontCutout ?? base?.frontCutout ?? product.frontSrc);
-    const isOpaquePhoto = !photoSrc.includes("cutout");
-    return {
-      photoSrc,
-      cutoutSrc,
-      isColorPhoto: true,
-      cutoutNeedsTint: false,
-      photoKind: isOpaquePhoto ? "opaque-photo" : "transparent-cutout",
-      requiresTint: false,
-      allowSilhouetteShadow: !isOpaquePhoto,
-    };
-  }
-
-  if (colorPhoto && (!back || colorPhoto.back)) {
-    const photoSrc = back && colorPhoto.back ? colorPhoto.back : colorPhoto.front;
-    const cutoutSrc = back
-      ? (base?.backCutout ?? base?.frontCutout ?? product.frontSrc)
-      : (base?.frontCutout ?? product.frontSrc);
-    return {
-      photoSrc,
-      cutoutSrc,
-      isColorPhoto: true,
-      cutoutNeedsTint: false,
-      photoKind: "opaque-photo",
-      requiresTint: false,
-      allowSilhouetteShadow: false,
-    };
-  }
-
-  const photoSrc = back
-    ? (base?.back ?? product.backSrc ?? base?.front ?? product.frontSrc)
-    : (base?.front ?? product.frontSrc);
-  const cutoutSrc = back
-    ? (base?.backCutout ?? base?.frontCutout ?? product.backSrc ?? product.frontSrc)
-    : (base?.frontCutout ?? product.frontSrc);
-  const isOpaquePhoto = !photoSrc.includes("cutout");
-  const requiresTint = !isLightTint(color) && !nearBlack;
-  const resolvedPhotoKind = requiresTint ? "transparent-cutout" : (isOpaquePhoto ? "opaque-photo" : "transparent-cutout");
+  const photoSrc = back ? (base?.back || base?.front || "") : (base?.front || "");
+  const cutoutSrc = back ? (base?.backCutout || base?.frontCutout || "") : (base?.frontCutout || "");
+  
   return {
     photoSrc,
     cutoutSrc,
     isColorPhoto: false,
-    cutoutNeedsTint: requiresTint,
-    photoKind: resolvedPhotoKind,
-    requiresTint,
-    allowSilhouetteShadow: resolvedPhotoKind === "transparent-cutout",
+    cutoutNeedsTint: true,
+    photoKind: "transparent-cutout",
+    requiresTint: true,
+    allowSilhouetteShadow: true,
   };
 }
 
@@ -810,26 +679,6 @@ export function resolveMockup(
   // and a separate transparent derivative. The photo is the only 2D/export
   // source; the cutout is the only billboard/shadow source. Never tint either
   // one again: the exact selected colour is already present in the pixels.
-  if (sourceKitSlug) {
-    const stem = `${category}-${sourceKitSlug}-${face}`;
-    return {
-      colorHex: hex,
-      photoSrc: `/mockups/normalized/${stem}.png`,
-      cutoutSrc: `/mockups/normalized-cutouts/${stem}.png`,
-      isColorPhoto: true,
-      cutoutNeedsTint: false,
-      photoKind: "opaque-photo",
-      requiresTint: false,
-      allowSilhouetteShadow: false,
-      printZone: zones?.[face] ?? (face === "back" && product.printZoneBack ? product.printZoneBack : product.printZone),
-      normalizedFrame,
-      isOpaquePhoto: true,
-      editableMasterPath: `attached_assets/trynex-mockup-source-kit/psd/${stem}.psd`,
-      sourceKitKey: stem,
-      source: "source-kit",
-    };
-  }
-
   const curated = getCuratedMockup(product, color, face);
 
   return {
@@ -1036,61 +885,52 @@ export function GarmentSVG({
       {/* Soft vignette overlay across the whole canvas for subtle studio lighting. */}
       <rect width={1000} height={1000} fill="url(#studio-vignette)" style={{ pointerEvents: "none" }} />
 
-      {/* ── Garment render ────────────────────────────────────────────────────
-          Strictly mutually exclusive rendering paths to prevent ghosting:
-          1. TINTED → shadow pass + multiply-tinted cutout.
-          2. OPAQUE → single opaque studio photo (no shadow, no tint).
-          3. CUTOUT → single transparent cutout with soft drop-shadow.
+      {/* ── Real Smart Mockup Render ───────────────────────────────────────────
+          Uses a multi-layer stack for high-fidelity realism:
+          1. Base Product Photo (with tint if needed)
+          2. Shadow Map (Luminosity Mask)
+          3. Highlight Map (Luminosity Mask)
       ───────────────────────────────────────────────────────────────────────── */}
 
-      {needsTint ? (
-        /* Path 1 (TINTED): shadow pass + multiply-tinted cutout image */
-        <>
-          {cutoutMaskSrc && (
-            <image
-              key={`shadow-${cutoutMaskSrc}`}
-              href={cutoutMaskSrc}
-              x={0} y={0} width={1000} height={1000}
-              preserveAspectRatio="xMidYMid meet"
-              filter="url(#garment-tint-shadow)"
-              style={{ pointerEvents: "none" }}
-            />
-          )}
-          {tintPhotoSrc && (
-            <image
-              key={`tint-${tintPhotoSrc}`}
-              href={tintPhotoSrc}
-              x={0} y={0} width={1000} height={1000}
-              preserveAspectRatio="xMidYMid meet"
-              filter="url(#garment-color-tint)"
-              className="garment-img"
-              style={{ pointerEvents: "none" }}
-            />
-          )}
-        </>
-      ) : resolvedMockup.photoKind === "opaque-photo" ? (
-        /* Path 2 (OPAQUE PHOTO): ONLY the opaque studio photo */
-        <image
-          key={resolvedMockup.photoSrc}
-          href={resolvedMockup.photoSrc}
-          x={0} y={0} width={1000} height={1000}
-          preserveAspectRatio="xMidYMid meet"
-          className="garment-img"
-          style={{ pointerEvents: "none" }}
-        />
-      ) : (
-        /* Path 3 (CUTOUT): ONLY the transparent cutout with drop-shadow */
-        <g filter={shadowFilter}>
+      <g style={{ pointerEvents: "none" }}>
+        {/* Layer 1: Base Product */}
+        {needsTint ? (
           <image
-            key={resolvedMockup.cutoutSrc}
-            href={resolvedMockup.cutoutSrc}
+            key={`base-tint-${tintPhotoSrc}`}
+            href={tintPhotoSrc}
+            x={0} y={0} width={1000} height={1000}
+            preserveAspectRatio="xMidYMid meet"
+            filter="url(#garment-color-tint)"
+            className="garment-img"
+          />
+        ) : (
+          <image
+            key={`base-photo-${resolvedMockup.photoSrc}`}
+            href={resolvedMockup.photoSrc || resolvedMockup.cutoutSrc}
             x={0} y={0} width={1000} height={1000}
             preserveAspectRatio="xMidYMid meet"
             className="garment-img"
-            style={{ pointerEvents: "none" }}
           />
-        </g>
-      )}
+        )}
+
+        {/* Layer 2: Shadow Mask (extracted from real photo) */}
+        <image
+          key={`shadow-mask-${resolvedMockup.photoSrc}`}
+          href={getShadowMask(resolvedMockup.photoSrc || resolvedMockup.cutoutSrc || "")}
+          x={0} y={0} width={1000} height={1000}
+          preserveAspectRatio="xMidYMid meet"
+          style={{ mixBlendMode: "multiply", opacity: 0.8 }}
+        />
+
+        {/* Layer 3: Highlight Mask (extracted from real photo) */}
+        <image
+          key={`highlight-mask-${resolvedMockup.photoSrc}`}
+          href={getHighlightMask(resolvedMockup.photoSrc || resolvedMockup.cutoutSrc || "")}
+          x={0} y={0} width={1000} height={1000}
+          preserveAspectRatio="xMidYMid meet"
+          style={{ mixBlendMode: "screen", opacity: 0.4 }}
+        />
+      </g>
 
       {showPrintZone && (() => {
         return (
