@@ -24,3 +24,11 @@ Date: 2026-08-13 (sandbox current session)
 ## Final Production Smoke Test
 
 The rebuilt production preview restored the saved pen layer on reload without an error. Activating Draw and tapping the canvas created a second visible Pen stroke, changed the Layers badge from 1 to 2, and opened the line’s fill/stroke controls without React #185. Clicking PNG then showed the success toast `PNG exported! High-res PNG saved to your downloads.` with the two shape layers present. This validates the end-to-end editor state, persistence, and export path at the tested desktop viewport.
+
+## Deployment Verification
+
+Cloudflare Pages project `trynex-lifestyle-shop` accepted commit `1bec80f369bc028444a846dae884f9eae079e5cc` from `main`. The production deployment `75bb82c9-a477-4fb6-8c77-3aebb6170612` completed both build and deploy stages successfully at 19:41 UTC, with the production aliases `trynex-lifestyle-shop.pages.dev` and `www.trynexshop.com` configured.
+
+## CORS Root Cause and Hotfix
+
+A live read-only check found that the Pages proxy returned the backend’s `cors_error` 403 because it forwarded the browser `Origin: https://trynex-lifestyle-shop.pages.dev` header to the older Render deployment. The proxy itself was adding the correct browser-facing CORS headers, but the upstream API rejected the forwarded request first. The proxy now strips `origin` from upstream request headers and owns the browser CORS response policy, allowing the existing Pages route to work even while the Render service is on an older CORS allowlist. The storefront catalog endpoint returned 69 product records during the same audit.

@@ -30,6 +30,7 @@ const STRIP_REQUEST_HEADERS = new Set([
   "cf-request-id",
   "cdn-loop",
   "x-real-ip",
+  "origin",
 ]);
 
 /** Response headers that must NOT be forwarded to the browser. */
