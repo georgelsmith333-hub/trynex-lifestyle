@@ -122,8 +122,8 @@ app.use(
       if (process.env.NODE_ENV !== "production" && /^https:\/\/trynex[^.]*\.vercel\.app$/.test(origin)) {
         return callback(null, true);
       }
-      // Allow Cloudflare Pages preview deployments for TryNex.
-      if (process.env.NODE_ENV !== "production" && /^https:\/\/[^/]*\.trynex-lifestyle-shop\.pages\.dev$/.test(origin)) {
+      // Allow Cloudflare Pages preview and production deployments for TryNex.
+      if (/^https:\/\/[^/]*\.trynex-lifestyle-shop\.pages\.dev$/.test(origin) || origin === "https://www.trynexshop.com") {
         return callback(null, true);
       }
       return callback(new Error(`CORS: origin ${origin} not allowed`));
