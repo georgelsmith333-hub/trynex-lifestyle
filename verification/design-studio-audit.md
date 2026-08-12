@@ -40,3 +40,7 @@ After production deployment `1f47ee41-6104-4e6b-9c77-623241d6ce0c` completed suc
 ## Mockup V4 and Editor Tool Verification
 
 The rebuilt local production preview loaded without a runtime error. The Templates tab displayed intentional ready-to-use sticker assets; clicking Heart created a visible selected `Heart` image layer and opened Layers. The QR tab generated a real QR preview for the storefront URL; clicking Add QR Code created a visible selected `QR Code` image layer and opened Layers. The resulting design displayed the template and QR together inside the print zone, and PNG export completed with the confirmation `PNG exported! High-res PNG saved to your downloads.` The preview’s garment lighting remained restrained after removing SVG glow overlays and reducing compositor highlight strength.
+
+## Live V4 Verification
+
+Cloudflare Pages deployment `7cdd5ee7-77d6-4a7c-a26c-9f352a9809d0` completed build and deploy successfully for commit `ae148d40a83301174373b61037b8a74b8ba31c77`. The live Design Studio loaded with the V4 controls. The production QR panel generated its preview; Add QR Code created a visible `QR Code` layer, selected Layers, and displayed the QR on the shirt print zone without a runtime error.
