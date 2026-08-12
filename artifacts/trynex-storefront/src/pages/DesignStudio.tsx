@@ -3597,35 +3597,7 @@ export default function DesignStudio() {
 
                     {/* Smart Mockup shading is painted AFTER the artwork. This is the
                         critical order: folds must affect the design, not sit behind it. */}
-                    {currentFaceLayers.some(l => l.visible) && !isFlatZone && (() => {
-                      const overlayMockup = activeFace === "back" ? backMockup : frontMockup;
-                      // Always shade from the aligned transparent cutout. Using an
-                      // opaque studio photo here would bring its white background into
-                      // Screen blending and create a washed-out rectangle/ghost edge.
-                      const textureSrc = overlayMockup.cutoutSrc;
-                      return (
-                        <>
-                          <image
-                            href={textureSrc}
-                            x={0} y={0} width={1000} height={1000}
-                            preserveAspectRatio="xMidYMid meet"
-                            pointerEvents="none"
-                            filter="url(#smart-shadow-overlay)"
-                            opacity={0.34}
-                            style={{ mixBlendMode: "multiply", pointerEvents: "none" }}
-                          />
-                          <image
-                            href={textureSrc}
-                            x={0} y={0} width={1000} height={1000}
-                            preserveAspectRatio="xMidYMid meet"
-                            pointerEvents="none"
-                            filter="url(#smart-highlight-overlay)"
-                            opacity={0.18}
-                            style={{ mixBlendMode: "screen", pointerEvents: "none" }}
-                          />
-                        </>
-                      );
-                    })()}
+
                   </g>
 
 
@@ -3844,42 +3816,7 @@ export default function DesignStudio() {
                         </div>
                       </div>
                     </div>
-                    {/* Action buttons — compact pill row at bottom, glass style */}
-                    <motion.div
-                      className="flex items-center gap-2 pointer-events-auto"
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <button
-                        onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all hover:scale-105 active:scale-95 touch-manipulation"
-                        style={{ background: "rgba(255,255,255,0.92)", color: "#374151", boxShadow: "0 2px 8px rgba(0,0,0,0.14)", backdropFilter: "blur(6px)" }}
-                      >
-                        <Upload className="w-3 h-3" /> Upload
-                      </button>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); setActiveTab("text"); if(isMobile) setMobileToolOpen(true); }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all hover:scale-105 active:scale-95 touch-manipulation"
-                        style={{ background: "rgba(255,255,255,0.92)", color: "#374151", boxShadow: "0 2px 8px rgba(0,0,0,0.14)", backdropFilter: "blur(6px)" }}
-                      >
-                        <Type className="w-3 h-3" /> Text
-                      </button>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); setActiveTab("ai"); if(isMobile) setMobileToolOpen(true); }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all hover:scale-105 active:scale-95 touch-manipulation"
-                        style={{ background: "linear-gradient(135deg,#E85D04,#FB8500)", color: "white", boxShadow: "0 2px 12px rgba(232,93,4,0.4)" }}
-                      >
-                        <Wand2 className="w-3 h-3" /> AI Art
-                      </button>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); setActiveTab("templates"); if(isMobile) setMobileToolOpen(true); }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all hover:scale-105 active:scale-95 touch-manipulation"
-                        style={{ background: "rgba(255,255,255,0.92)", color: "#374151", boxShadow: "0 2px 8px rgba(0,0,0,0.14)", backdropFilter: "blur(6px)" }}
-                      >
-                        <Sparkles className="w-3 h-3" /> Templates
-                      </button>
-                    </motion.div>
+
                   </div>
                 )}
 
