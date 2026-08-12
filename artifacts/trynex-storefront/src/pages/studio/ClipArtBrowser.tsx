@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { Search, Image as ImageIcon } from "lucide-react";
 import { useDesignStore } from "@/hooks/useDesignStore";
+import { fitImageTransform } from "./autoFit";
 import { STICKERS } from "@/pages/design-studio/mockups";
 
 export function ClipArtBrowser() {
   const [query, setQuery] = useState("");
   const addLayer = useDesignStore((s) => s.addLayer);
+  const selectLayer = useDesignStore((s) => s.selectLayer);
+  const setActiveTab = useDesignStore((s) => s.setActiveTab);
   const activeFace = useDesignStore((s) => s.activeFace);
+  const printZone = useDesignStore((s) => s.selectedProduct.printZone);
 
   const filtered = STICKERS.filter((s) => s.name.toLowerCase().includes(query.toLowerCase()));
 
@@ -29,8 +33,9 @@ export function ClipArtBrowser() {
             onClick={() => {
               const img = new Image();
               img.onload = () => {
+                const id = Math.random().toString(36).slice(2, 10);
                 addLayer({
-                  id: Math.random().toString(36).slice(2, 10),
+                  id,
                   name: s.name,
                   type: "image",
                   src: s.dataUrl,
@@ -38,9 +43,11 @@ export function ClipArtBrowser() {
                   naturalH: img.naturalHeight || 100,
                   visible: true,
                   locked: false,
-                  transform: { x: 0, y: 0, scale: 0.4, rotation: 0, opacity: 1 },
+                  transform: fitImageTransform(img.naturalWidth || 100, img.naturalHeight || 100, { w: printZone.w, h: printZone.h }, { padding: 0.7, maxScale: 4 }),
                   face: activeFace,
                 });
+                selectLayer(id);
+                setActiveTab("layers");
               };
               img.src = s.dataUrl;
             }}

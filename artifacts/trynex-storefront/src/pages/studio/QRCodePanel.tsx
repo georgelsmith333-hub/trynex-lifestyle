@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDesignStore } from "@/hooks/useDesignStore";
+import { fitImageTransform } from "./autoFit";
 import QRCode from "qrcode";
 import { QrCode } from "lucide-react";
 
@@ -10,7 +11,10 @@ export function QRCodePanel() {
   const [bg, setBg] = useState("#ffffff");
   const [svg, setSvg] = useState<string | null>(null);
   const addLayer = useDesignStore((s) => s.addLayer);
+  const selectLayer = useDesignStore((s) => s.selectLayer);
+  const setActiveTab = useDesignStore((s) => s.setActiveTab);
   const activeFace = useDesignStore((s) => s.activeFace);
+  const printZone = useDesignStore((s) => s.selectedProduct.printZone);
 
   useEffect(() => {
     if (!url.trim()) return;
@@ -23,8 +27,9 @@ export function QRCodePanel() {
     if (!svg) return;
     const img = new Image();
     img.onload = () => {
+      const id = Math.random().toString(36).slice(2, 10);
       addLayer({
-        id: Math.random().toString(36).slice(2, 10),
+        id,
         name: "QR Code",
         type: "image",
         src: svg,
@@ -32,9 +37,11 @@ export function QRCodePanel() {
         naturalH: size,
         visible: true,
         locked: false,
-        transform: { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 },
+        transform: fitImageTransform(size, size, { w: printZone.w, h: printZone.h }, { padding: 0.34, minScale: 0.35, maxScale: 2 }),
         face: activeFace,
       });
+      selectLayer(id);
+      setActiveTab("layers");
     };
     img.src = svg;
   };

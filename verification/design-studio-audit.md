@@ -36,3 +36,7 @@ A live read-only check found that the Pages proxy returned the backend’s `cors
 ## Post-Hotfix CORS Verification
 
 After production deployment `1f47ee41-6104-4e6b-9c77-623241d6ce0c` completed successfully for commit `caf80dd83b389db983d70ffec6081ae1c121d823`, the Pages proxy returned HTTP 200 for `GET /api/products?limit=1` with `Access-Control-Allow-Origin: https://trynex-lifestyle-shop.pages.dev` and `Access-Control-Allow-Credentials: true`. The same origin’s preflight returned HTTP 204 with the expected methods, headers, credentials, and 86400-second max age. The catalog response remained valid and the earlier proxy `cors_error` 403 was resolved.
+
+## Mockup V4 and Editor Tool Verification
+
+The rebuilt local production preview loaded without a runtime error. The Templates tab displayed intentional ready-to-use sticker assets; clicking Heart created a visible selected `Heart` image layer and opened Layers. The QR tab generated a real QR preview for the storefront URL; clicking Add QR Code created a visible selected `QR Code` image layer and opened Layers. The resulting design displayed the template and QR together inside the print zone, and PNG export completed with the confirmation `PNG exported! High-res PNG saved to your downloads.` The preview’s garment lighting remained restrained after removing SVG glow overlays and reducing compositor highlight strength.

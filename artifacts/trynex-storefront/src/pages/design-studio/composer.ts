@@ -709,8 +709,8 @@ export async function composeGarmentMockup(opts: {
           for (let i = 0; i < pixels.length; i += 4) {
             const alpha = pixels[i + 3] / 255;
             const luminance = (0.299 * pixels[i] + 0.587 * pixels[i + 1] + 0.114 * pixels[i + 2]) / 255;
-            const shadowAmount = Math.max(0, (0.52 - luminance) / 0.52) * strength * alpha;
-            const highlightAmount = Math.max(0, (luminance - 0.48) / 0.52) * strength * 0.55 * alpha;
+            const shadowAmount = Math.max(0, (0.45 - luminance) / 0.45) * strength * 0.75 * alpha;
+            const highlightAmount = Math.max(0, (luminance - 0.55) / 0.45) * strength * 0.22 * alpha;
 
             // Black with variable alpha becomes a controlled Multiply shadow.
             shadow.data[i] = 0;
@@ -844,29 +844,34 @@ export async function autoFixImage(src: string): Promise<{ src: string; brightne
   const data = ctx.getImageData(0, 0, size, size).data;
 
   // Compute average luminance and a simple contrast metric (std-dev-like).
-  let sum = 0, sumSq = 0, count = 0;
+  let sum = 0, sumSq = 0, count = 0, transparentCount = 0;
   for (let i = 0; i < data.length; i += 4) {
     const r = data[i], g = data[i + 1], b = data[i + 2];
     const a = data[i + 3];
-    if (a < 32) continue; // ignore transparent pixels
+    if (a < 250) transparentCount++;
+    if (a < 32) continue; // ignore fully transparent pixels
     const lum = 0.299 * r + 0.587 * g + 0.114 * b;
     sum += lum; sumSq += lum * lum; count++;
   }
   if (count === 0) return { src, brightness: 100, contrast: 100 };
+  // Transparent logos and cutout art already carry intentional color values;
+  // do not flatten their alpha-backed palette with a global correction filter.
+  if (transparentCount / (data.length / 4) > 0.02) return { src, brightness: 100, contrast: 100 };
   const avg = sum / count;
   const variance = sumSq / count - avg * avg;
   const std = Math.sqrt(Math.max(0, variance));
 
-  // Target: average brightness ~ 128, contrast std ~ 60-80.
+  // Correct only unusually flat photographic uploads. Keep the correction
+  // deliberately narrow so the product color and artwork palette stay honest.
   let brightness = 100;
   let contrast = 100;
-  if (avg < 100) brightness = Math.round(100 + (100 - avg) * 0.45);
-  if (avg > 180) brightness = Math.round(100 - (avg - 180) * 0.45);
-  if (std < 55) contrast = Math.round(100 + (55 - std) * 1.1);
-  if (std > 90) contrast = Math.round(100 - (std - 90) * 0.6);
+  if (avg < 96) brightness = Math.round(100 + (96 - avg) * 0.22);
+  if (avg > 184) brightness = Math.round(100 - (avg - 184) * 0.22);
+  if (std < 48) contrast = Math.round(100 + (48 - std) * 0.45);
+  if (std > 104) contrast = Math.round(100 - (std - 104) * 0.25);
 
-  brightness = Math.max(80, Math.min(140, brightness));
-  contrast = Math.max(85, Math.min(140, contrast));
+  brightness = Math.max(92, Math.min(112, brightness));
+  contrast = Math.max(94, Math.min(116, contrast));
 
   if (brightness === 100 && contrast === 100) return { src, brightness, contrast };
 

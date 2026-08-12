@@ -1,33 +1,35 @@
 import { useState } from "react";
-import { Wand2, Loader2, Image as ImageIcon, Info } from "lucide-react";
-import { AI_STYLE_PRESETS } from "./types";
+import { Wand2, Loader2, Info } from "lucide-react";
+import { fitImageTransform } from "./autoFit";
 import { useDesignStore } from "@/hooks/useDesignStore";
 
 export function AIPanel() {
   const [prompt, setPrompt] = useState("");
   const [negative, setNegative] = useState("");
-  const [style, setStyle] = useState(AI_STYLE_PRESETS[0].id);
   const [generating, setGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const addLayer = useDesignStore((s) => s.addLayer);
+  const selectLayer = useDesignStore((s) => s.selectLayer);
+  const setActiveTab = useDesignStore((s) => s.setActiveTab);
   const activeFace = useDesignStore((s) => s.activeFace);
+  const printZone = useDesignStore((s) => s.selectedProduct.printZone);
 
   const handleGenerate = async () => {
     if (!prompt.trim()) return;
     setGenerating(true);
     setError(null);
     setProgress(0);
-    const preset = AI_STYLE_PRESETS.find((p) => p.id === style);
-    const fullPrompt = `${prompt}${preset?.suffix ?? ""}`;
+    const fullPrompt = prompt.trim();
     const neg = encodeURIComponent(negative);
     const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(fullPrompt)}?width=1024&height=1024&nologo=true&enhance=true&negative=${neg}`;
     try {
       const img = new Image();
       img.crossOrigin = "anonymous";
       img.onload = () => {
+        const id = Math.random().toString(36).slice(2, 10);
         addLayer({
-          id: Math.random().toString(36).slice(2, 10),
+          id,
           name: prompt.slice(0, 30),
           type: "image",
           src: url,
@@ -35,9 +37,11 @@ export function AIPanel() {
           naturalH: img.naturalHeight || 1024,
           visible: true,
           locked: false,
-          transform: { x: 0, y: 0, scale: 0.8, rotation: 0, opacity: 1 },
+          transform: fitImageTransform(img.naturalWidth || 1024, img.naturalHeight || 1024, { w: printZone.w, h: printZone.h }, { padding: 0.88, maxScale: 4 }),
           face: activeFace,
         });
+        selectLayer(id);
+        setActiveTab("layers");
         setGenerating(false);
         setProgress(100);
       };
@@ -69,19 +73,7 @@ export function AIPanel() {
         className="w-full px-3 py-2 rounded-xl text-xs border border-gray-200 focus:border-purple-400 outline-none"
         rows={3}
       />
-      <div className="flex gap-2 overflow-x-auto pb-1">
-        {AI_STYLE_PRESETS.map((p) => (
-          <button
-            key={p.id}
-            onClick={() => setStyle(p.id)}
-            className={`shrink-0 px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-all ${
-              style === p.id ? "bg-purple-600 text-white border-purple-600" : "bg-white border-gray-200 text-gray-600"
-            }`}
-          >
-            {p.label}
-          </button>
-        ))}
-      </div>
+      <p className="text-[10px] text-gray-400">Create one original image from your prompt. It will be fitted to the active print zone automatically.</p>
       <details className="group">
         <summary className="text-[10px] font-black uppercase tracking-widest text-gray-400 cursor-pointer list-none flex items-center gap-1 select-none">
           <span className="text-gray-300 group-open:rotate-90 transition-transform inline-block">▶</span> Advanced

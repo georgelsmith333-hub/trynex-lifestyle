@@ -4,6 +4,8 @@
    The mockup PNGs live in /public/mockups/<id>-?face?.png
 ════════════════════════════════════════════════════════ */
 
+import { createSmartMockupManifest, type SmartMockupManifest } from "./smart-mockup-manifest";
+
 // ── T-Shirt: unified studio photos from normalized/ folder ──
 const tshirtFront          = "/assets/mockups/tshirt_1.png";
 const tshirtBack           = "/assets/mockups/tshirt_6.png";
@@ -493,6 +495,8 @@ export interface MockupResolution {
   editableMasterPath?: string;
   /** Stable source-kit document key used by export/admin tooling. */
   sourceKitKey?: string;
+  /** Explicit PSD/PSB smart-object recipe used by compositor/export tooling. */
+  smartObject: SmartMockupManifest;
   source: "source-kit" | "curated";
 }
 
@@ -698,6 +702,13 @@ export function resolveMockup(
     isOpaquePhoto: curated.photoKind === "opaque-photo",
     editableMasterPath: masterPath,
     sourceKitKey,
+    smartObject: createSmartMockupManifest({
+      category,
+      sourceKitKey,
+      editableMasterPath: masterPath,
+      normalizedFrame,
+      printZone: zones?.[face] ?? (face === "back" && product.printZoneBack ? product.printZoneBack : product.printZone),
+    }),
     source: "source-kit",
   };
 }
@@ -771,9 +782,8 @@ export function GarmentSVG({
   // canvas entirely so no background colour shows through.
   const canvasBg = "#ffffff";
 
-  // Drop-shadow filter: only on transparent-bg (cutout) images.
-  // Applying it to a full opaque photo creates a box shadow around the rectangle.
-  const shadowFilter = resolvedMockup.allowSilhouetteShadow ? "url(#garment-shadow)" : undefined;
+  // Keep the base preview neutral; realistic lighting is supplied by the product
+  // source and the clipped compositor masks, not by an extra glow layer.
 
   return (
     <svg
@@ -796,43 +806,9 @@ export function GarmentSVG({
 
 
 
-        {/* Fabric grain / subtle noise texture — gives the studio photo a tactile,
-            premium printed-on-fabric feel without overpowering the design. */}
-        <filter id="fabric-grain" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
-          <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch" result="noise" />
-          <feColorMatrix type="matrix" values="0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.06 0" in="noise" result="softNoise" />
-          <feComposite in="softNoise" in2="SourceGraphic" operator="over" />
-        </filter>
-
-        {/* Soft vignette / studio lighting — darkens the corners slightly so the
-            product is the hero and the white canvas doesn't look flat. */}
-        <radialGradient id="studio-vignette" cx="50%" cy="45%" r="75%" fx="50%" fy="40%">
-          <stop offset="0%" stopColor="white" stopOpacity="0" />
-          <stop offset="75%" stopColor="white" stopOpacity="0" />
-          <stop offset="100%" stopColor="rgba(0,0,0,0.06)" stopOpacity="1" />
-        </radialGradient>
-
-        {/* Soft drop shadow for cutout garments — lifts them off the white canvas. */}
-        <filter id="garment-shadow" x="-20%" y="-20%" width="140%" height="140%">
-          <feDropShadow dx="0" dy="12" stdDeviation="20" floodColor="rgba(0,0,0,0.08)" />
-        </filter>
-
-        {/* Smart Mockup Luminosity Passes */}
-        <filter id="smart-shadow-pass" colorInterpolationFilters="sRGB">
-          <feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0" in="SourceGraphic" result="mask" />
-          <feBlend in="SourceGraphic" in2="SourceGraphic" mode="multiply" />
-        </filter>
-        <filter id="smart-highlight-pass" colorInterpolationFilters="sRGB">
-          <feBlend in="SourceGraphic" in2="SourceGraphic" mode="screen" />
-        </filter>
-
-        {/* ── Smart Mockup Luminosity Filters ────────────────────────────────
-            Keep shadows and highlights as separate passes. The shadow pass is
-            neutral-white in bright regions for Multiply; the highlight pass is
-            neutral-black in dark regions for Screen. This avoids the ghosted
-            duplicate-garment effect caused by painting a second full mockup. */}
-
-
+        {/* No SVG grain, vignette, full-frame shadow, or highlight overlays here.
+            The single product source plus the compositor's clipped luminosity
+            masks is the PSD-style stack; duplicate SVG treatments create glow. */}
 
         {/* ── Colour multiply-tint filter ──────────────────────────────────────
             Applied DIRECTLY to the <image> element (not a separate rect).
@@ -949,12 +925,11 @@ export function FlatZoneSVG({
     >
       <defs>
         {/* flat-artboard-glow: white glow + drop shadow behind the print-zone artboard */}
-        <filter id="flat-artboard-glow">
-          <feDropShadow dx="0" dy="0" stdDeviation="18" floodColor="rgba(255,255,255,0.60)" />
-          <feDropShadow dx="0" dy="6" stdDeviation="12" floodColor="rgba(0,0,0,0.18)" />
+        <filter id="flat-artboard-glow" x="-10%" y="-10%" width="120%" height="120%">
+          <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="rgba(0,0,0,0.06)" />
         </filter>
-        <filter id="flat-shadow-sm">
-          <feDropShadow dx="0" dy="3" stdDeviation="6" floodColor="rgba(0,0,0,0.12)" />
+        <filter id="flat-shadow-sm" x="-10%" y="-10%" width="120%" height="120%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="rgba(0,0,0,0.07)" />
         </filter>
         <clipPath id="flat-clip-pz">
           <rect x={pz.x} y={pz.y} width={pz.w} height={pz.h} rx={10} />

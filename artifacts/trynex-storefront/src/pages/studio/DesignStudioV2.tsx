@@ -36,6 +36,7 @@ import { MainToolbar } from "./toolbar/MainToolbar";
 import { ProductSwitcher } from "./toolbar/ProductSwitcher";
 import { CanvasArea } from "./CanvasArea";
 import { AIPanel } from "./AIPanel";
+import { fitImageTransform } from "./autoFit";
 import { ClipArtBrowser } from "./ClipArtBrowser";
 import { QRCodePanel } from "./QRCodePanel";
 import { FONT_FAMILIES, type Layer, type ImageLayer, type TextLayer, type ShapeLayer, DRAFT_VERSION } from "./types";
@@ -301,14 +302,11 @@ export default function DesignStudioV2() {
         await new Promise<void>((res, rej) => { img.onload = () => res(); img.onerror = () => rej(new Error("This image could not be decoded.")); });
         try { await img.decode?.(); } catch {}
         const fixed = await autoFixImage(src);
-        const aspect = img.naturalWidth / Math.max(img.naturalHeight, 1);
-        const maxScaleForHeight = (pz.h * aspect) / pz.w;
-        const initialScale = Math.min(1.0, maxScaleForHeight) * 0.95;
         const layer: ImageLayer = {
           id: uid(), name: file.name.replace(/\.[^.]+$/, "") || "Image",
           type: "image", src: fixed.src, naturalW: img.naturalWidth, naturalH: img.naturalHeight,
           visible: true, locked: false,
-          transform: { x: 0, y: 0, scale: initialScale, rotation: 0, opacity: 1 },
+          transform: fitImageTransform(img.naturalWidth, img.naturalHeight, { w: pz.w, h: pz.h }, { padding: 0.92, maxScale: 4 }),
           face: activeFace, brightness: fixed.brightness, contrast: fixed.contrast,
         };
         addLayer(layer);
