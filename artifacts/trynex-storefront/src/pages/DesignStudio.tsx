@@ -1090,8 +1090,8 @@ export default function DesignStudio() {
      cylindrical-warp algorithm used by the 3D composer, then display the result
      as an SVG <image> overlay. The flat SVG image layers are kept (opacity 0) so
      interaction hit-rects, selection boxes and resize handles all keep working. */
-  const isCylindrical = false;
-  const cylindricalCurvature = 0;
+  const isCylindrical = selectedProduct.category === "mug" || selectedProduct.category === "waterbottle" || selectedProduct.category === "cap";
+  const cylindricalCurvature = selectedProduct.category === "cap" ? 0.10 : 0.16;
   const [curvedDesignUrl, setCurvedDesignUrl] = useState<string | null>(null);
   const curvedPreviewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const curvedPreviewCacheRef = useRef(new Map<string, HTMLImageElement>());
