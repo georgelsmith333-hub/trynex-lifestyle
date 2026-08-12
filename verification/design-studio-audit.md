@@ -32,3 +32,7 @@ Cloudflare Pages project `trynex-lifestyle-shop` accepted commit `1bec80f369bc02
 ## CORS Root Cause and Hotfix
 
 A live read-only check found that the Pages proxy returned the backend’s `cors_error` 403 because it forwarded the browser `Origin: https://trynex-lifestyle-shop.pages.dev` header to the older Render deployment. The proxy itself was adding the correct browser-facing CORS headers, but the upstream API rejected the forwarded request first. The proxy now strips `origin` from upstream request headers and owns the browser CORS response policy, allowing the existing Pages route to work even while the Render service is on an older CORS allowlist. The storefront catalog endpoint returned 69 product records during the same audit.
+
+## Post-Hotfix CORS Verification
+
+After production deployment `1f47ee41-6104-4e6b-9c77-623241d6ce0c` completed successfully for commit `caf80dd83b389db983d70ffec6081ae1c121d823`, the Pages proxy returned HTTP 200 for `GET /api/products?limit=1` with `Access-Control-Allow-Origin: https://trynex-lifestyle-shop.pages.dev` and `Access-Control-Allow-Credentials: true`. The same origin’s preflight returned HTTP 204 with the expected methods, headers, credentials, and 86400-second max age. The catalog response remained valid and the earlier proxy `cors_error` 403 was resolved.
