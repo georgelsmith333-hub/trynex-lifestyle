@@ -626,7 +626,7 @@ function getCuratedMockup(
   const category = product.category;
   const hex = normalizeMockupHex(color);
   const slug = SOURCE_KIT_COLOR_SLUGS[category]?.[hex] || "white";
-  const photoSrc = `/mockups/normalized/${category}-${slug}-${face}.png`;
+  const photoSrc = `/mockups/normalized/${category}-${slug}-${face}.png?v=v3_clean`;
   return {
     photoSrc,
     cutoutSrc: photoSrc,
