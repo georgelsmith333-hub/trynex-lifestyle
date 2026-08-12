@@ -75,9 +75,9 @@ registerRoute(
 registerRoute(
   /\.(?:png|jpg|jpeg|webp|svg|gif|ico)$/i,
   new StaleWhileRevalidate({
-    cacheName: "images-cache",
+    cacheName: "images-cache-v4-clean",
     plugins: [
-      new ExpirationPlugin({ maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 30 }),
+      new ExpirationPlugin({ maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 }),
     ],
   })
 );
@@ -90,7 +90,7 @@ registerRoute(
 // credentials handling.
 
 const navigationHandler = new NetworkFirst({
-  cacheName: "navigation-cache-v2",
+  cacheName: "navigation-cache-v3-clean",
   networkTimeoutSeconds: 5,
   plugins: [new CacheableResponsePlugin({ statuses: [200] })],
 });
