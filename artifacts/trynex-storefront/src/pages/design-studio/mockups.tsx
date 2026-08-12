@@ -781,13 +781,7 @@ export function GarmentSVG({
           .garment-img { animation: garmentFadeIn 0.13s ease-in-out; }
         `}</style>
 
-        {/* Drop shadow — crisp silhouette lift on the white studio canvas.
-            Applied only to cutout (transparent) images, not full opaque photos. */}
-        <filter id="garment-shadow" x="-12%" y="-10%" width="124%" height="124%" colorInterpolationFilters="sRGB">
-          <feDropShadow dx="0" dy="14" stdDeviation="32" floodColor="rgba(0,0,0,0.18)" />
-          <feDropShadow dx="0" dy="5" stdDeviation="12"  floodColor="rgba(0,0,0,0.12)" />
-          <feDropShadow dx="0" dy="1" stdDeviation="3"   floodColor="rgba(0,0,0,0.08)" />
-        </filter>
+
 
         {/* Fabric grain / subtle noise texture — gives the studio photo a tactile,
             premium printed-on-fabric feel without overpowering the design. */}
@@ -811,17 +805,7 @@ export function GarmentSVG({
             neutral-black in dark regions for Screen. This avoids the ghosted
             duplicate-garment effect caused by painting a second full mockup. */}
 
-        <filter id="smart-highlight-overlay" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
-          <feColorMatrix type="matrix" values="0.299 0.587 0.114 0 0
-                                              0.299 0.587 0.114 0 0
-                                              0.299 0.587 0.114 0 0
-                                              0 0 0 1 0" result="luma" />
-          <feComponentTransfer in="luma">
-            <feFuncR type="table" tableValues="0 0 0.04 0.18 0.58 1" />
-            <feFuncG type="table" tableValues="0 0 0.04 0.18 0.58 1" />
-            <feFuncB type="table" tableValues="0 0 0.04 0.18 0.58 1" />
-          </feComponentTransfer>
-        </filter>
+
 
         {/* ── Colour multiply-tint filter ──────────────────────────────────────
             Applied DIRECTLY to the <image> element (not a separate rect).
@@ -840,38 +824,14 @@ export function GarmentSVG({
           </filter>
         )}
 
-        {/* ── Shadow-only filter for tinted garments ───────────────────────────
-            SVG elements can only hold ONE filter. For the tint path, that slot is
-            taken by garment-color-tint. So we use a SEPARATE filter that outputs
-            ONLY the drop-shadow (no source image) from the garment alpha-channel.
-            Rendered before the tinted garment, it sits behind the garment layer. */}
-        {needsTint && cutoutMaskSrc && (
-          <filter id="garment-tint-shadow" x="-12%" y="-10%" width="124%" height="124%" colorInterpolationFilters="sRGB">
-            {/* Layer 1: soft outer shadow — strong enough to lift tinted garments off white */}
-            <feGaussianBlur in="SourceAlpha" stdDeviation="28" result="blur1" />
-            <feOffset       in="blur1" dx="0" dy="12"  result="off1" />
-            <feFlood        floodColor="rgba(0,0,0,0.22)" floodOpacity="1" result="col1" />
-            <feComposite    in="col1"  in2="off1"    operator="in" result="shadow1" />
-            {/* Layer 2: tight inner shadow */}
-            <feGaussianBlur in="SourceAlpha" stdDeviation="10"  result="blur2" />
-            <feOffset       in="blur2" dx="0" dy="4"  result="off2" />
-            <feFlood        floodColor="rgba(0,0,0,0.14)" floodOpacity="1" result="col2" />
-            <feComposite    in="col2"  in2="off2"    operator="in" result="shadow2" />
-            {/* Merge both shadow layers — output has NO source image */}
-            <feMerge>
-              <feMergeNode in="shadow1" />
-              <feMergeNode in="shadow2" />
-            </feMerge>
-          </filter>
-        )}
+
       </defs>
 
       {/* Studio canvas background — clean white for all products so the mockup reads
           as a premium product shot on a light, neutral studio surface. */}
       <rect width={1000} height={1000} fill={canvasBg} style={{ pointerEvents: "none" }} />
 
-      {/* Soft vignette overlay across the whole canvas for subtle studio lighting. */}
-      <rect width={1000} height={1000} fill="url(#studio-vignette)" style={{ pointerEvents: "none" }} />
+
 
       {/* ── Real Smart Mockup Render ───────────────────────────────────────────
           Uses a multi-layer stack for high-fidelity realism:
