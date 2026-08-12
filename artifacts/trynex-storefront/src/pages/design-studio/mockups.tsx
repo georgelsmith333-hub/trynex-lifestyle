@@ -810,17 +810,7 @@ export function GarmentSVG({
             neutral-white in bright regions for Multiply; the highlight pass is
             neutral-black in dark regions for Screen. This avoids the ghosted
             duplicate-garment effect caused by painting a second full mockup. */}
-        {/* ── True SVG Displacement Map & Luminosity Shading ───────────────────
-            Senior-grade Smart Object simulation: warps the artwork using the garment
-            photo's luminosity/heightmap, and applies multiply/screen shading so the
-            artwork bends naturally around folds, seams, and cylinder curves. */}
-        <filter id="smart-displacement-warp" x="-10%" y="-10%" width="120%" height="120%" colorInterpolationFilters="sRGB">
-          <feImage href={waterBottleFront} result="displacementMapSource" preserveAspectRatio="none" />
-          <feColorMatrix type="matrix" values="0.3 0.59 0.11 0 0  0.3 0.59 0.11 0 0  0.3 0.59 0.11 0 0  0 0 0 1 0" in="displacementMapSource" result="grayMap" />
-          <feGaussianBlur in="grayMap" stdDeviation="4" result="smoothMap" />
-          <feDisplacementMap in="SourceGraphic" in2="smoothMap" scale="18" xChannelSelector="R" yChannelSelector="G" result="warpedArt" />
-          <feComposite in="warpedArt" in2="SourceGraphic" operator="in" />
-        </filter>
+
         <filter id="smart-highlight-overlay" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
           <feColorMatrix type="matrix" values="0.299 0.587 0.114 0 0
                                               0.299 0.587 0.114 0 0
@@ -911,14 +901,7 @@ export function GarmentSVG({
           />
         )}
 
-        {/* Layer 2: True Displacement & Luminosity Shading Overlay */}
-        <g filter="url(#smart-displacement-warp)" style={{ mixBlendMode: "multiply", opacity: 0.88 }}>
-          <image
-            href={resolvedMockup.photoSrc || resolvedMockup.cutoutSrc}
-            x={0} y={0} width={1000} height={1000}
-            preserveAspectRatio="xMidYMid meet"
-          />
-        </g>
+
 
 
       </g>
