@@ -515,8 +515,8 @@ export default function DesignStudioV2() {
         </div>
       </div>
 
-      <div className="flex-1 container-wide mx-auto w-full px-4 py-6">
-        <div className="flex flex-col md:flex-row gap-6">
+      <div className="flex-1 container-wide mx-auto w-full px-2 sm:px-4 py-4 sm:py-6">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
           <div className="flex-1 min-w-0" ref={containerRef}>
             <ProductSwitcher />
             <div className="mt-3 mb-3">
