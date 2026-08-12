@@ -799,6 +799,20 @@ export function GarmentSVG({
           <stop offset="100%" stopColor="rgba(0,0,0,0.06)" stopOpacity="1" />
         </radialGradient>
 
+        {/* Soft drop shadow for cutout garments — lifts them off the white canvas. */}
+        <filter id="garment-shadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="12" stdDeviation="20" floodColor="rgba(0,0,0,0.08)" />
+        </filter>
+
+        {/* Smart Mockup Luminosity Passes */}
+        <filter id="smart-shadow-pass" colorInterpolationFilters="sRGB">
+          <feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0" in="SourceGraphic" result="mask" />
+          <feBlend in="SourceGraphic" in2="SourceGraphic" mode="multiply" />
+        </filter>
+        <filter id="smart-highlight-pass" colorInterpolationFilters="sRGB">
+          <feBlend in="SourceGraphic" in2="SourceGraphic" mode="screen" />
+        </filter>
+
         {/* ── Smart Mockup Luminosity Filters ────────────────────────────────
             Keep shadows and highlights as separate passes. The shadow pass is
             neutral-white in bright regions for Multiply; the highlight pass is
@@ -861,9 +875,23 @@ export function GarmentSVG({
           />
         )}
 
+        {/* Layer 2: Shadow Pass (Luminosity Multiply) */}
+        <image
+          key={`shadow-${tintPhotoSrc}`}
+          href={getShadowMask(tintPhotoSrc)}
+          x={0} y={0} width={1000} height={1000}
+          preserveAspectRatio="xMidYMid meet"
+          style={{ mixBlendMode: "multiply", opacity: 0.8 }}
+        />
 
-
-
+        {/* Layer 3: Highlight Pass (Luminosity Screen) */}
+        <image
+          key={`highlight-${tintPhotoSrc}`}
+          href={getHighlightMask(tintPhotoSrc)}
+          x={0} y={0} width={1000} height={1000}
+          preserveAspectRatio="xMidYMid meet"
+          style={{ mixBlendMode: "screen", opacity: 0.4 }}
+        />
       </g>
 
       {showPrintZone && (() => {

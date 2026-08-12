@@ -504,11 +504,11 @@ export default function DesignStudioV2() {
                 {saveStatus === "saving" ? <><CloudUpload className="w-3 h-3 animate-pulse" /> Saving…</> : <><Check className="w-3 h-3" /> Saved</>}
               </div>
             )}
-            <button onClick={undo} disabled={store.history.length <= 1} className="p-2 rounded-xl bg-gray-100 text-gray-600 disabled:opacity-30"><Undo2 className="w-3.5 h-3.5" /></button>
-            <button onClick={redo} disabled={store.future.length === 0} className="p-2 rounded-xl bg-gray-100 text-gray-600 disabled:opacity-30"><Redo2 className="w-3.5 h-3.5" /></button>
-            <button onClick={() => setShowPrintZone(!showPrintZone)} className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold ${showPrintZone ? "text-orange-500 bg-orange-50" : "text-gray-500 bg-gray-100"}`}><Eye className="w-3 h-3" /> Print Zone</button>
-            {!isFlatZone && <button onClick={() => setShow3D(!show3D)} className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold ${show3D ? "text-blue-500 bg-blue-50" : "text-gray-500 bg-gray-100"}`}><Package className="w-3 h-3" /> {show3D ? "2D Edit" : "3D Preview"}</button>}
-            <motion.button onClick={handleAddToCart} whileTap={{ scale: 0.97 }} className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-5 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm text-white" style={{ background: "linear-gradient(135deg, #E85D04, #FB8500)", boxShadow: "0 4px 12px rgba(232,93,4,0.35)" }}>
+            <button onClick={undo} disabled={store.history.length <= 1} className="p-2 rounded-xl bg-gray-100 text-gray-600 disabled:opacity-30 active:scale-95 transition-transform"><Undo2 className="w-3.5 h-3.5" /></button>
+            <button onClick={redo} disabled={store.future.length === 0} className="p-2 rounded-xl bg-gray-100 text-gray-600 disabled:opacity-30 active:scale-95 transition-transform"><Redo2 className="w-3.5 h-3.5" /></button>
+            <button onClick={() => setShowPrintZone(!showPrintZone)} className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold ${showPrintZone ? "text-orange-500 bg-orange-50" : "text-gray-500 bg-gray-100 hover:bg-gray-200"}`}><Eye className="w-3 h-3" /> Print Zone</button>
+            {!isFlatZone && <button onClick={() => setShow3D(!show3D)} className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold ${show3D ? "text-blue-500 bg-blue-50" : "text-gray-500 bg-gray-100 hover:bg-gray-200"}`}><Package className="w-3 h-3" /> {show3D ? "2D Edit" : "3D Preview"}</button>}
+            <motion.button onClick={handleAddToCart} whileTap={{ scale: 0.97 }} className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-5 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm text-white shadow-lg shadow-orange-500/20" style={{ background: "linear-gradient(135deg, #E85D04, #FB8500)" }}>
               <ShoppingCart className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Add to Cart</span><span className="sm:hidden">Cart</span>
             </motion.button>
           </div>
@@ -525,39 +525,39 @@ export default function DesignStudioV2() {
             <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) { handleFileUpload(f); e.target.value = ""; } }} />
 
             {isZoneTabs && (
-              <div className="flex gap-1.5 overflow-x-auto pb-1 mb-3" style={{ scrollbarWidth: "none" }}>
+              <div className="flex gap-1.5 overflow-x-auto pb-1 mb-3 no-scrollbar">
                 {apparelZones.map(zone => {
                   const isActive = activeFace === zone.face;
                   const count = layers.filter(l => (l.face ?? "front") === zone.face).length;
                   return (
-                    <button key={zone.face} onClick={() => setFace(zone.face)} className="relative shrink-0 px-3.5 py-2 rounded-xl text-xs font-black" style={{ background: isActive ? "#1C1C1E" : "white", color: isActive ? "white" : "#374151", border: isActive ? "1.5px solid #3a3a3c" : "1.5px solid #e5e7eb" }}>
+                    <button key={zone.face} onClick={() => setFace(zone.face)} className="relative shrink-0 px-3.5 py-2 rounded-xl text-xs font-black transition-all active:scale-95" style={{ background: isActive ? "#1C1C1E" : "white", color: isActive ? "white" : "#374151", border: isActive ? "1.5px solid #3a3a3c" : "1.5px solid #e5e7eb", boxShadow: isActive ? "0 4px 12px rgba(0,0,0,0.15)" : "none" }}>
                       {zone.shortLabel}
-                      {count > 0 && !isActive && <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-black text-white bg-orange-500">{count}</span>}
+                      {count > 0 && !isActive && <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-black text-white bg-orange-500 border-2 border-white">{count}</span>}
                     </button>
                   );
                 })}
               </div>
             )}
             {isMug && (
-              <div className="flex gap-1.5 mb-3 overflow-x-auto pb-1">
+              <div className="flex gap-1.5 mb-3 overflow-x-auto pb-1 no-scrollbar">
                 {(["side1", "side2", "wrap"] as const).map(v => (
-                  <button key={v} onClick={() => setMugMode(v)} className="shrink-0 px-4 py-2 rounded-xl text-xs font-black" style={{ background: mugMode === v ? "#1C1C1E" : "white", color: mugMode === v ? "white" : "#374151", border: mugMode === v ? "1.5px solid #3a3a3c" : "1.5px solid #e5e7eb" }}>
+                  <button key={v} onClick={() => setMugMode(v)} className="shrink-0 px-4 py-2 rounded-xl text-xs font-black transition-all active:scale-95" style={{ background: mugMode === v ? "#1C1C1E" : "white", color: mugMode === v ? "white" : "#374151", border: mugMode === v ? "1.5px solid #3a3a3c" : "1.5px solid #e5e7eb", boxShadow: mugMode === v ? "0 4px 12px rgba(0,0,0,0.15)" : "none" }}>
                     {v === "side1" ? "Left Side" : v === "side2" ? "Right Side" : "Wrap"}
                   </button>
                 ))}
               </div>
             )}
 
-            <div className="mb-4">
+            <div className="mb-4 bg-white p-3 rounded-2xl border border-gray-200 shadow-sm">
               <div className="flex items-center justify-between mb-2.5">
-                <div className="flex items-center gap-2"><Palette className="w-3.5 h-3.5 text-gray-400" /><span className="text-[11px] font-black uppercase tracking-widest text-gray-400">Color</span></div>
+                <div className="flex items-center gap-2"><Palette className="w-3.5 h-3.5 text-orange-500" /><span className="text-[11px] font-black uppercase tracking-widest text-gray-400">Garment Color</span></div>
                 <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full" style={{ background: selectedColor.hex, color: isLightTint(selectedColor.hex) ? "#374151" : "white" }}>{selectedColor.name}</span>
               </div>
               <div className="flex overflow-x-auto pb-1.5 gap-2.5 items-center no-scrollbar">
                 {studioColors.map((c: any) => {
                   const isSelected = selectedColor.hex.toLowerCase() === c.hex.toLowerCase();
                   return (
-                    <button key={c.hex} title={c.name} onClick={() => setColor(c)} className="relative touch-manipulation flex-shrink-0 transition-transform duration-100 hover:scale-110" style={{ width: 34, height: 34 }}>
+                    <button key={c.hex} title={c.name} onClick={() => setColor(c)} className="relative touch-manipulation flex-shrink-0 transition-transform duration-100 hover:scale-110 active:scale-90" style={{ width: 36, height: 36 }}>
                       {isSelected && <span className="absolute inset-0 rounded-full pointer-events-none" style={{ border: "2.5px solid #E85D04", transform: "scale(1.28)", boxShadow: "0 0 0 2px rgba(232,93,4,0.20)" }} />}
                       <span className="absolute rounded-full transition-transform duration-100" style={{ inset: 3, background: c.hex, border: isLightTint(c.hex) ? "1.5px solid #d1d5db" : "1px solid rgba(0,0,0,0.10)", transform: isSelected ? "scale(0.88)" : "scale(1)", boxShadow: isSelected ? "0 2px 8px rgba(0,0,0,0.28)" : "0 1px 4px rgba(0,0,0,0.14)" }} />
                     </button>
@@ -573,7 +573,7 @@ export default function DesignStudioV2() {
                     <Suspense fallback={<Loader2 className="w-8 h-8 animate-spin text-blue-400" />}>
                       <LazyProductViewer3D product={selectedProduct} garmentColor={selectedColor.hex} front={{ layers: frontLayers, printZone: isMug ? MUG_SIDE_PZ : selectedProduct.printZone, baseHeight: selectedProduct.baseHeight }} back={supportsBack && backLayers.length > 0 ? { layers: backLayers, printZone: isMug ? MUG_SIDE_BACK_PZ : (selectedProduct.printZoneBack ?? selectedProduct.printZone), baseHeight: selectedProduct.baseHeight } : undefined} activeFace={activeFace as "front" | "back"} isWrapMode={isMug && frontLayers.length > 0 && backLayers.length > 0} />
                     </Suspense>
-                    <button onClick={() => setShow3D(false)} className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full text-xs font-bold text-white" style={{ background: "rgba(17,24,39,0.78)" }}><Eye className="w-3 h-3 inline" /> Back to 2D</button>
+                    <button onClick={() => setShow3D(false)} className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full text-xs font-bold text-white shadow-xl" style={{ background: "rgba(17,24,39,0.85)", backdropFilter: "blur(8px)" }}><Eye className="w-3 h-3 inline mr-1" /> Back to 2D</button>
                   </div>
                 )}
                 <CanvasArea
@@ -590,15 +590,34 @@ export default function DesignStudioV2() {
             </div>
 
             {currentFaceLayers.length > 0 && (
-              <div className="px-4 py-2 mt-2 text-[10px] font-semibold text-gray-500 flex items-center gap-2 bg-white border-t border-gray-200">
-                <Move className="w-3 h-3" /> Drag · Pinch to scale & rotate · +/− to zoom
+              <div className="px-4 py-2 mt-2 text-[10px] font-semibold text-gray-500 flex items-center gap-2 bg-white border border-gray-200 rounded-xl">
+                <Move className="w-3 h-3 text-orange-500" /> Drag · Pinch to scale & rotate · +/− to zoom
               </div>
             )}
           </div>
 
-          <div className="md:w-[320px] lg:w-[340px] shrink-0 flex flex-col gap-4">
-            <div className="rounded-2xl bg-white border border-gray-200 shadow-sm flex flex-col">
-              <div className="flex p-1.5 gap-1 bg-[#f8f7f5] rounded-t-2xl border-b border-gray-200">
+          {/* ═══════ MOBILE TOOL SHEET BACKDROP ═══════ */}
+          {isMobile && mobileToolOpen && (
+            <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-[2px]" onClick={() => setMobileToolOpen(false)} />
+          )}
+
+          {/* ═══════ RIGHT PANEL / MOBILE BOTTOM SHEET ═══════ */}
+          <div className={`md:w-[320px] lg:w-[340px] shrink-0 flex flex-col gap-4 transition-all duration-300
+            ${isMobile ? `fixed bottom-0 left-0 right-0 z-[70] bg-[#faf9f6] rounded-t-[32px] shadow-2xl overflow-hidden transform ${mobileToolOpen ? 'translate-y-0' : 'translate-y-full'}` : 'relative'}`}
+            style={isMobile ? { maxHeight: "85vh" } : {}}>
+            
+            {isMobile && (
+              <div className="flex flex-col items-center pt-3 pb-1 shrink-0 sticky top-0 z-10 bg-[#faf9f6]" onClick={() => setMobileToolOpen(false)}>
+                <div className="w-10 h-1 rounded-full bg-gray-300 mb-2" />
+                <div className="w-full flex items-center justify-between px-5 pb-2">
+                  <span className="text-sm font-black text-gray-800 uppercase tracking-wider">Design Tools</span>
+                  <button onClick={() => setMobileToolOpen(false)} className="p-2 rounded-xl text-gray-400 hover:bg-gray-100"><X className="w-4 h-4" /></button>
+                </div>
+              </div>
+            )}
+
+            <div className={`rounded-2xl bg-white border border-gray-200 shadow-sm flex flex-col ${isMobile ? 'flex-1 overflow-hidden mx-2 mb-2' : ''}`}>
+              <div className="flex p-1.5 gap-1 bg-[#f8f7f5] rounded-t-2xl border-b border-gray-200 shrink-0">
                 {[
                   { id: "upload" as const, label: "Upload", icon: Upload },
                   { id: "text" as const, label: "Text", icon: Type },
@@ -607,16 +626,16 @@ export default function DesignStudioV2() {
                   { id: "templates" as const, label: "Templates", icon: Sparkles },
                   { id: "qrcode" as const, label: "QR", icon: Crosshair },
                 ].map(({ id, label, icon: Icon }) => (
-                  <button key={id} onClick={() => setActiveTab(id)} className="relative flex-1 flex flex-col items-center justify-center gap-0.5 py-2 rounded-xl text-[9px] font-black transition-all" style={{ background: activeTab === id ? "white" : "transparent", color: activeTab === id ? "#E85D04" : "#9ca3af", boxShadow: activeTab === id ? "0 1px 6px rgba(0,0,0,0.10)" : "none" }}>
+                  <button key={id} onClick={() => setActiveTab(id)} className="relative flex-1 flex flex-col items-center justify-center gap-0.5 py-2 rounded-xl text-[9px] font-black transition-all active:scale-90" style={{ background: activeTab === id ? "white" : "transparent", color: activeTab === id ? "#E85D04" : "#9ca3af", boxShadow: activeTab === id ? "0 1px 6px rgba(0,0,0,0.10)" : "none" }}>
                     <Icon className="w-4 h-4" />{label}
-                    {id === "layers" && layers.length > 0 && <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 rounded-full flex items-center justify-center text-[7px] font-black text-white bg-orange-500">{layers.length}</span>}
+                    {id === "layers" && layers.length > 0 && <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 rounded-full flex items-center justify-center text-[7px] font-black text-white bg-orange-500 border border-white">{layers.length}</span>}
                   </button>
                 ))}
               </div>
-              <div className="p-2">
+              <div className={`p-2 ${isMobile ? 'overflow-y-auto' : ''}`}>
                 {activeTab === "upload" && (
                   <div className="p-4 space-y-3">
-                    <button onClick={() => fileInputRef.current?.click()} className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm text-white" style={{ background: "linear-gradient(135deg,#E85D04,#FB8500)" }}><Upload className="w-4 h-4" /> Upload Image</button>
+                    <button onClick={() => fileInputRef.current?.click()} className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm text-white shadow-md active:scale-95 transition-transform" style={{ background: "linear-gradient(135deg,#E85D04,#FB8500)" }}><Upload className="w-4 h-4" /> Upload Image</button>
                     <p className="text-[11px] text-gray-500 text-center">JPG, PNG, or WebP · Max 10MB</p>
                     {selectedLayer?.type === "image" && <ImagePanel />}
                     {!isMug && !isCap && !isWaterBottle && (
@@ -624,7 +643,7 @@ export default function DesignStudioV2() {
                         <label className="block text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2">Garment Size</label>
                         <div className="flex flex-wrap gap-1.5">
                           {SIZE_CHART.map(s => (
-                            <button key={s.size} onClick={() => setSize(s.size)} className="px-3 py-1.5 rounded-lg text-xs font-black transition-all" style={{ background: selectedSize === s.size ? "linear-gradient(135deg,#E85D04,#FB8500)" : "#f3f4f6", color: selectedSize === s.size ? "white" : "#374151" }}>{s.size}</button>
+                            <button key={s.size} onClick={() => setSize(s.size)} className="px-3 py-1.5 rounded-lg text-xs font-black transition-all active:scale-90" style={{ background: selectedSize === s.size ? "linear-gradient(135deg,#E85D04,#FB8500)" : "#f3f4f6", color: selectedSize === s.size ? "white" : "#374151", boxShadow: selectedSize === s.size ? "0 2px 8px rgba(232,93,4,0.2)" : "none" }}>{s.size}</button>
                           ))}
                         </div>
                       </div>
@@ -635,8 +654,8 @@ export default function DesignStudioV2() {
                 {activeTab === "layers" && (
                   <div className="p-2">
                     <div className="flex gap-2 mb-2">
-                      <button onClick={() => fileInputRef.current?.click()} className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-gray-200 bg-white"><ImageIcon className="w-3.5 h-3.5" /> Image</button>
-                      <button onClick={addText} className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-gray-200 bg-white"><Type className="w-3.5 h-3.5" /> Text</button>
+                      <button onClick={() => fileInputRef.current?.click()} className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-gray-200 bg-white hover:bg-gray-50 active:scale-95 transition-all"><ImageIcon className="w-3.5 h-3.5 text-orange-500" /> Image</button>
+                      <button onClick={addText} className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border border-gray-200 bg-white hover:bg-gray-50 active:scale-95 transition-all"><Type className="w-3.5 h-3.5 text-blue-500" /> Text</button>
                     </div>
                     <LayerPanel />
                     {selectedLayer?.type === "shape" && <ShapePanel />}
@@ -648,15 +667,28 @@ export default function DesignStudioV2() {
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white border border-gray-200 shadow-sm">
-              <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2 block">Export</label>
+            <div className={`p-4 rounded-2xl bg-white border border-gray-200 shadow-sm ${isMobile ? 'mx-2 mb-4' : ''}`}>
+              <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2 block">Export Design</label>
               <div className="flex gap-2">
-                <button onClick={handleExportPNG} className="flex-1 py-2 rounded-xl text-xs font-bold border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center gap-1"><Download className="w-3 h-3" /> PNG</button>
+                <button onClick={handleExportPNG} className="flex-1 py-2 rounded-xl text-xs font-bold border border-gray-200 bg-white hover:bg-gray-50 active:scale-95 transition-all flex items-center justify-center gap-1"><Download className="w-3 h-3" /> PNG</button>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* ═══════ MOBILE FLOATING ACTION BUTTONS ═══════ */}
+      {isMobile && (
+        <div className="fixed bottom-6 right-4 z-50 flex flex-col gap-3">
+          <button
+            onClick={() => setMobileToolOpen(true)}
+            className="w-14 h-14 rounded-full flex items-center justify-center text-white shadow-2xl active:scale-90 transition-transform"
+            style={{ background: "linear-gradient(135deg,#E85D04,#FB8500)", boxShadow: "0 8px 24px rgba(232,93,4,0.4)" }}
+          >
+            <Wand2 className="w-6 h-6" />
+          </button>
+        </div>
+      )}
       <Footer />
     </div>
   );
