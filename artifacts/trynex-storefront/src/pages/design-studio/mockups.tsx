@@ -634,7 +634,10 @@ function getCuratedMockup(
     cutoutNeedsTint: false,
     photoKind: "opaque-photo",
     requiresTint: false,
-    allowSilhouetteShadow: true,
+    // Normalized source-kit files are opaque studio photos. A drop shadow on the
+    // 1024×1024 rectangle creates the exact ghost box users reported, so never
+    // apply a silhouette shadow to these assets.
+    allowSilhouetteShadow: false,
   };
 }
 
@@ -875,23 +878,10 @@ export function GarmentSVG({
           />
         )}
 
-        {/* Layer 2: Shadow Pass (Luminosity Multiply) */}
-        <image
-          key={`shadow-${tintPhotoSrc}`}
-          href={getShadowMask(tintPhotoSrc)}
-          x={0} y={0} width={1000} height={1000}
-          preserveAspectRatio="xMidYMid meet"
-          style={{ mixBlendMode: "multiply", opacity: 0.8 }}
-        />
-
-        {/* Layer 3: Highlight Pass (Luminosity Screen) */}
-        <image
-          key={`highlight-${tintPhotoSrc}`}
-          href={getHighlightMask(tintPhotoSrc)}
-          x={0} y={0} width={1000} height={1000}
-          preserveAspectRatio="xMidYMid meet"
-          style={{ mixBlendMode: "screen", opacity: 0.4 }}
-        />
+        {/* Do not paint a second full-frame photo here. The previous duplicate
+            shadow/highlight images were not real PSD masks and produced ghosted
+            silhouettes. Texture and garment lighting remain embedded in the
+            single normalized smart-object source image. */}
       </g>
 
       {showPrintZone && (() => {

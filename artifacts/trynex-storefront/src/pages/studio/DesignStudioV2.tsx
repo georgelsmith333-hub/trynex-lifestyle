@@ -100,10 +100,10 @@ export default function DesignStudioV2() {
   const {
     selectedProduct, selectedColor, activeFace, mugMode, selectedSize, quantity,
     layers, selectedIds, linkedStoreProduct, showPrintZone, show3D, activeTab,
-    saveStatus, hasDraft, isMobile, fabricTexture,
+    saveStatus, hasDraft, isMobile, fabricTexture, mobileToolOpen,
     setProduct, setColor, setFace, setMugMode, setSize, setQuantity,
     addLayer, updateLayer, deleteLayer, moveLayer, setLayerVisibility, selectLayer, clearSelection, setLayers,
-    undo, redo, setShowPrintZone, setActiveTab, setShow3D, setLinkedStoreProduct, setSaveStatus, setHasDraft,
+    undo, redo, setShowPrintZone, setActiveTab, setShow3D, setLinkedStoreProduct, setSaveStatus, setHasDraft, setMobileToolOpen,
   } = store;
 
   const selectedLayerId = selectedIds[0] ?? null;

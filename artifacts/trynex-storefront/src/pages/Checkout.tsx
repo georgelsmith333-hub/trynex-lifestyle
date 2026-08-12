@@ -1396,7 +1396,7 @@ export default function Checkout() {
                     <div className="sm:col-span-2">
                       <DeliveryAreaPicker
                         selectedDistrict={selectedDistrict}
-                        selectedUpazila={selectedUpazila}
+                        selectedUpazila={selectedUpazila ?? ""}
                         onSelect={(district, upazila, division, postCode) => {
                           setValue("shippingDistrict", district, { shouldValidate: true });
                           setValue("shippingUpazila", upazila, { shouldValidate: true });
