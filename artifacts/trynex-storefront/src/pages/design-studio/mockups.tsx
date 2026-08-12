@@ -772,7 +772,13 @@ export function GarmentSVG({
   const shadowFilter = resolvedMockup.allowSilhouetteShadow ? "url(#garment-shadow)" : undefined;
 
   return (
-    <>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 1000 1000"
+      preserveAspectRatio="xMidYMid meet"
+      className="absolute inset-0 w-full h-full pointer-events-none"
+      aria-hidden="true"
+    >
       <defs>
         {/* Smooth cross-fade when switching garment color / face.
             Uses key prop on the image element to retrigger the animation each swap. */}
@@ -895,7 +901,7 @@ export function GarmentSVG({
           </g>
         );
       })()}
-    </>
+    </svg>
   );
 }
 
@@ -930,7 +936,13 @@ export function FlatZoneSVG({
   const vigEndColor = "rgba(0,0,0,0.06)";
 
   return (
-    <>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 1000 1000"
+      preserveAspectRatio="xMidYMid meet"
+      className="absolute inset-0 w-full h-full pointer-events-none"
+      aria-hidden="true"
+    >
       <defs>
         {/* flat-artboard-glow: white glow + drop shadow behind the print-zone artboard */}
         <filter id="flat-artboard-glow">
@@ -1072,7 +1084,7 @@ export function FlatZoneSVG({
           </g>
         );
       })()}
-    </>
+    </svg>
   );
 }
 
