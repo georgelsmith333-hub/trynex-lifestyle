@@ -64,9 +64,16 @@ app.use(
 // In production (`NODE_ENV === "production"`) we additionally require
 // `ALLOWED_ORIGINS` to be configured so a misconfigured deploy can't
 // silently fall back to a permissive policy.
+const DEFAULT_PROD_ORIGINS = [
+  "https://trynex-lifestyle-shop.pages.dev",
+  "https://www.trynexshop.com",
+  "https://trynexshop.com",
+];
+
 const DEFAULT_DEV_ORIGINS = [
   "https://trynex-lifestyle-shop.pages.dev",
   "https://www.trynexshop.com",
+  "https://trynexshop.com",
   "http://localhost:5173",
   "http://localhost:8080",
   "http://localhost:8081",
@@ -81,7 +88,9 @@ const DEFAULT_DEV_ORIGINS = [
 
 const allowedOrigins: string[] = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim()).filter(Boolean)
-  : DEFAULT_DEV_ORIGINS;
+  : process.env.NODE_ENV === "production"
+    ? [...DEFAULT_PROD_ORIGINS]
+    : [...DEFAULT_DEV_ORIGINS];
 
 // EXTRA_ORIGINS — optional comma-separated list of additional allowed origins.
 // Use this to add preview or staging URLs without changing ALLOWED_ORIGINS.
@@ -95,10 +104,7 @@ if (extraOrigins) {
 }
 
 if (process.env.NODE_ENV === "production" && !process.env.ALLOWED_ORIGINS) {
-  logger.error(
-    "ALLOWED_ORIGINS env var is not set in production. Refusing to start with a permissive CORS fallback.",
-  );
-  throw new Error("ALLOWED_ORIGINS must be configured in production");
+  logger.warn("ALLOWED_ORIGINS is not set; using the strict built-in TryNex production CORS allow-list.");
 }
 
 app.use(
@@ -122,8 +128,11 @@ app.use(
       if (process.env.NODE_ENV !== "production" && /^https:\/\/trynex[^.]*\.vercel\.app$/.test(origin)) {
         return callback(null, true);
       }
-      // Allow Cloudflare Pages preview and production deployments for TryNex.
-      if (/^https:\/\/[^/]*\.trynex-lifestyle-shop\.pages\.dev$/.test(origin) || origin === "https://www.trynexshop.com") {
+      // Allow the exact Cloudflare Pages production host plus any Pages preview
+      // hostname belonging to this project. Also accept both custom-domain forms.
+      if (/^https:\/\/(?:[a-z0-9-]+\.)?trynex-lifestyle-shop\.pages\.dev$/i.test(origin)
+        || origin === "https://www.trynexshop.com"
+        || origin === "https://trynexshop.com") {
         return callback(null, true);
       }
       return callback(new Error(`CORS: origin ${origin} not allowed`));

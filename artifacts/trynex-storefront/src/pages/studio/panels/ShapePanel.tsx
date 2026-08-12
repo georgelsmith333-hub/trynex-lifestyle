@@ -1,5 +1,5 @@
 import { useDesignStore, useSelectedLayer } from "@/hooks/useDesignStore";
-import { Square, Circle, Star, Triangle, Hexagon } from "lucide-react";
+import { Square, Circle, Star, Triangle, Hexagon, Minus } from "lucide-react";
 import { GradientEditor } from "../GradientEditor";
 import { ShapeType, GradientConfig } from "../types";
 
@@ -9,19 +9,21 @@ const SHAPE_OPTIONS: { type: ShapeType; icon: React.ReactNode }[] = [
   { type: "star", icon: <Star className="w-4 h-4" /> },
   { type: "arrow", icon: <Triangle className="w-4 h-4" /> },
   { type: "polygon", icon: <Hexagon className="w-4 h-4" /> },
+  { type: "line", icon: <Minus className="w-4 h-4" /> },
 ];
 
 export function ShapePanel() {
   const layer = useSelectedLayer();
   const updateLayer = useDesignStore((s) => s.updateLayer);
   const addLayer = useDesignStore((s) => s.addLayer);
+  const selectLayer = useDesignStore((s) => s.selectLayer);
   const activeFace = useDesignStore((s) => s.activeFace);
 
   if (!layer || layer.type !== "shape") {
     return (
       <div className="p-4 space-y-3">
         <p className="text-[11px] text-gray-500">Click a shape to add it to the canvas.</p>
-        <div className="grid grid-cols-5 gap-2">
+        <div className="grid grid-cols-6 gap-2">
           {SHAPE_OPTIONS.map((s) => (
             <button
               key={s.type}
@@ -35,14 +37,16 @@ export function ShapePanel() {
                   fill: "#E85D04",
                   strokeColor: "#111111",
                   strokeWidth: 0,
-                  width: 120,
-                  height: 120,
+                  width: s.type === "line" ? 180 : 120,
+                  height: s.type === "line" ? 8 : 120,
+                  points: s.type === "line" ? [-90, 0, 90, 0] : undefined,
                   sides: s.type === "polygon" ? 6 : undefined,
                   visible: true,
                   locked: false,
                   transform: { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 },
                   face: activeFace,
                 });
+                selectLayer(id);
               }}
               className="aspect-square rounded-xl bg-white border border-gray-200 hover:border-orange-300 flex items-center justify-center"
             >

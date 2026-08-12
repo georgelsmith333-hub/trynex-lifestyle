@@ -68,17 +68,22 @@ function useFaceTexture(
         z: face.printZone,
         h: face.baseHeight,
         l: face.layers.map((l) =>
-          l.type === "image"
+            l.type === "image"
             ? [
                 l.visible, l.transform, l.naturalW, l.naturalH, l.src.slice(0, 64),
                 l.flipH, l.flipV, l.brightness, l.contrast, l.saturation,
               ]
-            : [
-                l.visible, l.transform, l.text, l.fontFamily, l.fontSize,
-                l.fontStyle, l.fontWeight, l.color,
-                l.textAlign, l.letterSpacing, l.strokeColor, l.strokeWidth,
-                l.shadowColor, l.shadowBlur, l.shadowOffsetX, l.shadowOffsetY,
-              ]
+            : l.type === "text"
+              ? [
+                  l.visible, l.transform, l.text, l.fontFamily, l.fontSize,
+                  l.fontStyle, l.fontWeight, l.color,
+                  l.textAlign, l.letterSpacing, l.strokeColor, l.strokeWidth,
+                  l.shadowColor, l.shadowBlur, l.shadowOffsetX, l.shadowOffsetY,
+                ]
+              : [
+                  l.visible, l.transform, l.shapeType, l.fill, l.strokeColor,
+                  l.strokeWidth, l.width, l.height, l.sides, l.points,
+                ]
         ),
       })
     : "";

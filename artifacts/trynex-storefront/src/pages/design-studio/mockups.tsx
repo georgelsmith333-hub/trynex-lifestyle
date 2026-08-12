@@ -677,10 +677,12 @@ export function resolveMockup(
   };
 
   // Every reviewed source-kit colour/face pair has an opaque normalized photo
-  // and a separate transparent derivative. The photo is the only 2D/export
-  // source; the cutout is the only billboard/shadow source. Never tint either
-  // one again: the exact selected colour is already present in the pixels.
+  // and a real editable PSD master. The browser uses the normalized render, while
+  // export/admin tooling can round-trip to the exact source document without
+  // guessing a product, color, or face.
   const curated = getCuratedMockup(product, color, face);
+  const masterPath = `attached_assets/trynex-mockup-source-kit/psd/${category}-${sourceKitSlug ?? "white"}-${face}.psd`;
+  const sourceKitKey = `${category}:${sourceKitSlug ?? "white"}:${face}`;
 
   return {
     colorHex: hex,
@@ -694,7 +696,9 @@ export function resolveMockup(
     printZone: zones?.[face] ?? (face === "back" && product.printZoneBack ? product.printZoneBack : product.printZone),
     normalizedFrame,
     isOpaquePhoto: curated.photoKind === "opaque-photo",
-    source: "curated",
+    editableMasterPath: masterPath,
+    sourceKitKey,
+    source: "source-kit",
   };
 }
 

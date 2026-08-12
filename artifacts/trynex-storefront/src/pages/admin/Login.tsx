@@ -23,7 +23,8 @@ export default function AdminLogin() {
   const [isPending, setIsPending] = useState(false);
 
   async function apiPost(path: string, body: Record<string, unknown>) {
-    const res = await fetch(getApiUrl("/api" + path), {
+    const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+    const res = await fetch(getApiUrl(normalizedPath), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -49,7 +50,7 @@ export default function AdminLogin() {
     setErrorMsg("");
     setIsPending(true);
     try {
-      const data = await apiPost("/admin/login", { username: "admin", password });
+      const data = await apiPost("admin/login", { username: "admin", password });
       if (data.requiresTotp) {
         setPartialToken(data.partialToken as string);
         setStep("totp");

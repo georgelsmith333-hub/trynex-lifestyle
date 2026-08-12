@@ -570,7 +570,7 @@ export const useDeleteTestimonial = (opts?: ReqOpts) => {
 export const useCreateOrder = () => {
   return useMutation({
     mutationFn: (data: CreateOrderRequest) =>
-      customFetch<{ order: Order }>("/api/orders", {
+      customFetch<Order>("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

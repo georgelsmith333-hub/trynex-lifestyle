@@ -5,6 +5,11 @@ import { useDesignStore, useSelectedLayer } from "@/hooks/useDesignStore";
 import { DesignLayer } from "./DesignLayer";
 import { Layer as LayerType, PrintZone } from "./types";
 
+interface CanvasPoint {
+  x: number;
+  y: number;
+}
+
 interface Props {
   width: number;
   height: number;
@@ -16,11 +21,25 @@ interface Props {
   printZone: PrintZone;
   /** Scale the design layer rendering so it aligns with the mockup print zone. */
   stageScale?: number;
+  /** Called with a point in the 1000×1000 product coordinate system when a creation tool is used. */
+  onCanvasAction?: (point: CanvasPoint) => void;
+  /** Called while the Draw tool is pressed, with the full point path in product coordinates. */
+  onDrawStart?: (point: CanvasPoint) => void;
+  onDrawMove?: (point: CanvasPoint) => void;
+  onDrawEnd?: () => void;
+  /** Called with a sampled hex colour when the eyedropper is used. */
+  onPickColor?: (hex: string) => void;
 }
 
-export function CanvasArea({ width, height, mockup, mockupImg, printZone }: Props) {
+function rgbaToHex(r: number, g: number, b: number, a: number) {
+  if (a < 16) return null;
+  return `#${[r, g, b].map((value) => value.toString(16).padStart(2, "0")).join("")}`;
+}
+
+export function CanvasArea({ width, height, mockup, mockupImg, printZone, onCanvasAction, onDrawStart, onDrawMove, onDrawEnd, onPickColor }: Props) {
   const trRef = useRef<Konva.Transformer>(null);
-  const { layers, selectedIds, selectLayer, clearSelection } = useDesignStore();
+  const drawingRef = useRef(false);
+  const { layers, selectedIds, activeTool, selectLayer, clearSelection, setActiveTool } = useDesignStore();
   const selectedLayer = useSelectedLayer();
   const [img, setImg] = useState<HTMLImageElement | null>(mockupImg ?? null);
 
@@ -74,10 +93,78 @@ export function CanvasArea({ width, height, mockup, mockupImg, printZone }: Prop
         height={height}
         className="absolute inset-0"
         onMouseDown={(e: Konva.KonvaEventObject<MouseEvent>) => {
-          if (e.target === e.target.getStage()) clearSelection();
+          const stage = e.target.getStage();
+          const point = stage?.getPointerPosition();
+          if (!stage || !point) return;
+          const mapped = { x: Math.round((point.x - center.x) / scale), y: Math.round((point.y - center.y) / scale) };
+
+          if (activeTool === "eyedrop") {
+            try {
+              const snapshot = stage.toCanvas({ pixelRatio: 1 });
+              const sample = snapshot.getContext("2d")?.getImageData(Math.round(point.x), Math.round(point.y), 1, 1).data;
+              const hex = sample ? rgbaToHex(sample[0], sample[1], sample[2], sample[3]) : null;
+              if (hex) onPickColor?.(hex);
+            } catch (error) {
+              console.warn("[studio] Could not sample canvas colour", error);
+            }
+            setActiveTool("select");
+            return;
+          }
+
+          if (activeTool === "draw") {
+            drawingRef.current = true;
+            onDrawStart?.(mapped);
+            return;
+          }
+
+          if (activeTool !== "select") {
+            onCanvasAction?.(mapped);
+            setActiveTool("select");
+            return;
+          }
+
+          if (e.target === stage) clearSelection();
+        }}
+        onMouseMove={(e: Konva.KonvaEventObject<MouseEvent>) => {
+          if (activeTool !== "draw" || !drawingRef.current) return;
+          const point = e.target.getStage()?.getPointerPosition();
+          if (!point) return;
+          onDrawMove?.({ x: Math.round((point.x - center.x) / scale), y: Math.round((point.y - center.y) / scale) });
+        }}
+        onMouseUp={() => {
+          if (!drawingRef.current) return;
+          drawingRef.current = false;
+          onDrawEnd?.();
+          setActiveTool("select");
         }}
         onTouchStart={(e: Konva.KonvaEventObject<TouchEvent>) => {
-          if (e.target === e.target.getStage()) clearSelection();
+          const stage = e.target.getStage();
+          const point = stage?.getPointerPosition();
+          if (!stage || !point) return;
+          const mapped = { x: Math.round((point.x - center.x) / scale), y: Math.round((point.y - center.y) / scale) };
+          if (activeTool === "draw") {
+            drawingRef.current = true;
+            onDrawStart?.(mapped);
+            return;
+          }
+          if (activeTool !== "select") {
+            onCanvasAction?.(mapped);
+            setActiveTool("select");
+            return;
+          }
+          if (e.target === stage) clearSelection();
+        }}
+        onTouchMove={(e: Konva.KonvaEventObject<TouchEvent>) => {
+          if (activeTool !== "draw" || !drawingRef.current) return;
+          const point = e.target.getStage()?.getPointerPosition();
+          if (!point) return;
+          onDrawMove?.({ x: Math.round((point.x - center.x) / scale), y: Math.round((point.y - center.y) / scale) });
+        }}
+        onTouchEnd={() => {
+          if (!drawingRef.current) return;
+          drawingRef.current = false;
+          onDrawEnd?.();
+          setActiveTool("select");
         }}
       >
         <Layer>

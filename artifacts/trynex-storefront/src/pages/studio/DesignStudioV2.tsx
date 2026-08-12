@@ -38,7 +38,7 @@ import { CanvasArea } from "./CanvasArea";
 import { AIPanel } from "./AIPanel";
 import { ClipArtBrowser } from "./ClipArtBrowser";
 import { QRCodePanel } from "./QRCodePanel";
-import { FONT_FAMILIES, type Layer, type ImageLayer, type TextLayer, DRAFT_VERSION } from "./types";
+import { FONT_FAMILIES, type Layer, type ImageLayer, type TextLayer, type ShapeLayer, DRAFT_VERSION } from "./types";
 
 const LazyProductViewer3D = lazy(() => import("../design-studio/ProductViewer3D"));
 
@@ -95,15 +95,16 @@ export default function DesignStudioV2() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [canvasSize, setCanvasSize] = useState(600);
+  const activeDrawIdRef = useRef<string | null>(null);
 
   const store = useDesignStore();
   const {
     selectedProduct, selectedColor, activeFace, mugMode, selectedSize, quantity,
-    layers, selectedIds, linkedStoreProduct, showPrintZone, show3D, activeTab,
+    layers, selectedIds, linkedStoreProduct, showPrintZone, show3D, activeTab, activeTool,
     saveStatus, hasDraft, isMobile, fabricTexture, mobileToolOpen,
     setProduct, setColor, setFace, setMugMode, setSize, setQuantity,
-    addLayer, updateLayer, deleteLayer, moveLayer, setLayerVisibility, selectLayer, clearSelection, setLayers,
-    undo, redo, setShowPrintZone, setActiveTab, setShow3D, setLinkedStoreProduct, setSaveStatus, setHasDraft, setMobileToolOpen,
+    addLayer, updateLayer, deleteLayer, moveLayer, setLayerVisibility, selectLayer, clearSelection, setLayers, commit,
+    undo, redo, setShowPrintZone, setActiveTab, setActiveTool, setShow3D, setLinkedStoreProduct, setSaveStatus, setHasDraft, setMobileToolOpen, setShowProductPicker, setIsMobile,
   } = store;
 
   const selectedLayerId = selectedIds[0] ?? null;
@@ -139,14 +140,14 @@ export default function DesignStudioV2() {
     const onResize = () => {
       const width = containerRef.current?.clientWidth ?? window.innerWidth;
       const mobile = window.innerWidth < 768;
-      store.setIsMobile(mobile);
+      setIsMobile(mobile);
       const maxWidth = mobile ? width - 32 : Math.min(width - 360, 720);
       setCanvasSize(Math.max(320, Math.min(maxWidth, 720)));
     };
     onResize();
     window.addEventListener("resize", onResize, { passive: true });
     return () => window.removeEventListener("resize", onResize);
-  }, [store]);
+  }, [setIsMobile]);
 
   // URL params + draft restore
   useEffect(() => {
@@ -279,7 +280,9 @@ export default function DesignStudioV2() {
   };
 
   const handleFileUpload = (file: File) => {
-    if (!file.type.startsWith("image/")) {
+    const extension = file.name.toLowerCase().split(".").pop();
+    const acceptedExtension = ["jpg", "jpeg", "png", "webp"].includes(extension ?? "");
+    if (!file.type.startsWith("image/") && !acceptedExtension) {
       toast({ title: "Invalid file", description: "Please upload a JPG, PNG, or WebP image.", variant: "destructive" });
       return;
     }
@@ -290,27 +293,32 @@ export default function DesignStudioV2() {
     const reader = new FileReader();
     reader.onerror = () => toast({ title: "Couldn't read file", description: "Try another image.", variant: "destructive" });
     reader.onload = async (e) => {
-      const src = e.target?.result as string;
-      if (!src) return;
-      const img = new Image();
-      img.src = src;
-      await new Promise<void>((res, rej) => { img.onload = () => res(); img.onerror = rej; });
-      try { await img.decode?.(); } catch {}
-      const fixed = await autoFixImage(src);
-      const aspect = img.naturalWidth / Math.max(img.naturalHeight, 1);
-      const maxScaleForHeight = (pz.h * aspect) / pz.w;
-      const initialScale = Math.min(1.0, maxScaleForHeight) * 0.95;
-      const layer: ImageLayer = {
-        id: uid(), name: file.name.replace(/\.[^.]+$/, "") || "Image",
-        type: "image", src: fixed.src, naturalW: img.naturalWidth, naturalH: img.naturalHeight,
-        visible: true, locked: false,
-        transform: { x: 0, y: 0, scale: initialScale, rotation: 0, opacity: 1 },
-        face: activeFace, brightness: fixed.brightness, contrast: fixed.contrast,
-      };
-      addLayer(layer);
-      selectLayer(layer.id);
-      setActiveTab("layers");
-      toast({ title: "✓ Design placed!", description: "Tap your design to move, resize or adjust it." });
+      try {
+        const src = e.target?.result as string;
+        if (!src) throw new Error("The selected file was empty.");
+        const img = new Image();
+        img.src = src;
+        await new Promise<void>((res, rej) => { img.onload = () => res(); img.onerror = () => rej(new Error("This image could not be decoded.")); });
+        try { await img.decode?.(); } catch {}
+        const fixed = await autoFixImage(src);
+        const aspect = img.naturalWidth / Math.max(img.naturalHeight, 1);
+        const maxScaleForHeight = (pz.h * aspect) / pz.w;
+        const initialScale = Math.min(1.0, maxScaleForHeight) * 0.95;
+        const layer: ImageLayer = {
+          id: uid(), name: file.name.replace(/\.[^.]+$/, "") || "Image",
+          type: "image", src: fixed.src, naturalW: img.naturalWidth, naturalH: img.naturalHeight,
+          visible: true, locked: false,
+          transform: { x: 0, y: 0, scale: initialScale, rotation: 0, opacity: 1 },
+          face: activeFace, brightness: fixed.brightness, contrast: fixed.contrast,
+        };
+        addLayer(layer);
+        selectLayer(layer.id);
+        setActiveTab("layers");
+        toast({ title: "✓ Design placed!", description: "Tap your design to move, resize or adjust it." });
+      } catch (error) {
+        console.error("Design upload failed", error);
+        toast({ title: "Upload failed", description: "This image could not be prepared. Try a JPG, PNG, or WebP under 10MB.", variant: "destructive" });
+      }
     };
     reader.readAsDataURL(file);
   };
@@ -325,7 +333,7 @@ export default function DesignStudioV2() {
     const layer: TextLayer = {
       id: uid(), name: "New text", type: "text", visible: true, locked: false,
       transform: { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 },
-      text: "Your text", fontFamily: FONT_FAMILIES[0].value, fontWeight: 700, fontStyle: "normal", fontSize: 40, color: "#111111",
+      text: "Your text", fontFamily: FONT_FAMILIES[0].value, fontWeight: 700, fontStyle: "normal", fontSize: 40, color: selectedColor.hex,
       face: activeFace,
     };
     addLayer(layer);
@@ -333,8 +341,94 @@ export default function DesignStudioV2() {
     setActiveTab("text");
   };
 
-  const frontLayers = useMemo(() => layers.filter(l => l.type !== "shape" && (l.face ?? "front") === "front") as unknown as ComposerLayer[], [layers]);
-  const backLayers = useMemo(() => layers.filter(l => l.type !== "shape" && (l.face ?? "front") === "back") as unknown as ComposerLayer[], [layers]);
+  const handleCanvasAction = (point: { x: number; y: number }) => {
+    const id = uid();
+    const transform = { x: point.x, y: point.y, scale: 1, rotation: 0, opacity: 1 };
+    if (activeTool === "text") {
+      const layer: TextLayer = {
+        id, name: "Canvas text", type: "text", visible: true, locked: false,
+        transform, text: "Your text", fontFamily: FONT_FAMILIES[0].value, fontWeight: 700,
+        fontStyle: "normal", fontSize: 40, color: selectedColor.hex, face: activeFace,
+      };
+      addLayer(layer);
+      selectLayer(id);
+      setActiveTab("text");
+      return;
+    }
+    if (activeTool === "shape") {
+      const layer: ShapeLayer = {
+        id, name: "Rectangle", type: "shape", visible: true, locked: false,
+        transform, shapeType: "rect", fill: selectedColor.hex,
+        strokeColor: selectedColor.hex, strokeWidth: 0, width: 240, height: 160,
+        face: activeFace,
+      };
+      addLayer(layer);
+      selectLayer(id);
+      setActiveTab("layers");
+    }
+  };
+
+  const handleDrawStart = (point: { x: number; y: number }) => {
+    const id = uid();
+    const layer: ShapeLayer = {
+      id, name: "Pen stroke", type: "shape", visible: true, locked: false,
+      transform: { x: point.x, y: point.y, scale: 1, rotation: 0, opacity: 1 },
+      shapeType: "line", fill: selectedColor.hex, strokeColor: selectedColor.hex,
+      strokeWidth: 12, width: 1, height: 1, points: [0, 0], face: activeFace,
+    };
+    activeDrawIdRef.current = id;
+    addLayer(layer);
+    selectLayer(id);
+    setActiveTab("layers");
+  };
+
+  const handleDrawMove = (point: { x: number; y: number }) => {
+    const id = activeDrawIdRef.current;
+    if (!id) return;
+    const layer = layers.find((item) => item.id === id);
+    if (!layer || layer.type !== "shape") return;
+    const localX = point.x - layer.transform.x;
+    const localY = point.y - layer.transform.y;
+    const existing = layer.points && layer.points.length >= 2 ? layer.points : [0, 0];
+    const lastX = existing[existing.length - 2];
+    const lastY = existing[existing.length - 1];
+    if (Math.hypot(localX - lastX, localY - lastY) < 3) return;
+    const nextPoints = [...existing, localX, localY];
+    const xs = nextPoints.filter((_, index) => index % 2 === 0);
+    const ys = nextPoints.filter((_, index) => index % 2 === 1);
+    updateLayer(id, {
+      points: nextPoints,
+      width: Math.max(1, Math.max(...xs) - Math.min(...xs)),
+      height: Math.max(1, Math.max(...ys) - Math.min(...ys)),
+    });
+  };
+
+  const handleDrawEnd = () => {
+    const id = activeDrawIdRef.current;
+    if (id) {
+      const layer = layers.find((item) => item.id === id);
+      if (layer?.type === "shape" && (layer.points?.length ?? 0) < 4) {
+        updateLayer(id, { points: [0, 0, 160, 0], width: 160, height: 1 });
+      }
+      commit();
+    }
+    activeDrawIdRef.current = null;
+  };
+
+  const handlePickColor = (hex: string) => {
+    if (!selectedLayer) {
+      toast({ title: "Color sampled", description: `${hex} is ready. Select a text or shape layer to apply it.` });
+      return;
+    }
+    if (selectedLayer.type === "text") updateLayer(selectedLayer.id, { color: hex });
+    else if (selectedLayer.type === "shape") updateLayer(selectedLayer.id, { fill: hex, strokeColor: hex });
+    else updateLayer(selectedLayer.id, { tint: hex });
+    commit();
+    toast({ title: "Color applied", description: `${hex} applied to ${selectedLayer.name || "the selected layer"}.` });
+  };
+
+  const frontLayers = useMemo(() => layers.filter(l => (l.face ?? "front") === "front") as unknown as ComposerLayer[], [layers]);
+  const backLayers = useMemo(() => layers.filter(l => (l.face ?? "front") === "back") as unknown as ComposerLayer[], [layers]);
 
   const handleAddToCart = async () => {
     if (layers.length === 0) {
@@ -374,9 +468,9 @@ export default function DesignStudioV2() {
     const isColorPhoto = frontMockup.isColorPhoto;
     const frontPZ = isMug ? MUG_SIDE_PZ : selectedProduct.printZone;
     const backPZ = isMug ? MUG_SIDE_BACK_PZ : (selectedProduct.printZoneBack ?? selectedProduct.printZone);
-    const leftSleeveLayers = layers.filter(l => l.type !== "shape" && l.face === "left-sleeve") as unknown as ComposerLayer[];
-    const rightSleeveLayers = layers.filter(l => l.type !== "shape" && l.face === "right-sleeve") as unknown as ComposerLayer[];
-    const neckLabelLayers = layers.filter(l => l.type !== "shape" && l.face === "neck-label") as unknown as ComposerLayer[];
+    const leftSleeveLayers = layers.filter(l => l.face === "left-sleeve") as unknown as ComposerLayer[];
+    const rightSleeveLayers = layers.filter(l => l.face === "right-sleeve") as unknown as ComposerLayer[];
+    const neckLabelLayers = layers.filter(l => l.face === "neck-label") as unknown as ComposerLayer[];
 
     let mockupUrl: string;
     try {
@@ -460,7 +554,7 @@ export default function DesignStudioV2() {
   };
 
   const handleExportPNG = async () => {
-    const activeLayers = layers.filter(l => l.type !== "shape" && (l.face ?? "front") === activeFace) as unknown as ComposerLayer[];
+    const activeLayers = layers.filter(l => (l.face ?? "front") === activeFace) as unknown as ComposerLayer[];
     if (activeLayers.length === 0) { toast({ title: "Nothing to export", description: "Add a layer first." }); return; }
     const garmentSrc = frontMockup.photoKind === "opaque-photo" && !frontMockup.requiresTint
       ? frontMockup.photoSrc
@@ -520,7 +614,13 @@ export default function DesignStudioV2() {
           <div className="flex-1 min-w-0" ref={containerRef}>
             <ProductSwitcher />
             <div className="mt-3 mb-3">
-              <MainToolbar />
+              <MainToolbar onExport={handleExportPNG} />
+              <div className="mb-3 flex items-center gap-2 overflow-x-auto rounded-2xl border border-orange-100 bg-orange-50/70 p-2 md:hidden no-scrollbar">
+                <button type="button" onClick={() => setShowProductPicker(true)} className="flex shrink-0 items-center gap-1.5 rounded-xl bg-white px-3 py-2 text-[11px] font-black text-gray-800 shadow-sm active:scale-95"><Package className="h-3.5 w-3.5 text-orange-500" /> Product</button>
+                <button type="button" onClick={() => fileInputRef.current?.click()} className="flex shrink-0 items-center gap-1.5 rounded-xl bg-gradient-to-r from-orange-600 to-orange-500 px-3 py-2 text-[11px] font-black text-white shadow-sm active:scale-95"><Upload className="h-3.5 w-3.5" /> Upload</button>
+                <button type="button" onClick={addText} className="flex shrink-0 items-center gap-1.5 rounded-xl bg-white px-3 py-2 text-[11px] font-black text-gray-800 shadow-sm active:scale-95"><Type className="h-3.5 w-3.5 text-blue-500" /> Text</button>
+                <button type="button" onClick={() => setMobileToolOpen(true)} className="flex shrink-0 items-center gap-1.5 rounded-xl bg-gray-900 px-3 py-2 text-[11px] font-black text-white shadow-sm active:scale-95"><Wand2 className="h-3.5 w-3.5" /> All tools</button>
+              </div>
             </div>
             <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) { handleFileUpload(f); e.target.value = ""; } }} />
 
@@ -580,6 +680,11 @@ export default function DesignStudioV2() {
                   width={canvasSize}
                   height={canvasSize}
                   printZone={pz}
+                  onCanvasAction={handleCanvasAction}
+                  onDrawStart={handleDrawStart}
+                  onDrawMove={handleDrawMove}
+                  onDrawEnd={handleDrawEnd}
+                  onPickColor={handlePickColor}
                   mockup={
                     isFlatZone && activeZoneConfig
                       ? <FlatZoneSVG zone={activeZoneConfig} showPrintZone={showPrintZone} mockup={frontMockup} />

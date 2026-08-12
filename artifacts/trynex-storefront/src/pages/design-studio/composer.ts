@@ -40,7 +40,20 @@ export interface ComposerTextLayer {
   shadowOffsetX?: number;
   shadowOffsetY?: number;
 }
-export type ComposerLayer = ComposerImageLayer | ComposerTextLayer;
+export interface ComposerShapeLayer {
+  type: "shape";
+  visible: boolean;
+  transform: ComposerTransform;
+  shapeType: "rect" | "circle" | "star" | "arrow" | "polygon" | "line";
+  fill?: string;
+  strokeColor?: string;
+  strokeWidth?: number;
+  width: number;
+  height: number;
+  sides?: number;
+  points?: number[];
+}
+export type ComposerLayer = ComposerImageLayer | ComposerTextLayer | ComposerShapeLayer;
 
 export interface ComposerPrintZone {
   x: number;
@@ -198,9 +211,17 @@ function layerGeom(l: ComposerLayer, pz: ComposerPrintZone) {
     const h = (baseW / aspect) * (l.transform.scaleY ?? 1);
     return { cx, cy, w, h };
   }
-  const w = (l.text.length * l.fontSize * 0.55) * l.transform.scale * (l.transform.scaleX ?? 1);
-  const h = l.fontSize * 1.2 * l.transform.scale * (l.transform.scaleY ?? 1);
-  return { cx, cy, w, h };
+  if (l.type === "text") {
+    const w = (l.text.length * l.fontSize * 0.55) * l.transform.scale * (l.transform.scaleX ?? 1);
+    const h = l.fontSize * 1.2 * l.transform.scale * (l.transform.scaleY ?? 1);
+    return { cx, cy, w, h };
+  }
+  return {
+    cx,
+    cy,
+    w: l.width * l.transform.scale * (l.transform.scaleX ?? 1),
+    h: l.height * l.transform.scale * (l.transform.scaleY ?? 1),
+  };
 }
 
 /** Build CSS filter string for image adjustments. Returns '' if no adjustments. */
@@ -270,6 +291,75 @@ function textAlignOffset(align: "left" | "center" | "right", halfW: number): num
   if (align === "left") return -halfW;
   if (align === "right") return halfW;
   return 0;
+}
+
+function drawShape(
+  ctx: CanvasRenderingContext2D,
+  layer: ComposerShapeLayer,
+  w: number,
+  h: number,
+  sx: number,
+  sy: number,
+) {
+  const fill = layer.fill ?? "#111111";
+  const stroke = layer.strokeColor ?? fill;
+  const lineWidth = Math.max(0, (layer.strokeWidth ?? 0) * Math.min(sx, sy));
+  ctx.fillStyle = fill;
+  ctx.strokeStyle = stroke;
+  ctx.lineWidth = lineWidth;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
+  if (layer.shapeType === "line" || layer.shapeType === "arrow") {
+    const raw = layer.points && layer.points.length >= 4 ? layer.points : [-layer.width / 2, 0, layer.width / 2, 0];
+    const points = raw.map((point, index) => point * (index % 2 === 0 ? sx : sy));
+    ctx.beginPath();
+    ctx.moveTo(points[0], points[1]);
+    for (let i = 2; i < points.length; i += 2) ctx.lineTo(points[i], points[i + 1]);
+    ctx.stroke();
+    if (layer.shapeType === "arrow") {
+      const end = points.length - 2;
+      const angle = Math.atan2(points[end + 1] - points[end - 1], points[end] - points[end - 2]);
+      const head = Math.max(10, 18 * Math.min(sx, sy));
+      ctx.beginPath();
+      ctx.moveTo(points[end], points[end + 1]);
+      ctx.lineTo(points[end] - head * Math.cos(angle - Math.PI / 6), points[end + 1] - head * Math.sin(angle - Math.PI / 6));
+      ctx.moveTo(points[end], points[end + 1]);
+      ctx.lineTo(points[end] - head * Math.cos(angle + Math.PI / 6), points[end + 1] - head * Math.sin(angle + Math.PI / 6));
+      ctx.stroke();
+    }
+    return;
+  }
+
+  if (layer.shapeType === "circle") {
+    ctx.beginPath();
+    ctx.ellipse(0, 0, w / 2, h / 2, 0, 0, Math.PI * 2);
+    ctx.fill();
+    if (lineWidth) ctx.stroke();
+    return;
+  }
+
+  if (layer.shapeType === "star" || layer.shapeType === "polygon") {
+    const sides = Math.max(3, layer.sides ?? (layer.shapeType === "star" ? 5 : 6));
+    const count = sides * (layer.shapeType === "star" ? 2 : 1);
+    const outer = Math.min(w, h) / 2;
+    const inner = layer.shapeType === "star" ? outer * 0.45 : outer;
+    ctx.beginPath();
+    for (let i = 0; i < count; i++) {
+      const radius = layer.shapeType === "star" && i % 2 === 1 ? inner : outer;
+      const angle = -Math.PI / 2 + (i * Math.PI * 2) / count;
+      const x = Math.cos(angle) * radius;
+      const y = Math.sin(angle) * radius;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fill();
+    if (lineWidth) ctx.stroke();
+    return;
+  }
+
+  ctx.fillRect(-w / 2, -h / 2, w, h);
+  if (lineWidth) ctx.strokeRect(-w / 2, -h / 2, w, h);
 }
 
 /** Draw an image warped to fake a cylindrical / dome surface curve.
@@ -416,7 +506,7 @@ export async function composeLayers(opts: ComposeOptions): Promise<HTMLCanvasEle
         ctx.fillRect(-(g.w * sx) / 2, -(g.h * sy) / 2, g.w * sx, g.h * sy);
         console.warn("[composer] Failed to load image layer:", (imgErr as Error)?.message ?? imgErr, l.src);
       }
-    } else {
+    } else if (l.type === "text") {
       ctx.globalCompositeOperation = blendMode;
       const fs = Math.round(l.fontSize * l.transform.scale * sy);
       ctx.font = `${l.fontStyle} ${l.fontWeight} ${fs}px ${l.fontFamily}`;
@@ -424,6 +514,9 @@ export async function composeLayers(opts: ComposeOptions): Promise<HTMLCanvasEle
       const align = l.textAlign ?? "center";
       const xOffset = textAlignOffset(align, (g.w * sx) / 2);
       drawText(ctx, l, fs, xOffset, 0, sx, sy);
+    } else {
+      ctx.globalCompositeOperation = blendMode;
+      drawShape(ctx, l, g.w * sx, g.h * sy, sx, sy);
     }
     ctx.restore();
   }
@@ -543,7 +636,7 @@ export async function composeGarmentMockup(opts: {
         }
         if (cssFilter) ctx.filter = "none";
       } catch {}
-    } else {
+    } else if (layer.type === "text") {
       const fs = Math.round(layer.fontSize * layer.transform.scale * s);
       ctx.font = `${layer.fontStyle} ${layer.fontWeight} ${fs}px ${layer.fontFamily}`;
       const align = layer.textAlign ?? "center";
@@ -559,27 +652,17 @@ export async function composeGarmentMockup(opts: {
       ctx.globalCompositeOperation = textBlend as GlobalCompositeOperation;
       drawText(ctx, layer, fs, xOffset, 0, s, s);
       ctx.globalCompositeOperation = "source-over";
+    } else {
+      drawShape(ctx, layer, geom.w * s, geom.h * s, s, s);
     }
     ctx.restore();
   }
 
   ctx.restore();
 
-  // ── Smart Mockup Overlay Pass ──
-  // Redraw the garment highlights and occlusion (drawstrings, folds) over the design.
-  // For hoodies, this ensures drawstrings realistically sit ON TOP of the logo.
-  if (layers.some(l => l.visible)) {
-    try {
-      const overlayImg = await loadImage(garmentSrc, imageCache);
-      const isHoodie = garmentSrc.includes("hoodie");
-      ctx.save();
-      ctx.globalAlpha = isHoodie ? 0.85 : 0.32;
-      ctx.globalCompositeOperation = "multiply";
-      ctx.drawImage(overlayImg, 0, 0, outSize, outSize);
-      ctx.restore();
-    } catch {}
-  }
-
+  // Do not redraw the full garment over the artwork here. A whole-frame
+  // multiply pass creates the duplicate/ghost silhouette users see on dark
+  // variants. The clipped luminosity masks below are the single shading source.
   if (fabricTexture && layers.some(l => l.visible)) {
     ctx.save();
     ctx.beginPath();
@@ -723,12 +806,14 @@ export async function composeDesignTexture(opts: {
         }
         if (cssFilter) ctx.filter = "none";
       } catch {}
-    } else {
+    } else if (layer.type === "text") {
       const fs = Math.round(layer.fontSize * layer.transform.scale * s);
       ctx.font = `${layer.fontStyle} ${layer.fontWeight} ${fs}px ${layer.fontFamily}`;
       const align = layer.textAlign ?? "center";
       const xOffset = textAlignOffset(align, (geom.w * s) / 2);
       drawText(ctx, layer, fs, xOffset, 0, s, s);
+    } else {
+      drawShape(ctx, layer, geom.w * s, geom.h * s, s, s);
     }
     ctx.restore();
   }

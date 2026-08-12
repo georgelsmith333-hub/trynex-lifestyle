@@ -43,19 +43,24 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
   const url = new URL(request.url);
 
-  /* ── CORS preflight ──────────────────────────────────────────────────── */
+  /* ── CORS policy for preflight and ordinary API responses ─────────────── */
+  const requestOrigin = request.headers.get("Origin");
+  const allowedOrigin = requestOrigin && (
+    /^https:\/\/(?:[a-z0-9-]+\.)?trynex-lifestyle-shop\.pages\.dev$/i.test(requestOrigin)
+      || requestOrigin === "https://www.trynexshop.com"
+      || requestOrigin === "https://trynexshop.com"
+  ) ? requestOrigin : url.origin;
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With, Cookie",
+    "Access-Control-Allow-Credentials": "true",
+    "Access-Control-Max-Age": "86400",
+    "Vary": "Origin",
+  };
+
   if (request.method === "OPTIONS") {
-    return new Response(null, {
-      status: 204,
-      headers: {
-        "Access-Control-Allow-Origin": url.origin,
-        "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers":
-          "Content-Type, Authorization, X-Requested-With, Cookie",
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Max-Age": "86400",
-      },
-    });
+    return new Response(null, { status: 204, headers: corsHeaders });
   }
 
   /* ── Guard: API_URL must be configured. No hardcoded fallback is allowed. */
@@ -64,7 +69,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     console.error("[api-proxy] API_URL is not configured in CF Pages environment variables");
     return Response.json(
       { error: "API_URL not configured", message: "This site is not connected to an API backend." },
-      { status: 503 }
+      { status: 503, headers: corsHeaders }
     );
   }
 
@@ -96,7 +101,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     console.error("[api-proxy] upstream fetch failed:", err);
     return Response.json(
       { error: "API server is unreachable.", detail: String(err) },
-      { status: 502 }
+      { status: 502, headers: corsHeaders }
     );
   }
 
@@ -127,6 +132,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   }
 
   /* ── Stream upstream body back ───────────────────────────────────────── */
+  for (const [key, value] of Object.entries(corsHeaders)) {
+    respHeaders.set(key, value);
+  }
   return new Response(upstream.body, {
     status: upstream.status,
     statusText: upstream.statusText,

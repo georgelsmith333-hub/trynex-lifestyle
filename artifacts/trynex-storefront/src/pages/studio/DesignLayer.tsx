@@ -177,6 +177,34 @@ export function DesignLayer({
     const h = shape.height * baseScale;
 
     switch (shape.shapeType) {
+      case "line": {
+        const points = (shape.points && shape.points.length >= 4 ? shape.points : [-shape.width / 2, 0, shape.width / 2, 0]).map((point) => point * baseScale);
+        const lineColor = shape.strokeColor || (typeof shape.fill === "string" ? shape.fill : "#111111");
+        return (
+          <>
+            <Line
+              ref={shapeRef as any}
+              points={points}
+              x={cx}
+              y={cy}
+              stroke={lineColor}
+              strokeWidth={Math.max(4, strokeWidth)}
+              lineCap="round"
+              lineJoin="round"
+              hitStrokeWidth={Math.max(18, 26 * baseScale)}
+              rotation={layer.transform.rotation}
+              opacity={layer.transform.opacity}
+              draggable={!layer.locked}
+              visible={layer.visible}
+              onClick={onSelect}
+              onTap={onSelect}
+              onDragEnd={dragEnd}
+              onTransformEnd={transformEnd}
+            />
+            {transformer}
+          </>
+        );
+      }
       case "rect":
         return (
           <>

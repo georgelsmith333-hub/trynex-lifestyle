@@ -1,11 +1,14 @@
 import { LayersIcon, Eye, EyeOff, Lock, Unlock, Trash2, ChevronUp, ChevronDown, ArrowUp, ArrowDown } from "lucide-react";
-import { useDesignStore, useCurrentFaceLayers } from "@/hooks/useDesignStore";
+import { useDesignStore } from "@/hooks/useDesignStore";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function LayerPanel() {
   const layers = useDesignStore((s) => s.layers);
   const selectedIds = useDesignStore((s) => s.selectedIds);
-  const currentFaceLayers = useCurrentFaceLayers();
+  const currentFaceLayerCount = useDesignStore((s) => {
+    const face = s.selectedProduct.category === "mug" ? (s.mugMode === "side1" ? "front" : "back") : s.activeFace;
+    return s.layers.reduce((count, layer) => count + ((layer.face ?? "front") === face ? 1 : 0), 0);
+  });
   const selectLayer = useDesignStore((s) => s.selectLayer);
   const deleteLayer = useDesignStore((s) => s.deleteLayer);
   const moveLayer = useDesignStore((s) => s.moveLayer);
@@ -16,7 +19,7 @@ export function LayerPanel() {
     <div className="p-4 space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="text-[11px] font-black uppercase tracking-widest text-gray-400">Layers</h3>
-        <span className="text-[10px] text-gray-400 font-semibold">{currentFaceLayers.length} on this face</span>
+        <span className="text-[10px] text-gray-400 font-semibold">{currentFaceLayerCount} on this face</span>
       </div>
       <AnimatePresence initial={false}>
         {layers.length === 0 ? (
