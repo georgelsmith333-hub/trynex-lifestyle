@@ -75,8 +75,7 @@ router.get("/sitemap.xml", async (_req, res) => {
     const [latestProductRow] = await db.select({ updatedAt: max(productsTable.updatedAt) }).from(productsTable);
     const latestProductLastmod = formatDate(latestProductRow?.updatedAt) ?? today;
 
-    const [latestCategoryRow] = await db.select({ updatedAt: max(categoriesTable.updatedAt) }).from(categoriesTable);
-    const latestCategoryLastmod = formatDate(latestCategoryRow?.updatedAt) ?? today;
+    const latestCategoryLastmod = today;
 
     const [latestBlogRow] = await db.select({ updatedAt: max(blogPostsTable.updatedAt) }).from(blogPostsTable).where(eq(blogPostsTable.published, true));
     const latestBlogLastmod = formatDate(latestBlogRow?.updatedAt) ?? today;

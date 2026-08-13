@@ -318,8 +318,9 @@ export default function Checkout() {
   const bankConfigured = !!(settings.bankName && settings.bankAccountNumber && settings.bankAccountName);
   const anyWalletConfigured = !!(settings.bkashNumber || settings.nagadNumber || settings.upayNumber);
 
-  // Only payment methods that the admin has configured are shown to customers.
-  // No hardcoded fallback numbers are used anywhere in the checkout flow.
+  // Only payment methods with a configured or canonical fallback number are shown
+  // to customers. bKash/Nagad remain admin-configured; uPay uses the supplied
+  // canonical merchant number when the settings row is empty.
   const configuredPaymentMethods: PaymentMethod[] = ([
     'bkash', 'nagad', 'upay', 'bank', 'card', 'cod'
   ] as PaymentMethod[]).filter((m) => {
@@ -435,6 +436,10 @@ export default function Checkout() {
       shippingAddress: formattedAddress,
       customerName,
       paymentMethod,
+      notes: [
+        rest.notes,
+        paymentMode === 'advance' ? 'Payment plan: 25% advance + cash on delivery' : 'Payment plan: full payment',
+      ].filter(Boolean).join(' | '),
       items: items.map(i => ({
         productId: i.productId,
         name: i.name,
@@ -491,7 +496,7 @@ export default function Checkout() {
           setServerWaking(true);
         }
         try {
-          order = await createOrder({ data: orderPayload } as any);
+          order = await createOrder(orderPayload as CreateOrderRequest);
           lastErr = undefined;
           break;
         } catch (e) {
@@ -536,27 +541,11 @@ export default function Checkout() {
       }));
       clearCart();
 
-      // Auto-submit payment verification collected in step 2.
-      // Wallet and bank payments include the details now; card/COD skip this.
-      if (paymentMethod !== 'card' && paymentMethod !== 'cod') {
-        try {
-          await fetch(getApiUrl(`/api/orders/${orderData.id}/payment-info`), {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-            body: JSON.stringify({
-              lastFourDigits: lastFour,
-              senderNumber,
-              transactionId,
-              senderName,
-              bankReference,
-              promoCode: promoApplied || undefined,
-            }),
-          });
-          setCheckoutStatus('success');
-        } catch (paymentErr) {
-          // If payment verification couldn't be saved, show the gateway so the user can retry.
-          setCheckoutStatus('gateway');
-        }
+      // Wallet orders must stop at the gateway so the customer can send the
+      // exact 25% amount and submit transaction evidence. Payment is only
+      // marked submitted after the customer presses “I've Sent the Payment”.
+      if (paymentMethod === 'bkash' || paymentMethod === 'nagad' || paymentMethod === 'upay' || paymentMethod === 'bank') {
+        setCheckoutStatus('gateway');
       } else {
         setCheckoutStatus('success');
       }
@@ -641,16 +630,45 @@ export default function Checkout() {
   };
 
   const handlePaymentSubmit = async () => {
-    if (!lastFour || lastFour.length < 4) {
-      toast({ title: "Please enter last 4 digits", description: "Enter the last 4 digits of your sending number.", variant: "destructive" });
-      return;
+    const cleanSender = senderNumber.replace(/\D/g, '');
+    const cleanTransaction = transactionId.trim();
+    if (paymentMethod === 'bank') {
+      if (senderName.trim().length < 2) {
+        toast({ title: "Enter account holder name", description: "Enter the name used for the bank transfer.", variant: "destructive" });
+        return;
+      }
+      if (bankReference.trim().length < 4) {
+        toast({ title: "Enter bank reference", description: "Enter the bank transfer reference or confirmation number.", variant: "destructive" });
+        return;
+      }
+    } else {
+      if (cleanSender.length < 10) {
+        toast({ title: "Enter your sending number", description: `Enter the ${theme.name} number you sent the payment from.`, variant: "destructive" });
+        return;
+      }
+      if (lastFour.length < 4 && cleanTransaction.length < 4) {
+        toast({ title: "Add payment evidence", description: "Enter either the last 4 digits of your sending number or the transaction ID.", variant: "destructive" });
+        return;
+      }
     }
     setIsSubmittingPayment(true);
     try {
-      const res = await fetch(getApiUrl(`/api/orders/${(createdOrder as Record<string, unknown>)?.id}/payment-info`), {
+      const orderId = Number((createdOrder as Record<string, unknown>)?.id);
+      if (!Number.isFinite(orderId) || orderId <= 0) {
+        throw new Error('Your order reference is missing. Please return to checkout and try again.');
+      }
+      const res = await fetch(getApiUrl(`/api/orders/${orderId}/payment-info`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-        body: JSON.stringify({ lastFourDigits: lastFour, promoCode: promoApplied || undefined })
+        body: JSON.stringify({
+          paymentMethod,
+          lastFourDigits: lastFour || undefined,
+          senderNumber: cleanSender,
+          transactionId: cleanTransaction || undefined,
+          senderName: senderName.trim() || undefined,
+          bankReference: bankReference.trim() || undefined,
+          promoCode: promoApplied || undefined,
+        })
       });
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
@@ -760,10 +778,14 @@ export default function Checkout() {
 
   const theme = gatewayTheme[effectiveGatewayMethod];
 
+  const isWalletMethod = paymentMethod === 'bkash' || paymentMethod === 'nagad' || paymentMethod === 'upay';
+  const hasWalletEvidence = lastFour.length === 4 || transactionId.trim().length >= 4;
   const canProceed = (() => {
     if (configuredPaymentMethods.length === 0) return false;
-    if (paymentMethod === 'bkash' || paymentMethod === 'nagad' || paymentMethod === 'upay') {
-      return paymentNumberReady && lastFour.length === 4 && senderNumber.length >= 10;
+    if (isWalletMethod) {
+      // The customer must identify the sending wallet and provide either the
+      // sender-number suffix or a transaction ID before review/order creation.
+      return paymentNumberReady && senderNumber.replace(/\D/g, '').length >= 10 && hasWalletEvidence;
     }
     if (paymentMethod === 'bank') {
       return bankConfigured && senderName.trim().length > 0 && bankReference.trim().length > 0;
@@ -943,6 +965,11 @@ export default function Checkout() {
     const snapAdvance = snapshotRef.current.advance;
     const snapRemaining = snapTotal - snapAdvance;
     const amountToSend = paymentMode === 'full' ? snapTotal : snapAdvance;
+    const gatewayEvidenceReady = isWalletMethod
+      ? paymentNumberReady && senderNumber.replace(/\D/g, '').length >= 10 && hasWalletEvidence
+      : paymentMethod === 'bank'
+        ? bankConfigured && senderName.trim().length >= 2 && bankReference.trim().length >= 4
+        : true;
 
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4 py-10">
@@ -1000,7 +1027,7 @@ export default function Checkout() {
                   `Go to "Send Money"`,
                   `Enter number: ${effectivePaymentNumber}`,
                   `Send exactly ${formatPrice(amountToSend)}`,
-                  'Enter your sending number last 4 digits below',
+                  'Enter either the last 4 digits of your sending number or your transaction ID below',
                 ].map((s, i) => (
                   <div key={i} className="flex items-start gap-3">
                     <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black shrink-0 mt-0.5"
@@ -1050,8 +1077,23 @@ export default function Checkout() {
               </div>
 
               <div>
-                <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2">
-                  Your Sending Number — Last 4 Digits *
+                  <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2">
+                  Your Sending Number *
+                </label>
+                <input
+                  type="tel"
+                  inputMode="numeric"
+                  maxLength={11}
+                  placeholder="01XXXXXXXXX"
+                  value={senderNumber}
+                  onChange={e => setSenderNumber(e.target.value.replace(/\D/g, '').slice(0, 11))}
+                  className={inputClass}
+                  style={{ ...inputStyle, letterSpacing: '0.2em' }}
+                />
+                <p className="text-xs text-gray-400 mt-1.5">The wallet number you sent the payment from</p>
+
+                <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2 mt-4">
+                  Last 4 Digits of Sending Number
                 </label>
                 <input
                   type="tel"
@@ -1063,19 +1105,32 @@ export default function Checkout() {
                   className={inputClass}
                   style={{ ...inputStyle, letterSpacing: '0.5em', textAlign: 'center', fontSize: '1.5rem', fontWeight: 900 }}
                 />
-                <p className="text-xs text-gray-400 mt-1.5">
-                  Enter the last 4 digits of the {theme.name} number you're sending FROM
+                  <p className="text-xs text-gray-400 mt-1.5">
+                  Optional when you provide a transaction ID
                 </p>
               </div>
 
+              {paymentMethod === 'bank' && (
+                <div className="rounded-2xl p-4 mb-5 bg-gray-50" style={{ border: `1px solid ${theme.border}` }}>
+                  <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Bank Transfer Details</p>
+                  <p className="text-sm text-gray-700"><strong>{settings.bankName}</strong> · {settings.bankAccountName}</p>
+                  <p className="text-lg font-black font-mono text-gray-900 mt-1">{settings.bankAccountNumber}</p>
+                  {settings.bankBranch && <p className="text-xs text-gray-500 mt-1">Branch: {settings.bankBranch}</p>}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                    <input value={senderName} onChange={e => setSenderName(e.target.value.slice(0, 100))} placeholder="Transfer account holder name" className={inputClass} style={inputStyle} />
+                    <input value={bankReference} onChange={e => setBankReference(e.target.value.replace(/[^a-zA-Z0-9-]/g, '').slice(0, 100))} placeholder="Bank reference / ID" className={inputClass} style={inputStyle} />
+                  </div>
+                </div>
+              )}
+
               <button
                 onClick={handlePaymentSubmit}
-                disabled={isSubmittingPayment || lastFour.length < 4}
+                disabled={isSubmittingPayment || !gatewayEvidenceReady}
                 className="w-full py-4 rounded-xl font-black text-white text-base flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-40"
                 style={{
-                  background: lastFour.length >= 4 && !isSubmittingPayment ? theme.badge : '#e5e7eb',
-                  boxShadow: lastFour.length >= 4 ? `0 8px 30px ${theme.light}` : 'none',
-                  color: lastFour.length >= 4 ? 'white' : '#9ca3af',
+                  background: gatewayEvidenceReady && !isSubmittingPayment ? theme.badge : '#e5e7eb',
+                  boxShadow: gatewayEvidenceReady ? `0 8px 30px ${theme.light}` : 'none',
+                  color: gatewayEvidenceReady ? 'white' : '#9ca3af',
                 }}
               >
                 {isSubmittingPayment ? (
@@ -1648,7 +1703,7 @@ export default function Checkout() {
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2">Transaction ID (optional)</label>
+                          <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2">                  Transaction ID (enter this or the last 4 digits)</label>
                           <input
                             type="text"
                             placeholder="e.g. 8X9K2L"

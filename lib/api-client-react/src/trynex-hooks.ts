@@ -144,7 +144,9 @@ export enum CreateOrderRequestPaymentMethod {
   cod = "cod",
   bkash = "bkash",
   nagad = "nagad",
+  upay = "upay",
   rocket = "rocket",
+  bank = "bank",
   card = "card",
 }
 
@@ -209,6 +211,11 @@ export interface CreateOrderRequest {
   utmSource?: string;
   utmMedium?: string;
   utmCampaign?: string;
+  paymentEvidence?: {
+    senderNumber?: string;
+    lastFourDigits?: string;
+    transactionId?: string;
+  };
 }
 
 export interface CreateProductRequest {

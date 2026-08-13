@@ -106,7 +106,10 @@ async function buildSettings(map: Record<string, string | null>) {
     bkashNumber: map["bkashNumber"] ?? "",
     nagadNumber: map["nagadNumber"] ?? "",
     rocketNumber: map["rocketNumber"] ?? "",
-    upayNumber: map["upayNumber"] ?? "",
+    // User-provided canonical uPay number. An admin value still takes precedence;
+    // the fallback prevents checkout from silently hiding uPay when the settings row
+    // is missing during a partial deployment/configuration.
+    upayNumber: map["upayNumber"]?.trim() || "01747292277",
     whatsappNumber: map["whatsappNumber"] ?? "",
     shippingCost: parseFloat(map["shippingCost"] ?? "100"),
     // Bank / card payment details exposed publicly to the checkout flow.

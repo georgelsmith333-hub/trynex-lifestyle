@@ -30,10 +30,10 @@ const PAYMENT_LABELS: Record<string, { label: string; color: string }> = {
 
 const PAYMENT_STATUS_OPTS = [
   { value: 'pending', label: '✗ Not Paid', color: '#ef4444' },
+  { value: 'not_paid', label: '✗ Not Paid', color: '#ef4444' },
   { value: 'submitted', label: '⏳ Under Review', color: '#f59e0b' },
-  { value: 'partial', label: '⏳ 25% Advance Paid', color: '#f59e0b' },
-  { value: 'verified', label: '✓ Payment Confirmed', color: '#22c55e' },
-  { value: 'wrong', label: '⚠ Payment Issue', color: '#ef4444' },
+  { value: 'paid', label: '✓ Payment Received', color: '#22c55e' },
+  { value: 'refunded', label: '↩ Refunded', color: '#8b5cf6' },
 ];
 
 
@@ -214,15 +214,14 @@ export default function AdminOrders() {
   const getPaymentStatusColor = (s: string) => {
     const map: Record<string, string> = {
       pending: '#ef4444', not_paid: '#ef4444',
-      submitted: '#f59e0b', partial: '#f59e0b', verified: '#22c55e', wrong: '#ef4444', cod: '#9ca3af'
+      submitted: '#f59e0b', paid: '#22c55e', refunded: '#8b5cf6', cod: '#9ca3af'
     };
     return map[s] || '#aaa';
   };
 
   const getPaymentStatusLabel = (s: string) => {
     const map: Record<string, string> = {
-      pending: 'Not Paid', not_paid: 'Not Paid', submitted: 'Under Review', partial: '25% Advance',
-      verified: 'Confirmed', wrong: 'Issue', cod: 'Legacy COD'
+      pending: 'Not Paid', not_paid: 'Not Paid', submitted: 'Under Review', paid: 'Payment Received', refunded: 'Refunded', cod: 'Legacy COD'
     };
     return map[s] || s;
   };
@@ -704,12 +703,12 @@ export default function AdminOrders() {
                   <div>
                     <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-2">
                       <CreditCard className="inline w-3 h-3 mr-1" />Payment Status
-                      {selectedOrder.paymentMethod === 'cod' && (
-                        <span className="ml-2 text-[10px] font-bold px-1.5 py-0.5 rounded"
-                          style={{ background: 'rgba(74,222,128,0.1)', color: '#4ade80' }}>
-                          25% Advance
-                        </span>
-                      )}
+                        {(selectedOrder.paymentMethod === 'cod' || selectedOrder.paymentStatus === 'submitted') && (
+                          <span className="ml-2 text-[10px] font-bold px-1.5 py-0.5 rounded"
+                            style={{ background: 'rgba(74,222,128,0.1)', color: '#16a34a' }}>
+                            25% Advance Flow
+                          </span>
+                        )}
                     </p>
                     <select
                       value={selectedOrder.paymentStatus || 'pending'}
@@ -728,8 +727,9 @@ export default function AdminOrders() {
                 {selectedOrder.notes && (
                   <div className="p-4 rounded-xl"
                     style={{ background: 'rgba(255,107,43,0.05)', border: '1px solid rgba(255,107,43,0.15)' }}>
-                    <p className="text-xs font-black uppercase tracking-widest text-primary mb-2">Notes / Payment Info</p>
-                    <p className="text-sm text-gray-500 font-mono">{selectedOrder.notes}</p>
+                    <p className="text-xs font-black uppercase tracking-widest text-primary mb-2">Payment Evidence / Notes</p>
+                    <p className="text-sm text-gray-500 font-mono whitespace-pre-wrap break-words">{selectedOrder.notes}</p>
+                    <p className="text-[11px] text-gray-400 mt-3">Use “Payment Received” only after matching the wallet number and transaction evidence in the bKash, Nagad, or uPay account.</p>
                   </div>
                 )}
 

@@ -133,7 +133,7 @@ const defaults: SiteSettings = {
   bkashNumber: c("bkashNumber") || "",
   nagadNumber: c("nagadNumber") || "",
   rocketNumber: c("rocketNumber") || "",
-  upayNumber: c("upayNumber") || "",
+  upayNumber: c("upayNumber") || "01747292277",
   bankName: c("bankName") || "",
   bankAccountName: c("bankAccountName") || "",
   bankAccountNumber: c("bankAccountNumber") || "",

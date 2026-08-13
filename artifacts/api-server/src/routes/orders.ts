@@ -1265,8 +1265,9 @@ const updatePaymentStatusHandler = async (req: Request, res: Response) => {
       return;
     }
     const { paymentStatus } = req.body;
-    if (!paymentStatus) {
-      res.status(400).json({ error: "validation_error", message: "paymentStatus is required" });
+    const allowedPaymentStatuses = new Set(["pending", "not_paid", "submitted", "paid", "refunded"]);
+    if (typeof paymentStatus !== "string" || !allowedPaymentStatuses.has(paymentStatus)) {
+      res.status(400).json({ error: "validation_error", message: "paymentStatus must be pending, not_paid, submitted, paid, or refunded" });
       return;
     }
     const [beforeSnap] = await db.select().from(ordersTable).where(eq(ordersTable.id, id));
@@ -1306,13 +1307,38 @@ router.put("/orders/:id/payment-info", async (req, res) => {
       res.status(400).json({ error: "validation_error", message: "Invalid order id" });
       return;
     }
-    const rawLastFour = String(req.body?.lastFourDigits ?? "").replace(/\D/g, "").slice(0, 8);
-    const rawSenderNumber = String(req.body?.senderNumber ?? "").replace(/[^0-9+\- ]/g, "").slice(0, 20);
+    const [existingOrder] = await db.select().from(ordersTable).where(eq(ordersTable.id, id));
+    if (!existingOrder) {
+      res.status(404).json({ error: "not_found", message: "Order not found" });
+      return;
+    }
+
+    const rawPaymentMethod = String(req.body?.paymentMethod ?? existingOrder.paymentMethod ?? "").toLowerCase();
+    if (req.body?.paymentMethod && rawPaymentMethod !== String(existingOrder.paymentMethod ?? "").toLowerCase()) {
+      res.status(400).json({ error: "validation_error", message: "Payment method does not match this order." });
+      return;
+    }
+    const rawLastFour = String(req.body?.lastFourDigits ?? "").replace(/\D/g, "").slice(0, 4);
+    const rawSenderNumber = String(req.body?.senderNumber ?? "").replace(/\D/g, "").slice(0, 15);
     const rawTransactionId = String(req.body?.transactionId ?? "").replace(/[^a-zA-Z0-9\-]/gi, "").slice(0, 100);
     const rawSenderName = String(req.body?.senderName ?? "").replace(/[^a-zA-Z0-9.\- ]/gi, "").slice(0, 100);
     const rawBankReference = String(req.body?.bankReference ?? "").replace(/[^a-zA-Z0-9\-]/gi, "").slice(0, 100);
     const rawPromo = String(req.body?.promoCode ?? "").replace(/[^A-Z0-9_\-]/gi, "").toUpperCase().slice(0, 50);
-    const notes = [
+    const walletMethod = ["bkash", "nagad", "upay"].includes(rawPaymentMethod);
+
+    if (walletMethod) {
+      if (rawSenderNumber.length < 10) {
+        res.status(400).json({ error: "validation_error", message: "Your sending wallet number is required." });
+        return;
+      }
+      if (rawLastFour.length !== 4 && rawTransactionId.length < 4) {
+        res.status(400).json({ error: "validation_error", message: "Enter either the last 4 digits of your sending number or the transaction ID." });
+        return;
+      }
+    }
+
+    const evidence = [
+      rawPaymentMethod ? `Wallet/payment method: ${rawPaymentMethod}` : null,
       rawLastFour ? `Payment last 4 digits: ${rawLastFour}` : null,
       rawSenderNumber ? `Sender number: ${rawSenderNumber}` : null,
       rawTransactionId ? `Transaction ID: ${rawTransactionId}` : null,
@@ -1320,6 +1346,7 @@ router.put("/orders/:id/payment-info", async (req, res) => {
       rawBankReference ? `Bank reference: ${rawBankReference}` : null,
       rawPromo ? `Promo code: ${rawPromo}` : null,
     ].filter(Boolean).join(" | ");
+    const notes = [existingOrder.notes, evidence].filter(Boolean).join(" | ");
 
     const [order] = await db.update(ordersTable)
       .set({ paymentStatus: "submitted", ...(notes ? { notes } : {}), updatedAt: new Date() })

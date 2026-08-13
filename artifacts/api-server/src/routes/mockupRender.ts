@@ -1,5 +1,5 @@
 import { Router, type Request, type Response } from "express";
-import sharp from "sharp";
+import sharp, { type OverlayOptions } from "sharp";
 
 const router = Router();
 const MAX_INPUT_BYTES = 12 * 1024 * 1024;
@@ -85,7 +85,7 @@ router.post("/api/mockup/render", async (req: Request, res: Response) => {
     }
 
     const maskValue = req.body?.mask;
-    const composites: sharp.OverlayOptions[] = [{ input: renderedArtwork, left, top }];
+    const composites: OverlayOptions[] = [{ input: renderedArtwork, left, top }];
     if (typeof maskValue === "string" && maskValue.startsWith("data:image/")) {
       const mask = await sharp(decodeImage(maskValue))
         .resize(resizedW, resizedH, { fit: "fill" })
@@ -97,7 +97,7 @@ router.post("/api/mockup/render", async (req: Request, res: Response) => {
 
     const textureValue = req.body?.texture;
     if (typeof textureValue === "string" && textureValue.startsWith("data:image/")) {
-      composites.push({ input: await sharp(decodeImage(textureValue)).resize(canvasW, canvasH, { fit: "fill" }).ensureAlpha().png().toBuffer(), left: 0, top: 0, blend: "multiply", opacity: 0.22 });
+      composites.push({ input: await sharp(decodeImage(textureValue)).resize(canvasW, canvasH, { fit: "fill" }).ensureAlpha().png().toBuffer(), left: 0, top: 0, blend: "multiply" });
     }
 
     const output = await baseImage.composite(composites).webp({ quality: 90 }).toBuffer();
