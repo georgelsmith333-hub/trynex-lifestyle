@@ -97,6 +97,17 @@ export default function Checkout() {
 
   const { mutateAsync: createOrder, isPending } = useCreateOrder();
   const formRef = useRef<HTMLFormElement>(null);
+  const stepPanelRef = useRef<HTMLDivElement>(null);
+
+  const goToStep = useCallback((nextStep: number) => {
+    setStep(nextStep);
+    requestAnimationFrame(() => {
+      window.setTimeout(() => {
+        stepPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        stepPanelRef.current?.focus({ preventScroll: true });
+      }, 0);
+    });
+  }, []);
 
   const { customer, loginAsGuest } = useAuth();
   const [guestLoading, setGuestLoading] = useState(false);
@@ -1190,7 +1201,7 @@ export default function Checkout() {
       <SEOHead title="Checkout" description="Complete your order at TryNex Lifestyle." noindex />
       <Navbar />
 
-      <main className="flex-1 pt-header pb-24">
+      <main ref={stepPanelRef} tabIndex={-1} className="flex-1 pt-header pb-24 outline-none">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* Mobile Order Summary Toggle */}
@@ -1349,7 +1360,7 @@ export default function Checkout() {
               <form id="checkout-form" ref={formRef} onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
                 {/* Delivery Details Step 1 */}
-                <div className={`p-7 rounded-3xl ${step !== 1 ? 'hidden' : ''}`} style={{ background: 'white', border: '1px solid #e5e7eb' }}>
+                <div className={`p-4 sm:p-7 rounded-3xl ${step !== 1 ? 'hidden' : ''}`} style={{ background: 'white', border: '1px solid #e5e7eb' }}>
                   <h2 className="text-xl font-black font-display flex items-center gap-3 mb-6 text-gray-800">
                     <span className="w-8 h-8 rounded-xl flex items-center justify-center"
                       style={{ background: 'rgba(232,93,4,0.08)', color: '#E85D04' }}>
@@ -1507,7 +1518,7 @@ export default function Checkout() {
                           "shippingDistrict", "shippingUpazila"
                         ];
                         const isValid = await trigger(fields);
-                        if (isValid) setStep(2);
+                        if (isValid) goToStep(2);
                       }}
                       className="w-full py-4 rounded-2xl bg-gray-900 text-white font-black flex items-center justify-center gap-2 hover:bg-black transition-all"
                     >
@@ -1517,7 +1528,7 @@ export default function Checkout() {
                 </div>
 
                 {/* Payment Method Step 2 */}
-                <div className={`p-7 rounded-3xl ${step !== 2 ? 'hidden' : ''}`} style={{ background: 'white', border: '1px solid #e5e7eb' }}>
+                <div className={`p-4 sm:p-7 rounded-3xl ${step !== 2 ? 'hidden' : ''}`} style={{ background: 'white', border: '1px solid #e5e7eb' }}>
                   <h2 className="text-xl font-black font-display flex items-center gap-3 mb-6 text-gray-800">
                     <span className="w-8 h-8 rounded-xl flex items-center justify-center"
                       style={{ background: 'rgba(232,93,4,0.08)', color: '#E85D04' }}>
@@ -1795,7 +1806,7 @@ export default function Checkout() {
                   <div className="flex flex-col gap-3">
                     <button
                       type="button"
-                      onClick={() => setStep(3)}
+                      onClick={() => goToStep(3)}
                       disabled={!canProceed}
                       className={`w-full py-4 rounded-2xl font-black flex items-center justify-center gap-2 transition-all ${
                         canProceed
@@ -1807,7 +1818,7 @@ export default function Checkout() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setStep(1)}
+                      onClick={() => goToStep(1)}
                       className="w-full py-3 rounded-xl bg-white border border-gray-200 text-gray-500 font-bold text-sm"
                     >
                       Back to Delivery
@@ -1816,7 +1827,7 @@ export default function Checkout() {
                 </div>
 
                 {/* Review & Place Order Step 3 */}
-                <div className={`p-7 rounded-3xl ${step !== 3 ? 'hidden' : ''}`} style={{ background: 'white', border: '1px solid #e5e7eb' }}>
+                <div className={`p-4 sm:p-7 rounded-3xl ${step !== 3 ? 'hidden' : ''}`} style={{ background: 'white', border: '1px solid #e5e7eb' }}>
                   <h2 className="text-xl font-black font-display flex items-center gap-3 mb-6 text-gray-800">
                     <span className="w-8 h-8 rounded-xl flex items-center justify-center"
                       style={{ background: 'rgba(232,93,4,0.08)', color: '#E85D04' }}>
@@ -1829,7 +1840,7 @@ export default function Checkout() {
                     <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100">
                       <div className="flex justify-between items-center mb-2">
                         <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Delivery To</p>
-                        <button type="button" onClick={() => setStep(1)} className="text-[10px] font-black text-orange-600 uppercase">Edit</button>
+                        <button type="button" onClick={() => goToStep(1)} className="text-[10px] font-black text-orange-600 uppercase">Edit</button>
                       </div>
                       <p className="text-sm font-bold text-gray-900">{watch("firstName")} {watch("lastName")}</p>
                       <p className="text-xs text-gray-500 mt-0.5">{watch("customerPhone")}</p>
@@ -1841,7 +1852,7 @@ export default function Checkout() {
                     <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100">
                       <div className="flex justify-between items-center mb-2">
                         <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Payment Method</p>
-                        <button type="button" onClick={() => setStep(2)} className="text-[10px] font-black text-orange-600 uppercase">Edit</button>
+                        <button type="button" onClick={() => goToStep(2)} className="text-[10px] font-black text-orange-600 uppercase">Edit</button>
                       </div>
                       <p className="text-sm font-bold text-gray-900">
                          {paymentMode === 'full' ? 'Full Payment' : '25% Advance + Pay on Delivery'}
@@ -1869,7 +1880,7 @@ export default function Checkout() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setStep(2)}
+                      onClick={() => goToStep(2)}
                       className="w-full py-3 rounded-xl bg-white border border-gray-200 text-gray-500 font-bold text-sm"
                     >
                       Back to Payment
@@ -1884,7 +1895,7 @@ export default function Checkout() {
             </div>
 
             <div className="lg:col-span-5 order-first lg:order-last">
-              <div className="sticky top-28 rounded-3xl p-5 sm:p-7" style={{ background: 'white', border: '1px solid #e5e7eb' }}>
+              <div className="lg:sticky lg:top-28 rounded-3xl p-5 sm:p-7" style={{ background: 'white', border: '1px solid #e5e7eb' }}>
                 <h3 className="text-lg font-black font-display mb-6 text-gray-800">Order Summary</h3>
 
                 <div className="space-y-3 max-h-[280px] overflow-y-auto pr-1 mb-6 hide-scrollbar">
