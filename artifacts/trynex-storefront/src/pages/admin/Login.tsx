@@ -23,7 +23,11 @@ export default function AdminLogin() {
   const [isPending, setIsPending] = useState(false);
 
   async function apiPost(path: string, body: Record<string, unknown>) {
-    const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+    const normalizedPath = path.startsWith("/api/")
+      ? path
+      : path.startsWith("/")
+        ? `/api${path}`
+        : `/api/${path}`;
     const res = await fetch(getApiUrl(normalizedPath), {
       method: "POST",
       headers: {
