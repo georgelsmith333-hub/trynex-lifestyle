@@ -217,7 +217,14 @@ const SiteSettingsContext = createContext<SiteSettings>(defaults);
 
 export function SiteSettingsProvider({ children }: { children: ReactNode }) {
   const { data } = useGetSettings();
-  const settings: SiteSettings = { ...defaults, ...(data as Partial<SiteSettings> || {}), isLoaded: !!data };
+  const remote = (data as Partial<SiteSettings> | undefined) || {};
+  const settings: SiteSettings = {
+    ...defaults,
+    ...remote,
+    // An empty admin setting must not hide the canonical fallback wallet.
+    upayNumber: remote.upayNumber?.trim() || defaults.upayNumber || "01747292277",
+    isLoaded: !!data,
+  };
 
   useEffect(() => {
     if (data) {
