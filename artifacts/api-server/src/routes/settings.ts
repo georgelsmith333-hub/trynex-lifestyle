@@ -101,10 +101,10 @@ async function buildSettings(map: Record<string, string | null>) {
     heroSubtitle: map["heroSubtitle"] ?? "",
     announcementBar: map["announcementBar"] ?? "🚚 Free delivery on orders above ৳1,500!",
     freeShippingThreshold: parseFloat(map["freeShippingThreshold"] ?? "1500"),
-    // Payment numbers must be configured by the admin. No hardcoded fallback numbers
-    // are returned to the storefront or mobile app.
-    bkashNumber: map["bkashNumber"] ?? "",
-    nagadNumber: map["nagadNumber"] ?? "",
+    // The merchant supplied the same personal Send Money number for all three
+    // supported wallets. Admin-configured values still take precedence.
+    bkashNumber: map["bkashNumber"]?.trim() || "01747292277",
+    nagadNumber: map["nagadNumber"]?.trim() || "01747292277",
     rocketNumber: map["rocketNumber"] ?? "",
     // User-provided canonical uPay number. An admin value still takes precedence;
     // the fallback prevents checkout from silently hiding uPay when the settings row
