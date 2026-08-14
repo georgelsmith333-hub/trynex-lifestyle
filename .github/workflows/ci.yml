@@ -62,8 +62,10 @@ jobs:
         run: pnpm --filter @workspace/trynex-storefront run typecheck && pnpm --filter @workspace/api-server run typecheck
         continue-on-error: false
 
-      - name: Lint check
-        run: pnpm -r exec eslint --max-warnings=50 .
+      - name: Lint check (configured packages)
+        # Only execute lint scripts declared by a workspace. Several packages
+        # are build-only/mobile packages and intentionally do not install ESLint.
+        run: pnpm -r --if-present run lint
 
       - name: Build all packages
         run: pnpm -r build
