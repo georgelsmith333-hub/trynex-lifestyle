@@ -528,7 +528,17 @@ export default function DesignStudioV2() {
       }
     }
 
-    const studioPrice = linkedStoreProduct?.price ?? (isMug || isWaterBottle ? (settings.studioMugPrice || 799) : (settings.studioTshirtPrice || 1099));
+    // Public custom-design pricing: general mug ৳449 + ৳99 customization;
+    // short-sleeve T-shirt ৳450 + ৳99 customization. A product launched
+    // from the catalog keeps its authoritative linked product price.
+    const studioPrice = linkedStoreProduct?.price ?? (
+      isMug ? 548 :
+      selectedProduct.category === "tshirt" ? 549 :
+      isWaterBottle ? 899 :
+      selectedProduct.category === "hoodie" ? 1699 :
+      selectedProduct.category === "longsleeve" ? 1299 :
+      isCap ? 699 : 549
+    );
     const sessionId = Date.now().toString(36);
     try {
       localStorage.setItem(`studio_session_${sessionId}`, JSON.stringify({ version: DRAFT_VERSION, layers, productId: selectedProduct.id, color: selectedColor, size: selectedSize, savedAt: Date.now() }));

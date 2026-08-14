@@ -623,8 +623,10 @@ router.post("/orders", async (req, res) => {
 
     // Fetch studio prices from server-side settings (never trust client price)
     // Defaults must match buildSettings() in settings.ts
-    let studioTshirtPrice = 1099;
-    let studioMugPrice = 799;
+    // Custom Design Studio prices are business rules, not client-controlled values:
+    // short-sleeve T-shirt ৳450 + ৳99 customization; general mug ৳449 + ৳99.
+    let studioTshirtPrice = 549;
+    let studioMugPrice = 548;
     let studioHoodiePrice = 1699;
     let studioLongsleevePrice = 1299;
     let studioCapPrice = 699;
@@ -632,8 +634,10 @@ router.post("/orders", async (req, res) => {
     try {
       const allSettings = await db.select().from(settingsTable);
       const settingsMap = Object.fromEntries(allSettings.map((s: any) => [s.key, s.value]));
-      if (settingsMap["studioTshirtPrice"] != null) studioTshirtPrice = parseFloat(settingsMap["studioTshirtPrice"]) || 1099;
-      if (settingsMap["studioMugPrice"] != null) studioMugPrice = parseFloat(settingsMap["studioMugPrice"]) || 799;
+      // Do not apply legacy studioTshirtPrice/studioMugPrice settings here;
+      // those values predate the current published base-plus-customization rules.
+      // Other product studio prices remain admin-configurable below.
+
       if (settingsMap["studioHoodiePrice"] != null) studioHoodiePrice = parseFloat(settingsMap["studioHoodiePrice"]) || 1699;
       if (settingsMap["studioLongsleevePrice"] != null) studioLongsleevePrice = parseFloat(settingsMap["studioLongsleevePrice"]) || 1299;
       if (settingsMap["studioCapPrice"] != null) studioCapPrice = parseFloat(settingsMap["studioCapPrice"]) || 699;
