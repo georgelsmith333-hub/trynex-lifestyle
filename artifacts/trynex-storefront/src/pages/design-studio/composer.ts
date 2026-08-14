@@ -60,7 +60,7 @@ export interface ComposerPrintZone {
   y: number;
   w: number;
   h: number;
-  shape?: "rect" | "mug-front-body" | "mug-back-body" | "mug-wrap-body";
+  shape?: "rect" | "mug-front-body" | "mug-back-body" | "mug-wrap-body" | "cap-front" | "bottle-body";
 }
 
 export function tracePrintZone(
@@ -76,6 +76,29 @@ export function tracePrintZone(
   const h = zone.h * sy;
   if (!shape || shape === "rect") {
     ctx.rect(x, y, w, h);
+    return;
+  }
+
+  if (shape === "bottle-body") {
+    const shoulder = Math.min(h * 0.12, 54 * sy);
+    const base = Math.min(h * 0.08, 38 * sy);
+    const side = Math.min(w * 0.16, 28 * sx);
+    ctx.moveTo(x + side, y + shoulder);
+    ctx.quadraticCurveTo(x + w / 2, y + shoulder * 0.45, x + w - side, y + shoulder);
+    ctx.lineTo(x + w - side, y + h - base);
+    ctx.quadraticCurveTo(x + w / 2, y + h + base * 0.2, x + side, y + h - base);
+    ctx.closePath();
+    return;
+  }
+
+  if (shape === "cap-front") {
+    const crown = Math.min(h * 0.18, 56 * sy);
+    const side = Math.min(w * 0.12, 34 * sx);
+    ctx.moveTo(x + side, y + crown);
+    ctx.quadraticCurveTo(x + w / 2, y - crown * 0.15, x + w - side, y + crown);
+    ctx.lineTo(x + w - side * 0.7, y + h - 18 * sy);
+    ctx.quadraticCurveTo(x + w / 2, y + h + 12 * sy, x + side * 0.7, y + h - 18 * sy);
+    ctx.closePath();
     return;
   }
 
@@ -379,7 +402,7 @@ function drawImageCurved(
   const curve = Math.max(0, curvature);
   const pinchStrength = Math.min(0.62, 0.34 + curve * 1.9);
   const bowStrength = 0.05 + curve * 0.22;
-  const edgeShadeStrength = 1.1 + curve * 4.2;
+  const edgeShadeStrength = 0.62 + curve * 2.2;
   for (let i = 0; i < STRIPS; i++) {
     // u ranges -0.5 (left edge) .. 0 (centre) .. 0.5 (right edge)
     const u = (i + 0.5) / STRIPS - 0.5;
@@ -395,7 +418,7 @@ function drawImageCurved(
     const bow = (1 - Math.cos((u2 * Math.PI) / 2)) * h * curve * bowStrength;
 
     // Edge darkening: surface curving away catches less light.
-    const shade = 1 - Math.min(0.62, Math.pow(edgeFactor, 1.2) * edgeShadeStrength);
+    const shade = 1 - Math.min(0.34, Math.pow(edgeFactor, 1.2) * edgeShadeStrength);
 
     // Source x keeps the original proportions; we take slightly wider source
     // strips at the edges so the compressed pixels still map correctly.
@@ -413,10 +436,12 @@ function drawImageCurved(
     ctx.restore();
   }
 
-  // Soft vertical highlight down the centre — glossy ceramic/metal reflection.
+  // Very restrained centre reflection. The source photo already contains
+  // its own light; adding a strong overlay washed out white garments and
+  // doubled the highlight in the smart-shading pass.
   const grad = ctx.createLinearGradient(-w * 0.22, 0, w * 0.22, 0);
   grad.addColorStop(0, "rgba(255,255,255,0)");
-  grad.addColorStop(0.5, "rgba(255,255,255,0.22)");
+  grad.addColorStop(0.5, "rgba(255,255,255,0.06)");
   grad.addColorStop(1, "rgba(255,255,255,0)");
   ctx.save();
   ctx.globalCompositeOperation = "overlay";
@@ -425,7 +450,7 @@ function drawImageCurved(
   ctx.restore();
 
   const edgeShade = ctx.createLinearGradient(-w / 2, 0, -w * 0.12, 0);
-  edgeShade.addColorStop(0, "rgba(0,0,0,0.34)");
+  edgeShade.addColorStop(0, "rgba(0,0,0,0.16)");
   edgeShade.addColorStop(1, "rgba(0,0,0,0)");
   ctx.save();
   ctx.globalCompositeOperation = "multiply";
@@ -433,7 +458,7 @@ function drawImageCurved(
   ctx.fillRect(-w / 2, -h / 2, w * 0.34, h);
   const edgeShadeR = ctx.createLinearGradient(w * 0.12, 0, w / 2, 0);
   edgeShadeR.addColorStop(0, "rgba(0,0,0,0)");
-  edgeShadeR.addColorStop(1, "rgba(0,0,0,0.34)");
+  edgeShadeR.addColorStop(1, "rgba(0,0,0,0.16)");
   ctx.fillStyle = edgeShadeR;
   ctx.fillRect(w * 0.16, -h / 2, w * 0.34, h);
   ctx.restore();
@@ -709,8 +734,8 @@ export async function composeGarmentMockup(opts: {
           for (let i = 0; i < pixels.length; i += 4) {
             const alpha = pixels[i + 3] / 255;
             const luminance = (0.299 * pixels[i] + 0.587 * pixels[i + 1] + 0.114 * pixels[i + 2]) / 255;
-            const shadowAmount = Math.max(0, (0.45 - luminance) / 0.45) * strength * 0.75 * alpha;
-            const highlightAmount = Math.max(0, (luminance - 0.55) / 0.45) * strength * 0.22 * alpha;
+            const shadowAmount = Math.max(0, (0.42 - luminance) / 0.42) * strength * 0.52 * alpha;
+            const highlightAmount = Math.max(0, (luminance - 0.62) / 0.38) * strength * 0.08 * alpha;
 
             // Black with variable alpha becomes a controlled Multiply shadow.
             shadow.data[i] = 0;

@@ -195,10 +195,13 @@ export default function HomeScreen() {
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Featured</Text>
-          <Pressable onPress={() => router.push("/(tabs)/shop")}>
-            <Pressable accessibilityRole="button" accessibilityLabel="See all products" onPress={() => router.push("/(tabs)/shop")}>
-              <Text style={[styles.seeAll, { color: colors.primary }]}>See all</Text>
-            </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="See all products"
+            onPress={() => router.push("/(tabs)/shop")}
+          >
+            <Text style={[styles.seeAll, { color: colors.primary }]}>See all</Text>
+          </Pressable>
         </View>
         {isLoading ? (
           <View style={{ flexDirection: "row", gap: 12, paddingHorizontal: 16 }}>

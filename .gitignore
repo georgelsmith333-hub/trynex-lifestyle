@@ -16,3 +16,4 @@ dist/
 build/
 .next/
 out/
+*.tsbuildinfo

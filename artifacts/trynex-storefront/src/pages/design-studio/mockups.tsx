@@ -99,7 +99,7 @@ export type Face =
   | "right-sleeve"
   | "neck-label";
 
-export type PrintZoneShape = "rect" | "mug-front-body" | "mug-back-body" | "mug-wrap-body";
+export type PrintZoneShape = "rect" | "mug-front-body" | "mug-back-body" | "mug-wrap-body" | "cap-front" | "bottle-body";
 
 export interface PrintZone {
   x: number;
@@ -162,7 +162,7 @@ export const LONGSLEEVE_BACK_PZ: PrintZone  = { x: 292, y: 195, w: 416, h: 458 }
 export const HOODIE_PZ: PrintZone           = { x: 240, y: 270, w: 520, h: 400 };
 export const HOODIE_BACK_PZ: PrintZone      = { x: 292, y: 184, w: 416, h: 448 };
 /** Cap front panel — structured 5-panel cap, panel is centred between brim and seam. */
-export const CAP_PZ: PrintZone              = { x: 240, y: 260, w: 540, h: 320 };
+export const CAP_PZ: PrintZone              = { x: 240, y: 260, w: 540, h: 320, shape: "cap-front" };
 /** Cap rear crown zone — deliberately stops above the adjustment opening and strap. */
 export const CAP_BACK_PZ: PrintZone         = { x: 285, y: 270, w: 430, h: 230 };
 /** Full Wrap uses the continuous printable body band and is an explicit mode. */
@@ -178,7 +178,7 @@ export const MUG_SIDE_PZ: PrintZone         = { x: 165, y: 220, w: 475, h: 580, 
 export const MUG_SIDE_BACK_PZ: PrintZone    = { x: 384, y: 220, w: 451, h: 580, shape: "mug-back-body" };
 /** Water bottle label panel: only the straight aluminium body is printable;
  * the lid, shoulder, carabiner and rounded base are intentionally excluded. */
-export const WATERBOTTLE_PZ: PrintZone      = { x: 390, y: 340, w: 245, h: 555 };
+export const WATERBOTTLE_PZ: PrintZone      = { x: 390, y: 340, w: 245, h: 555, shape: "bottle-body" };
 /** Sleeve print area — roughly square (1228×1087px real-world ratio). */
 export const SLEEVE_PZ: PrintZone           = { x: 175, y: 175, w: 650, h: 650 };
 /** Neck label — wider than tall (1299×945px real-world ratio). */
@@ -532,6 +532,31 @@ export function printZonePath(zone: PrintZone): string {
   const right = x + w - topInset;
   const cx = x + w / 2;
   const isMugSide = zone.shape === "mug-front-body" || zone.shape === "mug-back-body";
+
+  if (zone.shape === "bottle-body") {
+    const shoulder = Math.min(h * 0.12, 54);
+    const base = Math.min(h * 0.08, 38);
+    const side = Math.min(w * 0.16, 28);
+    return [
+      `M${x + side} ${y + shoulder}`,
+      `Q${x + w / 2} ${y + shoulder * 0.45} ${x + w - side} ${y + shoulder}`,
+      `L${x + w - side} ${y + h - base}`,
+      `Q${x + w / 2} ${y + h + base * 0.2} ${x + side} ${y + h - base}`,
+      "Z",
+    ].join(" ");
+  }
+
+  if (zone.shape === "cap-front") {
+    const crown = Math.min(h * 0.18, 56);
+    const side = Math.min(w * 0.12, 34);
+    return [
+      `M${x + side} ${y + crown}`,
+      `Q${x + w / 2} ${y - crown * 0.15} ${x + w - side} ${y + crown}`,
+      `L${x + w - side * 0.7} ${y + h - 18}`,
+      `Q${x + w / 2} ${y + h + 12} ${x + side * 0.7} ${y + h - 18}`,
+      "Z",
+    ].join(" ");
+  }
 
   if (isMugSide) {
     return [

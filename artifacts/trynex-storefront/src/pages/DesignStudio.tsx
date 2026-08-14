@@ -695,8 +695,9 @@ export default function DesignStudio() {
         const sp = new URLSearchParams(window.location.search);
         const urlProduct = sp.get("product");
         if (urlProduct) {
-          const resolvedUrl = LEGACY_ID_MAP[urlProduct] ?? urlProduct;
-          const found = PRODUCTS.find(p => p.id === resolvedUrl || p.category === resolvedUrl);
+          const normalizedUrl = urlProduct.toLowerCase().replace(/[-_\s]/g, "");
+          const resolvedUrl = LEGACY_ID_MAP[urlProduct] ?? LEGACY_ID_MAP[normalizedUrl] ?? urlProduct;
+          const found = PRODUCTS.find(p => p.id === resolvedUrl || p.category === resolvedUrl || p.id.replace(/[-_\s]/g, "") === normalizedUrl || p.category.replace(/[-_\s]/g, "") === normalizedUrl);
           if (found) {
             setSelectedProduct(found);
             setSelectedColor(found.colors[0]);
@@ -2241,7 +2242,7 @@ export default function DesignStudio() {
         isColorPhoto: !isFlatZone && activeMockup.isColorPhoto,
         requiresTint: !isFlatZone && activeMockup.requiresTint,
         smartShading: true,
-        shadingStrength: 0.22,
+        shadingStrength: 0.12,
         fabricTexture: true,
       });
       const url = canvas.toDataURL("image/png");
@@ -2282,7 +2283,7 @@ export default function DesignStudio() {
         isColorPhoto: !isFlatZone && activeMockup.isColorPhoto,
         requiresTint: !isFlatZone && activeMockup.requiresTint,
         smartShading: true,
-        shadingStrength: 0.22,
+        shadingStrength: 0.12,
         fabricTexture: true,
       });
       const url = canvas.toDataURL("image/jpeg", 0.93);
@@ -2400,7 +2401,7 @@ export default function DesignStudio() {
         isColorPhoto: isColorPhotoCart,
         requiresTint: cartPreviewMockup.requiresTint,
         smartShading: true,
-        shadingStrength: 0.22,
+        shadingStrength: 0.12,
         fabricTexture: true,
       });
       let mockupUrl = mockupCanvas.toDataURL("image/webp", 0.8);
