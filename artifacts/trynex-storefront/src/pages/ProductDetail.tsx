@@ -47,6 +47,11 @@ const SIZE_GUIDE = [
   { size: "3XL", chest: "46-48", length: "32", sleeve: "37" },
 ];
 
+function isSizedApparelProduct(product: any): boolean {
+  const text = [product?.name, product?.categoryName, product?.category?.name].filter(Boolean).join(" ").toLowerCase();
+  return !/(mug|cup|cap|hat|bottle|tumbler|flask|water bottle|accessory)/.test(text);
+}
+
 
 function ReviewsSection({ productId, rating }: { productId: number; rating: number }) {
   const [reviews, setReviews] = useState<any[]>([]);
@@ -311,6 +316,7 @@ export default function ProductDetail() {
   const error = isNumeric ? hookError : slugError;
   const productId = product?.id ?? numericId;
   const isValidId = isNumeric || isSlug;
+  const hasApparelSizing = isSizedApparelProduct(product);
 
   const { data: relatedData } = useListProducts(
     { limit: 4, category: product?.categoryId ? String(product.categoryId) : undefined } as any,
@@ -995,7 +1001,7 @@ export default function ProductDetail() {
               </div>
 
               {/* Sizes */}
-              {product.sizes && product.sizes.length > 0 && (
+              {hasApparelSizing && product.sizes && product.sizes.length > 0 && (
                 <div className="mb-6" id="size-picker">
                   <div className="flex items-center justify-between mb-3">
                     <p className="font-bold text-gray-900 text-sm">
@@ -1458,7 +1464,9 @@ export default function ProductDetail() {
                       {[
                         { label: "Material", value: "230-320 GSM Premium Cotton" },
                         { label: "Print Method", value: "DTF / Screen Print / Sublimation" },
-                        { label: "Available Sizes", value: product.sizes?.join(", ") || "S, M, L, XL, 2XL" },
+                        ...(hasApparelSizing
+                          ? [{ label: "Available Sizes", value: Array.isArray(product.sizes) && product.sizes.length > 0 ? product.sizes.join(", ") : SIZE_GUIDE.map(s => s.size).join(", ") }]
+                          : [{ label: "Size", value: "One size" }]),
                         { label: "Available Colors", value: product.colors?.join(", ") || "Multiple" },
                         { label: "Production Time", value: "24 hours", highlight: true },
                         { label: "Delivery", value: "24 hours nationwide", highlight: true },
