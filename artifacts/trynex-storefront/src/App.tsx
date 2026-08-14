@@ -27,7 +27,13 @@ import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 import { useUtmCapture } from "@/hooks/useUtm";
 import { Loader } from "@/components/ui/Loader";
 import { AppErrorBoundary } from "@/components/AppErrorBoundary";
-import { getApiUrl } from "@/lib/utils";
+import { getApiBaseUrl, getApiUrl } from "@/lib/utils";
+import { setBaseUrl } from "@workspace/api-client-react";
+
+// Keep generated hooks (orders, stats, products) on the same API origin as
+// the hand-written fetches. In production this avoids a Pages proxy request
+// hanging while direct authenticated Render requests remain healthy.
+setBaseUrl(getApiBaseUrl());
 
 // Warm up the API on mount so the first real request is fast.
 function useWarmUpApi() {
