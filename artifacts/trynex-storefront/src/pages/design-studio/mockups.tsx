@@ -180,7 +180,9 @@ export const MUG_SIDE_PZ: PrintZone         = { x: 165, y: 220, w: 475, h: 580, 
 export const MUG_SIDE_BACK_PZ: PrintZone    = { x: 384, y: 220, w: 451, h: 580, shape: "mug-back-body" };
 /** Water bottle label panel: only the straight aluminium body is printable;
  * the lid, shoulder, carabiner and rounded base are intentionally excluded. */
-export const WATERBOTTLE_PZ: PrintZone      = { x: 390, y: 340, w: 245, h: 555, shape: "bottle-body" };
+// Supplied key-ring bottle reference: body begins below the shoulder and ends above
+// the rounded foot. The loop/carabiner and shoulder are intentionally outside.
+export const WATERBOTTLE_PZ: PrintZone      = { x: 335, y: 320, w: 276, h: 590, shape: "bottle-body" };
 /** Sleeve print area — roughly square (1228×1087px real-world ratio). */
 export const SLEEVE_PZ: PrintZone           = { x: 175, y: 175, w: 650, h: 650 };
 /** Neck label — wider than tall (1299×945px real-world ratio). */
@@ -432,8 +434,8 @@ const SOURCE_KIT_PRINT_ZONES: Record<
     back: { x: 285, y: 270, w: 430, h: 230 },
   },
   waterbottle: {
-    front: { x: 390, y: 340, w: 245, h: 555 },
-    back: { x: 390, y: 340, w: 245, h: 555 },
+    front: { x: 335, y: 320, w: 276, h: 590, shape: "bottle-body" },
+    back: { x: 335, y: 320, w: 276, h: 590, shape: "bottle-body" },
   },
 };
 

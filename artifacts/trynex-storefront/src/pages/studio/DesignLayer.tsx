@@ -58,6 +58,16 @@ export function DesignLayer({
     });
   };
 
+  const editText = () => {
+    if (layer.type !== "text" || layer.locked) return;
+    const current = (layer as TextLayer).text;
+    const next = window.prompt("Edit text", current);
+    if (next !== null && next !== current) {
+      updateLayer(layer.id, { text: next });
+      onSelect();
+    }
+  };
+
   const transformEnd = (e: Konva.KonvaEventObject<Event>) => {
     const node = e.target;
     updateLayer(layer.id, {
@@ -156,6 +166,8 @@ export function DesignLayer({
           visible={layer.visible}
           onClick={onSelect}
           onTap={onSelect}
+          onDblClick={editText}
+          onDblTap={editText}
           onDragEnd={dragEnd}
           onTransformEnd={transformEnd}
         />

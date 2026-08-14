@@ -24,7 +24,9 @@ export function fitImageScale(
 ): number {
   const safeW = Math.max(1, naturalW);
   const safeH = Math.max(1, naturalH);
-  const padding = Math.max(0.1, Math.min(1, options.padding ?? 0.92));
+  // Keep a visible safety margin so rounded/curved product masks never expose
+  // artwork at the print-zone boundary. Callers can opt into tighter fitting.
+  const padding = Math.max(0.1, Math.min(1, options.padding ?? 0.86));
   const maxScale = Math.max(0.01, options.maxScale ?? 4);
   const minScale = Math.max(0.001, Math.min(maxScale, options.minScale ?? 0.001));
   const scale = Math.min((printZone.w * padding) / safeW, (printZone.h * padding) / safeH);
@@ -37,10 +39,13 @@ export function fitImageTransform(
   printZone: FitPrintZone,
   options?: ImageFitOptions,
 ) {
+  const scale = fitImageScale(naturalW, naturalH, printZone, options);
   return {
     x: 0,
     y: 0,
-    scale: fitImageScale(naturalW, naturalH, printZone, options),
+    scale,
+    scaleX: 1,
+    scaleY: 1,
     rotation: 0,
     opacity: 1,
   };
