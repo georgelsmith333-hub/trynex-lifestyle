@@ -79,30 +79,84 @@ export const db = new Proxy({} as NodePgDatabase<typeof schema>, {
  * schema (products table exists). This prevents falling back to an empty
  * local database when Neon is reachable but the local DB has no tables.
  */
-async function hasSchema(testPool: pg.Pool): Promise<boolean> {
+type ProbeResult = {
+  ok: boolean;
+  pool?: pg.Pool;
+  error?: string;
+  orders: number;
+  products: number;
+  mockups: number;
+};
+
+async function hasSchema(testPool: pg.Pool): Promise<{ products: boolean; orders: boolean; mockups: boolean }> {
   const client = await testPool.connect();
   try {
     const result = await client.query(
-      "SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='products' LIMIT 1"
+      `SELECT
+         EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='products') AS products,
+         EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='orders') AS orders,
+         EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='mockups') AS mockups`
     );
-    return result.rowCount !== null && result.rowCount > 0;
+    return result.rows[0] ?? { products: false, orders: false, mockups: false };
   } finally {
     client.release();
   }
 }
 
 /* ─── Probe a single candidate URL (creates and ends its own test pool) ─── */
-async function probeCandidate(url: string): Promise<{ ok: boolean; pool?: pg.Pool; error?: string }> {
+async function probeCandidate(url: string): Promise<ProbeResult> {
   const testPool = new Pool({ connectionString: url, max: 1, connectionTimeoutMillis: 10_000 });
   try {
-    const schemaOk = await hasSchema(testPool);
-    if (schemaOk) return { ok: true, pool: testPool };
-    await testPool.end().catch(() => {});
-    return { ok: false, error: "missing schema" };
+    const schema = await hasSchema(testPool);
+    if (!schema.products) {
+      await testPool.end().catch(() => {});
+      return { ok: false, error: "missing products schema", orders: 0, products: 0, mockups: 0 };
+    }
+    const client = await testPool.connect();
+    try {
+      const result = await client.query(
+        `SELECT
+           ${schema.orders ? "(SELECT count(*)::int FROM orders)" : "0"} AS orders,
+           ${schema.products ? "(SELECT count(*)::int FROM products)" : "0"} AS products,
+           ${schema.mockups ? "(SELECT count(*)::int FROM mockups)" : "0"} AS mockups`
+      );
+      const row = result.rows[0] ?? {};
+      return {
+        ok: true,
+        pool: testPool,
+        orders: Number(row.orders ?? 0),
+        products: Number(row.products ?? 0),
+        mockups: Number(row.mockups ?? 0),
+      };
+    } finally {
+      client.release();
+    }
   } catch (err) {
     await testPool.end().catch(() => {});
-    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : String(err),
+      orders: 0,
+      products: 0,
+      mockups: 0,
+    };
   }
+}
+
+function dataScore(result: ProbeResult): number {
+  // Historical orders are the strongest signal for the operational database;
+  // products and mockups break ties between catalog mirrors.
+  return result.orders * 1_000_000 + result.products * 1_000 + result.mockups;
+}
+
+async function chooseBestCandidate(): Promise<{ url: string; result: ProbeResult; index: number } | null> {
+  const probed = await Promise.all(urls.map(async (url, index) => ({ url, index, result: await probeCandidate(url) })));
+  const healthy = probed.filter((item) => item.result.ok && item.result.pool);
+  if (healthy.length === 0) return null;
+  healthy.sort((a, b) => dataScore(b.result) - dataScore(a.result) || a.index - b.index);
+  const winner = healthy[0];
+  for (const item of healthy.slice(1)) await item.result.pool!.end().catch(() => {});
+  return winner;
 }
 
 function hostOf(url: string): string {
@@ -120,34 +174,18 @@ async function switchTo(url: string, pool: pg.Pool): Promise<void> {
 
 /* ─── Non-blocking startup probe + failover ─────────────────────────────── */
 async function probeAndFailover(): Promise<void> {
-  // Always test the primary first. If it is already healthy, keep the existing
-  // pool so we do not churn connections on every restart.
-  const primaryProbe = await probeCandidate(primaryUrl);
-  if (primaryProbe.ok && primaryProbe.pool) {
-    await switchTo(primaryUrl, primaryProbe.pool);
-    console.info(`[DB] Connected to primary (${hostOf(primaryUrl)})`);
+  const winner = await chooseBestCandidate();
+  if (!winner) {
+    console.error(
+      "[DB] WARNING: All database connection candidates failed at probe time. " +
+      "The server will still start — queries will fail until a DB becomes reachable.",
+    );
     return;
   }
-
-  // Try fallbacks in priority order.
-  for (let i = 1; i < urls.length; i++) {
-    const url = urls[i];
-    const result = await probeCandidate(url);
-    if (result.ok && result.pool) {
-      await switchTo(url, result.pool);
-      console.warn(
-        `[DB] Primary unreachable or empty. Switched to fallback #${i + 1} (${hostOf(url)})`,
-      );
-      return;
-    }
-    if (!result.ok) {
-      console.warn(`[DB] Fallback #${i + 1} (${hostOf(url)}) not ready: ${result.error}`);
-    }
-  }
-
-  console.error(
-    "[DB] WARNING: All database connection candidates failed at probe time. " +
-    "The server will still start — queries will fail until a DB becomes reachable.",
+  await switchTo(winner.url, winner.result.pool!);
+  const label = winner.index === 0 ? "primary" : `candidate #${winner.index + 1}`;
+  console.info(
+    `[DB] Connected to ${label} (${hostOf(winner.url)}; orders=${winner.result.orders}, products=${winner.result.products}, mockups=${winner.result.mockups})`,
   );
 }
 
@@ -157,26 +195,17 @@ let _reprobeIntervalMs = 60_000; // re-evaluate every 60 seconds
 
 async function reprobe(): Promise<void> {
   try {
-    // Walk the whole chain from top to bottom and use the first healthy DB.
-    // This both: (a) promotes the primary back when it recovers, and
-    // (b) demotes to the next fallback if the currently active DB goes down.
-    for (let i = 0; i < urls.length; i++) {
-      const url = urls[i];
-      const result = await probeCandidate(url);
-      if (result.ok && result.pool) {
-        if (url !== _activeUrl) {
-          const prevHost = hostOf(_activeUrl);
-          const newHost = hostOf(url);
-          const label = i === 0 ? "primary" : `fallback #${i + 1}`;
-          await switchTo(url, result.pool);
-          console.warn(
-            `[DB] Re-probe: switched from ${prevHost} to ${label} (${newHost})`,
-          );
-        } else {
-          await result.pool.end().catch(() => {});
-        }
-        return;
-      }
+    const winner = await chooseBestCandidate();
+    if (!winner) return;
+    if (winner.url !== _activeUrl) {
+      const prevHost = hostOf(_activeUrl);
+      const label = winner.index === 0 ? "primary" : `candidate #${winner.index + 1}`;
+      await switchTo(winner.url, winner.result.pool!);
+      console.warn(
+        `[DB] Re-probe: switched from ${prevHost} to ${label} (${hostOf(winner.url)}; orders=${winner.result.orders}, products=${winner.result.products}, mockups=${winner.result.mockups})`,
+      );
+    } else {
+      await winner.result.pool!.end().catch(() => {});
     }
   } catch {
     // Ignore individual probe errors — the next tick will retry.
