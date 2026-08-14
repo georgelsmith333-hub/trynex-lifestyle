@@ -143,8 +143,9 @@ async function buildSettings(map: Record<string, string | null>) {
     studioCapColors: map["studioCapColors"] ?? "",
     studioWaterbottleColors: map["studioWaterbottleColors"] ?? "",
     // Admin-configured prices for custom studio orders (BDT)
-    studioTshirtPrice: parseFloat(map["studioTshirtPrice"] ?? "1099"),
-    studioMugPrice: parseFloat(map["studioMugPrice"] ?? "799"),
+    // Published custom-design defaults: T-shirt ৳450 + ৳99; mug ৳449 + ৳99.
+    studioTshirtPrice: parseFloat(map["studioTshirtPrice"] ?? "549"),
+    studioMugPrice: parseFloat(map["studioMugPrice"] ?? "548"),
     studioHoodiePrice: parseFloat(map["studioHoodiePrice"] ?? "1699"),
     studioLongsleevePrice: parseFloat(map["studioLongsleevePrice"] ?? "1299"),
     studioCapPrice: parseFloat(map["studioCapPrice"] ?? "699"),

@@ -155,8 +155,9 @@ const defaults: SiteSettings = {
   googleSiteVerification: c("googleSiteVerification") || "",
   studioTshirtColors: c("studioTshirtColors") || "",
   studioMugColors: c("studioMugColors") || "",
-  studioTshirtPrice: Number(c("studioTshirtPrice")) || 1099,
-  studioMugPrice: Number(c("studioMugPrice")) || 799,
+  // Published custom-design defaults: T-shirt ৳450 + ৳99; mug ৳449 + ৳99.
+  studioTshirtPrice: Number(c("studioTshirtPrice")) || 549,
+  studioMugPrice: Number(c("studioMugPrice")) || 548,
   heroImageUrl: c("heroImageUrl") || "",
   heroGradient: c("heroGradient") || "",
   heroCTAText: c("heroCTAText") || "Shop Now",
