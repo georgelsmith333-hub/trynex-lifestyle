@@ -127,7 +127,9 @@ const initialState: DesignStoreState = {
   zoom: 1,
   panX: 0,
   panY: 0,
-  showPrintZone: true,
+  // Guides are an audit tool, not part of the default customer editing experience.
+  // Users can enable them explicitly from the studio controls when checking safe areas.
+  showPrintZone: false,
   fabricTexture: true,
   snapGuides: { v: false, h: false },
 

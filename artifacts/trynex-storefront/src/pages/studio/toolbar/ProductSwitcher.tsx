@@ -19,6 +19,10 @@ export function ProductSwitcher() {
   const productSearch = useDesignStore((s) => s.productSearch);
   const productPickerCategory = useDesignStore((s) => s.productPickerCategory);
   const setProduct = useDesignStore((s) => s.setProduct);
+  const setLinkedStoreProduct = useDesignStore((s) => s.setLinkedStoreProduct);
+  const setQuantity = useDesignStore((s) => s.setQuantity);
+  const setFace = useDesignStore((s) => s.setFace);
+  const setMugMode = useDesignStore((s) => s.setMugMode);
   const setShowProductPicker = useDesignStore((s) => s.setShowProductPicker);
   const setProductSearch = useDesignStore((s) => s.setProductSearch);
   const setProductPickerCategory = useDesignStore((s) => s.setProductPickerCategory);
@@ -33,7 +37,15 @@ export function ProductSwitcher() {
   }, [productPickerCategory, productSearch]);
 
   const chooseProduct = (product: DesignProduct) => {
-    setProduct(product);
+    if (product.id !== selectedProduct.id) {
+      // Keep the user's layers for the apply-to-product workflow, but never
+      // keep the old catalog product identity, price, or incompatible face.
+      setProduct(product);
+      setLinkedStoreProduct(null);
+      setQuantity(1);
+      setFace("front");
+      if (product.category !== "mug") setMugMode("side1");
+    }
     setProductSearch("");
     setProductPickerCategory("all");
     setShowProductPicker(false);
@@ -62,7 +74,7 @@ export function ProductSwitcher() {
                 <div className="flex items-center gap-2 text-sm font-black text-gray-900 sm:text-base">
                   <Sparkles className="h-4 w-4 text-orange-500" /> Choose your product
                 </div>
-                <p className="mt-1 text-[11px] text-gray-500 sm:text-xs">Select a real preview, then personalize its color, print zones, and artwork.</p>
+                <p className="mt-1 text-[11px] text-gray-500 sm:text-xs">Select a real preview. Your current artwork stays attached and is automatically reapplied to the new product.</p>
               </div>
               <button type="button" onClick={() => setShowProductPicker(false)} aria-label="Close product picker" className="rounded-xl p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700 active:scale-95">
                 <X className="h-5 w-5" />
