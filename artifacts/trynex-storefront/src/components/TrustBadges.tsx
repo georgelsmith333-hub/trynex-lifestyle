@@ -34,8 +34,7 @@ export function TrustBadges() {
         <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">We accept:</span>
         <span className="text-[11px] font-black px-2 py-0.5 rounded" style={{ background: "rgba(226,19,110,0.08)", color: "#e2136e" }}>bKash</span>
         <span className="text-[11px] font-black px-2 py-0.5 rounded" style={{ background: "rgba(247,148,29,0.1)", color: "#f7941d" }}>Nagad</span>
-        <span className="text-[11px] font-black px-2 py-0.5 rounded" style={{ background: "rgba(139,92,246,0.1)", color: "#7c3aed" }}>Rocket</span>
-        <span className="text-[11px] font-black px-2 py-0.5 rounded" style={{ background: "rgba(16,163,74,0.08)", color: "#16a34a" }}>Card</span>
+        <span className="text-[11px] font-black px-2 py-0.5 rounded" style={{ background: "rgba(124,58,237,0.1)", color: "#7c3aed" }}>uPay</span>
       </div>
     </div>
   );

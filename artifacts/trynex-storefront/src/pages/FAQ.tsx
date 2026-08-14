@@ -41,7 +41,7 @@ const faqs: FAQItem[] = [
   {
     category: "Returns & Refunds",
     question: "How do I get a refund?",
-    answer: "Refunds are processed within 3–5 business days after we receive and inspect the returned item. Refunds are issued via bKash, Nagad, or Rocket — whichever you used to pay.",
+    answer: "Refunds are processed within 3–5 business days after we receive and inspect the returned item. Refunds are issued via bKash, Nagad, or uPay — whichever you used to pay.",
   },
   {
     category: "Returns & Refunds",
@@ -81,17 +81,17 @@ const faqs: FAQItem[] = [
   {
     category: "Payments",
     question: "What payment methods do you accept?",
-    answer: "We offer 2 payment options: Full Payment or 25% Advance. We accept bKash, Nagad, and Rocket (mobile banking).",
+    answer: "We accept bKash, Nagad, and uPay. A 25% advance payment is required to confirm your order, with the remaining 75% collected on delivery.",
   },
   {
     category: "Payments",
     question: "Can I pay on delivery?",
-    answer: "We require a 25% advance payment via bKash/Nagad/Rocket to confirm your order. The remaining 75% is collected on delivery.",
+    answer: "We require a 25% advance payment via bKash, Nagad, or uPay to confirm your order. The remaining 75% is collected on delivery.",
   },
   {
     category: "Payments",
     question: "Is my payment information secure?",
-    answer: "We never store your mobile banking credentials. All payments are processed directly through the official bKash, Nagad, and Rocket apps using Send Money. Your financial data stays safe.",
+    answer: "We never store your mobile banking credentials. All payments are processed directly through the official bKash, Nagad, and uPay apps using Send Money. Your financial data stays safe.",
   },
   {
     category: "Account & Orders",
