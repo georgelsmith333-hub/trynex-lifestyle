@@ -18,6 +18,10 @@ import { motion, AnimatePresence } from "framer-motion";
 const STATUS_OPTIONS = ["all", "pending", "processing", "shipped", "ongoing", "delivered", "cancelled"] as const;
 type StatusFilter = typeof STATUS_OPTIONS[number];
 
+function getPaymentProofUrl(notes?: string | null): string | null {
+  return notes?.match(/Payment proof:\s*(https?:\/\/\S+)/i)?.[1] ?? null;
+}
+
 const PAYMENT_LABELS: Record<string, { label: string; color: string }> = {
   cod: { label: "Legacy COD", color: "#9ca3af" },
   partial: { label: "25% Advance (COD)", color: "#f59e0b" },
@@ -729,6 +733,12 @@ export default function AdminOrders() {
                     style={{ background: 'rgba(255,107,43,0.05)', border: '1px solid rgba(255,107,43,0.15)' }}>
                     <p className="text-xs font-black uppercase tracking-widest text-primary mb-2">Payment Evidence / Notes</p>
                     <p className="text-sm text-gray-500 font-mono whitespace-pre-wrap break-words">{selectedOrder.notes}</p>
+                    {getPaymentProofUrl(selectedOrder.notes) && (
+                      <a href={getPaymentProofUrl(selectedOrder.notes)!} target="_blank" rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 mt-3 px-3 py-2 rounded-lg text-xs font-black text-orange-700 bg-orange-50 border border-orange-200 hover:bg-orange-100">
+                        View payment screenshot
+                      </a>
+                    )}
                     <p className="text-[11px] text-gray-400 mt-3">Use “Payment Received” only after matching the wallet number and transaction evidence in the bKash, Nagad, or uPay account.</p>
                   </div>
                 )}
