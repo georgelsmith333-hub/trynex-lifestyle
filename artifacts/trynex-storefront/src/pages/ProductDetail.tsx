@@ -433,6 +433,7 @@ export default function ProductDetail() {
     setQuantity(1);
     setSelectedSize("");
     setSelectedColor("");
+    setSelectedVariantId(productVariants[0]?.id || "");
     setCustomNote("");
     setCustomImages([]);
     if (product) {
@@ -612,7 +613,7 @@ export default function ProductDetail() {
     setTimeout(() => setAddedToBag(false), 1200);
   };
 
-  const discount = product.discountPrice
+  const discount = productVariants.length === 0 && product.discountPrice
     ? Math.round(((product.price - product.discountPrice) / product.price) * 100)
     : 0;
 
@@ -636,7 +637,7 @@ export default function ProductDetail() {
       toast({ title: "WhatsApp ordering is unavailable", description: "Please add this item to your cart and continue to checkout." });
       return;
     }
-    const itemPrice = product.discountPrice || product.price;
+    const itemPrice = selectedProductPrice + (customNote || customImages.length > 0 ? variantCustomizationFee : 0);
     const totalPrice = itemPrice * quantity;
     const lines = [
       `Assalamu Alaikum, TryNex!`,
@@ -644,7 +645,7 @@ export default function ProductDetail() {
       `I'd like to place an order:`,
       ``,
       `🛍️ *Product:* ${product.name}`,
-      `💰 *Price:* ${formatPrice(itemPrice)}${product.discountPrice ? ` (was ${formatPrice(product.price)})` : ``}`,
+      `💰 *Price:* ${formatPrice(itemPrice)}${selectedVariant ? ` (${selectedVariant.name})` : ``}`,
       `📦 *Quantity:* ${quantity}`,
       `💵 *Total:* ${formatPrice(totalPrice)}`,
     ];
@@ -968,7 +969,9 @@ export default function ProductDetail() {
               {/* Price */}
                <div className="mb-8 p-5 rounded-2xl" style={{ background: '#fff8f5', border: '1px solid #fde4d0' }}>
                 <div className="flex items-baseline gap-3 sm:gap-4 mb-3 flex-wrap">
-                  {product.discountPrice ? (
+                  {productVariants.length > 0 ? (
+                    <span className="text-4xl font-black text-orange-600">{formatPrice(selectedProductPrice)}</span>
+                  ) : product.discountPrice ? (
                     <>
                       <span className="text-4xl font-black text-orange-600">{formatPrice(product.discountPrice)}</span>
                       <span className="text-xl line-through text-gray-400">{formatPrice(product.price)}</span>
@@ -1691,8 +1694,8 @@ export default function ProductDetail() {
         product={{
           id: product.id,
           name: product.name,
-          price: product.price,
-          discountPrice: product.discountPrice,
+          price: selectedProductPrice,
+          discountPrice: productVariants.length > 0 ? undefined : product.discountPrice,
           imageUrl: product.imageUrl,
           stock: product.stock,
         }}
