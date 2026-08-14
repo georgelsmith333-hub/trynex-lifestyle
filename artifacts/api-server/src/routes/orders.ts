@@ -23,6 +23,9 @@ const OrderItemSchema = z.object({
   name:         z.string().max(300).optional(),
   size:         z.string().max(50).optional().nullable(),
   color:        z.string().max(50).optional().nullable(),
+  variantId:    z.string().max(80).optional().nullable(),
+  variantName:  z.string().max(120).optional().nullable(),
+  customizationFee: z.number().nonnegative().optional(),
   customNote:   z.string().max(10000).optional().nullable(),
   // customImages may contain base64 data-URLs (for studio mockup preview) which
   // are far longer than a plain URL — no per-item length cap here; we strip
@@ -704,14 +707,28 @@ router.post("/orders", async (req, res) => {
 
     const catalogOrderItems = catalogItems.map((item: any) => {
       const product = productMap[item.productId];
-      const price = product.discountPrice ? parseFloat(product.discountPrice) : parseFloat(product.price);
+      const selectedVariant = Array.isArray(product.variants)
+        ? product.variants.find((v: any) => v?.id === item.variantId && v.active !== false)
+        : null;
+      if (item.variantId && !selectedVariant) {
+        throw new Error("VARIANT_INVALID");
+      }
+      const requestedQty = Math.max(1, Math.floor(Number(item.quantity)));
+      if (selectedVariant && Number(selectedVariant.stock) < requestedQty) {
+        throw new StockOutError(`${product.name} — ${selectedVariant.name}`, Number(selectedVariant.stock), requestedQty);
+      }
+      const basePrice = selectedVariant ? Number(selectedVariant.price) : (product.discountPrice ? parseFloat(product.discountPrice) : parseFloat(product.price));
+      const hasCustomization = Boolean(item.customNote || (Array.isArray(item.customImages) && item.customImages.length > 0));
+      const price = basePrice + (hasCustomization && selectedVariant ? Number(selectedVariant.customizationFee || 0) : 0);
       return {
         productId: item.productId,
         productName: product.name,
         productImage: product.imageUrl,
-        quantity: Math.max(1, Math.floor(Number(item.quantity))),
+        quantity: requestedQty,
         size: item.size,
         color: item.color,
+        variantId: item.variantId,
+        variantName: selectedVariant?.name ?? item.variantName,
         price,
         customNote: item.customNote,
         customImages: sanitizeCustomImages(item.customImages),
@@ -922,16 +939,28 @@ router.post("/orders", async (req, res) => {
           continue;
         }
 
-        const [prod] = await tx.select({ stock: productsTable.stock }).from(productsTable).where(eq(productsTable.id, item.productId));
+        const [prod] = await tx.select({ stock: productsTable.stock, variants: productsTable.variants }).from(productsTable).where(eq(productsTable.id, item.productId));
         if (!prod) {
           throw new ProductMissingError(item.productName);
         }
         if (prod.stock < item.quantity) {
           throw new StockOutError(item.productName, prod.stock, item.quantity);
         }
-        await tx.execute(
-          sql`UPDATE products SET stock = stock - ${item.quantity} WHERE id = ${item.productId}`
-        );
+        const variantId = (item as any).variantId as string | null | undefined;
+        let nextVariants: any[] | undefined;
+        if (variantId) {
+          const variants = Array.isArray(prod.variants) ? [...(prod.variants as any[])] : [];
+          const index = variants.findIndex((v: any) => v?.id === variantId && v.active !== false);
+          if (index < 0 || Number(variants[index].stock) < item.quantity) {
+            throw new StockOutError(`${item.productName} — selected variant`, index < 0 ? 0 : Number(variants[index].stock || 0), item.quantity);
+          }
+          nextVariants = variants;
+          nextVariants[index] = { ...variants[index], stock: Number(variants[index].stock) - item.quantity };
+        }
+        await tx.update(productsTable).set({
+          stock: sql`${productsTable.stock} - ${item.quantity}`,
+          ...(nextVariants ? { variants: nextVariants } : {}),
+        }).where(eq(productsTable.id, item.productId));
       }
 
       let validatedPromoCode: string | null = null;

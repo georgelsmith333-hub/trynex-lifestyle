@@ -65,6 +65,9 @@ export const productsTable = pgTable("products", {
   customizable: boolean("customizable").default(false),
   tags: jsonb("tags").default([]),
   colorVariants: jsonb("color_variants").default([]),
+  // Structured sellable variants: mug handle/rim or apparel fit/color/size.
+  // Kept separate from colorVariants for backward compatibility.
+  variants: jsonb("variants").default([]),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 }, (table) => ({

@@ -25,6 +25,19 @@ const ProductFieldsSchema = z.object({
   sizes: z.array(z.string()).optional(),
   colors: z.array(z.string()).optional(),
   colorVariants: z.array(z.object({ name: z.string(), inStock: z.boolean() })).optional(),
+  variants: z.array(z.object({
+    id: z.string().min(1).max(80),
+    name: z.string().min(1).max(120),
+    price: moneyValue,
+    customizationFee: moneyValue.optional(),
+    stock: z.number().int().min(0),
+    sizes: z.array(z.string().max(30)).optional(),
+    colors: z.array(z.string().max(50)).optional(),
+    inStockColors: z.array(z.string().max(50)).optional(),
+    mockupKey: z.string().max(120).optional(),
+    oneSize: z.boolean().optional(),
+    active: z.boolean().optional(),
+  })).optional(),
   stock: z.number().int().min(0, "Stock cannot be negative"),
   featured: z.boolean().optional(),
   customizable: z.boolean().optional(),
@@ -127,6 +140,7 @@ function mapProduct(p: any, categoryName?: string | null) {
     reviewCount: p.reviewCount ?? 0,
     customizable: p.customizable ?? false,
     tags: p.tags ?? [],
+    variants: Array.isArray(p.variants) ? p.variants : [],
   };
 }
 
@@ -287,6 +301,7 @@ router.post("/products", requireAdmin, async (req, res) => {
       price: String(price),
       discountPrice: discountPrice !== undefined ? String(discountPrice) : null,
       colorVariants: rest.colorVariants ?? [],
+      variants: rest.variants ?? [],
     }).returning();
 
     if (rest.categoryId) {
@@ -340,6 +355,7 @@ router.put("/products/:id", requireAdmin, async (req, res) => {
     if (body.sizes !== undefined) updateData.sizes = body.sizes;
     if (body.colors !== undefined) updateData.colors = body.colors;
     if (body.colorVariants !== undefined) updateData.colorVariants = body.colorVariants;
+    if (body.variants !== undefined) updateData.variants = body.variants;
     if (body.stock !== undefined) updateData.stock = body.stock;
     if (body.featured !== undefined) updateData.featured = body.featured;
     if (body.customizable !== undefined) updateData.customizable = body.customizable;
@@ -427,6 +443,7 @@ router.post("/products/bulk", requireAdmin, async (req, res) => {
           images: [],
           sizes: Array.isArray(p.sizes) ? p.sizes : (p.sizes ? String(p.sizes).split(/[,;]/).map((s: string) => s.trim()).filter(Boolean) : []),
           colors: Array.isArray(p.colors) ? p.colors : (p.colors ? String(p.colors).split(/[,;]/).map((s: string) => s.trim()).filter(Boolean) : []),
+          variants: Array.isArray(p.variants) ? p.variants : [],
           stock: parseInt(String(p.stock || 0), 10),
           featured: p.featured === true || p.featured === 'true',
           customizable: p.customizable === true || p.customizable === 'true',

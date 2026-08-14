@@ -317,6 +317,15 @@ export default function ProductDetail() {
   const productId = product?.id ?? numericId;
   const isValidId = isNumeric || isSlug;
   const hasApparelSizing = isSizedApparelProduct(product);
+  const productVariants = useMemo(() =>
+    (Array.isArray((product as any)?.variants) ? (product as any).variants : [])
+      .filter((v: any) => v && v.active !== false),
+    [product?.id, (product as any)?.variants]
+  );
+  const selectedVariant = productVariants.find((v: any) => v.id === selectedVariantId) ?? null;
+  const variantPrice = selectedVariant ? Number(selectedVariant.price) : null;
+  const variantCustomizationFee = selectedVariant ? Number(selectedVariant.customizationFee || 0) : 0;
+  const selectedProductPrice = variantPrice != null ? variantPrice : Number(product?.discountPrice || product?.price || 0);
 
   const { data: relatedData } = useListProducts(
     { limit: 4, category: product?.categoryId ? String(product.categoryId) : undefined } as any,
@@ -359,6 +368,7 @@ export default function ProductDetail() {
   const [qtyPulse, setQtyPulse] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [selectedColor, setSelectedColor] = useState<string>("");
+  const [selectedVariantId, setSelectedVariantId] = useState<string>("");
   const [customNote, setCustomNote] = useState("");
   const [customImages, setCustomImages] = useState<string[]>([]);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -556,12 +566,21 @@ export default function ProductDetail() {
       return;
     }
 
+    if (productVariants.length > 0 && !selectedVariant) {
+      toast({ title: "Choose a variant", description: "Select the product style or fit before adding it to your bag.", variant: "destructive" });
+      document.getElementById("variant-picker")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    if (selectedVariant && selectedVariant.sizes?.length && selectedSize && !selectedVariant.sizes.includes(selectedSize)) {
+      toast({ title: "Size unavailable", description: "Choose a size available for this variant.", variant: "destructive" });
+      return;
+    }
     // Block if selected color is marked out of stock
     if (selectedColor) {
       const variant = (product.colorVariants ?? []).find((v: any) => v.name === selectedColor);
       if (variant && variant.inStock === false) return;
     }
-    const itemPrice = product.discountPrice || product.price;
+    const itemPrice = selectedProductPrice + (customNote || customImages.length > 0 ? variantCustomizationFee : 0);
     addToCart({
       productId: product.id,
       name: product.name,
@@ -571,6 +590,10 @@ export default function ProductDetail() {
       imageUrl: displayImage || product.imageUrl,
       size: selectedSize || undefined,
       color: selectedColor || undefined,
+      variantId: selectedVariant?.id,
+      variantName: selectedVariant?.name,
+      variantPrice: selectedVariant?.price,
+      customizationFee: variantCustomizationFee || undefined,
       customNote: customNote || undefined,
       customImages: customImages.length > 0 ? customImages : undefined,
     } as any);
@@ -596,7 +619,7 @@ export default function ProductDetail() {
   const displayImage = activeImage || product.imageUrl || "";
   const wishlisted = isWishlisted(product.id);
   const rating = product.rating ? parseFloat(String(product.rating)) : 4.9;
-  const itemPrice = Number(product.discountPrice || product.price) || 0;
+  const itemPrice = selectedProductPrice + (customNote || customImages.length > 0 ? variantCustomizationFee : 0);
   const advanceAmount = Math.round(itemPrice * 0.25);
 
   const handleShare = async () => {
@@ -999,6 +1022,45 @@ export default function ProductDetail() {
                   );
                 })()}
               </div>
+
+              {/* Structured product variants: mug handle/rim or apparel fit */}
+              {productVariants.length > 0 && (
+                <div className="mb-6" id="variant-picker">
+                  <p className="font-bold text-gray-900 text-sm mb-3">
+                    {hasApparelSizing ? "Fit" : "Style"}
+                    <span className="ml-1.5 text-[10px] font-bold text-orange-500 uppercase tracking-wider">· Required</span>
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {productVariants.map((variant: any) => {
+                      const available = Number(variant.stock) > 0;
+                      const active = selectedVariantId === variant.id;
+                      return (
+                        <button
+                          key={variant.id}
+                          type="button"
+                          disabled={!available}
+                          onClick={() => {
+                            if (!available) return;
+                            setSelectedVariantId(active ? "" : variant.id);
+                            if (variant.sizes?.length && selectedSize && !variant.sizes.includes(selectedSize)) setSelectedSize("");
+                            if (variant.colors?.length && selectedColor && !variant.colors.includes(selectedColor)) setSelectedColor("");
+                          }}
+                          className={cn("text-left rounded-xl border px-3.5 py-3 transition-all", active ? "border-orange-500 bg-orange-50 ring-2 ring-orange-200" : "border-gray-200 bg-white hover:border-orange-300", !available && "opacity-45 cursor-not-allowed")}
+                          aria-pressed={active}
+                          aria-label={`${variant.name}${available ? `, ${formatPrice(variant.price)}` : ", out of stock"}`}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <span className="font-black text-sm text-gray-900">{variant.name}</span>
+                            {active && <Check className="w-4 h-4 text-orange-600 shrink-0" />}
+                          </div>
+                          <div className="mt-1 text-xs font-bold text-orange-600">{formatPrice(variant.price)}{variant.customizationFee ? ` · +${formatPrice(variant.customizationFee)} custom` : ""}</div>
+                          <div className="mt-1 text-[11px] text-gray-500">{available ? `${variant.stock} available` : "Out of stock"}</div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               {/* Sizes */}
               {hasApparelSizing && product.sizes && product.sizes.length > 0 && (

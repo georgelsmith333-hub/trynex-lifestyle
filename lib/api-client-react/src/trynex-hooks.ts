@@ -24,6 +24,19 @@ export interface Product {
   rating?: number | null;
   reviewCount?: number;
   tags?: string[] | null;
+  variants?: Array<{
+    id: string;
+    name: string;
+    price: number;
+    customizationFee?: number;
+    stock: number;
+    sizes?: string[];
+    colors?: string[];
+    inStockColors?: string[];
+    mockupKey?: string;
+    oneSize?: boolean;
+    active?: boolean;
+  }> | null;
   metaTitle?: string | null;
   metaDescription?: string | null;
   createdAt?: string;
