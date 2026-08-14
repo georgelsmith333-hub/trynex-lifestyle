@@ -7,7 +7,7 @@ import { Loader } from "@/components/ui/Loader";
 import { ProductDetailSkeleton } from "@/components/ui/skeleton";
 import { useGetProduct, useListProducts, getListProductsQueryKey } from "@workspace/api-client-react";
 import { ProductCard } from "@/components/ProductCard";
-import { formatPrice, cn, getApiUrl } from "@/lib/utils";
+import { formatPrice, cn, getApiUrl, resolveImageUrl } from "@/lib/utils";
 import { useState, useEffect, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCartActions } from "@/context/CartContext";
@@ -1510,7 +1510,7 @@ export default function ProductDetail() {
                 <div className="relative flex flex-col items-center gap-2 w-28">
                   <div className="w-28 h-28 rounded-2xl overflow-hidden border-2 border-orange-400 shadow-md">
                     {product.imageUrl ? (
-                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = "none"; }} />
+                      <img src={resolveImageUrl(product.imageUrl)} alt={product.name} className="w-full h-full object-cover" loading="eager" decoding="async" width={900} height={900} onError={e => { e.currentTarget.src = "/images/product-placeholder.svg"; }} />
                     ) : (
                       <div className="w-full h-full bg-orange-50 flex items-center justify-center">
                         <ShoppingCart className="w-8 h-8 text-orange-300" />
@@ -1530,7 +1530,7 @@ export default function ProductDetail() {
                     <div className="flex flex-col items-center gap-2 w-28">
                       <Link href={`/product/${fbtProduct.id}`} className="w-28 h-28 rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:border-orange-300 transition-colors block">
                         {fbtProduct.imageUrl ? (
-                          <img src={fbtProduct.imageUrl} alt={fbtProduct.name} className="w-full h-full object-cover" loading="lazy" onError={e => { e.currentTarget.style.display = "none"; }} />
+                          <img src={resolveImageUrl(fbtProduct.imageUrl)} alt={fbtProduct.name} className="w-full h-full object-cover" loading="lazy" onError={e => { e.currentTarget.style.display = "none"; }} />
                         ) : (
                           <div className="w-full h-full bg-gray-50 flex items-center justify-center">
                             <ShoppingCart className="w-8 h-8 text-gray-300" />
