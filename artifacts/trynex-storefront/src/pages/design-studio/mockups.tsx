@@ -659,14 +659,21 @@ function getCuratedMockup(
   const category = product.category;
   const hex = normalizeMockupHex(color);
   const slug = SOURCE_KIT_COLOR_SLUGS[category]?.[hex] || "white";
-  const photoSrc = `/mockups/normalized/${category}-${slug}-${face}.png?v=v3_clean`;
+  const recreatedFront = category === "tshirt" && slug === "black" && face === "front"
+    ? "/mockups/recreated/tshirt-black-front-clean.png?v=recreated-v1"
+    : category === "longsleeve" && slug === "black" && face === "front"
+      ? "/mockups/recreated/longsleeve-black-front-clean.png?v=recreated-v1"
+      : null;
+  const photoSrc = recreatedFront ?? `/mockups/normalized/${category}-${slug}-${face}.png?v=v3_clean`;
   return {
     photoSrc,
     cutoutSrc: photoSrc,
     isColorPhoto: true,
     cutoutNeedsTint: false,
-    photoKind: "opaque-photo",
+    photoKind: recreatedFront ? "transparent-cutout" : "opaque-photo",
     requiresTint: false,
+    // Recreated assets have clean alpha but no synthetic silhouette shadow;
+    // source-kit photos also remain shadow-free to avoid ghost boxes.
     // Normalized source-kit files are opaque studio photos. A drop shadow on the
     // 1024×1024 rectangle creates the exact ghost box users reported, so never
     // apply a silhouette shadow to these assets.
