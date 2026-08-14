@@ -26,6 +26,16 @@ const COLOR_MAP: Record<string, string> = {
   'Sky Blue': '#0ea5e9', 'Lime': '#84cc16', 'Coral': '#f97316', 'Indigo': '#6366f1',
 };
 
+function getProductFallback(product: Product): string {
+  const text = `${product.name ?? ""} ${(product as any).category?.name ?? ""} ${(product as any).categoryName ?? ""}`.toLowerCase();
+  if (text.includes("mug") || text.includes("cup")) return "/assets/mockups/mug_1.png";
+  if (text.includes("hoodie") || text.includes("sweatshirt")) return "/assets/mockups/hoodie_1.png";
+  if (text.includes("bottle") || text.includes("flask") || text.includes("tumbler")) return "/products/water-bottle.png";
+  if (text.includes("cap") || text.includes("hat")) return "/assets/mockups/cap_1.png";
+  if (text.includes("long sleeve") || text.includes("longsleeve") || text.includes("long-sleeve")) return "/assets/mockups/longsleeve_1.png";
+  return "/assets/mockups/tshirt_1.png";
+}
+
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
     const [, navigate] = useLocation();
     const { addToCart } = useCartActions();
@@ -48,6 +58,8 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
     }, []);
 
     const price = parseFloat(String(product.price)) || 0;
+    const fallbackImage = getProductFallback(product);
+    const imageSrc = resolveImageUrl(product.imageUrl) || fallbackImage;
     const discountPrice = product.discountPrice ? parseFloat(String(product.discountPrice)) : null;
     const discount = discountPrice
       ? Math.round(((price - discountPrice) / price) * 100)
@@ -229,13 +241,12 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
 
           {/* Image */}
           <div className="relative aspect-[4/5] overflow-hidden" style={{ background: '#f9f5f2', aspectRatio: '4/5' }}>
-            {resolveImageUrl(product.imageUrl) ? (
-              <>
-                {!imgLoaded && (
-                  <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-gray-100 to-gray-200" aria-hidden="true" />
-                )}
-                <img
-                  src={resolveImageUrl(product.imageUrl)}
+            <>
+              {!imgLoaded && (
+                <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-gray-100 to-gray-200" aria-hidden="true" />
+              )}
+              <img
+                  src={imageSrc}
                   alt={product.name}
                   width={400}
                   height={500}
@@ -244,8 +255,9 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                   fetchPriority={index === 0 ? "high" : "auto"}
                   onLoad={() => setImgLoaded(true)}
                   onError={e => {
-                    setImgLoaded(true);
-                    (e.currentTarget as HTMLImageElement).src = "/images/product-placeholder.svg";
+                    const img = e.currentTarget as HTMLImageElement;
+                    if (!img.src.endsWith(fallbackImage)) img.src = fallbackImage;
+                    else setImgLoaded(true);
                   }}
                   className="w-full h-full object-cover"
                   style={{
@@ -254,18 +266,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                     transition: 'transform 0.6s cubic-bezier(0.22,1,0.36,1), opacity 0.25s ease',
                   }}
                 />
-                {/* Fallback shown when image URL is broken */}
-                {imgLoaded && (
-                  <div className="absolute inset-0 -z-10 flex items-center justify-center bg-gradient-to-br from-orange-50 to-amber-50">
-                    <ShoppingCart className="w-16 h-16 text-orange-200" aria-hidden="true" />
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-50 to-amber-50">
-                <ShoppingCart className="w-16 h-16 text-orange-300" aria-hidden="true" />
-              </div>
-            )}
+            </>
 
             {/* Discount / Stock Badges */}
             <div className="absolute top-3 left-3 z-20 flex flex-col gap-1.5 pointer-events-none">

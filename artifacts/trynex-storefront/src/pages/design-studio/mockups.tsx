@@ -51,8 +51,10 @@ const mugFrontCutout       = "/assets/mockups/mug_1.png";
 const mugFrontDarkCutout   = "/assets/mockups/mug_1.png";
 const capFront             = "/assets/mockups/cap_1.png";
 const capFrontCutout       = "/assets/mockups/cap_1.png";
-const waterBottleFront          = "/assets/mockups/bottle_1.png";
-const waterBottleCutout         = "/assets/mockups/bottle_1.png";
+// Canonical TryNex bottle: upright aluminium body with black key-ring loop and side carabiner.
+// Keep legacy bottle_1 out of the active studio path; it is the wrong product shape.
+const waterBottleFront          = "/mockups/source-kit/waterbottle-white-front.png";
+const waterBottleCutout         = "/mockups/source-kit/waterbottle-white-front.png";
 const tshirtFrontDarkCutout     = "/mockups/normalized-cutouts/black-tshirt-front-cutout.png";
 const tshirtBackDarkCutout      = "/mockups/normalized-cutouts/black-tshirt-back-cutout.png";
 const hoodieFrontDarkCutout     = "/mockups/black-hoodie-front-cutout-real.png";

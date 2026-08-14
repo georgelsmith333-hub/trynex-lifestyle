@@ -658,7 +658,7 @@ export default function DesignStudioV2() {
             {isMug && (
               <div className="flex gap-1.5 mb-3 overflow-x-auto pb-1 no-scrollbar">
                 {(["side1", "side2", "wrap"] as const).map(v => (
-                  <button key={v} onClick={() => setMugMode(v)} className="shrink-0 px-4 py-2 rounded-xl text-xs font-black transition-all active:scale-95" style={{ background: mugMode === v ? "#1C1C1E" : "white", color: mugMode === v ? "white" : "#374151", border: mugMode === v ? "1.5px solid #3a3a3c" : "1.5px solid #e5e7eb", boxShadow: mugMode === v ? "0 4px 12px rgba(0,0,0,0.15)" : "none" }}>
+                  <button key={v} onClick={() => { setMugMode(v); setFace(v === "side2" ? "back" : "front"); }} className="shrink-0 px-4 py-2 rounded-xl text-xs font-black transition-all active:scale-95" style={{ background: mugMode === v ? "#1C1C1E" : "white", color: mugMode === v ? "white" : "#374151", border: mugMode === v ? "1.5px solid #3a3a3c" : "1.5px solid #e5e7eb", boxShadow: mugMode === v ? "0 4px 12px rgba(0,0,0,0.15)" : "none" }}>
                     {v === "side1" ? "Left Side" : v === "side2" ? "Right Side" : "Wrap"}
                   </button>
                 ))}

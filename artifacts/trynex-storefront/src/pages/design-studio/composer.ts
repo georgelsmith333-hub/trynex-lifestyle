@@ -402,9 +402,11 @@ function drawImageCurved(
   const STRIPS = 80;
   const stripW = w / STRIPS;
   const curve = Math.max(0, curvature);
-  const pinchStrength = Math.min(0.62, 0.34 + curve * 1.9);
-  const bowStrength = 0.05 + curve * 0.22;
-    const edgeShadeStrength = 0.42 + curve * 1.55;
+  // Keep the warp bounded: the source photos already communicate most curvature.
+  // Excessive pinch/bow made artwork visibly buckle at mug and bottle edges.
+  const pinchStrength = Math.min(0.48, 0.18 + curve * 1.2);
+  const bowStrength = 0.03 + curve * 0.12;
+  const edgeShadeStrength = 0.18 + curve * 0.60;
   for (let i = 0; i < STRIPS; i++) {
     // u ranges -0.5 (left edge) .. 0 (centre) .. 0.5 (right edge)
     const u = (i + 0.5) / STRIPS - 0.5;
@@ -443,7 +445,7 @@ function drawImageCurved(
   // doubled the highlight in the smart-shading pass.
   const grad = ctx.createLinearGradient(-w * 0.22, 0, w * 0.22, 0);
   grad.addColorStop(0, "rgba(255,255,255,0)");
-    grad.addColorStop(0.5, "rgba(255,255,255,0.035)");
+    grad.addColorStop(0.5, "rgba(255,255,255,0.018)");
   grad.addColorStop(1, "rgba(255,255,255,0)");
   ctx.save();
   ctx.globalCompositeOperation = "overlay";
@@ -452,7 +454,7 @@ function drawImageCurved(
   ctx.restore();
 
   const edgeShade = ctx.createLinearGradient(-w / 2, 0, -w * 0.12, 0);
-    edgeShade.addColorStop(0, "rgba(0,0,0,0.08)");
+    edgeShade.addColorStop(0, "rgba(0,0,0,0.045)");
   edgeShade.addColorStop(1, "rgba(0,0,0,0)");
   ctx.save();
   ctx.globalCompositeOperation = "multiply";
@@ -460,7 +462,7 @@ function drawImageCurved(
   ctx.fillRect(-w / 2, -h / 2, w * 0.34, h);
   const edgeShadeR = ctx.createLinearGradient(w * 0.12, 0, w / 2, 0);
   edgeShadeR.addColorStop(0, "rgba(0,0,0,0)");
-    edgeShadeR.addColorStop(1, "rgba(0,0,0,0.08)");
+    edgeShadeR.addColorStop(1, "rgba(0,0,0,0.045)");
   ctx.fillStyle = edgeShadeR;
   ctx.fillRect(w * 0.16, -h / 2, w * 0.34, h);
   ctx.restore();
@@ -588,7 +590,7 @@ export async function composeGarmentMockup(opts: {
     requiresTint = !isColorPhoto,
     fabricTexture = false,
     smartShading = true,
-    shadingStrength = 0.08,
+    shadingStrength = 0.05,
   } = opts;
   canvas.width = outSize;
   canvas.height = outSize;
@@ -737,7 +739,7 @@ export async function composeGarmentMockup(opts: {
             const alpha = pixels[i + 3] / 255;
             const luminance = (0.299 * pixels[i] + 0.587 * pixels[i + 1] + 0.114 * pixels[i + 2]) / 255;
             const shadowAmount = Math.max(0, (0.38 - luminance) / 0.38) * strength * 0.34 * alpha;
-            const highlightAmount = Math.max(0, (luminance - 0.68) / 0.32) * strength * 0.045 * alpha;
+            const highlightAmount = Math.max(0, (luminance - 0.68) / 0.32) * strength * 0.018 * alpha;
 
             // Black with variable alpha becomes a controlled Multiply shadow.
             shadow.data[i] = 0;

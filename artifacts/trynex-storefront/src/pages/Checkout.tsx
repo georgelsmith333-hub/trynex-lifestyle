@@ -1280,14 +1280,14 @@ export default function Checkout() {
 
           {/* Step Indicator */}
           <div className="mb-8">
-            <div className="flex items-center justify-center gap-0 max-w-lg mx-auto" role="navigation" aria-label="Checkout progress">
+            <div className="flex items-start justify-center gap-0 max-w-lg mx-auto px-1 sm:px-3" role="navigation" aria-label="Checkout progress">
               {[
                 { num: 1, label: "Delivery", done: step > 1, active: step === 1 },
                 { num: 2, label: "Payment", done: step > 2, active: step === 2 },
                 { num: 3, label: "Review", done: false, active: step === 3 },
               ].map((s, i) => (
-                <div key={s.num} className="flex items-center flex-1 last:flex-initial">
-                  <div className="flex flex-col items-center gap-1.5">
+                <div key={s.num} className="flex items-start flex-1 min-w-0 last:flex-initial">
+                  <div className="flex flex-col items-center gap-1.5 min-w-[58px] sm:min-w-[72px]">
                     <div
                       className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-black transition-all"
                       style={{
@@ -1304,12 +1304,12 @@ export default function Checkout() {
                       {s.done ? <Check className="w-4 h-4" /> : s.num}
                     </div>
                     {/* Hide label on very small screens, show only for active/done or on larger screens */}
-                    <span className={`text-[10px] font-bold uppercase tracking-wider md:block ${s.active ? 'text-orange-600' : 'text-gray-400 hidden'}`}>
+                    <span className={`text-[10px] sm:text-xs font-bold uppercase tracking-wider whitespace-nowrap ${s.active ? 'text-orange-600' : s.done ? 'text-green-600' : 'text-gray-400'}`}>
                       {s.label}
                     </span>
                   </div>
                   {i < 2 && (
-                    <div className="flex-1 h-0.5 mx-2 mt-[-1rem] rounded-full" style={{ background: s.done ? '#16a34a' : '#e5e7eb' }} />
+                    <div className="flex-1 h-0.5 mx-1.5 sm:mx-2 mt-[18px] rounded-full min-w-[18px]" style={{ background: s.done ? '#16a34a' : '#e5e7eb' }} />
                   )}
                 </div>
               ))}
