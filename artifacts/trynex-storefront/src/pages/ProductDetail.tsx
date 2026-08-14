@@ -317,6 +317,7 @@ export default function ProductDetail() {
   const productId = product?.id ?? numericId;
   const isValidId = isNumeric || isSlug;
   const hasApparelSizing = isSizedApparelProduct(product);
+  const [selectedVariantId, setSelectedVariantId] = useState<string>("");
   const productVariants = useMemo(() =>
     (Array.isArray((product as any)?.variants) ? (product as any).variants : [])
       .filter((v: any) => v && v.active !== false),
@@ -368,7 +369,6 @@ export default function ProductDetail() {
   const [qtyPulse, setQtyPulse] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [selectedColor, setSelectedColor] = useState<string>("");
-  const [selectedVariantId, setSelectedVariantId] = useState<string>("");
   const [customNote, setCustomNote] = useState("");
   const [customImages, setCustomImages] = useState<string[]>([]);
   const [uploadingImage, setUploadingImage] = useState(false);
