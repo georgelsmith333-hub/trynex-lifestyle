@@ -170,7 +170,7 @@ export function CanvasArea({ width, height, mockup, mockupImg, printZone, onCanv
         <Layer>
           {img && <KonvaImage image={img} width={width} height={height} listening={false} />}
         </Layer>
-        <Layer style={{ mixBlendMode: "multiply" }}>
+        <Layer style={{ mixBlendMode: "source-over" }}>
           {layers.map((layer: LayerType) => (
             <DesignLayer
               key={layer.id}

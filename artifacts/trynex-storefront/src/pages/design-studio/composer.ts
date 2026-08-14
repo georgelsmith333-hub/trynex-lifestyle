@@ -228,10 +228,12 @@ function layerGeom(l: ComposerLayer, pz: ComposerPrintZone) {
   const cx = pz.x + pz.w / 2 + l.transform.x;
   const cy = pz.y + pz.h / 2 + l.transform.y;
   if (l.type === "image") {
-    const aspect = l.naturalW / Math.max(l.naturalH, 1);
-    const baseW = pz.w * l.transform.scale;
-    const w = baseW * (l.transform.scaleX ?? 1);
-    const h = (baseW / aspect) * (l.transform.scaleY ?? 1);
+    // The editor stores image transforms in product-space pixels: Konva renders
+    // naturalW/naturalH multiplied by transform.scale. Do not reinterpret the
+    // scale as a percentage of printZone.w, otherwise uploads resize again when
+    // they reach the compositor and preview/export no longer match.
+    const w = Math.max(1, l.naturalW) * l.transform.scale * (l.transform.scaleX ?? 1);
+    const h = Math.max(1, l.naturalH) * l.transform.scale * (l.transform.scaleY ?? 1);
     return { cx, cy, w, h };
   }
   if (l.type === "text") {
@@ -467,7 +469,7 @@ function drawImageCurved(
 export async function composeLayers(opts: ComposeOptions): Promise<HTMLCanvasElement> {
   const {
     canvas, baseHeight, printZone, layers, garmentColor,
-    outW, outH, imageCache, clipToPrintZone = true, blendMode = "multiply",
+    outW, outH, imageCache, clipToPrintZone = true, blendMode = "source-over",
     curvature = 0, fabricTexture = false,
   } = opts;
   canvas.width = outW;

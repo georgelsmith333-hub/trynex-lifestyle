@@ -18,7 +18,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import {
-  PRODUCTS, GarmentSVG, FlatZoneSVG, MUG_SIDE_PZ, MUG_SIDE_BACK_PZ, resolveMockup,
+  PRODUCTS, GarmentSVG, FlatZoneSVG, MUG_PZ, MUG_WRAP_BACK_PZ, MUG_SIDE_PZ, MUG_SIDE_BACK_PZ, resolveMockup,
   getApparelZones, getZonePZ, type ApparelZone, isNearBlack, isLightTint,
   type PrintZone, type DesignProduct, type Face,
 } from "../design-studio/mockups";
@@ -130,9 +130,12 @@ export default function DesignStudioV2() {
   const isFlatZone = activeFace === "left-sleeve" || activeFace === "right-sleeve" || activeFace === "neck-label";
 
   const pz = useMemo(() => {
-    if (isMug) return activeFace === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ;
+    if (isMug) {
+      if (mugMode === "wrap") return activeFace === "back" ? MUG_WRAP_BACK_PZ : MUG_PZ;
+      return activeFace === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ;
+    }
     return getZonePZ(activeFace, selectedProduct);
-  }, [isMug, activeFace, selectedProduct]);
+  }, [isMug, mugMode, activeFace, selectedProduct]);
 
   const isBlackGarment = isNearBlack(selectedColor.hex);
   const isLightGarment = isLightTint(selectedColor.hex);
@@ -669,7 +672,7 @@ export default function DesignStudioV2() {
                 {show3D && !isFlatZone && (
                   <div className="absolute inset-0 z-20 rounded-3xl overflow-hidden flex items-center justify-center" style={{ background: "radial-gradient(ellipse at 50% 40%, #f4f4f4 0%, #e8e8e8 100%)" }}>
                     <Suspense fallback={<Loader2 className="w-8 h-8 animate-spin text-blue-400" />}>
-                      <LazyProductViewer3D product={selectedProduct} garmentColor={selectedColor.hex} front={{ layers: frontLayers, printZone: isMug ? MUG_SIDE_PZ : selectedProduct.printZone, baseHeight: selectedProduct.baseHeight }} back={supportsBack && backLayers.length > 0 ? { layers: backLayers, printZone: isMug ? MUG_SIDE_BACK_PZ : (selectedProduct.printZoneBack ?? selectedProduct.printZone), baseHeight: selectedProduct.baseHeight } : undefined} activeFace={activeFace as "front" | "back"} isWrapMode={isMug && frontLayers.length > 0 && backLayers.length > 0} />
+                      <LazyProductViewer3D product={selectedProduct} garmentColor={selectedColor.hex} front={{ layers: frontLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ) : selectedProduct.printZone, baseHeight: selectedProduct.baseHeight }} back={supportsBack && backLayers.length > 0 ? { layers: backLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ) : (selectedProduct.printZoneBack ?? selectedProduct.printZone), baseHeight: selectedProduct.baseHeight } : undefined} activeFace={activeFace as "front" | "back"} isWrapMode={isMug && mugMode === "wrap"} />
                     </Suspense>
                     <button onClick={() => setShow3D(false)} className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full text-xs font-bold text-white shadow-xl" style={{ background: "rgba(17,24,39,0.85)", backdropFilter: "blur(8px)" }}><Eye className="w-3 h-3 inline mr-1" /> Back to 2D</button>
                   </div>
