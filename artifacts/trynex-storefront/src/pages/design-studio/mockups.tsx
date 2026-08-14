@@ -863,6 +863,17 @@ export function GarmentSVG({
           </filter>
         )}
 
+        {/* Hoodie smart-object detail mask. Artwork sits below these narrow source
+            strips so drawstrings remain visible instead of being painted over by
+            uploaded images, text, emoji, or AI art. Coordinates are calibrated to
+            the 1000×1000 normalized hoodie source-kit frame. */}
+        {product.category === "hoodie" && face === "front" && (
+          <clipPath id="hoodie-rope-preservation">
+            <path d="M462 216 C463 252 455 300 451 350 L450 445" stroke="black" strokeWidth="18" fill="none" strokeLinecap="round" />
+            <path d="M555 216 C554 252 560 300 564 350 L565 445" stroke="black" strokeWidth="18" fill="none" strokeLinecap="round" />
+          </clipPath>
+        )}
+
 
       </defs>
 
@@ -904,6 +915,16 @@ export function GarmentSVG({
             shadow/highlight images were not real PSD masks and produced ghosted
             silhouettes. Texture and garment lighting remain embedded in the
             single normalized smart-object source image. */}
+        {product.category === "hoodie" && face === "front" && (
+          <image
+            key={`hoodie-rope-detail-${resolvedMockup.photoSrc}`}
+            href={resolvedMockup.photoSrc || resolvedMockup.cutoutSrc}
+            x={0} y={0} width={1000} height={1000}
+            preserveAspectRatio="xMidYMid meet"
+            clipPath="url(#hoodie-rope-preservation)"
+            pointerEvents="none"
+          />
+        )}
       </g>
 
       {showPrintZone && (() => {

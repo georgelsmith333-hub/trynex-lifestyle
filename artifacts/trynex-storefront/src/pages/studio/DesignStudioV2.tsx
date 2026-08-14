@@ -670,11 +670,11 @@ export default function DesignStudioV2() {
                 <div className="flex items-center gap-2"><Palette className="w-3.5 h-3.5 text-orange-500" /><span className="text-[11px] font-black uppercase tracking-widest text-gray-400">Garment Color</span></div>
                 <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full" style={{ background: selectedColor.hex, color: isLightTint(selectedColor.hex) ? "#374151" : "white" }}>{selectedColor.name}</span>
               </div>
-              <div className="flex overflow-x-auto pb-1.5 gap-2.5 items-center no-scrollbar">
+              <div className="grid grid-cols-5 sm:grid-cols-8 gap-2.5 pb-1.5 items-center justify-items-center">
                 {studioColors.map((c: any) => {
                   const isSelected = selectedColor.hex.toLowerCase() === c.hex.toLowerCase();
                   return (
-                    <button key={c.hex} title={c.name} onClick={() => setColor(c)} className="relative touch-manipulation flex-shrink-0 transition-transform duration-100 hover:scale-110 active:scale-90" style={{ width: 36, height: 36 }}>
+                    <button key={c.hex} title={c.name} aria-label={`Select ${c.name}`} onClick={() => setColor(c)} className="relative touch-manipulation transition-transform duration-100 hover:scale-110 active:scale-90" style={{ width: 36, height: 36 }}>
                       {isSelected && <span className="absolute inset-0 rounded-full pointer-events-none" style={{ border: "2.5px solid #E85D04", transform: "scale(1.28)", boxShadow: "0 0 0 2px rgba(232,93,4,0.20)" }} />}
                       <span className="absolute rounded-full transition-transform duration-100" style={{ inset: 3, background: c.hex, border: isLightTint(c.hex) ? "1.5px solid #d1d5db" : "1px solid rgba(0,0,0,0.10)", transform: isSelected ? "scale(0.88)" : "scale(1)", boxShadow: isSelected ? "0 2px 8px rgba(0,0,0,0.28)" : "0 1px 4px rgba(0,0,0,0.14)" }} />
                     </button>
