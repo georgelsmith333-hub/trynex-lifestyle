@@ -15,7 +15,7 @@ import {
   CheckCircle2, CreditCard, Banknote,
   ShieldCheck, Copy, Check, ArrowRight,
   Smartphone, Info, Tag, MapPin, MessageCircle, Phone, AlertCircle, Search,
-  LocateFixed, Loader2
+  LocateFixed, Loader2, Upload
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { trackInitiateCheckout, trackPurchase } from "@/lib/tracking";
@@ -73,10 +73,11 @@ export default function Checkout() {
   const [checkoutStatus, setCheckoutStatus] = useState<CheckoutStep>('form');
   const [createdOrder, setCreatedOrder] = useState<Record<string, unknown> | null>(null);
   const [lastFour, setLastFour] = useState("");
-  const [transactionId, setTransactionId] = useState("");
-  const [senderNumber, setSenderNumber] = useState("");
   const [senderName, setSenderName] = useState("");
   const [bankReference, setBankReference] = useState("");
+  const [paymentProofUrl, setPaymentProofUrl] = useState("");
+  const [paymentProofName, setPaymentProofName] = useState("");
+  const [isUploadingProof, setIsUploadingProof] = useState(false);
   const [isSubmittingPayment, setIsSubmittingPayment] = useState(false);
   const [copiedNumber, setCopiedNumber] = useState(false);
   const [promoInput, setPromoInput] = useState("");
@@ -332,15 +333,8 @@ export default function Checkout() {
   // Only payment methods with a configured or canonical fallback number are shown
   // to customers. bKash/Nagad remain admin-configured; uPay uses the supplied
   // canonical merchant number when the settings row is empty.
-  const configuredPaymentMethods: PaymentMethod[] = ([
-    'bkash', 'nagad', 'upay', 'bank', 'card', 'cod'
-  ] as PaymentMethod[]).filter((m) => {
-    if (m === 'bkash' || m === 'nagad' || m === 'upay') return !!getPaymentNumber(m);
-    if (m === 'bank') return bankConfigured;
-    if (m === 'card') return true; // card is always available as "card on delivery" note
-    if (m === 'cod') return settings.codEnabled !== false;
-    return false;
-  });
+  const configuredPaymentMethods: PaymentMethod[] = (['bkash', 'nagad', 'upay'] as PaymentMethod[])
+    .filter((m) => !!getPaymentNumber(m));
   const validatePromo = async (codeOverride?: string) => {
     const codeToValidate = codeOverride?.trim() ?? promoInput.trim();
     if (!codeToValidate) return;
@@ -401,6 +395,17 @@ export default function Checkout() {
     }
   }, [items.length, checkoutStatus, setLocation]);
 
+  // Normalize the wallet selection before any conditional return. Keeping this
+  // hook above the empty-cart branch prevents React error #310 when a cart is
+  // emptied or restored during navigation.
+  useEffect(() => {
+    if (configuredPaymentMethods.length > 0 && !configuredPaymentMethods.includes(paymentMethod)) {
+      setPaymentMethod(configuredPaymentMethods[0]);
+    }
+    setPaymentMode('advance');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [configuredPaymentMethods.join(",")]);
+
   // Suppress checkout render while redirecting to /cart on empty cart.
   // We render a deterministic loading state instead of `return null` so
   // the user never sees a flash of empty checkout chrome before the
@@ -416,7 +421,9 @@ export default function Checkout() {
     );
   }
 
-  const effectiveGatewayMethod: PaymentMethod = paymentMethod;
+  const effectiveGatewayMethod: PaymentMethod = configuredPaymentMethods.includes(paymentMethod)
+    ? paymentMethod
+    : (configuredPaymentMethods[0] ?? 'bkash');
 
   const onSubmit = async (data: CheckoutFormData) => {
     const snapSubtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -641,8 +648,6 @@ export default function Checkout() {
   };
 
   const handlePaymentSubmit = async () => {
-    const cleanSender = senderNumber.replace(/\D/g, '');
-    const cleanTransaction = transactionId.trim();
     if (paymentMethod === 'bank') {
       if (senderName.trim().length < 2) {
         toast({ title: "Enter account holder name", description: "Enter the name used for the bank transfer.", variant: "destructive" });
@@ -653,12 +658,12 @@ export default function Checkout() {
         return;
       }
     } else {
-      if (cleanSender.length < 10) {
-        toast({ title: "Enter your sending number", description: `Enter the ${theme.name} number you sent the payment from.`, variant: "destructive" });
+      if (lastFour.length !== 4) {
+        toast({ title: "Enter the last 4 digits", description: "Use the last 4 digits of the wallet number you paid from.", variant: "destructive" });
         return;
       }
-      if (lastFour.length < 4 && cleanTransaction.length < 4) {
-        toast({ title: "Add payment evidence", description: "Enter either the last 4 digits of your sending number or the transaction ID.", variant: "destructive" });
+      if (!paymentProofUrl) {
+        toast({ title: "Upload payment proof", description: "Attach a screenshot of the successful payment before submitting.", variant: "destructive" });
         return;
       }
     }
@@ -674,8 +679,8 @@ export default function Checkout() {
         body: JSON.stringify({
           paymentMethod,
           lastFourDigits: lastFour || undefined,
-          senderNumber: cleanSender,
-          transactionId: cleanTransaction || undefined,
+          transactionId: undefined,
+          paymentProofUrl,
           senderName: senderName.trim() || undefined,
           bankReference: bankReference.trim() || undefined,
           promoCode: promoApplied || undefined,
@@ -693,20 +698,39 @@ export default function Checkout() {
     }
   };
 
+  const uploadPaymentProof = async (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      toast({ title: 'Image required', description: 'Please choose a JPG, PNG, or WebP screenshot.', variant: 'destructive' });
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      toast({ title: 'Screenshot is too large', description: 'Please choose an image smaller than 8 MB.', variant: 'destructive' });
+      return;
+    }
+    setIsUploadingProof(true);
+    try {
+      const req = await fetch(getApiUrl('/api/storage/uploads/request-url'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: `payment-proof-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-80)}`, contentType: file.type, size: file.size }),
+      });
+      if (!req.ok) throw new Error('Could not prepare the upload');
+      const { uploadURL, objectPath } = await req.json();
+      const put = await fetch(uploadURL, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } });
+      if (!put.ok) throw new Error('Could not upload the screenshot');
+      setPaymentProofUrl(getApiUrl(`/api/storage/public-objects/${objectPath}`));
+      setPaymentProofName(file.name);
+      toast({ title: 'Payment proof attached', description: 'Your screenshot is ready to submit.' });
+    } catch (err: any) {
+      toast({ title: 'Upload failed', description: err?.message || 'Please try again.', variant: 'destructive' });
+    } finally {
+      setIsUploadingProof(false);
+    }
+  };
+
   const activePaymentNumber = getPaymentNumber(effectiveGatewayMethod);
   const effectivePaymentNumber = activePaymentNumber;
   const paymentNumberReady = !!effectivePaymentNumber;
-
-  // If the currently selected payment method is not configured, switch to the first configured one.
-  // Must be in a useEffect — calling setState during render causes an infinite re-render loop.
-  useEffect(() => {
-    if (configuredPaymentMethods.length > 0 && !configuredPaymentMethods.includes(paymentMethod)) {
-      const nextMethod = configuredPaymentMethods[0];
-      setPaymentMethod(nextMethod);
-      setPaymentMode(nextMethod === 'card' ? 'full' : 'advance');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configuredPaymentMethods.join(",")]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const copyNumber = async () => {
     if (!effectivePaymentNumber) return;
@@ -789,19 +813,19 @@ export default function Checkout() {
 
   const theme = gatewayTheme[effectiveGatewayMethod];
 
-  const isWalletMethod = paymentMethod === 'bkash' || paymentMethod === 'nagad' || paymentMethod === 'upay';
-  const hasWalletEvidence = lastFour.length === 4 || transactionId.trim().length >= 4;
+  const isWalletMethod = true;
+  const hasWalletEvidence = lastFour.length === 4 && !!paymentProofUrl;
   const canProceed = (() => {
     if (configuredPaymentMethods.length === 0) return false;
     if (isWalletMethod) {
       // The customer must identify the sending wallet and provide either the
       // sender-number suffix or a transaction ID before review/order creation.
-      return paymentNumberReady && senderNumber.replace(/\D/g, '').length >= 10 && hasWalletEvidence;
+      return paymentNumberReady && hasWalletEvidence;
     }
     if (paymentMethod === 'bank') {
       return bankConfigured && senderName.trim().length > 0 && bankReference.trim().length > 0;
     }
-    return true; // card, cod
+      return false;
   })();
 
   if (checkoutStatus === 'success') {
@@ -977,7 +1001,7 @@ export default function Checkout() {
     const snapRemaining = snapTotal - snapAdvance;
     const amountToSend = paymentMode === 'full' ? snapTotal : snapAdvance;
     const gatewayEvidenceReady = isWalletMethod
-      ? paymentNumberReady && senderNumber.replace(/\D/g, '').length >= 10 && hasWalletEvidence
+      ? paymentNumberReady && hasWalletEvidence
       : paymentMethod === 'bank'
         ? bankConfigured && senderName.trim().length >= 2 && bankReference.trim().length >= 4
         : true;
@@ -996,9 +1020,7 @@ export default function Checkout() {
               <div className="mb-2">{theme.logo}</div>
               <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-1">Payment Gateway</p>
               <p className="text-sm text-gray-500">
-                {paymentMode === 'full'
-                  ? `Pay full amount via ${theme.name} — order confirmed instantly`
-                  : `Pay 25% advance via ${theme.name} — rest collected on delivery`}
+                {`Pay 25% advance via ${theme.name} — rest collected on delivery`}
               </p>
             </div>
 
@@ -1017,7 +1039,7 @@ export default function Checkout() {
 
               <div className="rounded-2xl p-5 text-center" style={{ background: theme.light, border: `2px solid ${theme.border}` }}>
                 <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: theme.primary }}>
-                  {paymentMode === 'full' ? 'Send This Amount (Full Payment)' : 'Send This Amount (25% Advance)'}
+                  Send This Amount (25% Advance)
                 </p>
                 <p className="text-6xl font-black font-display" style={{ color: theme.primary }}>
                   {formatPrice(amountToSend)}
@@ -1038,7 +1060,7 @@ export default function Checkout() {
                   `Go to "Send Money"`,
                   `Enter number: ${effectivePaymentNumber}`,
                   `Send exactly ${formatPrice(amountToSend)}`,
-                  'Enter either the last 4 digits of your sending number or your transaction ID below',
+                  'Enter the last 4 digits of the wallet number you paid from below',
                 ].map((s, i) => (
                   <div key={i} className="flex items-start gap-3">
                     <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black shrink-0 mt-0.5"
@@ -1088,21 +1110,6 @@ export default function Checkout() {
               </div>
 
               <div>
-                  <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2">
-                  Your Sending Number *
-                </label>
-                <input
-                  type="tel"
-                  inputMode="numeric"
-                  maxLength={11}
-                  placeholder="01XXXXXXXXX"
-                  value={senderNumber}
-                  onChange={e => setSenderNumber(e.target.value.replace(/\D/g, '').slice(0, 11))}
-                  className={inputClass}
-                  style={{ ...inputStyle, letterSpacing: '0.2em' }}
-                />
-                <p className="text-xs text-gray-400 mt-1.5">The wallet number you sent the payment from</p>
-
                 <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2 mt-4">
                   Last 4 Digits of Sending Number
                 </label>
@@ -1117,8 +1124,22 @@ export default function Checkout() {
                   style={{ ...inputStyle, letterSpacing: '0.5em', textAlign: 'center', fontSize: '1.5rem', fontWeight: 900 }}
                 />
                   <p className="text-xs text-gray-400 mt-1.5">
-                  Optional when you provide a transaction ID
+                  Enter only the last 4 digits — never your full sending number.
                 </p>
+
+                <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2 mt-5">
+                  Payment Screenshot *
+                </label>
+                <label className="flex items-center gap-3 p-4 rounded-xl cursor-pointer transition-colors hover:bg-orange-50"
+                  style={{ background: paymentProofUrl ? 'rgba(22,163,74,0.06)' : '#fffaf5', border: `1px dashed ${paymentProofUrl ? 'rgba(22,163,74,0.4)' : 'rgba(232,93,4,0.35)'}` }}>
+                  <Upload className="w-5 h-5 text-orange-500 shrink-0" />
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-bold text-gray-800">{isUploadingProof ? 'Uploading screenshot…' : paymentProofName || 'Attach payment screenshot'}</span>
+                    <span className="block text-xs text-gray-400 mt-0.5">JPG, PNG, or WebP · max 8 MB</span>
+                  </span>
+                  {paymentProofUrl && <Check className="w-5 h-5 text-green-600 shrink-0" />}
+                  <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" disabled={isUploadingProof} onChange={e => { const f = e.target.files?.[0]; if (f) void uploadPaymentProof(f); }} />
+                </label>
               </div>
 
               {paymentMethod === 'bank' && (
@@ -1541,35 +1562,7 @@ export default function Checkout() {
                     Choose how you pay. For wallets, send the amount to our merchant number and enter your sending details below.
                   </p>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const fullMethod = configuredPaymentMethods.find(m => m !== 'cod');
-                        if (paymentMethod === 'cod') {
-                          if (!fullMethod) return;
-                          setPaymentMethod(fullMethod);
-                        }
-                        setPaymentMode('full');
-                      }}
-                      className="text-left p-4 rounded-2xl transition-all duration-200 focus:outline-none"
-                      style={{
-                        background: paymentMode === 'full' ? 'rgba(232,93,4,0.05)' : '#f9fafb',
-                        border: paymentMode === 'full' ? '2px solid rgba(232,93,4,0.45)' : '2px solid #e5e7eb',
-                        boxShadow: paymentMode === 'full' ? '0 2px 16px rgba(232,93,4,0.10)' : 'none',
-                      }}
-                    >
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${paymentMode === 'full' ? 'border-orange-500' : 'border-gray-300'}`}>
-                          {paymentMode === 'full' && <div className="w-2 h-2 rounded-full bg-orange-500" />}
-                        </div>
-                        <span className="font-black text-sm text-gray-900">Full Payment</span>
-                      </div>
-                      <p className="text-xs text-gray-500 leading-relaxed pl-6">
-                        Pay <strong className="text-gray-800">{formatPrice(total)}</strong> now.
-                      </p>
-                    </button>
-
+                  <div className="grid grid-cols-1 gap-3 mb-6">
                     <button
                       type="button"
                       onClick={() => {
@@ -1614,10 +1607,7 @@ export default function Checkout() {
                               type="button"
                               onClick={() => {
                                 setPaymentMethod(method);
-                                 // COD requires the same 25% advance as every
-                                 // other pay-on-delivery order.
-                                 if (method === 'cod') setPaymentMode('advance');
-                                 if (method === 'card') setPaymentMode('full');
+                                setPaymentMode('advance');
                               }}
                               className="relative flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all duration-200 focus:outline-none disabled:opacity-40"
                               style={{
@@ -1689,18 +1679,6 @@ export default function Checkout() {
 
                       <div className="space-y-3">
                         <div>
-                          <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2">Your Sending Number *</label>
-                          <input
-                            type="tel"
-                            inputMode="numeric"
-                            placeholder="01XXXXXXXXX"
-                            value={senderNumber}
-                            onChange={e => setSenderNumber(e.target.value.replace(/[^0-9]/g, '').slice(0, 11))}
-                            className={inputClass}
-                            style={{ ...inputStyle, letterSpacing: '0.2em' }}
-                          />
-                        </div>
-                        <div>
                           <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2">Last 4 Digits of Sending Number *</label>
                           <input
                             type="tel"
@@ -1713,17 +1691,7 @@ export default function Checkout() {
                             style={{ ...inputStyle, letterSpacing: '0.5em', textAlign: 'center', fontSize: '1.5rem', fontWeight: 900 }}
                           />
                         </div>
-                        <div>
-                          <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2">                  Transaction ID (enter this or the last 4 digits)</label>
-                          <input
-                            type="text"
-                            placeholder="e.g. 8X9K2L"
-                            value={transactionId}
-                            onChange={e => setTransactionId(e.target.value.replace(/[^a-zA-Z0-9-]/g, '').slice(0, 30))}
-                            className={inputClass}
-                            style={inputStyle}
-                          />
-                        </div>
+
                       </div>
                     </div>
                   )}

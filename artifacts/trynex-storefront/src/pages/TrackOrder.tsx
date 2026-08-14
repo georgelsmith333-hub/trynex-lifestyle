@@ -33,6 +33,10 @@ const PAYMENT_STATUSES: Record<string, { label: string; color: string; bg: strin
     label: 'Payment Confirmed', color: '#22c55e', bg: 'rgba(34,197,94,0.06)', border: 'rgba(34,197,94,0.15)',
     icon: CheckCircle2, desc: 'Payment received and confirmed!'
   },
+  paid: {
+    label: 'Payment Confirmed', color: '#22c55e', bg: 'rgba(34,197,94,0.06)', border: 'rgba(34,197,94,0.15)',
+    icon: CheckCircle2, desc: 'Payment received and confirmed!'
+  },
   wrong: {
     label: 'Payment Issue', color: '#ef4444', bg: 'rgba(239,68,68,0.06)', border: 'rgba(239,68,68,0.15)',
     icon: AlertTriangle, desc: 'Issue with payment — contact us on WhatsApp'

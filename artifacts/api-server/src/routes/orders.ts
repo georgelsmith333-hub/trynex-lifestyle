@@ -595,8 +595,11 @@ router.post("/orders", async (req, res) => {
     const shippingAddress: string = body.shippingAddress;
     const shippingCity: string | null | undefined = body.shippingCity;
     const shippingDistrict: string | null | undefined = body.shippingDistrict;
-    // Default payment method to COD so missing/empty values don't block orders
-    const paymentMethod: string = body.paymentMethod || "cod";
+    const paymentMethod: string = body.paymentMethod || "";
+    if (!['bkash', 'nagad', 'upay'].includes(paymentMethod.toLowerCase())) {
+      res.status(400).json({ error: 'validation_error', message: 'Select bKash, Nagad, or uPay to pay the required 25% advance.' });
+      return;
+    }
     const { items, notes, promoCode, utmSource, utmMedium, utmCampaign } = body;
     const customerEmailLower = customerEmail ? customerEmail.toLowerCase().trim() : null;
 
@@ -1319,20 +1322,19 @@ router.put("/orders/:id/payment-info", async (req, res) => {
       return;
     }
     const rawLastFour = String(req.body?.lastFourDigits ?? "").replace(/\D/g, "").slice(0, 4);
-    const rawSenderNumber = String(req.body?.senderNumber ?? "").replace(/\D/g, "").slice(0, 15);
-    const rawTransactionId = String(req.body?.transactionId ?? "").replace(/[^a-zA-Z0-9\-]/gi, "").slice(0, 100);
+    const rawPaymentProofUrl = String(req.body?.paymentProofUrl ?? "").trim().slice(0, 1000);
     const rawSenderName = String(req.body?.senderName ?? "").replace(/[^a-zA-Z0-9.\- ]/gi, "").slice(0, 100);
     const rawBankReference = String(req.body?.bankReference ?? "").replace(/[^a-zA-Z0-9\-]/gi, "").slice(0, 100);
     const rawPromo = String(req.body?.promoCode ?? "").replace(/[^A-Z0-9_\-]/gi, "").toUpperCase().slice(0, 50);
     const walletMethod = ["bkash", "nagad", "upay"].includes(rawPaymentMethod);
 
     if (walletMethod) {
-      if (rawSenderNumber.length < 10) {
-        res.status(400).json({ error: "validation_error", message: "Your sending wallet number is required." });
+      if (rawLastFour.length !== 4) {
+        res.status(400).json({ error: "validation_error", message: "Enter the last 4 digits of your sending wallet number." });
         return;
       }
-      if (rawLastFour.length !== 4 && rawTransactionId.length < 4) {
-        res.status(400).json({ error: "validation_error", message: "Enter either the last 4 digits of your sending number or the transaction ID." });
+      if (!rawPaymentProofUrl) {
+        res.status(400).json({ error: "validation_error", message: "A payment screenshot is required." });
         return;
       }
     }
@@ -1340,8 +1342,7 @@ router.put("/orders/:id/payment-info", async (req, res) => {
     const evidence = [
       rawPaymentMethod ? `Wallet/payment method: ${rawPaymentMethod}` : null,
       rawLastFour ? `Payment last 4 digits: ${rawLastFour}` : null,
-      rawSenderNumber ? `Sender number: ${rawSenderNumber}` : null,
-      rawTransactionId ? `Transaction ID: ${rawTransactionId}` : null,
+      rawPaymentProofUrl ? `Payment proof: ${rawPaymentProofUrl}` : null,
       rawSenderName ? `Sender name: ${rawSenderName}` : null,
       rawBankReference ? `Bank reference: ${rawBankReference}` : null,
       rawPromo ? `Promo code: ${rawPromo}` : null,

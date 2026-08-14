@@ -105,7 +105,7 @@ function parseOptionalPositiveInt(value: unknown): number | null | undefined {
   return Number.isInteger(parsed) && parsed >= 0 ? parsed : undefined;
 }
 
-router.get("/mockups", async (_req: Request, res: Response) => {
+router.get("/mockups", async (req: Request, res: Response) => {
   try {
     const rows = await db.select({
       id: mockupsTable.id,
