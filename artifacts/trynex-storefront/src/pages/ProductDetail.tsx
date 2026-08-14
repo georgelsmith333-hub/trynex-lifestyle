@@ -437,20 +437,23 @@ export default function ProductDetail() {
     setCustomNote("");
     setCustomImages([]);
     if (product) {
+      const defaultVariantPrice = productVariants[0]?.price != null
+        ? Number(productVariants[0].price)
+        : Number(product.discountPrice || product.price);
       trackViewContent({
         id: product.id,
         name: product.name,
-        price: product.discountPrice || product.price,
+        price: defaultVariantPrice,
       });
       trackRecentlyViewed({
         id: product.id,
         name: product.name,
         slug: product.slug || String(product.id),
-        price: product.discountPrice || product.price,
+        price: defaultVariantPrice,
         imageUrl: product.imageUrl || '',
       });
     }
-  }, [product?.id]);
+  }, [product?.id, productVariants.length, productVariants[0]?.price]);
 
   if (isLoading) return <ProductDetailSkeleton />;
 
