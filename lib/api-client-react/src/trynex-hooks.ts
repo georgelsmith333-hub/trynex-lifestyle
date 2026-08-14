@@ -410,7 +410,7 @@ export const useTrynexListProducts = (
   const customKey = (opts as { query?: { queryKey?: unknown } })?.query?.queryKey;
   return useQuery({
     queryKey: customKey ? (customKey as unknown[]) : ["/api/products", params],
-    queryFn: () => customFetch<{ products: Product[]; total?: number }>(url),
+    queryFn: () => customFetch<{ products: Product[]; total?: number; page?: number; limit?: number; totalPages?: number }>(url),
     staleTime: 60 * 1000,
   });
 };

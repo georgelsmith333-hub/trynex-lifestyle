@@ -73,6 +73,11 @@ export default function Products() {
   const [priceMax, setPriceMax] = useState("");
   const [inStockOnly, setInStockOnly] = useState(false);
 
+  const currentPage = useMemo(() => {
+    const page = Number(new URLSearchParams(searchString).get("page") || "1");
+    return Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
+  }, [searchString]);
+
   const { data: categoriesData } = useListCategories();
   const categories = categoriesData?.categories || [];
 
@@ -94,10 +99,23 @@ export default function Products() {
   const { data: productsData, isLoading, isError, refetch } = useListProducts({
     search: search || undefined,
     category: activeCategory ? String(activeCategory) : undefined,
-    limit: 48
+    limit: 50,
+    page: currentPage,
   });
 
   const products = productsData?.products || [];
+  const totalProducts = productsData?.total ?? products.length;
+  const totalPages = Math.max(1, productsData?.totalPages ?? Math.ceil(totalProducts / 50));
+
+  const goToPage = (nextPage: number) => {
+    const safePage = Math.min(Math.max(1, nextPage), totalPages);
+    const params = new URLSearchParams(searchString);
+    if (safePage <= 1) params.delete("page");
+    else params.set("page", String(safePage));
+    const query = params.toString();
+    setLocation(`/products${query ? `?${query}` : ""}`);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const categoryWeight = (p: any): number => {
     const slug = (p.category?.slug || p.category?.name || "").toLowerCase();
@@ -483,7 +501,7 @@ export default function Products() {
                     {(search || activeCategory) && (
                       <div className="flex items-center justify-between mb-4">
                         <p className="text-xs text-gray-400 font-medium">
-                          {isLoading ? "Loading..." : `${sortedProducts.length} result${sortedProducts.length !== 1 ? 's' : ''}`}
+                          {isLoading ? "Loading..." : `${totalProducts} product${totalProducts !== 1 ? 's' : ''}${totalPages > 1 ? ` · Page ${currentPage} of ${totalPages}` : ''}`}
                         </p>
                         <button
                           onClick={() => { setSearch(""); setActiveCategory(undefined); }}
@@ -557,6 +575,43 @@ export default function Products() {
                         </motion.div>
                       )}
                     </AnimatePresence>
+
+                    {!isLoading && !isError && totalPages > 1 && (
+                      <nav className="mt-8 flex flex-wrap items-center justify-center gap-2" aria-label="Product pages">
+                        <button
+                          type="button"
+                          onClick={() => goToPage(currentPage - 1)}
+                          disabled={currentPage <= 1}
+                          className="min-h-11 rounded-xl border border-gray-200 bg-white px-4 text-sm font-bold text-gray-700 transition hover:border-orange-300 hover:text-orange-600 disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          Previous
+                        </button>
+                        {Array.from({ length: totalPages }, (_, index) => index + 1).map(pageNumber => (
+                          <button
+                            key={pageNumber}
+                            type="button"
+                            onClick={() => goToPage(pageNumber)}
+                            aria-current={pageNumber === currentPage ? "page" : undefined}
+                            className={cn(
+                              "min-h-11 min-w-11 rounded-xl border px-3 text-sm font-black transition",
+                              pageNumber === currentPage
+                                ? "border-orange-500 bg-orange-500 text-white shadow-sm"
+                                : "border-gray-200 bg-white text-gray-700 hover:border-orange-300 hover:text-orange-600"
+                            )}
+                          >
+                            {pageNumber}
+                          </button>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={() => goToPage(currentPage + 1)}
+                          disabled={currentPage >= totalPages}
+                          className="min-h-11 rounded-xl border border-gray-200 bg-white px-4 text-sm font-bold text-gray-700 transition hover:border-orange-300 hover:text-orange-600 disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          Next
+                        </button>
+                      </nav>
+                    )}
                   </div>
                 </div>
               </div>

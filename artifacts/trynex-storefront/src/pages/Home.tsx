@@ -19,7 +19,7 @@ import {
   Users, BadgeCheck, Flame, Shirt, Coffee, Crown, TrendingUp, Eye
 } from "lucide-react";
 import { motion, useInView } from "framer-motion";
-import React, { useRef, useEffect, useState, useCallback } from "react";
+import React, { useRef, useEffect, useState, useCallback, useMemo } from "react";
 import { TypewriterHero } from "@/components/home/TypewriterHero";
 
 const MARQUEE_ITEMS = [
@@ -658,10 +658,41 @@ function HomeTopPostsWidget() {
 }
 
 export default function Home() {
-  const { data: productsData, isLoading, isError, refetch } = useListProducts({ limit: 9, featured: true });
+  const { data: productsData, isLoading, isError, refetch } = useListProducts({ limit: 100 });
   const { data: testimonialsData } = useGetTestimonials();
   const publicStats = usePublicStats();
-  const featuredProducts = productsData?.products || [];
+  const allProducts = productsData?.products || [];
+  const featuredProducts = useMemo(() => {
+    const categoryMatchers: Array<(product: typeof allProducts[number]) => boolean> = [
+      p => /t-?shirt|tee/i.test(`${p.categoryName || ""} ${p.name}`),
+      p => /hoodie|sweatshirt/i.test(`${p.categoryName || ""} ${p.name}`),
+      p => /mug|cup/i.test(`${p.categoryName || ""} ${p.name}`),
+      p => /cap|hat/i.test(`${p.categoryName || ""} ${p.name}`),
+      p => /long.?sleeve/i.test(`${p.categoryName || ""} ${p.name}`),
+      p => /bottle|flask|canteen/i.test(`${p.categoryName || ""} ${p.name}`),
+    ];
+    const ranked = [...allProducts].sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)) || (b.id || 0) - (a.id || 0));
+    const buckets = categoryMatchers.map(match => ranked.filter(match));
+    const selected: typeof ranked = [];
+    const selectedIds = new Set<number>();
+    let round = 0;
+    while (selected.length < 20 && round < 20) {
+      for (const bucket of buckets) {
+        const product = bucket[round];
+        if (product && !selectedIds.has(product.id)) {
+          selected.push(product);
+          selectedIds.add(product.id);
+        }
+        if (selected.length >= 20) break;
+      }
+      round += 1;
+    }
+    for (const product of ranked) {
+      if (selected.length >= 20) break;
+      if (!selectedIds.has(product.id)) selected.push(product);
+    }
+    return selected.slice(0, 20);
+  }, [allProducts]);
   const dynamicTestimonials = testimonialsData?.testimonials || [];
   const howItWorksRef = useRef<HTMLDivElement>(null);
   const howItWorksInView = useInView(howItWorksRef, { once: true, margin: "-80px" });
@@ -814,7 +845,7 @@ export default function Home() {
 
           {isLoading ? (
             <div className="product-grid-responsive" aria-label="Loading products" aria-busy="true">
-              {Array.from({ length: 9 }).map((_, i) => (
+              {Array.from({ length: 20 }).map((_, i) => (
                 <ProductCardSkeleton key={i} />
               ))}
             </div>
@@ -835,7 +866,7 @@ export default function Home() {
           ) : featuredProducts.length === 0 ? null : (
             <ErrorBoundary section="featured products">
               <div className="product-grid-responsive">
-                {featuredProducts.slice(0, 9).map((product, i) => (
+                {featuredProducts.map((product, i) => (
                   <ProductCard key={product.id} product={product} index={i} />
                 ))}
               </div>

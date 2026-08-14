@@ -132,7 +132,9 @@ function mapProduct(p: any, categoryName?: string | null) {
 
 router.get("/products", async (req, res) => {
   try {
-    const { categoryId, search, featured, customizable, page = "1", limit = "12", sort } = req.query;
+    const { categoryId: rawCategoryId, category, search, featured, customizable, page = "1", limit = "12", sort } = req.query;
+    // Accept both the canonical API name and the storefront-friendly alias.
+    const categoryId = rawCategoryId ?? category;
     const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
     const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10) || 12));
     const offset = (pageNum - 1) * limitNum;
