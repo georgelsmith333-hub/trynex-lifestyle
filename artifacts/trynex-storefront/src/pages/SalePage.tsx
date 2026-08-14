@@ -4,7 +4,7 @@ import { Link, useLocation } from "wouter";
 import { Zap, Clock, Shield, Truck, Star, ChevronRight } from "lucide-react";
 import { useListProducts } from "@workspace/api-client-react";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, resolveImageUrl } from "@/lib/utils";
 import { trackViewContent } from "@/lib/tracking";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -72,8 +72,12 @@ function ProductCard({ product }: { product: any }) {
       >
         <div className="relative overflow-hidden aspect-square bg-gray-50">
           <img
-            src={product.imageUrl || product.images?.[0] || "/images/product-placeholder.svg"}
+            src={resolveImageUrl(product.imageUrl || product.images?.[0])}
             alt={product.name}
+            width={640}
+            height={640}
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover"
             onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/images/product-placeholder.svg"; }}
           />

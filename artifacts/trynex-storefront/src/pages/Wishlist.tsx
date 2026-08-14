@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { type Product } from "@workspace/api-client-react";
 import { Heart, ShoppingCart, ArrowRight, Trash2, X, Check } from "lucide-react";
 import { ToastAction } from "@/components/ui/toast";
-import { formatPrice, getApiUrl } from "@/lib/utils";
+import { formatPrice, getApiUrl, resolveImageUrl } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 const COLOR_MAP: Record<string, string> = {
@@ -258,7 +258,7 @@ export default function Wishlist() {
                   >
                     <div className="relative aspect-[4/5] overflow-hidden bg-gray-50">
                       {item.imageUrl ? (
-                        <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" width="300" height="300" onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/images/product-placeholder.svg"; }} />
+                        <img src={resolveImageUrl(item.imageUrl)} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" width="300" height="300" onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/images/product-placeholder.svg"; }} />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-4xl">🛍️</div>
                       )}
