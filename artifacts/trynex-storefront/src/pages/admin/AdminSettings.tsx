@@ -365,12 +365,18 @@ export default function AdminSettings() {
         freeShippingThreshold: "1500",
         shippingCost: "100",
         scarcityThreshold: "10",
-        studioTshirtPrice: "1099",
-        studioMugPrice: "799",
+        studioTshirtPrice: "450",
+        studioMugPrice: "449",
         studioHoodiePrice: "1699",
         studioLongsleevePrice: "1299",
         studioCapPrice: "699",
         studioWaterbottlePrice: "899",
+        studioTshirtCustomizationFee: "99",
+        studioHoodieCustomizationFee: "99",
+        studioLongsleeveCustomizationFee: "99",
+        studioCapCustomizationFee: "99",
+        studioMugCustomizationFee: "99",
+        studioWaterbottleCustomizationFee: "99",
       };
       for (const [key, fallback] of Object.entries(numericDefaults)) {
         const val = safeData[key];
@@ -390,6 +396,12 @@ export default function AdminSettings() {
         studioLongsleevePrice: Number(safeData.studioLongsleevePrice),
         studioCapPrice: Number(safeData.studioCapPrice),
         studioWaterbottlePrice: Number(safeData.studioWaterbottlePrice),
+        studioTshirtCustomizationFee: Number(safeData.studioTshirtCustomizationFee),
+        studioHoodieCustomizationFee: Number(safeData.studioHoodieCustomizationFee),
+        studioLongsleeveCustomizationFee: Number(safeData.studioLongsleeveCustomizationFee),
+        studioCapCustomizationFee: Number(safeData.studioCapCustomizationFee),
+        studioMugCustomizationFee: Number(safeData.studioMugCustomizationFee),
+        studioWaterbottleCustomizationFee: Number(safeData.studioWaterbottleCustomizationFee),
         studioTshirtColors: tshirtColorsJson,
         studioMugColors: mugColorsJson,
         studioHoodieColors: hoodieColorsJson,
@@ -628,7 +640,7 @@ export default function AdminSettings() {
             </p>
           </Field>
           <Field label="T-Shirt Price (৳)" full={false}>
-            <input {...register("studioTshirtPrice")} className={inputClass} style={inputStyle} placeholder="1099" type="number" min="0" max="50000" step="1" />
+            <input {...register("studioTshirtPrice")} className={inputClass} style={inputStyle} placeholder="450" type="number" min="0" max="50000" step="1" />
             <p className="text-xs text-gray-400 mt-1">Base price for custom T-shirt orders from the Design Studio.</p>
           </Field>
           <Field label="Hoodie Price (৳)" full={false}>
@@ -644,12 +656,32 @@ export default function AdminSettings() {
             <p className="text-xs text-gray-400 mt-1">Base price for custom Cap orders.</p>
           </Field>
           <Field label="Mug Price (৳)" full={false}>
-            <input {...register("studioMugPrice")} className={inputClass} style={inputStyle} placeholder="799" type="number" min="0" max="50000" step="1" />
+            <input {...register("studioMugPrice")} className={inputClass} style={inputStyle} placeholder="449" type="number" min="0" max="50000" step="1" />
             <p className="text-xs text-gray-400 mt-1">Base price for custom Mug orders.</p>
           </Field>
           <Field label="Water Bottle Price (৳)" full={false}>
             <input {...register("studioWaterbottlePrice")} className={inputClass} style={inputStyle} placeholder="899" type="number" min="0" max="50000" step="1" />
             <p className="text-xs text-gray-400 mt-1">Base price for custom Water Bottle orders.</p>
+          </Field>
+          <Field label="Customization Fee — T-Shirt (৳)" full={false}>
+            <input {...register("studioTshirtCustomizationFee")} className={inputClass} style={inputStyle} placeholder="99" type="number" min="0" max="50000" step="1" />
+            <p className="text-xs text-gray-400 mt-1">Applied once when the customer adds artwork or text.</p>
+          </Field>
+          <Field label="Customization Fee — Hoodie (৳)" full={false}>
+            <input {...register("studioHoodieCustomizationFee")} className={inputClass} style={inputStyle} placeholder="99" type="number" min="0" max="50000" step="1" />
+          </Field>
+          <Field label="Customization Fee — Long Sleeve (৳)" full={false}>
+            <input {...register("studioLongsleeveCustomizationFee")} className={inputClass} style={inputStyle} placeholder="99" type="number" min="0" max="50000" step="1" />
+          </Field>
+          <Field label="Customization Fee — Cap (৳)" full={false}>
+            <input {...register("studioCapCustomizationFee")} className={inputClass} style={inputStyle} placeholder="99" type="number" min="0" max="50000" step="1" />
+          </Field>
+          <Field label="Customization Fee — Mug (৳)" full={false}>
+            <input {...register("studioMugCustomizationFee")} className={inputClass} style={inputStyle} placeholder="99" type="number" min="0" max="50000" step="1" />
+            <p className="text-xs text-gray-400 mt-1">Use variant-level overrides for Love Shape, Blue Rim, and Yellow Rim.</p>
+          </Field>
+          <Field label="Customization Fee — Water Bottle (৳)" full={false}>
+            <input {...register("studioWaterbottleCustomizationFee")} className={inputClass} style={inputStyle} placeholder="99" type="number" min="0" max="50000" step="1" />
           </Field>
           <Field label="T-Shirt Colors" full>
             <StudioColorsManager value={tshirtColorsJson} onChange={setTshirtColorsJson} />

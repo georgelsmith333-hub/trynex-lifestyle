@@ -40,6 +40,9 @@ const SETTINGS_KEYS = [
   "studioLongsleeveColors", "studioLongsleevePrice",
   "studioCapColors", "studioCapPrice",
   "studioWaterbottleColors", "studioWaterbottlePrice",
+  "studioTshirtCustomizationFee", "studioHoodieCustomizationFee",
+  "studioLongsleeveCustomizationFee", "studioCapCustomizationFee",
+  "studioMugCustomizationFee", "studioWaterbottleCustomizationFee",
   // Visual Designer keys (Task #7)
   "heroImageUrl", "heroGradient", "heroCTAText", "heroCTALink",
   "primaryColor", "announcementColor",
@@ -144,12 +147,18 @@ async function buildSettings(map: Record<string, string | null>) {
     studioWaterbottleColors: map["studioWaterbottleColors"] ?? "",
     // Admin-configured prices for custom studio orders (BDT)
     // Published custom-design defaults: T-shirt ৳450 + ৳99; mug ৳449 + ৳99.
-    studioTshirtPrice: parseFloat(map["studioTshirtPrice"] ?? "549"),
-    studioMugPrice: parseFloat(map["studioMugPrice"] ?? "548"),
+    studioTshirtPrice: parseFloat(map["studioTshirtPrice"] ?? "450"),
+    studioMugPrice: parseFloat(map["studioMugPrice"] ?? "449"),
     studioHoodiePrice: parseFloat(map["studioHoodiePrice"] ?? "1699"),
     studioLongsleevePrice: parseFloat(map["studioLongsleevePrice"] ?? "1299"),
     studioCapPrice: parseFloat(map["studioCapPrice"] ?? "699"),
     studioWaterbottlePrice: parseFloat(map["studioWaterbottlePrice"] ?? "899"),
+    studioTshirtCustomizationFee: parseFloat(map["studioTshirtCustomizationFee"] ?? "99"),
+    studioHoodieCustomizationFee: parseFloat(map["studioHoodieCustomizationFee"] ?? "99"),
+    studioLongsleeveCustomizationFee: parseFloat(map["studioLongsleeveCustomizationFee"] ?? "99"),
+    studioCapCustomizationFee: parseFloat(map["studioCapCustomizationFee"] ?? "99"),
+    studioMugCustomizationFee: parseFloat(map["studioMugCustomizationFee"] ?? "99"),
+    studioWaterbottleCustomizationFee: parseFloat(map["studioWaterbottleCustomizationFee"] ?? "99"),
     // Visual Designer settings (Task #7)
     heroImageUrl: map["heroImageUrl"] ?? "",
     heroGradient: map["heroGradient"] ?? "",
