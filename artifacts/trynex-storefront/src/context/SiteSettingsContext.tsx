@@ -44,6 +44,16 @@ interface SiteSettings {
   studioMugColors: string;
   studioTshirtPrice: number;
   studioMugPrice: number;
+  studioHoodiePrice: number;
+  studioLongsleevePrice: number;
+  studioCapPrice: number;
+  studioWaterbottlePrice: number;
+  studioTshirtCustomizationFee: number;
+  studioHoodieCustomizationFee: number;
+  studioLongsleeveCustomizationFee: number;
+  studioCapCustomizationFee: number;
+  studioMugCustomizationFee: number;
+  studioWaterbottleCustomizationFee: number;
   heroImageUrl: string;
   heroGradient: string;
   heroCTAText: string;
@@ -156,8 +166,18 @@ const defaults: SiteSettings = {
   studioTshirtColors: c("studioTshirtColors") || "",
   studioMugColors: c("studioMugColors") || "",
   // Published custom-design defaults: T-shirt ৳450 + ৳99; mug ৳449 + ৳99.
-  studioTshirtPrice: Number(c("studioTshirtPrice")) || 549,
-  studioMugPrice: Number(c("studioMugPrice")) || 548,
+  studioTshirtPrice: Number(c("studioTshirtPrice")) || 450,
+  studioMugPrice: Number(c("studioMugPrice")) || 449,
+  studioHoodiePrice: Number(c("studioHoodiePrice")) || 1699,
+  studioLongsleevePrice: Number(c("studioLongsleevePrice")) || 1299,
+  studioCapPrice: Number(c("studioCapPrice")) || 699,
+  studioWaterbottlePrice: Number(c("studioWaterbottlePrice")) || 899,
+  studioTshirtCustomizationFee: Number(c("studioTshirtCustomizationFee")) || 99,
+  studioHoodieCustomizationFee: Number(c("studioHoodieCustomizationFee")) || 99,
+  studioLongsleeveCustomizationFee: Number(c("studioLongsleeveCustomizationFee")) || 99,
+  studioCapCustomizationFee: Number(c("studioCapCustomizationFee")) || 99,
+  studioMugCustomizationFee: Number(c("studioMugCustomizationFee")) || 99,
+  studioWaterbottleCustomizationFee: Number(c("studioWaterbottleCustomizationFee")) || 99,
   heroImageUrl: c("heroImageUrl") || "",
   heroGradient: c("heroGradient") || "",
   heroCTAText: c("heroCTAText") || "Shop Now",

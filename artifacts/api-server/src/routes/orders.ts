@@ -1296,7 +1296,7 @@ const updateOrderStatusHandler = async (req: Request, res: Response) => {
     sendTelegramStatusUpdate(mapped, status).catch((err) => logger.warn({ err }, "Telegram status update failed (fire-and-forget)"));
     sendStatusUpdateEmail(mapped, status).catch((err) => logger.warn({ err }, "Status update email failed (fire-and-forget)"));
 
-    if (order.customerId) {
+    if (order.customerId && beforeSnap?.status !== status) {
       const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
       createCustomerNotification(
         order.customerId,
@@ -1339,7 +1339,7 @@ const updatePaymentStatusHandler = async (req: Request, res: Response) => {
 
     sendTelegramPaymentStatusUpdate(mappedPayment, paymentStatus).catch((err) => logger.warn({ err }, "Telegram payment status update failed (fire-and-forget)"));
 
-    if (order.customerId) {
+    if (order.customerId && beforeSnap?.paymentStatus !== paymentStatus) {
       const pStatusLabel = paymentStatus.charAt(0).toUpperCase() + paymentStatus.slice(1);
       createCustomerNotification(
         order.customerId,
@@ -1412,6 +1412,15 @@ router.put("/orders/:id/payment-info", async (req, res) => {
       return;
     }
     res.json(mapOrder(order));
+    if (order.customerId && existingOrder.paymentStatus !== "submitted") {
+      createCustomerNotification(
+        order.customerId,
+        `Payment Submitted: #${order.orderNumber}`,
+        `We received your payment proof for order #${order.orderNumber}. Our team will verify it shortly. Tap to view details.`,
+        "payment_status",
+        `/account?order=${order.orderNumber}`
+      ).catch((err) => logger.warn({ err }, "Failed to create payment-submitted notification (fire-and-forget)"));
+    }
   } catch (err) {
     req.log.error({ err }, "Failed to update payment info");
     res.status(500).json({ error: "internal_error", message: "Failed to update payment info" });

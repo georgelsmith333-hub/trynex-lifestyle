@@ -528,17 +528,23 @@ export default function DesignStudioV2() {
       }
     }
 
-    // Public custom-design pricing: general mug ৳449 + ৳99 customization;
-    // short-sleeve T-shirt ৳450 + ৳99 customization. A product launched
-    // from the catalog keeps its authoritative linked product price.
-    const studioPrice = linkedStoreProduct?.price ?? (
-      isMug ? 548 :
-      selectedProduct.category === "tshirt" ? 549 :
-      isWaterBottle ? 899 :
-      selectedProduct.category === "hoodie" ? 1699 :
-      selectedProduct.category === "longsleeve" ? 1299 :
-      isCap ? 699 : 549
-    );
+    // Admin-controlled custom-design pricing. A product launched from the
+    // catalog keeps its authoritative linked product/variant price; a blank
+    // studio product uses the configured base price plus one customization fee.
+    const configuredStudioPrice = isMug
+      ? Number(settings.studioMugPrice) + Number(settings.studioMugCustomizationFee)
+      : selectedProduct.category === "tshirt"
+        ? Number(settings.studioTshirtPrice) + Number(settings.studioTshirtCustomizationFee)
+        : isWaterBottle
+          ? Number(settings.studioWaterbottlePrice) + Number(settings.studioWaterbottleCustomizationFee)
+          : selectedProduct.category === "hoodie"
+            ? Number(settings.studioHoodiePrice) + Number(settings.studioHoodieCustomizationFee)
+            : selectedProduct.category === "longsleeve"
+              ? Number(settings.studioLongsleevePrice) + Number(settings.studioLongsleeveCustomizationFee)
+              : isCap
+                ? Number(settings.studioCapPrice) + Number(settings.studioCapCustomizationFee)
+                : Number(settings.studioTshirtPrice) + Number(settings.studioTshirtCustomizationFee);
+    const studioPrice = linkedStoreProduct?.price ?? configuredStudioPrice;
     const sessionId = Date.now().toString(36);
     try {
       localStorage.setItem(`studio_session_${sessionId}`, JSON.stringify({ version: DRAFT_VERSION, layers, productId: selectedProduct.id, color: selectedColor, size: selectedSize, savedAt: Date.now() }));
