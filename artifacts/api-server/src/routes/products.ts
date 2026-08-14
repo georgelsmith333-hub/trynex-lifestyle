@@ -121,6 +121,8 @@ async function invalidateProductCache(): Promise<void> {
 }
 
 function mapProduct(p: any, categoryName?: string | null) {
+  const category = String(categoryName ?? "").toLowerCase();
+  const oneSizeCategory = category.includes("mug") || category.includes("cap") || category.includes("bottle");
   return {
     id: p.id,
     name: p.name,
@@ -132,7 +134,7 @@ function mapProduct(p: any, categoryName?: string | null) {
     categoryName: categoryName ?? undefined,
     imageUrl: p.imageUrl,
     images: p.images ?? [],
-    sizes: p.sizes ?? [],
+    sizes: oneSizeCategory ? [] : (p.sizes ?? []),
     colors: p.colors ?? [],
     stock: p.stock,
     featured: p.featured ?? false,
