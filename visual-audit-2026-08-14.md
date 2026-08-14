@@ -45,3 +45,27 @@ The Cap route works through the picker and renders a distinct cap silhouette wit
 ## Bottle visual audit
 
 The in-app picker successfully changes to `Water Bottle · Front` and shows the intended 600ml aluminium bottle silhouette with a black loop cap and a tall centered printable rectangle. This is the correct product shape, but the bottle body is extremely pale and the orange print-zone rectangle does not communicate the curved side exclusion areas or top/bottom no-print regions. The bottle needs a product-specific exclusion mask/overlay rather than a generic rectangular zone, and the white/grey lighting should be reduced so the bottle edge and surface remain readable.
+
+## Post-deployment verification
+
+After the passing CI release, the live Design Studio deep link `?product=waterbottle` now correctly opens **Water Bottle · Front** instead of reverting to the T-shirt. The live bottle preview shows the intended aluminium silhouette and the print-zone overlay now follows a narrowed body shape with curved shoulder and base boundaries rather than a plain rectangle. This confirms the URL normalization and product-specific print-zone fix reached Cloudflare Pages.
+
+## Admin gallery verification
+
+The authenticated live Mockup Gallery now loads fully after the initial spinner and reports **92 mockups**. The cards are labeled `SOURCE KIT`, and the gallery exposes Upload Mockups, product/status filters, and read-only source-kit records. The current card grid still contains visibly inconsistent source imagery: white apparel cards remain pale while black/color cards are stronger, and there are many creative catalog names in the filter list that are not the six canonical Design Studio product templates. Those rows are admin-visible catalog/source records, not the six editor templates, so the gallery is functional but the catalog taxonomy remains broader than the editor’s canonical set.
+
+## Orders verification
+
+The authenticated production Orders page now loads correctly with its filters, refresh control, auto-sync label, and status counters, but it still reports **0 Total** and displays `No orders yet.`. This is not a frontend loading failure; the admin UI is functioning and the backend/database selection problem remains unresolved in the live Render API. The deployment must not be reported as fully complete until the backend rollout for the data-aware database selection reaches production and the same page returns historical rows.
+
+## Render deployment blocker
+
+The authenticated Admin Deployment page reports the API server online and environment variables present, but the `Render Deploy Hook URL` field is empty. The page explicitly says the hook is required for the “Trigger Render Deploy” action. This explains why GitHub commits can reach Cloudflare Pages while the Render backend remains on the older release and continues returning zero orders. This is the one external configuration action required from the user: add the Render service deploy hook URL in Admin → Deployment or trigger the current Render deploy manually in the Render dashboard.
+
+## Backend rollout result
+
+Render’s deployment API reports commit `ba3b9e1` as `live`, replacing the older `8250330` deployment. Despite that, the live Admin Orders page still reports zero records. This confirms the problem is not deployment propagation or frontend caching: the running backend is live but cannot see the historical-order data through its configured database candidates. The next diagnostic is the production DB Cluster page, followed by an explicit user action if the historical database credential is not configured in Render.
+
+## DB Cluster diagnostics
+
+The live DB Cluster page reports **6/6 healthy nodes**, with Neon Main marked active. It lists Products DB and Analytics DB as separate satellite databases, and the Analytics DB is online but not selected as the active transactional database. The UI does not expose row counts per node. Therefore, the backend can reach all configured nodes, but the historical orders are not present on the active transactional database; the data-aware selection code alone cannot recover rows unless the historical order database is configured as a transactional candidate or the data is migrated into Neon Main.
