@@ -945,6 +945,27 @@ router.post("/orders", async (req, res) => {
           if (virtual.minOrderAmount && subtotal < virtual.minOrderAmount) {
             throw new Error("PROMO_INVALID");
           }
+          // Virtual spin codes are not stored in promoCodesTable, so enforce
+          // one redeemed spin reward per customer identity from order history.
+          // This prevents creating multiple guest sessions to reuse rewards.
+          const priorSpinUse = await tx
+            .select({ id: ordersTable.id })
+            .from(ordersTable)
+            .where(and(
+              or(
+                ilike(ordersTable.promoCode, "SPIN%"),
+                eq(ordersTable.promoCode, "FREEDELIV"),
+                eq(ordersTable.promoCode, "SUPERDEAL"),
+              ),
+              or(
+                eq(ordersTable.customerPhone, customerPhone),
+                ...(customerEmailLower ? [eq(ordersTable.customerEmail, customerEmailLower)] : []),
+              ),
+            ))
+            .limit(1);
+          if (priorSpinUse.length > 0) {
+            throw new Error("PROMO_ALREADY_USED");
+          }
           const { discount, freeShipping } = calcVirtualDiscount(virtual, subtotal, shippingCost);
           validatedPromoCode = virtual.code;
           validatedPromoDiscount = discount;
