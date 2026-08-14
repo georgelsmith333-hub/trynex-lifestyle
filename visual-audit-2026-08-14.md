@@ -69,3 +69,7 @@ Render’s deployment API reports commit `ba3b9e1` as `live`, replacing the olde
 ## DB Cluster diagnostics
 
 The live DB Cluster page reports **6/6 healthy nodes**, with Neon Main marked active. It lists Products DB and Analytics DB as separate satellite databases, and the Analytics DB is online but not selected as the active transactional database. The UI does not expose row counts per node. Therefore, the backend can reach all configured nodes, but the historical orders are not present on the active transactional database; the data-aware selection code alone cannot recover rows unless the historical order database is configured as a transactional candidate or the data is migrated into Neon Main.
+
+## Historical database comparison
+
+A read-only comparison of the saved pre-migration Neon candidates found the actual history: `DATABASE_ANALYTICS` contains **73 orders and 10 products**, while `DATABASE_PRODUCTS` contains **73 orders and 70 products**. Both have an orders table but no database mockup rows. The current Render DB Cluster page points to a different newly active Neon Main host, which explains the live zero-order result. The primary and failover candidates in the saved snapshot currently reject queries because their Neon project exceeded its data-transfer quota. The historical order rows are therefore recoverable from the saved `DATABASE_PRODUCTS`/`DATABASE_ANALYTICS` candidate credentials, but those candidates are not currently configured in Render.

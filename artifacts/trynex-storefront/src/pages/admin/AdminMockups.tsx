@@ -82,6 +82,7 @@ export default function AdminMockups() {
   const [saving, setSaving] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
   const [lightbox, setLightbox] = useState<string | null>(null);
+  const [uploadTarget, setUploadTarget] = useState<Mockup | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: productsData } = useListProducts({ limit: 200 });
@@ -109,25 +110,43 @@ export default function AdminMockups() {
 
   const handleUpload = async (files: FileList | null) => {
     if (!files?.length) return;
+    const target = uploadTarget;
     setUploading(true);
     try {
       for (const file of Array.from(files)) {
         if (!file.type.startsWith("image/")) continue;
         const imageUrl = await uploadFile(file);
-        const name = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+        const fileName = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+        const name = target ? `${target.name} — override` : fileName;
+        const tags = Array.from(new Set([...(target?.tags ?? []), ...(target ? ["override"] : ["uploaded"]) ]));
         await apiFetch("/api/admin/mockups", {
           method: "POST",
-          body: JSON.stringify({ name, imageUrl }),
+          body: JSON.stringify({
+            name,
+            description: target ? `Editable override for ${target.name}` : null,
+            productId: target?.productId ?? null,
+            productName: target?.productName ?? null,
+            imageUrl,
+            tags,
+            isActive: true,
+            sortOrder: target?.sortOrder ?? 0,
+          }),
         });
-        toast({ title: "Mockup uploaded", description: name });
+        toast({ title: target ? "Live override uploaded" : "Mockup uploaded", description: name });
       }
       await fetchMockups();
     } catch (err: any) {
       toast({ title: "Upload failed", description: err.message, variant: "destructive" });
     } finally {
       setUploading(false);
+      setUploadTarget(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
+  };
+
+  const startUpload = (target: Mockup | null = null) => {
+    setUploadTarget(target);
+    window.setTimeout(() => fileInputRef.current?.click(), 0);
   };
 
   const openEdit = (m: Mockup) => {
@@ -241,7 +260,7 @@ export default function AdminMockups() {
               onChange={e => handleUpload(e.target.files)}
             />
             <button
-              onClick={() => fileInputRef.current?.click()}
+              onClick={() => startUpload()}
               disabled={uploading}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm text-white disabled:opacity-60"
               style={{ background: "linear-gradient(135deg, #E85D04, #FB8500)" }}
@@ -386,9 +405,18 @@ export default function AdminMockups() {
                       </button>
                     </div>}
                     {m.isCanonical && (
-                      <span className="absolute bottom-2 left-2 text-[8px] font-black uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-white/90 text-orange-600 shadow-sm">
-                        Source kit
-                      </span>
+                      <>
+                        <button
+                          onClick={e => { e.stopPropagation(); startUpload(m); }}
+                          className="absolute top-1 right-1 p-1 rounded-lg bg-orange-500 text-white opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
+                          title="Upload editable live override"
+                        >
+                          <Pencil className="w-3 h-3" />
+                        </button>
+                        <span className="absolute bottom-2 left-2 text-[8px] font-black uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-white/90 text-orange-600 shadow-sm">
+                          Source kit · click pencil to override
+                        </span>
+                      </>
                     )}
                   </div>
 

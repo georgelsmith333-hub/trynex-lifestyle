@@ -105,6 +105,25 @@ function parseOptionalPositiveInt(value: unknown): number | null | undefined {
   return Number.isInteger(parsed) && parsed >= 0 ? parsed : undefined;
 }
 
+router.get("/mockups", async (_req: Request, res: Response) => {
+  try {
+    const rows = await db.select({
+      id: mockupsTable.id,
+      name: mockupsTable.name,
+      productName: mockupsTable.productName,
+      imageUrl: mockupsTable.imageUrl,
+      thumbUrl: mockupsTable.thumbUrl,
+      tags: mockupsTable.tags,
+      isActive: mockupsTable.isActive,
+      updatedAt: mockupsTable.updatedAt,
+    }).from(mockupsTable).where(eq(mockupsTable.isActive, true)).orderBy(asc(mockupsTable.sortOrder), desc(mockupsTable.updatedAt));
+    res.json(rows);
+  } catch (err) {
+    req.log.error({ err }, "Failed to list public mockup overrides");
+    res.status(500).json({ error: "internal_error", message: "Failed to list mockups" });
+  }
+});
+
 router.get("/admin/mockups", requireAdmin, async (req: Request, res: Response) => {
   try {
     const { q, productId, tag, active } = req.query;

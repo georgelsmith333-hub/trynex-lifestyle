@@ -331,6 +331,7 @@ export default function DesignStudio() {
   const pendingStoreProductIdRef = useRef<number | null>(null);
 
   const [selectedProduct, setSelectedProduct] = useState<DesignProduct>(PRODUCTS[0]);
+  const [mockupOverrides, setMockupOverrides] = useState<Record<string, string>>({});
   const [selectedColor, setSelectedColor] = useState<{ name: string; hex: string }>(
     PRODUCTS[0].colors[0]
   );
@@ -911,14 +912,45 @@ export default function DesignStudio() {
   // Mug: MUG_PZ in wrap mode, MUG_SIDE_PZ for sides.
   // Apparel sleeve/neck zones: use getZonePZ which returns SLEEVE_PZ or NECK_LABEL_PZ.
   // Apparel front/back: product's own printZone.
-  const frontMockup = useMemo(
-    () => resolveMockup(selectedProduct, selectedColor.hex, "front"),
-    [selectedProduct, selectedColor.hex],
-  );
-  const backMockup = useMemo(
-    () => resolveMockup(selectedProduct, selectedColor.hex, "back"),
-    [selectedProduct, selectedColor.hex],
-  );
+  useEffect(() => {
+    let cancelled = false;
+    const loadOverrides = async () => {
+      try {
+        const response = await fetch(getApiUrl("/api/mockups"), { cache: "no-store" });
+        if (!response.ok) return;
+        const rows = await response.json();
+        if (!Array.isArray(rows) || cancelled) return;
+        const next: Record<string, string> = {};
+        const categories = new Set(["tshirt", "longsleeve", "hoodie", "mug", "cap", "waterbottle"]);
+        const faces = new Set(["front", "back"]);
+        for (const row of rows) {
+          const tags = Array.isArray(row?.tags) ? row.tags.map((tag: unknown) => String(tag).toLowerCase()) : [];
+          if (!tags.includes("override") || typeof row?.imageUrl !== "string") continue;
+          const category = tags.find((tag: string) => categories.has(tag));
+          const color = tags.find((tag: string) => !categories.has(tag) && !faces.has(tag) && tag !== "source-kit" && tag !== "override");
+          const face = tags.find((tag: string) => faces.has(tag));
+          if (category && color && face) next[`${category}:${color}:${face}`] = row.imageUrl;
+        }
+        if (!cancelled) setMockupOverrides(next);
+      } catch {
+        // Source-kit assets remain the safe fallback when the public override API is unavailable.
+      }
+    };
+    void loadOverrides();
+    const timer = window.setInterval(loadOverrides, 30_000);
+    return () => { cancelled = true; window.clearInterval(timer); };
+  }, []);
+
+  const frontMockup = useMemo(() => {
+    const base = resolveMockup(selectedProduct, selectedColor.hex, "front");
+    const override = base.sourceKitKey ? mockupOverrides[base.sourceKitKey] : undefined;
+    return override ? { ...base, photoSrc: override, cutoutSrc: override, isColorPhoto: true, requiresTint: false } : base;
+  }, [selectedProduct, selectedColor.hex, mockupOverrides]);
+  const backMockup = useMemo(() => {
+    const base = resolveMockup(selectedProduct, selectedColor.hex, "back");
+    const override = base.sourceKitKey ? mockupOverrides[base.sourceKitKey] : undefined;
+    return override ? { ...base, photoSrc: override, cutoutSrc: override, isColorPhoto: true, requiresTint: false } : base;
+  }, [selectedProduct, selectedColor.hex, mockupOverrides]);
 
   // ── Image preloading ────────────────────────────────────────────────────
   // When the user selects a product, eagerly fetch every color's front + back
@@ -1301,26 +1333,17 @@ export default function DesignStudio() {
       // automatically snaps to the new product structure instead of carrying over a
       // relative size that may overflow narrower zones (mug/bottle) or look tiny on
       // wider zones (t-shirt/hoodie).
-      const currentFace = activeFaceRef.current;
-      const aspect = finalW / Math.max(finalH, 1);
-
-      // Improved smart auto-fit: Calculate the best scale for each product's print zone
-      const calculateSmartScale = (zone: PrintZone) => {
-        const zoneAspect = zone.w / zone.h;
-        if (aspect > zoneAspect) {
-          // Image is wider than zone -> fit to width
-          return 1.0;
-        } else {
-          // Image is taller than zone -> fit to height
-          return (zone.h * aspect) / zone.w;
-        }
-      };
+            const currentFace = activeFaceRef.current;
+      const isCylindricalProduct = (category: DesignProduct["category"]) =>
+        category === "mug" || category === "waterbottle" || category === "cap";
 
       PRODUCTS.forEach(prod => {
+
         if (prod.id === selectedProduct.id) return;
         const targetFace: Face = prod.category === selectedProduct.category ? currentFace : "front";
         const targetPZ = getZonePZ(targetFace, prod);
-        const newScale = calculateSmartScale(targetPZ) * 0.94; // 94% to allow small margin
+        const targetMargin = isCylindricalProduct(prod.category) ? 0.88 : 0.94;
+        const newScale = fitImageToPrintZone(finalW, finalH, targetPZ, "contain", targetMargin).scale;
         const propagated: ImageLayer = {
           ...layer,
           id: uid(),
