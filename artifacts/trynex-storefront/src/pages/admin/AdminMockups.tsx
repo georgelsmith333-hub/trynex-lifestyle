@@ -23,6 +23,7 @@ interface Mockup {
   sortOrder: number;
   createdAt: string;
   updatedAt: string;
+  isCanonical?: boolean;
 }
 
 async function apiFetch(path: string, opts: RequestInit = {}) {
@@ -190,6 +191,8 @@ export default function AdminMockups() {
   };
 
   const moveSort = async (id: number, direction: "up" | "down") => {
+    const current = mockups.find(m => m.id === id);
+    if (current?.isCanonical) return;
     const idx = mockups.findIndex(m => m.id === id);
     if (idx < 0) return;
     const newMockups = [...mockups];
@@ -341,8 +344,8 @@ export default function AdminMockups() {
                         <span className="text-[10px] font-black text-gray-400 bg-white/80 px-2 py-0.5 rounded-full">INACTIVE</span>
                       </div>
                     )}
-                    {/* Sort arrows */}
-                    <div className="absolute left-1 top-1/2 -translate-y-1/2 flex flex-col gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {/* Database-upload controls are intentionally hidden for canonical source-kit rows. */}
+                    {!m.isCanonical && <div className="absolute left-1 top-1/2 -translate-y-1/2 flex flex-col gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={e => { e.stopPropagation(); moveSort(m.id, "up"); }}
                         disabled={idx === 0}
@@ -357,9 +360,9 @@ export default function AdminMockups() {
                       >
                         <ChevronDown className="w-3 h-3" />
                       </button>
-                    </div>
+                    </div>}
                     {/* Action buttons */}
-                    <div className="absolute top-1 right-1 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {!m.isCanonical && <div className="absolute top-1 right-1 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={e => { e.stopPropagation(); openEdit(m); }}
                         className="p-1 rounded-lg bg-white/90 text-gray-700 hover:bg-white shadow-sm"
@@ -381,7 +384,12 @@ export default function AdminMockups() {
                       >
                         <Trash2 className="w-3 h-3" />
                       </button>
-                    </div>
+                    </div>}
+                    {m.isCanonical && (
+                      <span className="absolute bottom-2 left-2 text-[8px] font-black uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-white/90 text-orange-600 shadow-sm">
+                        Source kit
+                      </span>
+                    )}
                   </div>
 
                   {/* Info */}

@@ -4,8 +4,10 @@
  * Priority order for connection URLs:
  *   1. DATABASE_URL_MAIN     (Neon primary — ep-proud-hill) ← preferred when set
  *   2. DATABASE_FAILOVER     (Neon failover — ep-crimson-dawn) ← second Neon instance
- *   3. DATABASE_URL_TRYNEX_DB (Neon secondary)
- *   4. DATABASE_URL          (Replit built-in — local dev last resort)
+ *   3. DATABASE_ANALYTICS     (full mirror — preserves orders and admin data)
+ *   4. DATABASE_URL_TRYNEX_DB (Neon secondary)
+ *   5. DATABASE_PRODUCTS      (catalog-only fallback)
+ *   6. DATABASE_URL            (Replit built-in — local dev last resort)
  *
  * The probe validates that a connection both connects AND has the expected schema
  * (by checking for the `products` table). This prevents falling back to an empty
@@ -27,9 +29,9 @@ function getCandidateUrls(): string[] {
   const candidates = [
     process.env.DATABASE_URL_MAIN,      // Neon primary — preferred production DB
     process.env.DATABASE_FAILOVER,      // Neon failover — ep-crimson-dawn
+    process.env.DATABASE_ANALYTICS,     // Full mirror — preserves historical orders/admin data
     process.env.DATABASE_URL_TRYNEX_DB, // Neon secondary (if configured)
-    process.env.DATABASE_ANALYTICS,     // Analytics shard — full mirror (promoted: has 73 orders)
-    process.env.DATABASE_PRODUCTS,      // Products shard / cold mirror
+    process.env.DATABASE_PRODUCTS,      // Products shard / catalog-only fallback
     process.env.DATABASE_URL,           // Replit built-in — last resort
   ].filter((url): url is string => typeof url === "string" && url.trim().length > 0);
 
