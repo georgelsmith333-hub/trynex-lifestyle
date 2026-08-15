@@ -708,6 +708,20 @@ export default function DesignStudioV2() {
                       : <GarmentSVG product={selectedProduct} color={selectedColor.hex} showPrintZone={showPrintZone} face={activeFace} mugMode={isMug ? mugMode : undefined} />
                   }
                 />
+                {!show3D && !isFlatZone && currentFaceLayers.length === 0 && (
+                  <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="pointer-events-auto inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-black text-white shadow-xl transition-all hover:-translate-y-0.5 hover:shadow-2xl active:scale-95 focus:outline-none focus:ring-4 focus:ring-orange-200"
+                      style={{ background: "linear-gradient(135deg,#E85D04,#FB8500)", boxShadow: "0 10px 28px rgba(232,93,4,0.30)" }}
+                      aria-label={`Upload an image for the ${selectedProduct.name}`}
+                    >
+                      <CloudUpload className="w-5 h-5" />
+                      Upload Image
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
