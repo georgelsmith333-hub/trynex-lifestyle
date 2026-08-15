@@ -176,7 +176,7 @@ export default function AdminSEO() {
             </div>
             <div>
               <h1 className="text-2xl font-black font-display text-gray-900">Google Search Console</h1>
-              <p className="text-sm text-gray-500">Submit your sitemap so Google indexes trynexshop.com immediately.</p>
+              <p className="text-sm text-gray-500">Submit your sitemap so Google indexes the live TryNex Pages property immediately.</p>
             </div>
           </div>
         </motion.div>
@@ -298,12 +298,12 @@ export default function AdminSEO() {
               {
                 step: 1,
                 title: "Open Google Search Console",
-                desc: "Sign in with the Google account that owns trynexshop.com.",
+                desc: "Sign in with the Google account that owns the live TryNex Pages property.",
                 link: { href: "https://search.google.com/search-console", label: "Open Search Console →" },
               },
               {
                 step: 2,
-                title: "Select the trynexshop.com property",
+                title: "Select the trynex-lifestyle-shop.pages.dev property",
                 desc: "If it is not listed, click Add Property → Domain. Verify using DNS TXT record (best with Cloudflare) or HTML file method — see the verification guide card below.",
               },
               {
@@ -425,7 +425,7 @@ export default function AdminSEO() {
               { slug: "birthday-gift-bangladesh",   keyword: "birthday gift Bangladesh",    priority: "0.8", badge: null },
             ].map(({ slug, keyword, priority, badge }) => {
               const liveUrl = `https://trynex-lifestyle-shop.pages.dev/${slug}`;
-              const gscUrl  = `https://search.google.com/search-console/inspect?resource_id=https%3A%2F%2Ftrynexshop.com%2F&id=${encodeURIComponent(liveUrl)}`;
+              const gscUrl  = `https://search.google.com/search-console/inspect?resource_id=https%3A%2F%2Ftrynex-lifestyle-shop.pages.dev%2F&id=${encodeURIComponent(liveUrl)}`;
               return (
                 <div key={slug} className="flex items-center gap-3 px-6 py-3.5 hover:bg-orange-50/30 transition-colors group">
                   <Globe className="w-4 h-4 text-gray-300 shrink-0 group-hover:text-orange-400 transition-colors" />
