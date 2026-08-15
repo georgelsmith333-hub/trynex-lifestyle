@@ -830,9 +830,11 @@ export default function Checkout() {
   const canProceed = (() => {
     if (configuredPaymentMethods.length === 0) return false;
     if (isWalletMethod) {
-      // The customer must identify the sending wallet and provide either the
-      // sender-number suffix or a transaction ID before review/order creation.
-      return paymentNumberReady && hasWalletEvidence;
+      // The screenshot is uploaded only after the order exists, because the
+      // payment-proof object is attached to the created order on the gateway
+      // screen. Requiring it here deadlocks Step 2 and makes Review Order
+      // impossible. The sender suffix is enough to reach the review step.
+      return paymentNumberReady && lastFour.length === 4;
     }
     if (paymentMethod === 'bank') {
       return bankConfigured && senderName.trim().length > 0 && bankReference.trim().length > 0;
