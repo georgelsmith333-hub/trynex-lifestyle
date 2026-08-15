@@ -7,12 +7,12 @@
 import { createSmartMockupManifest, type SmartMockupManifest } from "./smart-mockup-manifest";
 
 // ── T-Shirt: unified studio photos from normalized/ folder ──
-const tshirtFront          = "/assets/mockups/tshirt_1.png";
-const tshirtBack           = "/assets/mockups/tshirt_6.png";
-const tshirtFrontDark      = "/assets/mockups/tshirt_1.png"; // Will be tinted
-const tshirtBackDark       = "/assets/mockups/tshirt_6.png";
-const tshirtFrontCutout    = "/assets/mockups/tshirt_1.png";
-const tshirtBackCutout     = "/assets/mockups/tshirt_6.png";
+const tshirtFront          = "/mockups/normalized/tshirt-white-front.png";
+const tshirtBack           = "/mockups/normalized/tshirt-white-back.png";
+const tshirtFrontDark      = "/mockups/normalized/tshirt-black-front.png";
+const tshirtBackDark       = "/mockups/normalized/tshirt-black-back.png";
+const tshirtFrontCutout    = "/mockups/normalized-cutouts/tshirt-white-front.png";
+const tshirtBackCutout     = "/mockups/normalized-cutouts/tshirt-white-back.png";
 
 // Smart Mockup Mask Paths
 const getShadowMask = (path: string) => path.replace("/assets/mockups/", "/assets/mockups/processed/").replace(".png", "_shadow.png");
@@ -30,35 +30,36 @@ const oliveTshirtFront     = "/mockups/olive-tshirt-front.png";
 const oliveTshirtBack      = "/mockups/olive-tshirt-back.png";
 const skyblueTshirtFront   = "/mockups/skyblue-tshirt-front.png";
 const skyblueTshirtBack    = "/mockups/skyblue-tshirt-back.png";
-const longsleeveFront          = "/assets/mockups/longsleeve_1.png";
-const longsleeveBack           = "/assets/mockups/longsleeve_6.png";
-const longsleeveFrontDark      = "/assets/mockups/longsleeve_1.png";
-const longsleeveFrontCutout    = "/assets/mockups/longsleeve_1.png";
-const longsleeveBackCutout     = "/assets/mockups/longsleeve_6.png";
-const longsleeveFrontDarkCutout = "/assets/mockups/longsleeve_1.png";
-const longsleeveBackDarkCutout  = "/assets/mockups/longsleeve_6.png";
-const hoodieFront          = "/assets/mockups/hoodie_1.png";
-const hoodieBack           = "/assets/mockups/hoodie_6.png";
-const hoodieFrontDark      = "/assets/mockups/hoodie_1.png";
-const hoodieBackDark       = "/assets/mockups/hoodie_6.png";
-const hoodieFrontCutout    = "/assets/mockups/hoodie_1.png";
-const hoodieBackCutout     = "/assets/mockups/hoodie_6.png";
-const mugFront             = "/assets/mockups/mug_1.png";
-const mugFrontDark         = "/assets/mockups/mug_1.png";
-const mugBack              = "/assets/mockups/mug_6.png";
-const mugBackDark          = "/assets/mockups/mug_6.png";
-const mugFrontCutout       = "/assets/mockups/mug_1.png";
-const mugFrontDarkCutout   = "/assets/mockups/mug_1.png";
-const capFront             = "/assets/mockups/cap_1.png";
-const capFrontCutout       = "/assets/mockups/cap_1.png";
+const longsleeveFront          = "/mockups/normalized/longsleeve-white-front.png";
+const longsleeveBack           = "/mockups/normalized/longsleeve-white-back.png";
+const longsleeveFrontDark      = "/mockups/normalized/longsleeve-black-front.png";
+const longsleeveFrontCutout    = "/mockups/normalized-cutouts/longsleeve-white-front.png";
+const longsleeveBackCutout     = "/mockups/normalized-cutouts/longsleeve-white-back.png";
+const longsleeveFrontDarkCutout = "/mockups/normalized-cutouts/longsleeve-black-front.png";
+const longsleeveBackDarkCutout  = "/mockups/normalized-cutouts/longsleeve-black-back.png";
+const hoodieFront          = "/mockups/normalized/hoodie-white-front.png";
+const hoodieBack           = "/mockups/normalized/hoodie-white-back.png";
+const hoodieFrontDark      = "/mockups/normalized/hoodie-black-front.png";
+const hoodieBackDark       = "/mockups/normalized/hoodie-black-back.png";
+const hoodieFrontCutout    = "/mockups/normalized-cutouts/hoodie-white-front.png";
+const hoodieBackCutout     = "/mockups/normalized-cutouts/hoodie-white-back.png";
+const mugFront             = "/mockups/normalized/mug-white-front.png";
+const mugFrontDark         = "/mockups/normalized/mug-black-front.png";
+const mugBack              = "/mockups/normalized/mug-white-back.png";
+const mugBackDark          = "/mockups/normalized/mug-black-back.png";
+const mugFrontCutout       = "/mockups/normalized-cutouts/mug-white-front.png";
+const mugFrontDarkCutout   = "/mockups/normalized-cutouts/mug-black-front.png";
+const capFront             = "/mockups/normalized/cap-white-front.png";
+const capBack              = "/mockups/normalized/cap-white-back.png";
+const capFrontCutout       = "/mockups/normalized-cutouts/cap-white-front.png";
 // Canonical TryNex bottle: upright aluminium body with black key-ring loop and side carabiner.
 // Keep legacy bottle_1 out of the active studio path; it is the wrong product shape.
-const waterBottleFront          = "/mockups/source-kit/waterbottle-white-front.png";
-const waterBottleCutout         = "/mockups/source-kit/waterbottle-white-front.png";
+const waterBottleFront          = "/mockups/normalized/waterbottle-white-front.png";
+const waterBottleCutout         = "/mockups/normalized-cutouts/waterbottle-white-front.png";
 const tshirtFrontDarkCutout     = "/mockups/normalized-cutouts/black-tshirt-front-cutout.png";
 const tshirtBackDarkCutout      = "/mockups/normalized-cutouts/black-tshirt-back-cutout.png";
 const hoodieFrontDarkCutout     = "/mockups/black-hoodie-front-cutout-real.png";
-const hoodieBackDarkCutout      = "/mockups/black-hoodie-back-cutout-real.png";
+const hoodieBackDarkCutout     = "/mockups/normalized-cutouts/hoodie-black-back.png";
 
 // ── Hoodie: per-color front photos (real studio shots, no SVG tint needed) ──
 // Back photos for colored hoodies are not available — back falls through to tint path.
@@ -356,7 +357,7 @@ export const BASE_BY_CATEGORY: Record<
   longsleeve:  { front: longsleeveFront, back: longsleeveBack, frontCutout: longsleeveFront, backCutout: longsleeveBack },
   hoodie:      { front: hoodieFront, back: hoodieBack, frontCutout: hoodieFront, backCutout: hoodieBack },
   mug:         { front: mugFront, back: mugBack, frontCutout: mugFront, backCutout: mugBack },
-  cap:         { front: capFront, frontCutout: capFront },
+  cap:         { front: capFront, back: capBack, frontCutout: capFront, backCutout: "/mockups/normalized-cutouts/cap-white-back.png" },
   waterbottle: { front: waterBottleFront, frontCutout: waterBottleFront },
   // watertumbler uses category "waterbottle" — shares the same base entry
 };
