@@ -77,9 +77,11 @@ export default function Checkout() {
   const [bankReference, setBankReference] = useState("");
   const [paymentProofUrl, setPaymentProofUrl] = useState("");
   const [paymentProofName, setPaymentProofName] = useState("");
+  const [paymentProofNotice, setPaymentProofNotice] = useState<string | null>(null);
   const [isUploadingProof, setIsUploadingProof] = useState(false);
   const [isSubmittingPayment, setIsSubmittingPayment] = useState(false);
   const [paymentSubmitError, setPaymentSubmitError] = useState<string | null>(null);
+  const paymentSubmissionInFlightRef = useRef(false);
   const [copiedNumber, setCopiedNumber] = useState(false);
   const [promoInput, setPromoInput] = useState("");
   const [promoDiscount, setPromoDiscount] = useState(0);
@@ -661,6 +663,7 @@ export default function Checkout() {
   };
 
   const handlePaymentSubmit = async () => {
+    if (paymentSubmissionInFlightRef.current || isSubmittingPayment) return;
     setPaymentSubmitError(null);
     if (paymentMethod === 'bank') {
       if (senderName.trim().length < 2) {
@@ -678,19 +681,17 @@ export default function Checkout() {
         toast({ title: "Sender number is incomplete", description: message, variant: "destructive" });
         return;
       }
-      if (!paymentProofUrl) {
-        const message = "Attach the successful payment screenshot before submitting.";
-        setPaymentSubmitError(message);
-        toast({ title: "Payment proof is required", description: message, variant: "destructive" });
-        return;
-      }
     }
+    const orderId = Number((createdOrder as Record<string, unknown>)?.id);
+    if (!Number.isFinite(orderId) || orderId <= 0) {
+      const message = 'Your order reference is missing. Please return to checkout and try again.';
+      setPaymentSubmitError(message);
+      toast({ title: 'Order reference missing', description: message, variant: 'destructive' });
+      return;
+    }
+    paymentSubmissionInFlightRef.current = true;
     setIsSubmittingPayment(true);
     try {
-      const orderId = Number((createdOrder as Record<string, unknown>)?.id);
-      if (!Number.isFinite(orderId) || orderId <= 0) {
-        throw new Error('Your order reference is missing. Please return to checkout and try again.');
-      }
       const res = await fetch(getApiUrl(`/api/orders/${orderId}/payment-info`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
@@ -714,6 +715,7 @@ export default function Checkout() {
       setPaymentSubmitError(null);
       setCheckoutStatus('success');
     } catch (err: any) {
+      paymentSubmissionInFlightRef.current = false;
       const message = err?.message || "Please try again or contact us on WhatsApp.";
       setPaymentSubmitError(message);
       toast({ title: "Payment submission failed", description: message, variant: "destructive" });
@@ -721,7 +723,6 @@ export default function Checkout() {
       setIsSubmittingPayment(false);
     }
   };
-
   const uploadPaymentProof = async (file: File) => {
     if (!file.type.startsWith('image/')) {
       toast({ title: 'Image required', description: 'Please choose a JPG, PNG, or WebP screenshot.', variant: 'destructive' });
@@ -761,9 +762,11 @@ export default function Checkout() {
       if (!entityId) throw new Error('The upload completed without an object reference');
       setPaymentProofUrl(getApiUrl(`/api/storage/objects/${entityId}`));
       setPaymentProofName(file.name);
+      setPaymentProofNotice(null);
       toast({ title: 'Payment proof attached', description: 'Your screenshot is ready to submit.' });
     } catch (err: any) {
-      toast({ title: 'Upload failed', description: err?.message || 'Please try again.', variant: 'destructive' });
+      setPaymentProofNotice('Screenshot upload is unavailable right now. You can still submit with the required last 4 sender digits.');
+      toast({ title: 'Screenshot optional', description: 'We could not attach the screenshot, but you can continue with the required last 4 sender digits.' });
     } finally {
       setIsUploadingProof(false);
     }
@@ -1044,7 +1047,7 @@ export default function Checkout() {
     const snapRemaining = snapTotal - snapAdvance;
     const amountToSend = paymentMode === 'full' ? snapTotal : snapAdvance;
     const gatewayEvidenceReady = isWalletMethod
-      ? paymentNumberReady && hasWalletEvidence
+      ? paymentNumberReady && lastFour.length === 4
       : paymentMethod === 'bank'
         ? bankConfigured && senderName.trim().length >= 2 && bankReference.trim().length >= 4
         : true;
@@ -1181,18 +1184,23 @@ export default function Checkout() {
                 <p className="text-xs text-gray-400 mt-1">Example: if your sending number ends in 5678, enter <strong>5678</strong>.</p>
 
                 <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2 mt-5">
-                  Payment Screenshot *
+                  Payment Screenshot (Optional)
                 </label>
                 <label className="relative overflow-hidden flex items-center gap-3 p-4 rounded-xl cursor-pointer transition-colors hover:bg-orange-50"
                   style={{ background: paymentProofUrl ? 'rgba(22,163,74,0.06)' : '#fffaf5', border: `1px dashed ${paymentProofUrl ? 'rgba(22,163,74,0.4)' : 'rgba(232,93,4,0.35)'}` }}>
                   <Upload className="w-5 h-5 text-orange-500 shrink-0" />
                   <span className="min-w-0 flex-1">
                     <span className="block text-sm font-bold text-gray-800">{isUploadingProof ? 'Uploading screenshot…' : paymentProofName || 'Attach payment screenshot'}</span>
-                    <span className="block text-xs text-gray-400 mt-0.5">JPG, PNG, or WebP · max 8 MB</span>
+                    <span className="block text-xs text-gray-400 mt-0.5">Optional · JPG, PNG, or WebP · max 8 MB</span>
                   </span>
                   {paymentProofUrl && <Check className="w-5 h-5 text-green-600 shrink-0" />}
                   <input id="payment-proof-file" type="file" accept="image/png,image/jpeg,image/webp" className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0" disabled={isUploadingProof} onChange={e => { const f = e.target.files?.[0]; if (f) void uploadPaymentProof(f); }} />
                 </label>
+                {paymentProofNotice && (
+                  <p role="status" className="mt-2 text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
+                    {paymentProofNotice}
+                  </p>
+                )}
               </div>
 
               {paymentMethod === 'bank' && (
@@ -1217,12 +1225,12 @@ export default function Checkout() {
               <button
                 type="button"
                 onClick={handlePaymentSubmit}
-                disabled={isSubmittingPayment || isUploadingProof}
+                disabled={isSubmittingPayment}
                 className="w-full py-4 rounded-xl font-black text-white text-base flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-40"
                 style={{
-                  background: !isSubmittingPayment && !isUploadingProof ? theme.badge : '#e5e7eb',
-                  boxShadow: !isSubmittingPayment && !isUploadingProof ? `0 8px 30px ${theme.light}` : 'none',
-                  color: !isSubmittingPayment && !isUploadingProof ? 'white' : '#9ca3af',
+                  background: !isSubmittingPayment ? theme.badge : '#e5e7eb',
+                  boxShadow: !isSubmittingPayment ? `0 8px 30px ${theme.light}` : 'none',
+                  color: !isSubmittingPayment ? 'white' : '#9ca3af',
                 }}
               >
                 {isSubmittingPayment ? (
@@ -1234,7 +1242,7 @@ export default function Checkout() {
 
               {!gatewayEvidenceReady && !paymentSubmitError && (
                 <p className="text-center text-xs font-semibold text-gray-500">
-                  Complete both required fields above: <strong>4 sender digits</strong> and <strong>payment screenshot</strong>. The button will explain anything missing.
+                  Enter the required <strong>4 sender digits</strong>. The screenshot is optional and can be attached for faster verification.
                 </p>
               )}
 

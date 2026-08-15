@@ -1387,10 +1387,6 @@ router.put("/orders/:id/payment-info", async (req, res) => {
         res.status(400).json({ error: "validation_error", message: "Enter the last 4 digits of your sending wallet number." });
         return;
       }
-      if (!rawPaymentProofUrl) {
-        res.status(400).json({ error: "validation_error", message: "A payment screenshot is required." });
-        return;
-      }
     }
 
     const evidence = [
@@ -1416,7 +1412,7 @@ router.put("/orders/:id/payment-info", async (req, res) => {
       createCustomerNotification(
         order.customerId,
         `Payment Submitted: #${order.orderNumber}`,
-        `We received your payment proof for order #${order.orderNumber}. Our team will verify it shortly. Tap to view details.`,
+        `${rawPaymentProofUrl ? "We received your payment details and screenshot" : "We received your payment details"} for order #${order.orderNumber}. Our team will verify them shortly. Tap to view details.`,
         "payment_status",
         `/account?order=${order.orderNumber}`
       ).catch((err) => logger.warn({ err }, "Failed to create payment-submitted notification (fire-and-forget)"));
