@@ -79,6 +79,7 @@ export default function Checkout() {
   const [paymentProofName, setPaymentProofName] = useState("");
   const [isUploadingProof, setIsUploadingProof] = useState(false);
   const [isSubmittingPayment, setIsSubmittingPayment] = useState(false);
+  const [paymentSubmitError, setPaymentSubmitError] = useState<string | null>(null);
   const [copiedNumber, setCopiedNumber] = useState(false);
   const [promoInput, setPromoInput] = useState("");
   const [promoDiscount, setPromoDiscount] = useState(0);
@@ -648,6 +649,7 @@ export default function Checkout() {
   };
 
   const handlePaymentSubmit = async () => {
+    setPaymentSubmitError(null);
     if (paymentMethod === 'bank') {
       if (senderName.trim().length < 2) {
         toast({ title: "Enter account holder name", description: "Enter the name used for the bank transfer.", variant: "destructive" });
@@ -659,11 +661,15 @@ export default function Checkout() {
       }
     } else {
       if (lastFour.length !== 4) {
-        toast({ title: "Enter the last 4 digits", description: "Use the last 4 digits of the wallet number you paid from.", variant: "destructive" });
+        const message = "Enter exactly 4 digits from the wallet number you paid from.";
+        setPaymentSubmitError(message);
+        toast({ title: "Sender number is incomplete", description: message, variant: "destructive" });
         return;
       }
       if (!paymentProofUrl) {
-        toast({ title: "Upload payment proof", description: "Attach a screenshot of the successful payment before submitting.", variant: "destructive" });
+        const message = "Attach the successful payment screenshot before submitting.";
+        setPaymentSubmitError(message);
+        toast({ title: "Payment proof is required", description: message, variant: "destructive" });
         return;
       }
     }
@@ -686,13 +692,19 @@ export default function Checkout() {
           promoCode: promoApplied || undefined,
         })
       });
+      const updatedOrder = await res.json().catch(() => null);
       if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.message || `Server error: ${res.status}`);
+        throw new Error(updatedOrder?.message || `Server error: ${res.status}`);
       }
+      if (updatedOrder && typeof updatedOrder === 'object') {
+        setCreatedOrder(prev => ({ ...(prev || {}), ...(updatedOrder as Record<string, unknown>) }));
+      }
+      setPaymentSubmitError(null);
       setCheckoutStatus('success');
     } catch (err: any) {
-      toast({ title: "Payment submission failed", description: err?.message || "Please screenshot this page and contact us on WhatsApp.", variant: "destructive" });
+      const message = err?.message || "Please try again or contact us on WhatsApp.";
+      setPaymentSubmitError(message);
+      toast({ title: "Payment submission failed", description: message, variant: "destructive" });
     } finally {
       setIsSubmittingPayment(false);
     }
@@ -1086,7 +1098,11 @@ export default function Checkout() {
                     )}
                   </div>
                   <button
-                    onClick={copyNumber}
+                    type="button"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      void copyNumber();
+                    }}
                     className="flex flex-col items-center gap-1 w-14 h-14 rounded-xl justify-center transition-all duration-300 shrink-0"
                     style={{
                       background: copiedNumber ? 'rgba(22,163,74,0.08)' : theme.light,
@@ -1110,22 +1126,28 @@ export default function Checkout() {
               </div>
 
               <div>
-                <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2 mt-4">
-                  Last 4 Digits of Sending Number
+                <label htmlFor="payment-sender-last-four" className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2 mt-4">
+                  Sender Number — Last 4 Digits
                 </label>
                 <input
+                  id="payment-sender-last-four"
                   type="tel"
                   inputMode="numeric"
                   maxLength={4}
                   placeholder="e.g. 5678"
+                  aria-label="Last four digits of the number used to send payment"
                   value={lastFour}
-                  onChange={e => setLastFour(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                  onChange={e => {
+                    setPaymentSubmitError(null);
+                    setLastFour(e.target.value.replace(/\D/g, '').slice(0, 4));
+                  }}
                   className={inputClass}
                   style={{ ...inputStyle, letterSpacing: '0.5em', textAlign: 'center', fontSize: '1.5rem', fontWeight: 900 }}
                 />
-                  <p className="text-xs text-gray-400 mt-1.5">
-                  Enter only the last 4 digits — never your full sending number.
+                  <p className="text-xs text-gray-500 mt-1.5">
+                  Use the last 4 digits of <strong>your own sending number</strong>, not our merchant number. Never enter your full number.
                 </p>
+                <p className="text-xs text-gray-400 mt-1">Example: if your sending number ends in 5678, enter <strong>5678</strong>.</p>
 
                 <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2 mt-5">
                   Payment Screenshot *
@@ -1155,7 +1177,14 @@ export default function Checkout() {
                 </div>
               )}
 
+              {paymentSubmitError && (
+                <div role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
+                  {paymentSubmitError}
+                </div>
+              )}
+
               <button
+                type="button"
                 onClick={handlePaymentSubmit}
                 disabled={isSubmittingPayment || !gatewayEvidenceReady}
                 className="w-full py-4 rounded-xl font-black text-white text-base flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-40"
@@ -1171,6 +1200,12 @@ export default function Checkout() {
                   <>I've Sent the Payment <ArrowRight className="w-5 h-5" /></>
                 )}
               </button>
+
+              {!gatewayEvidenceReady && (
+                <p className="text-center text-xs font-semibold text-gray-500">
+                  Complete both required fields above: <strong>4 sender digits</strong> and <strong>payment screenshot</strong>.
+                </p>
+              )}
 
               <div className="flex items-center justify-center gap-2 text-xs text-gray-400">
                 <ShieldCheck className="w-3.5 h-3.5" />

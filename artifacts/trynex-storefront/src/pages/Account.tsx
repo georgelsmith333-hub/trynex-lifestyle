@@ -697,6 +697,9 @@ export default function Account() {
                                 <div className="text-right">
                                   <p className="text-sm font-black text-gray-900">{formatPrice(parseFloat(order.total))}</p>
                                   <p className="text-[10px] text-gray-400 capitalize">{order.paymentMethod}</p>
+                                  <p className={`mt-1 text-[10px] font-black uppercase tracking-wide ${['paid', 'verified'].includes(String(order.paymentStatus).toLowerCase()) ? 'text-green-600' : String(order.paymentStatus).toLowerCase() === 'wrong' ? 'text-red-600' : 'text-amber-600'}`}>
+                                    {['paid', 'verified'].includes(String(order.paymentStatus).toLowerCase()) ? 'Payment Confirmed' : String(order.paymentStatus).toLowerCase() === 'submitted' ? 'Payment Under Review' : 'Payment ' + (order.paymentStatus || 'Pending')}
+                                  </p>
                                 </div>
                               </div>
 

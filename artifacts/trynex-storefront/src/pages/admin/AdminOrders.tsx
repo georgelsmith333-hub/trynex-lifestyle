@@ -36,7 +36,9 @@ const PAYMENT_STATUS_OPTS = [
   { value: 'pending', label: '✗ Not Paid', color: '#ef4444' },
   { value: 'not_paid', label: '✗ Not Paid', color: '#ef4444' },
   { value: 'submitted', label: '⏳ Under Review', color: '#f59e0b' },
+  { value: 'verified', label: '✓ Payment Confirmed', color: '#22c55e' },
   { value: 'paid', label: '✓ Payment Received', color: '#22c55e' },
+  { value: 'wrong', label: '⚠ Payment Issue', color: '#ef4444' },
   { value: 'refunded', label: '↩ Refunded', color: '#8b5cf6' },
 ];
 

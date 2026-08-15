@@ -1322,9 +1322,9 @@ const updatePaymentStatusHandler = async (req: Request, res: Response) => {
       return;
     }
     const { paymentStatus } = req.body;
-    const allowedPaymentStatuses = new Set(["pending", "not_paid", "submitted", "paid", "refunded"]);
+    const allowedPaymentStatuses = new Set(["pending", "not_paid", "submitted", "verified", "paid", "wrong", "refunded"]);
     if (typeof paymentStatus !== "string" || !allowedPaymentStatuses.has(paymentStatus)) {
-      res.status(400).json({ error: "validation_error", message: "paymentStatus must be pending, not_paid, submitted, paid, or refunded" });
+      res.status(400).json({ error: "validation_error", message: "paymentStatus must be pending, not_paid, submitted, verified, paid, wrong, or refunded" });
       return;
     }
     const [beforeSnap] = await db.select().from(ordersTable).where(eq(ordersTable.id, id));
