@@ -639,7 +639,15 @@ export default function DesignStudioV2() {
                 <button type="button" onClick={() => setMobileToolOpen(true)} className="flex shrink-0 items-center gap-1.5 rounded-xl bg-gray-900 px-3 py-2 text-[11px] font-black text-white shadow-sm active:scale-95"><Wand2 className="h-3.5 w-3.5" /> All tools</button>
               </div>
             </div>
-            <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) { handleFileUpload(f); e.target.value = ""; } }} />
+            <input
+              id="design-studio-upload"
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              aria-label="Upload design image"
+              className="absolute left-0 top-0 h-px w-px opacity-0"
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) { handleFileUpload(f); e.target.value = ""; } }}
+            />
 
             {isZoneTabs && (
               <div className="flex gap-1.5 overflow-x-auto pb-1 mb-3 no-scrollbar">
