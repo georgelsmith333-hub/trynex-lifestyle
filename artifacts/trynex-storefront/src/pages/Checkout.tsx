@@ -1183,7 +1183,7 @@ export default function Checkout() {
                 <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2 mt-5">
                   Payment Screenshot *
                 </label>
-                <label className="flex items-center gap-3 p-4 rounded-xl cursor-pointer transition-colors hover:bg-orange-50"
+                <label className="relative overflow-hidden flex items-center gap-3 p-4 rounded-xl cursor-pointer transition-colors hover:bg-orange-50"
                   style={{ background: paymentProofUrl ? 'rgba(22,163,74,0.06)' : '#fffaf5', border: `1px dashed ${paymentProofUrl ? 'rgba(22,163,74,0.4)' : 'rgba(232,93,4,0.35)'}` }}>
                   <Upload className="w-5 h-5 text-orange-500 shrink-0" />
                   <span className="min-w-0 flex-1">
@@ -1191,7 +1191,7 @@ export default function Checkout() {
                     <span className="block text-xs text-gray-400 mt-0.5">JPG, PNG, or WebP · max 8 MB</span>
                   </span>
                   {paymentProofUrl && <Check className="w-5 h-5 text-green-600 shrink-0" />}
-                  <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" disabled={isUploadingProof} onChange={e => { const f = e.target.files?.[0]; if (f) void uploadPaymentProof(f); }} />
+                  <input id="payment-proof-file" type="file" accept="image/png,image/jpeg,image/webp" className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0" disabled={isUploadingProof} onChange={e => { const f = e.target.files?.[0]; if (f) void uploadPaymentProof(f); }} />
                 </label>
               </div>
 
