@@ -29,7 +29,12 @@ interface Mockup {
 async function apiFetch(path: string, opts: RequestInit = {}) {
   const res = await fetch(getApiUrl(path), {
     ...opts,
-    headers: { "Content-Type": "application/json", ...getAuthHeaders(), ...(opts.headers ?? {}) },
+    headers: {
+      "Content-Type": "application/json",
+      "X-Requested-With": "XMLHttpRequest",
+      ...getAuthHeaders(),
+      ...(opts.headers ?? {}),
+    },
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
@@ -41,9 +46,14 @@ async function apiFetch(path: string, opts: RequestInit = {}) {
 async function uploadFile(file: File): Promise<string> {
   const { uploadURL, objectPath } = await apiFetch("/api/storage/uploads/request-url", {
     method: "POST",
-    body: JSON.stringify({ contentType: file.type, size: file.size }),
+    body: JSON.stringify({
+      name: `mockup-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-80)}`,
+      contentType: file.type,
+      size: file.size,
+    }),
   });
-  await fetch(uploadURL, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
+  const put = await fetch(uploadURL, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
+  if (!put.ok) throw new Error(`Storage upload failed (${put.status})`);
   return getApiUrl(`/api/storage/public-objects/${objectPath}`);
 }
 

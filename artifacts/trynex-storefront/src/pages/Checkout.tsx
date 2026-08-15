@@ -1194,12 +1194,12 @@ export default function Checkout() {
               <button
                 type="button"
                 onClick={handlePaymentSubmit}
-                disabled={isSubmittingPayment || !gatewayEvidenceReady}
+                disabled={isSubmittingPayment || isUploadingProof}
                 className="w-full py-4 rounded-xl font-black text-white text-base flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-40"
                 style={{
-                  background: gatewayEvidenceReady && !isSubmittingPayment ? theme.badge : '#e5e7eb',
-                  boxShadow: gatewayEvidenceReady ? `0 8px 30px ${theme.light}` : 'none',
-                  color: gatewayEvidenceReady ? 'white' : '#9ca3af',
+                  background: !isSubmittingPayment && !isUploadingProof ? theme.badge : '#e5e7eb',
+                  boxShadow: !isSubmittingPayment && !isUploadingProof ? `0 8px 30px ${theme.light}` : 'none',
+                  color: !isSubmittingPayment && !isUploadingProof ? 'white' : '#9ca3af',
                 }}
               >
                 {isSubmittingPayment ? (
@@ -1209,9 +1209,9 @@ export default function Checkout() {
                 )}
               </button>
 
-              {!gatewayEvidenceReady && (
+              {!gatewayEvidenceReady && !paymentSubmitError && (
                 <p className="text-center text-xs font-semibold text-gray-500">
-                  Complete both required fields above: <strong>4 sender digits</strong> and <strong>payment screenshot</strong>.
+                  Complete both required fields above: <strong>4 sender digits</strong> and <strong>payment screenshot</strong>. The button will explain anything missing.
                 </p>
               )}
 
