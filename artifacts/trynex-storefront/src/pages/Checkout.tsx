@@ -723,7 +723,13 @@ export default function Checkout() {
     try {
       const req = await fetch(getApiUrl('/api/storage/uploads/request-url'), {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          // The API rejects cross-site state-changing requests without this
+          // explicit AJAX marker. Without it, valid payment screenshots fail
+          // before a signed upload URL is issued.
+          'X-Requested-With': 'XMLHttpRequest',
+        },
         body: JSON.stringify({ name: `payment-proof-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-80)}`, contentType: file.type, size: file.size }),
       });
       if (!req.ok) throw new Error('Could not prepare the upload');
