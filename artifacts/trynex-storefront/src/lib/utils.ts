@@ -27,12 +27,11 @@ export function getApiBaseUrl(): string {
   // An empty string or absent var means "same-origin" — the proxy handles /api/*.
   const fromEnv = import.meta.env.VITE_API_BASE_URL as string | undefined;
   if (fromEnv) return fromEnv.replace(/\/+$/, '');
-  // Cloudflare Pages is a separate origin from the Render API. The Pages
-  // project exposes API_URL to the deployment, but Vite does not expose
-  // non-VITE_* variables to browser code, so keep the known production
-  // origin as a safe runtime fallback. Local development remains same-origin.
-  if (import.meta.env.PROD) return 'https://trynex-api.onrender.com';
-  // Default: same-origin — Vite dev proxy handles /api/* → localhost:8082.
+  // Production Cloudflare Pages exposes /api/* through the Pages Function
+  // reverse proxy. Keep browser requests same-origin so preflight, CSRF
+  // headers, cookies, and signed-upload URL negotiation are not blocked by
+  // the Render origin's browser CORS policy.
+  // Local development also remains same-origin through the Vite proxy.
   return '';
 }
 

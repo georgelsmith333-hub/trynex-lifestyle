@@ -744,11 +744,22 @@ export default function Checkout() {
         },
         body: JSON.stringify({ name: `payment-proof-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-80)}`, contentType: file.type, size: file.size }),
       });
-      if (!req.ok) throw new Error('Could not prepare the upload');
-      const { uploadURL, objectPath } = await req.json();
+      const requestBody = await req.json().catch(() => null);
+      if (!req.ok || !requestBody?.uploadURL || !requestBody?.objectPath) {
+        throw new Error(requestBody?.message || `Could not prepare the upload (server ${req.status})`);
+      }
+      const { uploadURL, objectPath } = requestBody as { uploadURL: string; objectPath: string };
       const put = await fetch(uploadURL, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } });
-      if (!put.ok) throw new Error('Could not upload the screenshot');
-      setPaymentProofUrl(getApiUrl(`/api/storage/public-objects/${objectPath}`));
+      if (!put.ok) {
+        const detail = await put.text().catch(() => '');
+        throw new Error(`Could not upload the screenshot (storage ${put.status}${detail ? `: ${detail.slice(0, 120)}` : ''})`);
+      }
+      // Uploaded entities live in the private storage namespace. The prior
+      // public-objects URL was invalid for R2/S3-backed uploads and made the
+      // proof appear to disappear even after the PUT completed.
+      const entityId = String(objectPath).replace(/^\/objects\//, '').replace(/^\/+/, '');
+      if (!entityId) throw new Error('The upload completed without an object reference');
+      setPaymentProofUrl(getApiUrl(`/api/storage/objects/${entityId}`));
       setPaymentProofName(file.name);
       toast({ title: 'Payment proof attached', description: 'Your screenshot is ready to submit.' });
     } catch (err: any) {
