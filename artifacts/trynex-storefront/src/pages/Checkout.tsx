@@ -529,9 +529,19 @@ export default function Checkout() {
       const orderData = order as unknown as Record<string, unknown>;
       setCreatedOrder(orderData);
 
-      const serverTotal = typeof orderData.total === "number" ? orderData.total : snapTotal;
+      const rawServerTotal = typeof orderData.total === "number" ? orderData.total : snapTotal;
+      const serverSubtotal = typeof orderData.subtotal === "number" ? orderData.subtotal : snapSubtotal;
+      const serverShipping = typeof orderData.shippingCost === "number" ? orderData.shippingCost : snapshotRef.current.shipping;
+      // Some already-published API builds return the line-item subtotal as `total`
+      // while still returning the shipping field separately. Reconcile that narrow
+      // legacy response so the wallet gateway never undercharges or misstates the
+      // customer’s advance amount after order creation. A current full total is
+      // preserved unchanged, including valid promo/free-shipping adjustments.
+      const serverTotal = rawServerTotal === serverSubtotal && serverShipping > 0
+        ? rawServerTotal + serverShipping
+        : rawServerTotal;
       const serverAdvance = Math.ceil(serverTotal * 0.25);
-      snapshotRef.current = { total: serverTotal, advance: serverAdvance, shipping: snapshotRef.current.shipping };
+      snapshotRef.current = { total: serverTotal, advance: serverAdvance, shipping: serverShipping };
 
       trackPurchase({
         orderId: orderData.orderNumber as string,
