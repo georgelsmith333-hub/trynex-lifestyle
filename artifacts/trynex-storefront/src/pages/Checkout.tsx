@@ -537,9 +537,11 @@ export default function Checkout() {
       // legacy response so the wallet gateway never undercharges or misstates the
       // customer’s advance amount after order creation. A current full total is
       // preserved unchanged, including valid promo/free-shipping adjustments.
-      const serverTotal = rawServerTotal === serverSubtotal && serverShipping > 0
-        ? rawServerTotal + serverShipping
-        : rawServerTotal;
+      const serverTotal = rawServerTotal === snapSubtotal && snapTotal > rawServerTotal
+        ? snapTotal
+        : rawServerTotal === serverSubtotal && serverShipping > 0
+          ? rawServerTotal + serverShipping
+          : rawServerTotal;
       const serverAdvance = Math.ceil(serverTotal * 0.25);
       snapshotRef.current = { total: serverTotal, advance: serverAdvance, shipping: serverShipping };
 
