@@ -164,7 +164,7 @@ export default function AdminOrders() {
     try {
       const res = await fetch(getApiUrl(`/api/orders/${id}/status`), {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', ...getAuthHeaders() },
         body: JSON.stringify({ status }),
       });
       if (!res.ok) throw new Error('Failed');
@@ -194,7 +194,7 @@ export default function AdminOrders() {
     try {
       const res = await fetch(getApiUrl(`/api/orders/${id}/payment-status`), {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', ...getAuthHeaders() },
         body: JSON.stringify({ paymentStatus }),
       });
       if (!res.ok) throw new Error('Failed');
@@ -220,14 +220,14 @@ export default function AdminOrders() {
   const getPaymentStatusColor = (s: string) => {
     const map: Record<string, string> = {
       pending: '#ef4444', not_paid: '#ef4444',
-      submitted: '#f59e0b', paid: '#22c55e', refunded: '#8b5cf6', cod: '#9ca3af'
+      submitted: '#f59e0b', verified: '#22c55e', paid: '#22c55e', wrong: '#ef4444', refunded: '#8b5cf6', cod: '#9ca3af'
     };
     return map[s] || '#aaa';
   };
 
   const getPaymentStatusLabel = (s: string) => {
     const map: Record<string, string> = {
-      pending: 'Not Paid', not_paid: 'Not Paid', submitted: 'Under Review', paid: 'Payment Received', refunded: 'Refunded', cod: 'Legacy COD'
+      pending: 'Not Paid', not_paid: 'Not Paid', submitted: 'Under Review', verified: 'Payment Confirmed', paid: 'Payment Received', wrong: 'Payment Issue', refunded: 'Refunded', cod: 'Legacy COD'
     };
     return map[s] || s;
   };
