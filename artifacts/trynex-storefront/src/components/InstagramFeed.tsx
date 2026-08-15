@@ -4,21 +4,21 @@ import { motion } from "framer-motion";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 
 const FEED_IMAGES = [
-  "/mockups/new/white-tshirt-front.png",
-  "/mockups/white-hoodie-front.png",
-  "/mockups/white-mug-front.png",
-  "/mockups/white-cap-front.png",
-  "/mockups/new/black-tshirt-front.png",
-  "/mockups/grey-hoodie-front.png",
+  "/mockups/normalized/tshirt-white-front.png",
+  "/mockups/normalized/hoodie-white-front.png",
+  "/mockups/normalized/mug-white-front.png",
+  "/mockups/normalized/cap-white-front.png",
+  "/mockups/normalized/tshirt-black-front.png",
+  "/mockups/normalized/hoodie-grey-front.png",
 ];
 
 const FALLBACK_IMAGES = [
-  "/mockups/white-tshirt-front.png",
-  "/mockups/white-hoodie-front.png",
-  "/mockups/white-mug-front.png",
-  "/mockups/white-cap-front.png",
-  "/mockups/black-tshirt-front.png",
-  "/mockups/white-tshirt-front.png",
+  "/mockups/normalized/tshirt-white-front.png",
+  "/mockups/normalized/hoodie-white-front.png",
+  "/mockups/normalized/mug-white-front.png",
+  "/mockups/normalized/cap-white-front.png",
+  "/mockups/normalized/tshirt-black-front.png",
+  "/mockups/normalized/tshirt-white-front.png",
 ];
 
 const LIKES = [1284, 976, 2103, 843, 1567, 729];
