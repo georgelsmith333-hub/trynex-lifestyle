@@ -440,32 +440,10 @@ function drawImageCurved(
     ctx.restore();
   }
 
-  // Very restrained centre reflection. The source photo already contains
-  // its own light; adding a strong overlay washed out white garments and
-  // doubled the highlight in the smart-shading pass.
-  const grad = ctx.createLinearGradient(-w * 0.22, 0, w * 0.22, 0);
-  grad.addColorStop(0, "rgba(255,255,255,0)");
-    grad.addColorStop(0.5, "rgba(255,255,255,0.018)");
-  grad.addColorStop(1, "rgba(255,255,255,0)");
-  ctx.save();
-  ctx.globalCompositeOperation = "overlay";
-  ctx.fillStyle = grad;
-  ctx.fillRect(-w * 0.26, -h / 2, w * 0.52, h);
-  ctx.restore();
-
-  const edgeShade = ctx.createLinearGradient(-w / 2, 0, -w * 0.12, 0);
-    edgeShade.addColorStop(0, "rgba(0,0,0,0.045)");
-  edgeShade.addColorStop(1, "rgba(0,0,0,0)");
-  ctx.save();
-  ctx.globalCompositeOperation = "multiply";
-  ctx.fillStyle = edgeShade;
-  ctx.fillRect(-w / 2, -h / 2, w * 0.34, h);
-  const edgeShadeR = ctx.createLinearGradient(w * 0.12, 0, w / 2, 0);
-  edgeShadeR.addColorStop(0, "rgba(0,0,0,0)");
-    edgeShadeR.addColorStop(1, "rgba(0,0,0,0.045)");
-  ctx.fillStyle = edgeShadeR;
-  ctx.fillRect(w * 0.16, -h / 2, w * 0.34, h);
-  ctx.restore();
+  // Do not synthesize a second light pass here. Canonical mug, bottle, and cap
+  // photos already contain their real highlight and edge falloff. The compositor
+  // only performs geometric warp; extra overlay/multiply passes create the ghost
+  // shadows and washed white surfaces reported in the live editor.
 }
 
 export async function composeLayers(opts: ComposeOptions): Promise<HTMLCanvasElement> {
@@ -551,7 +529,7 @@ export async function composeLayers(opts: ComposeOptions): Promise<HTMLCanvasEle
   }
 
   if (fabricTexture) {
-    applyFabricGrain(ctx, outW, outH, 0.10);
+    applyFabricGrain(ctx, outW, outH, 0.035);
   }
 
   if (clipToPrintZone) ctx.restore();
@@ -589,8 +567,8 @@ export async function composeGarmentMockup(opts: {
     isColorPhoto = false,
     requiresTint = !isColorPhoto,
     fabricTexture = false,
-    smartShading = true,
-    shadingStrength = 0.05,
+    smartShading = false,
+    shadingStrength = 0.025,
   } = opts;
   canvas.width = outSize;
   canvas.height = outSize;
@@ -697,15 +675,17 @@ export async function composeGarmentMockup(opts: {
     ctx.beginPath();
     tracePrintZone(ctx, printZone, s, s);
     ctx.clip();
-    applyFabricGrain(ctx, outSize, outSize, 0.10);
+    applyFabricGrain(ctx, outSize, outSize, 0.035);
     ctx.restore();
   }
 
-  // --- SMART SHADING (Luminosity Masking) ---
-  // Build separate shadow and highlight masks from the actual garment pixels.
-  // Applying the entire grayscale garment twice makes artwork muddy; splitting
-  // the masks keeps only dark folds for Multiply and only bright folds for Screen.
-  if (smartShading && layers.some(l => l.visible)) {
+  // --- SMART SHADING (transparent fallback only) ---
+  // Canonical opaque source-kit photos already contain product lighting. Reapplying
+  // their luminance above customer artwork creates the duplicate/ghost shadow bug.
+  // Keep this optional pass exclusively for transparent cutout assets that need
+  // restrained fabric separation; never run it on an opaque color photo.
+  const useSmartShading = smartShading && requiresTint && !isColorPhoto;
+  if (useSmartShading && layers.some(l => l.visible)) {
     try {
       const garmentImg = await loadImage(garmentSrc, imageCache);
       const source = document.createElement("canvas");

@@ -857,8 +857,7 @@ export default function Checkout() {
 
   const theme = gatewayTheme[effectiveGatewayMethod];
 
-  const isWalletMethod = true;
-  const hasWalletEvidence = lastFour.length === 4 && !!paymentProofUrl;
+  const isWalletMethod = paymentMethod === 'bkash' || paymentMethod === 'nagad' || paymentMethod === 'upay';
   const canProceed = (() => {
     if (configuredPaymentMethods.length === 0) return false;
     if (isWalletMethod) {
@@ -1240,9 +1239,9 @@ export default function Checkout() {
                 )}
               </button>
 
-              {!gatewayEvidenceReady && !paymentSubmitError && (
+                      {!gatewayEvidenceReady && !paymentSubmitError && (
                 <p className="text-center text-xs font-semibold text-gray-500">
-                  Enter the required <strong>4 sender digits</strong>. The screenshot is optional and can be attached for faster verification.
+                  {isWalletMethod ? <>Enter the required <strong>4 sender digits</strong>. The screenshot is optional and can be attached for faster verification.</> : <>Complete the required payment reference fields to submit this transfer.</>}
                 </p>
               )}
 

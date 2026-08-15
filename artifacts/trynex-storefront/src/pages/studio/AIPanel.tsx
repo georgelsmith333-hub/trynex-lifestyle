@@ -71,11 +71,25 @@ export function AIPanel() {
           : Math.random().toString(36).slice(2, 12);
         const naturalW = img.naturalWidth || 1024;
         const naturalH = img.naturalHeight || 1024;
+        // Keep a local copy when the provider permits canvas readback. This
+        // prevents the compositor from re-fetching a transient cross-origin URL
+        // after the user has already received a successful AI result.
+        let stableSrc = url;
+        try {
+          const snapshot = document.createElement("canvas");
+          snapshot.width = naturalW;
+          snapshot.height = naturalH;
+          const snapshotCtx = snapshot.getContext("2d");
+          snapshotCtx?.drawImage(img, 0, 0, naturalW, naturalH);
+          stableSrc = snapshot.toDataURL("image/png");
+        } catch {
+          // Keep the provider URL as a fallback if the image is not readable.
+        }
         addLayer({
           id,
           name: request.prompt.slice(0, 42),
           type: "image",
-          src: url,
+          src: stableSrc,
           naturalW,
           naturalH,
           visible: true,

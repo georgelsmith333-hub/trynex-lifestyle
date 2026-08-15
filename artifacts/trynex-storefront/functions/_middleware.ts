@@ -21,7 +21,9 @@
    serving the unmodified SPA. No user is ever broken.
 ═══════════════════════════════════════════════════════════════════════════ */
 
-const SITE_URL = "https://trynexshop.com";
+// Pages is the currently live origin. Switch this single constant to the
+// custom domain only after DNS, robots, sitemap, and SSL are all verified there.
+const SITE_URL = "https://trynex-lifestyle-shop.pages.dev";
 const DEFAULT_OG = `${SITE_URL}/opengraph.jpg`;
 const API_TIMEOUT_MS = 4000;
 

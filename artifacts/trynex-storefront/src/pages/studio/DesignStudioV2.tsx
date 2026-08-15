@@ -708,7 +708,7 @@ export default function DesignStudioV2() {
                       : <GarmentSVG product={selectedProduct} color={selectedColor.hex} showPrintZone={showPrintZone} face={activeFace} mugMode={isMug ? mugMode : undefined} />
                   }
                 />
-                {!show3D && !isFlatZone && currentFaceLayers.length === 0 && (
+                {!show3D && !isFlatZone && layers.length === 0 && (
                   <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
                     <button
                       type="button"

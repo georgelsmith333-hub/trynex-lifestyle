@@ -66,10 +66,13 @@ export function createSmartMockupManifest(args: {
       clipToPrintZone: true,
       duplicateBasePass: false,
     },
+    // Source-kit photos already contain product lighting. Keeping these
+    // synthetic passes at zero prevents duplicate shadows and white bloom in
+    // editor, export, cart thumbnails, and admin previews.
     shading: {
-      multiplyOpacity: 0.24,
-      screenOpacity: 0.06,
-      grainOpacity: 0.025,
+      multiplyOpacity: 0,
+      screenOpacity: 0,
+      grainOpacity: 0.035,
     },
   };
 }

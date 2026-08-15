@@ -130,7 +130,9 @@ const initialState: DesignStoreState = {
   // Guides are an audit tool, not part of the default customer editing experience.
   // Users can enable them explicitly from the studio controls when checking safe areas.
   showPrintZone: false,
-  fabricTexture: true,
+  // Texture is an optional proofing effect; it must not add grain or haze to
+  // a new customer design before the user explicitly enables it.
+  fabricTexture: false,
   snapGuides: { v: false, h: false },
 
   activeTab: "upload",

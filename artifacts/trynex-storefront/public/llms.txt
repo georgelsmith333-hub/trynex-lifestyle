@@ -6,7 +6,7 @@
 
 TryNex Lifestyle (trynexshop.com) is a full-stack custom print-on-demand e-commerce store based in Bangladesh. Founded to bring premium-quality custom apparel to the Bangladeshi market, TryNex allows anyone to design their own t-shirts, hoodies, long sleeves, mugs, caps, and waterbottles using an in-browser Design Studio — with no minimum order quantity.
 
-- **Website**: https://trynexshop.com
+- **Website**: https://trynex-lifestyle-shop.pages.dev
 - **WhatsApp**: +8801903426915
 - **Email**: support@trynexshop.com
 - **Location**: Dhaka, Bangladesh
@@ -36,7 +36,7 @@ The Design Studio is TryNex's browser-native product customiser. Features includ
 - Save designs for later
 - Pre-built design templates
 
-URL: https://trynexshop.com/design-studio
+URL: https://trynex-lifestyle-shop.pages.dev/design-studio
 
 ## Payment Methods
 
@@ -65,13 +65,13 @@ URL: https://trynexshop.com/design-studio
 
 TryNex offers curated premium gift hamper sets — ideal for birthdays, corporate gifting, and special occasions. Custom-branded hampers with multiple items are available.
 
-URL: https://trynexshop.com/hampers
+URL: https://trynex-lifestyle-shop.pages.dev/hampers
 
 ## Blog
 
 The TryNex blog covers custom apparel tips, fashion trends, garment care guides, and design inspiration for the Bangladeshi market.
 
-URL: https://trynexshop.com/blog
+URL: https://trynex-lifestyle-shop.pages.dev/blog
 
 ## Technology
 
@@ -88,10 +88,10 @@ URL: https://trynexshop.com/blog
 
 ## Order Tracking
 
-Customers can track their orders at: https://trynexshop.com/track
+Customers can track their orders at: https://trynex-lifestyle-shop.pages.dev/track
 
 ## Contact
 
 - WhatsApp: +8801903426915
 - Email: support@trynexshop.com
-- Website: https://trynexshop.com
+- Website: https://trynex-lifestyle-shop.pages.dev

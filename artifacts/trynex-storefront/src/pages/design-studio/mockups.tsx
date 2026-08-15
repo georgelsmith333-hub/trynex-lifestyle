@@ -14,9 +14,6 @@ const tshirtBackDark       = "/mockups/normalized/tshirt-black-back.png";
 const tshirtFrontCutout    = "/mockups/normalized-cutouts/tshirt-white-front.png";
 const tshirtBackCutout     = "/mockups/normalized-cutouts/tshirt-white-back.png";
 
-// Smart Mockup Mask Paths
-const getShadowMask = (path: string) => path.replace("/assets/mockups/", "/assets/mockups/processed/").replace(".png", "_shadow.png");
-const getHighlightMask = (path: string) => path.replace("/assets/mockups/", "/assets/mockups/processed/").replace(".png", "_highlight.png");
 // Color-specific photo mockups — used instead of SVG tint for highest realism
 const navyTshirtFront      = "/mockups/new/navy-tshirt-front.png";
 const navyTshirtBack       = "/mockups/new/navy-tshirt-back.png";
