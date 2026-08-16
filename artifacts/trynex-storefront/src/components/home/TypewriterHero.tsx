@@ -97,7 +97,7 @@ function useTypewriter(phrases: string[], opts?: {
 // Multi-product grid shown in the hero right column
 const HERO_PRODUCT_GRID = [
   { src: hoodieSrc, label: "Custom Hoodie", badge: "Best Seller", badgeColor: "#E85D04", delay: 0.1, floatY: 10, href: "/products?category=hoodies&sort=bestsellers" },
-  { src: bottleSrc, label: "Water Bottle", badge: "New", badgeColor: "#0EA5E9", delay: 0.25, floatY: 8, href: "/products?category=custom-orders&sort=newest" },
+  { src: bottleSrc, label: "Water Bottle", badge: "New", badgeColor: "#0EA5E9", delay: 0.25, floatY: 8, href: "/products?category=water-bottles&sort=newest" },
   { src: tshirtSrc, label: "Custom T-Shirt", badge: "Top Pick", badgeColor: "#10B981", delay: 0.15, floatY: 12, href: "/products?category=t-shirts&sort=bestsellers" },
   { src: capSrc, label: "Custom Cap", badge: "Trending", badgeColor: "#7C3AED", delay: 0.3, floatY: 9, href: "/products?category=caps&sort=newest" },
   { src: longsleeveSrc, label: "Long Sleeve", badge: "New", badgeColor: "#2563EB", delay: 0.2, floatY: 7, href: "/products?category=long-sleeves&sort=newest" },

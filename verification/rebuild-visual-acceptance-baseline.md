@@ -49,3 +49,23 @@ After rebuilding the matrix in the correct order and extracting original normali
 ## Live deep-link check
 
 A cache-busted navigation to `/design-studio?product=long-sleeves&release=3da3cff` currently resolves in the live browser to `/design-studio?product=hoodie`. The rendered page shows the Hoodie editor and a cloud-restored draft. This is recorded as a deployment/acceptance failure for the current live revision, not marked fixed until the 3da3cff build is deployed and the route remains Long Sleeve after initialization.
+
+## Live V2 deep-link acceptance
+
+Cloudflare deployed commit `430e35b` as production deployment `94d26b2d`. The public route `/design-studio?product=long-sleeves&release=430e35b` now normalizes to `?product=longsleeve`, renders **Unisex Long Sleeve 240GSM Cotton**, and shows a complete black Long Sleeve with both sleeves and cuffs visible. The previous live Hoodie fallback was traced to the active `src/pages/studio/DesignStudioV2.tsx` route—not the legacy V1 file—and was corrected with alias normalization, explicit-query precedence over draft restoration, and deferred URL synchronization.
+
+## Live product-family acceptance
+
+The deployed `430e35b` build was also checked on `/design-studio?product=mug` and `/design-studio?product=water-bottles`. Mug resolves to **Coffee Mug 11oz Ceramic** with distinct Left Side, Right Side, and Wrap controls. Water Bottle resolves to **Water Bottle 600ml Aluminium** and visibly retains the required ring-cap/carabiner silhouette. Both routes expose the v3 editor controls and clean canvas state without the earlier Hoodie fallback.
+
+## Remaining live matrix note
+
+After the Water Bottle check, an attempted navigation to `/design-studio?product=tshirt&release=430e35b` remained at `?product=waterbottle` in the existing browser session. Console inspection confirmed the URL and rendered button both remained Water Bottle. This is recorded as a browser/session navigation anomaly and requires a fresh navigation/session or automated route-level matrix check before T-shirt and Cap are marked as live-accepted; they are not being falsely marked complete.
+
+## Cap and T-shirt live matrix status
+
+The live Cap route resolves correctly to **Structured Cap Cotton Twill** and renders the black cap front. A same-session T-shirt navigation unexpectedly remained on the prior Water Bottle state, while Cap navigation succeeded immediately afterward. This suggests a browser/session or route-transition inconsistency rather than a universal alias failure, but T-shirt is conservatively left as pending isolated-session acceptance until verified independently.
+
+## Isolated browser harness limitation
+
+A fresh-session attempt and forced `window.location.href` navigation for T-shirt still returned the existing Cap page in the browser harness. The resulting page source and screenshot consistently report `?product=cap`. This prevents a reliable visual T-shirt acceptance claim through the current browser session; the code-level resolver and generated v3 contact sheet remain the source of truth until a separate browser context or automated Playwright run is available.

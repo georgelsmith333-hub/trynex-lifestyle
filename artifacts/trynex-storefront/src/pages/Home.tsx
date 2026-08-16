@@ -99,7 +99,7 @@ const CATEGORIES = [
   { name: "Hoodies",       icon: "hoodie",       desc: "320GSM premium fleece",       count: "Starting ৳1,299", color: "#ecfeff", accent: "#0891b2",             href: "/products?category=hoodies" },
   { name: "Mugs",          icon: "mug",          desc: "Ceramic & sublimation",       count: "Starting ৳449",   color: "#fdf4ff", accent: "#9333ea",             href: "/products?category=mugs" },
   { name: "Caps",          icon: "cap",          desc: "Embroidered & printed",       count: "Starting ৳499",   color: "#f0fdf4", accent: "#16a34a",             href: "/products?category=caps" },
-  { name: "Water Bottles", icon: "waterbottle",  desc: "600ml aluminium custom",      count: "Starting ৳699",   color: "#eff6ff", accent: "#2563eb",             href: "/products?category=custom-orders" },
+  { name: "Water Bottles", icon: "waterbottle",  desc: "600ml aluminium custom",      count: "Starting ৳699",   color: "#eff6ff", accent: "#2563eb",             href: "/products?category=water-bottles" },
 ];
 
 
