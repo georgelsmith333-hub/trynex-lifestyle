@@ -116,6 +116,7 @@ export default function AdminMockups() {
   const [editTags, setEditTags] = useState<string[]>([]);
   const [editTagInput, setEditTagInput] = useState("");
   const [editActive, setEditActive] = useState(true);
+  const [editIngestionStatus, setEditIngestionStatus] = useState<NonNullable<Mockup["ingestionStatus"]>>("preview-only");
   const [saving, setSaving] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
   const [lightbox, setLightbox] = useState<string | null>(null);
@@ -182,7 +183,9 @@ export default function AdminMockups() {
             sourceKitKey: target?.sourceKitKey ?? null,
             face: target?.face ?? null,
             color: target?.color ?? null,
-            ingestionStatus: masterFile ? "pending" : "preview-only",
+            // A PSD/PSB plus a validated preview is immediately usable as a
+            // visual override. The master remains available for future editing.
+            ingestionStatus: masterFile ? ((previewFile || target?.imageUrl) ? "ready" : "pending") : "preview-only",
             tags,
             isActive: true,
             sortOrder: target?.sortOrder ?? 0,
@@ -214,6 +217,7 @@ export default function AdminMockups() {
     setEditTags(Array.isArray(m.tags) ? m.tags : []);
     setEditTagInput("");
     setEditActive(m.isActive);
+    setEditIngestionStatus(m.ingestionStatus ?? (m.masterFileUrl ? "pending" : "preview-only"));
   };
 
   const saveEdit = async () => {
@@ -230,6 +234,7 @@ export default function AdminMockups() {
           productName: prod?.name ?? (editProductName || null),
           tags: editTags,
           isActive: editActive,
+          ...(editModal.mockup.masterFileUrl ? { ingestionStatus: editIngestionStatus } : {}),
         }),
       });
       toast({ title: "Mockup saved" });
@@ -607,6 +612,25 @@ export default function AdminMockups() {
                     </button>
                   </div>
                 </div>
+
+                {editModal.mockup.masterFileUrl && (
+                  <div className="p-3 rounded-xl bg-purple-50 border border-purple-100 space-y-2">
+                    <div>
+                      <p className="text-sm font-bold text-purple-900">Editable master binding</p>
+                      <p className="text-[11px] text-purple-700">A ready record can override this exact source-kit face. Use failed only when the master or preview is not usable.</p>
+                    </div>
+                    <select
+                      value={editIngestionStatus}
+                      onChange={e => setEditIngestionStatus(e.target.value as NonNullable<Mockup["ingestionStatus"]>)}
+                      className="w-full border border-purple-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-100 focus:border-purple-400"
+                    >
+                      <option value="pending">Pending review</option>
+                      <option value="ready">Ready — use approved preview</option>
+                      <option value="failed">Failed — do not use</option>
+                    </select>
+                    <p className="text-[10px] text-purple-700 truncate" title={editModal.mockup.masterFileName ?? undefined}>Master: {editModal.mockup.masterFileName ?? "attached"}</p>
+                  </div>
+                )}
 
                 {/* Active */}
                 <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100">
