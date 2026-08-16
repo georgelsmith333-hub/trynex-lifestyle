@@ -443,7 +443,7 @@ System uptime: ${Math.floor(storeContext.health.uptime / 60)} min, Memory: ${sto
 
       const r = await fetch(endpoint, {
         method: "POST",
-        headers: getAuthHeaders(),
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         body: JSON.stringify(body),
         signal: abortRef.current.signal,
       });
