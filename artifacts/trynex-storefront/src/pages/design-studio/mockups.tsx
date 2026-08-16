@@ -857,6 +857,15 @@ export function GarmentSVG({
           </filter>
         )}
 
+        {/* Dark apparel sources can contain opaque white/gray extraction pixels
+            inside the nominal silhouette. Convert only those light pixels to
+            transparent alpha; preserve the dark fabric and product details. */}
+        {(product.category === "tshirt" || product.category === "longsleeve" || product.category === "hoodie") && isNearBlack(tintHex) && (
+          <filter id="dark-garment-alpha-clean" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
+            <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -1.7 -1.7 -1.7 0 1" />
+          </filter>
+        )}
+
         {/* Hoodie smart-object detail mask. Artwork sits below these narrow source
             strips so drawstrings remain visible instead of being painted over by
             uploaded images, text, emoji, or AI art. Coordinates are calibrated to
@@ -912,7 +921,7 @@ export function GarmentSVG({
           x={0} y={0} width={1000} height={1000}
           preserveAspectRatio="xMidYMid meet"
           clipPath={product.category === "tshirt" ? "url(#tshirt-silhouette)" : product.category === "longsleeve" ? "url(#longsleeve-silhouette)" : product.category === "hoodie" ? "url(#hoodie-silhouette)" : undefined}
-          filter={needsTint ? "url(#garment-color-tint)" : undefined}
+          filter={needsTint ? "url(#garment-color-tint)" : (isNearBlack(tintHex) && (product.category === "tshirt" || product.category === "longsleeve" || product.category === "hoodie") ? "url(#dark-garment-alpha-clean)" : undefined)}
           className="garment-img"
         />
 
