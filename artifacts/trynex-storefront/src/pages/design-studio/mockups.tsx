@@ -868,6 +868,26 @@ export function GarmentSVG({
           </clipPath>
         )}
 
+        {/* Source-kit edge guard. Some legacy-derived transparent renders retain
+            pale extraction wedges outside the real garment silhouette. These
+            product-specific paths clip only the outer artifact corridors; they
+            do not add lighting, shadows, or a second product layer. */}
+        {product.category === "tshirt" && (
+          <clipPath id="tshirt-silhouette" clipPathUnits="userSpaceOnUse">
+            <path d="M390 176 Q430 128 500 128 Q570 128 610 176 L760 260 L892 360 L830 485 L738 440 L738 930 Q500 970 262 930 L262 440 L170 485 L108 360 L240 260 Z" />
+          </clipPath>
+        )}
+        {product.category === "longsleeve" && (
+          <clipPath id="longsleeve-silhouette" clipPathUnits="userSpaceOnUse">
+            <path d="M405 132 Q500 92 595 132 L690 220 L820 300 L920 700 L852 930 L730 890 L700 530 L700 930 Q500 970 300 930 L300 530 L270 890 L148 930 L80 700 L180 300 L310 220 Z" />
+          </clipPath>
+        )}
+        {product.category === "hoodie" && (
+          <clipPath id="hoodie-silhouette" clipPathUnits="userSpaceOnUse">
+            <path d="M405 42 Q500 18 595 42 Q645 88 650 165 Q690 215 760 250 Q850 285 900 360 Q938 520 948 760 L930 915 Q918 958 860 960 L790 950 L760 680 L735 550 L735 930 Q500 972 265 930 L265 550 L240 680 L210 950 L140 960 Q82 958 70 915 L52 760 Q62 520 100 360 Q150 285 240 250 Q310 215 350 165 Q355 88 405 42 Z" />
+          </clipPath>
+        )}
+
 
       </defs>
 
@@ -891,6 +911,7 @@ export function GarmentSVG({
           href={canonicalBaseSrc}
           x={0} y={0} width={1000} height={1000}
           preserveAspectRatio="xMidYMid meet"
+          clipPath={product.category === "tshirt" ? "url(#tshirt-silhouette)" : product.category === "longsleeve" ? "url(#longsleeve-silhouette)" : product.category === "hoodie" ? "url(#hoodie-silhouette)" : undefined}
           filter={needsTint ? "url(#garment-color-tint)" : undefined}
           className="garment-img"
         />
