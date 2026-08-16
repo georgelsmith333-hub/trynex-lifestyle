@@ -353,16 +353,16 @@ export default function DesignStudio() {
   const [mobileToolOpen, setMobileToolOpen] = useState(false);
   const [mobileTab, setMobileTab] = useState<"product" | "color" | "edit">("product");
 
-  // Auto-scroll the tools panel when the active tab changes on desktop
+  // Do not forcibly scroll the desktop tools panel when a tab changes. The
+  // previous smooth scroll caused cursor-wheel jumps and made long forms feel
+  // collapsed; keep only a short visual focus cue for the newly active tool.
   useEffect(() => {
-    if (!isMobile) {
-      const panel = document.querySelector('[data-testid="studio-right-panel"]');
-      if (panel) {
-        panel.scrollTo({ top: 0, behavior: "smooth" });
-        panel.classList.add('ring-4', 'ring-orange-500/20', 'ring-offset-2');
-        setTimeout(() => panel.classList.remove('ring-4', 'ring-orange-500/20', 'ring-offset-2'), 1000);
-      }
-    }
+    if (isMobile) return;
+    const panel = document.querySelector('[data-testid="studio-right-panel"]');
+    if (!panel) return;
+    panel.classList.add('ring-4', 'ring-orange-500/20', 'ring-offset-2');
+    const timer = window.setTimeout(() => panel.classList.remove('ring-4', 'ring-orange-500/20', 'ring-offset-2'), 1000);
+    return () => window.clearTimeout(timer);
   }, [activeTab, isMobile]);
 
   /* Product catalog picker */
@@ -508,7 +508,9 @@ export default function DesignStudio() {
   /* ── UI state ──────────────────────────────────────────────── */
   /** Hex being hovered in the colour picker — drives the floating photo preview tooltip. */
   const [hoveredColorHex, setHoveredColorHex] = useState<string | null>(null);
-  const [showPrintZone, setShowPrintZone] = useState(() => !isMobile);
+  // Keep the canvas clean by default; designers can explicitly enable the
+  // overlay from the review controls when they need zone-safe placement checks.
+  const [showPrintZone, setShowPrintZone] = useState(false);
   useEffect(() => {
     if (isMobile) setShowPrintZone(false);
   }, [isMobile]);
