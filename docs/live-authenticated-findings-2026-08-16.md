@@ -63,3 +63,7 @@ The Cloudflare Pages deployment for commit `d8f24b314` completed successfully, b
 ## Render API deployment and provider correction
 
 The Render API health endpoint reports `status: ok`, `db: ok`, `redis: ok`, and a recent process uptime after the GitHub push, confirming the API auto-deployed from `main`. The live AI Developer page now shows `TryNex Local Agent — Free operational fallback` and `Local Operations Agent — instant`, with store context active. The old Pollinations error remains only as historical chat content; a fresh prompt is required to verify the new local response path.
+
+## AI request diagnosis and final storefront fix
+
+A direct live request initially returned `csrf_blocked` because the shared `getAuthHeaders()` helper did not include `X-Requested-With`. The API CORS/CSRF policy requires that header for cookie-authenticated mutations. The helper was corrected, typechecked, committed as `aee861479`, and pushed. Cloudflare began deployment `4dac839f`; the final live AI smoke test must be rerun after that deployment completes. The backend local agent itself is already deployed and provider discovery is correct.
