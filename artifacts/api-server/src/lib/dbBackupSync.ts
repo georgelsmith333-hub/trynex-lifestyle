@@ -162,12 +162,9 @@ async function verifySchemasMatch(
     const sourceMap = new Map(sourceColumns.map((c) => [c.name, c.dataType]));
     const targetMap = new Map(targetColumns.map((c) => [c.name, c.dataType]));
 
-    if (sourceMap.size !== targetMap.size) {
-      throw new Error(
-        `Schema mismatch for table "${table}": source has ${sourceMap.size} columns, target has ${targetMap.size}. Run migrations on the target first.`,
-      );
-    }
-
+    // The mirror writes an explicit source-column list, so target-only legacy
+    // columns are safe when they remain nullable/defaulted. Block only when a
+    // source column is missing or has an incompatible type on the target.
     for (const [name, dataType] of sourceMap) {
       if (!targetMap.has(name)) {
         throw new Error(`Schema mismatch for table "${table}": column "${name}" missing on target. Run migrations on the target first.`);
