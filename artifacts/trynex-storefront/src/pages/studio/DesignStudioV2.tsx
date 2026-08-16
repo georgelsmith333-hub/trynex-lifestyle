@@ -56,10 +56,18 @@ const LEGACY_ID_MAP: Record<string, string> = {
   "white-tshirt": "tshirt", "black-tshirt": "tshirt",
   "white-hoodie": "hoodie", "black-hoodie": "hoodie",
   "white-longsleeve": "longsleeve", "black-longsleeve": "longsleeve",
+  "long-sleeve": "longsleeve", "long-sleeves": "longsleeve", "longsleeves": "longsleeve",
   "white-mug": "mug", "black-mug": "mug",
   "white-cap": "cap", "black-cap": "cap",
   "white-waterbottle": "waterbottle", "black-waterbottle": "waterbottle",
+  "water-bottle": "waterbottle", "water-bottles": "waterbottle", "bottle": "waterbottle",
 };
+
+function normalizeStudioProductId(raw: string): string {
+  const trimmed = raw.trim().toLowerCase();
+  const compact = trimmed.replace(/[-_\s]/g, "");
+  return LEGACY_ID_MAP[trimmed] ?? LEGACY_ID_MAP[compact] ?? compact;
+}
 
 function uid() { return Math.random().toString(36).slice(2, 10); }
 
@@ -97,6 +105,7 @@ export default function DesignStudioV2() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [canvasSize, setCanvasSize] = useState(600);
   const activeDrawIdRef = useRef<string | null>(null);
+  const urlInitializedRef = useRef(false);
 
   const store = useDesignStore();
   const {
@@ -153,10 +162,12 @@ export default function DesignStudioV2() {
     return () => window.removeEventListener("resize", onResize);
   }, [setIsMobile]);
 
-  // URL params + draft restore
+  // URL params + draft restore. An explicit product query is authoritative;
+  // cloud/local draft restoration must not silently replace it with Hoodie.
   useEffect(() => {
     const sp = new URLSearchParams(window.location.search);
     const isEdit = sp.get("edit") === "1";
+    const explicitUrlProduct = sp.get("product");
     const token = localStorage.getItem("trynex_customer_token");
     const restore = async () => {
       if (token) {
@@ -174,9 +185,9 @@ export default function DesignStudioV2() {
       } catch {}
     };
     restore();
-    const urlProduct = sp.get("product");
+    const urlProduct = explicitUrlProduct;
     if (urlProduct) {
-      const resolved = LEGACY_ID_MAP[urlProduct] ?? urlProduct;
+      const resolved = normalizeStudioProductId(urlProduct);
       const found = PRODUCTS.find(p => p.id === resolved || p.category === resolved);
       if (found) { setProduct(found); setColor(found.colors[0]); }
     }
@@ -205,14 +216,18 @@ export default function DesignStudioV2() {
     if (sp.get("view") === "back") setFace("back");
     const urlSize = sp.get("size");
     if (urlSize && ["XS", "S", "M", "L", "XL", "XXL", "XXXL"].includes(urlSize)) setSize(urlSize);
+    urlInitializedRef.current = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function applyDraftPayload(data: any, source: "cloud" | "local") {
     if (!data || data.version !== DRAFT_VERSION) return;
-    if (typeof data.productId === "string") {
-      const resolved = LEGACY_ID_MAP[data.productId] ?? data.productId;
-      const p = PRODUCTS.find(x => x.id === resolved);
+    const explicitUrlProduct = typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search).get("product")
+      : null;
+    if (typeof data.productId === "string" && !explicitUrlProduct) {
+      const resolved = normalizeStudioProductId(data.productId);
+      const p = PRODUCTS.find(x => x.id === resolved || x.category === resolved);
       if (p) setProduct(p);
     }
     if (data.color?.hex && data.color?.name) setColor(data.color);
@@ -259,8 +274,9 @@ export default function DesignStudioV2() {
     return () => window.clearTimeout(handle);
   }, [layers, selectedProduct, selectedColor, selectedSize, mugMode, linkedStoreProduct]);
 
-  // Sync URL params
+  // Sync URL params only after the initial query has been applied.
   useEffect(() => {
+    if (!urlInitializedRef.current) return;
     const params = new URLSearchParams();
     if (linkedStoreProduct) params.set("storeProductId", String(linkedStoreProduct.id));
     else if (selectedProduct.id !== PRODUCTS[0].id) params.set("product", selectedProduct.id);

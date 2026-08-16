@@ -9,17 +9,26 @@ export function prefetchDesignStudio(): void {
   if (designStudioPrefetched) return;
   designStudioPrefetched = true;
   // Kick off the lazy chunk download.
-  import("@/pages/DesignStudio").catch(() => {
+  import("@/pages/studio/DesignStudioV2").catch(() => {
     // Ignore — the real navigation will retry via lazyWithRetry.
     designStudioPrefetched = false;
   });
-  // Warm the browser cache for the default (t-shirt) garment mockup images
-  // so the first render of the studio canvas doesn't wait on a cold image
-  // fetch. Uses Image() so it never re-triggers React rendering.
+  // Warm one canonical front/back pair per product family so the active
+  // V2 studio resolves v3 assets without falling back to legacy cutouts.
   try {
     [
-      "/mockups/white-tshirt-front-cutout.png",
-      "/mockups/white-tshirt-back-cutout.png",
+      "/mockups/source-kit-v3/tshirt/white/front.png",
+      "/mockups/source-kit-v3/tshirt/white/back.png",
+      "/mockups/source-kit-v3/longsleeve/white/front.png",
+      "/mockups/source-kit-v3/longsleeve/white/back.png",
+      "/mockups/source-kit-v3/hoodie/white/front.png",
+      "/mockups/source-kit-v3/hoodie/white/back.png",
+      "/mockups/source-kit-v3/mug/white/front.png",
+      "/mockups/source-kit-v3/mug/white/back.png",
+      "/mockups/source-kit-v3/cap/white/front.png",
+      "/mockups/source-kit-v3/cap/white/back.png",
+      "/mockups/source-kit-v3/waterbottle/white/front.png",
+      "/mockups/source-kit-v3/waterbottle/white/back.png",
     ].forEach((src) => {
       const img = new Image();
       img.src = src;
