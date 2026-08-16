@@ -45,3 +45,7 @@ The Mug matrix has correct mirrored handle geometry for front/back, but colored 
 ## v3 contact-sheet visual findings — final apparel pass
 
 After rebuilding the matrix in the correct order and extracting original normalized photographic backs, all hoodie and Long Sleeve rows retain complete silhouettes, sleeves, cuffs, hems, and stable framing. The former missing-back/flat-source wiring defect is removed from the runtime matrix. The black and white special cutouts are the strongest references; colored backs now have authentic product contours and restrained shading, but remain less detailed than the colored front studio photos because the available source backs themselves are simpler. No new generic silhouette clip or duplicate layer was introduced. This is a materially improved source contract, but live six-family acceptance must still verify artwork rendering on the deployed build.
+
+## Live deep-link check
+
+A cache-busted navigation to `/design-studio?product=long-sleeves&release=3da3cff` currently resolves in the live browser to `/design-studio?product=hoodie`. The rendered page shows the Hoodie editor and a cloud-restored draft. This is recorded as a deployment/acceptance failure for the current live revision, not marked fixed until the 3da3cff build is deployed and the route remains Long Sleeve after initialization.

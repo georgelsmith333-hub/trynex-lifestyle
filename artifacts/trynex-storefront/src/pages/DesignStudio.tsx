@@ -614,9 +614,12 @@ export default function DesignStudio() {
       return false;
     }
     if (data && data.version === DRAFT_VERSION) {
-      if (typeof data.productId === "string") {
-        const resolvedId = LEGACY_ID_MAP[data.productId] ?? data.productId;
-        const p = PRODUCTS.find(x => x.id === resolvedId);
+      const explicitUrlProduct = typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("product")
+        : null;
+      if (typeof data.productId === "string" && !explicitUrlProduct) {
+        const resolvedId = normalizeStudioProductId(data.productId);
+        const p = PRODUCTS.find(x => x.id === resolvedId || x.category === resolvedId);
         if (p) {
           setSelectedProduct(p);
           setShow3D(false);
