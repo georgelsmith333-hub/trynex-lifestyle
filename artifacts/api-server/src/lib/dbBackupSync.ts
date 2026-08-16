@@ -179,6 +179,17 @@ async function verifySchemasMatch(
 }
 
 const ADDITIVE_SCHEMA_PATCHES = [
+  // Live Analytics source fields retained for compatibility with the active
+  // production mirror while the shared schema package catches up.
+  `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS product_type text`,
+  `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS color_name text`,
+  `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS side text`,
+  `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS fallback_url text`,
+  `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS print_zone_x integer`,
+  `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS print_zone_y integer`,
+  `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS print_zone_w integer`,
+  `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS print_zone_h integer`,
+  `ALTER TABLE orders ADD COLUMN IF NOT EXISTS idempotency_key text`,
   `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS master_file_url text`,
   `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS master_file_name text`,
   `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS master_file_mime text`,
