@@ -1,0 +1,12 @@
+{
+  "count": 54,
+  "categories": [
+    "cap",
+    "hoodie",
+    "longsleeve",
+    "mug",
+    "tshirt",
+    "waterbottle"
+  ],
+  "output": "/home/ubuntu/trynex-release/artifacts/trynex-storefront/public/mockups/source-kit-v2"
+}

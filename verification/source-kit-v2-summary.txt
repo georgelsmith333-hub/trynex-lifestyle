@@ -1,0 +1,5 @@
+items 54
+by_category {'cap': 8, 'hoodie': 10, 'longsleeve': 10, 'mug': 10, 'tshirt': 8, 'waterbottle': 8}
+alpha_coverage_min 0.20131
+alpha_coverage_max 0.571178
+alpha_empty 0

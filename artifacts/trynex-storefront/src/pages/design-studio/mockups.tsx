@@ -657,15 +657,11 @@ function getCuratedMockup(
   const category = product.category;
   const hex = normalizeMockupHex(color);
   const slug = SOURCE_KIT_COLOR_SLUGS[category]?.[hex] || "white";
-  const recreatedFront = category === "tshirt" && slug === "black" && face === "front"
-    ? "/mockups/recreated/tshirt-black-front-clean.png?v=recreated-v1"
-    : category === "longsleeve" && slug === "black" && face === "front"
-      ? "/mockups/recreated/longsleeve-black-front-clean.png?v=recreated-v1"
-      : null;
-  const photoSrc = recreatedFront ?? `/mockups/normalized/${category}-${slug}-${face}.png?v=v3_clean`;
+  const photoSrc = `/mockups/normalized/${category}-${slug}-${face}.png?v=smart-v2-source`;
+  const cutoutSrc = `/mockups/source-kit-v2/${category}/${slug}/${face}.png?v=smart-v2`;
   return {
     photoSrc,
-    cutoutSrc: photoSrc,
+    cutoutSrc,
     isColorPhoto: true,
     cutoutNeedsTint: false,
     photoKind: recreatedFront ? "transparent-cutout" : "opaque-photo",
@@ -738,8 +734,13 @@ export function resolveMockup(
     sourceKitKey,
     smartObject: createSmartMockupManifest({
       category,
+      colorSlug: sourceKitSlug ?? "white",
+      face,
       sourceKitKey,
       editableMasterPath: masterPath,
+      masterStatus: "manifest-only",
+      baseSrc: curated.photoSrc,
+      cutoutSrc: curated.cutoutSrc,
       normalizedFrame,
       printZone: zones?.[face] ?? (face === "back" && product.printZoneBack ? product.printZoneBack : product.printZone),
     }),
@@ -799,16 +800,11 @@ export function GarmentSVG({
       : (face === "back" && product.printZoneBack) ? product.printZoneBack : product.printZone;
   const displayPZ = pz;
 
-  // Source used for the coloured tint path. We always use the transparent cutout PNG
-  // itself, not the full studio photo + a separate mask. The cutout already carries
-  // the garment silhouette in its alpha channel, so using it directly prevents the
-  // ghost/double-image effect that happens when the full photo and cutout are not
-  // perfectly aligned (longsleeve, cap, mug, waterbottle).
-  const tintPhotoSrc = resolvedMockup.cutoutSrc;
-
-  // Keep the separate cutout mask source only when we need the shadow pass for the
-  // coloured tint path. For light/white garments the cutout is rendered directly.
-  const cutoutMaskSrc = resolvedMockup.cutoutSrc;
+  // The transparent source-kit cutout is the only runtime product layer. The
+  // opaque normalized photo remains available as source metadata and for admin
+  // inspection, but it must never be stacked beneath or above the cutout in the
+  // live editor because that creates the pale duplicate wedges seen in production.
+  const canonicalBaseSrc = resolvedMockup.cutoutSrc;
 
   // Canvas background colour: clean white for all products so the mockup reads
   // as a premium product shot on a light, neutral studio surface. Cutout garments
@@ -890,39 +886,17 @@ export function GarmentSVG({
 
       <g style={{ pointerEvents: "none" }}>
         {/* Layer 1: Base Product */}
-        {needsTint ? (
-          <image
-            key={`base-tint-${tintPhotoSrc}`}
-            href={tintPhotoSrc}
-            x={0} y={0} width={1000} height={1000}
-            preserveAspectRatio="xMidYMid meet"
-            filter="url(#garment-color-tint)"
-            className="garment-img"
-          />
-        ) : (
-          <image
-            key={`base-photo-${resolvedMockup.photoSrc}`}
-            href={resolvedMockup.photoSrc || resolvedMockup.cutoutSrc}
-            x={0} y={0} width={1000} height={1000}
-            preserveAspectRatio="xMidYMid meet"
-            className="garment-img"
-          />
-        )}
+        <image
+          key={`canonical-cutout-${canonicalBaseSrc}`}
+          href={canonicalBaseSrc}
+          x={0} y={0} width={1000} height={1000}
+          preserveAspectRatio="xMidYMid meet"
+          filter={needsTint ? "url(#garment-color-tint)" : undefined}
+          className="garment-img"
+        />
 
-        {/* Do not paint a second full-frame photo here. The previous duplicate
-            shadow/highlight images were not real PSD masks and produced ghosted
-            silhouettes. Texture and garment lighting remain embedded in the
-            single normalized smart-object source image. */}
-        {product.category === "hoodie" && face === "front" && (
-          <image
-            key={`hoodie-rope-detail-${resolvedMockup.photoSrc}`}
-            href={resolvedMockup.photoSrc || resolvedMockup.cutoutSrc}
-            x={0} y={0} width={1000} height={1000}
-            preserveAspectRatio="xMidYMid meet"
-            clipPath="url(#hoodie-rope-preservation)"
-            pointerEvents="none"
-          />
-        )}
+        {/* No second full-frame source is painted. Protected product details
+            remain in the canonical cutout and artwork is clipped separately. */}
       </g>
 
       {showPrintZone && (() => {

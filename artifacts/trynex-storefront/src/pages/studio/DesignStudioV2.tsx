@@ -463,9 +463,9 @@ export default function DesignStudioV2() {
       } catch {}
     }
 
-    const garmentSrc = frontMockup.photoKind === "opaque-photo" && !frontMockup.requiresTint
-      ? frontMockup.photoSrc
-      : frontMockup.cutoutSrc;
+    // Use the same canonical transparent cutout as the live SVG preview. The
+    // opaque photo is source metadata only and must not create a second silhouette.
+    const garmentSrc = frontMockup.cutoutSrc;
     const isColorPhoto = frontMockup.isColorPhoto;
     const frontPZ = isMug ? MUG_SIDE_PZ : selectedProduct.printZone;
     const backPZ = isMug ? MUG_SIDE_BACK_PZ : (selectedProduct.printZoneBack ?? selectedProduct.printZone);
@@ -573,9 +573,7 @@ export default function DesignStudioV2() {
   const handleExportPNG = async () => {
     const activeLayers = layers.filter(l => (l.face ?? "front") === activeFace) as unknown as ComposerLayer[];
     if (activeLayers.length === 0) { toast({ title: "Nothing to export", description: "Add a layer first." }); return; }
-    const garmentSrc = frontMockup.photoKind === "opaque-photo" && !frontMockup.requiresTint
-      ? frontMockup.photoSrc
-      : frontMockup.cutoutSrc;
+    const garmentSrc = frontMockup.cutoutSrc;
     const canvas = document.createElement("canvas");
     await composeGarmentMockup({ canvas, garmentSrc, garmentColor: selectedColor.hex, printZone: isMug ? (activeFace === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ) : selectedProduct.printZone, layers: activeLayers, outSize: 1200, isColorPhoto: frontMockup.isColorPhoto, requiresTint: frontMockup.requiresTint, fabricTexture });
     const a = document.createElement("a"); a.href = canvas.toDataURL("image/png"); a.download = `trynex-${selectedProduct.id}-${activeFace}-design.png`; a.click();

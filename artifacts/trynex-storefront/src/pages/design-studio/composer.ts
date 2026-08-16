@@ -577,6 +577,11 @@ export async function composeGarmentMockup(opts: {
   const s = outSize / 1000;
 
   ctx.clearRect(0, 0, outSize, outSize);
+  // The product cutout carries the complete silhouette and embedded lighting.
+  // Paint one neutral studio background behind it instead of relying on an
+  // opaque source photo that can introduce pale duplicate wedges at the edges.
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, outSize, outSize);
 
   try {
     const garmentImg = await loadImage(garmentSrc, imageCache);
