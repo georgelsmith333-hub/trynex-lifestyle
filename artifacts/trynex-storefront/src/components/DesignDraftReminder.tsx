@@ -19,9 +19,10 @@ export function DesignDraftReminder() {
   const [location] = useLocation();
 
   const isStudio = location.startsWith("/design-studio");
+  const isInteractionRoute = /^\/(products|track|checkout|cart|wishlist|login|register|admin)(\/|$)/.test(location);
 
   useEffect(() => {
-    if (isStudio) return;
+    if (isStudio || isInteractionRoute) return;
     const alreadyShown = sessionStorage.getItem(REMINDER_SESSION_KEY);
     if (alreadyShown) return;
 
@@ -67,7 +68,7 @@ export function DesignDraftReminder() {
 
     checkDraft();
     return () => { cancelled = true; };
-  }, [isStudio]);
+  }, [isStudio, isInteractionRoute]);
 
   const handleDismiss = () => {
     setShow(false);
@@ -81,7 +82,7 @@ export function DesignDraftReminder() {
     return hrs < 24 ? `${hrs}h ago` : "recently";
   })() : "";
 
-  if (typeof document === "undefined") return null;
+  if (typeof document === "undefined" || isInteractionRoute) return null;
 
   return createPortal(
     <AnimatePresence>

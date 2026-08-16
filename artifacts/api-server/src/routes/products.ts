@@ -175,8 +175,21 @@ router.get("/products", async (req, res) => {
 
     const conditions: any[] = [];
     if (categoryId) {
-      const catId = parseInt(categoryId as string, 10);
-      if (Number.isFinite(catId)) conditions.push(eq(productsTable.categoryId, catId));
+      const rawCategory = String(categoryId).trim();
+      const numericCategoryId = Number(rawCategory);
+      if (Number.isInteger(numericCategoryId) && numericCategoryId > 0) {
+        conditions.push(eq(productsTable.categoryId, numericCategoryId));
+      } else {
+        // Storefront links use canonical category slugs. Resolve them server-side
+        // instead of silently ignoring a non-numeric `category` query parameter.
+        const [categoryRow] = await db
+          .select({ id: categoriesTable.id })
+          .from(categoriesTable)
+          .where(ilike(categoriesTable.slug, rawCategory))
+          .limit(1);
+        // An unknown category must not silently return the entire catalogue.
+        conditions.push(eq(productsTable.categoryId, categoryRow?.id ?? -1));
+      }
     }
     if (search) {
       const pattern = `%${search}%`;
