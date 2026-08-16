@@ -664,7 +664,7 @@ function getCuratedMockup(
     cutoutSrc,
     isColorPhoto: true,
     cutoutNeedsTint: false,
-    photoKind: recreatedFront ? "transparent-cutout" : "opaque-photo",
+    photoKind: "opaque-photo",
     requiresTint: false,
     // Recreated assets have clean alpha but no synthetic silhouette shadow;
     // source-kit photos also remain shadow-free to avoid ghost boxes.
