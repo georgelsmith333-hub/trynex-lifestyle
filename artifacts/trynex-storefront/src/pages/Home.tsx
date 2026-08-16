@@ -94,12 +94,12 @@ const BASE_STATS = [
 ];
 
 const CATEGORIES = [
-  { name: "T-Shirts",      icon: "tshirt",      desc: "Premium custom tees",         count: "Starting ৳599",   color: "#fff4ee", accent: "var(--color-primary)", href: "/products?category=t-shirts" },
-  { name: "Mugs",          icon: "mug",          desc: "Ceramic & sublimation",       count: "Starting ৳399",   color: "#fdf4ff", accent: "#9333ea",             href: "/products?category=mugs" },
+  { name: "T-Shirts",      icon: "tshirt",      desc: "230GSM premium cotton",       count: "Starting ৳450",   color: "#fff4ee", accent: "var(--color-primary)", href: "/products?category=t-shirts" },
+  { name: "Long Sleeve",  icon: "longsleeve",  desc: "Comfort fit long sleeves",     count: "Starting ৳599",   color: "#f0f7ff", accent: "#2563eb",             href: "/products?category=long-sleeve" },
   { name: "Hoodies",       icon: "hoodie",       desc: "320GSM premium fleece",       count: "Starting ৳1,299", color: "#ecfeff", accent: "#0891b2",             href: "/products?category=hoodies" },
+  { name: "Mugs",          icon: "mug",          desc: "Ceramic & sublimation",       count: "Starting ৳449",   color: "#fdf4ff", accent: "#9333ea",             href: "/products?category=mugs" },
   { name: "Caps",          icon: "cap",          desc: "Embroidered & printed",       count: "Starting ৳499",   color: "#f0fdf4", accent: "#16a34a",             href: "/products?category=caps" },
   { name: "Water Bottles", icon: "waterbottle",  desc: "600ml aluminium custom",      count: "Starting ৳699",   color: "#eff6ff", accent: "#2563eb",             href: "/products?category=custom-orders" },
-  { name: "Custom",        icon: "custom",       desc: "Anything you imagine",        count: "Get a quote",     color: "#fffbeb", accent: "#d97706",             href: "/design-studio" },
 ];
 
 
@@ -974,13 +974,13 @@ export default function Home() {
             }).map((cat, i) => {
               /* Use crisp mockup photos for category cards — clean on any background */
               const imageMap: Record<string, string> = {
-                tshirt:      "/mockups/white-tshirt-front-cutout.png",
-                hoodie:      "/mockups/white-hoodie-front.png",
-                cap:         "/mockups/white-cap-front-cutout.png",
-                mug:         "/mockups/white-mug-front.png",
-                waterbottle: "/mockups/white-waterbottle-front.png",
-                watertumbler:"/mockups/white-waterbottle-front.png",
-                custom:      "/mockups/white-tshirt-front-cutout.png",
+                tshirt:      "/mockups/source-kit-v2/tshirt/white/front.png",
+                longsleeve:  "/mockups/source-kit-v2/longsleeve/white/front.png",
+                hoodie:      "/mockups/source-kit-v2/hoodie/white/front.png",
+                cap:         "/mockups/source-kit-v2/cap/white/front.png",
+                mug:         "/mockups/source-kit-v2/mug/white/front.png",
+                waterbottle: "/mockups/source-kit-v2/waterbottle/white/front.png",
+                watertumbler:"/mockups/source-kit-v2/waterbottle/white/front.png",
               };
 
               return (

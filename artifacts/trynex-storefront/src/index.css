@@ -131,7 +131,9 @@
   .no-scrollbar::-webkit-scrollbar { display: none; }
 
   .pt-header {
-    padding-top: calc(var(--announcement-height, 0px) + 4rem);
+    /* Navbar is 4.25rem tall; the former 4rem offset clipped the first
+       0.25rem of page bodies on routes using this shared utility. */
+    padding-top: calc(var(--announcement-height, 0px) + 4.25rem);
   }
 
   /* Premium orange gradient text */

@@ -6,9 +6,12 @@ import {
 } from "lucide-react";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 
-const tshirtSrc = "/mockups/white-tshirt-front-cutout.png";
-const mugSrc    = "/mockups/white-mug-front.png";
-const capSrc    = "/mockups/white-cap-front-cutout.png";
+const tshirtSrc = "/mockups/source-kit-v2/tshirt/white/front.png";
+const mugSrc    = "/mockups/source-kit-v2/mug/white/front.png";
+const capSrc    = "/mockups/source-kit-v2/cap/white/front.png";
+const hoodieSrc = "/mockups/source-kit-v2/hoodie/white/front.png";
+const longsleeveSrc = "/mockups/source-kit-v2/longsleeve/white/front.png";
+const bottleSrc = "/mockups/source-kit-v2/waterbottle/white/front.png";
 
 const DEFAULT_PHRASES: string[] = [
   "T-Shirts.",
@@ -93,46 +96,12 @@ function useTypewriter(phrases: string[], opts?: {
 
 // Multi-product grid shown in the hero right column
 const HERO_PRODUCT_GRID = [
-  {
-    src: "/mockups/white-hoodie-front.png",
-    label: "Custom Hoodie",
-    badge: "Best Seller",
-    badgeColor: "#E85D04",
-    delay: 0.1,
-    floatY: 10,
-    rotate: "0deg",
-    href: "/products?category=hoodies&sort=bestsellers",
-  },
-  {
-    src: "/mockups/white-waterbottle-front-cutout.png",
-    label: "Water Bottle",
-    badge: "New",
-    badgeColor: "#0EA5E9",
-    delay: 0.25,
-    floatY: 8,
-    rotate: "0deg",
-    href: "/products?category=custom-orders&sort=newest",
-  },
-  {
-    src: "/mockups/white-tshirt-front-cutout.png",
-    label: "Custom T-Shirt",
-    badge: "Top Pick",
-    badgeColor: "#10B981",
-    delay: 0.15,
-    floatY: 12,
-    rotate: "0deg",
-    href: "/products?category=t-shirts&sort=bestsellers",
-  },
-  {
-    src: "/mockups/white-cap-front-cutout.png",
-    label: "Custom Cap",
-    badge: "Trending",
-    badgeColor: "#7C3AED",
-    delay: 0.3,
-    floatY: 9,
-    rotate: "0deg",
-    href: "/products?category=caps&sort=newest",
-  },
+  { src: hoodieSrc, label: "Custom Hoodie", badge: "Best Seller", badgeColor: "#E85D04", delay: 0.1, floatY: 10, href: "/products?category=hoodies&sort=bestsellers" },
+  { src: bottleSrc, label: "Water Bottle", badge: "New", badgeColor: "#0EA5E9", delay: 0.25, floatY: 8, href: "/products?category=custom-orders&sort=newest" },
+  { src: tshirtSrc, label: "Custom T-Shirt", badge: "Top Pick", badgeColor: "#10B981", delay: 0.15, floatY: 12, href: "/products?category=t-shirts&sort=bestsellers" },
+  { src: capSrc, label: "Custom Cap", badge: "Trending", badgeColor: "#7C3AED", delay: 0.3, floatY: 9, href: "/products?category=caps&sort=newest" },
+  { src: longsleeveSrc, label: "Long Sleeve", badge: "New", badgeColor: "#2563EB", delay: 0.2, floatY: 7, href: "/products?category=long-sleeve&sort=newest" },
+  { src: mugSrc, label: "Custom Mug", badge: "Popular", badgeColor: "#9333EA", delay: 0.35, floatY: 6, href: "/products?category=mugs&sort=bestsellers" },
 ];
 
 
@@ -452,9 +421,9 @@ export function TypewriterHero() {
         {/* ── RIGHT: Premium multi-product showcase (tablet + desktop) ── */}
         <div className="hidden md:flex flex-col gap-3 lg:gap-4 w-full max-w-lg ml-auto">
 
-          {/* Top row: 2 product cards */}
-          <div className="flex gap-3 lg:gap-4">
-            {HERO_PRODUCT_GRID.slice(0, 2).map((p, i) => (
+          {/* Top row: 3 product cards */}
+          <div className="flex gap-2 lg:gap-3">
+            {HERO_PRODUCT_GRID.slice(0, 3).map((p, i) => (
               <motion.div
                 key={p.label}
                 className="flex-1 relative rounded-2xl lg:rounded-3xl overflow-hidden cursor-pointer"
@@ -503,9 +472,9 @@ export function TypewriterHero() {
             ))}
           </div>
 
-          {/* Bottom row: 2 more product cards */}
-          <div className="flex gap-3 lg:gap-4">
-            {HERO_PRODUCT_GRID.slice(2, 4).map((p, i) => (
+          {/* Bottom row: 3 more product cards */}
+          <div className="flex gap-2 lg:gap-3">
+            {HERO_PRODUCT_GRID.slice(3, 6).map((p, i) => (
               <motion.div
                 key={p.label}
                 className="flex-1 relative rounded-2xl lg:rounded-3xl overflow-hidden cursor-pointer"
