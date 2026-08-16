@@ -44,11 +44,19 @@ export const BACKUP_TARGETS: BackupTarget[] = [
 export interface TargetSyncResult {
   id: string;
   label: string;
-  status: "ok" | "skipped" | "error";
+  status: "ok" | "skipped" | "blocked" | "error";
   tablesCopied?: number;
   rowsCopied?: number;
   message?: string;
   durationMs?: number;
+}
+
+export interface SchemaRepairResult {
+  id: string;
+  label: string;
+  status: "repaired" | "skipped" | "blocked" | "error";
+  message: string;
+  durationMs: number;
 }
 
 async function getTables(pool: pg.Pool): Promise<string[]> {
@@ -173,6 +181,67 @@ async function verifySchemasMatch(
   }
 }
 
+const ADDITIVE_SCHEMA_PATCHES = [
+  `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS master_file_url text`,
+  `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS master_file_name text`,
+  `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS master_file_mime text`,
+  `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS master_file_size integer`,
+  `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS master_file_sha256 text`,
+  `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS source_kit_key text`,
+  `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS face text`,
+  `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS color text`,
+  `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS manifest_json jsonb`,
+  `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS ingestion_status text NOT NULL DEFAULT 'preview-only'`,
+  `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS ingestion_error text`,
+  `ALTER TABLE products ADD COLUMN IF NOT EXISTS variants jsonb NOT NULL DEFAULT '[]'::jsonb`,
+  `CREATE INDEX IF NOT EXISTS mockups_source_kit_key_idx ON mockups(source_kit_key)`,
+  `CREATE INDEX IF NOT EXISTS mockups_ingestion_status_idx ON mockups(ingestion_status)`,
+] as const;
+
+export async function repairTargetSchemas(): Promise<SchemaRepairResult[]> {
+  if (process.env.ALLOW_DB_SCHEMA_REPAIR !== "true") {
+    return BACKUP_TARGETS.map((target) => ({
+      id: target.id,
+      label: target.label,
+      status: "blocked" as const,
+      message: "Schema repair is disabled. Set ALLOW_DB_SCHEMA_REPAIR=true for an additive-only repair window, then retry.",
+      durationMs: 0,
+    }));
+  }
+
+  const results: SchemaRepairResult[] = [];
+  for (const target of BACKUP_TARGETS) {
+    const start = Date.now();
+    const targetUrl = process.env[target.envKey];
+    if (!targetUrl) {
+      results.push({ id: target.id, label: target.label, status: "skipped", message: `${target.envKey} not configured`, durationMs: Date.now() - start });
+      continue;
+    }
+
+    const pool = new Pool({ connectionString: targetUrl, max: 1, connectionTimeoutMillis: 10_000 });
+    try {
+      const client = await pool.connect();
+      try {
+        await client.query("BEGIN");
+        for (const statement of ADDITIVE_SCHEMA_PATCHES) await client.query(statement);
+        await client.query("COMMIT");
+      } catch (err) {
+        await client.query("ROLLBACK").catch(() => {});
+        throw err;
+      } finally {
+        client.release();
+      }
+      results.push({ id: target.id, label: target.label, status: "repaired", message: "Additive schema patch applied; run Sync Now to verify and mirror data.", durationMs: Date.now() - start });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      results.push({ id: target.id, label: target.label, status: "error", message: message.slice(0, 240), durationMs: Date.now() - start });
+    } finally {
+      await pool.end().catch(() => {});
+    }
+  }
+  return results;
+}
+
 async function syncOneTarget(
   sourceUrl: string,
   target: BackupTarget,
@@ -280,7 +349,8 @@ async function syncOneTarget(
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     logger.warn({ target: target.label, err: message }, "[backupSync] Target sync failed");
-    return { id: target.id, label: target.label, status: "error", message, durationMs: Date.now() - start };
+    const blockedBySchema = message.startsWith("Schema mismatch for table");
+    return { id: target.id, label: target.label, status: blockedBySchema ? "blocked" : "error", message, durationMs: Date.now() - start };
   } finally {
     await sourcePool.end().catch(() => {});
     await targetPool.end().catch(() => {});

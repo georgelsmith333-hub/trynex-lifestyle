@@ -487,7 +487,7 @@ def build_pdf(output_path="TryNex_DesignStudio_MasterPlan.pdf"):
         "This restores git-push capability and CF Pages deployment.", s["body"]))
     story.append(code_block([
         "# Secret to update in Replit → Secrets panel:",
-        "GITHUB_PERSONAL_ACCESS_TOKEN = ghp_sIcLXnagb...SFGBR  (from uploaded secrets file)",
+        "GITHUB_PERSONAL_ACCESS_TOKEN = <set this in the deployment secret manager; never store the token here>",
         "",
         "# Also update Cloudflare token — all existing CF tokens returned error 1000",
         "# Generate a new token at dash.cloudflare.com → Profile → API Tokens",
@@ -1154,7 +1154,7 @@ def build_pdf(output_path="TryNex_DesignStudio_MasterPlan.pdf"):
     story.append(info_card([
         ("✓ DB Failover Reordered", "DATABASE_ANALYTICS promoted above DATABASE_PRODUCTS — 73 orders now visible in admin"),
         ("✓ API Server Rebuilt", "lib/db/src/index.ts updated, api-server bundle rebuilt and restarted"),
-        ("→ GitHub Token", "Paste new token (ghp_sIcLXna...) into GITHUB_PERSONAL_ACCESS_TOKEN in Replit Secrets"),
+        ("→ GitHub Token", "Set GITHUB_PERSONAL_ACCESS_TOKEN in the deployment secret manager; never paste it into repository files"),
         ("→ CF Token", "Generate new CF API token at dash.cloudflare.com using 'Edit Cloudflare Pages' template"),
         ("→ Neon Upgrade", "Upgrade trynex main Neon account to restore full primary DB (optional — analytics covers for now)"),
     ], bg=HexColor("#F0FDF4"), label_color=BRAND_GREEN))

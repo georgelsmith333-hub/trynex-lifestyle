@@ -245,14 +245,19 @@ export function recordBackupSyncResults(results: TargetSyncResult[]): void {
 
   const ok = results.filter((r) => r.status === "ok").length;
   const failed = results.filter((r) => r.status === "error");
+  const blocked = results.filter((r) => r.status === "blocked");
   logger.info({ ok, total: results.length }, "[scheduler] Backup sync complete");
   if (failed.length > 0) {
     logger.warn({ failed }, "[scheduler] Some backup targets failed to sync");
   }
+  if (blocked.length > 0) {
+    logger.warn({ blocked }, "[scheduler] Some backup targets require schema migration before sync");
+  }
 
-  // If ALL configured targets failed, count as a full failure for the breaker.
+  // Only connectivity/quota errors count toward the breaker. A schema block is
+  // an operator migration task, not evidence that the database is unavailable.
   const configured = results.filter((r) => r.status !== "skipped");
-  if (configured.length > 0 && ok === 0) {
+  if (configured.length > 0 && failed.length === configured.length) {
     backupConsecutiveFailures += 1;
     if (backupConsecutiveFailures >= BACKUP_CIRCUIT_OPEN_AFTER) {
       backupCircuitOpenSince = Date.now();

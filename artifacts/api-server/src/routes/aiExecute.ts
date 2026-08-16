@@ -290,9 +290,6 @@ async function parseCommandWithAI(command: string): Promise<Record<string, unkno
 
   // Fall back to AI parsing for complex/ambiguous commands
   const config = parserConfig();
-  if (!config.key) {
-    throw new Error("AI command parser is not configured. Add OPENAI_API_KEY or POLLINATIONS_API_KEY in the server environment.");
-  }
   const modelsToTry = config.models;
   let lastError: Error = new Error("No models tried");
 

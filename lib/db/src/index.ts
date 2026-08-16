@@ -2,16 +2,18 @@
  * Resilient PostgreSQL connection with automatic failover.
  *
  * Priority order for connection URLs:
- *   1. DATABASE_URL_MAIN     (Neon primary — ep-proud-hill) ← preferred when set
- *   2. DATABASE_FAILOVER     (Neon failover — ep-crimson-dawn) ← second Neon instance
+ *   1. DATABASE_URL_MAIN     (Neon primary — transactional source)
+ *   2. DATABASE_FAILOVER     (Neon failover — transactional standby)
  *   3. DATABASE_ANALYTICS     (full mirror — preserves orders and admin data)
- *   4. DATABASE_URL_TRYNEX_DB (Neon secondary)
- *   5. DATABASE_PRODUCTS      (catalog-only fallback)
- *   6. DATABASE_URL            (Replit built-in — local dev last resort)
+ *   4. DATABASE_URL_TRYNEX_DB (Neon secondary — transactional standby)
+ *   5. DATABASE_URL            (Replit built-in — local development last resort)
  *
- * The probe validates that a connection both connects AND has the expected schema
- * (by checking for the `products` table). This prevents falling back to an empty
- * local DB when Neon is reachable but slow to wake up.
+ * DATABASE_PRODUCTS is intentionally excluded from this chain. It is a catalog
+ * satellite and may not contain orders, admin data, or the current schema.
+ *
+ * The probe validates that a connection both connects AND has the expected
+ * transactional schema (`products` and `orders`). This prevents a catalog-only
+ * database from silently becoming the live source of truth.
  *
  * The module probes all URLs at startup (non-blocking) and switches
  * transparently to the first reachable one. All callers use the same
@@ -31,7 +33,6 @@ function getCandidateUrls(): string[] {
     process.env.DATABASE_FAILOVER,      // Neon failover — ep-crimson-dawn
     process.env.DATABASE_ANALYTICS,     // Full mirror — preserves historical orders/admin data
     process.env.DATABASE_URL_TRYNEX_DB, // Neon secondary (if configured)
-    process.env.DATABASE_PRODUCTS,      // Products shard / catalog-only fallback
     process.env.DATABASE_URL,           // Replit built-in — last resort
   ].filter((url): url is string => typeof url === "string" && url.trim().length > 0);
 
@@ -108,9 +109,10 @@ async function probeCandidate(url: string): Promise<ProbeResult> {
   const testPool = new Pool({ connectionString: url, max: 1, connectionTimeoutMillis: 10_000 });
   try {
     const schema = await hasSchema(testPool);
-    if (!schema.products) {
+    if (!schema.products || !schema.orders) {
       await testPool.end().catch(() => {});
-      return { ok: false, error: "missing products schema", orders: 0, products: 0, mockups: 0 };
+      const missing = [!schema.products ? "products" : null, !schema.orders ? "orders" : null].filter(Boolean).join(", ");
+      return { ok: false, error: `missing transactional schema: ${missing}`, orders: 0, products: 0, mockups: 0 };
     }
     const client = await testPool.connect();
     try {

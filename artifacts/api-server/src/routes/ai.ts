@@ -61,7 +61,8 @@ type ImageModelId = keyof typeof IMAGE_MODELS;
 
 /* ══════════════════════════════════════════════════════
    TEXT / CHAT MODELS — server-configured provider
-   Uses the current Pollinations OpenAI-compatible endpoint when a server key exists.
+   Uses the current Pollinations OpenAI-compatible endpoint with an optional server key;
+   a key improves quota/reliability but is not required for the free best-effort path.
 ══════════════════════════════════════════════════════ */
 const TEXT_MODELS = [
   { id: "openai",          label: "OpenAI-compatible (recommended)" },
@@ -483,10 +484,6 @@ router.post("/ai/chat", async (req: Request, res: Response) => {
     return res.status(400).json({ error: "messages array is required" });
   }
 
-  if (!POLLINATIONS_API_KEY) {
-    return res.status(503).json({ error: "AI chat is not configured. Add POLLINATIONS_API_KEY or enable another server-side AI provider." });
-  }
-
   const safeModel = TEXT_MODELS.some(m => m.id === model) ? model : "openai";
 
   const systemMessages = system
@@ -683,10 +680,10 @@ const DEV_PROVIDERS = [
   {
     id: "pollinations",
     name: "Pollinations AI",
-    tag: "Server key required",
+    tag: "Free, no key (best effort)",
     color: "#6366f1",
     url: POLLIN_TEXT_URL,
-    needsKey: true,
+    needsKey: false,
     envKey: "POLLINATIONS_API_KEY",
     models: [
       { id: "openai",         label: "OpenAI-compatible", ctx: 128000, speed: "fast" },
@@ -851,11 +848,6 @@ router.post("/ai/developer/chat", requireAdmin, async (req: Request, res: Respon
   const hasCreds = (p: DevProvider) => !p.needsKey || !!process.env[p.envKey];
   const provider: DevProvider = (wanted && hasCreds(wanted)) ? wanted : DEV_PROVIDERS.find(hasCreds) ?? DEV_PROVIDERS[0];
   const apiKey  = provider.needsKey ? (process.env[provider.envKey] ?? "") : "";
-  if (provider.id === "pollinations" && !apiKey) {
-    res.status(503).json({ error: "AI provider is not configured. Add POLLINATIONS_API_KEY or enable a configured provider in the server environment." });
-    return;
-  }
-
   const safeModel = provider.models.some((m: { id: string }) => m.id === model)
     ? model!
     : provider.models[0].id;

@@ -88,6 +88,19 @@ export function CanvasArea({ width, height, mockup, mockupImg, printZone, onCanv
       }}
     >
       {mockup}
+      {layers.length === 0 && (
+        <div
+          className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none p-8"
+          aria-live="polite"
+        >
+          <div className="max-w-[250px] rounded-2xl border border-dashed border-orange-200 bg-white/90 px-5 py-4 text-center shadow-sm backdrop-blur-sm">
+            <p className="text-sm font-black text-gray-800">Start your design</p>
+            <p className="mt-1 text-xs leading-5 text-gray-500">
+              Upload artwork, add text, or choose a template from the panel to begin.
+            </p>
+          </div>
+        </div>
+      )}
       <Stage
         width={width}
         height={height}

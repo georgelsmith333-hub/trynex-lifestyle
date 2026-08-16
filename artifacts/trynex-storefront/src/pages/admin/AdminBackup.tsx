@@ -16,7 +16,7 @@ interface SyncStatus {
   lastResults?: Array<{
     id: string;
     label: string;
-    status: "ok" | "skipped" | "error";
+    status: "ok" | "skipped" | "blocked" | "error";
     message?: string;
     rowsCopied?: number;
     durationMs?: number;
@@ -31,6 +31,7 @@ export default function AdminBackup() {
   const [importResult, setImportResult] = useState<Record<string, number> | null>(null);
   const [syncStatus, setSyncStatus] = useState<SyncStatus | null>(null);
   const [syncNowLoading, setSyncNowLoading] = useState(false);
+  const [repairLoading, setRepairLoading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const importMutation = useImportBackup();
 
@@ -52,12 +53,15 @@ export default function AdminBackup() {
       const ok = data.results?.filter((r: any) => r.status === "ok").length ?? 0;
       const total = data.results?.length ?? 0;
       const failed = data.results?.filter((r: any) => r.status === "error") ?? [];
+      const blocked = data.results?.filter((r: any) => r.status === "blocked") ?? [];
       toast({
-        title: failed.length > 0 ? "Sync partially complete" : "Sync complete",
+        title: failed.length > 0 ? "Sync partially complete" : blocked.length > 0 ? "Schema repair required" : "Sync complete",
         description: failed.length > 0
           ? `${ok}/${total} targets synced. ${failed.map((r: any) => r.label).join(", ")} failed.`
-          : `${ok}/${total} targets synced successfully.`,
-        variant: failed.length > 0 ? "destructive" : undefined,
+          : blocked.length > 0
+            ? `${ok}/${total} targets synced. ${blocked.map((r: any) => r.label).join(", ")} need migrations before mirroring.`
+            : `${ok}/${total} targets synced successfully.`,
+        variant: failed.length > 0 || blocked.length > 0 ? "destructive" : undefined,
       });
       // Refresh status after sync
       const statusRes = await fetch(getApiUrl("/api/admin/backup/sync-status"), { headers: getAuthHeaders() });
@@ -66,6 +70,33 @@ export default function AdminBackup() {
       toast({ title: "Sync failed", description: "Check server logs.", variant: "destructive" });
     } finally {
       setSyncNowLoading(false);
+    }
+  };
+
+  const handleRepairSchemas = async () => {
+    if (!window.confirm("This applies additive-only schema patches to configured backup databases. It does not delete data. Continue?")) return;
+    setRepairLoading(true);
+    try {
+      const res = await fetch(getApiUrl("/api/admin/backup/repair-schemas"), {
+        method: "POST",
+        headers: getAuthHeaders(),
+      });
+      const data = await res.json();
+      const blocked = data.results?.filter((r: any) => r.status === "blocked") ?? [];
+      const failed = data.results?.filter((r: any) => r.status === "error") ?? [];
+      toast({
+        title: blocked.length > 0 ? "Repair window is disabled" : failed.length > 0 ? "Schema repair partially failed" : "Schema repair completed",
+        description: blocked.length > 0
+          ? "Set ALLOW_DB_SCHEMA_REPAIR=true on the API for a controlled additive-only repair window."
+          : failed.length > 0
+            ? failed.map((r: any) => `${r.label}: ${r.message}`).join("; ")
+            : "Run Sync Now next to verify schemas and mirror data.",
+        variant: blocked.length > 0 || failed.length > 0 ? "destructive" : undefined,
+      });
+    } catch {
+      toast({ title: "Schema repair failed", description: "Check server logs.", variant: "destructive" });
+    } finally {
+      setRepairLoading(false);
     }
   };
 
@@ -164,15 +195,26 @@ export default function AdminBackup() {
                   <p className="text-xs text-gray-500">Auto-mirrors every 30 min to backup databases</p>
                 </div>
               </div>
-              <button
-                onClick={handleSyncNow}
-                disabled={syncNowLoading}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs border transition-all hover:-translate-y-0.5 disabled:opacity-50"
-                style={{ background: '#f9fafb', borderColor: '#e5e7eb', color: '#374151' }}
-              >
-                {syncNowLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-                Sync Now
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleRepairSchemas}
+                  disabled={repairLoading}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs border transition-all hover:-translate-y-0.5 disabled:opacity-50"
+                  style={{ background: '#fff7ed', borderColor: '#fed7aa', color: '#c2410c' }}
+                >
+                  {repairLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShieldCheck className="w-3.5 h-3.5" />}
+                  Repair Schema
+                </button>
+                <button
+                  onClick={handleSyncNow}
+                  disabled={syncNowLoading}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs border transition-all hover:-translate-y-0.5 disabled:opacity-50"
+                  style={{ background: '#f9fafb', borderColor: '#e5e7eb', color: '#374151' }}
+                >
+                  {syncNowLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+                  Sync Now
+                </button>
+              </div>
             </div>
             {syncStatus ? (
               <div className="grid grid-cols-3 gap-3">
@@ -217,22 +259,26 @@ export default function AdminBackup() {
                 {syncStatus.lastResults.map((target) => (
                   <div key={target.id} className="flex items-start gap-2 rounded-xl px-3 py-2"
                     style={{
-                      background: target.status === "ok" ? "#f0fdf4" : target.status === "error" ? "#fef2f2" : "#f9fafb",
-                      border: `1px solid ${target.status === "ok" ? "#bbf7d0" : target.status === "error" ? "#fecaca" : "#e5e7eb"}`,
+                      background: target.status === "ok" ? "#f0fdf4" : target.status === "error" || target.status === "blocked" ? "#fff7ed" : "#f9fafb",
+                      border: `1px solid ${target.status === "ok" ? "#bbf7d0" : target.status === "error" ? "#fecaca" : target.status === "blocked" ? "#fed7aa" : "#e5e7eb"}`,
                     }}>
                     {target.status === "ok"
                       ? <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0 mt-0.5" />
                       : target.status === "error"
                         ? <AlertTriangle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-                        : <ShieldAlert className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />}
+                        : target.status === "blocked"
+                          ? <ShieldAlert className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                          : <ShieldAlert className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />}
                     <div className="min-w-0">
                       <div className="text-xs font-bold text-gray-800">{target.label}</div>
-                      <div className={`text-[11px] ${target.status === "error" ? "text-red-700" : "text-gray-500"}`}>
+                      <div className={`text-[11px] ${target.status === "error" ? "text-red-700" : target.status === "blocked" ? "text-amber-700" : "text-gray-500"}`}>
                         {target.status === "ok"
                           ? `${target.rowsCopied ?? 0} rows copied`
                           : target.status === "error"
                             ? (target.message || "Target failed without a message")
-                            : "Skipped"}
+                            : target.status === "blocked"
+                              ? (target.message || "Target schema requires migration")
+                              : "Skipped"}
                       </div>
                     </div>
                   </div>

@@ -29,8 +29,9 @@ export interface DbNodeStatus {
   status: "ok" | "error" | "timeout" | "unconfigured";
   latencyMs: number | null;
   isActive: boolean;
+  schemaStatus: "transactional" | "catalog" | "incomplete" | "unknown";
   error?: string;
-}
+};
 
 interface ClusterResponse {
   checkedAt: string;
@@ -80,8 +81,8 @@ const NODE_DEFS = [
     label: "Products DB",
     role: "Historical/catalogue candidate",
     envKey: "DATABASE_PRODUCTS",
-    inFailoverChain: true,
-    failoverPriority: 5,
+    inFailoverChain: false,
+    failoverPriority: null,
   },
   {
     id: "replit_primary",
@@ -89,20 +90,23 @@ const NODE_DEFS = [
     role: "Local development last resort",
     envKey: "DATABASE_URL",
     inFailoverChain: true,
-    failoverPriority: 6,
+    failoverPriority: 5,
   },
 ] as const;
 
 /* ── Helper: extract safe host label from a connection string ────────────────── */
 function maskUrl(url: string): string {
   try {
-    // REDACTED_SECRET  →  HOST
     const after = url.split("@")[1] ?? "";
     const host = after.split("/")[0].split("?")[0];
     return host || "unknown";
   } catch {
     return "unknown";
   }
+}
+
+function connectionKey(url: string): string {
+  return (url.split("@")[1] ?? url).split("?")[0];
 }
 
 /* ── Probe a single database ─────────────────────────────────────────────────── */
@@ -123,11 +127,12 @@ async function probeNode(
       status: "unconfigured",
       latencyMs: null,
       isActive: false,
+      schemaStatus: "unknown",
     };
   }
 
   const host = maskUrl(url);
-  const isActive = maskUrl(activeUrl) === host;
+  const isActive = connectionKey(activeUrl) === connectionKey(url);
 
   const testPool = new Pool({
     connectionString: url,
@@ -140,8 +145,22 @@ async function probeNode(
   try {
     const client = await testPool.connect();
     await client.query("SELECT 1");
+    const schemaResult = await client.query(`
+      SELECT
+        EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'products') AS products,
+        EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'orders') AS orders
+    `);
     client.release();
+    const schemaRow = schemaResult.rows[0] ?? {};
+    const schemaStatus: DbNodeStatus["schemaStatus"] = schemaRow.products && schemaRow.orders
+      ? "transactional"
+      : schemaRow.products
+      ? "catalog"
+      : "incomplete";
     const latencyMs = Date.now() - start;
+    const schemaError = def.inFailoverChain && schemaStatus !== "transactional"
+      ? `Missing transactional schema (${schemaStatus})`
+      : undefined;
 
     return {
       id: def.id,
@@ -150,10 +169,12 @@ async function probeNode(
       host,
       inFailoverChain: def.inFailoverChain,
       failoverPriority: def.failoverPriority,
-      status: "ok",
+      status: schemaError ? "error" : "ok",
       latencyMs,
       isActive,
-    };
+      schemaStatus,
+      ...(schemaError ? { error: schemaError } : {}),
+      };
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
     const isTimeout =
@@ -169,6 +190,7 @@ async function probeNode(
       status: isTimeout ? "timeout" : "error",
       latencyMs: null,
       isActive,
+      schemaStatus: "unknown",
       error: msg.slice(0, 120),
     };
   } finally {

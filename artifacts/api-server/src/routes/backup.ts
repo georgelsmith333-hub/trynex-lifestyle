@@ -2,7 +2,7 @@ import { Router, type IRouter } from "express";
 import { db, ordersTable, productsTable, categoriesTable, settingsTable, blogPostsTable } from "@workspace/db";
 import { desc, sql } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
-import { runBackupSync } from "../lib/dbBackupSync";
+import { repairTargetSchemas, runBackupSync } from "../lib/dbBackupSync";
 import { getBackupSyncStatus, recordBackupSyncResults } from "../lib/scheduler";
 
 const router: IRouter = Router();
@@ -19,6 +19,17 @@ router.get("/admin/backup/sync-status", requireAdmin, (req, res) => {
  * automatically every 30 minutes — exposed here so an admin can trigger it
  * on demand and see the result immediately.
  */
+router.post("/admin/backup/repair-schemas", requireAdmin, async (req, res) => {
+  try {
+    const results = await repairTargetSchemas();
+    const blocked = results.some((result) => result.status === "blocked");
+    res.status(blocked ? 409 : 200).json({ success: !blocked, results });
+  } catch (err) {
+    req.log.error({ err }, "Failed to repair backup target schemas");
+    res.status(500).json({ error: "internal_error", message: "Schema repair failed" });
+  }
+});
+
 router.post("/admin/backup/sync-now", requireAdmin, async (req, res) => {
   try {
     const results = await runBackupSync();
