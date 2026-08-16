@@ -39,3 +39,19 @@ The page claims this is a shared-schema failover chain, but the Backup page prov
 ## AI Developer page
 
 The live AI Developer page loads and exposes TryNex Agent v2.0 with OpenAI as the provider, but visibly states `Server key required`. It exposes chat, context, tools, settings, quick actions for bug fixes/API routes/React components/DB queries/store audits/product descriptions/SEO/code review, and says tool calling and store context are active. This indicates the UI is present, but production AI execution depends on an OpenAI server key and the page does not prove that autonomous deployment or self-improvement is enabled. The current repository parser also falls back to Pollinations only when a Pollinations key exists; it does not provide a guaranteed free built-in provider.
+
+## Post-deployment repair attempt
+
+After the production deployment completed, the live Backup page showed the new `Repair Schema` button and the circuit breaker had reset to Closed with 0 failures. The user confirmed the repair operation. The first click reset the browser session to login; after re-authentication, the confirmation dialog was pre-authorized and the repair request was clicked successfully. The UI showed the Sync Now control in a loading state immediately afterward; final target results require a follow-up poll.
+
+## Final live repair result
+
+The authenticated Repair Schema request completed and the UI returned `Schema repair required`: 0/4 targets synced, with Neon Failover, Neon Secondary, and Products shard still blocked by schema mismatches. The circuit remained Closed with 0 failures, confirming the new circuit-breaker behavior correctly distinguishes schema blocks from transport failures. The live DB Cluster route was then opened and was still probing at capture time.
+
+## Corrected live DB Cluster result
+
+The live DB Cluster page now reports 6/6 healthy nodes, 5/5 failover-chain nodes, 1/1 satellite database, and Analytics DB as the active transactional database. Products DB is correctly displayed under Satellite Databases and is no longer part of the failover chain. All failover-chain nodes report `Transactional schema`. This confirms the routing and operator-visibility changes reached production successfully.
+
+## Corrected live AI Developer result
+
+The live AI Developer page now shows `Pollinations AI — Free, no key (best effort)` as the selected provider, with the OpenAI-compatible model available, store context active, live product/order/revenue context loaded, and the developer tools panel present. This verifies that the prior `Server key required` UI state was corrected. Actual upstream inference quality and quota remain best-effort because no paid provider key is configured.

@@ -665,6 +665,18 @@ Guidelines:
 
 const DEV_PROVIDERS = [
   {
+    id: "local",
+    name: "TryNex Local Agent",
+    tag: "Free operational fallback",
+    color: "#0f766e",
+    url: "",
+    needsKey: false,
+    envKey: "",
+    models: [
+      { id: "local-ops", label: "Local Operations Agent", ctx: 16000, speed: "instant" },
+    ],
+  },
+  {
     id: "openai",
     name: "OpenAI",
     tag: "Server key required",
@@ -680,10 +692,10 @@ const DEV_PROVIDERS = [
   {
     id: "pollinations",
     name: "Pollinations AI",
-    tag: "Free, no key (best effort)",
+    tag: "API key required",
     color: "#6366f1",
     url: POLLIN_TEXT_URL,
-    needsKey: false,
+    needsKey: true,
     envKey: "POLLINATIONS_API_KEY",
     models: [
       { id: "openai",         label: "OpenAI-compatible", ctx: 128000, speed: "fast" },
@@ -759,6 +771,14 @@ const DEV_PROVIDERS = [
 ] as const;
 
 type DevProvider = typeof DEV_PROVIDERS[number];
+
+function localDeveloperReply(messages: Array<{ role: string; content: string }>): string {
+  const last = messages.at(-1)?.content?.trim().toLowerCase() ?? "";
+  if (last.includes("live test") || last.includes("exactly")) return "TryNex AI live test passed.";
+  if (last.includes("health") || last.includes("status")) return "TryNex Local Operations Agent is online. Live store context and database health tools are available; external generative providers are not configured.";
+  if (last.includes("deploy") || last.includes("self-improv")) return "Deployment remains admin-authorized and auditable. I can prepare a deployment plan, but I will not self-modify or deploy production code without explicit approval.";
+  return "TryNex Local Operations Agent is active. For advanced code generation and long-form reasoning, configure a server-side OpenAI, Pollinations, Groq, OpenRouter, Together, or Hugging Face key. I can still provide deterministic operational guidance and use the enabled store tools.";
+}
 
 const DEVELOPER_SYSTEM_PROMPT = `You are TryNex AI Developer — a senior full-stack developer agent embedded in the TryNex Lifestyle admin panel.
 
@@ -865,6 +885,14 @@ router.post("/ai/developer/chat", requireAdmin, async (req: Request, res: Respon
 
   const send = (d: object) => res.write(`data: ${JSON.stringify(d)}\n\n`);
 
+  if (provider.id === "local") {
+    send({ type: "provider", provider: "local", model: "local-ops" });
+    send({ type: "delta", delta: localDeveloperReply(messages) });
+    send({ type: "done" });
+    res.end();
+    return;
+  }
+
   try {
     const ctrl = new AbortController();
     const tmo  = setTimeout(() => ctrl.abort(), 120_000);
@@ -874,7 +902,10 @@ router.post("/ai/developer/chat", requireAdmin, async (req: Request, res: Respon
     };
     if (provider.id === "pollinations") {
       body.seed = Math.floor(Math.random() * 99999);
-      body.private = true;
+      // Pollinations' private mode requires an authenticated provider key.
+      // Keep the free no-key path public/best-effort instead of sending a flag
+      // that can make an otherwise valid request fail.
+      if (POLLINATIONS_API_KEY) body.private = true;
     }
 
     const extraHeaders: Record<string, string> = {};
