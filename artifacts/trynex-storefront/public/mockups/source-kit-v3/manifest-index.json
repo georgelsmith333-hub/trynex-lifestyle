@@ -86,11 +86,11 @@
       ],
       "alphaBBox": [
         162,
-        185,
+        184,
         862,
         839
       ],
-      "sha256": "7dd445976f0759cb6160c8a04a711e45e2bfc46297a98129b1752eae93b9b69c",
+      "sha256": "fabedb36664fc006307abb2c1896311ff637987c5237706a0a939d5a8e9e8c59",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -134,11 +134,11 @@
       ],
       "alphaBBox": [
         162,
-        185,
+        184,
         862,
         839
       ],
-      "sha256": "819c5e248d0fb21c35ddffbbb30d88cbd62b3c3a432f9a2e9129b51c10b63f62",
+      "sha256": "20ec7df0a4bddbf52221f0811ce4bf8d4b6eb71661589013593acf767fa4d75b",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -182,11 +182,11 @@
       ],
       "alphaBBox": [
         162,
-        185,
+        184,
         862,
         839
       ],
-      "sha256": "9d82a6c8fa5df9ad0babb7be400ef95df525391ca086a376c11249d64e9b7fd7",
+      "sha256": "be1c3b5e30b1305d182580496b82aa74c0d62fe6f2b367c0f900059a9e2b3b6d",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -230,11 +230,11 @@
       ],
       "alphaBBox": [
         162,
-        185,
+        184,
         862,
         839
       ],
-      "sha256": "72a9d2809d1af5dc5a48213b5fffe3693a66877c62203e27f20fb9d1f76cfc6a",
+      "sha256": "5aa9a86144e7ae2061e477a3e83833bc6ec399444fd59a7b15722a6ab1571c78",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -278,11 +278,11 @@
       ],
       "alphaBBox": [
         162,
-        185,
+        184,
         862,
         839
       ],
-      "sha256": "be40aeab04c7eecc953c5b2fcb3b9e3afdcfd04e5a8a0cb26a59b3abe4855612",
+      "sha256": "1358a905042ec43ad402e1627d0ae6903b6aef3996e19e6ac7d53e9472939646",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -330,7 +330,7 @@
         862,
         839
       ],
-      "sha256": "dcaf8c30099a5069f9083e6309f4fa23192ddcc8552c90750b54cef11bb130f0",
+      "sha256": "73925b4636a575b7f8eb5d0fe78090f624f4d3a68d01734a8f67ad11a3434be8",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -373,12 +373,12 @@
         1024
       ],
       "alphaBBox": [
-        163,
-        187,
-        851,
-        837
+        162,
+        184,
+        862,
+        839
       ],
-      "sha256": "df99e280f2c6029d81a6198b86a668008e4dfdecc0510f811acc15562ed944b4",
+      "sha256": "ae59a51d3d493a15d6ad058fb13fa2028e745dc37c4afaa4f790c31ecdaed1d6",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -422,11 +422,11 @@
       ],
       "alphaBBox": [
         162,
-        184,
-        862,
-        839
+        202,
+        861,
+        821
       ],
-      "sha256": "fe10f5a08e4ca370a475bf69240e6c04948f3959bd5e512af6bddcb56dc672de",
+      "sha256": "b23603080e65001adc7759173157e7558a5ddcec8751ec67476d7034dca376cd",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -517,12 +517,12 @@
         1024
       ],
       "alphaBBox": [
-        54,
-        43,
-        969,
-        980
+        72,
+        62,
+        952,
+        962
       ],
-      "sha256": "1cfe5d402dc045a4dc3d246ceaab1d8947932a30afb4959917a9941b6c76684d",
+      "sha256": "41adac29eb063201d5918ca7be6fb60e69addfd0a52b868f6278cea208d1dba8",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -565,12 +565,12 @@
         1024
       ],
       "alphaBBox": [
-        54,
-        43,
-        969,
-        980
+        72,
+        62,
+        952,
+        962
       ],
-      "sha256": "4cf91c9581045a93b431fb46eab6dd0d6346bad2dfa9d935f55a2833fcaa3a38",
+      "sha256": "a347a355c31d7d5e7d58b73158d284f9d9fd224c6e9d09a115c264e232e00eff",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -613,12 +613,12 @@
         1024
       ],
       "alphaBBox": [
-        54,
-        43,
-        969,
-        980
+        72,
+        62,
+        952,
+        962
       ],
-      "sha256": "79a999ab987c40d2156054c7b4286457fe82b69d5b0b128c2b7257af57d21961",
+      "sha256": "aa6efe4d2cd8c78cdc7255bebba10323081254c126848ccefb0f8f569473fdf8",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -661,12 +661,12 @@
         1024
       ],
       "alphaBBox": [
-        54,
-        43,
-        969,
-        980
+        72,
+        62,
+        952,
+        962
       ],
-      "sha256": "b09e18604df0ffa91aac774179b95e0bbcfc886eb62ce7e55c2c89dd0fa02c72",
+      "sha256": "6ab82cb4c753abccd48ea3798fc8af8df936df8857ccfcf49b5c84d5b053c0e5",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -709,12 +709,12 @@
         1024
       ],
       "alphaBBox": [
-        54,
-        43,
-        969,
-        980
+        72,
+        62,
+        952,
+        962
       ],
-      "sha256": "487556e7fe3dc4fb1f397b37eb640fc0ee66768d4ec8cd13d35810828061bba8",
+      "sha256": "ee33d76169bf74ebe28c07bf23e1131e4d09462cf403a7ce61a42ca64788b808",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -757,12 +757,12 @@
         1024
       ],
       "alphaBBox": [
-        54,
-        43,
-        969,
-        980
+        72,
+        62,
+        952,
+        962
       ],
-      "sha256": "ddad8bc22a8d91c7641a7bc8e7dbd2b465ee14993b85813dce5d9b8d0a7da625",
+      "sha256": "2851608c9d2ea82251ae3908ad95db431c3474c55a005b29cc6dbcb85a91daf2",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -805,12 +805,12 @@
         1024
       ],
       "alphaBBox": [
-        54,
-        43,
-        969,
-        980
+        72,
+        62,
+        952,
+        962
       ],
-      "sha256": "4fea8d7d6a6830c410fcba8734967ea58008fb0b11a60516881af1fb3cc86b46",
+      "sha256": "ce9d595623b1bf6c6c464b83b8c2fb7c7df2c9c3c3f3341f03d3b586f479ae07",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -853,12 +853,12 @@
         1024
       ],
       "alphaBBox": [
-        54,
-        43,
-        969,
-        980
+        72,
+        62,
+        952,
+        962
       ],
-      "sha256": "24a093604ea6edeeb430fcdec032e312d6ff77956008f930426c48dc114a2efd",
+      "sha256": "c7b3e250dfc30cea192ddaa6bac20401e9aad5c4205520aff5c662b5e908ae91",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -997,12 +997,12 @@
         1024
       ],
       "alphaBBox": [
-        53,
-        94,
-        970,
-        930
+        72,
+        113,
+        952,
+        912
       ],
-      "sha256": "f6398dbc7038a50664f067bf1381e868c2cddd3d6c2d90248ef17e346ba9e380",
+      "sha256": "749db52740f935c8c274c8462240518237c28f6e019241a05013bbe6e5a86856",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -1045,12 +1045,12 @@
         1024
       ],
       "alphaBBox": [
-        53,
-        94,
-        970,
-        930
+        72,
+        113,
+        952,
+        912
       ],
-      "sha256": "b2d5c80b56aceee30d6ed8e117ede6c04042404a913c9ac2b4bc7f25fcddd224",
+      "sha256": "11567b7f07b8a456535af7419fd6be151379147f676838719fd5ab9c0eabac86",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -1093,12 +1093,12 @@
         1024
       ],
       "alphaBBox": [
-        53,
-        94,
-        970,
-        930
+        72,
+        113,
+        952,
+        912
       ],
-      "sha256": "d038ec2ec7a5e2a8b4cb44d100649649ffa1b5fdeddbf8e02e39ba6704cdcc16",
+      "sha256": "ecb78df82a67d48d2f9b4104e234b0a14eaea57f0e1362983d42ba6d5a245e57",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -1141,12 +1141,12 @@
         1024
       ],
       "alphaBBox": [
-        53,
-        94,
-        970,
-        930
+        72,
+        113,
+        952,
+        912
       ],
-      "sha256": "a0d964a6f99b78c2894b103f5695c779654e225d680eda283808c29d09e14851",
+      "sha256": "4931a27df62f654e1562be7684bf7ff3a942bd16a837795cb363e4316ac87f7e",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -1189,12 +1189,12 @@
         1024
       ],
       "alphaBBox": [
-        53,
-        94,
-        970,
-        930
+        72,
+        113,
+        952,
+        912
       ],
-      "sha256": "7b72809a0676a19f5f3c11e5b50cfacd24948c78911341b42901f227e9779a2b",
+      "sha256": "4c302e7fab580cb80bda1c964748972ce8a506e9eb9c2a6256bfc4ffc7c83c55",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -1237,12 +1237,12 @@
         1024
       ],
       "alphaBBox": [
-        53,
-        94,
-        970,
-        930
+        72,
+        113,
+        952,
+        912
       ],
-      "sha256": "3a934d42eb90c0ffc6db2cd1b9e4715eb3963a23133bfa6007d8e1d85c25fea6",
+      "sha256": "558d21afa717f837b3e122f7b41dcf6878a37a1641616f6d068670a448956327",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -1285,12 +1285,12 @@
         1024
       ],
       "alphaBBox": [
-        53,
-        94,
-        970,
-        930
+        72,
+        113,
+        952,
+        912
       ],
-      "sha256": "c185b9c793502f9e0428e02d1e285d2ca30d344de16d1cd66b5f59babdf7f37b",
+      "sha256": "fe928cf7f5563bc7ccfa72abc07f599dd8150e285196c7df6c768e9e3426fabd",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -1333,12 +1333,12 @@
         1024
       ],
       "alphaBBox": [
-        53,
-        94,
-        970,
-        930
+        72,
+        113,
+        952,
+        912
       ],
-      "sha256": "40909d255e9a61aaa401e59ee45dd33656c0523294cf819038910198128d5ea0",
+      "sha256": "9361a23cc5c0c05f2353d89c9398e2146adbd26133285af70aeb87fc9ff67bdb",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -1482,7 +1482,7 @@
         881,
         829
       ],
-      "sha256": "afa9f8311085b332b101cf4df7f49ad61a1a89b02d0f8c72d9310698c539b701",
+      "sha256": "86978be41b7dba4eb58b125f6821c6fd6fa4c70cd5ae3029826598a46db3f1b6",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -1530,7 +1530,7 @@
         881,
         829
       ],
-      "sha256": "375795186fc3b075125e7837cf42ae698951725dc724bd807e2c82c3adad115f",
+      "sha256": "6b305c155d852b76c07ba3efe85afea74808a7c0b854f1c9285c387e9edd9dee",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -1578,7 +1578,7 @@
         881,
         829
       ],
-      "sha256": "cf67630bab42f83364b86660a960db4af1d78fc02b583165f5c19524e5d08224",
+      "sha256": "e88ed99a5ff43959bb727c1744f05ed7e2b6ba15647d32ea9cac0ab3d27a52b0",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -1626,7 +1626,7 @@
         881,
         829
       ],
-      "sha256": "6d601e8be2c04c2819124e818172b661e52c7c7765398f79561b14fb35b33be6",
+      "sha256": "b18e3f2d92089cbcf4b3974c8bec0629484ba7634ad8bcafa73f942999de55f5",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -1669,12 +1669,12 @@
         1024
       ],
       "alphaBBox": [
-        144,
+        143,
         192,
-        879,
+        881,
         829
       ],
-      "sha256": "3ea75a2efaf748e2aa16e82c1d3002bee1afcd3952fe3d6ea9491af9b70aa790",
+      "sha256": "504783bfd221b2d66d04642a769dcdd69edd6b910da4bdbe9ff4a6ad84ee8626",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -1717,12 +1717,12 @@
         1024
       ],
       "alphaBBox": [
-        144,
+        143,
         192,
         881,
         829
       ],
-      "sha256": "baa5bad9be4a75c00f37af9f6788e18698d3a255cac2d2a3f34b893e90b94112",
+      "sha256": "11871c44baffa48bc1cdb183e509acd3ea4cc04fa9fd07d9e988cb92104dffb4",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -1770,7 +1770,7 @@
         881,
         829
       ],
-      "sha256": "2c42c88a0aa9518cf21e37b73a52d726e5606f2309819d4d70fe6a5d616ec654",
+      "sha256": "95ee355fd71bab2d1394b36ee56fff70df416214d356cf8988bf2f93f64eac28",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -1815,10 +1815,10 @@
       "alphaBBox": [
         143,
         192,
-        879,
+        881,
         829
       ],
-      "sha256": "b6e3439820e25a030e4f8219d82aa0528d68f2b99efcf5c09d88df8888eeaa58",
+      "sha256": "8e0d2393a9b203286e8175bf21b3885f70811c556e217d10471b17713ab98745",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -1960,9 +1960,9 @@
         43,
         66,
         980,
-        956
+        957
       ],
-      "sha256": "fe82389f1b6ce953d3289cbc16a6a9ef29cef5d5f2c59d45ad6304bb05fd025a",
+      "sha256": "4b852ccc401fd5296c433d280129e5279eabee27e64d21505b008265985aa8d3",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -2007,10 +2007,10 @@
       "alphaBBox": [
         43,
         66,
-        979,
+        980,
         957
       ],
-      "sha256": "0f40e1f4a0af9613095d7497bfd02d6633a7759886afdd062ab4d08fccea3c3e",
+      "sha256": "96c52a96fe78b85d6d07dd89b44db3dd50e9a09e4a494b6d55a9a3d9915a342c",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -2058,7 +2058,7 @@
         980,
         957
       ],
-      "sha256": "bab7cf68e28e99fb628f9ef5e528f54dc9f0b5a3cf5987ea35f84944b68f41f7",
+      "sha256": "f8f7e45bc245851ffd9faa18843dddaa0363b00f6152ffaf6f48b53ad5eecc1a",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -2101,12 +2101,12 @@
         1024
       ],
       "alphaBBox": [
-        56,
-        68,
-        966,
+        43,
+        66,
+        980,
         957
       ],
-      "sha256": "2bd35f8a798da6df6820600b1e9d7d9cec538d24a4a50a07cdff634dc29ed7e0",
+      "sha256": "797c3258d93288faaa8517d8a8d49594073069492e54f89a95bc41d689b184a0",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -2152,9 +2152,9 @@
         43,
         66,
         980,
-        956
+        957
       ],
-      "sha256": "d7d0bd2c857fbfe26b661050cc939f0aa4eba091cb7962520140021c2d33c268",
+      "sha256": "a2463eb8d264448bf8cbcbfbfd98a16ba5bb36f6d2bb6da1b9efa86917386729",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -2199,10 +2199,10 @@
       "alphaBBox": [
         43,
         66,
-        973,
+        980,
         957
       ],
-      "sha256": "4815ea27aec126766314f8da78455a0d03b0dee228dd15e85126696050d9b9de",
+      "sha256": "84e6de7259d4a09158bd282db74c65495fb7f9f26a5386da548c1254364c9fb7",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -2293,12 +2293,12 @@
         1024
       ],
       "alphaBBox": [
-        368,
+        351,
         78,
         673,
         944
       ],
-      "sha256": "fd55c52fb6ec27a1e79009b5ff921e9c726ccf6f0a98a122f826c3d22dffbdb8",
+      "sha256": "66af5158994b895244fdda51eabfb70e660b8e8ee776e88e608af3e4b04dd1c7",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -2341,12 +2341,12 @@
         1024
       ],
       "alphaBBox": [
-        367,
+        351,
         78,
         673,
         944
       ],
-      "sha256": "4744c9983fb03939b425695573c771b194502789c9fd8207c11c78b2d0839cba",
+      "sha256": "4a4e46c435b7082c831effda05d8f94fe4da18fab8d527ff4025aa266b09574f",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -2394,7 +2394,7 @@
         673,
         944
       ],
-      "sha256": "3050d296fc6da470fea1cafe09c70b5ce6b20d4a6e5e01106045b1f5c5533797",
+      "sha256": "5606052b517207835c82c897080a5415c51d7b5f383702c141af074c841ebfb4",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -2437,12 +2437,12 @@
         1024
       ],
       "alphaBBox": [
-        352,
+        351,
         78,
-        671,
-        943
+        673,
+        944
       ],
-      "sha256": "a1ed991ed3bd5b448f2e8cbcac13ff5c99b804e96e61550ef755656bb1cac78b",
+      "sha256": "d7eb7425d1aabb4c733e43d9e3716870806531ce7cd8ae91f93ea3b30e929ab5",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -2490,7 +2490,7 @@
         673,
         944
       ],
-      "sha256": "2487298e341556ed3c3a66a88eda3626e53327d9117cbe1d826c589c5b13cad1",
+      "sha256": "42443d1c8f9317eec21b6ec909eb18d08d2f072249851e989881ec2e18c9ef05",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -2538,7 +2538,7 @@
         673,
         944
       ],
-      "sha256": "808b84b85b322a4c447fe2f06f3d349b03b77ba0db53bf0c6a8b5e1a7a68b36d",
+      "sha256": "cee16b8669e52f1839e125bba11a5a6b47d1fd98f2d3163541a03e19131561d2",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -2581,12 +2581,12 @@
         1024
       ],
       "alphaBBox": [
-        381,
+        351,
         78,
         673,
         944
       ],
-      "sha256": "c521d385b2c1c808e94006d249fd7e2647a469f9ac01aca1f04d93c66855d43a",
+      "sha256": "9affefc6d8b49e63f4408d31622e5679b75a31a1160ec8b92f8462924da6faae",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },
@@ -2629,12 +2629,12 @@
         1024
       ],
       "alphaBBox": [
-        351,
-        78,
-        673,
-        944
+        362,
+        97,
+        662,
+        927
       ],
-      "sha256": "6fc9e80819be9e7abd68b2b2be8fffc83aadba8fb5f528042e520fdf50b0a1f0",
+      "sha256": "0224a48b251898b23892029743c89585fd9d854d25b0aae9345f1c36ac3cc999",
       "sourceSelection": "normalized-cutout",
       "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
     },

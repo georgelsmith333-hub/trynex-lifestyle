@@ -18,7 +18,7 @@
     881,
     829
   ],
-  "sha256": "cf67630bab42f83364b86660a960db4af1d78fc02b583165f5c19524e5d08224",
+  "sha256": "e88ed99a5ff43959bb727c1744f05ed7e2b6ba15647d32ea9cac0ab3d27a52b0",
   "sourceSelection": "normalized-cutout",
   "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
 }

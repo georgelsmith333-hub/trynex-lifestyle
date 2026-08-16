@@ -18,7 +18,7 @@
     673,
     944
   ],
-  "sha256": "808b84b85b322a4c447fe2f06f3d349b03b77ba0db53bf0c6a8b5e1a7a68b36d",
+  "sha256": "cee16b8669e52f1839e125bba11a5a6b47d1fd98f2d3163541a03e19131561d2",
   "sourceSelection": "normalized-cutout",
   "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
 }
