@@ -68,3 +68,11 @@ Cap remains a separate unresolved class: its fronts are clean flat silhouettes w
 The refined Cap rear reconstruction now uses a clean mirrored front silhouette with only a central rear-adjuster patch. This removes the previous cast-shadow footprint, inconsistent rear scale, and photographic side halo. It is visually more stable and suitable for a clean blank mockup, although it intentionally does not preserve the old photographic rear texture.
 
 The Water Bottle mirror repair remains accepted at the source-matrix level: rear halos are gone, body shading is continuous, and the ring-cap/carabiner remains visible on both faces. Both repairs must still be exercised in the live editor with artwork before they are called final.
+
+## Live b71ea37 acceptance findings
+
+The public b71ea37 Design Studio is serving the repaired source bundle. Black Hoodie front is visually clean with one garment layer, complete hood, cords, sleeves, pocket, and hem. Switching the live Hoodie to Grey exposes a pale/white underarm wedge and light side pixels on both sleeves, matching the marked-matrix complaint. This proves the source-kit repair is not complete: the colored back rebuild improved the matrix contact sheet but the active front source still contains product/background pixels that must be removed with a bounded apparel silhouette mask or corrected source alpha. The issue is now narrowed to live colored front alpha/source pixels rather than routing or deployment.
+
+## Bounded front-alpha matrix result
+
+The hoodie contact sheet after the bounded front-alpha repair shows clean colored front envelopes: the Grey, Forest, Navy, Olive, Red, Sky Blue, Maroon, and Burgundy fronts no longer carry the broad pale side wedges seen in the marked matrix, and sleeves/hood/pocket/hem remain complete. The colored backs retain reconstructed folds and color. The front/back lighting style is still not identical—fronts are cleaner studio cutouts while backs carry stronger photographic folds—but the prior matte spill and duplicate-layer class is removed at the source-matrix level.

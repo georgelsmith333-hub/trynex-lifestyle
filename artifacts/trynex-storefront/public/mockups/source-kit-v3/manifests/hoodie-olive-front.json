@@ -13,12 +13,12 @@
     1024
   ],
   "alphaBBox": [
-    54,
-    43,
-    970,
-    980
+    73,
+    63,
+    951,
+    949
   ],
-  "sha256": "7c434ef19be1c714dd72d97c0394bfec543ce7c6b789dd9b8e023bf8b786ac2d",
+  "sha256": "cbbb36b2d0c9566b8b37e891e03674ca3f41a4deb7f4fe513f68b3a60e4de04e",
   "sourceSelection": "normalized-cutout",
   "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
 }
