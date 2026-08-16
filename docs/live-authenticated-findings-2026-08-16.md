@@ -55,3 +55,11 @@ The live DB Cluster page now reports 6/6 healthy nodes, 5/5 failover-chain nodes
 ## Corrected live AI Developer result
 
 The live AI Developer page now shows `Pollinations AI — Free, no key (best effort)` as the selected provider, with the OpenAI-compatible model available, store context active, live product/order/revenue context loaded, and the developer tools panel present. This verifies that the prior `Server key required` UI state was corrected. Actual upstream inference quality and quota remain best-effort because no paid provider key is configured.
+
+## API deployment gap
+
+The Cloudflare Pages deployment for commit `d8f24b314` completed successfully, but the live AI Developer page still reports the previous Pollinations no-key provider and reproduces `Error: internal_error`. This proves the storefront deployment and API deployment are separate; the backend changes in `artifacts/api-server` have not yet reached the Render API service. The next required action is to deploy the API service, then re-run the AI test.
+
+## Render API deployment and provider correction
+
+The Render API health endpoint reports `status: ok`, `db: ok`, `redis: ok`, and a recent process uptime after the GitHub push, confirming the API auto-deployed from `main`. The live AI Developer page now shows `TryNex Local Agent — Free operational fallback` and `Local Operations Agent — instant`, with store context active. The old Pollinations error remains only as historical chat content; a fresh prompt is required to verify the new local response path.

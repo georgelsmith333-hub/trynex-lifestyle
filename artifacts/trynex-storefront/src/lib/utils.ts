@@ -16,7 +16,9 @@ export function formatPrice(price: number): string {
 
 export function getAuthHeaders(): Record<string, string> {
   const token = sessionStorage.getItem('trynex_admin_token');
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  return token
+    ? { Authorization: `Bearer ${token}`, 'X-Requested-With': 'XMLHttpRequest' }
+    : { 'X-Requested-With': 'XMLHttpRequest' };
 }
 
 // API base URL — empty means same-origin (Replit proxy or Vite dev proxy handles /api/*).
