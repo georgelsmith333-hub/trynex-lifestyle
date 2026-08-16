@@ -272,7 +272,14 @@ async function syncOneTarget(
     const sourceTables = await getTables(sourcePool);
     const targetTables = new Set(await getTables(targetPool));
     const sharedTables = sourceTables.filter((t) => targetTables.has(t));
-    const edges = await getForeignKeyEdges(sourcePool);
+    // A target can retain stricter constraints than the active source during
+    // rolling schema transitions. Include both graphs so target-only foreign
+    // keys still force parent-before-child inserts.
+    const allEdges = [
+      ...(await getForeignKeyEdges(sourcePool)),
+      ...(await getForeignKeyEdges(targetPool)),
+    ];
+    const edges = [...new Map(allEdges.map((edge) => [`${edge.child}:${edge.parent}`, edge])).values()];
     const insertOrder = topoSortTables(sharedTables, edges);
 
     // Safety verification: source must be reachable and have some data.
