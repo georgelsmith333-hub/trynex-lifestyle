@@ -81,6 +81,17 @@ function canonicalMockups() {
     tags: ["source-kit", variant.category, variant.color, face],
     isActive: true,
     sortOrder: Math.abs(id),
+    masterFileUrl: null,
+    masterFileName: null,
+    masterFileMime: null,
+    masterFileSize: null,
+    masterFileSha256: null,
+    sourceKitKey: `${variant.category}/${variant.color}/${face}`,
+    face,
+    color: variant.color,
+    manifestJson: null,
+    ingestionStatus: "ready",
+    ingestionError: null,
     createdAt: new Date(0).toISOString(),
     updatedAt: new Date(0).toISOString(),
     isCanonical: true,
@@ -96,6 +107,21 @@ function isValidImageUrl(value: unknown): value is string {
   } catch {
     return false;
   }
+}
+
+const MASTER_MIMES = new Set([
+  "image/vnd.adobe.photoshop",
+  "application/vnd.adobe.photoshop",
+  "image/x-photoshop",
+]);
+const INGESTION_STATUSES = new Set(["preview-only", "pending", "ready", "failed"]);
+
+function isValidMasterUrl(value: unknown): value is string {
+  return value === undefined || value === null || isValidImageUrl(value);
+}
+
+function isValidOptionalInt(value: unknown): boolean {
+  return value === undefined || value === null || (Number.isInteger(value) && Number(value) >= 0);
 }
 
 function parseOptionalPositiveInt(value: unknown): number | null | undefined {
@@ -116,6 +142,10 @@ router.get("/mockups", async (req: Request, res: Response) => {
       tags: mockupsTable.tags,
       isActive: mockupsTable.isActive,
       updatedAt: mockupsTable.updatedAt,
+      sourceKitKey: mockupsTable.sourceKitKey,
+      face: mockupsTable.face,
+      color: mockupsTable.color,
+      ingestionStatus: mockupsTable.ingestionStatus,
     }).from(mockupsTable).where(eq(mockupsTable.isActive, true)).orderBy(asc(mockupsTable.sortOrder), desc(mockupsTable.updatedAt));
     res.json(rows);
   } catch (err) {
@@ -158,9 +188,14 @@ router.get("/admin/mockups", requireAdmin, async (req: Request, res: Response) =
 
 router.post("/admin/mockups", requireAdmin, async (req: Request, res: Response) => {
   try {
-    const { name, description, productId, productName, imageUrl, thumbUrl, tags, isActive, sortOrder } = req.body;
+    const {
+      name, description, productId, productName, imageUrl, thumbUrl, tags, isActive, sortOrder,
+      masterFileUrl, masterFileName, masterFileMime, masterFileSize, masterFileSha256,
+      sourceKitKey, face, color, manifestJson, ingestionStatus, ingestionError,
+    } = req.body;
     const parsedProductId = parseOptionalPositiveInt(productId);
     const parsedSortOrder = parseOptionalPositiveInt(sortOrder);
+    const parsedMasterFileSize = parseOptionalPositiveInt(masterFileSize);
     if (typeof name !== "string" || !name.trim() || !isValidImageUrl(imageUrl)) {
       res.status(400).json({ error: "validation_error", message: "name and imageUrl are required" });
       return;
@@ -173,6 +208,22 @@ router.post("/admin/mockups", requireAdmin, async (req: Request, res: Response) 
       res.status(400).json({ error: "validation_error", message: "thumbUrl must be a valid URL or local path" });
       return;
     }
+    if (!isValidMasterUrl(masterFileUrl)) {
+      res.status(400).json({ error: "validation_error", message: "masterFileUrl must be a valid URL or local path" });
+      return;
+    }
+    if (masterFileMime !== undefined && masterFileMime !== null && !MASTER_MIMES.has(String(masterFileMime))) {
+      res.status(400).json({ error: "validation_error", message: "masterFileMime must be a PSD or PSB MIME type" });
+      return;
+    }
+    if (!isValidOptionalInt(parsedMasterFileSize)) {
+      res.status(400).json({ error: "validation_error", message: "masterFileSize must be a non-negative integer" });
+      return;
+    }
+    if (ingestionStatus !== undefined && !INGESTION_STATUSES.has(String(ingestionStatus))) {
+      res.status(400).json({ error: "validation_error", message: "invalid ingestionStatus" });
+      return;
+    }
     const [row] = await db.insert(mockupsTable).values({
       name: name.trim(),
       description: description ?? null,
@@ -180,6 +231,17 @@ router.post("/admin/mockups", requireAdmin, async (req: Request, res: Response) 
       productName: productName ?? null,
       imageUrl,
       thumbUrl: thumbUrl ?? null,
+      masterFileUrl: masterFileUrl ?? null,
+      masterFileName: masterFileName ?? null,
+      masterFileMime: masterFileMime ?? null,
+      masterFileSize: parsedMasterFileSize ?? null,
+      masterFileSha256: masterFileSha256 ?? null,
+      sourceKitKey: sourceKitKey ?? null,
+      face: face ?? null,
+      color: color ?? null,
+      manifestJson: manifestJson ?? null,
+      ingestionStatus: ingestionStatus ?? (masterFileUrl ? "pending" : "preview-only"),
+      ingestionError: ingestionError ?? null,
       tags: Array.isArray(tags) ? tags : [],
       isActive: isActive !== false,
       sortOrder: parsedSortOrder ?? 0,
@@ -198,7 +260,11 @@ router.patch("/admin/mockups/:id", requireAdmin, async (req: Request, res: Respo
       res.status(400).json({ error: "validation_error", message: "Invalid id" });
       return;
     }
-    const { name, description, productId, productName, imageUrl, thumbUrl, tags, isActive, sortOrder } = req.body;
+    const {
+      name, description, productId, productName, imageUrl, thumbUrl, tags, isActive, sortOrder,
+      masterFileUrl, masterFileName, masterFileMime, masterFileSize, masterFileSha256,
+      sourceKitKey, face, color, manifestJson, ingestionStatus, ingestionError,
+    } = req.body;
     const update: Partial<typeof mockupsTable.$inferInsert> = { updatedAt: new Date() };
     if (name !== undefined) {
       if (typeof name !== "string" || !name.trim()) {
@@ -232,6 +298,42 @@ router.patch("/admin/mockups/:id", requireAdmin, async (req: Request, res: Respo
       update.thumbUrl = thumbUrl;
     }
     if (tags !== undefined) update.tags = Array.isArray(tags) ? tags : [];
+    if (masterFileUrl !== undefined) {
+      if (!isValidMasterUrl(masterFileUrl)) {
+        res.status(400).json({ error: "validation_error", message: "masterFileUrl must be a valid URL or local path" });
+        return;
+      }
+      update.masterFileUrl = masterFileUrl;
+    }
+    if (masterFileName !== undefined) update.masterFileName = masterFileName;
+    if (masterFileMime !== undefined) {
+      if (masterFileMime !== null && !MASTER_MIMES.has(String(masterFileMime))) {
+        res.status(400).json({ error: "validation_error", message: "masterFileMime must be a PSD or PSB MIME type" });
+        return;
+      }
+      update.masterFileMime = masterFileMime;
+    }
+    if (masterFileSize !== undefined) {
+      const parsed = parseOptionalPositiveInt(masterFileSize);
+      if (!isValidOptionalInt(parsed)) {
+        res.status(400).json({ error: "validation_error", message: "masterFileSize must be a non-negative integer" });
+        return;
+      }
+      update.masterFileSize = parsed ?? null;
+    }
+    if (masterFileSha256 !== undefined) update.masterFileSha256 = masterFileSha256;
+    if (sourceKitKey !== undefined) update.sourceKitKey = sourceKitKey;
+    if (face !== undefined) update.face = face;
+    if (color !== undefined) update.color = color;
+    if (manifestJson !== undefined) update.manifestJson = manifestJson;
+    if (ingestionStatus !== undefined) {
+      if (!INGESTION_STATUSES.has(String(ingestionStatus))) {
+        res.status(400).json({ error: "validation_error", message: "invalid ingestionStatus" });
+        return;
+      }
+      update.ingestionStatus = ingestionStatus;
+    }
+    if (ingestionError !== undefined) update.ingestionError = ingestionError;
     if (isActive !== undefined) update.isActive = isActive;
     if (sortOrder !== undefined) {
       const parsed = parseOptionalPositiveInt(sortOrder);

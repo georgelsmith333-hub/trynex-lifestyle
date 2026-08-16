@@ -14,15 +14,30 @@ const ALLOWED_IMAGE_TYPES: Record<string, number[][]> = {
   "image/webp": [[0x52, 0x49, 0x46, 0x46]], // RIFF header; also verify offset 8 = WEBP
 };
 
-const ALLOWED_TYPES = new Set(Object.keys(ALLOWED_IMAGE_TYPES));
+// Photoshop PSD and PSB files share the `8BPS` signature. The version at
+// bytes 4–5 distinguishes PSD (1) from PSB (2). These files are stored as
+// private editable masters and are never passed through the image optimizer.
+const ALLOWED_MASTER_TYPES = new Set([
+  "image/vnd.adobe.photoshop",
+  "application/vnd.adobe.photoshop",
+  "image/x-photoshop",
+]);
+
+const ALLOWED_TYPES = new Set([...Object.keys(ALLOWED_IMAGE_TYPES), ...ALLOWED_MASTER_TYPES]);
 
 function matchesMagicBytes(buf: Buffer, signatures: number[][]): boolean {
   return signatures.some(sig => sig.every((byte, i) => buf[i] === byte));
 }
 
 // Returns a validated content-type based on actual file magic bytes,
-// or null if the content is not a recognised image.
+// including Photoshop PSD/PSB masters, or null for an unrecognised file.
 function detectImageType(buf: Buffer): string | null {
+  if (buf.length >= 6 && buf.slice(0, 4).toString("ascii") === "8BPS") {
+    const version = buf.readUInt16BE(4);
+    if (version === 1) return "image/vnd.adobe.photoshop";
+    if (version === 2) return "application/vnd.adobe.photoshop";
+  }
+
   for (const [mimeType, sigs] of Object.entries(ALLOWED_IMAGE_TYPES)) {
     if (matchesMagicBytes(buf, sigs)) {
       // Extra check for WebP: bytes 8-11 must be "WEBP"
@@ -50,7 +65,7 @@ const UploadRequestSchema = z.object({
   contentType: z.string().min(1, "contentType is required").max(127, "contentType too long")
                 .transform(v => v.toLowerCase().split(";")[0].trim())
                 .refine(v => ALLOWED_TYPES.has(v), {
-                  message: "Unsupported content type. Only JPEG, PNG, GIF, and WebP images are allowed.",
+                  message: "Unsupported content type. JPEG, PNG, GIF, WebP, PSD, and PSB files are allowed.",
                 }),
 });
 
@@ -154,7 +169,7 @@ router.put("/storage/upload-direct/:objectId", async (req: Request, res: Respons
     // Magic-byte validation
     const detectedType = detectImageType(bodyBuf);
     if (!detectedType) {
-      res.status(415).json({ error: "Unsupported file type. Only JPEG, PNG, GIF, and WebP images are accepted." });
+      res.status(415).json({ error: "Unsupported file type. JPEG, PNG, GIF, WebP, PSD, and PSB files are accepted." });
       return;
     }
 

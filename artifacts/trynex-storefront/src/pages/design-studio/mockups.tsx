@@ -511,6 +511,28 @@ export interface NormalizedMockupFrame {
   h: number;
 }
 
+export interface RuntimeMockupOverride {
+  sourceKitKey: string;
+  imageUrl: string;
+  masterFileUrl?: string | null;
+  ingestionStatus: "ready";
+}
+
+const runtimeMockupOverrides = new Map<string, RuntimeMockupOverride>();
+
+function normalizeRuntimeKey(value: string): string {
+  return value.trim().toLowerCase().replace(/[\\/]+/g, ":");
+}
+
+/** Replace only an explicitly approved visual source; canonical geometry stays local. */
+export function setRuntimeMockupOverrides(overrides: RuntimeMockupOverride[]): void {
+  runtimeMockupOverrides.clear();
+  for (const override of overrides) {
+    if (override.ingestionStatus !== "ready" || !override.sourceKitKey || !override.imageUrl) continue;
+    runtimeMockupOverrides.set(normalizeRuntimeKey(override.sourceKitKey), override);
+  }
+}
+
 /**
  * Return the canonical printable silhouette in the same 1000×1000
  * coordinate system used by the editor and SVG mockups.
@@ -712,20 +734,23 @@ export function resolveMockup(
   const curated = getCuratedMockup(product, color, face);
   const masterPath = `attached_assets/trynex-mockup-source-kit/${category === "mug" || category === "waterbottle" ? "psb" : "psd"}/${category}-${sourceKitSlug ?? "white"}-${face}.${category === "mug" || category === "waterbottle" ? "psb" : "psd"}`;
   const sourceKitKey = `${category}:${sourceKitSlug ?? "white"}:${face}`;
+  const runtimeOverride = runtimeMockupOverrides.get(normalizeRuntimeKey(sourceKitKey))
+    ?? runtimeMockupOverrides.get(normalizeRuntimeKey(`${category}:${color}:${face}`));
+  const runtimePhoto = runtimeOverride?.imageUrl;
 
   return {
     colorHex: hex,
-    photoSrc: curated.photoSrc,
-    cutoutSrc: curated.cutoutSrc,
-    isColorPhoto: curated.isColorPhoto,
-    cutoutNeedsTint: curated.cutoutNeedsTint,
-    photoKind: curated.photoKind,
-    requiresTint: curated.requiresTint,
-    allowSilhouetteShadow: curated.allowSilhouetteShadow,
+    photoSrc: runtimePhoto ?? curated.photoSrc,
+    cutoutSrc: runtimePhoto ?? curated.cutoutSrc,
+    isColorPhoto: runtimePhoto ? true : curated.isColorPhoto,
+    cutoutNeedsTint: runtimePhoto ? false : curated.cutoutNeedsTint,
+    photoKind: runtimePhoto ? "opaque-photo" : curated.photoKind,
+    requiresTint: runtimePhoto ? false : curated.requiresTint,
+    allowSilhouetteShadow: false,
     printZone: zones?.[face] ?? (face === "back" && product.printZoneBack ? product.printZoneBack : product.printZone),
     normalizedFrame,
-    isOpaquePhoto: curated.photoKind === "opaque-photo",
-    editableMasterPath: masterPath,
+    isOpaquePhoto: runtimePhoto ? true : curated.photoKind === "opaque-photo",
+    editableMasterPath: runtimeOverride?.masterFileUrl ?? masterPath,
     sourceKitKey,
     smartObject: createSmartMockupManifest({
       category,
@@ -739,7 +764,7 @@ export function resolveMockup(
       normalizedFrame,
       printZone: zones?.[face] ?? (face === "back" && product.printZoneBack ? product.printZoneBack : product.printZone),
     }),
-    source: "source-kit",
+    source: runtimePhoto ? "curated" : "source-kit",
   };
 }
 

@@ -18,6 +18,18 @@ interface ChatMessage {
   ts?: number;
 }
 
+async function readApiPayload<T>(res: Response): Promise<T> {
+  const raw = await res.text();
+  if (!raw.trim()) return {} as T;
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    const contentType = res.headers.get("content-type") ?? "unknown";
+    const preview = raw.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 240);
+    throw new Error(`API returned non-JSON (${contentType}, HTTP ${res.status}): ${preview || "empty response"}`);
+  }
+}
+
 interface ExecuteResult {
   id: string;
   command: string;
@@ -334,7 +346,7 @@ export function AdminAIAssistant() {
       });
 
       if (!res.ok || !res.body) {
-        const data = await res.json().catch(() => ({})) as { error?: string };
+        const data = await readApiPayload<{ error?: string }>(res).catch((err: unknown) => ({ error: err instanceof Error ? err.message : "Invalid API response" }));
         throw new Error(data.error || `HTTP ${res.status}`);
       }
 
@@ -417,7 +429,7 @@ export function AdminAIAssistant() {
         headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         body: JSON.stringify({ command }),
       });
-      const data = await res.json() as PreviewData & { error?: string };
+      const data = await readApiPayload<PreviewData & { error?: string }>(res);
       if (!res.ok || data.error) {
         /* Fall through to direct execute on preview failure */
         setExecPhase("idle");
@@ -449,14 +461,14 @@ export function AdminAIAssistant() {
         headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         body: JSON.stringify({ command }),
       });
-      const data = await res.json() as {
+      const data = await readApiPayload<{
         success?: boolean;
         description?: string;
         error?: string;
         details?: string;
         suggestions?: string[];
         undoInfo?: Record<string, unknown>;
-      };
+      }>(res);
 
       if (!res.ok || !data.success) {
         const errMsg = data.error || "Execution failed";

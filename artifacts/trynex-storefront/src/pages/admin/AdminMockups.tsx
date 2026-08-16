@@ -24,6 +24,17 @@ interface Mockup {
   createdAt: string;
   updatedAt: string;
   isCanonical?: boolean;
+  masterFileUrl?: string | null;
+  masterFileName?: string | null;
+  masterFileMime?: string | null;
+  masterFileSize?: number | null;
+  masterFileSha256?: string | null;
+  sourceKitKey?: string | null;
+  face?: string | null;
+  color?: string | null;
+  manifestJson?: Record<string, unknown> | null;
+  ingestionStatus?: "preview-only" | "pending" | "ready" | "failed";
+  ingestionError?: string | null;
 }
 
 async function apiFetch(path: string, opts: RequestInit = {}) {
@@ -43,16 +54,32 @@ async function apiFetch(path: string, opts: RequestInit = {}) {
   return res.json();
 }
 
+function isMasterFile(file: File): boolean {
+  return /\.(psd|psb)$/i.test(file.name) || [
+    "image/vnd.adobe.photoshop",
+    "application/vnd.adobe.photoshop",
+    "image/x-photoshop",
+  ].includes(file.type);
+}
+
+function contentTypeFor(file: File): string {
+  if (file.type) return file.type;
+  if (/\.psb$/i.test(file.name)) return "application/vnd.adobe.photoshop";
+  if (/\.psd$/i.test(file.name)) return "image/vnd.adobe.photoshop";
+  return "application/octet-stream";
+}
+
 async function uploadFile(file: File): Promise<string> {
+  const contentType = contentTypeFor(file);
   const { uploadURL, objectPath } = await apiFetch("/api/storage/uploads/request-url", {
     method: "POST",
     body: JSON.stringify({
       name: `mockup-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-80)}`,
-      contentType: file.type,
+      contentType,
       size: file.size,
     }),
   });
-  const put = await fetch(uploadURL, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
+  const put = await fetch(uploadURL, { method: "PUT", body: file, headers: { "Content-Type": contentType } });
   if (!put.ok) throw new Error(`Storage upload failed (${put.status})`);
   return getApiUrl(`/api/storage/public-objects/${objectPath}`);
 }
@@ -121,28 +148,47 @@ export default function AdminMockups() {
   const handleUpload = async (files: FileList | null) => {
     if (!files?.length) return;
     const target = uploadTarget;
+    const selected = Array.from(files);
+    const masters = selected.filter(isMasterFile);
+    const previews = selected.filter(file => file.type.startsWith("image/"));
+    if (masters.length > 0 && previews.length === 0 && !target?.imageUrl) {
+      toast({ title: "PSD/PSB preview required", description: "Select the editable PSD/PSB together with a PNG, JPG, or WebP preview.", variant: "destructive" });
+      return;
+    }
     setUploading(true);
     try {
-      for (const file of Array.from(files)) {
-        if (!file.type.startsWith("image/")) continue;
-        const imageUrl = await uploadFile(file);
-        const fileName = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+      const previewFiles = previews.length ? previews : [null];
+      for (let i = 0; i < Math.max(previewFiles.length, masters.length || 1); i++) {
+        const previewFile = previewFiles[i] ?? previewFiles[0] ?? null;
+        const masterFile = masters[i] ?? masters[0] ?? null;
+        const imageUrl = previewFile ? await uploadFile(previewFile) : target?.imageUrl;
+        if (!imageUrl) throw new Error("A preview image is required for every gallery record.");
+        const masterFileUrl = masterFile ? await uploadFile(masterFile) : null;
+        const fileName = (masterFile ?? previewFile)?.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ") ?? "Mockup";
         const name = target ? `${target.name} — override` : fileName;
-        const tags = Array.from(new Set([...(target?.tags ?? []), ...(target ? ["override"] : ["uploaded"]) ]));
+        const tags = Array.from(new Set([...(target?.tags ?? []), ...(target ? ["override"] : ["uploaded"]), ...(masterFile ? ["psd-master"] : [])]));
         await apiFetch("/api/admin/mockups", {
           method: "POST",
           body: JSON.stringify({
             name,
-            description: target ? `Editable override for ${target.name}` : null,
+            description: masterFile ? `Editable ${/\.psb$/i.test(masterFile.name) ? "PSB" : "PSD"} master with preview` : target ? `Editable override for ${target.name}` : null,
             productId: target?.productId ?? null,
             productName: target?.productName ?? null,
             imageUrl,
+            masterFileUrl,
+            masterFileName: masterFile?.name ?? null,
+            masterFileMime: masterFile ? contentTypeFor(masterFile) : null,
+            masterFileSize: masterFile?.size ?? null,
+            sourceKitKey: target?.sourceKitKey ?? null,
+            face: target?.face ?? null,
+            color: target?.color ?? null,
+            ingestionStatus: masterFile ? "pending" : "preview-only",
             tags,
             isActive: true,
             sortOrder: target?.sortOrder ?? 0,
           }),
         });
-        toast({ title: target ? "Live override uploaded" : "Mockup uploaded", description: name });
+        toast({ title: masterFile ? "PSD/PSB master uploaded" : target ? "Live override uploaded" : "Mockup uploaded", description: name });
       }
       await fetchMockups();
     } catch (err: any) {
@@ -264,7 +310,7 @@ export default function AdminMockups() {
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*"
+              accept="image/*,.psd,.psb"
               multiple
               className="hidden"
               onChange={e => handleUpload(e.target.files)}
@@ -329,7 +375,7 @@ export default function AdminMockups() {
         >
           <ImageIcon className="w-8 h-8 text-gray-300 mx-auto mb-2" />
           <p className="text-sm text-gray-400 font-medium">Drag & drop mockup images here, or click <strong className="text-orange-500">Upload Mockups</strong></p>
-          <p className="text-xs text-gray-300 mt-1">PNG, JPG, WebP · Multiple files supported</p>
+              <p className="text-xs text-gray-300 mt-1">PNG, JPG, WebP · PSD/PSB master + preview pair · Multiple files supported</p>
         </div>
 
         {/* Grid */}
@@ -437,6 +483,14 @@ export default function AdminMockups() {
                       <p className="text-[9px] text-gray-400 mt-0.5 flex items-center gap-0.5 truncate">
                         <Package className="w-2.5 h-2.5 shrink-0" /> {m.productName}
                       </p>
+                    )}
+                    {m.masterFileName && (
+                      <p className="text-[9px] text-purple-600 mt-1 truncate" title={m.masterFileName}>Editable master: {m.masterFileName}</p>
+                    )}
+                    {m.ingestionStatus && (
+                      <span className={`inline-flex mt-1 text-[8px] font-bold px-1.5 py-0.5 rounded-full ${m.ingestionStatus === "ready" ? "bg-emerald-50 text-emerald-700" : m.ingestionStatus === "failed" ? "bg-red-50 text-red-700" : "bg-amber-50 text-amber-700"}`}>
+                        {m.ingestionStatus}
+                      </span>
                     )}
                     {Array.isArray(m.tags) && m.tags.length > 0 && (
                       <div className="flex flex-wrap gap-0.5 mt-1">

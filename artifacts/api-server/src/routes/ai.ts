@@ -60,17 +60,29 @@ const IMAGE_MODELS = {
 type ImageModelId = keyof typeof IMAGE_MODELS;
 
 /* ══════════════════════════════════════════════════════
-   TEXT / CHAT MODELS — free, no API key
-   Uses Pollinations text API (OpenAI-compatible endpoint).
+   TEXT / CHAT MODELS — server-configured provider
+   Uses the current Pollinations OpenAI-compatible endpoint when a server key exists.
 ══════════════════════════════════════════════════════ */
 const TEXT_MODELS = [
-  { id: "openai-large",  label: "GPT-4o (Recommended)" },
-  { id: "openai",        label: "GPT-4o Mini" },
-  { id: "mistral-large", label: "Mistral Large" },
-  { id: "llama",         label: "Llama 3.3 70B" },
+  { id: "openai",          label: "OpenAI-compatible (recommended)" },
+  { id: "openai-large",    label: "OpenAI Large" },
+  { id: "mistral",         label: "Mistral" },
+  { id: "gemini",          label: "Gemini" },
+  { id: "llama-maverick",  label: "Llama Maverick" },
+  { id: "gpt-oss",         label: "GPT OSS" },
 ];
 
-const POLLIN_TEXT_URL = "https://text.pollinations.ai/openai";
+const POLLIN_TEXT_URL = process.env.POLLINATIONS_API_URL || "https://gen.pollinations.ai/v1/chat/completions";
+const POLLINATIONS_API_KEY = process.env.POLLINATIONS_API_KEY || "";
+
+function pollinationsHeaders(extra: Record<string, string> = {}): Record<string, string> {
+  return {
+    "Content-Type": "application/json",
+    "User-Agent": "TryNex-Admin/3.0",
+    ...(POLLINATIONS_API_KEY ? { Authorization: `Bearer ${POLLINATIONS_API_KEY}` } : {}),
+    ...extra,
+  };
+}
 
 /* ════════════════════════════════════════════════════
    GET /api/ai/models
@@ -447,8 +459,7 @@ router.get("/storage/product-images/:filename", (req: Request, res: Response) =>
 
 /* ════════════════════════════════════════════════════
    POST /api/ai/chat
-   Free AI chat using Pollinations text API.
-   No API key needed. OpenAI-compatible format.
+   AI chat using the current authenticated Pollinations OpenAI-compatible API.
 
    Body:
      messages  (required) — array of { role, content }
@@ -472,7 +483,11 @@ router.post("/ai/chat", async (req: Request, res: Response) => {
     return res.status(400).json({ error: "messages array is required" });
   }
 
-  const safeModel = TEXT_MODELS.some(m => m.id === model) ? model : "openai-large";
+  if (!POLLINATIONS_API_KEY) {
+    return res.status(503).json({ error: "AI chat is not configured. Add POLLINATIONS_API_KEY or enable another server-side AI provider." });
+  }
+
+  const safeModel = TEXT_MODELS.some(m => m.id === model) ? model : "openai";
 
   const systemMessages = system
     ? [{ role: "system", content: system }]
@@ -528,7 +543,7 @@ Guidelines:
         const chatRes = await fetch(POLLIN_TEXT_URL, {
           method: "POST",
           signal: controller.signal,
-          headers: { "Content-Type": "application/json", "User-Agent": "TryNex-Admin/2.0" },
+          headers: pollinationsHeaders(),
           body: JSON.stringify({
             model: modelId,
             messages: allMessages,
@@ -587,16 +602,11 @@ Guidelines:
     const chatRes = await fetch(POLLIN_TEXT_URL, {
       method: "POST",
       signal: controller.signal,
-      headers: {
-        "Content-Type": "application/json",
-        "User-Agent": "TryNex-Admin/2.0",
-      },
+      headers: pollinationsHeaders(),
       body: JSON.stringify({
         model: safeModel,
         messages: allMessages,
         stream: false,
-        seed: Math.floor(Math.random() * 99999),
-        private: true,
       }),
     });
     clearTimeout(timeout);
@@ -629,13 +639,11 @@ Guidelines:
         const fbRes = await fetch(POLLIN_TEXT_URL, {
           method: "POST",
           signal: controller.signal,
-          headers: { "Content-Type": "application/json", "User-Agent": "TryNex-Admin/2.0" },
+          headers: pollinationsHeaders(),
           body: JSON.stringify({
             model: fb.id,
             messages: [...(system ? [{ role: "system", content: system }] : [{ role: "system", content: `You are a helpful AI assistant for TryNex Lifestyle — a premium custom apparel e-commerce brand in Bangladesh.` }]), ...messages],
             stream: false,
-            seed: Math.floor(Math.random() * 99999),
-            private: true,
           }),
         });
         clearTimeout(timeout);
@@ -660,20 +668,33 @@ Guidelines:
 
 const DEV_PROVIDERS = [
   {
+    id: "openai",
+    name: "OpenAI",
+    tag: "Server key required",
+    color: "#111827",
+    url: "https://api.openai.com/v1/chat/completions",
+    needsKey: true,
+    envKey: "OPENAI_API_KEY",
+    models: [
+      { id: process.env.OPENAI_MODEL || "gpt-4.1-mini", label: "OpenAI Mini", ctx: 128000, speed: "fast" },
+      { id: "gpt-4.1", label: "OpenAI", ctx: 128000, speed: "fast" },
+    ],
+  },
+  {
     id: "pollinations",
     name: "Pollinations AI",
-    tag: "Zero-Key",
+    tag: "Server key required",
     color: "#6366f1",
-    url: "https://text.pollinations.ai/openai",
-    needsKey: false,
-    envKey: "",
+    url: POLLIN_TEXT_URL,
+    needsKey: true,
+    envKey: "POLLINATIONS_API_KEY",
     models: [
-      { id: "openai-large",  label: "GPT-4o",          ctx: 128000, speed: "fast"   },
-      { id: "openai",        label: "GPT-4o Mini",     ctx: 128000, speed: "fast"   },
-      { id: "mistral-large", label: "Mistral Large 2", ctx: 32000,  speed: "fast"   },
-      { id: "llama",         label: "Llama 3.3 70B",   ctx: 32000,  speed: "medium" },
-      { id: "qwen-coder",    label: "Qwen Coder 32B",  ctx: 32000,  speed: "medium" },
-      { id: "deepseek",      label: "DeepSeek R1",     ctx: 64000,  speed: "medium" },
+      { id: "openai",         label: "OpenAI-compatible", ctx: 128000, speed: "fast" },
+      { id: "openai-large",   label: "OpenAI Large",      ctx: 128000, speed: "fast" },
+      { id: "mistral",        label: "Mistral",            ctx: 128000, speed: "fast" },
+      { id: "gemini",         label: "Gemini",             ctx: 128000, speed: "fast" },
+      { id: "llama-maverick", label: "Llama Maverick",     ctx: 128000, speed: "medium" },
+      { id: "gpt-oss",        label: "GPT OSS",            ctx: 128000, speed: "medium" },
     ],
   },
   {
@@ -828,8 +849,12 @@ router.post("/ai/developer/chat", requireAdmin, async (req: Request, res: Respon
 
   const wanted = DEV_PROVIDERS.find(p => p.id === providerId) as DevProvider | undefined;
   const hasCreds = (p: DevProvider) => !p.needsKey || !!process.env[p.envKey];
-  const provider: DevProvider = (wanted && hasCreds(wanted)) ? wanted : DEV_PROVIDERS[0];
-  const apiKey  = provider.needsKey ? (process.env[provider.envKey] ?? "") : "pollinations";
+  const provider: DevProvider = (wanted && hasCreds(wanted)) ? wanted : DEV_PROVIDERS.find(hasCreds) ?? DEV_PROVIDERS[0];
+  const apiKey  = provider.needsKey ? (process.env[provider.envKey] ?? "") : "";
+  if (provider.id === "pollinations" && !apiKey) {
+    res.status(503).json({ error: "AI provider is not configured. Add POLLINATIONS_API_KEY or enable a configured provider in the server environment." });
+    return;
+  }
 
   const safeModel = provider.models.some((m: { id: string }) => m.id === model)
     ? model!
@@ -868,15 +893,14 @@ router.post("/ai/developer/chat", requireAdmin, async (req: Request, res: Respon
 
     send({ type: "provider", provider: provider.id, model: safeModel });
 
+    const providerHeaders = provider.id === "pollinations"
+      ? pollinationsHeaders(extraHeaders)
+      : { ...pollinationsHeaders(extraHeaders), Authorization: `Bearer ${apiKey}` };
+
     const chatRes = await fetch(provider.url, {
       method: "POST",
       signal: ctrl.signal,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`,
-        "User-Agent": "TryNex-Dev/2.0",
-        ...extraHeaders,
-      },
+      headers: providerHeaders,
       body: JSON.stringify(body),
     });
     clearTimeout(tmo);
@@ -884,11 +908,11 @@ router.post("/ai/developer/chat", requireAdmin, async (req: Request, res: Respon
     if (!chatRes.ok || !chatRes.body) {
       /* fall back to Pollinations if primary provider failed */
       if (provider.id !== "pollinations") {
-        send({ type: "provider", provider: "pollinations", model: "openai-large" });
+        send({ type: "provider", provider: "pollinations", model: "openai" });
         const fbRes = await fetch(POLLIN_TEXT_URL, {
           method: "POST",
-          headers: { "Content-Type": "application/json", "User-Agent": "TryNex-Dev/2.0" },
-          body: JSON.stringify({ model: "openai-large", messages: allMessages, stream: true, seed: Math.floor(Math.random() * 99999), private: true }),
+          headers: pollinationsHeaders(),
+          body: JSON.stringify({ model: "openai", messages: allMessages, stream: true }),
         });
         if (fbRes.ok && fbRes.body) { await pipeSSEStream(fbRes, send); res.end(); return; }
       }

@@ -14,7 +14,23 @@ import { logger } from "../lib/logger";
 
 const router: IRouter = Router();
 
-const POLLIN_TEXT_URL = "https://text.pollinations.ai/openai";
+const POLLIN_TEXT_URL = process.env.POLLINATIONS_API_URL || "https://gen.pollinations.ai/v1/chat/completions";
+const POLLINATIONS_API_KEY = process.env.POLLINATIONS_API_KEY || "";
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY || "";
+const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4.1-mini";
+
+function parserConfig(): { url: string; key: string; models: string[] } {
+  if (OPENAI_API_KEY) return { url: "https://api.openai.com/v1/chat/completions", key: OPENAI_API_KEY, models: [OPENAI_MODEL, "gpt-4.1"] };
+  return { url: POLLIN_TEXT_URL, key: POLLINATIONS_API_KEY, models: ["openai", "openai-large", "mistral"] };
+}
+
+function parserHeaders(key: string): Record<string, string> {
+  return {
+    "Content-Type": "application/json",
+    "User-Agent": "TryNex-Admin/3.0",
+    ...(key ? { Authorization: `Bearer ${key}` } : {}),
+  };
+}
 
 const COMMAND_PARSER_SYSTEM = `You are a strict JSON command parser for TryNex Lifestyle admin panel.
 Parse the natural language admin command into ONE of these JSON action objects.
@@ -273,17 +289,21 @@ async function parseCommandWithAI(command: string): Promise<Record<string, unkno
   if (local) return local;
 
   // Fall back to AI parsing for complex/ambiguous commands
-  const modelsToTry = ["openai-large", "openai", "mistral-large"];
+  const config = parserConfig();
+  if (!config.key) {
+    throw new Error("AI command parser is not configured. Add OPENAI_API_KEY or POLLINATIONS_API_KEY in the server environment.");
+  }
+  const modelsToTry = config.models;
   let lastError: Error = new Error("No models tried");
 
   for (const model of modelsToTry) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15_000);
     try {
-      const r = await fetch(POLLIN_TEXT_URL, {
+      const r = await fetch(config.url, {
         method: "POST",
         signal: controller.signal,
-        headers: { "Content-Type": "application/json", "User-Agent": "TryNex-Admin/2.0" },
+        headers: parserHeaders(config.key),
         body: JSON.stringify({
           model,
           messages: [
@@ -291,7 +311,6 @@ async function parseCommandWithAI(command: string): Promise<Record<string, unkno
             { role: "user", content: command },
           ],
           stream: false,
-          private: true,
           seed: Math.floor(Math.random() * 99999),
         }),
       });
