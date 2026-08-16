@@ -34,6 +34,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build shared TypeScript declarations
+        run: pnpm run typecheck:libs
+
       - name: Typecheck storefront
         run: pnpm --filter @workspace/trynex-storefront typecheck
 

@@ -752,8 +752,12 @@ export default function ProductDetail() {
               >
                 {displayImage ? (
                   <img
-                    src={displayImage}
+                    src={resolveImageUrl(displayImage)}
                     alt={`${product.name} — TryNex Lifestyle`}
+                    onError={(event) => {
+                      event.currentTarget.onerror = null;
+                      event.currentTarget.src = "/images/product-placeholder.svg";
+                    }}
                     className="w-full h-full object-cover transition-transform duration-300"
                     width={800}
                     height={800}
@@ -839,8 +843,12 @@ export default function ProductDetail() {
                   >
                     {displayImage ? (
                       <img
-                        src={displayImage}
+                        src={resolveImageUrl(displayImage)}
                         alt={product.name}
+                        onError={(event) => {
+                          event.currentTarget.onerror = null;
+                          event.currentTarget.src = "/images/product-placeholder.svg";
+                        }}
                         className="w-full h-full object-cover pointer-events-none"
                         width="600"
                         height="600"
@@ -906,8 +914,12 @@ export default function ProductDetail() {
                       )}
                     >
                       <img
-                        src={img}
+                        src={resolveImageUrl(img)}
                         alt={`${product.name} thumb ${i + 1}`}
+                        onError={(event) => {
+                          event.currentTarget.onerror = null;
+                          event.currentTarget.src = "/images/product-placeholder.svg";
+                        }}
                         className="w-full h-full object-cover"
                         loading="lazy"
                       />
