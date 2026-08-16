@@ -76,3 +76,23 @@ The public b71ea37 Design Studio is serving the repaired source bundle. Black Ho
 ## Bounded front-alpha matrix result
 
 The hoodie contact sheet after the bounded front-alpha repair shows clean colored front envelopes: the Grey, Forest, Navy, Olive, Red, Sky Blue, Maroon, and Burgundy fronts no longer carry the broad pale side wedges seen in the marked matrix, and sleeves/hood/pocket/hem remain complete. The colored backs retain reconstructed folds and color. The front/back lighting style is still not identical—fronts are cleaner studio cutouts while backs carry stronger photographic folds—but the prior matte spill and duplicate-layer class is removed at the source-matrix level.
+
+## Live d55ce1b verification
+
+The public d55ce1b Design Studio now serves the bounded front-alpha assets. Grey Hoodie renders as a single complete garment with clean side edges and no extra opaque light strip; the white triangular areas between torso and sleeves are consistent transparent underarm negative space and remain stable across Sky Blue. Sky Blue also renders a complete hood, sleeves, pocket, cuffs, and hem with no diagonal yellow-like intrusion. The remaining visible difference is lighting style between clean colored fronts and more photographic reconstructed backs, not the previously observed source wedge.
+
+## Live apparel and mug checks
+
+The public d55ce1b Long Sleeve route resolves to `product=longsleeve` and renders the correct Unisex Long Sleeve 240GSM Cotton template. The Sky Blue front shows complete sleeves, cuffs, hem, and clean underarm negative space without the prior route fallback or visible cutoff.
+
+The public d55ce1b Mug route resolves to Coffee Mug 11oz Ceramic. Left Side, Right Side, and Wrap controls are visible, and the Sky Blue mug renders one cylindrical body with the correct handle geometry. No duplicate mug layer is visible in the live canvas. Curved uploaded-artwork behavior remains a separate stateful test.
+
+## Live bottle and cap checks
+
+The public d55ce1b Water Bottle route resolves to Water Bottle 600ml Aluminium and renders the required blue cylindrical body with ring-cap/carabiner. The clean mirrored source removed the previous bright rear halo class from the deployed front surface; the editor has the expected upload, layer, and export controls.
+
+The public d55ce1b Cap route resolves to Structured Cap Cotton Twill and renders a stable single white cap silhouette with continuous crown and brim. No cast-shadow rectangle or duplicate rear product layer is visible in the live front view. Rear-adjuster and artwork behavior still require a face-specific uploaded-design test.
+
+## T-shirt live route finding
+
+The d55ce1b public browser session continues to retain Structured Cap when navigating to both `product=tshirt` and `product=t-shirts`. This is the same harness/application-state anomaly seen in the prior wave. Because the live route does not visibly select T-shirt in this session, the T-shirt family is not marked live-pass even though its v3 source matrix and bounded alpha files are internally validated. A separate fresh browser context or route-level automated test is required to determine whether this is browser-session retention or an active V2 alias/state bug.

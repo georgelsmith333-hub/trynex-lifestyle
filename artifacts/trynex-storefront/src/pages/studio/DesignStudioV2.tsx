@@ -54,6 +54,7 @@ const SIZE_CHART = [
 const QUICK_PRODUCT_IDS = ["tshirt", "hoodie", "mug", "cap"] as const;
 const LEGACY_ID_MAP: Record<string, string> = {
   "white-tshirt": "tshirt", "black-tshirt": "tshirt",
+  "t-shirt": "tshirt", "t-shirts": "tshirt", "tshirts": "tshirt", "tee": "tshirt", "tees": "tshirt",
   "white-hoodie": "hoodie", "black-hoodie": "hoodie",
   "white-longsleeve": "longsleeve", "black-longsleeve": "longsleeve",
   "long-sleeve": "longsleeve", "long-sleeves": "longsleeve", "longsleeves": "longsleeve",
