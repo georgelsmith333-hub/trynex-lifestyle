@@ -95,7 +95,7 @@ const BASE_STATS = [
 
 const CATEGORIES = [
   { name: "T-Shirts",      icon: "tshirt",      desc: "230GSM premium cotton",       count: "Starting ৳450",   color: "#fff4ee", accent: "var(--color-primary)", href: "/products?category=t-shirts" },
-  { name: "Long Sleeve",  icon: "longsleeve",  desc: "Comfort fit long sleeves",     count: "Starting ৳599",   color: "#f0f7ff", accent: "#2563eb",             href: "/products?category=long-sleeve" },
+  { name: "Long Sleeve",  icon: "longsleeve",  desc: "Comfort fit long sleeves",     count: "Starting ৳599",   color: "#f0f7ff", accent: "#2563eb",             href: "/products?category=long-sleeves" },
   { name: "Hoodies",       icon: "hoodie",       desc: "320GSM premium fleece",       count: "Starting ৳1,299", color: "#ecfeff", accent: "#0891b2",             href: "/products?category=hoodies" },
   { name: "Mugs",          icon: "mug",          desc: "Ceramic & sublimation",       count: "Starting ৳449",   color: "#fdf4ff", accent: "#9333ea",             href: "/products?category=mugs" },
   { name: "Caps",          icon: "cap",          desc: "Embroidered & printed",       count: "Starting ৳499",   color: "#f0fdf4", accent: "#16a34a",             href: "/products?category=caps" },

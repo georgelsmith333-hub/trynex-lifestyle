@@ -100,7 +100,7 @@ const HERO_PRODUCT_GRID = [
   { src: bottleSrc, label: "Water Bottle", badge: "New", badgeColor: "#0EA5E9", delay: 0.25, floatY: 8, href: "/products?category=custom-orders&sort=newest" },
   { src: tshirtSrc, label: "Custom T-Shirt", badge: "Top Pick", badgeColor: "#10B981", delay: 0.15, floatY: 12, href: "/products?category=t-shirts&sort=bestsellers" },
   { src: capSrc, label: "Custom Cap", badge: "Trending", badgeColor: "#7C3AED", delay: 0.3, floatY: 9, href: "/products?category=caps&sort=newest" },
-  { src: longsleeveSrc, label: "Long Sleeve", badge: "New", badgeColor: "#2563EB", delay: 0.2, floatY: 7, href: "/products?category=long-sleeve&sort=newest" },
+  { src: longsleeveSrc, label: "Long Sleeve", badge: "New", badgeColor: "#2563EB", delay: 0.2, floatY: 7, href: "/products?category=long-sleeves&sort=newest" },
   { src: mugSrc, label: "Custom Mug", badge: "Popular", badgeColor: "#9333EA", delay: 0.35, floatY: 6, href: "/products?category=mugs&sort=bestsellers" },
 ];
 
