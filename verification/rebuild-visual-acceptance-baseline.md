@@ -69,3 +69,7 @@ The live Cap route resolves correctly to **Structured Cap Cotton Twill** and ren
 ## Isolated browser harness limitation
 
 A fresh-session attempt and forced `window.location.href` navigation for T-shirt still returned the existing Cap page in the browser harness. The resulting page source and screenshot consistently report `?product=cap`. This prevents a reliable visual T-shirt acceptance claim through the current browser session; the code-level resolver and generated v3 contact sheet remain the source of truth until a separate browser context or automated Playwright run is available.
+
+## Water Bottle catalog API acceptance
+
+The live Pages proxy now returns **10 products** for `GET /api/products?category=water-bottles&limit=100`, with `categoryName: Water Bottles`, canonical product image paths, and valid product metadata. The existing Long Sleeves query continues to return 10 products. Both homepage Water Bottle entry points now target this verified slug.
