@@ -7,8 +7,8 @@
 import { createSmartMockupManifest, type SmartMockupManifest } from "./smart-mockup-manifest";
 
 // ── T-Shirt: unified studio photos from normalized/ folder ──
-const tshirtFront          = "/mockups/normalized/tshirt-white-front.png";
-const tshirtBack           = "/mockups/normalized/tshirt-white-back.png";
+const tshirtFront          = "/mockups/source-kit-v3/tshirt/white/front.png";
+const tshirtBack           = "/mockups/source-kit-v3/tshirt/white/back.png";
 const tshirtFrontDark      = "/mockups/normalized/tshirt-black-front.png";
 const tshirtBackDark       = "/mockups/normalized/tshirt-black-back.png";
 const tshirtFrontCutout    = "/mockups/normalized-cutouts/tshirt-white-front.png";
@@ -27,32 +27,32 @@ const oliveTshirtFront     = "/mockups/olive-tshirt-front.png";
 const oliveTshirtBack      = "/mockups/olive-tshirt-back.png";
 const skyblueTshirtFront   = "/mockups/skyblue-tshirt-front.png";
 const skyblueTshirtBack    = "/mockups/skyblue-tshirt-back.png";
-const longsleeveFront          = "/mockups/normalized/longsleeve-white-front.png";
-const longsleeveBack           = "/mockups/normalized/longsleeve-white-back.png";
+const longsleeveFront          = "/mockups/source-kit-v3/longsleeve/white/front.png";
+const longsleeveBack           = "/mockups/source-kit-v3/longsleeve/white/back.png";
 const longsleeveFrontDark      = "/mockups/normalized/longsleeve-black-front.png";
 const longsleeveFrontCutout    = "/mockups/normalized-cutouts/longsleeve-white-front.png";
 const longsleeveBackCutout     = "/mockups/normalized-cutouts/longsleeve-white-back.png";
 const longsleeveFrontDarkCutout = "/mockups/normalized-cutouts/longsleeve-black-front.png";
 const longsleeveBackDarkCutout  = "/mockups/normalized-cutouts/longsleeve-black-back.png";
-const hoodieFront          = "/mockups/normalized/hoodie-white-front.png";
-const hoodieBack           = "/mockups/normalized/hoodie-white-back.png";
+const hoodieFront          = "/mockups/source-kit-v3/hoodie/white/front.png";
+const hoodieBack           = "/mockups/source-kit-v3/hoodie/white/back.png";
 const hoodieFrontDark      = "/mockups/normalized/hoodie-black-front.png";
 const hoodieBackDark       = "/mockups/normalized/hoodie-black-back.png";
 const hoodieFrontCutout    = "/mockups/normalized-cutouts/hoodie-white-front.png";
 const hoodieBackCutout     = "/mockups/normalized-cutouts/hoodie-white-back.png";
-const mugFront             = "/mockups/normalized/mug-white-front.png";
-const mugFrontDark         = "/mockups/normalized/mug-black-front.png";
-const mugBack              = "/mockups/normalized/mug-white-back.png";
-const mugBackDark          = "/mockups/normalized/mug-black-back.png";
+const mugFront             = "/mockups/source-kit-v3/mug/white/front.png";
+const mugFrontDark         = "/mockups/source-kit-v3/mug/black/front.png";
+const mugBack              = "/mockups/source-kit-v3/mug/white/back.png";
+const mugBackDark          = "/mockups/source-kit-v3/mug/black/back.png";
 const mugFrontCutout       = "/mockups/normalized-cutouts/mug-white-front.png";
 const mugFrontDarkCutout   = "/mockups/normalized-cutouts/mug-black-front.png";
-const capFront             = "/mockups/normalized/cap-white-front.png";
-const capBack              = "/mockups/normalized/cap-white-back.png";
+const capFront             = "/mockups/source-kit-v3/cap/white/front.png";
+const capBack              = "/mockups/source-kit-v3/cap/white/back.png";
 const capFrontCutout       = "/mockups/normalized-cutouts/cap-white-front.png";
 // Canonical TryNex bottle: upright aluminium body with black key-ring loop and side carabiner.
 // Keep legacy bottle_1 out of the active studio path; it is the wrong product shape.
-const waterBottleFront          = "/mockups/normalized/waterbottle-white-front.png";
-const waterBottleCutout         = "/mockups/normalized-cutouts/waterbottle-white-front.png";
+const waterBottleFront          = "/mockups/source-kit-v3/waterbottle/white/front.png";
+const waterBottleCutout         = "/mockups/source-kit-v3/waterbottle/white/front.png";
 const tshirtFrontDarkCutout     = "/mockups/normalized-cutouts/black-tshirt-front-cutout.png";
 const tshirtBackDarkCutout      = "/mockups/normalized-cutouts/black-tshirt-back-cutout.png";
 const hoodieFrontDarkCutout     = "/mockups/black-hoodie-front-cutout-real.png";
@@ -301,7 +301,7 @@ export const PRODUCTS: DesignProduct[] = [
     description: "11oz Ceramic", badge: "Popular",
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: MUG_SIDE_PZ,
-    frontSrc: mugFront,
+    frontSrc: mugFront, backSrc: mugBack,
   },
   {
     id: "cap", name: "Structured Cap", icon: "🧢", category: "cap",
@@ -315,7 +315,7 @@ export const PRODUCTS: DesignProduct[] = [
     description: "Cotton Twill",
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: CAP_PZ, printZoneBack: CAP_BACK_PZ,
-    frontSrc: capFront,
+    frontSrc: capFront, backSrc: capBack,
   },
   {
     id: "waterbottle", name: "Water Bottle", icon: "🥤", category: "waterbottle",
@@ -329,7 +329,7 @@ export const PRODUCTS: DesignProduct[] = [
     description: "600ml Aluminium",
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: WATERBOTTLE_PZ,
-    frontSrc: WATERBOTTLE_MOCKUP_URL,
+    frontSrc: WATERBOTTLE_MOCKUP_URL, backSrc: "/mockups/source-kit-v3/waterbottle/white/back.png",
   },
   // NOTE: Water Tumbler removed — it was a duplicate of Water Bottle with identical
   // mockup, colors, and print zone. Re-add if a distinct tumbler mockup is provided.
@@ -473,9 +473,9 @@ const SOURCE_KIT_FRAMES: Record<
 export interface MockupResolution {
   /** Normalized selected colour used only by fallback tint consumers. */
   colorHex: string;
-  /** Best photographic preview for 2D editor/export/cart thumbnails. */
+  /** Source-kit-v3 transparent runtime asset used by every surface. */
   photoSrc: string;
-  /** Reviewed transparent fallback for 3D/photo overlays. */
+  /** Alias retained for backward-compatible compositor contracts. */
   cutoutSrc: string;
   /** True when the selected photo is already the exact requested product colour. */
   isColorPhoto: boolean;
@@ -491,7 +491,7 @@ export interface MockupResolution {
   printZone: PrintZone;
   /** Normalized 1024px frame used by 2D and 3D consumers. */
   normalizedFrame: NormalizedMockupFrame;
-  /** Source-kit previews are full studio images, not alpha cutouts. */
+  /** True only when a future opaque photographic override is explicitly active. */
   isOpaquePhoto: boolean;
   /** Repository-relative editable master generated from the same source kit. */
   editableMasterPath?: string;
@@ -657,20 +657,17 @@ function getCuratedMockup(
   const category = product.category;
   const hex = normalizeMockupHex(color);
   const slug = SOURCE_KIT_COLOR_SLUGS[category]?.[hex] || "white";
-  const photoSrc = `/mockups/normalized/${category}-${slug}-${face}.png?v=smart-v2-source`;
-  const cutoutSrc = `/mockups/source-kit-v2/${category}/${slug}/${face}.png?v=smart-v2`;
+  const cutoutSrc = `/mockups/source-kit-v3/${category}/${slug}/${face}.png?v=smart-v3`;
+  const photoSrc = cutoutSrc;
   return {
     photoSrc,
     cutoutSrc,
-    isColorPhoto: true,
+    isColorPhoto: false,
     cutoutNeedsTint: false,
-    photoKind: "opaque-photo",
+    photoKind: "transparent-cutout",
     requiresTint: false,
-    // Recreated assets have clean alpha but no synthetic silhouette shadow;
-    // source-kit photos also remain shadow-free to avoid ghost boxes.
-    // Normalized source-kit files are opaque studio photos. A drop shadow on the
-    // 1024×1024 rectangle creates the exact ghost box users reported, so never
-    // apply a silhouette shadow to these assets.
+    // The v3 cutouts already carry product lighting and have clean alpha.
+    // Never add a full-frame shadow or duplicate source pass.
     allowSilhouetteShadow: false,
   };
 }
@@ -678,19 +675,17 @@ function getCuratedMockup(
 /**
  * Resolves one canonical mockup key for every customer-facing surface.
  *
- * Source-kit PNGs (public/mockups/source-kit/*) are now bound for all
- * products and colors. The colorPhotos maps in BASE_BY_CATEGORY point
- * directly to these 1024×1024 RGBA studio renders covering 108 documents
- * (6 products × up to 10 colors × front + back).
+ * Source-kit-v3 PNGs (public/mockups/source-kit-v3/*) are now bound for all
+ * products, colors, and faces. The canonical matrix contains 108 transparent
+ * 1024×1024 cutouts (6 products × 54 color variants × front + back) with a
+ * per-asset manifest index and explicit editable-master metadata.
  *
  * Rendering path summary:
- *   Light/white garments (lum > 0.92) → white cutout from /new/ or
- *     /mockups/ (floating on white canvas, soft drop-shadow).
- *   Near-black garments (lum < 0.12) + darkFront asset exists → dedicated
- *     dark studio photo (hasDarkPhotoAsset guard prevents SVG-tint on black).
- *   All other colors (navy, red, grey, maroon, olive, sky-blue, etc.) →
- *     source-kit colorPhoto for exact-match photographic realism, both
- *     front and back faces where available.
+ *   Every family/color/face resolves to one v3 transparent cutout at runtime.
+ *   Opaque normalized photos remain metadata/admin references only; they are
+ *   never stacked with the cutout in the editor because that creates ghost
+ *   silhouettes and pale wedges. Curved products use the same face contract
+ *   in the compositor and 3D texture path.
  */
 export function resolveMockup(
   product: DesignProduct,
@@ -715,7 +710,7 @@ export function resolveMockup(
   // export/admin tooling can round-trip to the exact source document without
   // guessing a product, color, or face.
   const curated = getCuratedMockup(product, color, face);
-  const masterPath = `attached_assets/trynex-mockup-source-kit/psd/${category}-${sourceKitSlug ?? "white"}-${face}.psd`;
+  const masterPath = `attached_assets/trynex-mockup-source-kit/${category === "mug" || category === "waterbottle" ? "psb" : "psd"}/${category}-${sourceKitSlug ?? "white"}-${face}.${category === "mug" || category === "waterbottle" ? "psb" : "psd"}`;
   const sourceKitKey = `${category}:${sourceKitSlug ?? "white"}:${face}`;
 
   return {
@@ -869,10 +864,10 @@ export function GarmentSVG({
           </clipPath>
         )}
 
-        {/* Source-kit edge guard. Some legacy-derived transparent renders retain
-            pale extraction wedges outside the real garment silhouette. These
-            product-specific paths clip only the outer artifact corridors; they
-            do not add lighting, shadows, or a second product layer. */}
+        {/* Legacy silhouette guards are retained in the manifest for audit history,
+            but runtime product alpha is authoritative in v3. Applying a generic
+            path here caused Long Sleeve/Hoodie sleeve cutoffs, so no product image
+            is clipped by a coordinate-guessed silhouette. */}
         {product.category === "tshirt" && (
           <clipPath id="tshirt-silhouette" clipPathUnits="userSpaceOnUse">
             <path d="M390 176 Q430 128 500 128 Q570 128 610 176 L760 260 L892 360 L830 485 L738 440 L738 930 Q500 970 262 930 L262 440 L170 485 L108 360 L240 260 Z" />
@@ -912,7 +907,6 @@ export function GarmentSVG({
           href={canonicalBaseSrc}
           x={0} y={0} width={1000} height={1000}
           preserveAspectRatio="xMidYMid meet"
-          clipPath={product.category === "tshirt" ? "url(#tshirt-silhouette)" : product.category === "longsleeve" ? "url(#longsleeve-silhouette)" : product.category === "hoodie" ? "url(#hoodie-silhouette)" : undefined}
           filter={needsTint ? "url(#garment-color-tint)" : undefined}
           className="garment-img"
         />

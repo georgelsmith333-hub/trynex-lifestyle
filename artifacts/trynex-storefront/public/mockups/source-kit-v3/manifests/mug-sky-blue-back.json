@@ -1,0 +1,24 @@
+{
+  "schema": "trynex-smart-mockup/v3",
+  "sourceKitKey": "mug:sky-blue:back",
+  "category": "mug",
+  "colorSlug": "sky-blue",
+  "face": "back",
+  "sourceFile": "normalized-cutouts/mug-sky-blue-back.png",
+  "cutoutSrc": "/mockups/source-kit-v3/mug/sky-blue/back.png",
+  "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-sky-blue-back.psb",
+  "masterStatus": "manifest-only",
+  "size": [
+    1024,
+    1024
+  ],
+  "alphaBBox": [
+    143,
+    192,
+    879,
+    829
+  ],
+  "sha256": "b6e3439820e25a030e4f8219d82aa0528d68f2b99efcf5c09d88df8888eeaa58",
+  "sourceSelection": "normalized-cutout",
+  "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+}

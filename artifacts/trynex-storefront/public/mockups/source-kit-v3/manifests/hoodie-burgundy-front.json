@@ -1,0 +1,24 @@
+{
+  "schema": "trynex-smart-mockup/v3",
+  "sourceKitKey": "hoodie:burgundy:front",
+  "category": "hoodie",
+  "colorSlug": "burgundy",
+  "face": "front",
+  "sourceFile": "normalized-cutouts/hoodie-burgundy-front.png",
+  "cutoutSrc": "/mockups/source-kit-v3/hoodie/burgundy/front.png",
+  "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/hoodie-burgundy-front.psd",
+  "masterStatus": "manifest-only",
+  "size": [
+    1024,
+    1024
+  ],
+  "alphaBBox": [
+    54,
+    43,
+    970,
+    980
+  ],
+  "sha256": "6c020399f27436903e3ceaddfd4f60b4ebad462e7bfccd55cd5b31a642f84649",
+  "sourceSelection": "normalized-cutout",
+  "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+}

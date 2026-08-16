@@ -1,0 +1,24 @@
+{
+  "schema": "trynex-smart-mockup/v3",
+  "sourceKitKey": "mug:red:back",
+  "category": "mug",
+  "colorSlug": "red",
+  "face": "back",
+  "sourceFile": "normalized-cutouts/mug-red-back.png",
+  "cutoutSrc": "/mockups/source-kit-v3/mug/red/back.png",
+  "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-red-back.psb",
+  "masterStatus": "manifest-only",
+  "size": [
+    1024,
+    1024
+  ],
+  "alphaBBox": [
+    143,
+    192,
+    881,
+    829
+  ],
+  "sha256": "2c42c88a0aa9518cf21e37b73a52d726e5606f2309819d4d70fe6a5d616ec654",
+  "sourceSelection": "normalized-cutout",
+  "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+}

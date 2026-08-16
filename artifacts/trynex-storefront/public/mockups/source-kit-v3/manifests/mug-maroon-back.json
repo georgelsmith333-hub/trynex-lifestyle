@@ -1,0 +1,24 @@
+{
+  "schema": "trynex-smart-mockup/v3",
+  "sourceKitKey": "mug:maroon:back",
+  "category": "mug",
+  "colorSlug": "maroon",
+  "face": "back",
+  "sourceFile": "normalized-cutouts/mug-maroon-back.png",
+  "cutoutSrc": "/mockups/source-kit-v3/mug/maroon/back.png",
+  "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-maroon-back.psb",
+  "masterStatus": "manifest-only",
+  "size": [
+    1024,
+    1024
+  ],
+  "alphaBBox": [
+    143,
+    192,
+    881,
+    829
+  ],
+  "sha256": "375795186fc3b075125e7837cf42ae698951725dc724bd807e2c82c3adad115f",
+  "sourceSelection": "normalized-cutout",
+  "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+}

@@ -10,7 +10,7 @@ export interface SmartObjectPrintZone {
 }
 
 export interface SmartMockupManifest {
-  schema: "trynex-smart-mockup/v2";
+  schema: "trynex-smart-mockup/v3";
   masterFormat: "psd" | "psb";
   masterStatus: "verified" | "manifest-only";
   category: SmartMockupCategory;
@@ -82,7 +82,7 @@ export function createSmartMockupManifest(args: {
   const baseSrc = args.baseSrc ?? "";
   const cutoutSrc = args.cutoutSrc ?? baseSrc;
   return {
-    schema: "trynex-smart-mockup/v2",
+    schema: "trynex-smart-mockup/v3",
     masterFormat: args.category === "waterbottle" || args.category === "mug" ? "psb" : "psd",
     masterStatus: args.masterStatus ?? "manifest-only",
     category: args.category,

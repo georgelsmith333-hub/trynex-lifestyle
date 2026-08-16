@@ -1,0 +1,24 @@
+{
+  "schema": "trynex-smart-mockup/v3",
+  "sourceKitKey": "longsleeve:olive:back",
+  "category": "longsleeve",
+  "colorSlug": "olive",
+  "face": "back",
+  "sourceFile": "normalized-cutouts/longsleeve-olive-back.png",
+  "cutoutSrc": "/mockups/source-kit-v3/longsleeve/olive/back.png",
+  "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-olive-back.psd",
+  "masterStatus": "manifest-only",
+  "size": [
+    1024,
+    1024
+  ],
+  "alphaBBox": [
+    53,
+    94,
+    970,
+    930
+  ],
+  "sha256": "3a934d42eb90c0ffc6db2cd1b9e4715eb3963a23133bfa6007d8e1d85c25fea6",
+  "sourceSelection": "normalized-cutout",
+  "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+}

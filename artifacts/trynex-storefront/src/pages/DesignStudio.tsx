@@ -254,11 +254,19 @@ const LEGACY_ID_MAP: Record<string, string> = {
   "white-tshirt": "tshirt", "black-tshirt": "tshirt",
   "white-hoodie": "hoodie", "black-hoodie": "hoodie",
   "white-longsleeve": "longsleeve", "black-longsleeve": "longsleeve",
+  "long-sleeve": "longsleeve", "long-sleeves": "longsleeve", "longsleeves": "longsleeve",
   "white-mug": "mug", "black-mug": "mug",
   "white-cap": "cap", "black-cap": "cap",
   "white-waterbottle": "waterbottle", "black-waterbottle": "waterbottle",
+  "water-bottle": "waterbottle", "water-bottles": "waterbottle", "bottle": "waterbottle",
   "white-watertumbler": "watertumbler", "black-watertumbler": "watertumbler",
 };
+
+function normalizeStudioProductId(raw: string): string {
+  const trimmed = raw.trim().toLowerCase();
+  const compact = trimmed.replace(/[-_\s]/g, "");
+  return LEGACY_ID_MAP[trimmed] ?? LEGACY_ID_MAP[compact] ?? compact;
+}
 type SaveStatus = "idle" | "saving" | "saved";
 interface DraftPayload {
   version: number;
@@ -330,7 +338,13 @@ export default function DesignStudio() {
   const [linkedStoreProduct, setLinkedStoreProduct] = useState<LinkedStoreProduct | null>(null);
   const pendingStoreProductIdRef = useRef<number | null>(null);
 
-  const [selectedProduct, setSelectedProduct] = useState<DesignProduct>(PRODUCTS[0]);
+  const [selectedProduct, setSelectedProduct] = useState<DesignProduct>(() => {
+    if (typeof window === "undefined") return PRODUCTS[0];
+    const raw = new URLSearchParams(window.location.search).get("product");
+    if (!raw) return PRODUCTS[0];
+    const id = normalizeStudioProductId(raw);
+    return PRODUCTS.find((p) => p.id === id || p.category === id) ?? PRODUCTS[0];
+  });
   const [mockupOverrides, setMockupOverrides] = useState<Record<string, string>>({});
   const [selectedColor, setSelectedColor] = useState<{ name: string; hex: string }>(
     PRODUCTS[0].colors[0]
@@ -694,17 +708,16 @@ export default function DesignStudio() {
       // URL params override draft settings (URL is the source of truth when shared)
       try {
         const sp = new URLSearchParams(window.location.search);
-        const urlProduct = sp.get("product");
-        if (urlProduct) {
-          const normalizedUrl = urlProduct.toLowerCase().replace(/[-_\s]/g, "");
-          const resolvedUrl = LEGACY_ID_MAP[urlProduct] ?? LEGACY_ID_MAP[normalizedUrl] ?? urlProduct;
-          const found = PRODUCTS.find(p => p.id === resolvedUrl || p.category === resolvedUrl || p.id.replace(/[-_\s]/g, "") === normalizedUrl || p.category.replace(/[-_\s]/g, "") === normalizedUrl);
-          if (found) {
-            setSelectedProduct(found);
-            setSelectedColor(found.colors[0]);
-            setShow3D(false);
+          const urlProduct = sp.get("product");
+          if (urlProduct) {
+            const resolvedUrl = normalizeStudioProductId(urlProduct);
+            const found = PRODUCTS.find((p) => p.id === resolvedUrl || p.category === resolvedUrl);
+            if (found) {
+              setSelectedProduct(found);
+              setSelectedColor(found.colors[0]);
+              setShow3D(false);
+            }
           }
-        }
         const urlStoreProductId = sp.get("storeProductId");
         if (urlStoreProductId) {
           const numId = parseInt(urlStoreProductId, 10);
@@ -718,7 +731,7 @@ export default function DesignStudio() {
           setActiveFace("back");
           // For mugs, "back" means Side 2 — sync mugMode so the effect at
           // line ~382 doesn't immediately re-override activeFace to "front".
-          if (PRODUCTS.find(p => p.id === (LEGACY_ID_MAP[sp.get("product") ?? ""] ?? sp.get("product") ?? ""))?.category === "mug"
+          if (PRODUCTS.find(p => p.id === normalizeStudioProductId(sp.get("product") ?? ""))?.category === "mug"
             || selectedProduct.category === "mug") {
             setMugMode("side2");
           }

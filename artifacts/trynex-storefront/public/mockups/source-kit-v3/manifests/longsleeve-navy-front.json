@@ -1,0 +1,24 @@
+{
+  "schema": "trynex-smart-mockup/v3",
+  "sourceKitKey": "longsleeve:navy:front",
+  "category": "longsleeve",
+  "colorSlug": "navy",
+  "face": "front",
+  "sourceFile": "normalized-cutouts/longsleeve-navy-front.png",
+  "cutoutSrc": "/mockups/source-kit-v3/longsleeve/navy/front.png",
+  "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-navy-front.psd",
+  "masterStatus": "manifest-only",
+  "size": [
+    1024,
+    1024
+  ],
+  "alphaBBox": [
+    53,
+    94,
+    970,
+    930
+  ],
+  "sha256": "a406fa234abafc1cac10b4be26ea5272cc002316312391b5a4b0cb7b70af2e79",
+  "sourceSelection": "normalized-cutout",
+  "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+}

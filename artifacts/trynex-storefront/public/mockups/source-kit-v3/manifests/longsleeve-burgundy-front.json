@@ -1,0 +1,24 @@
+{
+  "schema": "trynex-smart-mockup/v3",
+  "sourceKitKey": "longsleeve:burgundy:front",
+  "category": "longsleeve",
+  "colorSlug": "burgundy",
+  "face": "front",
+  "sourceFile": "normalized-cutouts/longsleeve-burgundy-front.png",
+  "cutoutSrc": "/mockups/source-kit-v3/longsleeve/burgundy/front.png",
+  "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-burgundy-front.psd",
+  "masterStatus": "manifest-only",
+  "size": [
+    1024,
+    1024
+  ],
+  "alphaBBox": [
+    53,
+    94,
+    970,
+    930
+  ],
+  "sha256": "2b4374a4127012e0c065e4676da2f73cc3a789a3ca78fd21d1de2892a09d9ce7",
+  "sourceSelection": "normalized-cutout",
+  "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+}

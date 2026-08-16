@@ -1,0 +1,24 @@
+{
+  "schema": "trynex-smart-mockup/v3",
+  "sourceKitKey": "cap:navy:back",
+  "category": "cap",
+  "colorSlug": "navy",
+  "face": "back",
+  "sourceFile": "normalized-cutouts/cap-navy-back.png",
+  "cutoutSrc": "/mockups/source-kit-v3/cap/navy/back.png",
+  "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/cap-navy-back.psd",
+  "masterStatus": "manifest-only",
+  "size": [
+    1024,
+    1024
+  ],
+  "alphaBBox": [
+    162,
+    185,
+    862,
+    839
+  ],
+  "sha256": "be40aeab04c7eecc953c5b2fcb3b9e3afdcfd04e5a8a0cb26a59b3abe4855612",
+  "sourceSelection": "normalized-cutout",
+  "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+}

@@ -1,0 +1,24 @@
+{
+  "schema": "trynex-smart-mockup/v3",
+  "sourceKitKey": "waterbottle:teal:back",
+  "category": "waterbottle",
+  "colorSlug": "teal",
+  "face": "back",
+  "sourceFile": "normalized-cutouts/waterbottle-teal-back.png",
+  "cutoutSrc": "/mockups/source-kit-v3/waterbottle/teal/back.png",
+  "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/waterbottle-teal-back.psb",
+  "masterStatus": "manifest-only",
+  "size": [
+    1024,
+    1024
+  ],
+  "alphaBBox": [
+    381,
+    78,
+    673,
+    944
+  ],
+  "sha256": "c521d385b2c1c808e94006d249fd7e2647a469f9ac01aca1f04d93c66855d43a",
+  "sourceSelection": "normalized-cutout",
+  "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+}

@@ -1,0 +1,24 @@
+{
+  "schema": "trynex-smart-mockup/v3",
+  "sourceKitKey": "tshirt:maroon:back",
+  "category": "tshirt",
+  "colorSlug": "maroon",
+  "face": "back",
+  "sourceFile": "normalized-cutouts/tshirt-maroon-back.png",
+  "cutoutSrc": "/mockups/source-kit-v3/tshirt/maroon/back.png",
+  "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/tshirt-maroon-back.psd",
+  "masterStatus": "manifest-only",
+  "size": [
+    1024,
+    1024
+  ],
+  "alphaBBox": [
+    43,
+    66,
+    979,
+    957
+  ],
+  "sha256": "0f40e1f4a0af9613095d7497bfd02d6633a7759886afdd062ab4d08fccea3c3e",
+  "sourceSelection": "normalized-cutout",
+  "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+}

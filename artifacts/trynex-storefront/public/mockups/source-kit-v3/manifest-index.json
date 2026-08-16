@@ -1,0 +1,2666 @@
+{
+  "schema": "trynex-smart-mockup/v3",
+  "assetCount": 108,
+  "categories": {
+    "tshirt": [
+      "white",
+      "black",
+      "navy",
+      "maroon",
+      "olive",
+      "sky-blue",
+      "grey",
+      "red"
+    ],
+    "longsleeve": [
+      "white",
+      "black",
+      "navy",
+      "maroon",
+      "olive",
+      "grey",
+      "red",
+      "sky-blue",
+      "burgundy",
+      "forest"
+    ],
+    "hoodie": [
+      "white",
+      "black",
+      "navy",
+      "grey",
+      "maroon",
+      "olive",
+      "red",
+      "sky-blue",
+      "forest",
+      "burgundy"
+    ],
+    "mug": [
+      "white",
+      "black",
+      "navy",
+      "red",
+      "green",
+      "purple",
+      "sky-blue",
+      "pink",
+      "maroon",
+      "orange"
+    ],
+    "cap": [
+      "white",
+      "black",
+      "navy",
+      "maroon",
+      "olive",
+      "red",
+      "grey",
+      "forest"
+    ],
+    "waterbottle": [
+      "white",
+      "black",
+      "navy",
+      "forest",
+      "sky-blue",
+      "red",
+      "pink",
+      "teal"
+    ]
+  },
+  "assets": [
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "cap:black:back",
+      "category": "cap",
+      "colorSlug": "black",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/cap-black-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/cap/black/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/cap-black-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        162,
+        185,
+        862,
+        839
+      ],
+      "sha256": "7dd445976f0759cb6160c8a04a711e45e2bfc46297a98129b1752eae93b9b69c",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "cap:black:front",
+      "category": "cap",
+      "colorSlug": "black",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/cap-black-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/cap/black/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/cap-black-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        162,
+        184,
+        862,
+        839
+      ],
+      "sha256": "916f22d46ab15a24c0cb85b6f1f549073ccd96d6b3c73c29a8c67241ab7dc4ec",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "cap:forest:back",
+      "category": "cap",
+      "colorSlug": "forest",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/cap-forest-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/cap/forest/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/cap-forest-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        162,
+        185,
+        862,
+        839
+      ],
+      "sha256": "819c5e248d0fb21c35ddffbbb30d88cbd62b3c3a432f9a2e9129b51c10b63f62",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "cap:forest:front",
+      "category": "cap",
+      "colorSlug": "forest",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/cap-forest-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/cap/forest/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/cap-forest-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        162,
+        184,
+        862,
+        839
+      ],
+      "sha256": "12faed203db137087daf6e1a8cf0b8a5ccbf8453f44a9fd0c9cfc8a4df34f640",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "cap:grey:back",
+      "category": "cap",
+      "colorSlug": "grey",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/cap-grey-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/cap/grey/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/cap-grey-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        162,
+        185,
+        862,
+        839
+      ],
+      "sha256": "9d82a6c8fa5df9ad0babb7be400ef95df525391ca086a376c11249d64e9b7fd7",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "cap:grey:front",
+      "category": "cap",
+      "colorSlug": "grey",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/cap-grey-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/cap/grey/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/cap-grey-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        162,
+        184,
+        862,
+        839
+      ],
+      "sha256": "9f916e3f9524647936770ec2ae151590a0ce3a5366e8fdab2ff3e6114053fd5a",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "cap:maroon:back",
+      "category": "cap",
+      "colorSlug": "maroon",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/cap-maroon-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/cap/maroon/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/cap-maroon-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        162,
+        185,
+        862,
+        839
+      ],
+      "sha256": "72a9d2809d1af5dc5a48213b5fffe3693a66877c62203e27f20fb9d1f76cfc6a",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "cap:maroon:front",
+      "category": "cap",
+      "colorSlug": "maroon",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/cap-maroon-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/cap/maroon/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/cap-maroon-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        162,
+        184,
+        862,
+        839
+      ],
+      "sha256": "82fb0292c8a9637a1ffe1713e1a842504e3e7adce0074e7e5ddafc4873aab142",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "cap:navy:back",
+      "category": "cap",
+      "colorSlug": "navy",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/cap-navy-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/cap/navy/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/cap-navy-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        162,
+        185,
+        862,
+        839
+      ],
+      "sha256": "be40aeab04c7eecc953c5b2fcb3b9e3afdcfd04e5a8a0cb26a59b3abe4855612",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "cap:navy:front",
+      "category": "cap",
+      "colorSlug": "navy",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/cap-navy-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/cap/navy/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/cap-navy-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        162,
+        184,
+        862,
+        839
+      ],
+      "sha256": "a15f175724213859a91b522afc05d34d1240660428159ae308d27a192c44f6f5",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "cap:olive:back",
+      "category": "cap",
+      "colorSlug": "olive",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/cap-olive-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/cap/olive/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/cap-olive-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        162,
+        184,
+        862,
+        839
+      ],
+      "sha256": "dcaf8c30099a5069f9083e6309f4fa23192ddcc8552c90750b54cef11bb130f0",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "cap:olive:front",
+      "category": "cap",
+      "colorSlug": "olive",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/cap-olive-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/cap/olive/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/cap-olive-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        162,
+        184,
+        862,
+        839
+      ],
+      "sha256": "ed2f0625b9f73b1294092951a44707cc127cebe39dfa840a256b59fdfc65687c",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "cap:red:back",
+      "category": "cap",
+      "colorSlug": "red",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/cap-red-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/cap/red/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/cap-red-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        163,
+        187,
+        851,
+        837
+      ],
+      "sha256": "df99e280f2c6029d81a6198b86a668008e4dfdecc0510f811acc15562ed944b4",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "cap:red:front",
+      "category": "cap",
+      "colorSlug": "red",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/cap-red-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/cap/red/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/cap-red-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        162,
+        184,
+        862,
+        839
+      ],
+      "sha256": "d59861a96690e71fa00ee0409a102a1a59c0671a969a49eea77f05ca96913105",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "cap:white:back",
+      "category": "cap",
+      "colorSlug": "white",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/cap-white-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/cap/white/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/cap-white-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        162,
+        184,
+        862,
+        839
+      ],
+      "sha256": "fe10f5a08e4ca370a475bf69240e6c04948f3959bd5e512af6bddcb56dc672de",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "cap:white:front",
+      "category": "cap",
+      "colorSlug": "white",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/white-cap-front-cutout.png",
+      "cutoutSrc": "/mockups/source-kit-v3/cap/white/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/cap-white-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        162,
+        202,
+        862,
+        822
+      ],
+      "sha256": "e46decafa83f96f96a1cc18fc14ecbd1852d3206c615d4e6ecc7182fd232e8c4",
+      "sourceSelection": "special-clean-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "hoodie:black:back",
+      "category": "hoodie",
+      "colorSlug": "black",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/black-hoodie-back-cutout-real.png",
+      "cutoutSrc": "/mockups/source-kit-v3/hoodie/black/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/hoodie-black-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        72,
+        63,
+        951,
+        961
+      ],
+      "sha256": "1fb92f994c2e8c7578b220466906a01d677e4a756ed652b9b826714f3014fb66",
+      "sourceSelection": "special-clean-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "hoodie:black:front",
+      "category": "hoodie",
+      "colorSlug": "black",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/black-hoodie-front-cutout-real.png",
+      "cutoutSrc": "/mockups/source-kit-v3/hoodie/black/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/hoodie-black-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        72,
+        62,
+        952,
+        962
+      ],
+      "sha256": "7e22beabf95935c8360b3b2595917d649c44ec31086c60f750f3d94b8174f554",
+      "sourceSelection": "special-clean-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "hoodie:burgundy:back",
+      "category": "hoodie",
+      "colorSlug": "burgundy",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/hoodie-burgundy-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/hoodie/burgundy/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/hoodie-burgundy-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        54,
+        43,
+        969,
+        980
+      ],
+      "sha256": "1cfe5d402dc045a4dc3d246ceaab1d8947932a30afb4959917a9941b6c76684d",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "hoodie:burgundy:front",
+      "category": "hoodie",
+      "colorSlug": "burgundy",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/hoodie-burgundy-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/hoodie/burgundy/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/hoodie-burgundy-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        54,
+        43,
+        970,
+        980
+      ],
+      "sha256": "6c020399f27436903e3ceaddfd4f60b4ebad462e7bfccd55cd5b31a642f84649",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "hoodie:forest:back",
+      "category": "hoodie",
+      "colorSlug": "forest",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/hoodie-forest-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/hoodie/forest/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/hoodie-forest-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        54,
+        43,
+        969,
+        980
+      ],
+      "sha256": "4cf91c9581045a93b431fb46eab6dd0d6346bad2dfa9d935f55a2833fcaa3a38",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "hoodie:forest:front",
+      "category": "hoodie",
+      "colorSlug": "forest",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/hoodie-forest-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/hoodie/forest/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/hoodie-forest-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        54,
+        43,
+        970,
+        980
+      ],
+      "sha256": "c42d82e6ae475ef0ac9ae2e8962feee85d7b691c4a000eca7250907527641336",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "hoodie:grey:back",
+      "category": "hoodie",
+      "colorSlug": "grey",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/hoodie-grey-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/hoodie/grey/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/hoodie-grey-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        54,
+        43,
+        969,
+        980
+      ],
+      "sha256": "79a999ab987c40d2156054c7b4286457fe82b69d5b0b128c2b7257af57d21961",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "hoodie:grey:front",
+      "category": "hoodie",
+      "colorSlug": "grey",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/hoodie-grey-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/hoodie/grey/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/hoodie-grey-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        54,
+        43,
+        970,
+        980
+      ],
+      "sha256": "8c3dfee19431ee9cc6928177b87b9fb61bf48cb83050696c58085d2541262932",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "hoodie:maroon:back",
+      "category": "hoodie",
+      "colorSlug": "maroon",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/hoodie-maroon-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/hoodie/maroon/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/hoodie-maroon-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        54,
+        43,
+        969,
+        980
+      ],
+      "sha256": "b09e18604df0ffa91aac774179b95e0bbcfc886eb62ce7e55c2c89dd0fa02c72",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "hoodie:maroon:front",
+      "category": "hoodie",
+      "colorSlug": "maroon",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/hoodie-maroon-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/hoodie/maroon/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/hoodie-maroon-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        54,
+        43,
+        970,
+        980
+      ],
+      "sha256": "a33571e9d06b1fdcffddffe6651056248c4ead02fe87ea782f9f4d716c9a618b",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "hoodie:navy:back",
+      "category": "hoodie",
+      "colorSlug": "navy",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/hoodie-navy-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/hoodie/navy/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/hoodie-navy-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        54,
+        43,
+        969,
+        980
+      ],
+      "sha256": "487556e7fe3dc4fb1f397b37eb640fc0ee66768d4ec8cd13d35810828061bba8",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "hoodie:navy:front",
+      "category": "hoodie",
+      "colorSlug": "navy",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/hoodie-navy-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/hoodie/navy/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/hoodie-navy-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        54,
+        43,
+        970,
+        980
+      ],
+      "sha256": "b64adc8c6e28b8c50244d57ed29112a449bcab474f0e3eca059207babc13ceaf",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "hoodie:olive:back",
+      "category": "hoodie",
+      "colorSlug": "olive",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/hoodie-olive-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/hoodie/olive/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/hoodie-olive-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        54,
+        43,
+        969,
+        980
+      ],
+      "sha256": "ddad8bc22a8d91c7641a7bc8e7dbd2b465ee14993b85813dce5d9b8d0a7da625",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "hoodie:olive:front",
+      "category": "hoodie",
+      "colorSlug": "olive",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/hoodie-olive-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/hoodie/olive/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/hoodie-olive-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        54,
+        43,
+        970,
+        980
+      ],
+      "sha256": "7c434ef19be1c714dd72d97c0394bfec543ce7c6b789dd9b8e023bf8b786ac2d",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "hoodie:red:back",
+      "category": "hoodie",
+      "colorSlug": "red",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/hoodie-red-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/hoodie/red/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/hoodie-red-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        54,
+        43,
+        969,
+        980
+      ],
+      "sha256": "4fea8d7d6a6830c410fcba8734967ea58008fb0b11a60516881af1fb3cc86b46",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "hoodie:red:front",
+      "category": "hoodie",
+      "colorSlug": "red",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/hoodie-red-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/hoodie/red/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/hoodie-red-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        54,
+        43,
+        970,
+        980
+      ],
+      "sha256": "6ff01439e56886b5bdc938f6336f28c25805ad8d8772cddb3c337160b685da2b",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "hoodie:sky-blue:back",
+      "category": "hoodie",
+      "colorSlug": "sky-blue",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/hoodie-sky-blue-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/hoodie/sky-blue/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/hoodie-sky-blue-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        54,
+        43,
+        969,
+        980
+      ],
+      "sha256": "24a093604ea6edeeb430fcdec032e312d6ff77956008f930426c48dc114a2efd",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "hoodie:sky-blue:front",
+      "category": "hoodie",
+      "colorSlug": "sky-blue",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/hoodie-sky-blue-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/hoodie/sky-blue/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/hoodie-sky-blue-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        54,
+        43,
+        970,
+        980
+      ],
+      "sha256": "3dbc673b606f92c48d0114e70022265da42cd364bd305f3b5949591e1ba1ee8b",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "hoodie:white:back",
+      "category": "hoodie",
+      "colorSlug": "white",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/white-hoodie-back-cutout-real.png",
+      "cutoutSrc": "/mockups/source-kit-v3/hoodie/white/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/hoodie-white-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        72,
+        62,
+        952,
+        962
+      ],
+      "sha256": "8d9c5151e8e6f60cfb6af24404812b4cf47e8eec25ed8c88a5f442f044195cf0",
+      "sourceSelection": "special-clean-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "hoodie:white:front",
+      "category": "hoodie",
+      "colorSlug": "white",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/white-hoodie-front-cutout-real.png",
+      "cutoutSrc": "/mockups/source-kit-v3/hoodie/white/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/hoodie-white-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        72,
+        62,
+        952,
+        962
+      ],
+      "sha256": "75061ef8e2b1392bc276951eeee8c1049785de0d21ff2c75ecfda5b364c297f5",
+      "sourceSelection": "special-clean-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "longsleeve:black:back",
+      "category": "longsleeve",
+      "colorSlug": "black",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/black-longsleeve-back-cutout.png",
+      "cutoutSrc": "/mockups/source-kit-v3/longsleeve/black/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-black-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        72,
+        112,
+        952,
+        912
+      ],
+      "sha256": "dbf042013e0143e28135f18e3f543fc99e4adc9c89355613b7e530345a15da48",
+      "sourceSelection": "special-clean-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "longsleeve:black:front",
+      "category": "longsleeve",
+      "colorSlug": "black",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/black-longsleeve-front-cutout.png",
+      "cutoutSrc": "/mockups/source-kit-v3/longsleeve/black/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-black-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        72,
+        112,
+        952,
+        912
+      ],
+      "sha256": "b2f7553ab20342cc23878177e46451f0519031ba7fa5af20be2f6fce4b669bb7",
+      "sourceSelection": "special-clean-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "longsleeve:burgundy:back",
+      "category": "longsleeve",
+      "colorSlug": "burgundy",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/longsleeve-burgundy-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/longsleeve/burgundy/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-burgundy-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        53,
+        94,
+        970,
+        930
+      ],
+      "sha256": "f6398dbc7038a50664f067bf1381e868c2cddd3d6c2d90248ef17e346ba9e380",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "longsleeve:burgundy:front",
+      "category": "longsleeve",
+      "colorSlug": "burgundy",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/longsleeve-burgundy-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/longsleeve/burgundy/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-burgundy-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        53,
+        94,
+        970,
+        930
+      ],
+      "sha256": "2b4374a4127012e0c065e4676da2f73cc3a789a3ca78fd21d1de2892a09d9ce7",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "longsleeve:forest:back",
+      "category": "longsleeve",
+      "colorSlug": "forest",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/longsleeve-forest-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/longsleeve/forest/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-forest-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        53,
+        94,
+        970,
+        930
+      ],
+      "sha256": "b2d5c80b56aceee30d6ed8e117ede6c04042404a913c9ac2b4bc7f25fcddd224",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "longsleeve:forest:front",
+      "category": "longsleeve",
+      "colorSlug": "forest",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/longsleeve-forest-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/longsleeve/forest/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-forest-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        53,
+        94,
+        970,
+        930
+      ],
+      "sha256": "2388a121f7013b5bebfeb499a72df95624715023a4777264a9c894f5579cd033",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "longsleeve:grey:back",
+      "category": "longsleeve",
+      "colorSlug": "grey",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/longsleeve-grey-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/longsleeve/grey/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-grey-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        53,
+        94,
+        970,
+        930
+      ],
+      "sha256": "d038ec2ec7a5e2a8b4cb44d100649649ffa1b5fdeddbf8e02e39ba6704cdcc16",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "longsleeve:grey:front",
+      "category": "longsleeve",
+      "colorSlug": "grey",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/longsleeve-grey-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/longsleeve/grey/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-grey-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        53,
+        94,
+        970,
+        930
+      ],
+      "sha256": "23e47938663b927b742405abf8836ddad524e0108169f0708179baf79c5b8dd6",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "longsleeve:maroon:back",
+      "category": "longsleeve",
+      "colorSlug": "maroon",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/longsleeve-maroon-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/longsleeve/maroon/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-maroon-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        53,
+        94,
+        970,
+        930
+      ],
+      "sha256": "a0d964a6f99b78c2894b103f5695c779654e225d680eda283808c29d09e14851",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "longsleeve:maroon:front",
+      "category": "longsleeve",
+      "colorSlug": "maroon",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/longsleeve-maroon-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/longsleeve/maroon/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-maroon-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        53,
+        94,
+        970,
+        930
+      ],
+      "sha256": "f9648bbdac2e0ce40ba44501266d25304301b502d1e836b6ebb2a92efb5888d3",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "longsleeve:navy:back",
+      "category": "longsleeve",
+      "colorSlug": "navy",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/longsleeve-navy-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/longsleeve/navy/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-navy-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        53,
+        94,
+        970,
+        930
+      ],
+      "sha256": "7b72809a0676a19f5f3c11e5b50cfacd24948c78911341b42901f227e9779a2b",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "longsleeve:navy:front",
+      "category": "longsleeve",
+      "colorSlug": "navy",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/longsleeve-navy-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/longsleeve/navy/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-navy-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        53,
+        94,
+        970,
+        930
+      ],
+      "sha256": "a406fa234abafc1cac10b4be26ea5272cc002316312391b5a4b0cb7b70af2e79",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "longsleeve:olive:back",
+      "category": "longsleeve",
+      "colorSlug": "olive",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/longsleeve-olive-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/longsleeve/olive/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-olive-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        53,
+        94,
+        970,
+        930
+      ],
+      "sha256": "3a934d42eb90c0ffc6db2cd1b9e4715eb3963a23133bfa6007d8e1d85c25fea6",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "longsleeve:olive:front",
+      "category": "longsleeve",
+      "colorSlug": "olive",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/longsleeve-olive-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/longsleeve/olive/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-olive-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        53,
+        94,
+        970,
+        930
+      ],
+      "sha256": "2a5c8464d180be7607cd0763216c1308e1f5a6ab4d1136c505bff1e403959066",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "longsleeve:red:back",
+      "category": "longsleeve",
+      "colorSlug": "red",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/longsleeve-red-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/longsleeve/red/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-red-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        53,
+        94,
+        970,
+        930
+      ],
+      "sha256": "c185b9c793502f9e0428e02d1e285d2ca30d344de16d1cd66b5f59babdf7f37b",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "longsleeve:red:front",
+      "category": "longsleeve",
+      "colorSlug": "red",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/longsleeve-red-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/longsleeve/red/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-red-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        53,
+        94,
+        970,
+        930
+      ],
+      "sha256": "05b859fc5ea958c30b90610bb13d657d14f42af0c2f57ae95c1e2c677de7371f",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "longsleeve:sky-blue:back",
+      "category": "longsleeve",
+      "colorSlug": "sky-blue",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/longsleeve-sky-blue-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/longsleeve/sky-blue/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-sky-blue-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        53,
+        94,
+        970,
+        930
+      ],
+      "sha256": "40909d255e9a61aaa401e59ee45dd33656c0523294cf819038910198128d5ea0",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "longsleeve:sky-blue:front",
+      "category": "longsleeve",
+      "colorSlug": "sky-blue",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/longsleeve-sky-blue-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/longsleeve/sky-blue/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-sky-blue-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        53,
+        94,
+        970,
+        930
+      ],
+      "sha256": "b72fc895abd4f7d0f7759d440ed9cb18150191d247e971bde24a270f4d58ee58",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "longsleeve:white:back",
+      "category": "longsleeve",
+      "colorSlug": "white",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/white-longsleeve-back-cutout-real.png",
+      "cutoutSrc": "/mockups/source-kit-v3/longsleeve/white/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-white-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        72,
+        113,
+        952,
+        912
+      ],
+      "sha256": "b3bac9f727d4679866e67e5baae5ca252ee8b3bc78100d58f47512fb1e19ec8b",
+      "sourceSelection": "special-clean-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "longsleeve:white:front",
+      "category": "longsleeve",
+      "colorSlug": "white",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/white-longsleeve-front-cutout-real.png",
+      "cutoutSrc": "/mockups/source-kit-v3/longsleeve/white/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-white-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        72,
+        112,
+        952,
+        912
+      ],
+      "sha256": "e45b4d3de937c229a76ec839037c879abe3388ae0368a8a7999b5f1045566be6",
+      "sourceSelection": "special-clean-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "mug:black:back",
+      "category": "mug",
+      "colorSlug": "black",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/mug-black-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/mug/black/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-black-back.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        143,
+        192,
+        880,
+        828
+      ],
+      "sha256": "be5f851eddb8b34463cc0b914782f1b7c4821ede860af3bd4f75e9e3cf398b23",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "mug:black:front",
+      "category": "mug",
+      "colorSlug": "black",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/mug-black-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/mug/black/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-black-front.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        143,
+        192,
+        881,
+        829
+      ],
+      "sha256": "23c3d2ea149dcfae2c6c36beb986592a4edc07cc77c4077dcc2dad2e79065949",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "mug:green:back",
+      "category": "mug",
+      "colorSlug": "green",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/mug-green-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/mug/green/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-green-back.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        143,
+        192,
+        881,
+        829
+      ],
+      "sha256": "afa9f8311085b332b101cf4df7f49ad61a1a89b02d0f8c72d9310698c539b701",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "mug:green:front",
+      "category": "mug",
+      "colorSlug": "green",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/mug-green-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/mug/green/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-green-front.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        143,
+        192,
+        881,
+        829
+      ],
+      "sha256": "a7b8e00f5985ad49ff444c2165bf870188b21a76a628c2aeac7a74c4fc1486f8",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "mug:maroon:back",
+      "category": "mug",
+      "colorSlug": "maroon",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/mug-maroon-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/mug/maroon/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-maroon-back.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        143,
+        192,
+        881,
+        829
+      ],
+      "sha256": "375795186fc3b075125e7837cf42ae698951725dc724bd807e2c82c3adad115f",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "mug:maroon:front",
+      "category": "mug",
+      "colorSlug": "maroon",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/mug-maroon-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/mug/maroon/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-maroon-front.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        143,
+        192,
+        881,
+        829
+      ],
+      "sha256": "7d9d9e573b79d77ff42a78f621f59fc8db417e973b6c326e417b7419c90b9009",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "mug:navy:back",
+      "category": "mug",
+      "colorSlug": "navy",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/mug-navy-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/mug/navy/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-navy-back.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        143,
+        192,
+        881,
+        829
+      ],
+      "sha256": "cf67630bab42f83364b86660a960db4af1d78fc02b583165f5c19524e5d08224",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "mug:navy:front",
+      "category": "mug",
+      "colorSlug": "navy",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/mug-navy-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/mug/navy/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-navy-front.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        143,
+        192,
+        881,
+        829
+      ],
+      "sha256": "29f0ad3be6d8c275ef4c3980cd78511bd063d69df1d4d2f4c279777786d36710",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "mug:orange:back",
+      "category": "mug",
+      "colorSlug": "orange",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/mug-orange-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/mug/orange/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-orange-back.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        143,
+        192,
+        881,
+        829
+      ],
+      "sha256": "6d601e8be2c04c2819124e818172b661e52c7c7765398f79561b14fb35b33be6",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "mug:orange:front",
+      "category": "mug",
+      "colorSlug": "orange",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/mug-orange-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/mug/orange/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-orange-front.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        143,
+        192,
+        881,
+        829
+      ],
+      "sha256": "42656bee728872e1b8d0c89afb6a7e1a89b58231a6a50f9d0b2d12c6e451cf3b",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "mug:pink:back",
+      "category": "mug",
+      "colorSlug": "pink",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/mug-pink-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/mug/pink/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-pink-back.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        144,
+        192,
+        879,
+        829
+      ],
+      "sha256": "3ea75a2efaf748e2aa16e82c1d3002bee1afcd3952fe3d6ea9491af9b70aa790",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "mug:pink:front",
+      "category": "mug",
+      "colorSlug": "pink",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/mug-pink-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/mug/pink/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-pink-front.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        143,
+        192,
+        881,
+        829
+      ],
+      "sha256": "65709f3bf602204b654351fac2c8fd6f0a0dd2be5bcc0126948c819fbd0ece24",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "mug:purple:back",
+      "category": "mug",
+      "colorSlug": "purple",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/mug-purple-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/mug/purple/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-purple-back.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        144,
+        192,
+        881,
+        829
+      ],
+      "sha256": "baa5bad9be4a75c00f37af9f6788e18698d3a255cac2d2a3f34b893e90b94112",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "mug:purple:front",
+      "category": "mug",
+      "colorSlug": "purple",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/mug-purple-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/mug/purple/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-purple-front.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        143,
+        192,
+        881,
+        829
+      ],
+      "sha256": "eafde4a6de49c909e24641bad7c8ab245cc584818dad727bf57b3a96f76d9b07",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "mug:red:back",
+      "category": "mug",
+      "colorSlug": "red",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/mug-red-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/mug/red/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-red-back.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        143,
+        192,
+        881,
+        829
+      ],
+      "sha256": "2c42c88a0aa9518cf21e37b73a52d726e5606f2309819d4d70fe6a5d616ec654",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "mug:red:front",
+      "category": "mug",
+      "colorSlug": "red",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/mug-red-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/mug/red/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-red-front.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        143,
+        192,
+        881,
+        829
+      ],
+      "sha256": "7814fb98e2afbb2a998db16ad8ffd337ed410ac073008e5cc7da98cb480a61cb",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "mug:sky-blue:back",
+      "category": "mug",
+      "colorSlug": "sky-blue",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/mug-sky-blue-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/mug/sky-blue/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-sky-blue-back.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        143,
+        192,
+        879,
+        829
+      ],
+      "sha256": "b6e3439820e25a030e4f8219d82aa0528d68f2b99efcf5c09d88df8888eeaa58",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "mug:sky-blue:front",
+      "category": "mug",
+      "colorSlug": "sky-blue",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/mug-sky-blue-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/mug/sky-blue/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-sky-blue-front.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        143,
+        192,
+        881,
+        829
+      ],
+      "sha256": "19009609faec3d84836bafeb7a3bb4ab8799905c0ef9de80e6d79d63a0115a63",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "mug:white:back",
+      "category": "mug",
+      "colorSlug": "white",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/mug-white-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/mug/white/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-white-back.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        143,
+        192,
+        881,
+        829
+      ],
+      "sha256": "1f971d72b351e17d0a51fe62ec0b343fed82ca3a03c9550612319456149684bc",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "mug:white:front",
+      "category": "mug",
+      "colorSlug": "white",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/white-mug-front-cutout.png",
+      "cutoutSrc": "/mockups/source-kit-v3/mug/white/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/mug-white-front.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        162,
+        212,
+        862,
+        812
+      ],
+      "sha256": "4650fe6278718fd9fefe25ca0654c431b8474fbebff209ae671066c4c749698e",
+      "sourceSelection": "special-clean-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "tshirt:black:back",
+      "category": "tshirt",
+      "colorSlug": "black",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/black-tshirt-back-cutout.png",
+      "cutoutSrc": "/mockups/source-kit-v3/tshirt/black/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/tshirt-black-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        62,
+        83,
+        962,
+        942
+      ],
+      "sha256": "16bd3ee1d85a3f7af46f08db8c1731557fd0a6f058b6fa6a88053371a6223945",
+      "sourceSelection": "special-clean-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "tshirt:black:front",
+      "category": "tshirt",
+      "colorSlug": "black",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/black-tshirt-front-cutout.png",
+      "cutoutSrc": "/mockups/source-kit-v3/tshirt/black/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/tshirt-black-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        62,
+        82,
+        962,
+        942
+      ],
+      "sha256": "6df97456c65f105074baaee3d888fed976b2b4ccfd934357576ed2d6c611f2ef",
+      "sourceSelection": "special-clean-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "tshirt:grey:back",
+      "category": "tshirt",
+      "colorSlug": "grey",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/tshirt-grey-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/tshirt/grey/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/tshirt-grey-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        43,
+        66,
+        980,
+        956
+      ],
+      "sha256": "fe82389f1b6ce953d3289cbc16a6a9ef29cef5d5f2c59d45ad6304bb05fd025a",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "tshirt:grey:front",
+      "category": "tshirt",
+      "colorSlug": "grey",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/tshirt-grey-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/tshirt/grey/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/tshirt-grey-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        43,
+        66,
+        980,
+        957
+      ],
+      "sha256": "3e945baf32a226fe48534f80caaef09f7eca6e9c2f77eb24adcbb9b9ac765bfb",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "tshirt:maroon:back",
+      "category": "tshirt",
+      "colorSlug": "maroon",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/tshirt-maroon-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/tshirt/maroon/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/tshirt-maroon-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        43,
+        66,
+        979,
+        957
+      ],
+      "sha256": "0f40e1f4a0af9613095d7497bfd02d6633a7759886afdd062ab4d08fccea3c3e",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "tshirt:maroon:front",
+      "category": "tshirt",
+      "colorSlug": "maroon",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/tshirt-maroon-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/tshirt/maroon/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/tshirt-maroon-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        43,
+        66,
+        980,
+        957
+      ],
+      "sha256": "f9d4bc0926eb5f96110dd6e80d743acd4fbdfe1858929efc7559142191652d4c",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "tshirt:navy:back",
+      "category": "tshirt",
+      "colorSlug": "navy",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/tshirt-navy-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/tshirt/navy/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/tshirt-navy-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        43,
+        66,
+        980,
+        957
+      ],
+      "sha256": "bab7cf68e28e99fb628f9ef5e528f54dc9f0b5a3cf5987ea35f84944b68f41f7",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "tshirt:navy:front",
+      "category": "tshirt",
+      "colorSlug": "navy",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/tshirt-navy-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/tshirt/navy/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/tshirt-navy-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        43,
+        66,
+        980,
+        957
+      ],
+      "sha256": "51cab0226fa752005cbc5c7a099ea7c83fa8cc0f959657b0fc7dcdfbc4415712",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "tshirt:olive:back",
+      "category": "tshirt",
+      "colorSlug": "olive",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/tshirt-olive-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/tshirt/olive/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/tshirt-olive-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        56,
+        68,
+        966,
+        957
+      ],
+      "sha256": "2bd35f8a798da6df6820600b1e9d7d9cec538d24a4a50a07cdff634dc29ed7e0",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "tshirt:olive:front",
+      "category": "tshirt",
+      "colorSlug": "olive",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/tshirt-olive-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/tshirt/olive/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/tshirt-olive-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        43,
+        66,
+        980,
+        957
+      ],
+      "sha256": "a5a567701cbbd2cd30caadf75d37192b464f760de72e8664806f34f502b3c11b",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "tshirt:red:back",
+      "category": "tshirt",
+      "colorSlug": "red",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/tshirt-red-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/tshirt/red/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/tshirt-red-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        43,
+        66,
+        980,
+        956
+      ],
+      "sha256": "d7d0bd2c857fbfe26b661050cc939f0aa4eba091cb7962520140021c2d33c268",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "tshirt:red:front",
+      "category": "tshirt",
+      "colorSlug": "red",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/tshirt-red-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/tshirt/red/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/tshirt-red-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        43,
+        66,
+        980,
+        957
+      ],
+      "sha256": "bc60e18423270c53bc2784e48711bf07499119d12bc4a032acde6e01eaa7e06c",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "tshirt:sky-blue:back",
+      "category": "tshirt",
+      "colorSlug": "sky-blue",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/tshirt-sky-blue-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/tshirt/sky-blue/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/tshirt-sky-blue-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        43,
+        66,
+        973,
+        957
+      ],
+      "sha256": "4815ea27aec126766314f8da78455a0d03b0dee228dd15e85126696050d9b9de",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "tshirt:sky-blue:front",
+      "category": "tshirt",
+      "colorSlug": "sky-blue",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/tshirt-sky-blue-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/tshirt/sky-blue/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/tshirt-sky-blue-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        43,
+        66,
+        980,
+        957
+      ],
+      "sha256": "03dc0af695209d9f464ffc88386e0c015285440fe7bf09626194eb7a7fd22f9b",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "tshirt:white:back",
+      "category": "tshirt",
+      "colorSlug": "white",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/tshirt-white-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/tshirt/white/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/tshirt-white-back.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        43,
+        66,
+        980,
+        957
+      ],
+      "sha256": "ca51c9e00cc962ccc4d8a737b3bdbe5b6f5a6d358b9b15bc00a1c0e3cd747cf2",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "tshirt:white:front",
+      "category": "tshirt",
+      "colorSlug": "white",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/tshirt-white-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/tshirt/white/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/tshirt-white-front.psd",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        43,
+        66,
+        980,
+        957
+      ],
+      "sha256": "d66f65db3d6e21a260e7eeb4d936b7ab607145b35797d26b5948785c150b6e72",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "waterbottle:black:back",
+      "category": "waterbottle",
+      "colorSlug": "black",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/waterbottle-black-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/waterbottle/black/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/waterbottle-black-back.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        368,
+        78,
+        673,
+        944
+      ],
+      "sha256": "fd55c52fb6ec27a1e79009b5ff921e9c726ccf6f0a98a122f826c3d22dffbdb8",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "waterbottle:black:front",
+      "category": "waterbottle",
+      "colorSlug": "black",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/waterbottle-black-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/waterbottle/black/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/waterbottle-black-front.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        351,
+        78,
+        673,
+        944
+      ],
+      "sha256": "446648888051beffbed3ae89486afce6bd2e20dde78a7c869f19b63853147b7e",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "waterbottle:forest:back",
+      "category": "waterbottle",
+      "colorSlug": "forest",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/waterbottle-forest-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/waterbottle/forest/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/waterbottle-forest-back.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        367,
+        78,
+        673,
+        944
+      ],
+      "sha256": "4744c9983fb03939b425695573c771b194502789c9fd8207c11c78b2d0839cba",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "waterbottle:forest:front",
+      "category": "waterbottle",
+      "colorSlug": "forest",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/waterbottle-forest-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/waterbottle/forest/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/waterbottle-forest-front.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        351,
+        78,
+        673,
+        944
+      ],
+      "sha256": "40e41de1c88a7c1798c800355d5f3fdffd6f78d8c272f8a306e420f71c3a7d13",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "waterbottle:navy:back",
+      "category": "waterbottle",
+      "colorSlug": "navy",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/waterbottle-navy-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/waterbottle/navy/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/waterbottle-navy-back.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        351,
+        78,
+        673,
+        944
+      ],
+      "sha256": "3050d296fc6da470fea1cafe09c70b5ce6b20d4a6e5e01106045b1f5c5533797",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "waterbottle:navy:front",
+      "category": "waterbottle",
+      "colorSlug": "navy",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/waterbottle-navy-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/waterbottle/navy/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/waterbottle-navy-front.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        351,
+        78,
+        673,
+        944
+      ],
+      "sha256": "6fffb5b4d2836850695ccbde517a01cefcd349af2cd698e7bf918200cee221b6",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "waterbottle:pink:back",
+      "category": "waterbottle",
+      "colorSlug": "pink",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/waterbottle-pink-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/waterbottle/pink/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/waterbottle-pink-back.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        352,
+        78,
+        671,
+        943
+      ],
+      "sha256": "a1ed991ed3bd5b448f2e8cbcac13ff5c99b804e96e61550ef755656bb1cac78b",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "waterbottle:pink:front",
+      "category": "waterbottle",
+      "colorSlug": "pink",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/waterbottle-pink-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/waterbottle/pink/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/waterbottle-pink-front.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        351,
+        78,
+        673,
+        944
+      ],
+      "sha256": "29fd92e2dc068539cc9ace218235164961c1667159630f8f464114b0a87150f6",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "waterbottle:red:back",
+      "category": "waterbottle",
+      "colorSlug": "red",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/waterbottle-red-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/waterbottle/red/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/waterbottle-red-back.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        351,
+        78,
+        673,
+        944
+      ],
+      "sha256": "2487298e341556ed3c3a66a88eda3626e53327d9117cbe1d826c589c5b13cad1",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "waterbottle:red:front",
+      "category": "waterbottle",
+      "colorSlug": "red",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/waterbottle-red-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/waterbottle/red/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/waterbottle-red-front.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        351,
+        78,
+        673,
+        944
+      ],
+      "sha256": "bdcc708a884266ad5892a51f7534c3281c6aef0c937d18ec012afcadafb96888",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "waterbottle:sky-blue:back",
+      "category": "waterbottle",
+      "colorSlug": "sky-blue",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/waterbottle-sky-blue-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/waterbottle/sky-blue/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/waterbottle-sky-blue-back.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        351,
+        78,
+        673,
+        944
+      ],
+      "sha256": "808b84b85b322a4c447fe2f06f3d349b03b77ba0db53bf0c6a8b5e1a7a68b36d",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "waterbottle:sky-blue:front",
+      "category": "waterbottle",
+      "colorSlug": "sky-blue",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/waterbottle-sky-blue-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/waterbottle/sky-blue/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/waterbottle-sky-blue-front.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        351,
+        78,
+        673,
+        944
+      ],
+      "sha256": "0a970e7880b16895d224ed011d1f478f602923d09565b71fdb7fdaf1cda26596",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "waterbottle:teal:back",
+      "category": "waterbottle",
+      "colorSlug": "teal",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/waterbottle-teal-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/waterbottle/teal/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/waterbottle-teal-back.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        381,
+        78,
+        673,
+        944
+      ],
+      "sha256": "c521d385b2c1c808e94006d249fd7e2647a469f9ac01aca1f04d93c66855d43a",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "waterbottle:teal:front",
+      "category": "waterbottle",
+      "colorSlug": "teal",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/waterbottle-teal-front.png",
+      "cutoutSrc": "/mockups/source-kit-v3/waterbottle/teal/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/waterbottle-teal-front.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        351,
+        78,
+        673,
+        944
+      ],
+      "sha256": "696ea7f9af823847a56ee5fd365060ab08eae5367f147a0d1afe0ba411ca4da1",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "waterbottle:white:back",
+      "category": "waterbottle",
+      "colorSlug": "white",
+      "face": "back",
+      "sourceFile": "normalized-cutouts/waterbottle-white-back.png",
+      "cutoutSrc": "/mockups/source-kit-v3/waterbottle/white/back.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/waterbottle-white-back.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        351,
+        78,
+        673,
+        944
+      ],
+      "sha256": "6fc9e80819be9e7abd68b2b2be8fffc83aadba8fb5f528042e520fdf50b0a1f0",
+      "sourceSelection": "normalized-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    },
+    {
+      "schema": "trynex-smart-mockup/v3",
+      "sourceKitKey": "waterbottle:white:front",
+      "category": "waterbottle",
+      "colorSlug": "white",
+      "face": "front",
+      "sourceFile": "normalized-cutouts/white-waterbottle-front-cutout.png",
+      "cutoutSrc": "/mockups/source-kit-v3/waterbottle/white/front.png",
+      "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/waterbottle-white-front.psb",
+      "masterStatus": "manifest-only",
+      "size": [
+        1024,
+        1024
+      ],
+      "alphaBBox": [
+        362,
+        97,
+        662,
+        927
+      ],
+      "sha256": "58723dfb1d378b17e2f8347db8425d91b0d89ed732a0dc7ab1e2a33819f1d27d",
+      "sourceSelection": "special-clean-cutout",
+      "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+    }
+  ]
+}

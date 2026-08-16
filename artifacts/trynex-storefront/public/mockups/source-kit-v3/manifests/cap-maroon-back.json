@@ -1,0 +1,24 @@
+{
+  "schema": "trynex-smart-mockup/v3",
+  "sourceKitKey": "cap:maroon:back",
+  "category": "cap",
+  "colorSlug": "maroon",
+  "face": "back",
+  "sourceFile": "normalized-cutouts/cap-maroon-back.png",
+  "cutoutSrc": "/mockups/source-kit-v3/cap/maroon/back.png",
+  "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/cap-maroon-back.psd",
+  "masterStatus": "manifest-only",
+  "size": [
+    1024,
+    1024
+  ],
+  "alphaBBox": [
+    162,
+    185,
+    862,
+    839
+  ],
+  "sha256": "72a9d2809d1af5dc5a48213b5fffe3693a66877c62203e27f20fb9d1f76cfc6a",
+  "sourceSelection": "normalized-cutout",
+  "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+}

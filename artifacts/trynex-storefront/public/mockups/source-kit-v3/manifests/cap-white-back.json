@@ -1,0 +1,24 @@
+{
+  "schema": "trynex-smart-mockup/v3",
+  "sourceKitKey": "cap:white:back",
+  "category": "cap",
+  "colorSlug": "white",
+  "face": "back",
+  "sourceFile": "normalized-cutouts/cap-white-back.png",
+  "cutoutSrc": "/mockups/source-kit-v3/cap/white/back.png",
+  "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psd/cap-white-back.psd",
+  "masterStatus": "manifest-only",
+  "size": [
+    1024,
+    1024
+  ],
+  "alphaBBox": [
+    162,
+    184,
+    862,
+    839
+  ],
+  "sha256": "fe10f5a08e4ca370a475bf69240e6c04948f3959bd5e512af6bddcb56dc672de",
+  "sourceSelection": "normalized-cutout",
+  "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+}

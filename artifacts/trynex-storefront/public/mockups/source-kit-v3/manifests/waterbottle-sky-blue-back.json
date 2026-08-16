@@ -1,0 +1,24 @@
+{
+  "schema": "trynex-smart-mockup/v3",
+  "sourceKitKey": "waterbottle:sky-blue:back",
+  "category": "waterbottle",
+  "colorSlug": "sky-blue",
+  "face": "back",
+  "sourceFile": "normalized-cutouts/waterbottle-sky-blue-back.png",
+  "cutoutSrc": "/mockups/source-kit-v3/waterbottle/sky-blue/back.png",
+  "editableMasterPath": "attached_assets/trynex-mockup-source-kit/psb/waterbottle-sky-blue-back.psb",
+  "masterStatus": "manifest-only",
+  "size": [
+    1024,
+    1024
+  ],
+  "alphaBBox": [
+    351,
+    78,
+    673,
+    944
+  ],
+  "sha256": "808b84b85b322a4c447fe2f06f3d349b03b77ba0db53bf0c6a8b5e1a7a68b36d",
+  "sourceSelection": "normalized-cutout",
+  "postProcess": "alpha-edge-cleaned; detailed-back-recolor where applicable"
+}
