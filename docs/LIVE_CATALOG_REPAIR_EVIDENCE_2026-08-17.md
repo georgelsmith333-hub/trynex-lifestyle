@@ -58,3 +58,11 @@ Current check URLs for `2e9086531` include Cloudflare Pages deployment `321de360
 ## Exact-Asset Release Terminal Result
 
 Commit `2e9086531` completed successfully through GitHub CI, security scan, Active app verification, and Cloudflare Pages. The live Pages deployment is `321de360-36dd-4ef5-bcfd-3236bdaa56db`. The only red check is the external `Workers Builds: trynex-liestyle` integration, build `4b8c67f2-47eb-43ba-9e38-eb08084e9bdb`; it remains distinct from the successful `trynex-lifestyle-shop` Pages deployment and from the repository’s source configuration.
+
+## API Health Contract Verification
+
+The active Render API health contract is green: `/api/healthz` returned HTTP 200 with database, Redis, and R2 status; `/api/health/liveness` returned HTTP 200 with uptime; and `/api/health/readiness` returned HTTP 200 with database latency, uptime, and memory. The root `/health` path returns 404 by design. `render.yaml` correctly declares `/api/health/readiness` as the Render health-check path, so the earlier `/health` discrepancy is a stale test assumption rather than a live deployment defect.
+
+## Anonymous API Route Probe
+
+The live Render API returned HTTP 200 for categories, products, featured products, blog, blog categories/settings, hampers, health storage/liveness/readiness, public stats, announcement, sitemap, robots, testimonials, and remove-background status. Protected notification, promo-code, and referral collection routes correctly returned HTTP 401 without admin/user credentials. A single healthz request timed out during the broad probe, but a focused retry immediately afterward returned HTTP 200; this is recorded as a transient probe timeout, not a confirmed route failure.
