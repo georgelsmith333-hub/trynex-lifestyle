@@ -255,7 +255,11 @@ export function TypewriterHero() {
                 style={{
                   display: "inline-block",
                   minWidth: "0.6em",
+                  maxWidth: "100%",
                   color: "var(--color-primary)",
+                  overflowWrap: "anywhere",
+                  whiteSpace: "normal",
+                  verticalAlign: "baseline",
                 }}
               >
                 {reduced ? headlineFallback : typed}

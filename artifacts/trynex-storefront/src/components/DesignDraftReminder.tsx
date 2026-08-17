@@ -92,8 +92,11 @@ export function DesignDraftReminder() {
           animate={{ opacity: 1, x: 0, y: 0 }}
           exit={{ opacity: 0, x: -40 }}
           transition={{ type: "spring", damping: 24, stiffness: 260 }}
-          className="fixed bottom-24 left-4 z-[500] w-72 rounded-2xl shadow-2xl overflow-hidden"
+          className="fixed bottom-24 left-4 right-4 sm:right-auto z-[500] sm:w-72 rounded-2xl shadow-2xl overflow-hidden"
           style={{
+            width: "min(18rem, calc(100vw - 2rem))",
+            maxHeight: "min(22rem, calc(100dvh - 8rem))",
+            overflowY: "auto",
             background: "linear-gradient(135deg, #1a1a1a, #2d1200)",
             border: "1px solid rgba(232,93,4,0.3)",
           }}
