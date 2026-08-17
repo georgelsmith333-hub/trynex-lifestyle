@@ -18,3 +18,11 @@ The first runner attempt falsely treated the storefront's long-lived network act
 ## Clean Studio V2 visual proof
 
 After clearing local and session storage, clean front and back screenshots of the deployed Design Studio still show a large baked checkerboard surrounding the white hoodie. The hoodie silhouette and front/back construction are coherent, but the background is visibly wrong for a production mockup. The central `Start your design` upload prompt is expected empty-editor UI; the checkerboard is the actual asset defect. The source fix that disables canonical activation is prepared locally but is not yet deployed in these screenshots.
+
+
+## Cloudflare propagation diagnosis
+
+Cloudflare Pages project `trynex-lifestyle-shop` is connected to GitHub repository `georgelsmith333-hub/trynex-lifestyle`, production branch `main`, with production deployments enabled and the expected build command targeting `artifacts/trynex-storefront/dist`. The live production deployment reported by the Cloudflare API is deployment `0e442bd6-ae4b-4f97-913c-71be94e5c3e7`, triggered by commit `d3035275745c116c1cfb7d5c38ee301d9c3d13d7` at `2026-08-17T02:41:55Z`. It does not yet reference mockup hardening commit `9839ee797`, which explains why the live diagnostic still returned `/mockups/canonical/hoodie/white/front.png?v=canonical-v1` after the new source was pushed. GitHub source checks for `9839ee797` passed, but Cloudflare has not created a corresponding Pages deployment yet.
+
+
+A harmless deployment-trigger commit is being used because the GitHub-connected Pages project has not created a deployment for `9839ee797` even though its source checks passed. This does not alter application behavior; it only asks the existing production-branch integration to process the validated main-branch state again.
