@@ -13,3 +13,6 @@ After the promotional overlay cleared, the unobstructed homepage screenshot show
 
 
 The authenticated live Design Studio opened at `/design-studio` and rendered the T-Shirt front with the Front/Back/L.Sleeve/R.Sleeve/Neck controls. Navigating to `?product=hoodie` rendered a Navy Hoodie. The live Back view at `?product=hoodie&view=back` rendered a matched Navy Hoodie rear silhouette and retained all face controls. A cloud draft overlay added a small prior design layer in the center; this is draft state, not evidence of a garment asset defect.
+
+
+Parallel release verification browser pass: production `/design-studio?product=hoodie` loaded successfully in My Browser and exposed Front, Back, L.Sleeve, R.Sleeve, and Neck controls. The current live canvas rendered a Navy Hoodie front surface. The associated HTML snapshot was saved as `/home/ubuntu/upload/trynex-lifestyle-shop.pages.dev_design-studio_product_hoodie_1786999458745.html` for path inspection.
