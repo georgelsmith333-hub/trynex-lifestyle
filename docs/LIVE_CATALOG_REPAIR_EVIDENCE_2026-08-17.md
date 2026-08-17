@@ -70,3 +70,40 @@ The live Render API returned HTTP 200 for categories, products, featured product
 ## Performance Audit Finding
 
 The storefront already uses retryable route-level lazy loading for secondary pages and admin surfaces. Vite also isolates motion, query, editor, charts, and Three.js/R3F dependencies into named chunks; the Design Studio V2 and ONNX/3D bundles are not part of the primary route imports. The latest build still reports large intentional chunks (`vendor-3d` about 1.16 MB, ONNX about 395 kB, DesignStudio V2 about 438 kB), so optimization remains a measured studio/mobile phase rather than an unverified global refactor.
+
+
+## Phase 2 final backup synchronization — 2026-08-17
+
+The deployed backup repair was extended to match the audited live order vocabulary. The active source contained 73 orders with lifecycle statuses `pending` (24), `ongoing` (3), `cancelled` (30), `delivered` (16), and `shipped` (1); payment statuses were `submitted`, `verified`, `pending`, and `wrong`. The canonical schema, migration `005_align_order_payment_status_constraint.sql`, and guarded target repair now accept these verified application states.
+
+After Render deployment `de95ab88fd9025c56f924fd25e0374da6aeaadbf` reached `live`, authenticated schema repair returned `repaired` for Neon Failover, Neon Secondary, Products shard, and Analytics shard. The subsequent authenticated Sync Now completed successfully for the three distinct configured mirrors: Neon Failover `ok`, 20 tables, 650 rows; Neon Secondary `ok`, 20 tables, 650 rows; Products shard `ok`, 20 tables, 650 rows. Analytics shard was correctly `skipped` because its configured URL matches the active source URL, preventing destructive self-mirroring. The sync circuit remained closed with zero consecutive failures.
+
+The earlier payment-status and order-status constraint errors are therefore resolved. This result is verified through the authenticated admin status endpoint after the detached full-mirror request completed.
+
+
+## Phase 3 storefront/API/admin verification — 2026-08-17
+
+A fresh public smoke audit returned HTTP 200 for Cloudflare Pages routes `/`, `/products`, `/categories`, `/design-studio`, `/cart`, `/checkout`, `/track`, `/admin/login`, `/hampers`, and `/blog`. The Render API returned HTTP 200 for healthz, liveness, readiness, categories, products, blog, hampers, testimonials, announcement, sitemap, and robots. The correct public statistics route is `/api/public-stats` and returned HTTP 200; the earlier `/api/stats/public` probe was a stale path and is not a defect. The correct protected collection routes are `/api/promo-codes` and `/api/referrals`; both returned HTTP 401 without admin credentials. The earlier `/api/admin/promo-codes` and `/api/admin/referrals` probes were stale paths.
+
+Representative first-party Cloudflare image assets returned HTTP 200 image responses: bottle_name, bottle_space, longsleeve_corporate, longsleeve_floral, hoodie_abstract, bottle_fitness, the main-combo resolver target, and the product placeholder. The protected `/api/admin/backup/sync-status` endpoint returned HTTP 401 without credentials, confirming the admin boundary.
+
+The authenticated Admin AI verification passed. POST `/api/ai/developer/chat` with `Content-Type: application/json`, `X-Requested-With: XMLHttpRequest`, and the local provider returned HTTP 200 `text/event-stream` with provider `local`, model `local-ops`, a truthful local operational response, and a final `done` event. The authenticated provider registry, model registry, and live context endpoints also returned HTTP 200. The local operational fallback is available; configured paid/external providers correctly report unavailable when their server-side keys are absent rather than claiming a false live connection.
+
+
+## Live catalog-family audit — 2026-08-17
+
+The live API returned 7 categories and 20 products. The six required product families are populated as follows: T-Shirts 3, Hoodies 2, Mugs 2, Caps 2, Long Sleeves 5, and Water Bottles 5. The additional Custom Orders category contains 1 product. All 20 returned product records have an image URL or image collection; no missing-image records were reported by the live catalog audit.
+
+
+## Studio V2 six-family parity matrix — 2026-08-17
+
+The production `/design-studio` route was exercised across all six required families. The editor’s family picker switched through T-Shirt (`?product=tshirt`), Long Sleeve (`?product=longsleeve`), Hoodie (`?product=hoodie`), Coffee Mug (`?product=mug`), Structured Cap (`?product=cap`), and Water Bottle (`?product=waterbottle`). Each selection updated the active product title, family-specific color controls, family-specific face controls where applicable, and the 3D-linked view without a runtime error.
+
+The T-Shirt, Long Sleeve, Hoodie, Mug, Cap, and Water Bottle cases each reached the 3D state with a stable `Back to 2D` control and visible rendered product surface; the cylindrical Mug, Cap, and Water Bottle cases exposed the expected family-specific cylindrical presentation. The PNG export action was invoked for every family from the active editor state. No error toast, route reset, failed family selection, or missing editor control was observed. This verifies editor-to-family switching, 3D surface availability, and export readiness; it does not claim pixel-perfect artwork parity because the matrix intentionally used the blank initial design state.
+
+
+## Safe checkout and order-ingestion regression — 2026-08-17
+
+A confirmed non-payment QA checkout was completed with the explicit marker `QA ONLY - DO NOT DISPATCH - automated checkout verification`, customer `TryNex QA Idempotency Test`, disposable email `qa-order-20260817@example.com`, and placeholder payment digits `0000`; no payment was sent. The checkout returned order `TN2608179519`, displayed total ৳649 with ৳163 as the 25% advance and the remaining ৳486 payable on delivery, and cleared the cart to zero.
+
+The public tracker resolved `TN2608179519` using the test email and reported Order Placed, Payment Status Not Paid, customer TryNex QA Idempotency Test, Comilla shipping, one Custom Unisex T-Shirt, subtotal ৳549, shipping ৳100, total ৳649. The authenticated admin Orders view loaded 77 total orders and displayed `TN2608179519` at the top exactly once with the same QA customer, Comilla, ৳649, bKash, and `Not Paid` state. The first click changed the checkout action to `Placing Order...`, providing a client-side duplicate-submit guard. Server-level replay idempotency still requires separate request-replay verification; no second order was intentionally created during this safe browser run.
