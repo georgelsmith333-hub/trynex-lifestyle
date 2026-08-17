@@ -1,57 +1,62 @@
-from pathlib import Path
-import json
+from __future__ import annotations
 
-try:
-    from PIL import Image
-except ImportError:
-    Image = None
+import json
+from pathlib import Path
+
+from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 PUBLIC = ROOT / "artifacts" / "trynex-storefront" / "public"
+SMART = PUBLIC / "mockups" / "smart-v4"
 
 families = {
-    "tshirt": ["front", "back", "left-sleeve", "right-sleeve", "neck-label"],
-    "longsleeve": ["front", "back", "left-sleeve", "right-sleeve", "neck-label"],
-    "hoodie": ["front", "back", "left-sleeve", "right-sleeve", "neck-label"],
-    "mug": ["front", "back", "wrap"],
-    "cap": ["front", "back"],
-    "waterbottle": ["front", "back"],
+    "tshirt": {"colors": ["white", "black", "navy", "maroon", "olive", "sky-blue", "grey", "red"], "views": ["front", "back", "left-sleeve", "right-sleeve", "neck-label"]},
+    "longsleeve": {"colors": ["white", "black", "navy", "maroon", "olive", "grey", "red", "sky-blue", "burgundy", "forest"], "views": ["front", "back", "left-sleeve", "right-sleeve", "neck-label"]},
+    "hoodie": {"colors": ["white", "black", "navy", "grey", "maroon", "olive", "red", "sky-blue", "forest", "burgundy"], "views": ["front", "back", "left-sleeve", "right-sleeve", "neck-label"]},
+    "mug": {"colors": ["white", "black", "navy", "red", "green", "purple", "sky-blue", "pink", "maroon", "orange"], "views": ["front", "back", "wrap"]},
+    "cap": {"colors": ["white", "black", "navy", "maroon", "olive", "red", "grey", "forest"], "views": ["front", "back"]},
+    "waterbottle": {"colors": ["white", "black", "navy", "forest", "sky-blue", "red", "pink", "teal"], "views": ["front", "back"]},
 }
 
-report = {"families": {}, "errors": [], "editable_master_status": {}}
-for family, views in families.items():
-    entry = {"required_views": views, "present_assets": [], "missing_assets": []}
-    for view in views:
-        # Canonical runtime assets are expected under canonical/<family>/<color>/<view>.png.
-        # White is the source geometry; CSS/material tinting may derive other colors only
-        # after the same silhouette has been validated.
-        path = PUBLIC / "mockups" / "canonical" / family / "white" / f"{view}.png"
-        if path.exists() and path.stat().st_size > 0:
-            rel = str(path.relative_to(ROOT))
-            entry["present_assets"].append(rel)
-            if Image is not None:
-                try:
-                    im = Image.open(path).convert("RGBA")
-                    sample_points = [(0, 0), (32, 0), (64, 0), (0, 32), (32, 32), (64, 32), (0, 64), (32, 64), (64, 64)]
-                    corner = [im.getpixel((x, y))[:3] for x, y in sample_points if x < im.width and y < im.height]
-                    neutral = [rgb for rgb in corner if max(rgb) - min(rgb) <= 6]
-                    alternating = len(neutral) >= 6 and len({rgb[0] for rgb in neutral}) >= 2
-                    if im.getchannel("A").getextrema() == (255, 255) and alternating:
-                        entry.setdefault("invalid_assets", []).append({"path": rel, "reason": "baked-checkerboard-background"})
-                        report["errors"].append(f"{family}/{view}: baked checkerboard background")
-                except Exception as exc:
-                    report["errors"].append(f"{family}/{view}: unreadable image ({exc})")
-        else:
-            entry["missing_assets"].append(str(path.relative_to(ROOT)))
+report = {"root": str(SMART.relative_to(ROOT)), "families": {}, "errors": [], "legacy_removed": not (PUBLIC / "mockups" / "canonical").exists()}
+seen = {}
+for family, config in families.items():
+    entry = {"required": 0, "present": 0, "missing": [], "invalid": []}
+    for color in config["colors"]:
+        for view in config["views"]:
+            entry["required"] += 1
+            path = SMART / family / color / f"{view}.png"
+            key = f"{family}:{color}:{view}"
+            if not path.exists() or path.stat().st_size == 0:
+                entry["missing"].append(str(path.relative_to(ROOT)))
+                continue
+            entry["present"] += 1
+            if key in seen:
+                report["errors"].append(f"duplicate key: {key}")
+            seen[key] = str(path.relative_to(ROOT))
+            try:
+                im = Image.open(path).convert("RGBA")
+                if im.size != (1024, 1024):
+                    entry["invalid"].append({"path": str(path.relative_to(ROOT)), "reason": f"bad-size:{im.size}"})
+                a_min, a_max = im.getchannel("A").getextrema()
+                if a_max == 255 and a_min == 255:
+                    entry["invalid"].append({"path": str(path.relative_to(ROOT)), "reason": "fully-opaque-background"})
+                sample = [im.getpixel((x, y))[:3] for x, y in [(0, 0), (32, 32), (64, 64), (960, 32), (992, 64)] if x < im.width and y < im.height]
+                magenta = sum(1 for r, g, b in sample if r > 150 and b > 100 and g < 120)
+                green = sum(1 for r, g, b in sample if g > 140 and g > r * 1.5 and g > b * 1.3)
+                if magenta or green:
+                    entry["invalid"].append({"path": str(path.relative_to(ROOT)), "reason": "chroma-key-artifact"})
+            except Exception as exc:
+                entry["invalid"].append({"path": str(path.relative_to(ROOT)), "reason": f"unreadable:{exc}"})
+    if entry["missing"]:
+        report["errors"].append(f"{family}: missing {len(entry['missing'])} smart-v4 assets")
+    if entry["invalid"]:
+        report["errors"].extend(f"{family}: {item['path']} {item['reason']}" for item in entry["invalid"])
     report["families"][family] = entry
-    report["editable_master_status"][family] = "manifest-only"
-    if entry["missing_assets"]:
-        report["errors"].append(f"{family}: missing {len(entry['missing_assets'])} canonical runtime assets")
 
-# Guard against accidentally activating generation artifacts with known background-removal defects.
-for p in (PUBLIC / "mockups" / "canonical").rglob("*.png"):
-    if any(token in p.name.lower() for token in ("artifact", "failed", "raw")):
-        report["errors"].append(f"quarantined-looking asset in canonical tree: {p.relative_to(ROOT)}")
-
+if not report["legacy_removed"]:
+    report["errors"].append("legacy canonical asset tree still exists")
+report["total_required"] = sum(item["required"] for item in report["families"].values())
+report["total_present"] = sum(item["present"] for item in report["families"].values())
 print(json.dumps(report, indent=2))
 raise SystemExit(1 if report["errors"] else 0)

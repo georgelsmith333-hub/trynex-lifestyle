@@ -1,5 +1,5 @@
 export type SmartMockupCategory = "mug" | "cap" | "waterbottle" | "tshirt" | "longsleeve" | "hoodie";
-export type SmartMockupFace = "front" | "back";
+export type SmartMockupFace = "front" | "back" | "left-sleeve" | "right-sleeve" | "neck-label" | "wrap";
 
 export interface SmartObjectPrintZone {
   x: number;

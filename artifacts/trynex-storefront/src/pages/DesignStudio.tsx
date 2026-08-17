@@ -970,6 +970,12 @@ export default function DesignStudio() {
     const override = base.sourceKitKey ? mockupOverrides[base.sourceKitKey] : undefined;
     return override ? { ...base, photoSrc: override, cutoutSrc: override, isColorPhoto: true, requiresTint: false } : base;
   }, [selectedProduct, selectedColor.hex, mockupOverrides]);
+  const activeMockup = useMemo(() => {
+    const view = selectedProduct.category === "mug" && mugMode === "wrap" ? "wrap" : activeFace;
+    const base = resolveMockup(selectedProduct, selectedColor.hex, view);
+    const override = base.sourceKitKey ? mockupOverrides[base.sourceKitKey] : undefined;
+    return override ? { ...base, photoSrc: override, cutoutSrc: override, isColorPhoto: true, requiresTint: false } : base;
+  }, [selectedProduct, selectedColor.hex, activeFace, mugMode, mockupOverrides]);
 
   // ── Image preloading ────────────────────────────────────────────────────
   // When the user selects a product, eagerly fetch every color's front + back
@@ -978,25 +984,21 @@ export default function DesignStudio() {
   useEffect(() => {
     const preload = (src: string) => { if (src) { const img = new window.Image(); img.src = src; } };
     selectedProduct.colors.forEach(c => {
-      const fm = resolveMockup(selectedProduct, c.hex, "front");
-      const bm = resolveMockup(selectedProduct, c.hex, "back");
-      preload(fm.photoSrc);
-      preload(bm.photoSrc);
-      preload(fm.cutoutSrc);
-      preload(bm.cutoutSrc);
+      const faces = ["front", "back", "left-sleeve", "right-sleeve", "neck-label"] as const;
+      for (const view of faces) {
+        const resolved = resolveMockup(selectedProduct, c.hex, view);
+        preload(resolved.photoSrc);
+        preload(resolved.cutoutSrc);
+      }
+      if (selectedProduct.category === "mug") {
+        const wrap = resolveMockup(selectedProduct, c.hex, "wrap");
+        preload(wrap.photoSrc);
+        preload(wrap.cutoutSrc);
+      }
     });
   }, [selectedProduct.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const pz = useMemo(() => {
-    if (isMugProduct) {
-      return mugMode === "wrap"
-        ? (activeFace === "back" ? MUG_WRAP_BACK_PZ : MUG_PZ)
-        : (activeFace === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ);
-    }
-    if (activeFace === "back") return backMockup.printZone;
-    if (activeFace === "front") return frontMockup.printZone;
-    return getZonePZ(activeFace, selectedProduct);
-  }, [isMugProduct, activeFace, selectedProduct, mugMode, frontMockup, backMockup]);
+  const pz = useMemo(() => activeMockup.printZone, [activeMockup]);
   const pzRef = useRef(pz);
   useEffect(() => { pzRef.current = pz; }, [pz]);
 
@@ -2270,7 +2272,6 @@ export default function DesignStudio() {
     }
     try {
       const canvas = document.createElement("canvas");
-      const activeMockup = activeFace === "back" ? backMockup : frontMockup;
       const garmentSrc = isFlatZone || activeMockup.requiresTint
         ? activeMockup.cutoutSrc
         : activeMockup.photoSrc;
@@ -2311,7 +2312,6 @@ export default function DesignStudio() {
     }
     try {
       const canvas = document.createElement("canvas");
-      const activeMockup = activeFace === "back" ? backMockup : frontMockup;
       const garmentSrc = isFlatZone || activeMockup.requiresTint
         ? activeMockup.cutoutSrc
         : activeMockup.photoSrc;
@@ -2424,9 +2424,15 @@ export default function DesignStudio() {
        const cartPreviewFace = (isMugProduct && mugMode === "side2") || (!isMugProduct && activeFace === "back")
          ? "back"
          : "front";
-      const cartPreviewMockup = cartPreviewFace === "back" ? backMockup : frontMockup;
-      const cartPreviewLayers = cartPreviewFace === "back" ? backLayers : frontLayers;
-       const cartPreviewPZ = cartPreviewFace === "back" ? backPZ : frontPZ;
+       const cartPreviewMockup = (isFlatZone || (isMugProduct && mugMode === "wrap"))
+         ? activeMockup
+         : (cartPreviewFace === "back" ? backMockup : frontMockup);
+      const cartPreviewLayers = isFlatZone
+        ? currentFaceLayers
+        : (cartPreviewFace === "back" ? backLayers : frontLayers);
+       const cartPreviewPZ = (isFlatZone || (isMugProduct && mugMode === "wrap"))
+         ? activeMockup.printZone
+         : (cartPreviewFace === "back" ? backPZ : frontPZ);
       const garmentSrc = cartPreviewMockup.requiresTint || !cartPreviewMockup.isColorPhoto
         ? cartPreviewMockup.cutoutSrc
         : cartPreviewMockup.photoSrc;

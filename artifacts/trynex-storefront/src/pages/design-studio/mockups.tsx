@@ -6,6 +6,7 @@
 
 import { createSmartMockupManifest, type SmartMockupManifest } from "./smart-mockup-manifest";
 import { getCanonicalMockupSpec, type MockupFamily } from "./canonical-mockup-spec";
+import { getCompleteMockupEntry, type CompleteMockupFamily, type CompleteMockupView } from "./complete-mockup-matrix";
 
 // ── T-Shirt: unified studio photos from normalized/ folder ──
 const tshirtFront          = "/mockups/source-kit-v3/tshirt/white/front.png";
@@ -667,7 +668,7 @@ function findColorPhoto(
 function getCuratedMockup(
   product: DesignProduct,
   color: string,
-  face: "front" | "back",
+  face: CompleteMockupView,
 ): {
   photoSrc: string;
   cutoutSrc: string;
@@ -680,18 +681,8 @@ function getCuratedMockup(
   const category = product.category;
   const hex = normalizeMockupHex(color);
   const slug = SOURCE_KIT_COLOR_SLUGS[category]?.[hex] || "white";
-  const canonicalSpec = getCanonicalMockupSpec(category as MockupFamily);
-  const canonicalView = canonicalSpec.views.find(view => view.view === face);
-  const canonicalAssetPath = canonicalView && slug === "white"
-    ? `/mockups/canonical/${canonicalView.assetKey.replace("{color}", slug)}.png?v=canonical-v1`
-    : undefined;
-  // The first generated canonical hoodie pair contains a baked checkerboard
-  // background. Keep it out of production until a clean-alpha master is
-  // verified; the source-kit pair is the reviewed safe fallback for now.
-  const isVerifiedCanonicalRuntimeAsset = false;
-  const cutoutSrc = isVerifiedCanonicalRuntimeAsset && canonicalAssetPath
-    ? canonicalAssetPath
-    : `/mockups/source-kit-v3/${category}/${slug}/${face}.png?v=smart-v3`;
+  const completeView = getCompleteMockupEntry(category as CompleteMockupFamily, slug, face);
+  const cutoutSrc = completeView.assetPath + "?v=smart-v4";
   const photoSrc = cutoutSrc;
   return {
     photoSrc,
@@ -724,28 +715,22 @@ function getCuratedMockup(
 export function resolveMockup(
   product: DesignProduct,
   color: string,
-  face: "front" | "back" = "front",
+  face: CompleteMockupView = "front",
 ): MockupResolution {
   const category = product.category;
   const zones = SOURCE_KIT_PRINT_ZONES[category];
   const canonicalSpec = getCanonicalMockupSpec(category as MockupFamily);
   const hex = normalizeMockupHex(color);
-  const sourceKitSlug = SOURCE_KIT_COLOR_SLUGS[category]?.[hex];
-  const normalizedFrame = SOURCE_KIT_FRAMES[category]?.[face] ?? {
-    canvasWidth: 1024,
-    canvasHeight: 1024,
-    x: 0,
-    y: 0,
-    w: 1024,
-    h: 1024,
-  };
+  const sourceKitSlug = SOURCE_KIT_COLOR_SLUGS[category]?.[hex] ?? "white";
+  const completeView = getCompleteMockupEntry(category as CompleteMockupFamily, sourceKitSlug, face);
+  const normalizedFrame = completeView.geometry.normalizedFrame;
 
   // Every reviewed source-kit colour/face pair has an opaque normalized photo
   // and a real editable PSD master. The browser uses the normalized render, while
   // export/admin tooling can round-trip to the exact source document without
   // guessing a product, color, or face.
   const curated = getCuratedMockup(product, color, face);
-  const masterPath = `attached_assets/trynex-mockup-source-kit/${category === "mug" || category === "waterbottle" ? "psb" : "psd"}/${category}-${sourceKitSlug ?? "white"}-${face}.${category === "mug" || category === "waterbottle" ? "psb" : "psd"}`;
+  const masterPath = `attached_assets/trynex-mockup-source-kit/${category === "mug" || category === "waterbottle" ? "psb" : "psd"}/${category}-${sourceKitSlug}-${face}.${category === "mug" || category === "waterbottle" ? "psb" : "psd"}`;
   const sourceKitKey = `${category}:${sourceKitSlug ?? "white"}:${face}`;
   const runtimeOverride = runtimeMockupOverrides.get(normalizeRuntimeKey(sourceKitKey))
     ?? runtimeMockupOverrides.get(normalizeRuntimeKey(`${category}:${color}:${face}`));
@@ -760,9 +745,7 @@ export function resolveMockup(
     photoKind: runtimePhoto ? "opaque-photo" : curated.photoKind,
     requiresTint: runtimePhoto ? false : curated.requiresTint,
     allowSilhouetteShadow: false,
-    printZone: canonicalSpec.views.find(view => view.view === face)?.printZone
-      ?? zones?.[face]
-      ?? (face === "back" && product.printZoneBack ? product.printZoneBack : product.printZone),
+    printZone: completeView.geometry.printZone,
     normalizedFrame,
     isOpaquePhoto: runtimePhoto ? true : curated.photoKind === "opaque-photo",
     editableMasterPath: runtimeOverride?.masterFileUrl ?? masterPath,
@@ -777,9 +760,7 @@ export function resolveMockup(
       baseSrc: curated.photoSrc,
       cutoutSrc: curated.cutoutSrc,
       normalizedFrame,
-      printZone: canonicalSpec.views.find(view => view.view === face)?.printZone
-        ?? zones?.[face]
-        ?? (face === "back" && product.printZoneBack ? product.printZoneBack : product.printZone),
+      printZone: completeView.geometry.printZone,
     }),
     source: runtimePhoto ? "curated" : "source-kit",
   };
@@ -827,15 +808,12 @@ export function GarmentSVG({
 }) {
   const isMug = product.category === "mug";
   const tintHex = color || product.garmentColor;
-  const resolvedMockup = resolveMockup(product, tintHex, face === "back" ? "back" : "front");
+  const resolvedFace: CompleteMockupView = isMug && mugMode === "wrap"
+    ? "wrap"
+    : face;
+  const resolvedMockup = resolveMockup(product, tintHex, resolvedFace);
   const needsTint = resolvedMockup.photoKind === "transparent-cutout" && resolvedMockup.requiresTint;
-
-  const pz = isMug && mugMode === "wrap"
-    ? (face === "back" ? MUG_WRAP_BACK_PZ : MUG_PZ)
-    : isMug
-      ? (face === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ)
-      : (face === "back" && product.printZoneBack) ? product.printZoneBack : product.printZone;
-  const displayPZ = pz;
+  const displayPZ = resolvedMockup.printZone;
 
   // The transparent source-kit cutout is the only runtime product layer. The
   // opaque normalized photo remains available as source metadata and for admin

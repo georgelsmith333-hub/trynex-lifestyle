@@ -1,0 +1,2217 @@
+{
+  "assetRoot": "/home/ubuntu/trynex-lifestyle/artifacts/trynex-storefront/public/mockups",
+  "families": [
+    "tshirt",
+    "longsleeve",
+    "hoodie",
+    "mug",
+    "cap",
+    "waterbottle"
+  ],
+  "viewsByFamily": {
+    "tshirt": [
+      "front",
+      "back",
+      "left-sleeve",
+      "right-sleeve",
+      "neck-label"
+    ],
+    "longsleeve": [
+      "front",
+      "back",
+      "left-sleeve",
+      "right-sleeve",
+      "neck-label"
+    ],
+    "hoodie": [
+      "front",
+      "back",
+      "left-sleeve",
+      "right-sleeve",
+      "neck-label"
+    ],
+    "mug": [
+      "front",
+      "back",
+      "wrap"
+    ],
+    "cap": [
+      "front",
+      "back"
+    ],
+    "waterbottle": [
+      "front",
+      "back"
+    ]
+  },
+  "summary": {
+    "tshirt": {
+      "required": 40,
+      "sourceKitV3": 16,
+      "canonical": 0,
+      "normalized": 16,
+      "legacy": 0,
+      "missingSourceKitV3": [
+        "white/left-sleeve",
+        "white/right-sleeve",
+        "white/neck-label",
+        "black/left-sleeve",
+        "black/right-sleeve",
+        "black/neck-label",
+        "navy/left-sleeve",
+        "navy/right-sleeve",
+        "navy/neck-label",
+        "maroon/left-sleeve",
+        "maroon/right-sleeve",
+        "maroon/neck-label",
+        "olive/left-sleeve",
+        "olive/right-sleeve",
+        "olive/neck-label",
+        "sky-blue/left-sleeve",
+        "sky-blue/right-sleeve",
+        "sky-blue/neck-label",
+        "grey/left-sleeve",
+        "grey/right-sleeve",
+        "grey/neck-label",
+        "red/left-sleeve",
+        "red/right-sleeve",
+        "red/neck-label"
+      ]
+    },
+    "longsleeve": {
+      "required": 50,
+      "sourceKitV3": 20,
+      "canonical": 0,
+      "normalized": 20,
+      "legacy": 0,
+      "missingSourceKitV3": [
+        "white/left-sleeve",
+        "white/right-sleeve",
+        "white/neck-label",
+        "black/left-sleeve",
+        "black/right-sleeve",
+        "black/neck-label",
+        "navy/left-sleeve",
+        "navy/right-sleeve",
+        "navy/neck-label",
+        "maroon/left-sleeve",
+        "maroon/right-sleeve",
+        "maroon/neck-label",
+        "olive/left-sleeve",
+        "olive/right-sleeve",
+        "olive/neck-label",
+        "grey/left-sleeve",
+        "grey/right-sleeve",
+        "grey/neck-label",
+        "red/left-sleeve",
+        "red/right-sleeve",
+        "red/neck-label",
+        "sky-blue/left-sleeve",
+        "sky-blue/right-sleeve",
+        "sky-blue/neck-label",
+        "burgundy/left-sleeve",
+        "burgundy/right-sleeve",
+        "burgundy/neck-label",
+        "forest/left-sleeve",
+        "forest/right-sleeve",
+        "forest/neck-label"
+      ]
+    },
+    "hoodie": {
+      "required": 50,
+      "sourceKitV3": 20,
+      "canonical": 2,
+      "normalized": 20,
+      "legacy": 0,
+      "missingSourceKitV3": [
+        "white/left-sleeve",
+        "white/right-sleeve",
+        "white/neck-label",
+        "black/left-sleeve",
+        "black/right-sleeve",
+        "black/neck-label",
+        "navy/left-sleeve",
+        "navy/right-sleeve",
+        "navy/neck-label",
+        "grey/left-sleeve",
+        "grey/right-sleeve",
+        "grey/neck-label",
+        "maroon/left-sleeve",
+        "maroon/right-sleeve",
+        "maroon/neck-label",
+        "olive/left-sleeve",
+        "olive/right-sleeve",
+        "olive/neck-label",
+        "red/left-sleeve",
+        "red/right-sleeve",
+        "red/neck-label",
+        "sky-blue/left-sleeve",
+        "sky-blue/right-sleeve",
+        "sky-blue/neck-label",
+        "forest/left-sleeve",
+        "forest/right-sleeve",
+        "forest/neck-label",
+        "burgundy/left-sleeve",
+        "burgundy/right-sleeve",
+        "burgundy/neck-label"
+      ]
+    },
+    "mug": {
+      "required": 30,
+      "sourceKitV3": 20,
+      "canonical": 0,
+      "normalized": 20,
+      "legacy": 0,
+      "missingSourceKitV3": [
+        "white/wrap",
+        "black/wrap",
+        "navy/wrap",
+        "red/wrap",
+        "green/wrap",
+        "purple/wrap",
+        "sky-blue/wrap",
+        "pink/wrap",
+        "maroon/wrap",
+        "orange/wrap"
+      ]
+    },
+    "cap": {
+      "required": 16,
+      "sourceKitV3": 16,
+      "canonical": 0,
+      "normalized": 16,
+      "legacy": 0,
+      "missingSourceKitV3": []
+    },
+    "waterbottle": {
+      "required": 16,
+      "sourceKitV3": 16,
+      "canonical": 0,
+      "normalized": 16,
+      "legacy": 0,
+      "missingSourceKitV3": []
+    }
+  },
+  "rows": [
+    {
+      "family": "tshirt",
+      "color": "white",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/white/front.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "white",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/white/back.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "white",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/white/left-sleeve.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "white",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/white/right-sleeve.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "white",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/white/neck-label.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "black",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/black/front.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "black",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/black/back.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "black",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/black/left-sleeve.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "black",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/black/right-sleeve.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "black",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/black/neck-label.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "navy",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/navy/front.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "navy",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/navy/back.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "navy",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/navy/left-sleeve.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "navy",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/navy/right-sleeve.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "navy",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/navy/neck-label.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "maroon",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/maroon/front.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "maroon",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/maroon/back.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "maroon",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/maroon/left-sleeve.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "maroon",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/maroon/right-sleeve.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "maroon",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/maroon/neck-label.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "olive",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/olive/front.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "olive",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/olive/back.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "olive",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/olive/left-sleeve.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "olive",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/olive/right-sleeve.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "olive",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/olive/neck-label.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "sky-blue",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/sky-blue/front.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "sky-blue",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/sky-blue/back.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "sky-blue",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/sky-blue/left-sleeve.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "sky-blue",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/sky-blue/right-sleeve.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "sky-blue",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/sky-blue/neck-label.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "grey",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/grey/front.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "grey",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/grey/back.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "grey",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/grey/left-sleeve.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "grey",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/grey/right-sleeve.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "grey",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/grey/neck-label.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "red",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/red/front.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "red",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/red/back.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "red",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/red/left-sleeve.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "red",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/red/right-sleeve.png"
+    },
+    {
+      "family": "tshirt",
+      "color": "red",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/tshirt/red/neck-label.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "white",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/white/front.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "white",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/white/back.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "white",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/white/left-sleeve.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "white",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/white/right-sleeve.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "white",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/white/neck-label.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "black",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/black/front.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "black",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/black/back.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "black",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/black/left-sleeve.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "black",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/black/right-sleeve.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "black",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/black/neck-label.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "navy",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/navy/front.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "navy",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/navy/back.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "navy",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/navy/left-sleeve.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "navy",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/navy/right-sleeve.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "navy",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/navy/neck-label.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "maroon",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/maroon/front.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "maroon",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/maroon/back.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "maroon",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/maroon/left-sleeve.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "maroon",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/maroon/right-sleeve.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "maroon",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/maroon/neck-label.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "olive",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/olive/front.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "olive",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/olive/back.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "olive",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/olive/left-sleeve.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "olive",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/olive/right-sleeve.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "olive",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/olive/neck-label.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "grey",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/grey/front.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "grey",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/grey/back.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "grey",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/grey/left-sleeve.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "grey",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/grey/right-sleeve.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "grey",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/grey/neck-label.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "red",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/red/front.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "red",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/red/back.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "red",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/red/left-sleeve.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "red",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/red/right-sleeve.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "red",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/red/neck-label.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "sky-blue",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/sky-blue/front.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "sky-blue",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/sky-blue/back.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "sky-blue",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/sky-blue/left-sleeve.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "sky-blue",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/sky-blue/right-sleeve.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "sky-blue",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/sky-blue/neck-label.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "burgundy",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/burgundy/front.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "burgundy",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/burgundy/back.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "burgundy",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/burgundy/left-sleeve.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "burgundy",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/burgundy/right-sleeve.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "burgundy",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/burgundy/neck-label.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "forest",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/forest/front.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "forest",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/forest/back.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "forest",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/forest/left-sleeve.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "forest",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/forest/right-sleeve.png"
+    },
+    {
+      "family": "longsleeve",
+      "color": "forest",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/longsleeve/forest/neck-label.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "white",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": true,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/white/front.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "white",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": true,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/white/back.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "white",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/white/left-sleeve.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "white",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/white/right-sleeve.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "white",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/white/neck-label.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "black",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/black/front.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "black",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/black/back.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "black",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/black/left-sleeve.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "black",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/black/right-sleeve.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "black",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/black/neck-label.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "navy",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/navy/front.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "navy",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/navy/back.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "navy",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/navy/left-sleeve.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "navy",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/navy/right-sleeve.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "navy",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/navy/neck-label.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "grey",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/grey/front.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "grey",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/grey/back.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "grey",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/grey/left-sleeve.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "grey",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/grey/right-sleeve.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "grey",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/grey/neck-label.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "maroon",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/maroon/front.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "maroon",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/maroon/back.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "maroon",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/maroon/left-sleeve.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "maroon",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/maroon/right-sleeve.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "maroon",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/maroon/neck-label.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "olive",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/olive/front.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "olive",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/olive/back.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "olive",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/olive/left-sleeve.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "olive",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/olive/right-sleeve.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "olive",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/olive/neck-label.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "red",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/red/front.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "red",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/red/back.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "red",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/red/left-sleeve.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "red",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/red/right-sleeve.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "red",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/red/neck-label.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "sky-blue",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/sky-blue/front.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "sky-blue",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/sky-blue/back.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "sky-blue",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/sky-blue/left-sleeve.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "sky-blue",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/sky-blue/right-sleeve.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "sky-blue",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/sky-blue/neck-label.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "forest",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/forest/front.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "forest",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/forest/back.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "forest",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/forest/left-sleeve.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "forest",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/forest/right-sleeve.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "forest",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/forest/neck-label.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "burgundy",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/burgundy/front.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "burgundy",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/burgundy/back.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "burgundy",
+      "view": "left-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/burgundy/left-sleeve.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "burgundy",
+      "view": "right-sleeve",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/burgundy/right-sleeve.png"
+    },
+    {
+      "family": "hoodie",
+      "color": "burgundy",
+      "view": "neck-label",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/hoodie/burgundy/neck-label.png"
+    },
+    {
+      "family": "mug",
+      "color": "white",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/white/front.png"
+    },
+    {
+      "family": "mug",
+      "color": "white",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/white/back.png"
+    },
+    {
+      "family": "mug",
+      "color": "white",
+      "view": "wrap",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/white/wrap.png"
+    },
+    {
+      "family": "mug",
+      "color": "black",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/black/front.png"
+    },
+    {
+      "family": "mug",
+      "color": "black",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/black/back.png"
+    },
+    {
+      "family": "mug",
+      "color": "black",
+      "view": "wrap",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/black/wrap.png"
+    },
+    {
+      "family": "mug",
+      "color": "navy",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/navy/front.png"
+    },
+    {
+      "family": "mug",
+      "color": "navy",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/navy/back.png"
+    },
+    {
+      "family": "mug",
+      "color": "navy",
+      "view": "wrap",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/navy/wrap.png"
+    },
+    {
+      "family": "mug",
+      "color": "red",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/red/front.png"
+    },
+    {
+      "family": "mug",
+      "color": "red",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/red/back.png"
+    },
+    {
+      "family": "mug",
+      "color": "red",
+      "view": "wrap",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/red/wrap.png"
+    },
+    {
+      "family": "mug",
+      "color": "green",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/green/front.png"
+    },
+    {
+      "family": "mug",
+      "color": "green",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/green/back.png"
+    },
+    {
+      "family": "mug",
+      "color": "green",
+      "view": "wrap",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/green/wrap.png"
+    },
+    {
+      "family": "mug",
+      "color": "purple",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/purple/front.png"
+    },
+    {
+      "family": "mug",
+      "color": "purple",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/purple/back.png"
+    },
+    {
+      "family": "mug",
+      "color": "purple",
+      "view": "wrap",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/purple/wrap.png"
+    },
+    {
+      "family": "mug",
+      "color": "sky-blue",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/sky-blue/front.png"
+    },
+    {
+      "family": "mug",
+      "color": "sky-blue",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/sky-blue/back.png"
+    },
+    {
+      "family": "mug",
+      "color": "sky-blue",
+      "view": "wrap",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/sky-blue/wrap.png"
+    },
+    {
+      "family": "mug",
+      "color": "pink",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/pink/front.png"
+    },
+    {
+      "family": "mug",
+      "color": "pink",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/pink/back.png"
+    },
+    {
+      "family": "mug",
+      "color": "pink",
+      "view": "wrap",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/pink/wrap.png"
+    },
+    {
+      "family": "mug",
+      "color": "maroon",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/maroon/front.png"
+    },
+    {
+      "family": "mug",
+      "color": "maroon",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/maroon/back.png"
+    },
+    {
+      "family": "mug",
+      "color": "maroon",
+      "view": "wrap",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/maroon/wrap.png"
+    },
+    {
+      "family": "mug",
+      "color": "orange",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/orange/front.png"
+    },
+    {
+      "family": "mug",
+      "color": "orange",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/orange/back.png"
+    },
+    {
+      "family": "mug",
+      "color": "orange",
+      "view": "wrap",
+      "sourceKitV3": false,
+      "canonical": false,
+      "normalized": false,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/mug/orange/wrap.png"
+    },
+    {
+      "family": "cap",
+      "color": "white",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/cap/white/front.png"
+    },
+    {
+      "family": "cap",
+      "color": "white",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/cap/white/back.png"
+    },
+    {
+      "family": "cap",
+      "color": "black",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/cap/black/front.png"
+    },
+    {
+      "family": "cap",
+      "color": "black",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/cap/black/back.png"
+    },
+    {
+      "family": "cap",
+      "color": "navy",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/cap/navy/front.png"
+    },
+    {
+      "family": "cap",
+      "color": "navy",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/cap/navy/back.png"
+    },
+    {
+      "family": "cap",
+      "color": "maroon",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/cap/maroon/front.png"
+    },
+    {
+      "family": "cap",
+      "color": "maroon",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/cap/maroon/back.png"
+    },
+    {
+      "family": "cap",
+      "color": "olive",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/cap/olive/front.png"
+    },
+    {
+      "family": "cap",
+      "color": "olive",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/cap/olive/back.png"
+    },
+    {
+      "family": "cap",
+      "color": "red",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/cap/red/front.png"
+    },
+    {
+      "family": "cap",
+      "color": "red",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/cap/red/back.png"
+    },
+    {
+      "family": "cap",
+      "color": "grey",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/cap/grey/front.png"
+    },
+    {
+      "family": "cap",
+      "color": "grey",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/cap/grey/back.png"
+    },
+    {
+      "family": "cap",
+      "color": "forest",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/cap/forest/front.png"
+    },
+    {
+      "family": "cap",
+      "color": "forest",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/cap/forest/back.png"
+    },
+    {
+      "family": "waterbottle",
+      "color": "white",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/waterbottle/white/front.png"
+    },
+    {
+      "family": "waterbottle",
+      "color": "white",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/waterbottle/white/back.png"
+    },
+    {
+      "family": "waterbottle",
+      "color": "black",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/waterbottle/black/front.png"
+    },
+    {
+      "family": "waterbottle",
+      "color": "black",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/waterbottle/black/back.png"
+    },
+    {
+      "family": "waterbottle",
+      "color": "navy",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/waterbottle/navy/front.png"
+    },
+    {
+      "family": "waterbottle",
+      "color": "navy",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/waterbottle/navy/back.png"
+    },
+    {
+      "family": "waterbottle",
+      "color": "forest",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/waterbottle/forest/front.png"
+    },
+    {
+      "family": "waterbottle",
+      "color": "forest",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/waterbottle/forest/back.png"
+    },
+    {
+      "family": "waterbottle",
+      "color": "sky-blue",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/waterbottle/sky-blue/front.png"
+    },
+    {
+      "family": "waterbottle",
+      "color": "sky-blue",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/waterbottle/sky-blue/back.png"
+    },
+    {
+      "family": "waterbottle",
+      "color": "red",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/waterbottle/red/front.png"
+    },
+    {
+      "family": "waterbottle",
+      "color": "red",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/waterbottle/red/back.png"
+    },
+    {
+      "family": "waterbottle",
+      "color": "pink",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/waterbottle/pink/front.png"
+    },
+    {
+      "family": "waterbottle",
+      "color": "pink",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/waterbottle/pink/back.png"
+    },
+    {
+      "family": "waterbottle",
+      "color": "teal",
+      "view": "front",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/waterbottle/teal/front.png"
+    },
+    {
+      "family": "waterbottle",
+      "color": "teal",
+      "view": "back",
+      "sourceKitV3": true,
+      "canonical": false,
+      "normalized": true,
+      "legacy": false,
+      "activeExpected": "/mockups/source-kit-v3/waterbottle/teal/back.png"
+    }
+  ]
+}

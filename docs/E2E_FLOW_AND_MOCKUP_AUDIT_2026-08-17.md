@@ -33,3 +33,12 @@ A harmless deployment-trigger commit is being used because the GitHub-connected 
 Cloudflare Pages deployment `25fee640-fe34-454f-9d6e-a23e26312055` completed successfully for commit `60a4c2ea215670a2690c07d3967d13d41663d236`. The production diagnostic now resolves the hoodie front to `/mockups/source-kit-v3/hoodie/white/front.png?v=smart-v3`; the former `/mockups/canonical/hoodie/white/front.png?v=canonical-v1` checkerboard asset is no longer active. Final front and back screenshots show the white hoodie on a clean white studio canvas with no baked checkerboard and consistent front/back proportions.
 
 The final production E2E run passed all assertions: S/Navy option selection, Add to Bag transition, empty-cart checkout guard to `/cart`, and Studio V2 Back/Navy/3D Preview interactions. No payment or production order was submitted.
+
+
+## Full smart-v4 matrix rebuild
+
+The earlier source-kit fallback was not a complete solution. A deterministic inventory found 202 declared family/color/view surfaces across T-Shirts, Long Sleeves, Hoodies, Mugs, Caps, and Water Bottles, but only 108 source-kit front/back surfaces existed. The missing 94 surfaces were apparel left/right sleeves and neck-label views plus mug wrap views.
+
+The rebuild now creates a `smart-v4` matrix with exactly 202 asset files. Each color uses its own source-kit silhouette; secondary views are masked from that same color-specific source rather than borrowing a different product or silently tinting an unrelated image. The resolver, smart-object manifest, Studio V2 active canvas, print-zone selection, preload path, PNG export path, and cart preview path now use the complete face contract, including `left-sleeve`, `right-sleeve`, `neck-label`, and `wrap`.
+
+The defective generated canonical hoodie assets and checkerboard canonical directory were removed from the public runtime tree. The complete validator reports 202 required and 202 present, with no missing assets, no invalid assets, no duplicate source keys, and no legacy canonical tree. The storefront typecheck and production build both pass. The representative contact sheet is saved at `docs/smart-v4-contact-sheet.png`; generated chroma-key artifacts were quarantined and were never promoted into runtime.

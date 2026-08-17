@@ -1,119 +1,45 @@
 {
+  "root": "artifacts/trynex-storefront/public/mockups/smart-v4",
   "families": {
     "tshirt": {
-      "required_views": [
-        "front",
-        "back",
-        "left-sleeve",
-        "right-sleeve",
-        "neck-label"
-      ],
-      "present_assets": [],
-      "missing_assets": [
-        "artifacts/trynex-storefront/public/mockups/canonical/tshirt/white/front.png",
-        "artifacts/trynex-storefront/public/mockups/canonical/tshirt/white/back.png",
-        "artifacts/trynex-storefront/public/mockups/canonical/tshirt/white/left-sleeve.png",
-        "artifacts/trynex-storefront/public/mockups/canonical/tshirt/white/right-sleeve.png",
-        "artifacts/trynex-storefront/public/mockups/canonical/tshirt/white/neck-label.png"
-      ]
+      "required": 40,
+      "present": 40,
+      "missing": [],
+      "invalid": []
     },
     "longsleeve": {
-      "required_views": [
-        "front",
-        "back",
-        "left-sleeve",
-        "right-sleeve",
-        "neck-label"
-      ],
-      "present_assets": [],
-      "missing_assets": [
-        "artifacts/trynex-storefront/public/mockups/canonical/longsleeve/white/front.png",
-        "artifacts/trynex-storefront/public/mockups/canonical/longsleeve/white/back.png",
-        "artifacts/trynex-storefront/public/mockups/canonical/longsleeve/white/left-sleeve.png",
-        "artifacts/trynex-storefront/public/mockups/canonical/longsleeve/white/right-sleeve.png",
-        "artifacts/trynex-storefront/public/mockups/canonical/longsleeve/white/neck-label.png"
-      ]
+      "required": 50,
+      "present": 50,
+      "missing": [],
+      "invalid": []
     },
     "hoodie": {
-      "required_views": [
-        "front",
-        "back",
-        "left-sleeve",
-        "right-sleeve",
-        "neck-label"
-      ],
-      "present_assets": [
-        "artifacts/trynex-storefront/public/mockups/canonical/hoodie/white/front.png",
-        "artifacts/trynex-storefront/public/mockups/canonical/hoodie/white/back.png"
-      ],
-      "missing_assets": [
-        "artifacts/trynex-storefront/public/mockups/canonical/hoodie/white/left-sleeve.png",
-        "artifacts/trynex-storefront/public/mockups/canonical/hoodie/white/right-sleeve.png",
-        "artifacts/trynex-storefront/public/mockups/canonical/hoodie/white/neck-label.png"
-      ],
-      "invalid_assets": [
-        {
-          "path": "artifacts/trynex-storefront/public/mockups/canonical/hoodie/white/front.png",
-          "reason": "baked-checkerboard-background"
-        },
-        {
-          "path": "artifacts/trynex-storefront/public/mockups/canonical/hoodie/white/back.png",
-          "reason": "baked-checkerboard-background"
-        }
-      ]
+      "required": 50,
+      "present": 50,
+      "missing": [],
+      "invalid": []
     },
     "mug": {
-      "required_views": [
-        "front",
-        "back",
-        "wrap"
-      ],
-      "present_assets": [],
-      "missing_assets": [
-        "artifacts/trynex-storefront/public/mockups/canonical/mug/white/front.png",
-        "artifacts/trynex-storefront/public/mockups/canonical/mug/white/back.png",
-        "artifacts/trynex-storefront/public/mockups/canonical/mug/white/wrap.png"
-      ]
+      "required": 30,
+      "present": 30,
+      "missing": [],
+      "invalid": []
     },
     "cap": {
-      "required_views": [
-        "front",
-        "back"
-      ],
-      "present_assets": [],
-      "missing_assets": [
-        "artifacts/trynex-storefront/public/mockups/canonical/cap/white/front.png",
-        "artifacts/trynex-storefront/public/mockups/canonical/cap/white/back.png"
-      ]
+      "required": 16,
+      "present": 16,
+      "missing": [],
+      "invalid": []
     },
     "waterbottle": {
-      "required_views": [
-        "front",
-        "back"
-      ],
-      "present_assets": [],
-      "missing_assets": [
-        "artifacts/trynex-storefront/public/mockups/canonical/waterbottle/white/front.png",
-        "artifacts/trynex-storefront/public/mockups/canonical/waterbottle/white/back.png"
-      ]
+      "required": 16,
+      "present": 16,
+      "missing": [],
+      "invalid": []
     }
   },
-  "errors": [
-    "tshirt: missing 5 canonical runtime assets",
-    "longsleeve: missing 5 canonical runtime assets",
-    "hoodie/front: baked checkerboard background",
-    "hoodie/back: baked checkerboard background",
-    "hoodie: missing 3 canonical runtime assets",
-    "mug: missing 3 canonical runtime assets",
-    "cap: missing 2 canonical runtime assets",
-    "waterbottle: missing 2 canonical runtime assets"
-  ],
-  "editable_master_status": {
-    "tshirt": "manifest-only",
-    "longsleeve": "manifest-only",
-    "hoodie": "manifest-only",
-    "mug": "manifest-only",
-    "cap": "manifest-only",
-    "waterbottle": "manifest-only"
-  }
+  "errors": [],
+  "legacy_removed": true,
+  "total_required": 202,
+  "total_present": 202
 }
