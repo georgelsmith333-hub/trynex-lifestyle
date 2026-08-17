@@ -29,3 +29,8 @@ The deployed `/design-studio` route initializes the active V2 editor successfull
 ## Cart and checkout findings
 
 The deployed `/cart` route renders an intentional empty-cart state with Browse Collection and recently viewed products. Navigating directly to `/checkout` with an empty cart redirected back to `/cart`, which is correct guard behavior rather than a checkout failure. A populated-cart checkout path still requires a controlled non-payment test if deeper checkout validation is needed.
+
+
+## Post-push verification
+
+After commit `1602f8b0e` was pushed, the deployed homepage rendered a complete `We Craft T-Shirt` phrase within the hero column, confirming the wrapping hardening is active. A later capture showed `We Craft Hood...` during the typewriter’s intentional mid-animation state; the phrase was not a stable overflow failure. The unfinished-design reminder remained visible but was contained within the lower-left viewport footprint rather than extending beyond the page edge. The lower row of white hero products can appear visually faint against the light background because the source assets are white garments, but their labels and links remain present.
