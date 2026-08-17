@@ -66,3 +66,7 @@ The active Render API health contract is green: `/api/healthz` returned HTTP 200
 ## Anonymous API Route Probe
 
 The live Render API returned HTTP 200 for categories, products, featured products, blog, blog categories/settings, hampers, health storage/liveness/readiness, public stats, announcement, sitemap, robots, testimonials, and remove-background status. Protected notification, promo-code, and referral collection routes correctly returned HTTP 401 without admin/user credentials. A single healthz request timed out during the broad probe, but a focused retry immediately afterward returned HTTP 200; this is recorded as a transient probe timeout, not a confirmed route failure.
+
+## Performance Audit Finding
+
+The storefront already uses retryable route-level lazy loading for secondary pages and admin surfaces. Vite also isolates motion, query, editor, charts, and Three.js/R3F dependencies into named chunks; the Design Studio V2 and ONNX/3D bundles are not part of the primary route imports. The latest build still reports large intentional chunks (`vendor-3d` about 1.16 MB, ONNX about 395 kB, DesignStudio V2 about 438 kB), so optimization remains a measured studio/mobile phase rather than an unverified global refactor.
