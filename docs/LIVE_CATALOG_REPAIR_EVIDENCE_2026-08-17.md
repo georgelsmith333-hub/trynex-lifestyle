@@ -48,3 +48,13 @@ The API deployment for `d31035609` is live on Render. Its target-foreign-key ord
 ## Public Route Smoke
 
 Cloudflare Pages returned HTTP 200 HTML for `/`, `/products`, both restored product-detail paths, `/design-studio`, `/cart`, `/checkout`, `/track`, and `/admin/login`. This confirms route entry and SPA fallback availability; it does not replace authenticated browser interaction or functional checkout/order assertions.
+
+## Exact-Asset Resolver Release
+
+Commit `2e9086531` preserves the design-specific Pages asset paths and remaps only the Imgur/Unsplash URLs proven to fail. At the latest check poll, GitHub build-and-check, Active app verification, Cloudflare Pages, and the separate Workers Build were all in progress. The previous equivalent image-fix commit had successful CI, security, Active app verification, and Pages checks; the Workers Build remained the only failing external integration.
+
+Current check URLs for `2e9086531` include Cloudflare Pages deployment `321de360-36dd-4ef5-bcfd-3236bdaa56db`, Workers Build `4b8c67f2-47eb-43ba-9e38-eb08084e9bdb`, and GitHub jobs under runs `31982800005` and `31982799997`.
+
+## Exact-Asset Release Terminal Result
+
+Commit `2e9086531` completed successfully through GitHub CI, security scan, Active app verification, and Cloudflare Pages. The live Pages deployment is `321de360-36dd-4ef5-bcfd-3236bdaa56db`. The only red check is the external `Workers Builds: trynex-liestyle` integration, build `4b8c67f2-47eb-43ba-9e38-eb08084e9bdb`; it remains distinct from the successful `trynex-lifestyle-shop` Pages deployment and from the repository’s source configuration.
