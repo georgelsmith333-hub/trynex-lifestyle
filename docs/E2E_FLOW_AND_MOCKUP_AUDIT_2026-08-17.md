@@ -42,3 +42,15 @@ The earlier source-kit fallback was not a complete solution. A deterministic inv
 The rebuild now creates a `smart-v4` matrix with exactly 202 asset files. Each color uses its own source-kit silhouette; secondary views are masked from that same color-specific source rather than borrowing a different product or silently tinting an unrelated image. The resolver, smart-object manifest, Studio V2 active canvas, print-zone selection, preload path, PNG export path, and cart preview path now use the complete face contract, including `left-sleeve`, `right-sleeve`, `neck-label`, and `wrap`.
 
 The defective generated canonical hoodie assets and checkerboard canonical directory were removed from the public runtime tree. The complete validator reports 202 required and 202 present, with no missing assets, no invalid assets, no duplicate source keys, and no legacy canonical tree. The storefront typecheck and production build both pass. The representative contact sheet is saved at `docs/smart-v4-contact-sheet.png`; generated chroma-key artifacts were quarantined and were never promoted into runtime.
+
+
+## Smart-v4 production deployment verification
+
+GitHub checks for commit `c9728890a` completed successfully: `security-scan`, `Typecheck, test, and build active apps`, and `build-and-check` all concluded `success`. Cloudflare Pages deployment `a58f7438-adb0-46ae-8058-b4f3329eb34f` was triggered from `main` at the full smart-v4 commit and completed queued, initialize, clone, build, and deploy stages successfully. The preview URL is Cloudflare Access-protected; the public production alias was used for final verification.
+
+The hydrated production Studio HTML contains `smart-v4` references and contains zero `smart-v3`, `source-kit-v3`, or `canonical-v1` references. Production Studio V2 visibly exposes Front, Back, L.Sleeve, R.Sleeve, and Neck controls and loads a clean hoodie canvas. The Back control successfully switched to a matched navy rear garment. A direct `view=left-sleeve` URL does not select the face state because the current route parser only honors the existing front/back query contract; the L.Sleeve control remains the intended interaction path and should receive a dedicated automated click assertion in the next browser pass.
+
+
+## Final post-smart-v4 automated flow
+
+The isolated Playwright runner was corrected to resolve its temporary dependency from the runner directory and completed against `https://trynex-lifestyle-shop.pages.dev`. All four assertions passed: hoodie size S/Navy selection, cart addition with confirmation, empty-cart checkout guard to `/cart`, and Design Studio V2 Back/Navy/3D Preview interaction. No payment or production order was submitted.
