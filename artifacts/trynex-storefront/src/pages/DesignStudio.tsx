@@ -30,6 +30,7 @@ import {
   type ApparelZone, isNearBlack, isLightTint, type PrintZone,
 } from "./design-studio/mockups";
 import { composeLayers, composeGarmentMockup, composeDesignTexture, autoFixImage, type ComposerLayer } from "./design-studio/composer";
+import { getCanonicalMockupSpec } from "./design-studio/canonical-mockup-spec";
 import { StudioFirstUseGuide, StudioQualityBanner } from "./studio/v1-components/V1StudioSupport";
 import { fitImageToPrintZone, prepareImageForPrintZone } from "./design-studio/autoFit";
 
@@ -3442,14 +3443,14 @@ export default function DesignStudio() {
                           layers: ds3dFrontLayers,
                           printZone: isMugProduct
                             ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ)
-                            : selectedProduct.printZone,
+                            : (getCanonicalMockupSpec(selectedProduct.category).views.find(view => view.view === "front")?.printZone ?? selectedProduct.printZone),
                           baseHeight: selectedProduct.baseHeight,
                         }}
                         back={supportsBack && ds3dBackLayers.length > 0 ? {
                           layers: ds3dBackLayers,
                           printZone: isMugProduct
                             ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ)
-                            : (selectedProduct.printZoneBack ?? selectedProduct.printZone),
+                            : (getCanonicalMockupSpec(selectedProduct.category).views.find(view => view.view === "back")?.printZone ?? selectedProduct.printZoneBack ?? selectedProduct.printZone),
                           baseHeight: selectedProduct.baseHeight,
                         } : undefined}
                         activeFace={activeFace as "front" | "back"}

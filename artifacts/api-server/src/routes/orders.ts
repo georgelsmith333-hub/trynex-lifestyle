@@ -669,13 +669,34 @@ router.post("/orders", async (req, res) => {
       return;
     }
 
-    // Strip base64 data-URLs from customImages before DB storage.
-    // Data-URLs are used only for in-browser preview (cart/3D viewer) and must
-    // not be persisted — original uploads are already in object storage via
-    // originalAssetUrls. Keeping only real paths (/ or http) keeps the DB lean.
-    function sanitizeCustomImages(imgs: string[] | null | undefined): string[] {
+    // Persist customer-uploaded design images instead of dropping base64 data URLs.
+    // The old implementation kept only non-data URLs, which made custom photos
+    // disappear permanently from admin order details after checkout. Data URLs
+    // are converted to private object-storage paths; existing object paths are
+    // normalized to the API's renderable `/api/storage/objects/...` form.
+    function renderableObjectPath(value: string): string {
+      if (value.startsWith("/objects/")) return `/api/storage${value}`;
+      return value;
+    }
+
+    async function persistCustomImages(imgs: string[] | null | undefined): Promise<string[]> {
       if (!Array.isArray(imgs)) return [];
-      return imgs.filter(s => typeof s === "string" && !s.startsWith("data:"));
+      const saved: string[] = [];
+      for (const value of imgs) {
+        if (typeof value !== "string" || !value.trim()) continue;
+        if (value.startsWith("data:image/")) {
+          try {
+            const stored = await orderStorageService.saveMockupImage(value);
+            if (stored) saved.push(stored);
+            else logger.warn("persistCustomImages: rejected invalid or oversized data URL");
+          } catch (err) {
+            logger.warn({ err }, "persistCustomImages: failed to persist customer image");
+          }
+          continue;
+        }
+        saved.push(renderableObjectPath(value));
+      }
+      return saved;
     }
 
     // Convert a URL to a storable path: real object-storage paths are kept as-is;
@@ -705,7 +726,11 @@ router.post("/orders", async (req, res) => {
       })
     );
 
-    const catalogOrderItems = catalogItems.map((item: any) => {
+    const catalogCustomImages = await Promise.all(
+      catalogItems.map((item: any) => persistCustomImages(item.customImages))
+    );
+
+    const catalogOrderItems = catalogItems.map((item: any, idx: number) => {
       const product = productMap[item.productId];
       const selectedVariant = Array.isArray(product.variants)
         ? product.variants.find((v: any) => v?.id === item.variantId && v.active !== false)
@@ -731,11 +756,15 @@ router.post("/orders", async (req, res) => {
         variantName: selectedVariant?.name ?? item.variantName,
         price,
         customNote: item.customNote,
-        customImages: sanitizeCustomImages(item.customImages),
+        customImages: catalogCustomImages[idx],
         imageUrl: sanitizeImageUrlSync(item.imageUrl),
         isStudio: false,
       };
     });
+
+    const studioCustomImages = await Promise.all(
+      studioItems.map((item: any) => persistCustomImages(item.customImages))
+    );
 
     // Studio items: price is derived server-side from settings; client price is ignored
     const studioOrderItems = studioItems.map((item: any, idx: number) => {
@@ -778,7 +807,7 @@ router.post("/orders", async (req, res) => {
         color: item.color,
         price: serverPrice,
         customNote: JSON.stringify(note),
-        customImages: sanitizeCustomImages(item.customImages),
+        customImages: studioCustomImages[idx],
         imageUrl: savedImageUrl,
         isStudio: true,
       };

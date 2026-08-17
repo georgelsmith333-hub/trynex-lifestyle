@@ -253,6 +253,13 @@ export default function AdminOrders() {
 
   const lastRefresh = dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleTimeString('en-BD') : null;
 
+  const resolveAdminAssetUrl = (raw: unknown): string => {
+    const value = typeof raw === "string" ? raw.trim() : "";
+    if (!value) return resolveImageUrl(value);
+    if (value.startsWith("data:") || value.startsWith("blob:") || value.startsWith("http://") || value.startsWith("https://")) return value;
+    return resolveImageUrl(value.startsWith("objects/") ? `/${value}` : value);
+  };
+
   const buildOrderPreview = (order: any) => {
     const items: PreviewItem[] = [];
     const mainIdx = new Map<number, number>();
@@ -270,7 +277,7 @@ export default function AdminOrders() {
       const rawSrc: string = (item.imageUrl as string | null) ?? (item.productImage as string | null) ?? '';
       const isDataUrl = rawSrc.startsWith('data:');
       const isR2Path  = rawSrc.includes('/objects/');
-      const src = (isDataUrl || isR2Path) ? rawSrc : resolveImageUrl(rawSrc);
+      const src = (isDataUrl || isR2Path) ? resolveAdminAssetUrl(rawSrc) : resolveImageUrl(rawSrc);
 
       if (src) {
         mainIdx.set(idx, items.length);
@@ -280,7 +287,7 @@ export default function AdminOrders() {
         const arr: number[] = [];
         item.customImages.forEach((img: string, i: number) => {
           arr.push(items.length);
-          items.push({ src: img, alt: `${item.productName} customer design ${i + 1}`, isStudio: false });
+          items.push({ src: resolveAdminAssetUrl(img), alt: `${item.productName} customer design ${i + 1}`, isStudio: true });
         });
         customIdx.set(idx, arr);
       }
@@ -645,7 +652,7 @@ export default function AdminOrders() {
                       try { isStudio = !!JSON.parse(item.customNote ?? "{}").studioDesign; } catch {}
                     }
                     if (isStudio && item.imageUrl) {
-                      studioSnapshots.push({ src: item.imageUrl as string, label: item.productName as string });
+                      studioSnapshots.push({ src: resolveAdminAssetUrl(item.imageUrl), label: item.productName as string });
                     }
                   });
                   if (studioSnapshots.length === 0) return null;
@@ -662,7 +669,8 @@ export default function AdminOrders() {
                             style={{ background: 'repeating-conic-gradient(#e5e7eb 0% 25%,white 0% 50%) 0 0/16px 16px' }}
                             onClick={() => {
                               const { items: pi } = buildOrderPreview(selectedOrder);
-                              openLightbox(pi, idx);
+                              const targetIndex = pi.findIndex((preview) => preview.src === snap.src);
+                              openLightbox(pi, targetIndex >= 0 ? targetIndex : 0);
                             }}
                           >
                             <img
@@ -825,7 +833,7 @@ export default function AdminOrders() {
                         <div className="flex items-center justify-between">
                           <div className="flex items-start gap-2.5 flex-1 min-w-0">
                             {(() => {
-                              const previewSrc = (item.imageUrl as string) || (item.productImage as string) || '';
+                              const previewSrc = resolveAdminAssetUrl((item.imageUrl as string) || (item.productImage as string) || '');
                               let isStudio = !!item.isStudio;
                               if (!isStudio) {
                                 try { isStudio = !!JSON.parse(item.customNote ?? "{}").studioDesign; } catch { /* ignore */ }
@@ -992,7 +1000,7 @@ export default function AdminOrders() {
                                 return (
                                   <ItemPreviewThumb
                                     key={idx}
-                                    src={img}
+                                    src={resolveAdminAssetUrl(img)}
                                     alt={`${item.productName} design ${idx + 1}`}
                                     isStudio={false}
                                     size="sm"

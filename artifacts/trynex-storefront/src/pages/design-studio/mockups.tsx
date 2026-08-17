@@ -5,6 +5,7 @@
 ════════════════════════════════════════════════════════ */
 
 import { createSmartMockupManifest, type SmartMockupManifest } from "./smart-mockup-manifest";
+import { getCanonicalMockupSpec, type MockupFamily } from "./canonical-mockup-spec";
 
 // ── T-Shirt: unified studio photos from normalized/ folder ──
 const tshirtFront          = "/mockups/source-kit-v3/tshirt/white/front.png";
@@ -679,7 +680,17 @@ function getCuratedMockup(
   const category = product.category;
   const hex = normalizeMockupHex(color);
   const slug = SOURCE_KIT_COLOR_SLUGS[category]?.[hex] || "white";
-  const cutoutSrc = `/mockups/source-kit-v3/${category}/${slug}/${face}.png?v=smart-v3`;
+  const canonicalSpec = getCanonicalMockupSpec(category as MockupFamily);
+  const canonicalView = canonicalSpec.views.find(view => view.view === face);
+  const canonicalAssetPath = canonicalView && slug === "white"
+    ? `/mockups/canonical/${canonicalView.assetKey.replace("{color}", slug)}.png?v=canonical-v1`
+    : undefined;
+  const isVerifiedCanonicalRuntimeAsset = category === "hoodie"
+    && slug === "white"
+    && (face === "front" || face === "back");
+  const cutoutSrc = isVerifiedCanonicalRuntimeAsset && canonicalAssetPath
+    ? canonicalAssetPath
+    : `/mockups/source-kit-v3/${category}/${slug}/${face}.png?v=smart-v3`;
   const photoSrc = cutoutSrc;
   return {
     photoSrc,
@@ -716,6 +727,7 @@ export function resolveMockup(
 ): MockupResolution {
   const category = product.category;
   const zones = SOURCE_KIT_PRINT_ZONES[category];
+  const canonicalSpec = getCanonicalMockupSpec(category as MockupFamily);
   const hex = normalizeMockupHex(color);
   const sourceKitSlug = SOURCE_KIT_COLOR_SLUGS[category]?.[hex];
   const normalizedFrame = SOURCE_KIT_FRAMES[category]?.[face] ?? {
@@ -747,7 +759,9 @@ export function resolveMockup(
     photoKind: runtimePhoto ? "opaque-photo" : curated.photoKind,
     requiresTint: runtimePhoto ? false : curated.requiresTint,
     allowSilhouetteShadow: false,
-    printZone: zones?.[face] ?? (face === "back" && product.printZoneBack ? product.printZoneBack : product.printZone),
+    printZone: canonicalSpec.views.find(view => view.view === face)?.printZone
+      ?? zones?.[face]
+      ?? (face === "back" && product.printZoneBack ? product.printZoneBack : product.printZone),
     normalizedFrame,
     isOpaquePhoto: runtimePhoto ? true : curated.photoKind === "opaque-photo",
     editableMasterPath: runtimeOverride?.masterFileUrl ?? masterPath,
@@ -762,7 +776,9 @@ export function resolveMockup(
       baseSrc: curated.photoSrc,
       cutoutSrc: curated.cutoutSrc,
       normalizedFrame,
-      printZone: zones?.[face] ?? (face === "back" && product.printZoneBack ? product.printZoneBack : product.printZone),
+      printZone: canonicalSpec.views.find(view => view.view === face)?.printZone
+        ?? zones?.[face]
+        ?? (face === "back" && product.printZoneBack ? product.printZoneBack : product.printZone),
     }),
     source: runtimePhoto ? "curated" : "source-kit",
   };
