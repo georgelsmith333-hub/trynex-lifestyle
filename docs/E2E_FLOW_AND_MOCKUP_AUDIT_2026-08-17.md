@@ -54,3 +54,13 @@ The hydrated production Studio HTML contains `smart-v4` references and contains 
 ## Final post-smart-v4 automated flow
 
 The isolated Playwright runner was corrected to resolve its temporary dependency from the runner directory and completed against `https://trynex-lifestyle-shop.pages.dev`. All four assertions passed: hoodie size S/Navy selection, cart addition with confirmation, empty-cart checkout guard to `/cart`, and Design Studio V2 Back/Navy/3D Preview interaction. No payment or production order was submitted.
+
+## Apparel v5 corrective rebuild — 2026-08-17
+
+The supplied contact sheet correctly identified a release-quality defect: the T-Shirt, Long Sleeve, and Hoodie family surfaces were not acceptable as ultra-premium mockups. The replacement was rebuilt from the repository's layered apparel PSD masters under `attached_assets/trynex-mockup-source-kit/psd`, not from the rejected generated contact-sheet assets.
+
+The new deterministic exporter is `scripts/rebuild_apparel_from_psd_v5.py`. It promotes the photorealistic white front/back PSD RGB composites, applies the verified transparent silhouettes from `public/mockups/normalized-cutouts` as alpha masks, preserves garment folds and construction details, derives same-color sleeve and neck surfaces from the same family/color front master, normalizes every surface to 1024×1024 RGBA PNG, and writes the resulting 140 apparel surfaces under `public/mockups/apparel-v5`. Those apparel-v5 surfaces replace only the T-Shirt, Long Sleeve, and Hoodie directories under `public/mockups/smart-v4`; Mug, Cap, and Water Bottle assets remain unchanged.
+
+The release gate passes for all families: T-Shirt 40/40, Long Sleeve 50/50, Hoodie 50/50, Mug 30/30, Cap 16/16, and Water Bottle 16/16, with zero missing and zero invalid surfaces. Storefront `pnpm run typecheck` and `pnpm run build` pass. The visual evidence sheet is `docs/apparel-v5-contact-sheet.png`.
+
+The rebuild intentionally uses repository PSD masters and verified transparent cutout masks rather than claiming a new AI-generated asset set. This is the production-safe route after the supplied contact sheet exposed the earlier apparel surfaces as unacceptable.
