@@ -17,18 +17,18 @@ export function prefetchDesignStudio(): void {
   // V2 studio resolves v3 assets without falling back to legacy cutouts.
   try {
     [
-      "/mockups/source-kit-v3/tshirt/white/front.png",
-      "/mockups/source-kit-v3/tshirt/white/back.png",
-      "/mockups/source-kit-v3/longsleeve/white/front.png",
-      "/mockups/source-kit-v3/longsleeve/white/back.png",
-      "/mockups/source-kit-v3/hoodie/white/front.png",
-      "/mockups/source-kit-v3/hoodie/white/back.png",
-      "/mockups/source-kit-v3/mug/white/front.png",
-      "/mockups/source-kit-v3/mug/white/back.png",
-      "/mockups/source-kit-v3/cap/white/front.png",
-      "/mockups/source-kit-v3/cap/white/back.png",
-      "/mockups/source-kit-v3/waterbottle/white/front.png",
-      "/mockups/source-kit-v3/waterbottle/white/back.png",
+      "/mockups/smart-v4/tshirt/white/front.png",
+      "/mockups/smart-v4/tshirt/white/back.png",
+      "/mockups/smart-v4/longsleeve/white/front.png",
+      "/mockups/smart-v4/longsleeve/white/back.png",
+      "/mockups/smart-v4/hoodie/white/front.png",
+      "/mockups/smart-v4/hoodie/white/back.png",
+      "/mockups/smart-v4/mug/white/front.png",
+      "/mockups/smart-v4/mug/white/back.png",
+      "/mockups/smart-v4/cap/white/front.png",
+      "/mockups/smart-v4/cap/white/back.png",
+      "/mockups/smart-v4/waterbottle/white/front.png",
+      "/mockups/smart-v4/waterbottle/white/back.png",
     ].forEach((src) => {
       const img = new Image();
       img.src = src;

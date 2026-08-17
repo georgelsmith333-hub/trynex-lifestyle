@@ -9,12 +9,12 @@ import { getCanonicalMockupSpec, type MockupFamily } from "./canonical-mockup-sp
 import { getCompleteMockupEntry, type CompleteMockupFamily, type CompleteMockupView } from "./complete-mockup-matrix";
 
 // ── T-Shirt: unified studio photos from normalized/ folder ──
-const tshirtFront          = "/mockups/source-kit-v3/tshirt/white/front.png";
-const tshirtBack           = "/mockups/source-kit-v3/tshirt/white/back.png";
-const tshirtFrontDark      = "/mockups/normalized/tshirt-black-front.png";
-const tshirtBackDark       = "/mockups/normalized/tshirt-black-back.png";
-const tshirtFrontCutout    = "/mockups/normalized-cutouts/tshirt-white-front.png";
-const tshirtBackCutout     = "/mockups/normalized-cutouts/tshirt-white-back.png";
+const tshirtFront          = "/mockups/smart-v4/tshirt/white/front.png";
+const tshirtBack           = "/mockups/smart-v4/tshirt/white/back.png";
+const tshirtFrontDark      = "/mockups/smart-v4/tshirt/black/front.png";
+const tshirtBackDark       = "/mockups/smart-v4/tshirt/black/back.png";
+const tshirtFrontCutout    = "/mockups/smart-v4/tshirt/white/front.png";
+const tshirtBackCutout     = "/mockups/smart-v4/tshirt/white/back.png";
 
 // Color-specific photo mockups — used instead of SVG tint for highest realism
 const navyTshirtFront      = "/mockups/new/navy-tshirt-front.png";
@@ -29,36 +29,36 @@ const oliveTshirtFront     = "/mockups/olive-tshirt-front.png";
 const oliveTshirtBack      = "/mockups/olive-tshirt-back.png";
 const skyblueTshirtFront   = "/mockups/skyblue-tshirt-front.png";
 const skyblueTshirtBack    = "/mockups/skyblue-tshirt-back.png";
-const longsleeveFront          = "/mockups/source-kit-v3/longsleeve/white/front.png";
-const longsleeveBack           = "/mockups/source-kit-v3/longsleeve/white/back.png";
-const longsleeveFrontDark      = "/mockups/normalized/longsleeve-black-front.png";
-const longsleeveFrontCutout    = "/mockups/normalized-cutouts/longsleeve-white-front.png";
-const longsleeveBackCutout     = "/mockups/normalized-cutouts/longsleeve-white-back.png";
-const longsleeveFrontDarkCutout = "/mockups/normalized-cutouts/longsleeve-black-front.png";
-const longsleeveBackDarkCutout  = "/mockups/normalized-cutouts/longsleeve-black-back.png";
-const hoodieFront          = "/mockups/source-kit-v3/hoodie/white/front.png";
-const hoodieBack           = "/mockups/source-kit-v3/hoodie/white/back.png";
-const hoodieFrontDark      = "/mockups/normalized/hoodie-black-front.png";
-const hoodieBackDark       = "/mockups/normalized/hoodie-black-back.png";
-const hoodieFrontCutout    = "/mockups/normalized-cutouts/hoodie-white-front.png";
-const hoodieBackCutout     = "/mockups/normalized-cutouts/hoodie-white-back.png";
-const mugFront             = "/mockups/source-kit-v3/mug/white/front.png";
-const mugFrontDark         = "/mockups/source-kit-v3/mug/black/front.png";
-const mugBack              = "/mockups/source-kit-v3/mug/white/back.png";
-const mugBackDark          = "/mockups/source-kit-v3/mug/black/back.png";
-const mugFrontCutout       = "/mockups/normalized-cutouts/mug-white-front.png";
-const mugFrontDarkCutout   = "/mockups/normalized-cutouts/mug-black-front.png";
-const capFront             = "/mockups/source-kit-v3/cap/white/front.png";
-const capBack              = "/mockups/source-kit-v3/cap/white/back.png";
-const capFrontCutout       = "/mockups/normalized-cutouts/cap-white-front.png";
+const longsleeveFront          = "/mockups/smart-v4/longsleeve/white/front.png";
+const longsleeveBack           = "/mockups/smart-v4/longsleeve/white/back.png";
+const longsleeveFrontDark      = "/mockups/smart-v4/longsleeve/black/front.png";
+const longsleeveFrontCutout    = "/mockups/smart-v4/longsleeve/white/front.png";
+const longsleeveBackCutout     = "/mockups/smart-v4/longsleeve/white/back.png";
+const longsleeveFrontDarkCutout = "/mockups/smart-v4/longsleeve/black/front.png";
+const longsleeveBackDarkCutout  = "/mockups/smart-v4/longsleeve/black/back.png";
+const hoodieFront          = "/mockups/smart-v4/hoodie/white/front.png";
+const hoodieBack           = "/mockups/smart-v4/hoodie/white/back.png";
+const hoodieFrontDark      = "/mockups/smart-v4/hoodie/black/front.png";
+const hoodieBackDark       = "/mockups/smart-v4/hoodie/black/back.png";
+const hoodieFrontCutout    = "/mockups/smart-v4/hoodie/white/front.png";
+const hoodieBackCutout     = "/mockups/smart-v4/hoodie/white/back.png";
+const mugFront             = "/mockups/smart-v4/mug/white/front.png";
+const mugFrontDark         = "/mockups/smart-v4/mug/black/front.png";
+const mugBack              = "/mockups/smart-v4/mug/white/back.png";
+const mugBackDark          = "/mockups/smart-v4/mug/black/back.png";
+const mugFrontCutout       = "/mockups/smart-v4/mug/white/front.png";
+const mugFrontDarkCutout   = "/mockups/smart-v4/mug/black/front.png";
+const capFront             = "/mockups/smart-v4/cap/white/front.png";
+const capBack              = "/mockups/smart-v4/cap/white/back.png";
+const capFrontCutout       = "/mockups/smart-v4/cap/white/front.png";
 // Canonical TryNex bottle: upright aluminium body with black key-ring loop and side carabiner.
 // Keep legacy bottle_1 out of the active studio path; it is the wrong product shape.
-const waterBottleFront          = "/mockups/source-kit-v3/waterbottle/white/front.png";
-const waterBottleCutout         = "/mockups/source-kit-v3/waterbottle/white/front.png";
-const tshirtFrontDarkCutout     = "/mockups/normalized-cutouts/black-tshirt-front-cutout.png";
-const tshirtBackDarkCutout      = "/mockups/normalized-cutouts/black-tshirt-back-cutout.png";
-const hoodieFrontDarkCutout     = "/mockups/black-hoodie-front-cutout-real.png";
-const hoodieBackDarkCutout     = "/mockups/normalized-cutouts/hoodie-black-back.png";
+const waterBottleFront          = "/mockups/smart-v4/waterbottle/white/front.png";
+const waterBottleCutout         = "/mockups/smart-v4/waterbottle/white/front.png";
+const tshirtFrontDarkCutout     = "/mockups/smart-v4/tshirt/black/front.png";
+const tshirtBackDarkCutout      = "/mockups/smart-v4/tshirt/black/back.png";
+const hoodieFrontDarkCutout     = "/mockups/smart-v4/hoodie/black/front.png";
+const hoodieBackDarkCutout     = "/mockups/smart-v4/hoodie/black/back.png";
 
 // ── Hoodie: per-color front photos (real studio shots, no SVG tint needed) ──
 // Back photos for colored hoodies are not available — back falls through to tint path.
@@ -331,7 +331,7 @@ export const PRODUCTS: DesignProduct[] = [
     description: "600ml Aluminium",
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: WATERBOTTLE_PZ,
-    frontSrc: WATERBOTTLE_MOCKUP_URL, backSrc: "/mockups/source-kit-v3/waterbottle/white/back.png",
+    frontSrc: WATERBOTTLE_MOCKUP_URL, backSrc: "/mockups/smart-v4/waterbottle/white/back.png",
   },
   // NOTE: Water Tumbler removed — it was a duplicate of Water Bottle with identical
   // mockup, colors, and print zone. Re-add if a distinct tumbler mockup is provided.
@@ -356,7 +356,7 @@ export const BASE_BY_CATEGORY: Record<
   longsleeve:  { front: longsleeveFront, back: longsleeveBack, frontCutout: longsleeveFront, backCutout: longsleeveBack },
   hoodie:      { front: hoodieFront, back: hoodieBack, frontCutout: hoodieFront, backCutout: hoodieBack },
   mug:         { front: mugFront, back: mugBack, frontCutout: mugFront, backCutout: mugBack },
-  cap:         { front: capFront, back: capBack, frontCutout: capFront, backCutout: "/mockups/normalized-cutouts/cap-white-back.png" },
+  cap:         { front: capFront, back: capBack, frontCutout: capFront, backCutout: "/mockups/smart-v4/cap/white/back.png" },
   waterbottle: { front: waterBottleFront, frontCutout: waterBottleFront },
   // watertumbler uses category "waterbottle" — shares the same base entry
 };
@@ -700,7 +700,7 @@ function getCuratedMockup(
 /**
  * Resolves one canonical mockup key for every customer-facing surface.
  *
- * Source-kit-v3 PNGs (public/mockups/source-kit-v3/*) are bound for all
+ * Smart-v4 PNGs (public/mockups/smart-v4/*) are bound for all
  * products, colors, and faces until a canonical asset has passed clean-alpha
  * validation. The initial generated hoodie pair is intentionally not activated
  * because its checkerboard background was baked into the pixels.

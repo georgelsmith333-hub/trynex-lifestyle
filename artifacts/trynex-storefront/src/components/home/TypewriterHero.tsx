@@ -6,12 +6,12 @@ import {
 } from "lucide-react";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 
-const tshirtSrc = "/mockups/source-kit-v3/tshirt/white/front.png";
-const mugSrc    = "/mockups/source-kit-v3/mug/white/front.png";
-const capSrc    = "/mockups/source-kit-v3/cap/white/front.png";
-const hoodieSrc = "/mockups/source-kit-v3/hoodie/white/front.png";
-const longsleeveSrc = "/mockups/source-kit-v3/longsleeve/white/front.png";
-const bottleSrc = "/mockups/source-kit-v3/waterbottle/white/front.png";
+const tshirtSrc = "/mockups/smart-v4/tshirt/white/front.png";
+const mugSrc    = "/mockups/smart-v4/mug/white/front.png";
+const capSrc    = "/mockups/smart-v4/cap/white/front.png";
+const hoodieSrc = "/mockups/smart-v4/hoodie/white/front.png";
+const longsleeveSrc = "/mockups/smart-v4/longsleeve/white/front.png";
+const bottleSrc = "/mockups/smart-v4/waterbottle/white/front.png";
 
 const DEFAULT_PHRASES: string[] = [
   "T-Shirts.",
