@@ -36,3 +36,15 @@ The live DB Cluster endpoint reported six healthy nodes and Analytics DB active 
 The public API reports `total=20` products over two pages (`12 + 8`) across seven categories. Runtime URL checks found ten restored Long Sleeve/Water Bottle records pointing to API paths that returned HTTP 404, one Imgur product image returning HTTP 429, and one Unsplash hoodie image returning HTTP 404. The remaining eight checked image URLs returned HTTP 200 with image content.
 
 The shared storefront resolver was patched to map those verified legacy failures to controlled first-party assets under `/mockups/` and `/products/`, while existing `onError` placeholder handling remains the final safeguard. The storefront typecheck and production build passed locally after the patch. Runtime Cloudflare verification remains pending until the next Pages deployment is live.
+
+## Pages Runtime Asset Verification
+
+Cloudflare Pages deployment for commit `76b4ef7fd` passed its Pages check. Direct public requests confirmed HTTP 200 image responses for `/mockups/white-waterbottle-front.png`, `/mockups/white-longsleeve-front.png`, `/products/main-combo.png`, `/mockups/black-hoodie-front.png`, and `/images/product-placeholder.svg`. The known broken catalog URL set is therefore covered by live first-party assets after the Pages deployment.
+
+The separate Cloudflare check `Workers Builds: trynex-liestyle` continues to report failure on this commit, while CI, security-scan, Active app verification, and Cloudflare Pages all report success. The repository’s valid configuration names `trynex-lifestyle-shop`; no source configuration references `trynex-liestyle`.
+
+The API deployment for `d31035609` is live on Render. Its target-foreign-key ordering fix has not yet received a final authenticated Sync Now result because the browser session needed for the admin bearer token is unavailable; this remains explicitly unverified rather than reported complete.
+
+## Public Route Smoke
+
+Cloudflare Pages returned HTTP 200 HTML for `/`, `/products`, both restored product-detail paths, `/design-studio`, `/cart`, `/checkout`, `/track`, and `/admin/login`. This confirms route entry and SPA fallback availability; it does not replace authenticated browser interaction or functional checkout/order assertions.
