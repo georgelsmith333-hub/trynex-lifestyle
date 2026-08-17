@@ -190,6 +190,10 @@ const ADDITIVE_SCHEMA_PATCHES = [
   `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS print_zone_w integer`,
   `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS print_zone_h integer`,
   `ALTER TABLE orders ADD COLUMN IF NOT EXISTS idempotency_key text`,
+  // The admin order workflow accepts verified/wrong for legacy payment review;
+  // reconcile the target check constraint before mirroring those historical rows.
+  `ALTER TABLE orders DROP CONSTRAINT IF EXISTS orders_payment_status_check`,
+  `ALTER TABLE orders ADD CONSTRAINT orders_payment_status_check CHECK (payment_status IN ('pending', 'submitted', 'verified', 'paid', 'not_paid', 'wrong', 'refunded'))`,
   `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS master_file_url text`,
   `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS master_file_name text`,
   `ALTER TABLE mockups ADD COLUMN IF NOT EXISTS master_file_mime text`,
