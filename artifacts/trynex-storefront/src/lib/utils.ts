@@ -54,6 +54,25 @@ export function resolveImageUrl(url: string | null | undefined): string {
   const PLACEHOLDER = "/images/product-placeholder.svg";
   if (!url || url.trim() === "") return PLACEHOLDER;
   const value = url.trim();
+  // Legacy seed records referenced assets that were never deployed to the API,
+  // and one external Imgur asset is rate-limited in production. Resolve those
+  // known records to controlled first-party assets before the browser requests
+  // a guaranteed 404/429. The onError handlers remain the final safeguard.
+  const legacyAssetMap: Record<string, string> = {
+    "/assets/products/bottle_name.png": "/mockups/white-waterbottle-front.png",
+    "/assets/products/bottle_space.png": "/mockups/white-waterbottle-front.png",
+    "/assets/products/bottle_adventure.png": "/mockups/white-waterbottle-front.png",
+    "/assets/products/bottle_tracker.png": "/mockups/white-waterbottle-front.png",
+    "/assets/products/bottle_eco.png": "/mockups/white-waterbottle-front.png",
+    "/assets/products/longsleeve_corporate.png": "/mockups/white-longsleeve-front.png",
+    "/assets/products/longsleeve_space.png": "/mockups/white-longsleeve-front.png",
+    "/assets/products/longsleeve_floral.png": "/mockups/white-longsleeve-front.png",
+    "/assets/products/longsleeve_retro.png": "/mockups/white-longsleeve-front.png",
+    "/assets/products/longsleeve_artistic.png": "/mockups/white-longsleeve-front.png",
+    "https://i.imgur.com/Xc8yXgT.jpeg": "/products/main-combo.png",
+    "https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=700&q=85": "/mockups/black-hoodie-front.png",
+  };
+  if (legacyAssetMap[value]) return legacyAssetMap[value];
   if (value.startsWith("http://") || value.startsWith("https://")) return value;
   // Uploads need the API base URL prepended — check before the generic "/" guard
   if (value.startsWith("/uploads/")) return `${getApiBaseUrl()}${value}`;

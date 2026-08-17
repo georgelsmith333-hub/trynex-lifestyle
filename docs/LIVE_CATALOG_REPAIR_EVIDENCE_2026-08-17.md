@@ -30,3 +30,9 @@ The guarded repair endpoint completed with HTTP 200 and repaired Neon Failover, 
 The API deployment for `de4c5c8aa` went live and was verified. Its post-deploy sync showed the remaining missing-column details above, prompting commit `e67c33ed3` with the expanded guarded repair. The Render deployment for `e67c33ed3` was accepted and remained `update_in_progress` at the final poll; therefore the expanded repair and final all-target sync are not yet claimed as live.
 
 The live DB Cluster endpoint reported six healthy nodes and Analytics DB active because the running data-aware election selected the fullest transactional mirror. Products DB was correctly marked outside the failover chain. Neon Main and failover candidates were healthy but contained a smaller/stale mockups schema, which is why the data-aware source selection and additive repair remain important.
+
+## Live Product Image Audit
+
+The public API reports `total=20` products over two pages (`12 + 8`) across seven categories. Runtime URL checks found ten restored Long Sleeve/Water Bottle records pointing to API paths that returned HTTP 404, one Imgur product image returning HTTP 429, and one Unsplash hoodie image returning HTTP 404. The remaining eight checked image URLs returned HTTP 200 with image content.
+
+The shared storefront resolver was patched to map those verified legacy failures to controlled first-party assets under `/mockups/` and `/products/`, while existing `onError` placeholder handling remains the final safeguard. The storefront typecheck and production build passed locally after the patch. Runtime Cloudflare verification remains pending until the next Pages deployment is live.
