@@ -114,7 +114,7 @@ export const ordersTable = pgTable("orders", {
   subtotalCheck: check("orders_subtotal_check", sql`${table.subtotal} >= 0`),
   shippingCostCheck: check("orders_shipping_cost_check", sql`${table.shippingCost} >= 0`),
   totalCheck: check("orders_total_check", sql`${table.total} >= 0`),
-  statusCheck: check("orders_status_check", sql`${table.status} IN ('pending', 'processing', 'shipped', 'delivered', 'cancelled')`),
+  statusCheck: check("orders_status_check", sql`${table.status} IN ('pending', 'processing', 'ongoing', 'shipped', 'delivered', 'cancelled')`),
   paymentStatusCheck: check("orders_payment_status_check", sql`${table.paymentStatus} IN ('pending', 'submitted', 'verified', 'paid', 'not_paid', 'wrong', 'refunded')`),
 }));
 
