@@ -50,6 +50,16 @@
         "artifacts/trynex-storefront/public/mockups/canonical/hoodie/white/left-sleeve.png",
         "artifacts/trynex-storefront/public/mockups/canonical/hoodie/white/right-sleeve.png",
         "artifacts/trynex-storefront/public/mockups/canonical/hoodie/white/neck-label.png"
+      ],
+      "invalid_assets": [
+        {
+          "path": "artifacts/trynex-storefront/public/mockups/canonical/hoodie/white/front.png",
+          "reason": "baked-checkerboard-background"
+        },
+        {
+          "path": "artifacts/trynex-storefront/public/mockups/canonical/hoodie/white/back.png",
+          "reason": "baked-checkerboard-background"
+        }
       ]
     },
     "mug": {
@@ -91,6 +101,8 @@
   "errors": [
     "tshirt: missing 5 canonical runtime assets",
     "longsleeve: missing 5 canonical runtime assets",
+    "hoodie/front: baked checkerboard background",
+    "hoodie/back: baked checkerboard background",
     "hoodie: missing 3 canonical runtime assets",
     "mug: missing 3 canonical runtime assets",
     "cap: missing 2 canonical runtime assets",

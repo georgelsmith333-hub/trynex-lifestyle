@@ -685,9 +685,10 @@ function getCuratedMockup(
   const canonicalAssetPath = canonicalView && slug === "white"
     ? `/mockups/canonical/${canonicalView.assetKey.replace("{color}", slug)}.png?v=canonical-v1`
     : undefined;
-  const isVerifiedCanonicalRuntimeAsset = category === "hoodie"
-    && slug === "white"
-    && (face === "front" || face === "back");
+  // The first generated canonical hoodie pair contains a baked checkerboard
+  // background. Keep it out of production until a clean-alpha master is
+  // verified; the source-kit pair is the reviewed safe fallback for now.
+  const isVerifiedCanonicalRuntimeAsset = false;
   const cutoutSrc = isVerifiedCanonicalRuntimeAsset && canonicalAssetPath
     ? canonicalAssetPath
     : `/mockups/source-kit-v3/${category}/${slug}/${face}.png?v=smart-v3`;
@@ -708,10 +709,10 @@ function getCuratedMockup(
 /**
  * Resolves one canonical mockup key for every customer-facing surface.
  *
- * Source-kit-v3 PNGs (public/mockups/source-kit-v3/*) are now bound for all
- * products, colors, and faces. The canonical matrix contains 108 transparent
- * 1024×1024 cutouts (6 products × 54 color variants × front + back) with a
- * per-asset manifest index and explicit editable-master metadata.
+ * Source-kit-v3 PNGs (public/mockups/source-kit-v3/*) are bound for all
+ * products, colors, and faces until a canonical asset has passed clean-alpha
+ * validation. The initial generated hoodie pair is intentionally not activated
+ * because its checkerboard background was baked into the pixels.
  *
  * Rendering path summary:
  *   Every family/color/face resolves to one v3 transparent cutout at runtime.
