@@ -120,7 +120,7 @@
     "hoodie": {
       "required": 50,
       "sourceKitV3": 20,
-      "canonical": 2,
+      "canonical": 0,
       "normalized": 20,
       "legacy": 0,
       "missingSourceKitV3": [
@@ -1098,7 +1098,7 @@
       "color": "white",
       "view": "front",
       "sourceKitV3": true,
-      "canonical": true,
+      "canonical": false,
       "normalized": true,
       "legacy": false,
       "activeExpected": "/mockups/source-kit-v3/hoodie/white/front.png"
@@ -1108,7 +1108,7 @@
       "color": "white",
       "view": "back",
       "sourceKitV3": true,
-      "canonical": true,
+      "canonical": false,
       "normalized": true,
       "legacy": false,
       "activeExpected": "/mockups/source-kit-v3/hoodie/white/back.png"
