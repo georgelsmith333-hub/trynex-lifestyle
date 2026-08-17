@@ -26,3 +26,10 @@ Cloudflare Pages project `trynex-lifestyle-shop` is connected to GitHub reposito
 
 
 A harmless deployment-trigger commit is being used because the GitHub-connected Pages project has not created a deployment for `9839ee797` even though its source checks passed. This does not alter application behavior; it only asks the existing production-branch integration to process the validated main-branch state again.
+
+
+## Final production verification
+
+Cloudflare Pages deployment `25fee640-fe34-454f-9d6e-a23e26312055` completed successfully for commit `60a4c2ea215670a2690c07d3967d13d41663d236`. The production diagnostic now resolves the hoodie front to `/mockups/source-kit-v3/hoodie/white/front.png?v=smart-v3`; the former `/mockups/canonical/hoodie/white/front.png?v=canonical-v1` checkerboard asset is no longer active. Final front and back screenshots show the white hoodie on a clean white studio canvas with no baked checkerboard and consistent front/back proportions.
+
+The final production E2E run passed all assertions: S/Navy option selection, Add to Bag transition, empty-cart checkout guard to `/cart`, and Studio V2 Back/Navy/3D Preview interactions. No payment or production order was submitted.
