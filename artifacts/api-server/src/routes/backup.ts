@@ -31,6 +31,13 @@ router.post("/admin/backup/repair-schemas", requireAdmin, async (req, res) => {
 });
 
 router.post("/admin/backup/sync-now", requireAdmin, async (req, res) => {
+  if (process.env.BACKUP_SYNC_ENABLED !== "true") {
+    res.status(409).json({
+      error: "backup_sync_disabled",
+      message: "The legacy full-database mirror is disabled until an explicitly owned, quota-measured sync strategy is enabled.",
+    });
+    return;
+  }
   try {
     const results = await runBackupSync();
     recordBackupSyncResults(results);

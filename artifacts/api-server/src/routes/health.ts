@@ -1,4 +1,4 @@
-import { Router, type IRouter } from "express";
+import { Router, type IRouter, type Request, type Response } from "express";
 import { sql } from "drizzle-orm";
 import { db } from "@workspace/db";
 import { getConfiguredGoogleClientId } from "./auth";
@@ -45,6 +45,9 @@ router.get("/healthz", async (_req, res) => {
     redis: redisMode,
     ...(redisDetail ? { redis_detail: redisDetail } : {}),
     storage: storageBackend,
+    runtimeRole: process.env.TRYNEX_RUNTIME_ROLE ?? "primary",
+    schedulerEnabled: process.env.SCHEDULER_ENABLED !== "false",
+    backupSyncEnabled: process.env.BACKUP_SYNC_ENABLED === "true",
     ts: new Date().toISOString(),
   });
 });
@@ -109,14 +112,15 @@ router.get("/health/liveness", (_req, res) => {
     status: "ok",
     timestamp: new Date().toISOString(),
     uptime: Math.floor(process.uptime()),
+    runtimeRole: process.env.TRYNEX_RUNTIME_ROLE ?? "primary",
   });
 });
 
-// ── GET /api/health/readiness ─────────────────────────────────────────────
+// ── GET /api/health/readiness and /api/readyz ──────────────────────────────
 // Readiness probe — checks that the API can serve real requests by
-// pinging the database. External monitors should hit this endpoint
-// every 30-60 seconds.
-router.get("/health/readiness", async (_req, res) => {
+// pinging the database. Keep both paths as aliases because the gateway,
+// monitors, and older deployment documentation use both contracts.
+const readinessHandler = async (_req: Request, res: Response) => {
   let dbOk = false;
   let dbLatencyMs = 0;
   try {
@@ -137,8 +141,14 @@ router.get("/health/readiness", async (_req, res) => {
     dbLatencyMs,
     uptime: Math.floor(process.uptime()),
     memoryMB: Math.round(process.memoryUsage().rss / 1024 / 1024),
+    runtimeRole: process.env.TRYNEX_RUNTIME_ROLE ?? "primary",
+    schedulerEnabled: process.env.SCHEDULER_ENABLED !== "false",
+    backupSyncEnabled: process.env.BACKUP_SYNC_ENABLED === "true",
     timestamp: new Date().toISOString(),
   });
-});
+};
+
+router.get("/health/readiness", readinessHandler);
+router.get("/readyz", readinessHandler);
 
 export default router;

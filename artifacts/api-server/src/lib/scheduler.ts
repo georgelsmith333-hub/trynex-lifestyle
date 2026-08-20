@@ -211,8 +211,9 @@ async function keepAlive(): Promise<void> {
 }
 
 // ── Backup / Failover Sync ───────────────────────────────────────────────────
-// Mirrors Neon Main into the Failover, Secondary, Products, and Analytics
-// databases every 30 minutes so a failover never serves stale/missing data.
+// The legacy full mirror is disabled unless explicitly enabled. It must never
+// run on every Render environment: one source row copied to four targets can
+// multiply Render egress enough to exhaust a Hobby workspace on its own.
 //
 // Circuit breaker: after BACKUP_CIRCUIT_OPEN_AFTER consecutive full failures,
 // the scheduler pauses for BACKUP_CIRCUIT_COOLDOWN_MS before retrying.
@@ -285,6 +286,7 @@ export function getBackupSyncStatus(): BackupSyncStatus {
 }
 
 async function runScheduledBackupSync(): Promise<void> {
+  if (process.env.BACKUP_SYNC_ENABLED !== "true") return;
   const now = Date.now();
 
   // Circuit open: skip until cooldown expires
@@ -317,7 +319,12 @@ async function runScheduledBackupSync(): Promise<void> {
 
 // ── Main Scheduler ───────────────────────────────────────────────────────────
 export function startScheduler(): void {
-  logger.info("[scheduler] Starting in-process scheduler");
+  const schedulerEnabled = process.env.SCHEDULER_ENABLED !== "false";
+  if (!schedulerEnabled) {
+    logger.info({ runtimeRole: process.env.TRYNEX_RUNTIME_ROLE ?? "primary" }, "[scheduler] Disabled for this runtime");
+    return;
+  }
+  logger.info({ runtimeRole: process.env.TRYNEX_RUNTIME_ROLE ?? "primary" }, "[scheduler] Starting in-process scheduler");
 
   const tick = setInterval(async () => {
     const bst = nowBST();

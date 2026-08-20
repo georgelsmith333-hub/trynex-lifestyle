@@ -8,6 +8,7 @@ import rateLimit from "express-rate-limit";
 import router from "./routes";
 import { logger } from "./lib/logger";
 import { validateAdminSession } from "./lib/adminSessions";
+import { shouldRejectMutation, mutationsAllowedForRole } from "./lib/runtimePolicy";
 
 const app: Express = express();
 
@@ -178,6 +179,25 @@ app.use((req: express.Request, res: express.Response, next: express.NextFunction
       res.status(403).json({ error: "csrf_blocked", message: "Cross-site request blocked (missing X-Requested-With header)" });
       return;
     }
+  }
+  next();
+});
+
+// Standby environments are deliberately read-only. This is a defense in depth
+// control: Cloudflare also routes sensitive mutations to the primary only, but a
+// standby must still reject writes if someone calls its public URL directly.
+// Promotion is explicit through TRYNEX_RUNTIME_ROLE=promoted; the default keeps
+// the existing Render 1 behavior as the primary writer.
+const runtimeRole = process.env.TRYNEX_RUNTIME_ROLE ?? "primary";
+const mutationsAllowed = mutationsAllowedForRole(runtimeRole);
+app.use((req: express.Request, res: express.Response, next: express.NextFunction): void => {
+  if (shouldRejectMutation(runtimeRole, req.method)) {
+    res.status(503).json({
+      error: "standby_read_only",
+      message: "This standby environment does not accept production mutations.",
+      runtimeRole,
+    });
+    return;
   }
   next();
 });
