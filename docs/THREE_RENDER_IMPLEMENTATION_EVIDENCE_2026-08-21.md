@@ -6,7 +6,7 @@
 
 ## Executive conclusion
 
-The three-Render compute topology is now provisioned and the public safe-read gateway is live. Render 1 remains the preserved existing primary service and is currently suspended by Render after exceeding its workspace bandwidth allowance. Render 2 is a live standby, Render 3 is a live DR standby, and both connect to the existing canonical Neon data path without creating a new production database. The public storefront is currently serving catalog and health responses through Render 2 while Render 1 is suspended.
+The three-Render compute topology is now provisioned and the public safe-read gateway is live. Render 1 remains the preserved existing primary service and is currently suspended by Render after exceeding its workspace bandwidth allowance. Render 2 is a live standby, Render 3 is a live DR standby, and both connect to the existing canonical Neon data path without creating a new production database. The public storefront is currently serving catalog and health responses through Render 2 while Render 1 is suspended.[1] [4] [5]
 
 The architecture is **not** three independent e-commerce writers. Render 1 remains the sole production write authority when active. Render 2 and Render 3 reject all `POST`, `PUT`, `PATCH`, and `DELETE` requests through runtime-role enforcement, have schedulers disabled, and have full backup synchronization disabled. Cloudflare Pages performs ordered safe-read failover only; it does not replay mutations to a later origin.
 
@@ -32,7 +32,7 @@ https://trynex-api-standby-2.onrender.com,
 https://trynex-api-standby-3.onrender.com
 ```
 
-The final production deployment was `f12ed021`, built successfully from commit `1b241b72f87aebd6b7b77e78d1140b40105a1fa5` and aliased to `https://www.trynexshop.com`. The deployment completed its queued, initialize, clone, build, and deploy stages successfully at 22:18:25 UTC.
+The final production deployment was `f12ed021`, built successfully from commit `1b241b72f87aebd6b7b77e78d1140b40105a1fa5` and aliased to `https://www.trynexshop.com`. The deployment completed its queued, initialize, clone, build, and deploy stages successfully at 22:18:25 UTC.[6] [7]
 
 Three production gateway corrections were required before the public failover became functional. The first corrected the wrong repository path by deploying the root `functions/api/[[path]].ts`. The second normalized the root Pages route parameter. The third derived the route from `request.url.pathname`, because the root catch-all did not reliably populate `params.path`. The final correction recognized that normal storefront cookies must not disable safe-read failover; it preserved Authorization pinning, disabled caching for cookie-bearing requests, and stripped cookies before forwarding allowlisted public reads.
 
@@ -49,13 +49,13 @@ The final probe was executed from the actual storefront browser session, includi
 | `OPTIONS /api/products` | **VERIFIED — HTTP 204** | Answered at the Cloudflare edge with the expected CORS headers and no origin call |
 | `POST /api/orders` | **VERIFIED — protected** | Remained pinned to suspended Render 1 and returned HTTP 503 with `x-render-routing: suspend-by-user`; no replay reached Render 2 or Render 3 |
 
-The public homepage was reloaded after the final deployment and no longer displayed `The catalogue could not load right now`. The full catalogue route rendered live product cards across T-shirts, bottles, long sleeves, caps, mugs, and hoodies. The API reports 70 products, while the UI currently renders 50 products per page with `Previous 1 2 Next`; the apparent “70 versus 20/50” discrepancy is a pagination/display-label issue, not missing API rows. A clearer label such as `Showing 50 of 70 products` would reduce customer confusion.
+The public homepage was reloaded after the final deployment and no longer displayed `The catalogue could not load right now`. The full catalogue route rendered live product cards across T-shirts, bottles, long sleeves, caps, mugs, and hoodies.[1] [2] The API reports 70 products, while the UI currently renders 50 products per page with `Previous 1 2 Next`; the apparent “70 versus 20/50” discrepancy is a pagination/display-label issue, not missing API rows. A clearer label such as `Showing 50 of 70 products` would reduce customer confusion.
 
 ## Customer-surface verification
 
 The public `/products` route rendered category filters, search, sort, price filters, availability filtering, pagination, product cards, image paths, and family coverage. The product-detail route for Birthday Celebration Tee rendered its image, price, fit variants, sizes, colors, quantity controls, Add to Bag, WhatsApp order, product details, reviews, bundle, and related products.
 
-The Design Studio route rendered its editor with Front, Back, L.Sleeve, R.Sleeve, and Neck controls; eight garment colors; sizes XS through XXXL; upload, text, AI Art, layers, templates, QR, export, Print Zone, Texture, 3D Preview, and Add to Cart controls. Switching to Back changed the URL to `?view=back`, updated the heading, and rendered a nonblank garment canvas. The studio surface is therefore **VERIFIED as available and interactive**. This session did not claim that every mockup family is photorealistic or that every generated asset is visually perfect.
+The Design Studio route rendered its editor with Front, Back, L.Sleeve, R.Sleeve, and Neck controls; eight garment colors; sizes XS through XXXL; upload, text, AI Art, layers, templates, QR, export, Print Zone, Texture, 3D Preview, and Add to Cart controls.[3] Switching to Back changed the URL to `?view=back`, updated the heading, and rendered a nonblank garment canvas. The studio surface is therefore **VERIFIED as available and interactive**. This session did not claim that every mockup family is photorealistic or that every generated asset is visually perfect.
 
 The cart regression verified required validation and successful addition. Clicking Add to Bag without a size produced `Please select a size`. Selecting size M and adding the product changed the header to `Cart (1)`, displayed `Added to Bag!`, and exposed Checkout. The cart drawer preserved the product and selected size. Checkout opened `/checkout` with delivery fields, guest checkout, optional order notes, payment-step navigation, and an order summary. No personal data was entered, no payment was initiated, and no real order was submitted.
 
@@ -109,3 +109,5 @@ The main branch now contains the gateway corrections through commit `1b241b72`. 
 [6]: https://www.trynexshop.com/ "TryNexShop production alias"
 [7]: https://github.com/georgelsmith333-hub/trynex-lifestyle/commit/1b241b72f87aebd6b7b77e78d1140b40105a1fa5 "Final gateway hardening commit"
 [8]: https://github.com/georgelsmith333-hub/trynex-lifestyle/pull/14 "Cookie-aware safe-read failover pull request"
+[9]: https://trynex-lifestyle-shop.pages.dev/api/products "TryNex public products API"
+[10]: https://trynex-lifestyle-shop.pages.dev/api/mockups "TryNex public mockups API"
