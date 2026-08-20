@@ -1,144 +1,161 @@
-/**
- * CF Pages Function — /api/* proxy
+/*
+ * Cloudflare Pages Function — route-aware API gateway.
  *
- * Forwards every request under /api/* to the configured API server
- * (API_URL env var in CF Pages settings).  Handles CORS and rewrites
- * Set-Cookie headers so session cookies work on the CF Pages domain.
+ * Render 1 is the normal primary. API_ORIGINS may contain an ordered,
+ * comma-separated list of Render origins for safe-read failover:
+ *   primary,secondary,tertiary
  *
- * How to configure:
- *   CF Pages → trynex-lifestyle-shop → Settings → Environment Variables
- *   API_URL = https://<your-api-host>  (no trailing slash)
- *
- * The API host can be:
- *   - The Replit dev domain while prototyping
- *   - A Render / Railway free-tier worker URL
- *   - A Cloudflare Worker URL (for full edge deployment)
+ * This gateway deliberately does not round-robin writes and never replays a
+ * mutation after an ambiguous timeout. Standby API services also enforce
+ * read-only mode server-side through TRYNEX_RUNTIME_ROLE.
  */
 
-interface Env {
-  /** Base URL of the API server.  Set in CF Pages env vars.  No trailing slash. */
-  API_URL: string;
+const DEFAULT_ORIGIN = "https://trynex-api.onrender.com";
+const REQUEST_TIMEOUT_MS = 12_000;
+const RETRYABLE_STATUSES = new Set([502, 503, 504]);
+const SAFE_PUBLIC_PREFIXES = [
+  "/products",
+  "/categories",
+  "/mockups",
+  "/public-stats",
+  "/blog",
+  "/testimonials",
+  "/settings",
+  "/health",
+  "/healthz",
+  "/readyz",
+];
+
+interface GatewayEnv {
+  API_URL?: string;
+  API_ORIGIN?: string;
+  TRYNEX_API_URL?: string;
+  API_ORIGINS?: string;
 }
 
-/** CF-internal request headers we must NOT forward to the upstream API. */
-const STRIP_REQUEST_HEADERS = new Set([
-  "host",
-  "cf-connecting-ip",
-  "cf-ipcountry",
-  "cf-ray",
-  "cf-visitor",
-  "cf-request-id",
-  "cdn-loop",
-  "x-real-ip",
-  "origin",
-]);
+function getOrigins(env: GatewayEnv): string[] {
+  const raw = env.API_ORIGINS || env.API_URL || env.API_ORIGIN || env.TRYNEX_API_URL || DEFAULT_ORIGIN;
+  const origins = raw
+    .split(",")
+    .map((value) => value.trim().replace(/\/$/, ""))
+    .filter(Boolean);
+  return [...new Set(origins)];
+}
 
-/** Response headers that must NOT be forwarded to the browser. */
-const STRIP_RESPONSE_HEADERS = new Set([
-  "transfer-encoding",
-  "connection",
-  "keep-alive",
-]);
+function isSafePublicRead(method: string, path: string, request: Request): boolean {
+  if (method !== "GET" && method !== "HEAD") return false;
+  if (request.headers.get("authorization") || request.headers.get("cookie")) return false;
+  return SAFE_PUBLIC_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
+}
 
-export const onRequest: PagesFunction<Env> = async (context) => {
-  const { request, env } = context;
-  const url = new URL(request.url);
+function corsHeaders(origin: string): Headers {
+  const headers = new Headers();
+  headers.set("Access-Control-Allow-Origin", origin);
+  headers.set("Access-Control-Allow-Credentials", "true");
+  headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Idempotency-Key");
+  headers.set("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS");
+  headers.set("Vary", "Origin");
+  return headers;
+}
 
-  /* ── CORS policy for preflight and ordinary API responses ─────────────── */
-  const requestOrigin = request.headers.get("Origin");
-  const allowedOrigin = requestOrigin && (
-    /^https:\/\/(?:[a-z0-9-]+\.)?trynex-lifestyle-shop\.pages\.dev$/i.test(requestOrigin)
-      || requestOrigin === "https://www.trynexshop.com"
-      || requestOrigin === "https://trynexshop.com"
-  ) ? requestOrigin : url.origin;
-  const corsHeaders = {
-    "Access-Control-Allow-Origin": allowedOrigin,
-    "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With, Cookie",
-    "Access-Control-Allow-Credentials": "true",
-    "Access-Control-Max-Age": "86400",
-    "Vary": "Origin",
-  };
+function makeTargetUrl(origin: string, path: string, search: string): URL {
+  return new URL(`/api/${path}${search}`, `${origin}/`);
+}
 
-  if (request.method === "OPTIONS") {
-    return new Response(null, { status: 204, headers: corsHeaders });
-  }
+export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
+  const { request, env, params } = context;
+  const originalUrl = new URL(request.url);
+  const pathSegments = (params["path"] as string[] | string) ?? [];
+  const path = Array.isArray(pathSegments) ? pathSegments.join("/") : pathSegments;
+  const method = request.method.toUpperCase();
+  const apiPath = `/${path}`;
+  const safeRead = isSafePublicRead(method, apiPath, request);
+  const origin = originalUrl.origin;
+  const responseCors = corsHeaders(origin);
+  const edgeCache = (globalThis as { caches?: { default?: Cache } }).caches?.default;
+  const cacheable = safeRead && method === "GET" && !originalUrl.searchParams.has("search");
+  const cacheKeyUrl = new URL(originalUrl.toString());
+  cacheKeyUrl.searchParams.set("_trynex_origin", origin);
+  const cacheKey = new Request(cacheKeyUrl.toString(), { method: "GET" });
 
-  /* ── Guard: API_URL must be configured. No hardcoded fallback is allowed. */
-  const apiBase = env.API_URL?.replace(/\/+$/, "");
-  if (!apiBase) {
-    console.error("[api-proxy] API_URL is not configured in CF Pages environment variables");
-    return Response.json(
-      { error: "API_URL not configured", message: "This site is not connected to an API backend." },
-      { status: 503, headers: corsHeaders }
-    );
-  }
-
-  /* ── Build upstream target URL ───────────────────────────────────────── */
-  const targetUrl = `${apiBase}${url.pathname}${url.search}`;
-
-  /* ── Forward request headers ─────────────────────────────────────────── */
-  const fwdHeaders = new Headers();
-  for (const [k, v] of request.headers.entries()) {
-    if (!STRIP_REQUEST_HEADERS.has(k.toLowerCase())) {
-      fwdHeaders.set(k, v);
-    }
-  }
-  fwdHeaders.set("X-Forwarded-Host", url.host);
-  fwdHeaders.set("X-Forwarded-Proto", url.protocol.replace(/:$/, ""));
-  const clientIp = request.headers.get("CF-Connecting-IP");
-  if (clientIp) fwdHeaders.set("X-Real-IP", clientIp);
-
-  /* ── Call upstream ───────────────────────────────────────────────────── */
-  let upstream: Response;
-  try {
-    upstream = await fetch(targetUrl, {
-      method: request.method,
-      headers: fwdHeaders,
-      body: ["GET", "HEAD"].includes(request.method) ? null : request.body,
-      redirect: "manual",
-    });
-  } catch (err) {
-    console.error("[api-proxy] upstream fetch failed:", err);
-    return Response.json(
-      { error: "API server is unreachable.", detail: String(err) },
-      { status: 502, headers: corsHeaders }
-    );
-  }
-
-  /* ── Build response headers ──────────────────────────────────────────── */
-  const respHeaders = new Headers();
-  for (const [k, v] of upstream.headers.entries()) {
-    if (!STRIP_RESPONSE_HEADERS.has(k.toLowerCase()) && k.toLowerCase() !== "set-cookie") {
-      respHeaders.set(k, v);
+  if (cacheable && edgeCache) {
+    const cached = await edgeCache.match(cacheKey);
+    if (cached) {
+      const cachedHeaders = new Headers(cached.headers);
+      responseCors.forEach((value, key) => cachedHeaders.set(key, value));
+      cachedHeaders.set("X-TryNex-Edge-Cache", "HIT");
+      return new Response(cached.body, { status: cached.status, statusText: cached.statusText, headers: cachedHeaders });
     }
   }
 
-  /* ── Rewrite Set-Cookie: drop Domain=, relax SameSite ───────────────── */
-  // CF Pages serves on HTTPS so Secure is fine; strip Domain so browser
-  // sets the cookie on the CF Pages hostname (not the API server hostname).
-  const rawCookies: string[] = [];
-  // getAll() is available in Workers; fall back to single header otherwise.
-  if (typeof (upstream.headers as any).getAll === "function") {
-    rawCookies.push(...(upstream.headers as any).getAll("set-cookie"));
-  } else {
-    const single = upstream.headers.get("set-cookie");
-    if (single) rawCookies.push(single);
-  }
-  for (const cookie of rawCookies) {
-    const rewritten = cookie
-      .replace(/;\s*Domain=[^;]*/gi, "")
-      .replace(/;\s*SameSite=None/gi, "; SameSite=Lax");
-    respHeaders.append("set-cookie", rewritten);
+  if (method === "OPTIONS") {
+    responseCors.set("Cache-Control", "public, max-age=600");
+    return new Response(null, { status: 204, headers: responseCors });
   }
 
-  /* ── Stream upstream body back ───────────────────────────────────────── */
-  for (const [key, value] of Object.entries(corsHeaders)) {
-    respHeaders.set(key, value);
+  const origins = getOrigins(env);
+  const candidates = safeRead ? origins : origins.slice(0, 1);
+  let lastStatus = 503;
+  let lastError = "No API origin responded";
+
+  for (const apiOrigin of candidates) {
+    const targetUrl = makeTargetUrl(apiOrigin, path, originalUrl.search);
+    const headers = new Headers(request.headers);
+    headers.set("Host", new URL(apiOrigin).host);
+    headers.delete("origin");
+    headers.delete("referer");
+
+    const requestInit: RequestInit & { duplex?: "half" } = {
+      method,
+      headers,
+      body: method === "GET" || method === "HEAD" ? undefined : request.body,
+      redirect: "follow",
+    };
+    if (requestInit.body) requestInit.duplex = "half";
+    const proxyRequest = new Request(targetUrl.toString(), requestInit);
+
+    try {
+      const response = await fetch(proxyRequest, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+      lastStatus = response.status;
+      if (safeRead && RETRYABLE_STATUSES.has(response.status)) {
+        lastError = `Origin ${apiOrigin} returned ${response.status}`;
+        continue;
+      }
+
+      const responseHeaders = new Headers(response.headers);
+      responseCors.forEach((value, key) => responseHeaders.set(key, value));
+      responseHeaders.set("X-TryNex-Origin", new URL(apiOrigin).host);
+      if (safeRead && response.ok) {
+        responseHeaders.set("Cache-Control", "public, max-age=10, s-maxage=30, stale-while-revalidate=60");
+      }
+
+      if (cacheable && edgeCache && response.ok) {
+        responseHeaders.set("X-TryNex-Edge-Cache", "MISS");
+      }
+      const output = new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: responseHeaders,
+      });
+      if (cacheable && edgeCache && response.ok) {
+        const waitUntil = (context as unknown as { waitUntil?: (promise: Promise<unknown>) => void }).waitUntil;
+        const cacheCopy = output.clone();
+        const write = edgeCache.put(cacheKey, cacheCopy).catch(() => undefined);
+        if (waitUntil) waitUntil(write);
+        else await write;
+      }
+      return output;
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : String(error);
+      if (!safeRead) break;
+    }
   }
-  return new Response(upstream.body, {
-    status: upstream.status,
-    statusText: upstream.statusText,
-    headers: respHeaders,
-  });
+
+  const failed = new Headers(responseCors);
+  failed.set("Content-Type", "application/json");
+  failed.set("Cache-Control", "no-store");
+  return new Response(
+    JSON.stringify({ error: "api_unavailable", message: "The API is temporarily unavailable.", status: lastStatus, detail: lastError }),
+    { status: 503, headers: failed },
+  );
 };
