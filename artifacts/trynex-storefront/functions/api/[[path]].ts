@@ -1,57 +1,161 @@
-/* ═══════════════════════════════════════════════════════
-   Cloudflare Pages Function — API reverse proxy
-   Route: /api/* → RENDER_API_URL (permanent backend)
+/*
+ * Cloudflare Pages Function — route-aware API gateway.
+ *
+ * Render 1 is the normal primary. API_ORIGINS may contain an ordered,
+ * comma-separated list of Render origins for safe-read failover:
+ *   primary,secondary,tertiary
+ *
+ * This gateway deliberately does not round-robin writes and never replays a
+ * mutation after an ambiguous timeout. Standby API services also enforce
+ * read-only mode server-side through TRYNEX_RUNTIME_ROLE.
+ */
 
-   This function forwards every /api/... request from the
-   Cloudflare Pages frontend to the permanent Render backend,
-   stripping the host/origin so CORS works correctly.
-═══════════════════════════════════════════════════════ */
+const DEFAULT_ORIGIN = "https://trynex-api.onrender.com";
+const REQUEST_TIMEOUT_MS = 12_000;
+const RETRYABLE_STATUSES = new Set([502, 503, 504]);
+const SAFE_PUBLIC_PREFIXES = [
+  "/products",
+  "/categories",
+  "/mockups",
+  "/public-stats",
+  "/blog",
+  "/testimonials",
+  "/settings",
+  "/health",
+  "/healthz",
+  "/readyz",
+];
 
-const RENDER_BACKEND = "https://trynex-api.onrender.com";
+interface GatewayEnv {
+  API_URL?: string;
+  API_ORIGIN?: string;
+  TRYNEX_API_URL?: string;
+  API_ORIGINS?: string;
+}
 
-export const onRequest: PagesFunction<{
-  API_URL: string;
-}> = async ({ request, env, params }) => {
-  const apiUrl = env.API_URL || RENDER_BACKEND;
+function getOrigins(env: GatewayEnv): string[] {
+  const raw = env.API_ORIGINS || env.API_URL || env.API_ORIGIN || env.TRYNEX_API_URL || DEFAULT_ORIGIN;
+  const origins = raw
+    .split(",")
+    .map((value) => value.trim().replace(/\/$/, ""))
+    .filter(Boolean);
+  return [...new Set(origins)];
+}
 
-  // Reconstruct the path from wildcard params
-  const pathSegments = (params["path"] as string[] | string) ?? [];
-  const pathStr = Array.isArray(pathSegments) ? pathSegments.join("/") : pathSegments;
+function isSafePublicRead(method: string, path: string, request: Request): boolean {
+  if (method !== "GET" && method !== "HEAD") return false;
+  if (request.headers.get("authorization") || request.headers.get("cookie")) return false;
+  return SAFE_PUBLIC_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
+}
 
+function corsHeaders(origin: string): Headers {
+  const headers = new Headers();
+  headers.set("Access-Control-Allow-Origin", origin);
+  headers.set("Access-Control-Allow-Credentials", "true");
+  headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Idempotency-Key");
+  headers.set("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS");
+  headers.set("Vary", "Origin");
+  return headers;
+}
+
+function makeTargetUrl(origin: string, path: string, search: string): URL {
+  return new URL(`/api/${path}${search}`, `${origin}/`);
+}
+
+export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
+  const { request, env, params } = context;
   const originalUrl = new URL(request.url);
-  const targetUrl = new URL(`/api/${pathStr}${originalUrl.search}`, apiUrl);
+  const pathSegments = (params["path"] as string[] | string) ?? [];
+  const path = Array.isArray(pathSegments) ? pathSegments.join("/") : pathSegments;
+  const method = request.method.toUpperCase();
+  const apiPath = `/${path}`;
+  const safeRead = isSafePublicRead(method, apiPath, request);
+  const origin = originalUrl.origin;
+  const responseCors = corsHeaders(origin);
+  const edgeCache = (globalThis as { caches?: { default?: Cache } }).caches?.default;
+  const cacheable = safeRead && method === "GET" && !originalUrl.searchParams.has("search");
+  const cacheKeyUrl = new URL(originalUrl.toString());
+  cacheKeyUrl.searchParams.set("_trynex_origin", origin);
+  const cacheKey = new Request(cacheKeyUrl.toString(), { method: "GET" });
 
-  // Forward the request, stripping host/origin to avoid CORS preflight issues
-  const headers = new Headers(request.headers);
-  headers.set("Host", new URL(apiUrl).host);
-  headers.delete("origin");
-  headers.delete("referer");
-
-  const proxyRequest = new Request(targetUrl.toString(), {
-    method: request.method,
-    headers,
-    body: ["GET", "HEAD"].includes(request.method) ? undefined : request.body,
-    redirect: "follow",
-  });
-
-  try {
-    const response = await fetch(proxyRequest);
-
-    // Forward the response, adding CORS headers for the Pages domain
-    const responseHeaders = new Headers(response.headers);
-    responseHeaders.set("Access-Control-Allow-Origin", originalUrl.origin);
-    responseHeaders.set("Access-Control-Allow-Credentials", "true");
-    responseHeaders.set("Vary", "Origin");
-
-    return new Response(response.body, {
-      status: response.status,
-      statusText: response.statusText,
-      headers: responseHeaders,
-    });
-  } catch (err) {
-    return new Response(
-      JSON.stringify({ error: "Failed to reach API backend", detail: String(err) }),
-      { status: 502, headers: { "Content-Type": "application/json" } }
-    );
+  if (cacheable && edgeCache) {
+    const cached = await edgeCache.match(cacheKey);
+    if (cached) {
+      const cachedHeaders = new Headers(cached.headers);
+      responseCors.forEach((value, key) => cachedHeaders.set(key, value));
+      cachedHeaders.set("X-TryNex-Edge-Cache", "HIT");
+      return new Response(cached.body, { status: cached.status, statusText: cached.statusText, headers: cachedHeaders });
+    }
   }
+
+  if (method === "OPTIONS") {
+    responseCors.set("Cache-Control", "public, max-age=600");
+    return new Response(null, { status: 204, headers: responseCors });
+  }
+
+  const origins = getOrigins(env);
+  const candidates = safeRead ? origins : origins.slice(0, 1);
+  let lastStatus = 503;
+  let lastError = "No API origin responded";
+
+  for (const apiOrigin of candidates) {
+    const targetUrl = makeTargetUrl(apiOrigin, path, originalUrl.search);
+    const headers = new Headers(request.headers);
+    headers.set("Host", new URL(apiOrigin).host);
+    headers.delete("origin");
+    headers.delete("referer");
+
+    const requestInit: RequestInit & { duplex?: "half" } = {
+      method,
+      headers,
+      body: method === "GET" || method === "HEAD" ? undefined : request.body,
+      redirect: "follow",
+    };
+    if (requestInit.body) requestInit.duplex = "half";
+    const proxyRequest = new Request(targetUrl.toString(), requestInit);
+
+    try {
+      const response = await fetch(proxyRequest, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+      lastStatus = response.status;
+      if (safeRead && RETRYABLE_STATUSES.has(response.status)) {
+        lastError = `Origin ${apiOrigin} returned ${response.status}`;
+        continue;
+      }
+
+      const responseHeaders = new Headers(response.headers);
+      responseCors.forEach((value, key) => responseHeaders.set(key, value));
+      responseHeaders.set("X-TryNex-Origin", new URL(apiOrigin).host);
+      if (safeRead && response.ok) {
+        responseHeaders.set("Cache-Control", "public, max-age=10, s-maxage=30, stale-while-revalidate=60");
+      }
+
+      if (cacheable && edgeCache && response.ok) {
+        responseHeaders.set("X-TryNex-Edge-Cache", "MISS");
+      }
+      const output = new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: responseHeaders,
+      });
+      if (cacheable && edgeCache && response.ok) {
+        const waitUntil = (context as unknown as { waitUntil?: (promise: Promise<unknown>) => void }).waitUntil;
+        const cacheCopy = output.clone();
+        const write = edgeCache.put(cacheKey, cacheCopy).catch(() => undefined);
+        if (waitUntil) waitUntil(write);
+        else await write;
+      }
+      return output;
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : String(error);
+      if (!safeRead) break;
+    }
+  }
+
+  const failed = new Headers(responseCors);
+  failed.set("Content-Type", "application/json");
+  failed.set("Cache-Control", "no-store");
+  return new Response(
+    JSON.stringify({ error: "api_unavailable", message: "The API is temporarily unavailable.", status: lastStatus, detail: lastError }),
+    { status: 503, headers: failed },
+  );
 };
