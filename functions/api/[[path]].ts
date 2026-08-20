@@ -44,7 +44,10 @@ function getOrigins(env: GatewayEnv): string[] {
 
 function isSafePublicRead(method: string, path: string, request: Request): boolean {
   if (method !== "GET" && method !== "HEAD") return false;
-  if (request.headers.get("authorization") || request.headers.get("cookie")) return false;
+  // A browser session cookie does not make an allowlisted catalog/health read
+  // a mutation. Authorization-bearing requests remain origin-pinned because
+  // they may be user-specific or otherwise unsafe to replay across standbys.
+  if (request.headers.get("authorization")) return false;
   return SAFE_PUBLIC_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
 }
 
@@ -82,7 +85,10 @@ export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
   const origin = originalUrl.origin;
   const responseCors = corsHeaders(origin);
   const edgeCache = (globalThis as { caches?: { default?: Cache } }).caches?.default;
-  const cacheable = safeRead && method === "GET" && !originalUrl.searchParams.has("search");
+  const cacheable = safeRead
+    && method === "GET"
+    && !request.headers.get("cookie")
+    && !originalUrl.searchParams.has("search");
   const cacheKeyUrl = new URL(originalUrl.toString());
   cacheKeyUrl.searchParams.set("_trynex_origin", origin);
   const cacheKey = new Request(cacheKeyUrl.toString(), { method: "GET" });
@@ -113,6 +119,7 @@ export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
     headers.set("Host", new URL(apiOrigin).host);
     headers.delete("origin");
     headers.delete("referer");
+    if (safeRead) headers.delete("cookie");
 
     const requestInit: RequestInit & { duplex?: "half" } = {
       method,
