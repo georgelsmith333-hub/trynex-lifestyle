@@ -1,4 +1,4 @@
-import { Router, type IRouter } from "express";
+import { Router, type IRouter, type Request, type Response } from "express";
 import { sql } from "drizzle-orm";
 import { db } from "@workspace/db";
 import { getConfiguredGoogleClientId } from "./auth";
@@ -116,11 +116,11 @@ router.get("/health/liveness", (_req, res) => {
   });
 });
 
-// ── GET /api/health/readiness ─────────────────────────────────────────────
+// ── GET /api/health/readiness and /api/readyz ──────────────────────────────
 // Readiness probe — checks that the API can serve real requests by
-// pinging the database. External monitors should hit this endpoint
-// every 30-60 seconds.
-router.get("/health/readiness", async (_req, res) => {
+// pinging the database. Keep both paths as aliases because the gateway,
+// monitors, and older deployment documentation use both contracts.
+const readinessHandler = async (_req: Request, res: Response) => {
   let dbOk = false;
   let dbLatencyMs = 0;
   try {
@@ -146,6 +146,9 @@ router.get("/health/readiness", async (_req, res) => {
     backupSyncEnabled: process.env.BACKUP_SYNC_ENABLED === "true",
     timestamp: new Date().toISOString(),
   });
-});
+};
+
+router.get("/health/readiness", readinessHandler);
+router.get("/readyz", readinessHandler);
 
 export default router;
