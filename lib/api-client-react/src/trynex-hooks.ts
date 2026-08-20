@@ -2,6 +2,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { UseQueryOptions } from "@tanstack/react-query";
 import { customFetch } from "./custom-fetch";
 
+// Public reads may briefly fail while a free-tier standby wakes up. Keep the
+// retry bounded and GET-only; mutations remain on their explicit mutation paths.
+const PUBLIC_READ_RETRY = 3;
+const PUBLIC_READ_RETRY_DELAY = (attemptIndex: number) => Math.min(1000 * 2 ** attemptIndex, 5000);
+
 // ─── Shared types (generated/api.ts is a skeleton; define types here) ──────
 export interface Product {
   id: number;
@@ -374,8 +379,10 @@ export interface BlogSettings {
 export const useGetSettings = (_opts?: ReqOpts) => {
   return useQuery({
     queryKey: ["/api/settings"],
-    queryFn: () => customFetch<SiteSettings>("/api/settings"),
+    queryFn: ({ signal }) => customFetch<SiteSettings>("/api/settings", { signal }),
     staleTime: 30 * 1000,
+    retry: PUBLIC_READ_RETRY,
+    retryDelay: PUBLIC_READ_RETRY_DELAY,
     refetchOnMount: "always",
     refetchOnWindowFocus: true,
   });
@@ -420,11 +427,16 @@ export const useTrynexListProducts = (
   if (params?.page) searchParams.set("page", String(params.page));
   const qs = searchParams.toString();
   const url = `/api/products${qs ? `?${qs}` : ""}`;
-  const customKey = (opts as { query?: { queryKey?: unknown } })?.query?.queryKey;
-  return useQuery({
+  type ProductsResponse = { products: Product[]; total?: number; page?: number; limit?: number; totalPages?: number };
+  const queryOptions = ((opts as { query?: Partial<UseQueryOptions<ProductsResponse>> })?.query ?? {}) as Partial<UseQueryOptions<ProductsResponse>>;
+  const customKey = queryOptions.queryKey;
+  return useQuery<ProductsResponse>({
+    ...queryOptions,
     queryKey: customKey ? (customKey as unknown[]) : ["/api/products", params],
-    queryFn: () => customFetch<{ products: Product[]; total?: number; page?: number; limit?: number; totalPages?: number }>(url),
-    staleTime: 60 * 1000,
+    queryFn: ({ signal }) => customFetch<ProductsResponse>(url, { signal }),
+    staleTime: queryOptions.staleTime ?? 60 * 1000,
+    retry: queryOptions.retry ?? PUBLIC_READ_RETRY,
+    retryDelay: queryOptions.retryDelay ?? PUBLIC_READ_RETRY_DELAY,
   });
 };
 
@@ -490,8 +502,10 @@ export const useToggleProductFeatured = (opts?: ReqOpts) => {
 export const useTrynexListCategories = (_opts?: ReqOpts) => {
   return useQuery({
     queryKey: ["/api/categories"],
-    queryFn: () => customFetch<{ categories: Category[] }>("/api/categories"),
+    queryFn: ({ signal }) => customFetch<{ categories: Category[] }>("/api/categories", { signal }),
     staleTime: 5 * 60 * 1000,
+    retry: PUBLIC_READ_RETRY,
+    retryDelay: PUBLIC_READ_RETRY_DELAY,
   });
 };
 
@@ -538,8 +552,10 @@ export const useDeleteCategory = (opts?: ReqOpts) => {
 export const useGetTestimonials = () => {
   return useQuery({
     queryKey: ["/api/testimonials"],
-    queryFn: () => customFetch<{ testimonials: Testimonial[] }>("/api/testimonials"),
+    queryFn: ({ signal }) => customFetch<{ testimonials: Testimonial[] }>("/api/testimonials", { signal }),
     staleTime: 5 * 60 * 1000,
+    retry: PUBLIC_READ_RETRY,
+    retryDelay: PUBLIC_READ_RETRY_DELAY,
   });
 };
 
