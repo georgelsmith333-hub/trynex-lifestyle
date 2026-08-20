@@ -45,6 +45,9 @@ router.get("/healthz", async (_req, res) => {
     redis: redisMode,
     ...(redisDetail ? { redis_detail: redisDetail } : {}),
     storage: storageBackend,
+    runtimeRole: process.env.TRYNEX_RUNTIME_ROLE ?? "primary",
+    schedulerEnabled: process.env.SCHEDULER_ENABLED !== "false",
+    backupSyncEnabled: process.env.BACKUP_SYNC_ENABLED === "true",
     ts: new Date().toISOString(),
   });
 });
@@ -109,6 +112,7 @@ router.get("/health/liveness", (_req, res) => {
     status: "ok",
     timestamp: new Date().toISOString(),
     uptime: Math.floor(process.uptime()),
+    runtimeRole: process.env.TRYNEX_RUNTIME_ROLE ?? "primary",
   });
 });
 
@@ -137,6 +141,9 @@ router.get("/health/readiness", async (_req, res) => {
     dbLatencyMs,
     uptime: Math.floor(process.uptime()),
     memoryMB: Math.round(process.memoryUsage().rss / 1024 / 1024),
+    runtimeRole: process.env.TRYNEX_RUNTIME_ROLE ?? "primary",
+    schedulerEnabled: process.env.SCHEDULER_ENABLED !== "false",
+    backupSyncEnabled: process.env.BACKUP_SYNC_ENABLED === "true",
     timestamp: new Date().toISOString(),
   });
 });
