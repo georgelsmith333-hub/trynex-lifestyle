@@ -67,9 +67,15 @@ export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
   const originalUrl = new URL(request.url);
   const pathSegments = (params["path"] as string[] | string) ?? [];
   const rawPath = Array.isArray(pathSegments) ? pathSegments.join("/") : pathSegments;
-  // Pages may provide either "products" or "api/products" here depending
-  // on whether the Function is mounted under the /api directory.
-  const path = rawPath.replace(/^\/?api(?:\/|$)/i, "").replace(/^\/+/, "");
+  // The request pathname is authoritative for Pages root catch-all Functions;
+  // params.path may be empty or may include the /api prefix depending on the
+  // runtime route matcher. Keep params only as a compatibility fallback.
+  const pathnamePath = originalUrl.pathname
+    .replace(/^\/+/, "")
+    .replace(/^api(?:\/|$)/i, "")
+    .replace(/^\/+/, "");
+  const parameterPath = rawPath.replace(/^\/?api(?:\/|$)/i, "").replace(/^\/+/, "");
+  const path = pathnamePath || parameterPath;
   const method = request.method.toUpperCase();
   const apiPath = `/${path}`;
   const safeRead = isSafePublicRead(method, apiPath, request);
