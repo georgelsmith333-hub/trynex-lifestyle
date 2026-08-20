@@ -1,67 +1,111 @@
 # TryNex Three-Render Implementation Evidence
 
-**Branch:** `hardening/three-render-implementation-2026-08-21`  
-**Commits:** `ef27b0b3`, `5abc1f4c`, `b51c855d` — implementation hardening, evidence, and Render API contract notes  
-**Scope:** Render 2 additive standby created and verified; Render 1 preserved; Render 3 and public Cloudflare failover not configured.
+**Date:** 2026-08-21  
+**Evidence owner:** Manus AI  
+**Scope:** Production hardening, Cloudflare Pages gateway, Render 1/2/3 coordination, and live customer-surface verification.
 
-## Verified locally
+## Executive conclusion
 
-| Gate | Status | Evidence |
+The three-Render compute topology is now provisioned and the public safe-read gateway is live. Render 1 remains the preserved existing primary service and is currently suspended by Render after exceeding its workspace bandwidth allowance. Render 2 is a live standby, Render 3 is a live DR standby, and both connect to the existing canonical Neon data path without creating a new production database. The public storefront is currently serving catalog and health responses through Render 2 while Render 1 is suspended.
+
+The architecture is **not** three independent e-commerce writers. Render 1 remains the sole production write authority when active. Render 2 and Render 3 reject all `POST`, `PUT`, `PATCH`, and `DELETE` requests through runtime-role enforcement, have schedulers disabled, and have full backup synchronization disabled. Cloudflare Pages performs ordered safe-read failover only; it does not replay mutations to a later origin.
+
+> **Current release result:** browser-safe public read failover is **VERIFIED**; mutation non-replay and standby write blocking are **VERIFIED**; Render 3 public selection has not been forced because Render 2 is healthy; the mockup API is reachable but currently returns an empty payload and therefore remains **PARTIALLY VERIFIED**.
+
+## Implemented topology
+
+| Environment | Service | Current role | Direct live evidence | Writes | Scheduler | Full backup sync |
+|---|---|---|---|---|---|---|
+| Render 1 | `trynex-api` | Existing primary, currently suspended | Render suspension response; service preserved and not deleted | Sole authority when active | Existing primary owner when restored; hardening branch still needs coordinated deployment after restoration | Disabled in the hardened contract; Render 1 must be updated before reactivation |
+| Render 2 | `trynex-api-standby-2` | Secondary standby | Readiness returned `status=ok`, `db=true`, `runtimeRole=standby` | Rejected with `standby_read_only` by the hardened runtime | Disabled | Disabled |
+| Render 3 | `trynex-api-standby-3` | Tertiary DR standby | Readiness returned `status=ok`, `db=true`, `runtimeRole=dr` | Rejected with `standby_read_only` by the hardened runtime | Disabled | Disabled |
+
+Render 2 readiness was directly verified at 22:04:26 UTC with `dbLatencyMs=59`, `schedulerEnabled=false`, and `backupSyncEnabled=false`. Render 3 readiness was directly verified at 22:04:38 UTC with the same disabled-workload controls and `runtimeRole=dr`. These direct probes also woke both free-tier standby services before public gateway verification.
+
+## Cloudflare Pages gateway release
+
+The active production Pages project is `trynex-lifestyle-shop`, connected to the `main` branch of `georgelsmith333-hub/trynex-lifestyle`. Its production `API_ORIGINS` is the ordered list below:
+
+```text
+https://trynex-api.onrender.com,
+https://trynex-api-standby-2.onrender.com,
+https://trynex-api-standby-3.onrender.com
+```
+
+The final production deployment was `f12ed021`, built successfully from commit `1b241b72f87aebd6b7b77e78d1140b40105a1fa5` and aliased to `https://www.trynexshop.com`. The deployment completed its queued, initialize, clone, build, and deploy stages successfully at 22:18:25 UTC.
+
+Three production gateway corrections were required before the public failover became functional. The first corrected the wrong repository path by deploying the root `functions/api/[[path]].ts`. The second normalized the root Pages route parameter. The third derived the route from `request.url.pathname`, because the root catch-all did not reliably populate `params.path`. The final correction recognized that normal storefront cookies must not disable safe-read failover; it preserved Authorization pinning, disabled caching for cookie-bearing requests, and stripped cookies before forwarding allowlisted public reads.
+
+## Public browser verification
+
+The final probe was executed from the actual storefront browser session, including its ordinary cookies. This is stronger than a build-only check because it exercises the same public origin and browser request shape used by customers.
+
+| Public request | Result | Evidence |
+|---|---:|---|
+| `GET /api/products` | **VERIFIED — HTTP 200** | `X-TryNex-Origin: trynex-api-standby-2.onrender.com`; `total=70`; `totalPages=6`; first page count `12` |
+| `GET /api/health/readiness` | **VERIFIED — HTTP 200** | Served by Render 2; JSON reported `db=true`, `runtimeRole=standby`, `schedulerEnabled=false`, `backupSyncEnabled=false` |
+| `GET /api/health/liveness` | **VERIFIED — HTTP 200** | Served by Render 2; JSON reported `runtimeRole=standby` |
+| `GET /api/mockups` | **PARTIALLY VERIFIED — HTTP 200** | Served by Render 2, but the current response payload is empty (`count=0`) |
+| `OPTIONS /api/products` | **VERIFIED — HTTP 204** | Answered at the Cloudflare edge with the expected CORS headers and no origin call |
+| `POST /api/orders` | **VERIFIED — protected** | Remained pinned to suspended Render 1 and returned HTTP 503 with `x-render-routing: suspend-by-user`; no replay reached Render 2 or Render 3 |
+
+The public homepage was reloaded after the final deployment and no longer displayed `The catalogue could not load right now`. The full catalogue route rendered live product cards across T-shirts, bottles, long sleeves, caps, mugs, and hoodies. The API reports 70 products, while the UI currently renders 50 products per page with `Previous 1 2 Next`; the apparent “70 versus 20/50” discrepancy is a pagination/display-label issue, not missing API rows. A clearer label such as `Showing 50 of 70 products` would reduce customer confusion.
+
+## Customer-surface verification
+
+The public `/products` route rendered category filters, search, sort, price filters, availability filtering, pagination, product cards, image paths, and family coverage. The product-detail route for Birthday Celebration Tee rendered its image, price, fit variants, sizes, colors, quantity controls, Add to Bag, WhatsApp order, product details, reviews, bundle, and related products.
+
+The Design Studio route rendered its editor with Front, Back, L.Sleeve, R.Sleeve, and Neck controls; eight garment colors; sizes XS through XXXL; upload, text, AI Art, layers, templates, QR, export, Print Zone, Texture, 3D Preview, and Add to Cart controls. Switching to Back changed the URL to `?view=back`, updated the heading, and rendered a nonblank garment canvas. The studio surface is therefore **VERIFIED as available and interactive**. This session did not claim that every mockup family is photorealistic or that every generated asset is visually perfect.
+
+The cart regression verified required validation and successful addition. Clicking Add to Bag without a size produced `Please select a size`. Selecting size M and adding the product changed the header to `Cart (1)`, displayed `Added to Bag!`, and exposed Checkout. The cart drawer preserved the product and selected size. Checkout opened `/checkout` with delivery fields, guest checkout, optional order notes, payment-step navigation, and an order summary. No personal data was entered, no payment was initiated, and no real order was submitted.
+
+## Resource and quota hardening
+
+The resource audit identified the recurring 30-minute full Neon mirror from `dbBackupSync.ts`—copying all tables to multiple targets—as the leading bandwidth suspect behind the Render 5 GB+ suspension. Additional contributors included uncached API-proxied binary traffic, polling, and response paths that were not sufficiently bounded. R2 is not treated as an unlimited replacement for Render or Pages.
+
+The hardening changes reduce systemic risk without multiplying the production write surface:
+
+| Risk | Hardening control |
+|---|---|
+| Duplicate order or payment writes | Standby runtime-role middleware rejects all mutating methods; Cloudflare never replays mutations |
+| Duplicate schedulers and workers | `SCHEDULER_ENABLED=false` on Render 2/3 |
+| Repeated full database mirrors | `BACKUP_SYNC_ENABLED=false` by default and manual backup route blocked unless explicitly enabled |
+| Browser reads pinned to suspended primary | Cloudflare safe-read allowlist now uses the actual request pathname and tolerates ordinary storefront cookies |
+| Edge cache leakage | Cookie-bearing safe reads are not cached; cookies are stripped before forwarding |
+| Unbounded origin retry | Ordered origins and bounded retryable statuses are used; no round-robin writes |
+| Rollback risk | Prior Pages deployment `40f6f6f5` remains preserved as the prior production target; the final deployment is separately identified as `f12ed021` |
+
+The three environments do not create a guaranteed pooled 15 GB capacity. Separate free-tier workspaces may provide separate allowances, but the system must remain efficient even if only one origin is active. The most important resource fix is reducing duplicate and uncached traffic, not merely adding Render services.
+
+## Evidence classification and remaining risks
+
+| Area | Classification | Explanation |
 |---|---|---|
-| Isolated source branch | **VERIFIED** | Branch created from verified `main`; working tree was clean after commit. |
-| API TypeScript build | **VERIFIED** | `pnpm exec tsc -b lib/db artifacts/api-server --force` passed. |
-| API production bundle | **VERIFIED** | `pnpm --filter @workspace/api-server build` passed; output `dist/index.mjs` generated. |
-| API tests | **VERIFIED** | 4 test files, 14 tests passed, including runtime-role policy tests. |
-| Storefront typecheck | **VERIFIED** | `pnpm --filter @workspace/trynex-storefront typecheck` passed. |
-| Storefront production build | **VERIFIED** | Build passed; existing large-chunk warning and approximately 342 MiB service-worker precache remain. |
-| Pages gateway typecheck | **VERIFIED** | Dedicated TypeScript gate passed against a minimal Pages runtime declaration. |
-| Pages gateway behavior | **VERIFIED** | 3 regression tests passed: safe-read failover, mutation non-replay, and edge CORS preflight. |
-| Standby write protection | **VERIFIED** | `standby` and `dr` roles reject POST/PUT/PATCH/DELETE; primary and explicitly promoted roles remain writable in the pure policy tests. |
-| Full mirror protection | **VERIFIED LOCALLY** | Scheduled backup sync is disabled unless `BACKUP_SYNC_ENABLED=true`; manual sync returns a controlled conflict response while disabled. |
-| Health role visibility | **VERIFIED IN SOURCE** | Health and readiness responses include non-secret runtime role and scheduler/backup flags. |
+| Render 2 direct readiness and database access | **VERIFIED** | HTTP 200-equivalent readiness with `db=true`, standby role, scheduler and backup disabled |
+| Render 3 direct readiness and DR controls | **VERIFIED** | HTTP 200-equivalent readiness with `db=true`, DR role, scheduler and backup disabled |
+| Public safe-read failover while Render 1 is suspended | **VERIFIED** | Browser catalog and health reads served by Render 2 with `X-TryNex-Origin` evidence |
+| Public mutation non-replay | **VERIFIED** | POST stayed on Render 1 and returned a truthful 503; no standby write attempt |
+| Cloudflare CORS preflight | **VERIFIED** | OPTIONS returned 204 at the edge |
+| Storefront catalog and six-family coverage | **VERIFIED** | 70 API total, 50 first-page cards, second-page pagination, family filters and visible image paths |
+| Design Studio availability and view controls | **VERIFIED** | Editor, controls, Back view, colors, sizes, upload/export surfaces loaded |
+| Full image/mockup quality across every variant | **UNVERIFIED** | The mockup endpoint is reachable but empty, and this evidence does not claim photorealistic parity |
+| Public Render 3 selection | **UNVERIFIED** | Render 2 is healthy, so the ordered gateway has not naturally advanced to Render 3 |
+| Real order creation and payment | **BLOCKED by safety boundary** | No real customer order or payment was created during verification |
+| Render 1 restoration on hardened code | **BLOCKED until suspension reset/recovery** | Render 1 was preserved but not modified while suspended; its return must be coordinated with the hardening branch and primary restoration gates |
 
-## Local changes in the commit
+The principal operational risks are free-tier cold starts, Render 1 remaining suspended until its allowance resets or the service is restored, empty mockup metadata on the standby-backed API, and the need to deploy the hardened runtime contract to Render 1 before it resumes as the primary. A future controlled failover test should temporarily make Render 2 unavailable or use a non-production preview to prove Render 3 selection without changing the public production origin order.
 
-The API now has a runtime-role guard. Render 2 and Render 3 can be deployed with `TRYNEX_RUNTIME_ROLE=standby` or `dr` and will reject direct mutations even if a caller bypasses Cloudflare. Render 1 preserves primary behavior by default; explicit promotion uses `TRYNEX_RUNTIME_ROLE=promoted` and remains an operator-controlled action.
+## Release and rollback record
 
-The in-process scheduler can be disabled with `SCHEDULER_ENABLED=false`, which is required on passive standby services. The legacy full-database mirror is disabled unless `BACKUP_SYNC_ENABLED=true`, preventing the known 30-minute four-target full-copy workload from silently multiplying across three services. The mirror has not yet been replaced by a measured incremental system; therefore the flag must remain false until that separate design is implemented and tested.
+The main branch now contains the gateway corrections through commit `1b241b72`. The earlier successful production deployments `40f6f6f5` and `6f0ead27` remain useful rollback and diagnostic references. No Render service was deleted, no new Neon database was created, no production writer was added, and no credential was written to source control or this document.
 
-The Pages gateway accepts an ordered `API_ORIGINS` list, handles CORS preflight at the edge, fails over only allowlisted unauthenticated public reads after bounded retryable failures, adds short public cache headers and Cache API storage for safe GETs, and never replays mutations to secondary or tertiary origins.
+## References
 
-## Blocked or not yet verified
-
-| Gate | Status | Reason |
-|---|---|---|
-| Render 1 live recovery | **BLOCKED** | Current Render dashboard/browser session returned a blank page; the service remains known to be suspended from the prior audit. |
-| Render 2 creation and deployment | **VERIFIED** | Additive service `srv-da3lhbrbc2fs73aa5opg` is live at `https://trynex-api-standby-2.onrender.com` on the tested branch; no database resource was created. |
-| Render 3 creation | **BLOCKED** | Same workspace/account access limitation; no third workspace credentials or visible session are available. |
-| Live Neon role mapping | **PARTIALLY VERIFIED** | Four bindings are known from source, but live database identity, row counts, and transfer usage were not available through the current connectors. |
-| Live Cloudflare API gateway deployment | **NOT DEPLOYED** | The gateway is committed locally only; production Pages still uses the old single-origin proxy. |
-| Live failover tests | **BLOCKED** | Require three reachable Render origins and a deployed Pages gateway. |
-| Live customer journey through Cloudflare | **BLOCKED** | Production Cloudflare still points to the suspended Render 1; public failover has not been deployed. Direct Render 2 health/catalog checks passed. |
-
-## Required next action
-
-Render 2 configuration and direct verification are complete. The next implementation action requiring external account access is Render 3 creation/configuration in a genuinely separate workspace. Public Cloudflare failover remains intentionally disabled until Render 3 is available and both standby origins have passed their independent gates. No new databases or production writers are part of the next step.
-
-Render 2 is now live and verified. Readiness returned HTTP 200 with `db=true`, `runtimeRole=standby`, `schedulerEnabled=false`, and `backupSyncEnabled=false`. Liveness returned HTTP 200. `GET /api/products` returned HTTP 200 with 70 total products, page 1 of 6, 12 products per page, and a 6,073-byte response. `GET /api/mockups` returned HTTP 200 with an empty list, which is a catalog-data observation requiring later mockup-route verification rather than a resilience failure. A harmless `POST /api/orders` probe returned HTTP 503 with `standby_read_only`; no order was created. The first deployment failed only because the service was initially created without the required database environment. After the protected Render 1 application contract and standby overrides were applied, the targeted redeploy built successfully and the service reported live at `https://trynex-api-standby-2.onrender.com`.
-
-## Render 2 provisioning update
-
-The user supplied a second-workspace credential and explicitly authorized starting Render 2. The credential validated read-only against the Render API and identified the separate workspace `tea-d7n82jegvqtc73angelg` (`it's workspace`). Its inventory contained one unrelated service, `va-api`; that service was not modified. An additive service named `trynex-api-standby-2` was created in the second workspace from the tested branch `hardening/three-render-implementation-2026-08-21`, using the Free plan, Oregon region, one instance, and `/api/health/readiness` as the health path. The service ID is `srv-da3lhbrbc2fs73aa5opg`, deployment ID `dep-da3lhc3bc2fs73aa5plg`, and public URL is `https://trynex-api-standby-2.onrender.com`.
-
-The new service currently has an empty environment-variable inventory, so it is not yet a verified usable standby. Applying environment variables safely requires the Render 1 production variable contract and secret values through protected access; no secret has been guessed, copied into source control, or written to logs. The Render 1 environment page was later loaded successfully in the authenticated browser. It confirmed the workspace is suspended after the 5 GB free-bandwidth allowance was exhausted and exposed the environment-variable editor with masked values. Visible non-secret keys include `ADMIN_JWT_SECRET`, `ADMIN_PASSWORD`, `ADMIN_SECRET_PASSWORD`, `ALLOW_DB_SCHEMA_REPAIR`, `ALLOWED_ORIGINS`, `API_BASE_URL`, `API_PUBLIC_URL`, `API_URL`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_KEYS_TOKEN`, `CORS_ORIGIN`, `DATABASE_ANALYTICS`, and `DATABASE_FAILOVER`. The values remained masked and were not copied. The environment export menu was opened, but the browser download history did not show a downloaded `.env` file; therefore no Render 1 secret file was obtained or transferred. A later return to the same page again produced a blank browser view after the initial page navigation, so the protected export route is unreliable in this session. A controlled DOM check confirmed the environment table was present, but the `Download .env` submenu item was not open; no secret value was read or accessed. A same-session read-only fetch to Render’s environment API returned HTTP 401 with zero keys, confirming that the dashboard session does not provide an API credential usable for protected environment transfer. A controlled page-side export was then triggered without reading the file contents, and the browser download history confirmed `trynex-api.env` was downloaded. The file was handled only as a protected temporary secret source, then removed after the Render 2 update; it was not committed, logged, or attached.
-
-## Render 3 provisioning update
-
-The user supplied a third-workspace credential and explicitly authorized proceeding after Render 2 verification. The credential validated read-only and identified workspace `tea-d7p6ovd7vvec73bv6o5g` (`My Workspace`, `itmedofficial2@gmail.com`). Its inventory contained one unrelated service, `aibay`; that service was not modified. An additive service named `trynex-api-standby-3` was created from the tested branch `hardening/three-render-implementation-2026-08-21`, using the Free plan, Oregon region, one instance, and `/api/health/readiness`, with no database resource. The service ID is `srv-da3luurm8hqs73cbt460`, initial deployment ID `dep-da3luvbm8hqs73cbt510`, and public URL is `https://trynex-api-standby-3.onrender.com`.
-
-The new Render 3 service requires the same protected application contract as Render 2 before it can be considered live. A controlled page-side export of the preserved Render 1 environment was triggered without reading its values; the export will be transferred privately, with standby overrides, and then removed after deployment. Render 1 remains untouched and public Cloudflare routing remains unchanged.
-
-The public storefront currently returns HTTP 200. Render 2 readiness and liveness return HTTP 200, its database is healthy, its role is `standby`, its scheduler and full mirror are disabled, and its catalog reports 70 products across 6 pages. Render 1 still returns HTTP 503 because the primary workspace remains suspended.
-
-## Render 3 verification update
-
-Render 3 is live and directly verified at `https://trynex-api-standby-3.onrender.com`. Its targeted deployment reached `live` after the initial no-environment deployment failed as expected with `DATABASE_URL must be set`; the protected contract redeploy then completed successfully. Readiness returned HTTP 200 with `db=true`, `runtimeRole=dr`, `schedulerEnabled=false`, and `backupSyncEnabled=false`. Liveness returned HTTP 200. `GET /api/products` returned HTTP 200 with 70 total products, page 1 of 6, 12 products per page, and a 6,073-byte response. `GET /api/mockups` returned HTTP 200 with an empty list, matching Render 2 and requiring later catalog/mockup-data verification. A harmless `POST /api/orders` probe returned HTTP 503 with `standby_read_only`; no order was created.
-
-The public storefront returned HTTP 200 during the pre-Render-3 check, but Render 1 still returned HTTP 503 because its primary workspace remains suspended. Cloudflare public routing has not been changed, so the storefront’s HTTP 200 shell must not be interpreted as full API availability. The three Render origins are now provisioned as Render 1 preserved primary, Render 2 standby, and Render 3 DR standby; public failover remains a separate release gate.
+[1]: https://trynex-lifestyle-shop.pages.dev/ "TryNex Lifestyle public storefront"
+[2]: https://trynex-lifestyle-shop.pages.dev/products "TryNex Lifestyle full catalogue"
+[3]: https://trynex-lifestyle-shop.pages.dev/design-studio "TryNex Lifestyle Design Studio"
+[4]: https://trynex-api-standby-2.onrender.com/api/health/readiness "Render 2 readiness endpoint"
+[5]: https://trynex-api-standby-3.onrender.com/api/health/readiness "Render 3 readiness endpoint"
+[6]: https://www.trynexshop.com/ "TryNexShop production alias"
+[7]: https://github.com/georgelsmith333-hub/trynex-lifestyle/commit/1b241b72f87aebd6b7b77e78d1140b40105a1fa5 "Final gateway hardening commit"
+[8]: https://github.com/georgelsmith333-hub/trynex-lifestyle/pull/14 "Cookie-aware safe-read failover pull request"
