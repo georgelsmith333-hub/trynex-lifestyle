@@ -1,0 +1,4259 @@
+{
+  "schema": "trynex-photoreal-mockup-manifest/v1",
+  "assetRoot": "/mockups/smart-v4",
+  "assetCount": 202,
+  "families": [
+    "cap",
+    "hoodie",
+    "longsleeve",
+    "mug",
+    "tshirt",
+    "waterbottle"
+  ],
+  "sourcePackage": "rebuilt canonical all-color candidate surfaces derived from corrected neutral bases; layered masters retained as source provenance",
+  "masterDeploymentStatus": "source-package-verified; master files are not browser-rendered and are not yet uploaded to production storage",
+  "assets": [
+    {
+      "family": "cap",
+      "color": "black",
+      "view": "back",
+      "sourceKitKey": "cap:black:back",
+      "assetPath": "/mockups/smart-v4/cap/black/back.png",
+      "sha256": "4339ae99717d9c14800b234dae11c1ee3e27cf9e852f3501012ed5c8b3624164",
+      "bytes": 1061389,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/back.psd",
+        "sha256": "1db3173bca18adda68cfeb35294702b9a2a3c70316b57cc6b1123cb0823cd446",
+        "bytes": 2592578,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "cap",
+      "color": "black",
+      "view": "front",
+      "sourceKitKey": "cap:black:front",
+      "assetPath": "/mockups/smart-v4/cap/black/front.png",
+      "sha256": "5e0cc40b50f5e42f51191764a51c1040ff58cffccf325622fc08d9451300bcb0",
+      "bytes": 1024155,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/front.psd",
+        "sha256": "cb99838cb91e1f58baa15b94392bdab8e71816b1a34390e9af0efa0d7bec5942",
+        "bytes": 3094953,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "cap",
+      "color": "forest",
+      "view": "back",
+      "sourceKitKey": "cap:forest:back",
+      "assetPath": "/mockups/smart-v4/cap/forest/back.png",
+      "sha256": "340cc95947ef6ce542cbf735187b5dad2ff0cd22eda710a8b695a2b7aa442aa5",
+      "bytes": 1203831,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/back.psd",
+        "sha256": "1db3173bca18adda68cfeb35294702b9a2a3c70316b57cc6b1123cb0823cd446",
+        "bytes": 2592578,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "cap",
+      "color": "forest",
+      "view": "front",
+      "sourceKitKey": "cap:forest:front",
+      "assetPath": "/mockups/smart-v4/cap/forest/front.png",
+      "sha256": "aa4f8d9b473873645f334ad08aa079bc4ae056dc287160e924f4fa09f4cfbecb",
+      "bytes": 1201125,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/front.psd",
+        "sha256": "cb99838cb91e1f58baa15b94392bdab8e71816b1a34390e9af0efa0d7bec5942",
+        "bytes": 3094953,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "cap",
+      "color": "grey",
+      "view": "back",
+      "sourceKitKey": "cap:grey:back",
+      "assetPath": "/mockups/smart-v4/cap/grey/back.png",
+      "sha256": "607c0219b1f6a4288955348c61de2f74a264f8c4694a6700e2467d5e246baa8e",
+      "bytes": 1153295,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/back.psd",
+        "sha256": "1db3173bca18adda68cfeb35294702b9a2a3c70316b57cc6b1123cb0823cd446",
+        "bytes": 2592578,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "cap",
+      "color": "grey",
+      "view": "front",
+      "sourceKitKey": "cap:grey:front",
+      "assetPath": "/mockups/smart-v4/cap/grey/front.png",
+      "sha256": "1ff67ed38f9c363a08ff1ce377f40e9ad2a1cf4290bf84b0497ea3b847f8ee2d",
+      "bytes": 1147174,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/front.psd",
+        "sha256": "cb99838cb91e1f58baa15b94392bdab8e71816b1a34390e9af0efa0d7bec5942",
+        "bytes": 3094953,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "cap",
+      "color": "maroon",
+      "view": "back",
+      "sourceKitKey": "cap:maroon:back",
+      "assetPath": "/mockups/smart-v4/cap/maroon/back.png",
+      "sha256": "06a484b631b1f27ff73ba13fcc7596b75e2d42bbdaaf0cda19926115c699cd0b",
+      "bytes": 1137086,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/back.psd",
+        "sha256": "1db3173bca18adda68cfeb35294702b9a2a3c70316b57cc6b1123cb0823cd446",
+        "bytes": 2592578,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "cap",
+      "color": "maroon",
+      "view": "front",
+      "sourceKitKey": "cap:maroon:front",
+      "assetPath": "/mockups/smart-v4/cap/maroon/front.png",
+      "sha256": "45a8b12fae6a41b5e12d96ad3107a96196f5c6f3957d10f89ef9da2a4b47b5c5",
+      "bytes": 1123523,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/front.psd",
+        "sha256": "cb99838cb91e1f58baa15b94392bdab8e71816b1a34390e9af0efa0d7bec5942",
+        "bytes": 3094953,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "cap",
+      "color": "navy",
+      "view": "back",
+      "sourceKitKey": "cap:navy:back",
+      "assetPath": "/mockups/smart-v4/cap/navy/back.png",
+      "sha256": "139daf0f377db08b7a32de702bb52a734de9a8ad294d1221312d2331515ff7b1",
+      "bytes": 1203224,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/back.psd",
+        "sha256": "1db3173bca18adda68cfeb35294702b9a2a3c70316b57cc6b1123cb0823cd446",
+        "bytes": 2592578,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "cap",
+      "color": "navy",
+      "view": "front",
+      "sourceKitKey": "cap:navy:front",
+      "assetPath": "/mockups/smart-v4/cap/navy/front.png",
+      "sha256": "b3e476a72d664d24560dcd18744a064bf9a19b82b7a439bd8a4d6841ed491dc0",
+      "bytes": 1198732,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/front.psd",
+        "sha256": "cb99838cb91e1f58baa15b94392bdab8e71816b1a34390e9af0efa0d7bec5942",
+        "bytes": 3094953,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "cap",
+      "color": "olive",
+      "view": "back",
+      "sourceKitKey": "cap:olive:back",
+      "assetPath": "/mockups/smart-v4/cap/olive/back.png",
+      "sha256": "6d1fb7d12dfd3b700442185e36bdddb7b7123bd0b6243cf1cbb11554c52adf6f",
+      "bytes": 1196610,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/back.psd",
+        "sha256": "1db3173bca18adda68cfeb35294702b9a2a3c70316b57cc6b1123cb0823cd446",
+        "bytes": 2592578,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "cap",
+      "color": "olive",
+      "view": "front",
+      "sourceKitKey": "cap:olive:front",
+      "assetPath": "/mockups/smart-v4/cap/olive/front.png",
+      "sha256": "a8b3f31811dd49c693bcfb6efa39d1b98bc2e9e3bb8b897aa270f08050c46842",
+      "bytes": 1191120,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/front.psd",
+        "sha256": "cb99838cb91e1f58baa15b94392bdab8e71816b1a34390e9af0efa0d7bec5942",
+        "bytes": 3094953,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "cap",
+      "color": "red",
+      "view": "back",
+      "sourceKitKey": "cap:red:back",
+      "assetPath": "/mockups/smart-v4/cap/red/back.png",
+      "sha256": "28bb8f4613afc8604e6fe73741310e68f8bd24b22bde9ffa3ff9d38a79e4a533",
+      "bytes": 1109172,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/back.psd",
+        "sha256": "1db3173bca18adda68cfeb35294702b9a2a3c70316b57cc6b1123cb0823cd446",
+        "bytes": 2592578,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "cap",
+      "color": "red",
+      "view": "front",
+      "sourceKitKey": "cap:red:front",
+      "assetPath": "/mockups/smart-v4/cap/red/front.png",
+      "sha256": "7acefc74954345fe8187b060e7aa89090b3a54988594fd26762c7bd5c3737e67",
+      "bytes": 1102026,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/front.psd",
+        "sha256": "cb99838cb91e1f58baa15b94392bdab8e71816b1a34390e9af0efa0d7bec5942",
+        "bytes": 3094953,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "cap",
+      "color": "white",
+      "view": "back",
+      "sourceKitKey": "cap:white:back",
+      "assetPath": "/mockups/smart-v4/cap/white/back.png",
+      "sha256": "fd400554b20942ab809d0f1484aa6581714dabfdb34013f99c48e16709009279",
+      "bytes": 1199575,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/back.psd",
+        "sha256": "1db3173bca18adda68cfeb35294702b9a2a3c70316b57cc6b1123cb0823cd446",
+        "bytes": 2592578,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "cap",
+      "color": "white",
+      "view": "front",
+      "sourceKitKey": "cap:white:front",
+      "assetPath": "/mockups/smart-v4/cap/white/front.png",
+      "sha256": "58158b23b45c906a2a1a5078f9343b95911d95915b2ffbe6e2b326240e9f2028",
+      "bytes": 1187128,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/front.psd",
+        "sha256": "cb99838cb91e1f58baa15b94392bdab8e71816b1a34390e9af0efa0d7bec5942",
+        "bytes": 3094953,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "black",
+      "view": "back",
+      "sourceKitKey": "hoodie:black:back",
+      "assetPath": "/mockups/smart-v4/hoodie/black/back.png",
+      "sha256": "0c5e2b7c01b3a3246f0d40371f435be10ebcc40ac30ff9410d3e53660ea795a4",
+      "bytes": 963094,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/back.psd",
+        "sha256": "991638164396d08fae3a1b827994aaa52b27a5953c343e62262a678139d4e3f2",
+        "bytes": 3607779,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "black",
+      "view": "front",
+      "sourceKitKey": "hoodie:black:front",
+      "assetPath": "/mockups/smart-v4/hoodie/black/front.png",
+      "sha256": "b872d385cac324d59f6b55bf25ec3120c282adad3ee71b59ec5243a063bb6bd6",
+      "bytes": 977214,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/front.psd",
+        "sha256": "06064f802e019e8d055bc6247736fa7af4b54832257e305298815f52d480f447",
+        "bytes": 3449709,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "black",
+      "view": "left-sleeve",
+      "sourceKitKey": "hoodie:black:left-sleeve",
+      "assetPath": "/mockups/smart-v4/hoodie/black/left-sleeve.png",
+      "sha256": "a0529ccd562c3a27e78768fe83e8b17ab1e4f6699f7d7a98fd5d484be1e79568",
+      "bytes": 163115,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/left-sleeve.psd",
+        "sha256": "80dc01b2624e115ae78c23179542e687201a8a8e66f4c50df36bf471fbe35a38",
+        "bytes": 2128080,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "black",
+      "view": "neck-label",
+      "sourceKitKey": "hoodie:black:neck-label",
+      "assetPath": "/mockups/smart-v4/hoodie/black/neck-label.png",
+      "sha256": "8297c822ecdfdd1c9d8363d88dd31b128fc59cf4735c765fb918e43b1fa0105f",
+      "bytes": 119451,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/neck-label.psd",
+        "sha256": "50cb3f1f496ba5751d77608d5be6b6db6d600ebfbb6657716fe3cca96255e393",
+        "bytes": 5286763,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "black",
+      "view": "right-sleeve",
+      "sourceKitKey": "hoodie:black:right-sleeve",
+      "assetPath": "/mockups/smart-v4/hoodie/black/right-sleeve.png",
+      "sha256": "82dbea68fc4728715c1b844a003b0d759b561232d4b7ea378594d0d7efd90491",
+      "bytes": 167528,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/right-sleeve.psd",
+        "sha256": "c7c321368a8dd517a230dee853b8f413743c6ea69319b9a2a2dc01b2ac639ba2",
+        "bytes": 2000808,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "burgundy",
+      "view": "back",
+      "sourceKitKey": "hoodie:burgundy:back",
+      "assetPath": "/mockups/smart-v4/hoodie/burgundy/back.png",
+      "sha256": "26fb5e016ba54fe8b42e7343ec1c01db2dbe93d32711021ca997ce4f03297dce",
+      "bytes": 1160822,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/back.psd",
+        "sha256": "991638164396d08fae3a1b827994aaa52b27a5953c343e62262a678139d4e3f2",
+        "bytes": 3607779,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "burgundy",
+      "view": "front",
+      "sourceKitKey": "hoodie:burgundy:front",
+      "assetPath": "/mockups/smart-v4/hoodie/burgundy/front.png",
+      "sha256": "1c9e1bae5b13f90d0b73732c0af1eba6f4c2cb1542aff75b6fffdb8d4be46a6b",
+      "bytes": 1160605,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/front.psd",
+        "sha256": "06064f802e019e8d055bc6247736fa7af4b54832257e305298815f52d480f447",
+        "bytes": 3449709,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "burgundy",
+      "view": "left-sleeve",
+      "sourceKitKey": "hoodie:burgundy:left-sleeve",
+      "assetPath": "/mockups/smart-v4/hoodie/burgundy/left-sleeve.png",
+      "sha256": "1c337ee63f059c53390c7cbd19437a7db20de9e045bc50954b0a5563d59a50e1",
+      "bytes": 236902,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/left-sleeve.psd",
+        "sha256": "80dc01b2624e115ae78c23179542e687201a8a8e66f4c50df36bf471fbe35a38",
+        "bytes": 2128080,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "burgundy",
+      "view": "neck-label",
+      "sourceKitKey": "hoodie:burgundy:neck-label",
+      "assetPath": "/mockups/smart-v4/hoodie/burgundy/neck-label.png",
+      "sha256": "c241c9189abe6884fcb08ea38010d41b1b576bd186dd5d4189de7acd19294ea3",
+      "bytes": 171733,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/neck-label.psd",
+        "sha256": "50cb3f1f496ba5751d77608d5be6b6db6d600ebfbb6657716fe3cca96255e393",
+        "bytes": 5286763,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "burgundy",
+      "view": "right-sleeve",
+      "sourceKitKey": "hoodie:burgundy:right-sleeve",
+      "assetPath": "/mockups/smart-v4/hoodie/burgundy/right-sleeve.png",
+      "sha256": "698f40c78be3af972c8e582d85950e728e5ec6fe0ec01ae72462ce5a1566434a",
+      "bytes": 238731,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/right-sleeve.psd",
+        "sha256": "c7c321368a8dd517a230dee853b8f413743c6ea69319b9a2a2dc01b2ac639ba2",
+        "bytes": 2000808,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "forest",
+      "view": "back",
+      "sourceKitKey": "hoodie:forest:back",
+      "assetPath": "/mockups/smart-v4/hoodie/forest/back.png",
+      "sha256": "035d567af78df6bfa96e6dcf3eb45f168ee8ea70e8c172499edf27167f98d6e8",
+      "bytes": 1161493,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/back.psd",
+        "sha256": "991638164396d08fae3a1b827994aaa52b27a5953c343e62262a678139d4e3f2",
+        "bytes": 3607779,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "forest",
+      "view": "front",
+      "sourceKitKey": "hoodie:forest:front",
+      "assetPath": "/mockups/smart-v4/hoodie/forest/front.png",
+      "sha256": "4278728d921787c11b5b217f8db87b1c0800be4c20578ca0178a4d69bfc70003",
+      "bytes": 1161518,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/front.psd",
+        "sha256": "06064f802e019e8d055bc6247736fa7af4b54832257e305298815f52d480f447",
+        "bytes": 3449709,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "forest",
+      "view": "left-sleeve",
+      "sourceKitKey": "hoodie:forest:left-sleeve",
+      "assetPath": "/mockups/smart-v4/hoodie/forest/left-sleeve.png",
+      "sha256": "bfbc5a6f137493c4b0e935042ca0a233a1ec5ea27ca3aa5e97150735ef3f5e66",
+      "bytes": 237753,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/left-sleeve.psd",
+        "sha256": "80dc01b2624e115ae78c23179542e687201a8a8e66f4c50df36bf471fbe35a38",
+        "bytes": 2128080,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "forest",
+      "view": "neck-label",
+      "sourceKitKey": "hoodie:forest:neck-label",
+      "assetPath": "/mockups/smart-v4/hoodie/forest/neck-label.png",
+      "sha256": "7b34b68e087922934672cedbe902d9e221defd0667074416856f6aa3804235f0",
+      "bytes": 172307,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/neck-label.psd",
+        "sha256": "50cb3f1f496ba5751d77608d5be6b6db6d600ebfbb6657716fe3cca96255e393",
+        "bytes": 5286763,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "forest",
+      "view": "right-sleeve",
+      "sourceKitKey": "hoodie:forest:right-sleeve",
+      "assetPath": "/mockups/smart-v4/hoodie/forest/right-sleeve.png",
+      "sha256": "0e1c989b127c320881cbcdf7e01b149b6af7dfd81812e7263c11b4072e034f27",
+      "bytes": 239534,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/right-sleeve.psd",
+        "sha256": "c7c321368a8dd517a230dee853b8f413743c6ea69319b9a2a2dc01b2ac639ba2",
+        "bytes": 2000808,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "grey",
+      "view": "back",
+      "sourceKitKey": "hoodie:grey:back",
+      "assetPath": "/mockups/smart-v4/hoodie/grey/back.png",
+      "sha256": "ac205d4170fba2375eb6b405978b5690b17fae1d86a0c6b3e4395cb4435d3ba5",
+      "bytes": 1114869,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/back.psd",
+        "sha256": "991638164396d08fae3a1b827994aaa52b27a5953c343e62262a678139d4e3f2",
+        "bytes": 3607779,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "grey",
+      "view": "front",
+      "sourceKitKey": "hoodie:grey:front",
+      "assetPath": "/mockups/smart-v4/hoodie/grey/front.png",
+      "sha256": "41ae6591df79c79b8bbd9f71b04b91b2fd474c6e8ea126951386d3c79a796331",
+      "bytes": 1109665,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/front.psd",
+        "sha256": "06064f802e019e8d055bc6247736fa7af4b54832257e305298815f52d480f447",
+        "bytes": 3449709,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "grey",
+      "view": "left-sleeve",
+      "sourceKitKey": "hoodie:grey:left-sleeve",
+      "assetPath": "/mockups/smart-v4/hoodie/grey/left-sleeve.png",
+      "sha256": "1c8cae5c7c88d7bd39466c0adf0e14d6758aae0e57c886854811354427c09715",
+      "bytes": 217973,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/left-sleeve.psd",
+        "sha256": "80dc01b2624e115ae78c23179542e687201a8a8e66f4c50df36bf471fbe35a38",
+        "bytes": 2128080,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "grey",
+      "view": "neck-label",
+      "sourceKitKey": "hoodie:grey:neck-label",
+      "assetPath": "/mockups/smart-v4/hoodie/grey/neck-label.png",
+      "sha256": "3adda226e9bae58ca068873c60750074d4a373fdfa91b6208a5ffa944bb9d689",
+      "bytes": 160269,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/neck-label.psd",
+        "sha256": "50cb3f1f496ba5751d77608d5be6b6db6d600ebfbb6657716fe3cca96255e393",
+        "bytes": 5286763,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "grey",
+      "view": "right-sleeve",
+      "sourceKitKey": "hoodie:grey:right-sleeve",
+      "assetPath": "/mockups/smart-v4/hoodie/grey/right-sleeve.png",
+      "sha256": "04423cc9f173b2a52ec6ffbeeaf2a02481fd1be1de263da56861b9f31dd0e02b",
+      "bytes": 219996,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/right-sleeve.psd",
+        "sha256": "c7c321368a8dd517a230dee853b8f413743c6ea69319b9a2a2dc01b2ac639ba2",
+        "bytes": 2000808,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "maroon",
+      "view": "back",
+      "sourceKitKey": "hoodie:maroon:back",
+      "assetPath": "/mockups/smart-v4/hoodie/maroon/back.png",
+      "sha256": "42a169a1e60cf97aa358a2d928805f328194ee0613d11b153bd917dfe1722fed",
+      "bytes": 1082608,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/back.psd",
+        "sha256": "991638164396d08fae3a1b827994aaa52b27a5953c343e62262a678139d4e3f2",
+        "bytes": 3607779,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "maroon",
+      "view": "front",
+      "sourceKitKey": "hoodie:maroon:front",
+      "assetPath": "/mockups/smart-v4/hoodie/maroon/front.png",
+      "sha256": "a01a58153de3b3677ff473518eaf1f36cc74fe980fbacc5de4daab409c86cde5",
+      "bytes": 1085575,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/front.psd",
+        "sha256": "06064f802e019e8d055bc6247736fa7af4b54832257e305298815f52d480f447",
+        "bytes": 3449709,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "maroon",
+      "view": "left-sleeve",
+      "sourceKitKey": "hoodie:maroon:left-sleeve",
+      "assetPath": "/mockups/smart-v4/hoodie/maroon/left-sleeve.png",
+      "sha256": "b19ac5be4b57ae0b090d27bff6dd59a794469e01d2c4616e2b882bd51ff279ac",
+      "bytes": 207998,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/left-sleeve.psd",
+        "sha256": "80dc01b2624e115ae78c23179542e687201a8a8e66f4c50df36bf471fbe35a38",
+        "bytes": 2128080,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "maroon",
+      "view": "neck-label",
+      "sourceKitKey": "hoodie:maroon:neck-label",
+      "assetPath": "/mockups/smart-v4/hoodie/maroon/neck-label.png",
+      "sha256": "10bd0c1f38d0251081e69efae1f7f730bc1003ed7447c592640df7fe1c9c27a8",
+      "bytes": 152379,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/neck-label.psd",
+        "sha256": "50cb3f1f496ba5751d77608d5be6b6db6d600ebfbb6657716fe3cca96255e393",
+        "bytes": 5286763,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "maroon",
+      "view": "right-sleeve",
+      "sourceKitKey": "hoodie:maroon:right-sleeve",
+      "assetPath": "/mockups/smart-v4/hoodie/maroon/right-sleeve.png",
+      "sha256": "26fc8a90dfcd2a77dc318b67c73691a2be9bfa0b2e47b40845498274d4fa7c84",
+      "bytes": 210147,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/right-sleeve.psd",
+        "sha256": "c7c321368a8dd517a230dee853b8f413743c6ea69319b9a2a2dc01b2ac639ba2",
+        "bytes": 2000808,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "navy",
+      "view": "back",
+      "sourceKitKey": "hoodie:navy:back",
+      "assetPath": "/mockups/smart-v4/hoodie/navy/back.png",
+      "sha256": "ccc20992fe3039a513a4ddf0e295a3efb2c6dbe68d0df708fe5fe79679eccd24",
+      "bytes": 1155292,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/back.psd",
+        "sha256": "991638164396d08fae3a1b827994aaa52b27a5953c343e62262a678139d4e3f2",
+        "bytes": 3607779,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "navy",
+      "view": "front",
+      "sourceKitKey": "hoodie:navy:front",
+      "assetPath": "/mockups/smart-v4/hoodie/navy/front.png",
+      "sha256": "13a01f4b74421f6a356812b027f5a0b83cbde2b6312519609999fc4154213584",
+      "bytes": 1154379,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/front.psd",
+        "sha256": "06064f802e019e8d055bc6247736fa7af4b54832257e305298815f52d480f447",
+        "bytes": 3449709,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "navy",
+      "view": "left-sleeve",
+      "sourceKitKey": "hoodie:navy:left-sleeve",
+      "assetPath": "/mockups/smart-v4/hoodie/navy/left-sleeve.png",
+      "sha256": "6dbd197257f134234171e40cfafbbef9abeb917c5f84cbc7c3207137d388c0af",
+      "bytes": 234963,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/left-sleeve.psd",
+        "sha256": "80dc01b2624e115ae78c23179542e687201a8a8e66f4c50df36bf471fbe35a38",
+        "bytes": 2128080,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "navy",
+      "view": "neck-label",
+      "sourceKitKey": "hoodie:navy:neck-label",
+      "assetPath": "/mockups/smart-v4/hoodie/navy/neck-label.png",
+      "sha256": "9767a3ccd2f9c6b796ef98dc910417913de58cae2b992c6ff088b31c531942d8",
+      "bytes": 170473,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/neck-label.psd",
+        "sha256": "50cb3f1f496ba5751d77608d5be6b6db6d600ebfbb6657716fe3cca96255e393",
+        "bytes": 5286763,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "navy",
+      "view": "right-sleeve",
+      "sourceKitKey": "hoodie:navy:right-sleeve",
+      "assetPath": "/mockups/smart-v4/hoodie/navy/right-sleeve.png",
+      "sha256": "e3446afb667ee4e77e7cca4dd19efc0ca303e28e57b8697a73ba7fc4356658de",
+      "bytes": 237036,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/right-sleeve.psd",
+        "sha256": "c7c321368a8dd517a230dee853b8f413743c6ea69319b9a2a2dc01b2ac639ba2",
+        "bytes": 2000808,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "olive",
+      "view": "back",
+      "sourceKitKey": "hoodie:olive:back",
+      "assetPath": "/mockups/smart-v4/hoodie/olive/back.png",
+      "sha256": "bf60c54f6ef9d36c204a90c033448bbed2c5865806557cfef9bad32b49abe2c0",
+      "bytes": 1138904,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/back.psd",
+        "sha256": "991638164396d08fae3a1b827994aaa52b27a5953c343e62262a678139d4e3f2",
+        "bytes": 3607779,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "olive",
+      "view": "front",
+      "sourceKitKey": "hoodie:olive:front",
+      "assetPath": "/mockups/smart-v4/hoodie/olive/front.png",
+      "sha256": "7886de3308fe9a1424fce17cb3df641f7c564f4cf7769df5145f8d92c9014942",
+      "bytes": 1139304,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/front.psd",
+        "sha256": "06064f802e019e8d055bc6247736fa7af4b54832257e305298815f52d480f447",
+        "bytes": 3449709,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "olive",
+      "view": "left-sleeve",
+      "sourceKitKey": "hoodie:olive:left-sleeve",
+      "assetPath": "/mockups/smart-v4/hoodie/olive/left-sleeve.png",
+      "sha256": "ca81ecd6983a783a5737fc964af935114db4b6c670037b51b05e52bc726b84b7",
+      "bytes": 229360,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/left-sleeve.psd",
+        "sha256": "80dc01b2624e115ae78c23179542e687201a8a8e66f4c50df36bf471fbe35a38",
+        "bytes": 2128080,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "olive",
+      "view": "neck-label",
+      "sourceKitKey": "hoodie:olive:neck-label",
+      "assetPath": "/mockups/smart-v4/hoodie/olive/neck-label.png",
+      "sha256": "08f309e610b2b98aefe167ec9cea6bd0374c40a525eac627b04f67d4cafcc38d",
+      "bytes": 167132,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/neck-label.psd",
+        "sha256": "50cb3f1f496ba5751d77608d5be6b6db6d600ebfbb6657716fe3cca96255e393",
+        "bytes": 5286763,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "olive",
+      "view": "right-sleeve",
+      "sourceKitKey": "hoodie:olive:right-sleeve",
+      "assetPath": "/mockups/smart-v4/hoodie/olive/right-sleeve.png",
+      "sha256": "3b6a16c3d761f9a61da721b2899432a89197ca64f75d338dddc8e9965a2bd413",
+      "bytes": 230674,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/right-sleeve.psd",
+        "sha256": "c7c321368a8dd517a230dee853b8f413743c6ea69319b9a2a2dc01b2ac639ba2",
+        "bytes": 2000808,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "red",
+      "view": "back",
+      "sourceKitKey": "hoodie:red:back",
+      "assetPath": "/mockups/smart-v4/hoodie/red/back.png",
+      "sha256": "791aa1b695e5ddb808ab2929a902b242f355120bd223913b9146e19caf2b1308",
+      "bytes": 1063508,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/back.psd",
+        "sha256": "991638164396d08fae3a1b827994aaa52b27a5953c343e62262a678139d4e3f2",
+        "bytes": 3607779,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "red",
+      "view": "front",
+      "sourceKitKey": "hoodie:red:front",
+      "assetPath": "/mockups/smart-v4/hoodie/red/front.png",
+      "sha256": "ec58244446c9ad0b3249031304d43ce9d329bf9f8701f8f6b0a023d66a0e0f34",
+      "bytes": 1063060,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/front.psd",
+        "sha256": "06064f802e019e8d055bc6247736fa7af4b54832257e305298815f52d480f447",
+        "bytes": 3449709,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "red",
+      "view": "left-sleeve",
+      "sourceKitKey": "hoodie:red:left-sleeve",
+      "assetPath": "/mockups/smart-v4/hoodie/red/left-sleeve.png",
+      "sha256": "446ee5809d23fd77f3a752b18a083ceec196eb21ad5a4d62e566791eb6c798e2",
+      "bytes": 197364,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/left-sleeve.psd",
+        "sha256": "80dc01b2624e115ae78c23179542e687201a8a8e66f4c50df36bf471fbe35a38",
+        "bytes": 2128080,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "red",
+      "view": "neck-label",
+      "sourceKitKey": "hoodie:red:neck-label",
+      "assetPath": "/mockups/smart-v4/hoodie/red/neck-label.png",
+      "sha256": "b2d3366c526b453d5bb495fdd897e0ac28e33c770314b935e710234b7d6fc536",
+      "bytes": 145677,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/neck-label.psd",
+        "sha256": "50cb3f1f496ba5751d77608d5be6b6db6d600ebfbb6657716fe3cca96255e393",
+        "bytes": 5286763,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "red",
+      "view": "right-sleeve",
+      "sourceKitKey": "hoodie:red:right-sleeve",
+      "assetPath": "/mockups/smart-v4/hoodie/red/right-sleeve.png",
+      "sha256": "dbbccf9074e0a70a3a98655e413dfb5ec379496168219e8218baf508eda5c246",
+      "bytes": 200584,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/right-sleeve.psd",
+        "sha256": "c7c321368a8dd517a230dee853b8f413743c6ea69319b9a2a2dc01b2ac639ba2",
+        "bytes": 2000808,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "sky-blue",
+      "view": "back",
+      "sourceKitKey": "hoodie:sky-blue:back",
+      "assetPath": "/mockups/smart-v4/hoodie/sky-blue/back.png",
+      "sha256": "72867cc313500c353be00a4cb44e845c733c59a8bd11ca9fb47ced5fc6331e70",
+      "bytes": 1130623,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/back.psd",
+        "sha256": "991638164396d08fae3a1b827994aaa52b27a5953c343e62262a678139d4e3f2",
+        "bytes": 3607779,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "sky-blue",
+      "view": "front",
+      "sourceKitKey": "hoodie:sky-blue:front",
+      "assetPath": "/mockups/smart-v4/hoodie/sky-blue/front.png",
+      "sha256": "d6d837de3f0c524df82df148448c9b63a84a19ce6144d5ff35ac4a852998668a",
+      "bytes": 1124914,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/front.psd",
+        "sha256": "06064f802e019e8d055bc6247736fa7af4b54832257e305298815f52d480f447",
+        "bytes": 3449709,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "sky-blue",
+      "view": "left-sleeve",
+      "sourceKitKey": "hoodie:sky-blue:left-sleeve",
+      "assetPath": "/mockups/smart-v4/hoodie/sky-blue/left-sleeve.png",
+      "sha256": "738007a8ee04e42cbd6c7fd7e0d477c2ba37bc792180858e7736fb5384d0f93b",
+      "bytes": 223046,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/left-sleeve.psd",
+        "sha256": "80dc01b2624e115ae78c23179542e687201a8a8e66f4c50df36bf471fbe35a38",
+        "bytes": 2128080,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "sky-blue",
+      "view": "neck-label",
+      "sourceKitKey": "hoodie:sky-blue:neck-label",
+      "assetPath": "/mockups/smart-v4/hoodie/sky-blue/neck-label.png",
+      "sha256": "4b25471c3a1cd22b309f980c1d58312b25e4e37efc42a5877146d6fd018854f1",
+      "bytes": 161888,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/neck-label.psd",
+        "sha256": "50cb3f1f496ba5751d77608d5be6b6db6d600ebfbb6657716fe3cca96255e393",
+        "bytes": 5286763,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "sky-blue",
+      "view": "right-sleeve",
+      "sourceKitKey": "hoodie:sky-blue:right-sleeve",
+      "assetPath": "/mockups/smart-v4/hoodie/sky-blue/right-sleeve.png",
+      "sha256": "2df40c9d40b5fcfb22a757c9191ae0d24af3015b232b23e1207e39c3459fcbeb",
+      "bytes": 225157,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/right-sleeve.psd",
+        "sha256": "c7c321368a8dd517a230dee853b8f413743c6ea69319b9a2a2dc01b2ac639ba2",
+        "bytes": 2000808,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "white",
+      "view": "back",
+      "sourceKitKey": "hoodie:white:back",
+      "assetPath": "/mockups/smart-v4/hoodie/white/back.png",
+      "sha256": "43a7aa22d8c466b3327331d5b3183a99da3d8dc5714557b8df37e9ccfed9ed34",
+      "bytes": 1207367,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/back.psd",
+        "sha256": "991638164396d08fae3a1b827994aaa52b27a5953c343e62262a678139d4e3f2",
+        "bytes": 3607779,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "white",
+      "view": "front",
+      "sourceKitKey": "hoodie:white:front",
+      "assetPath": "/mockups/smart-v4/hoodie/white/front.png",
+      "sha256": "f599960c852d170f2b3f8f6654959ea5b7f382375e599a4566956ebe1a27beae",
+      "bytes": 1182605,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/front.psd",
+        "sha256": "06064f802e019e8d055bc6247736fa7af4b54832257e305298815f52d480f447",
+        "bytes": 3449709,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "white",
+      "view": "left-sleeve",
+      "sourceKitKey": "hoodie:white:left-sleeve",
+      "assetPath": "/mockups/smart-v4/hoodie/white/left-sleeve.png",
+      "sha256": "f10395ea39ba9ef54d5b5df37cb0193559b5c380b243a737573a0da5e3944a6d",
+      "bytes": 240394,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/left-sleeve.psd",
+        "sha256": "80dc01b2624e115ae78c23179542e687201a8a8e66f4c50df36bf471fbe35a38",
+        "bytes": 2128080,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "white",
+      "view": "neck-label",
+      "sourceKitKey": "hoodie:white:neck-label",
+      "assetPath": "/mockups/smart-v4/hoodie/white/neck-label.png",
+      "sha256": "f5c4f5c7d41555edc57331333c62654fa9415a50829dea6bc13e5d51528fb552",
+      "bytes": 180121,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/neck-label.psd",
+        "sha256": "50cb3f1f496ba5751d77608d5be6b6db6d600ebfbb6657716fe3cca96255e393",
+        "bytes": 5286763,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "hoodie",
+      "color": "white",
+      "view": "right-sleeve",
+      "sourceKitKey": "hoodie:white:right-sleeve",
+      "assetPath": "/mockups/smart-v4/hoodie/white/right-sleeve.png",
+      "sha256": "32342c446e900c93574f1ac2af09f6367a5d5797b72e604e2f701f7b099c5f56",
+      "bytes": 242843,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/right-sleeve.psd",
+        "sha256": "c7c321368a8dd517a230dee853b8f413743c6ea69319b9a2a2dc01b2ac639ba2",
+        "bytes": 2000808,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "black",
+      "view": "back",
+      "sourceKitKey": "longsleeve:black:back",
+      "assetPath": "/mockups/smart-v4/longsleeve/black/back.png",
+      "sha256": "72fe2d91e3928e532ffbf09324890bc7df7e23e85aa9b74e9ea2fd6697171677",
+      "bytes": 906810,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/back.psd",
+        "sha256": "f84a023446ea3562a35abef58d20033a08348a7f6f0161f137556afb5463d118",
+        "bytes": 3146795,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "black",
+      "view": "front",
+      "sourceKitKey": "longsleeve:black:front",
+      "assetPath": "/mockups/smart-v4/longsleeve/black/front.png",
+      "sha256": "39e5a8ca764f31429b41825d17df94c31670452ef100f377c1c1f180d04ca153",
+      "bytes": 913096,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/front.psd",
+        "sha256": "08d457e809bf1ff450f37020233c55960604f54dc4356f9cad762712a877ac60",
+        "bytes": 4461272,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "black",
+      "view": "left-sleeve",
+      "sourceKitKey": "longsleeve:black:left-sleeve",
+      "assetPath": "/mockups/smart-v4/longsleeve/black/left-sleeve.png",
+      "sha256": "9a526b8001b3c105fce4dcc82eece368e7c0e5e5377c328065fa17cb5cbfdec9",
+      "bytes": 171139,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/left-sleeve.psd",
+        "sha256": "e5a01c8f9e05786f46157ed0d28682337f227653781180267b4a0a5d35ca319d",
+        "bytes": 1855724,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "black",
+      "view": "neck-label",
+      "sourceKitKey": "longsleeve:black:neck-label",
+      "assetPath": "/mockups/smart-v4/longsleeve/black/neck-label.png",
+      "sha256": "7c60af240d6cad888787e1fe11b3e862cf5f3a6ff4bca9a7ef113a6371dc7bc0",
+      "bytes": 46274,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/neck-label.psd",
+        "sha256": "b752a4a671c9f7818d235e669be3cdd2ea4fd51e1dcb501cba15d275667d8cf8",
+        "bytes": 2986471,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "black",
+      "view": "right-sleeve",
+      "sourceKitKey": "longsleeve:black:right-sleeve",
+      "assetPath": "/mockups/smart-v4/longsleeve/black/right-sleeve.png",
+      "sha256": "82f2d535f3a653c7c5f7895728d30a3d2d64b112bf9840adb57e343a37db4958",
+      "bytes": 181710,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/right-sleeve.psd",
+        "sha256": "92df71693e5b04b348da18d0fd5fd2b871758a137ff6f847aa4a0085d328b2d4",
+        "bytes": 1852603,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "burgundy",
+      "view": "back",
+      "sourceKitKey": "longsleeve:burgundy:back",
+      "assetPath": "/mockups/smart-v4/longsleeve/burgundy/back.png",
+      "sha256": "e12f3c679599b1ce993b0c497488cab24c429dd02d26d06ade55e57c879ecd48",
+      "bytes": 1068939,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/back.psd",
+        "sha256": "f84a023446ea3562a35abef58d20033a08348a7f6f0161f137556afb5463d118",
+        "bytes": 3146795,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "burgundy",
+      "view": "front",
+      "sourceKitKey": "longsleeve:burgundy:front",
+      "assetPath": "/mockups/smart-v4/longsleeve/burgundy/front.png",
+      "sha256": "1caffe8eea9ae59d0f5b9c9a6df89b0f58fec35666cda6647e8ba629384d5cfc",
+      "bytes": 1097943,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/front.psd",
+        "sha256": "08d457e809bf1ff450f37020233c55960604f54dc4356f9cad762712a877ac60",
+        "bytes": 4461272,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "burgundy",
+      "view": "left-sleeve",
+      "sourceKitKey": "longsleeve:burgundy:left-sleeve",
+      "assetPath": "/mockups/smart-v4/longsleeve/burgundy/left-sleeve.png",
+      "sha256": "fd5fc44250bb0a373ba11c17ec2376156de51f7475b568d4f8e6b4b85eed3ee5",
+      "bytes": 244957,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/left-sleeve.psd",
+        "sha256": "e5a01c8f9e05786f46157ed0d28682337f227653781180267b4a0a5d35ca319d",
+        "bytes": 1855724,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "burgundy",
+      "view": "neck-label",
+      "sourceKitKey": "longsleeve:burgundy:neck-label",
+      "assetPath": "/mockups/smart-v4/longsleeve/burgundy/neck-label.png",
+      "sha256": "57ac61e43220aeab4c92d4ad3eda99ff4ae11b67a9786b3070792f2ea7e29e6a",
+      "bytes": 63380,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/neck-label.psd",
+        "sha256": "b752a4a671c9f7818d235e669be3cdd2ea4fd51e1dcb501cba15d275667d8cf8",
+        "bytes": 2986471,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "burgundy",
+      "view": "right-sleeve",
+      "sourceKitKey": "longsleeve:burgundy:right-sleeve",
+      "assetPath": "/mockups/smart-v4/longsleeve/burgundy/right-sleeve.png",
+      "sha256": "89a9b1b133347cd95fd4f4305a52aa0e053b1983c20aa4bc33be113ea8372468",
+      "bytes": 262218,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/right-sleeve.psd",
+        "sha256": "92df71693e5b04b348da18d0fd5fd2b871758a137ff6f847aa4a0085d328b2d4",
+        "bytes": 1852603,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "forest",
+      "view": "back",
+      "sourceKitKey": "longsleeve:forest:back",
+      "assetPath": "/mockups/smart-v4/longsleeve/forest/back.png",
+      "sha256": "1a9ab6e7099026e03452952dda08f7255a0c7f8ca96eec901d2c8c16fcef35ec",
+      "bytes": 1070499,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/back.psd",
+        "sha256": "f84a023446ea3562a35abef58d20033a08348a7f6f0161f137556afb5463d118",
+        "bytes": 3146795,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "forest",
+      "view": "front",
+      "sourceKitKey": "longsleeve:forest:front",
+      "assetPath": "/mockups/smart-v4/longsleeve/forest/front.png",
+      "sha256": "d79ccbf05b0cd0359ac0c46e2d79d0282735659c244bd4cbf1a98c835fb562a4",
+      "bytes": 1104210,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/front.psd",
+        "sha256": "08d457e809bf1ff450f37020233c55960604f54dc4356f9cad762712a877ac60",
+        "bytes": 4461272,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "forest",
+      "view": "left-sleeve",
+      "sourceKitKey": "longsleeve:forest:left-sleeve",
+      "assetPath": "/mockups/smart-v4/longsleeve/forest/left-sleeve.png",
+      "sha256": "faac60a7bc3892127792160313a6e710af0c5e91e7915046253ffab51fb22c76",
+      "bytes": 246818,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/left-sleeve.psd",
+        "sha256": "e5a01c8f9e05786f46157ed0d28682337f227653781180267b4a0a5d35ca319d",
+        "bytes": 1855724,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "forest",
+      "view": "neck-label",
+      "sourceKitKey": "longsleeve:forest:neck-label",
+      "assetPath": "/mockups/smart-v4/longsleeve/forest/neck-label.png",
+      "sha256": "5d678dfeab660ab930200347440e4182741beeb8d04b25315ddf2f145ea169f1",
+      "bytes": 63525,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/neck-label.psd",
+        "sha256": "b752a4a671c9f7818d235e669be3cdd2ea4fd51e1dcb501cba15d275667d8cf8",
+        "bytes": 2986471,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "forest",
+      "view": "right-sleeve",
+      "sourceKitKey": "longsleeve:forest:right-sleeve",
+      "assetPath": "/mockups/smart-v4/longsleeve/forest/right-sleeve.png",
+      "sha256": "e985bb24d12ae1b71160f1b031c871177e6f552e0f25d50f73a67ebf857bbc19",
+      "bytes": 264766,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/right-sleeve.psd",
+        "sha256": "92df71693e5b04b348da18d0fd5fd2b871758a137ff6f847aa4a0085d328b2d4",
+        "bytes": 1852603,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "grey",
+      "view": "back",
+      "sourceKitKey": "longsleeve:grey:back",
+      "assetPath": "/mockups/smart-v4/longsleeve/grey/back.png",
+      "sha256": "6b90f961bf4387549670cc54c8dd0b1ddeb76a737ef83296d043891ba83b4028",
+      "bytes": 1010135,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/back.psd",
+        "sha256": "f84a023446ea3562a35abef58d20033a08348a7f6f0161f137556afb5463d118",
+        "bytes": 3146795,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "grey",
+      "view": "front",
+      "sourceKitKey": "longsleeve:grey:front",
+      "assetPath": "/mockups/smart-v4/longsleeve/grey/front.png",
+      "sha256": "3233c4a32be9c675018bfdc06bca5989cfc22c1d86061efcca862f9c1749b03a",
+      "bytes": 1048072,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/front.psd",
+        "sha256": "08d457e809bf1ff450f37020233c55960604f54dc4356f9cad762712a877ac60",
+        "bytes": 4461272,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "grey",
+      "view": "left-sleeve",
+      "sourceKitKey": "longsleeve:grey:left-sleeve",
+      "assetPath": "/mockups/smart-v4/longsleeve/grey/left-sleeve.png",
+      "sha256": "5bfc919ee056b0e10769d60647f0104583d9892c75d2facc2ae7dbf0a15af201",
+      "bytes": 227034,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/left-sleeve.psd",
+        "sha256": "e5a01c8f9e05786f46157ed0d28682337f227653781180267b4a0a5d35ca319d",
+        "bytes": 1855724,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "grey",
+      "view": "neck-label",
+      "sourceKitKey": "longsleeve:grey:neck-label",
+      "assetPath": "/mockups/smart-v4/longsleeve/grey/neck-label.png",
+      "sha256": "7081eba31e1a187269023a941d78e753b94f3fc14990ffc206fa3d1a6d714924",
+      "bytes": 58020,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/neck-label.psd",
+        "sha256": "b752a4a671c9f7818d235e669be3cdd2ea4fd51e1dcb501cba15d275667d8cf8",
+        "bytes": 2986471,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "grey",
+      "view": "right-sleeve",
+      "sourceKitKey": "longsleeve:grey:right-sleeve",
+      "assetPath": "/mockups/smart-v4/longsleeve/grey/right-sleeve.png",
+      "sha256": "7acfbc58843d10f912e4ee4cda455508f95babc33aa3b64348c9d994a188a4cd",
+      "bytes": 242289,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/right-sleeve.psd",
+        "sha256": "92df71693e5b04b348da18d0fd5fd2b871758a137ff6f847aa4a0085d328b2d4",
+        "bytes": 1852603,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "maroon",
+      "view": "back",
+      "sourceKitKey": "longsleeve:maroon:back",
+      "assetPath": "/mockups/smart-v4/longsleeve/maroon/back.png",
+      "sha256": "4df62ed6a6c80bd66551897a11315820f4851cc45fd26796b0ee955ad7ac214e",
+      "bytes": 998745,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/back.psd",
+        "sha256": "f84a023446ea3562a35abef58d20033a08348a7f6f0161f137556afb5463d118",
+        "bytes": 3146795,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "maroon",
+      "view": "front",
+      "sourceKitKey": "longsleeve:maroon:front",
+      "assetPath": "/mockups/smart-v4/longsleeve/maroon/front.png",
+      "sha256": "63b080592df72cce386a6b587892254cb9226f337d0cca66731ee14104224b25",
+      "bytes": 1022136,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/front.psd",
+        "sha256": "08d457e809bf1ff450f37020233c55960604f54dc4356f9cad762712a877ac60",
+        "bytes": 4461272,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "maroon",
+      "view": "left-sleeve",
+      "sourceKitKey": "longsleeve:maroon:left-sleeve",
+      "assetPath": "/mockups/smart-v4/longsleeve/maroon/left-sleeve.png",
+      "sha256": "47baa86e516fe55cf7bafa572a2d0ec43f1b9e9a90e1bfe5b589070a6fc7dd70",
+      "bytes": 214535,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/left-sleeve.psd",
+        "sha256": "e5a01c8f9e05786f46157ed0d28682337f227653781180267b4a0a5d35ca319d",
+        "bytes": 1855724,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "maroon",
+      "view": "neck-label",
+      "sourceKitKey": "longsleeve:maroon:neck-label",
+      "assetPath": "/mockups/smart-v4/longsleeve/maroon/neck-label.png",
+      "sha256": "9fea51ddcb054cf40c465ead218ee615443497a3885bda3c21a067efd7af19ad",
+      "bytes": 56467,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/neck-label.psd",
+        "sha256": "b752a4a671c9f7818d235e669be3cdd2ea4fd51e1dcb501cba15d275667d8cf8",
+        "bytes": 2986471,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "maroon",
+      "view": "right-sleeve",
+      "sourceKitKey": "longsleeve:maroon:right-sleeve",
+      "assetPath": "/mockups/smart-v4/longsleeve/maroon/right-sleeve.png",
+      "sha256": "971700534cb9a2bbf29ea906705225c47a011aa107fa1d7f6a4b14a023f6992b",
+      "bytes": 229401,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/right-sleeve.psd",
+        "sha256": "92df71693e5b04b348da18d0fd5fd2b871758a137ff6f847aa4a0085d328b2d4",
+        "bytes": 1852603,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "navy",
+      "view": "back",
+      "sourceKitKey": "longsleeve:navy:back",
+      "assetPath": "/mockups/smart-v4/longsleeve/navy/back.png",
+      "sha256": "41a8e742fc67f7f6bf7e73294cc37d235d2469010452488c8b15beaf73d843ab",
+      "bytes": 1076139,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/back.psd",
+        "sha256": "f84a023446ea3562a35abef58d20033a08348a7f6f0161f137556afb5463d118",
+        "bytes": 3146795,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "navy",
+      "view": "front",
+      "sourceKitKey": "longsleeve:navy:front",
+      "assetPath": "/mockups/smart-v4/longsleeve/navy/front.png",
+      "sha256": "e74ab3d4dafd6f9400aa01b22996e07270b764718146f6ba7e06993c4c880701",
+      "bytes": 1104602,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/front.psd",
+        "sha256": "08d457e809bf1ff450f37020233c55960604f54dc4356f9cad762712a877ac60",
+        "bytes": 4461272,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "navy",
+      "view": "left-sleeve",
+      "sourceKitKey": "longsleeve:navy:left-sleeve",
+      "assetPath": "/mockups/smart-v4/longsleeve/navy/left-sleeve.png",
+      "sha256": "ba03961b0e72f55e922368793d1537a13ed1e883db472de6f8078d9f82a6ee7e",
+      "bytes": 246230,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/left-sleeve.psd",
+        "sha256": "e5a01c8f9e05786f46157ed0d28682337f227653781180267b4a0a5d35ca319d",
+        "bytes": 1855724,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "navy",
+      "view": "neck-label",
+      "sourceKitKey": "longsleeve:navy:neck-label",
+      "assetPath": "/mockups/smart-v4/longsleeve/navy/neck-label.png",
+      "sha256": "d182701fbaeff0e5b75606cbb8ec127e1a9a910a0b3e34697d75f8f12c316f32",
+      "bytes": 63698,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/neck-label.psd",
+        "sha256": "b752a4a671c9f7818d235e669be3cdd2ea4fd51e1dcb501cba15d275667d8cf8",
+        "bytes": 2986471,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "navy",
+      "view": "right-sleeve",
+      "sourceKitKey": "longsleeve:navy:right-sleeve",
+      "assetPath": "/mockups/smart-v4/longsleeve/navy/right-sleeve.png",
+      "sha256": "1cd58a739dd0aecebc5d50f61c905cb3eb133e335cd07d43b4c4fab1a079e26b",
+      "bytes": 265190,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/right-sleeve.psd",
+        "sha256": "92df71693e5b04b348da18d0fd5fd2b871758a137ff6f847aa4a0085d328b2d4",
+        "bytes": 1852603,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "olive",
+      "view": "back",
+      "sourceKitKey": "longsleeve:olive:back",
+      "assetPath": "/mockups/smart-v4/longsleeve/olive/back.png",
+      "sha256": "1b27b5a18609a7adf31f43004cee803e3f623709bda7d771613c016a4c8ff554",
+      "bytes": 1061973,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/back.psd",
+        "sha256": "f84a023446ea3562a35abef58d20033a08348a7f6f0161f137556afb5463d118",
+        "bytes": 3146795,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "olive",
+      "view": "front",
+      "sourceKitKey": "longsleeve:olive:front",
+      "assetPath": "/mockups/smart-v4/longsleeve/olive/front.png",
+      "sha256": "e4e067ef9bfdd3e5b53eb9dc478ce2d7e0975eee3d0b8ed79d162267d653f535",
+      "bytes": 1086951,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/front.psd",
+        "sha256": "08d457e809bf1ff450f37020233c55960604f54dc4356f9cad762712a877ac60",
+        "bytes": 4461272,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "olive",
+      "view": "left-sleeve",
+      "sourceKitKey": "longsleeve:olive:left-sleeve",
+      "assetPath": "/mockups/smart-v4/longsleeve/olive/left-sleeve.png",
+      "sha256": "26878b596f2071dd714922ea02be1698b58c34590e34fd83384ae7124e8c8524",
+      "bytes": 241264,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/left-sleeve.psd",
+        "sha256": "e5a01c8f9e05786f46157ed0d28682337f227653781180267b4a0a5d35ca319d",
+        "bytes": 1855724,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "olive",
+      "view": "neck-label",
+      "sourceKitKey": "longsleeve:olive:neck-label",
+      "assetPath": "/mockups/smart-v4/longsleeve/olive/neck-label.png",
+      "sha256": "94e400b72b82fbabacdeadadb1e957d2d8efb3fe80faf86e49391882932ba1eb",
+      "bytes": 62318,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/neck-label.psd",
+        "sha256": "b752a4a671c9f7818d235e669be3cdd2ea4fd51e1dcb501cba15d275667d8cf8",
+        "bytes": 2986471,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "olive",
+      "view": "right-sleeve",
+      "sourceKitKey": "longsleeve:olive:right-sleeve",
+      "assetPath": "/mockups/smart-v4/longsleeve/olive/right-sleeve.png",
+      "sha256": "5345148ad7fabd072e9cf0b69f3bf2a76ef40cb97fff15ac005e25f249f9db36",
+      "bytes": 257323,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/right-sleeve.psd",
+        "sha256": "92df71693e5b04b348da18d0fd5fd2b871758a137ff6f847aa4a0085d328b2d4",
+        "bytes": 1852603,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "red",
+      "view": "back",
+      "sourceKitKey": "longsleeve:red:back",
+      "assetPath": "/mockups/smart-v4/longsleeve/red/back.png",
+      "sha256": "4e4bdf77cdeb0082e241af0390a84dd54812f0fadd7885d1da2f564b889f1010",
+      "bytes": 970260,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/back.psd",
+        "sha256": "f84a023446ea3562a35abef58d20033a08348a7f6f0161f137556afb5463d118",
+        "bytes": 3146795,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "red",
+      "view": "front",
+      "sourceKitKey": "longsleeve:red:front",
+      "assetPath": "/mockups/smart-v4/longsleeve/red/front.png",
+      "sha256": "c05f128e7e95d6a1ea9b7cb8d02c2054eff15b277372265720bacac82042a2bc",
+      "bytes": 998210,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/front.psd",
+        "sha256": "08d457e809bf1ff450f37020233c55960604f54dc4356f9cad762712a877ac60",
+        "bytes": 4461272,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "red",
+      "view": "left-sleeve",
+      "sourceKitKey": "longsleeve:red:left-sleeve",
+      "assetPath": "/mockups/smart-v4/longsleeve/red/left-sleeve.png",
+      "sha256": "96f3dd20aa41ad735fbe90be1f23e2ff87547ff9adab22412816992fedb984e8",
+      "bytes": 205338,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/left-sleeve.psd",
+        "sha256": "e5a01c8f9e05786f46157ed0d28682337f227653781180267b4a0a5d35ca319d",
+        "bytes": 1855724,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "red",
+      "view": "neck-label",
+      "sourceKitKey": "longsleeve:red:neck-label",
+      "assetPath": "/mockups/smart-v4/longsleeve/red/neck-label.png",
+      "sha256": "034277445c488feeb987ec5fa63b5eaef6283e516dffbdf9be7cdfba3cc66e85",
+      "bytes": 53636,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/neck-label.psd",
+        "sha256": "b752a4a671c9f7818d235e669be3cdd2ea4fd51e1dcb501cba15d275667d8cf8",
+        "bytes": 2986471,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "red",
+      "view": "right-sleeve",
+      "sourceKitKey": "longsleeve:red:right-sleeve",
+      "assetPath": "/mockups/smart-v4/longsleeve/red/right-sleeve.png",
+      "sha256": "6b212bfa4d62fbcee32020336ae52f189f5fd67c6def1c0cbf549f35eea7c68f",
+      "bytes": 221298,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/right-sleeve.psd",
+        "sha256": "92df71693e5b04b348da18d0fd5fd2b871758a137ff6f847aa4a0085d328b2d4",
+        "bytes": 1852603,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "sky-blue",
+      "view": "back",
+      "sourceKitKey": "longsleeve:sky-blue:back",
+      "assetPath": "/mockups/smart-v4/longsleeve/sky-blue/back.png",
+      "sha256": "e410e905319b9a70c560451e6218d43c0e1866988632891b2cff45c499b27ac4",
+      "bytes": 1033396,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/back.psd",
+        "sha256": "f84a023446ea3562a35abef58d20033a08348a7f6f0161f137556afb5463d118",
+        "bytes": 3146795,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "sky-blue",
+      "view": "front",
+      "sourceKitKey": "longsleeve:sky-blue:front",
+      "assetPath": "/mockups/smart-v4/longsleeve/sky-blue/front.png",
+      "sha256": "9534f7caaf510b179fdbda3db1b3995e86681dc0e690e784f85d7bafe6664527",
+      "bytes": 1063847,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/front.psd",
+        "sha256": "08d457e809bf1ff450f37020233c55960604f54dc4356f9cad762712a877ac60",
+        "bytes": 4461272,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "sky-blue",
+      "view": "left-sleeve",
+      "sourceKitKey": "longsleeve:sky-blue:left-sleeve",
+      "assetPath": "/mockups/smart-v4/longsleeve/sky-blue/left-sleeve.png",
+      "sha256": "15daa1a9ffd6962a9bf0af7002dd91be1fc30c19c710d28ced19aadf5bedc61d",
+      "bytes": 231192,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/left-sleeve.psd",
+        "sha256": "e5a01c8f9e05786f46157ed0d28682337f227653781180267b4a0a5d35ca319d",
+        "bytes": 1855724,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "sky-blue",
+      "view": "neck-label",
+      "sourceKitKey": "longsleeve:sky-blue:neck-label",
+      "assetPath": "/mockups/smart-v4/longsleeve/sky-blue/neck-label.png",
+      "sha256": "b2b534a0f7a8e7da8f54bbde055c3107262c460199300e019890c346887610bb",
+      "bytes": 59359,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/neck-label.psd",
+        "sha256": "b752a4a671c9f7818d235e669be3cdd2ea4fd51e1dcb501cba15d275667d8cf8",
+        "bytes": 2986471,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "sky-blue",
+      "view": "right-sleeve",
+      "sourceKitKey": "longsleeve:sky-blue:right-sleeve",
+      "assetPath": "/mockups/smart-v4/longsleeve/sky-blue/right-sleeve.png",
+      "sha256": "77e13309401eb9542486435834fa3f17693a592ada803c3a27aa9fa6c60061a6",
+      "bytes": 247080,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/right-sleeve.psd",
+        "sha256": "92df71693e5b04b348da18d0fd5fd2b871758a137ff6f847aa4a0085d328b2d4",
+        "bytes": 1852603,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "white",
+      "view": "back",
+      "sourceKitKey": "longsleeve:white:back",
+      "assetPath": "/mockups/smart-v4/longsleeve/white/back.png",
+      "sha256": "bff5faa6929fa9f567150a09a8cecd310c7f23c7ce5e3ff3557189d841f1b4c2",
+      "bytes": 1086221,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/back.psd",
+        "sha256": "f84a023446ea3562a35abef58d20033a08348a7f6f0161f137556afb5463d118",
+        "bytes": 3146795,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "white",
+      "view": "front",
+      "sourceKitKey": "longsleeve:white:front",
+      "assetPath": "/mockups/smart-v4/longsleeve/white/front.png",
+      "sha256": "e3a7f9c62d100abcce42f9ed302d1c84c60ee29480e3ef81537419e03958bbb4",
+      "bytes": 1111747,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/front.psd",
+        "sha256": "08d457e809bf1ff450f37020233c55960604f54dc4356f9cad762712a877ac60",
+        "bytes": 4461272,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "white",
+      "view": "left-sleeve",
+      "sourceKitKey": "longsleeve:white:left-sleeve",
+      "assetPath": "/mockups/smart-v4/longsleeve/white/left-sleeve.png",
+      "sha256": "f90a8387221e0fbff469b5d510ecedd5ca722e9d274b328ef748f84dff9be354",
+      "bytes": 246432,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/left-sleeve.psd",
+        "sha256": "e5a01c8f9e05786f46157ed0d28682337f227653781180267b4a0a5d35ca319d",
+        "bytes": 1855724,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "white",
+      "view": "neck-label",
+      "sourceKitKey": "longsleeve:white:neck-label",
+      "assetPath": "/mockups/smart-v4/longsleeve/white/neck-label.png",
+      "sha256": "ef81c788a91cf039276a487a2adc5170db2a63468223cc0b997c8631761f4c2c",
+      "bytes": 62700,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/neck-label.psd",
+        "sha256": "b752a4a671c9f7818d235e669be3cdd2ea4fd51e1dcb501cba15d275667d8cf8",
+        "bytes": 2986471,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "longsleeve",
+      "color": "white",
+      "view": "right-sleeve",
+      "sourceKitKey": "longsleeve:white:right-sleeve",
+      "assetPath": "/mockups/smart-v4/longsleeve/white/right-sleeve.png",
+      "sha256": "2b6daf09bdcf6d2f1bb3d62b14dea60082abfcf0c7be2434ae3f670aba4de75b",
+      "bytes": 269572,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/right-sleeve.psd",
+        "sha256": "92df71693e5b04b348da18d0fd5fd2b871758a137ff6f847aa4a0085d328b2d4",
+        "bytes": 1852603,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "black",
+      "view": "back",
+      "sourceKitKey": "mug:black:back",
+      "assetPath": "/mockups/smart-v4/mug/black/back.png",
+      "sha256": "b0370ab473838506efea95f5cd71a4d814b0f733f252b691e6b2da7870c9ffef",
+      "bytes": 1050866,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/back.psb",
+        "sha256": "4739db3d3e76ae27bf57568e24bd26d5a8116a27c4d68eeba4b87c090e96d827",
+        "bytes": 2861954,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "black",
+      "view": "front",
+      "sourceKitKey": "mug:black:front",
+      "assetPath": "/mockups/smart-v4/mug/black/front.png",
+      "sha256": "60d534235b07831da0dab662f4fd6757044748f807439ae448d5c113e331fe2b",
+      "bytes": 1020064,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/front.psb",
+        "sha256": "e184d4e7a769bfb932ca6a47e214d7048a0f90b89fa32fd29823afe0977f96b4",
+        "bytes": 2863444,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "black",
+      "view": "wrap",
+      "sourceKitKey": "mug:black:wrap",
+      "assetPath": "/mockups/smart-v4/mug/black/wrap.png",
+      "sha256": "483004cc738d1f8616c6b043367192f7088881953b2931ea6fdb3c3f7583191a",
+      "bytes": 1011212,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/wrap.psb",
+        "sha256": "7be8daf262d6d64f2e16e1c0cd52e106af7c653766a9d88e39448976431bc15f",
+        "bytes": 3079043,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "green",
+      "view": "back",
+      "sourceKitKey": "mug:green:back",
+      "assetPath": "/mockups/smart-v4/mug/green/back.png",
+      "sha256": "f20ce4a577de1adba5629a1aac03b9576225b7f64fd89e5a647584c143bf1844",
+      "bytes": 1037175,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/back.psb",
+        "sha256": "4739db3d3e76ae27bf57568e24bd26d5a8116a27c4d68eeba4b87c090e96d827",
+        "bytes": 2861954,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "green",
+      "view": "front",
+      "sourceKitKey": "mug:green:front",
+      "assetPath": "/mockups/smart-v4/mug/green/front.png",
+      "sha256": "00c421b3aef7b6287c00be8067dbf9e81c2ed3417b6789358f1e1b8814240acd",
+      "bytes": 1006139,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/front.psb",
+        "sha256": "e184d4e7a769bfb932ca6a47e214d7048a0f90b89fa32fd29823afe0977f96b4",
+        "bytes": 2863444,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "green",
+      "view": "wrap",
+      "sourceKitKey": "mug:green:wrap",
+      "assetPath": "/mockups/smart-v4/mug/green/wrap.png",
+      "sha256": "059af30ad01c13a38ffc906af94c99c452c4dc2eff76915b78cb130673b0eb8b",
+      "bytes": 984556,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/wrap.psb",
+        "sha256": "7be8daf262d6d64f2e16e1c0cd52e106af7c653766a9d88e39448976431bc15f",
+        "bytes": 3079043,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "maroon",
+      "view": "back",
+      "sourceKitKey": "mug:maroon:back",
+      "assetPath": "/mockups/smart-v4/mug/maroon/back.png",
+      "sha256": "00e7882026c30262d796f4d183598ecdc8164aabbecd67194a6af48422d8e715",
+      "bytes": 981983,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/back.psb",
+        "sha256": "4739db3d3e76ae27bf57568e24bd26d5a8116a27c4d68eeba4b87c090e96d827",
+        "bytes": 2861954,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "maroon",
+      "view": "front",
+      "sourceKitKey": "mug:maroon:front",
+      "assetPath": "/mockups/smart-v4/mug/maroon/front.png",
+      "sha256": "7e11aaed39d4ec364a255174a4777ba61c5b358b10cb694cd82ff2ee5b217bc7",
+      "bytes": 963578,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/front.psb",
+        "sha256": "e184d4e7a769bfb932ca6a47e214d7048a0f90b89fa32fd29823afe0977f96b4",
+        "bytes": 2863444,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "maroon",
+      "view": "wrap",
+      "sourceKitKey": "mug:maroon:wrap",
+      "assetPath": "/mockups/smart-v4/mug/maroon/wrap.png",
+      "sha256": "bbbae3f841a5acbd7315bebc62699d1195e090db2759db8540fab90669441e15",
+      "bytes": 918276,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/wrap.psb",
+        "sha256": "7be8daf262d6d64f2e16e1c0cd52e106af7c653766a9d88e39448976431bc15f",
+        "bytes": 3079043,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "navy",
+      "view": "back",
+      "sourceKitKey": "mug:navy:back",
+      "assetPath": "/mockups/smart-v4/mug/navy/back.png",
+      "sha256": "eecc5c9d03dbe3ef39796c558daf58ad45f816b172a1108dc3c976a0793cf8c1",
+      "bytes": 1052226,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/back.psb",
+        "sha256": "4739db3d3e76ae27bf57568e24bd26d5a8116a27c4d68eeba4b87c090e96d827",
+        "bytes": 2861954,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "navy",
+      "view": "front",
+      "sourceKitKey": "mug:navy:front",
+      "assetPath": "/mockups/smart-v4/mug/navy/front.png",
+      "sha256": "e7410539a4e04fcf4eb5cf614d5a5405cb0d5e830e422d261e1e1a615c7508b1",
+      "bytes": 1019445,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/front.psb",
+        "sha256": "e184d4e7a769bfb932ca6a47e214d7048a0f90b89fa32fd29823afe0977f96b4",
+        "bytes": 2863444,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "navy",
+      "view": "wrap",
+      "sourceKitKey": "mug:navy:wrap",
+      "assetPath": "/mockups/smart-v4/mug/navy/wrap.png",
+      "sha256": "ff551696a8a99970168883af040fe9cafeca7791af5199dd75b51aa61b3bf7b2",
+      "bytes": 1001527,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/wrap.psb",
+        "sha256": "7be8daf262d6d64f2e16e1c0cd52e106af7c653766a9d88e39448976431bc15f",
+        "bytes": 3079043,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "orange",
+      "view": "back",
+      "sourceKitKey": "mug:orange:back",
+      "assetPath": "/mockups/smart-v4/mug/orange/back.png",
+      "sha256": "4f767ccab9c04b1a41e5852398aee72af378e1b0bf68a08c2a348c4b78a39cf6",
+      "bytes": 1034468,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/back.psb",
+        "sha256": "4739db3d3e76ae27bf57568e24bd26d5a8116a27c4d68eeba4b87c090e96d827",
+        "bytes": 2861954,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "orange",
+      "view": "front",
+      "sourceKitKey": "mug:orange:front",
+      "assetPath": "/mockups/smart-v4/mug/orange/front.png",
+      "sha256": "548e789313b41df4416896efd8e6d0260fbb0af82dee8c36dd54fcec9c3a0341",
+      "bytes": 1004232,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/front.psb",
+        "sha256": "e184d4e7a769bfb932ca6a47e214d7048a0f90b89fa32fd29823afe0977f96b4",
+        "bytes": 2863444,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "orange",
+      "view": "wrap",
+      "sourceKitKey": "mug:orange:wrap",
+      "assetPath": "/mockups/smart-v4/mug/orange/wrap.png",
+      "sha256": "1ee573ee0e2a38a6be3fca1c459eb9676acdc736fbeec66f6761d2caf09d1772",
+      "bytes": 971968,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/wrap.psb",
+        "sha256": "7be8daf262d6d64f2e16e1c0cd52e106af7c653766a9d88e39448976431bc15f",
+        "bytes": 3079043,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "pink",
+      "view": "back",
+      "sourceKitKey": "mug:pink:back",
+      "assetPath": "/mockups/smart-v4/mug/pink/back.png",
+      "sha256": "22cb045a4563e0f5fe0f0b7a45b60d9f837e3257601eb198ca0dd7c7e275fbd2",
+      "bytes": 1001024,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/back.psb",
+        "sha256": "4739db3d3e76ae27bf57568e24bd26d5a8116a27c4d68eeba4b87c090e96d827",
+        "bytes": 2861954,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "pink",
+      "view": "front",
+      "sourceKitKey": "mug:pink:front",
+      "assetPath": "/mockups/smart-v4/mug/pink/front.png",
+      "sha256": "2e54bfa7e90806bafebefb8b7a28d33908c74bbf4f7ea327df5f2d14ea8f6ada",
+      "bytes": 979278,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/front.psb",
+        "sha256": "e184d4e7a769bfb932ca6a47e214d7048a0f90b89fa32fd29823afe0977f96b4",
+        "bytes": 2863444,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "pink",
+      "view": "wrap",
+      "sourceKitKey": "mug:pink:wrap",
+      "assetPath": "/mockups/smart-v4/mug/pink/wrap.png",
+      "sha256": "d8cddf25e9eee4f4a476aebeb312f2d2caba453c89340b0c35df75f3f8f5fb34",
+      "bytes": 949052,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/wrap.psb",
+        "sha256": "7be8daf262d6d64f2e16e1c0cd52e106af7c653766a9d88e39448976431bc15f",
+        "bytes": 3079043,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "purple",
+      "view": "back",
+      "sourceKitKey": "mug:purple:back",
+      "assetPath": "/mockups/smart-v4/mug/purple/back.png",
+      "sha256": "e84c390e0a503906a6a7132ab631210046a5ebce60dcbe2514ab40529ef1e115",
+      "bytes": 1012155,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/back.psb",
+        "sha256": "4739db3d3e76ae27bf57568e24bd26d5a8116a27c4d68eeba4b87c090e96d827",
+        "bytes": 2861954,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "purple",
+      "view": "front",
+      "sourceKitKey": "mug:purple:front",
+      "assetPath": "/mockups/smart-v4/mug/purple/front.png",
+      "sha256": "d4fefa2824a24d40c77ba41a261377c80204af2350a890531502c1e2a78b3dd5",
+      "bytes": 986591,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/front.psb",
+        "sha256": "e184d4e7a769bfb932ca6a47e214d7048a0f90b89fa32fd29823afe0977f96b4",
+        "bytes": 2863444,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "purple",
+      "view": "wrap",
+      "sourceKitKey": "mug:purple:wrap",
+      "assetPath": "/mockups/smart-v4/mug/purple/wrap.png",
+      "sha256": "0409adfd43491c2fb405d15fcd7d127cffc976e5c2df6b1c402c1f295b92c459",
+      "bytes": 956745,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/wrap.psb",
+        "sha256": "7be8daf262d6d64f2e16e1c0cd52e106af7c653766a9d88e39448976431bc15f",
+        "bytes": 3079043,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "red",
+      "view": "back",
+      "sourceKitKey": "mug:red:back",
+      "assetPath": "/mockups/smart-v4/mug/red/back.png",
+      "sha256": "d56481b477d60452181d5ab3621098c687be93f4a6736658aa38671cf8e6b1fa",
+      "bytes": 957778,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/back.psb",
+        "sha256": "4739db3d3e76ae27bf57568e24bd26d5a8116a27c4d68eeba4b87c090e96d827",
+        "bytes": 2861954,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "red",
+      "view": "front",
+      "sourceKitKey": "mug:red:front",
+      "assetPath": "/mockups/smart-v4/mug/red/front.png",
+      "sha256": "bc0f3dd0d8005a4653b827a267c9a8383594e085cc1dd8a9927172698ab3d6ef",
+      "bytes": 946356,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/front.psb",
+        "sha256": "e184d4e7a769bfb932ca6a47e214d7048a0f90b89fa32fd29823afe0977f96b4",
+        "bytes": 2863444,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "red",
+      "view": "wrap",
+      "sourceKitKey": "mug:red:wrap",
+      "assetPath": "/mockups/smart-v4/mug/red/wrap.png",
+      "sha256": "01de4268923189ac09b6a46fd8d42e0f30846a9f9abc8364bc81233226ae867e",
+      "bytes": 893784,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/wrap.psb",
+        "sha256": "7be8daf262d6d64f2e16e1c0cd52e106af7c653766a9d88e39448976431bc15f",
+        "bytes": 3079043,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "sky-blue",
+      "view": "back",
+      "sourceKitKey": "mug:sky-blue:back",
+      "assetPath": "/mockups/smart-v4/mug/sky-blue/back.png",
+      "sha256": "2d9a6332b2d492eb629c25d6c7a830b0a6a295c37fb4f057306c73b120e856b1",
+      "bytes": 1020663,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/back.psb",
+        "sha256": "4739db3d3e76ae27bf57568e24bd26d5a8116a27c4d68eeba4b87c090e96d827",
+        "bytes": 2861954,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "sky-blue",
+      "view": "front",
+      "sourceKitKey": "mug:sky-blue:front",
+      "assetPath": "/mockups/smart-v4/mug/sky-blue/front.png",
+      "sha256": "67f59479ccfbd9fc082431c567552f7710ecf64845446b9a79ee7255f5990b74",
+      "bytes": 995394,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/front.psb",
+        "sha256": "e184d4e7a769bfb932ca6a47e214d7048a0f90b89fa32fd29823afe0977f96b4",
+        "bytes": 2863444,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "sky-blue",
+      "view": "wrap",
+      "sourceKitKey": "mug:sky-blue:wrap",
+      "assetPath": "/mockups/smart-v4/mug/sky-blue/wrap.png",
+      "sha256": "705bc1a8c523d7b7c8cd3b0c3dde46c1ebe2f764428a01bb845c98f57937b236",
+      "bytes": 961140,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/wrap.psb",
+        "sha256": "7be8daf262d6d64f2e16e1c0cd52e106af7c653766a9d88e39448976431bc15f",
+        "bytes": 3079043,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "white",
+      "view": "back",
+      "sourceKitKey": "mug:white:back",
+      "assetPath": "/mockups/smart-v4/mug/white/back.png",
+      "sha256": "9698a40d985dd3ebdfcdd57651ccba767f84bb92c2b27b05cf93a754427a19de",
+      "bytes": 1042302,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/back.psb",
+        "sha256": "4739db3d3e76ae27bf57568e24bd26d5a8116a27c4d68eeba4b87c090e96d827",
+        "bytes": 2861954,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "white",
+      "view": "front",
+      "sourceKitKey": "mug:white:front",
+      "assetPath": "/mockups/smart-v4/mug/white/front.png",
+      "sha256": "45e3ffac3d9e325d9c47a129a4648de0b8adf20fd75562ed526b39158b66e878",
+      "bytes": 1005106,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/front.psb",
+        "sha256": "e184d4e7a769bfb932ca6a47e214d7048a0f90b89fa32fd29823afe0977f96b4",
+        "bytes": 2863444,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "mug",
+      "color": "white",
+      "view": "wrap",
+      "sourceKitKey": "mug:white:wrap",
+      "assetPath": "/mockups/smart-v4/mug/white/wrap.png",
+      "sha256": "ac6e33bbc198500ca109a7e7489be16737d1acea0200c835c16e9cc3832585ad",
+      "bytes": 987563,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/wrap.psb",
+        "sha256": "7be8daf262d6d64f2e16e1c0cd52e106af7c653766a9d88e39448976431bc15f",
+        "bytes": 3079043,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "black",
+      "view": "back",
+      "sourceKitKey": "tshirt:black:back",
+      "assetPath": "/mockups/smart-v4/tshirt/black/back.png",
+      "sha256": "50cd0d904277fb6d4dd628c85a55dbcf355b4cae94fc14eed146353bb7c8936e",
+      "bytes": 906307,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/back.psd",
+        "sha256": "bb780c870185528f3b2551e089fd2b7acee832a5d3f4365d789ef88b34efa114",
+        "bytes": 3756932,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "black",
+      "view": "front",
+      "sourceKitKey": "tshirt:black:front",
+      "assetPath": "/mockups/smart-v4/tshirt/black/front.png",
+      "sha256": "14e1ed843a6ca90202b796943f552fe511d5b0d5546c61707d71524453c9afab",
+      "bytes": 939285,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/front.psd",
+        "sha256": "8ecdbaefa4a7b0f4e397ac5a503333b02182561ee026552cf055a6a498f4bd8a",
+        "bytes": 3840890,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "black",
+      "view": "left-sleeve",
+      "sourceKitKey": "tshirt:black:left-sleeve",
+      "assetPath": "/mockups/smart-v4/tshirt/black/left-sleeve.png",
+      "sha256": "614ba2199dab6103382708638940608f5b1af2cb91dd7299833f8268da147518",
+      "bytes": 151576,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/left-sleeve.psd",
+        "sha256": "e003d579811cd536bf509b5e40345b71457be632d7200f0352538fc2ca2b8772",
+        "bytes": 1571777,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "black",
+      "view": "neck-label",
+      "sourceKitKey": "tshirt:black:neck-label",
+      "assetPath": "/mockups/smart-v4/tshirt/black/neck-label.png",
+      "sha256": "fdc7e3e7529504670d0f79bb9a43e3045a7549895ac160ff26a26b0b82b92abd",
+      "bytes": 110481,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/neck-label.psd",
+        "sha256": "191a83a9e5743758c90d106f72e2d27b1187fc0a9e2de6f3b72fc5f19160de1d",
+        "bytes": 2689952,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "black",
+      "view": "right-sleeve",
+      "sourceKitKey": "tshirt:black:right-sleeve",
+      "assetPath": "/mockups/smart-v4/tshirt/black/right-sleeve.png",
+      "sha256": "3e96b6f67a566a32e5c2da5404c4f4d432ef5cb23dd99885db66d188e5b91124",
+      "bytes": 143624,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/right-sleeve.psd",
+        "sha256": "7c7550c1e9fb71cb4b3304fedf28da935a1d4ab07cddb1dcea3d6a155200409e",
+        "bytes": 1570779,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "grey",
+      "view": "back",
+      "sourceKitKey": "tshirt:grey:back",
+      "assetPath": "/mockups/smart-v4/tshirt/grey/back.png",
+      "sha256": "49b5850d122e474c92d029f912dfea6a1339b495df4eb5556342d28559708937",
+      "bytes": 1072551,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/back.psd",
+        "sha256": "bb780c870185528f3b2551e089fd2b7acee832a5d3f4365d789ef88b34efa114",
+        "bytes": 3756932,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "grey",
+      "view": "front",
+      "sourceKitKey": "tshirt:grey:front",
+      "assetPath": "/mockups/smart-v4/tshirt/grey/front.png",
+      "sha256": "af4f165cbb2eeb2aab528dd8d7f72b94460e90c9aef5835b0786e910f49821a2",
+      "bytes": 1110023,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/front.psd",
+        "sha256": "8ecdbaefa4a7b0f4e397ac5a503333b02182561ee026552cf055a6a498f4bd8a",
+        "bytes": 3840890,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "grey",
+      "view": "left-sleeve",
+      "sourceKitKey": "tshirt:grey:left-sleeve",
+      "assetPath": "/mockups/smart-v4/tshirt/grey/left-sleeve.png",
+      "sha256": "4d8aa7d95dbeb9a644fbf4fd370fbff178616876d34d089f7dabf32f8e65cbed",
+      "bytes": 208755,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/left-sleeve.psd",
+        "sha256": "e003d579811cd536bf509b5e40345b71457be632d7200f0352538fc2ca2b8772",
+        "bytes": 1571777,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "grey",
+      "view": "neck-label",
+      "sourceKitKey": "tshirt:grey:neck-label",
+      "assetPath": "/mockups/smart-v4/tshirt/grey/neck-label.png",
+      "sha256": "c86180c085daaa0fc9638bcb62ceebcb1ee5d0ea83bbf8d4683fe56d4dc8ef3e",
+      "bytes": 151388,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/neck-label.psd",
+        "sha256": "191a83a9e5743758c90d106f72e2d27b1187fc0a9e2de6f3b72fc5f19160de1d",
+        "bytes": 2689952,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "grey",
+      "view": "right-sleeve",
+      "sourceKitKey": "tshirt:grey:right-sleeve",
+      "assetPath": "/mockups/smart-v4/tshirt/grey/right-sleeve.png",
+      "sha256": "aaa1b4198ed3495c4c3a55ffb6975b334be1459b9a1426a961932d7eb3ec1ddb",
+      "bytes": 193249,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/right-sleeve.psd",
+        "sha256": "7c7550c1e9fb71cb4b3304fedf28da935a1d4ab07cddb1dcea3d6a155200409e",
+        "bytes": 1570779,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "maroon",
+      "view": "back",
+      "sourceKitKey": "tshirt:maroon:back",
+      "assetPath": "/mockups/smart-v4/tshirt/maroon/back.png",
+      "sha256": "6e35388f68bed9af0d0e583744d6d923387f4d03a68fbd6ab084b0eac52dcc46",
+      "bytes": 1037193,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/back.psd",
+        "sha256": "bb780c870185528f3b2551e089fd2b7acee832a5d3f4365d789ef88b34efa114",
+        "bytes": 3756932,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "maroon",
+      "view": "front",
+      "sourceKitKey": "tshirt:maroon:front",
+      "assetPath": "/mockups/smart-v4/tshirt/maroon/front.png",
+      "sha256": "fcae22c7e6852fb7c24b395163b946fd07f8343a9da47077e7a5d0d1db2b9ab5",
+      "bytes": 1076353,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/front.psd",
+        "sha256": "8ecdbaefa4a7b0f4e397ac5a503333b02182561ee026552cf055a6a498f4bd8a",
+        "bytes": 3840890,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "maroon",
+      "view": "left-sleeve",
+      "sourceKitKey": "tshirt:maroon:left-sleeve",
+      "assetPath": "/mockups/smart-v4/tshirt/maroon/left-sleeve.png",
+      "sha256": "3081f1029296fc0399d1c27c3eddd7dd1b165771be74e2a72db54206c88b862b",
+      "bytes": 194488,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/left-sleeve.psd",
+        "sha256": "e003d579811cd536bf509b5e40345b71457be632d7200f0352538fc2ca2b8772",
+        "bytes": 1571777,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "maroon",
+      "view": "neck-label",
+      "sourceKitKey": "tshirt:maroon:neck-label",
+      "assetPath": "/mockups/smart-v4/tshirt/maroon/neck-label.png",
+      "sha256": "a9df4239d47aeaa2080328466c06162d226d05b9d9c405647676c657a91378db",
+      "bytes": 139240,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/neck-label.psd",
+        "sha256": "191a83a9e5743758c90d106f72e2d27b1187fc0a9e2de6f3b72fc5f19160de1d",
+        "bytes": 2689952,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "maroon",
+      "view": "right-sleeve",
+      "sourceKitKey": "tshirt:maroon:right-sleeve",
+      "assetPath": "/mockups/smart-v4/tshirt/maroon/right-sleeve.png",
+      "sha256": "77bcb61571cd1959a2136213c0eff1a12ad74bf6d4ace6c02a35248cb66c5dd3",
+      "bytes": 185499,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/right-sleeve.psd",
+        "sha256": "7c7550c1e9fb71cb4b3304fedf28da935a1d4ab07cddb1dcea3d6a155200409e",
+        "bytes": 1570779,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "navy",
+      "view": "back",
+      "sourceKitKey": "tshirt:navy:back",
+      "assetPath": "/mockups/smart-v4/tshirt/navy/back.png",
+      "sha256": "e59c54bab6a9aebd8d7f25d10bfb4bcc3eca1b1d06223c5b604444037d6d3a6f",
+      "bytes": 1118083,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/back.psd",
+        "sha256": "bb780c870185528f3b2551e089fd2b7acee832a5d3f4365d789ef88b34efa114",
+        "bytes": 3756932,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "navy",
+      "view": "front",
+      "sourceKitKey": "tshirt:navy:front",
+      "assetPath": "/mockups/smart-v4/tshirt/navy/front.png",
+      "sha256": "82ec2d090a5339648da5851ae5df1748a83dede12f8e72e97754f78257f70c86",
+      "bytes": 1171870,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/front.psd",
+        "sha256": "8ecdbaefa4a7b0f4e397ac5a503333b02182561ee026552cf055a6a498f4bd8a",
+        "bytes": 3840890,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "navy",
+      "view": "left-sleeve",
+      "sourceKitKey": "tshirt:navy:left-sleeve",
+      "assetPath": "/mockups/smart-v4/tshirt/navy/left-sleeve.png",
+      "sha256": "109cf113f2f86a3f78e13a5d80b3c2bd43a5b94878ec7e623039ea3629dd38e5",
+      "bytes": 223302,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/left-sleeve.psd",
+        "sha256": "e003d579811cd536bf509b5e40345b71457be632d7200f0352538fc2ca2b8772",
+        "bytes": 1571777,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "navy",
+      "view": "neck-label",
+      "sourceKitKey": "tshirt:navy:neck-label",
+      "assetPath": "/mockups/smart-v4/tshirt/navy/neck-label.png",
+      "sha256": "705d4ff3f9cd7e1729436ac1394e718b4f9c9e7c9ac442ca289f45ab5f220437",
+      "bytes": 163863,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/neck-label.psd",
+        "sha256": "191a83a9e5743758c90d106f72e2d27b1187fc0a9e2de6f3b72fc5f19160de1d",
+        "bytes": 2689952,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "navy",
+      "view": "right-sleeve",
+      "sourceKitKey": "tshirt:navy:right-sleeve",
+      "assetPath": "/mockups/smart-v4/tshirt/navy/right-sleeve.png",
+      "sha256": "142ab49418b18449793b646de883bea7e818bb481a68315f7c932511d20f4b32",
+      "bytes": 215776,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/right-sleeve.psd",
+        "sha256": "7c7550c1e9fb71cb4b3304fedf28da935a1d4ab07cddb1dcea3d6a155200409e",
+        "bytes": 1570779,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "olive",
+      "view": "back",
+      "sourceKitKey": "tshirt:olive:back",
+      "assetPath": "/mockups/smart-v4/tshirt/olive/back.png",
+      "sha256": "0b19848140f3f55cf2ca1808846767d2db9c6948424ab865c073537c09f2a35b",
+      "bytes": 1114682,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/back.psd",
+        "sha256": "bb780c870185528f3b2551e089fd2b7acee832a5d3f4365d789ef88b34efa114",
+        "bytes": 3756932,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "olive",
+      "view": "front",
+      "sourceKitKey": "tshirt:olive:front",
+      "assetPath": "/mockups/smart-v4/tshirt/olive/front.png",
+      "sha256": "95ca23d770d2f19e8ca8e438ccd20050d2e6a948d668f9e8223fe028f938e280",
+      "bytes": 1163075,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/front.psd",
+        "sha256": "8ecdbaefa4a7b0f4e397ac5a503333b02182561ee026552cf055a6a498f4bd8a",
+        "bytes": 3840890,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "olive",
+      "view": "left-sleeve",
+      "sourceKitKey": "tshirt:olive:left-sleeve",
+      "assetPath": "/mockups/smart-v4/tshirt/olive/left-sleeve.png",
+      "sha256": "6bd3a63095f775108bc18da6600210091b92c0e43e85431bfc929f890cf8ce48",
+      "bytes": 223279,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/left-sleeve.psd",
+        "sha256": "e003d579811cd536bf509b5e40345b71457be632d7200f0352538fc2ca2b8772",
+        "bytes": 1571777,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "olive",
+      "view": "neck-label",
+      "sourceKitKey": "tshirt:olive:neck-label",
+      "assetPath": "/mockups/smart-v4/tshirt/olive/neck-label.png",
+      "sha256": "c866ef16935e099ec9d1e2bbde6a602f6bb61a0a009a904da5fefcc5bce0edab",
+      "bytes": 162655,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/neck-label.psd",
+        "sha256": "191a83a9e5743758c90d106f72e2d27b1187fc0a9e2de6f3b72fc5f19160de1d",
+        "bytes": 2689952,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "olive",
+      "view": "right-sleeve",
+      "sourceKitKey": "tshirt:olive:right-sleeve",
+      "assetPath": "/mockups/smart-v4/tshirt/olive/right-sleeve.png",
+      "sha256": "b1b4e847752b0e03d806996d9c03858e3d8746a084bd8123f5ef3bff94a9b51a",
+      "bytes": 212800,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/right-sleeve.psd",
+        "sha256": "7c7550c1e9fb71cb4b3304fedf28da935a1d4ab07cddb1dcea3d6a155200409e",
+        "bytes": 1570779,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "red",
+      "view": "back",
+      "sourceKitKey": "tshirt:red:back",
+      "assetPath": "/mockups/smart-v4/tshirt/red/back.png",
+      "sha256": "99ad9fadc0f43d5d34f387e643c00b89da82abc0d08befd8c5d001f89ae72e86",
+      "bytes": 998276,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/back.psd",
+        "sha256": "bb780c870185528f3b2551e089fd2b7acee832a5d3f4365d789ef88b34efa114",
+        "bytes": 3756932,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "red",
+      "view": "front",
+      "sourceKitKey": "tshirt:red:front",
+      "assetPath": "/mockups/smart-v4/tshirt/red/front.png",
+      "sha256": "d4ae7b3c49f2e8691f0aad68b0ffb59fa508fb4d63f8b1f6664ecd3b4ef0419c",
+      "bytes": 1036282,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/front.psd",
+        "sha256": "8ecdbaefa4a7b0f4e397ac5a503333b02182561ee026552cf055a6a498f4bd8a",
+        "bytes": 3840890,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "red",
+      "view": "left-sleeve",
+      "sourceKitKey": "tshirt:red:left-sleeve",
+      "assetPath": "/mockups/smart-v4/tshirt/red/left-sleeve.png",
+      "sha256": "d5b21d02ea6b41edab1c35b15b4feb02adc48032b74eb03c9ba097f9aa7605ee",
+      "bytes": 181961,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/left-sleeve.psd",
+        "sha256": "e003d579811cd536bf509b5e40345b71457be632d7200f0352538fc2ca2b8772",
+        "bytes": 1571777,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "red",
+      "view": "neck-label",
+      "sourceKitKey": "tshirt:red:neck-label",
+      "assetPath": "/mockups/smart-v4/tshirt/red/neck-label.png",
+      "sha256": "81f4c1ef1d8f34e8d7a70c02d00d1727b1504444697f549559a328a668b3256c",
+      "bytes": 132907,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/neck-label.psd",
+        "sha256": "191a83a9e5743758c90d106f72e2d27b1187fc0a9e2de6f3b72fc5f19160de1d",
+        "bytes": 2689952,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "red",
+      "view": "right-sleeve",
+      "sourceKitKey": "tshirt:red:right-sleeve",
+      "assetPath": "/mockups/smart-v4/tshirt/red/right-sleeve.png",
+      "sha256": "1a5ffccc90e21358b48ba11384f7ca3dde46411af3023630f5846396b1574046",
+      "bytes": 172884,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/right-sleeve.psd",
+        "sha256": "7c7550c1e9fb71cb4b3304fedf28da935a1d4ab07cddb1dcea3d6a155200409e",
+        "bytes": 1570779,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "sky-blue",
+      "view": "back",
+      "sourceKitKey": "tshirt:sky-blue:back",
+      "assetPath": "/mockups/smart-v4/tshirt/sky-blue/back.png",
+      "sha256": "4c16aa65f0616e5d9ddfc3f4cf259e9c00760f85239727c83b937c5b66eee702",
+      "bytes": 1081605,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/back.psd",
+        "sha256": "bb780c870185528f3b2551e089fd2b7acee832a5d3f4365d789ef88b34efa114",
+        "bytes": 3756932,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "sky-blue",
+      "view": "front",
+      "sourceKitKey": "tshirt:sky-blue:front",
+      "assetPath": "/mockups/smart-v4/tshirt/sky-blue/front.png",
+      "sha256": "b049d571604903ad60d97449db0d6500b8e708d1acb0707843bd2050879d587e",
+      "bytes": 1122933,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/front.psd",
+        "sha256": "8ecdbaefa4a7b0f4e397ac5a503333b02182561ee026552cf055a6a498f4bd8a",
+        "bytes": 3840890,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "sky-blue",
+      "view": "left-sleeve",
+      "sourceKitKey": "tshirt:sky-blue:left-sleeve",
+      "assetPath": "/mockups/smart-v4/tshirt/sky-blue/left-sleeve.png",
+      "sha256": "4d02483dae1c2e543e7ebe13e78dca7357f65f781041ba02a97b6fb2a7a27814",
+      "bytes": 208133,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/left-sleeve.psd",
+        "sha256": "e003d579811cd536bf509b5e40345b71457be632d7200f0352538fc2ca2b8772",
+        "bytes": 1571777,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "sky-blue",
+      "view": "neck-label",
+      "sourceKitKey": "tshirt:sky-blue:neck-label",
+      "assetPath": "/mockups/smart-v4/tshirt/sky-blue/neck-label.png",
+      "sha256": "40e390f7da87e3466182fae844fc9c838d59cddd529f895187c5b860a1723ee2",
+      "bytes": 152542,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/neck-label.psd",
+        "sha256": "191a83a9e5743758c90d106f72e2d27b1187fc0a9e2de6f3b72fc5f19160de1d",
+        "bytes": 2689952,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "sky-blue",
+      "view": "right-sleeve",
+      "sourceKitKey": "tshirt:sky-blue:right-sleeve",
+      "assetPath": "/mockups/smart-v4/tshirt/sky-blue/right-sleeve.png",
+      "sha256": "e0b27b4d42b93b7a95e12138d7c0d5d5f22ed98ef222872970ab957a8c2a0f79",
+      "bytes": 200542,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/right-sleeve.psd",
+        "sha256": "7c7550c1e9fb71cb4b3304fedf28da935a1d4ab07cddb1dcea3d6a155200409e",
+        "bytes": 1570779,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "white",
+      "view": "back",
+      "sourceKitKey": "tshirt:white:back",
+      "assetPath": "/mockups/smart-v4/tshirt/white/back.png",
+      "sha256": "6ed7a95585dc6bbb9747287f8ecaf09cdcd128709cc98cea07606c57b95adaa3",
+      "bytes": 1139887,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/back.psd",
+        "sha256": "bb780c870185528f3b2551e089fd2b7acee832a5d3f4365d789ef88b34efa114",
+        "bytes": 3756932,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "white",
+      "view": "front",
+      "sourceKitKey": "tshirt:white:front",
+      "assetPath": "/mockups/smart-v4/tshirt/white/front.png",
+      "sha256": "e91754f959cdf7f87206be27e9499d5ffb17779732666cda079fb6c1073f3c2f",
+      "bytes": 1189481,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/front.psd",
+        "sha256": "8ecdbaefa4a7b0f4e397ac5a503333b02182561ee026552cf055a6a498f4bd8a",
+        "bytes": 3840890,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "white",
+      "view": "left-sleeve",
+      "sourceKitKey": "tshirt:white:left-sleeve",
+      "assetPath": "/mockups/smart-v4/tshirt/white/left-sleeve.png",
+      "sha256": "ea2a5b3a3d44b7948c8c12afb27011842aee4e25db36a4cffbda864f944b6f8a",
+      "bytes": 227559,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/left-sleeve.psd",
+        "sha256": "e003d579811cd536bf509b5e40345b71457be632d7200f0352538fc2ca2b8772",
+        "bytes": 1571777,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "white",
+      "view": "neck-label",
+      "sourceKitKey": "tshirt:white:neck-label",
+      "assetPath": "/mockups/smart-v4/tshirt/white/neck-label.png",
+      "sha256": "5474936d64c74c7bdfdfdad83145d771c0209f231010b0e4c9e7b511a19307b2",
+      "bytes": 166314,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/neck-label.psd",
+        "sha256": "191a83a9e5743758c90d106f72e2d27b1187fc0a9e2de6f3b72fc5f19160de1d",
+        "bytes": 2689952,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "tshirt",
+      "color": "white",
+      "view": "right-sleeve",
+      "sourceKitKey": "tshirt:white:right-sleeve",
+      "assetPath": "/mockups/smart-v4/tshirt/white/right-sleeve.png",
+      "sha256": "e085f0300e2358f097b22d050c39e8a1eefa5d4645fd7a5419a10a058aee49f7",
+      "bytes": 220300,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/right-sleeve.psd",
+        "sha256": "7c7550c1e9fb71cb4b3304fedf28da935a1d4ab07cddb1dcea3d6a155200409e",
+        "bytes": 1570779,
+        "format": "psd"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "waterbottle",
+      "color": "black",
+      "view": "back",
+      "sourceKitKey": "waterbottle:black:back",
+      "assetPath": "/mockups/smart-v4/waterbottle/black/back.png",
+      "sha256": "3a8c91752e9f77a501307cf0a9491835f9533b884532b6d0aca8055ceacc038e",
+      "bytes": 879054,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Bottle/back.psb",
+        "sha256": "84d60cf9345bfb18f60e4e699480adf4f9736324a5b7bd71727746a3e7268ae8",
+        "bytes": 1864931,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "waterbottle",
+      "color": "black",
+      "view": "front",
+      "sourceKitKey": "waterbottle:black:front",
+      "assetPath": "/mockups/smart-v4/waterbottle/black/front.png",
+      "sha256": "7deed222f2261eb033d2677368e0eb60314efed436127e218c8fc678b636442e",
+      "bytes": 948436,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Bottle/front.psb",
+        "sha256": "d7d781ae6ceaf2541d0cde3a14a1bf2677f5cac96789e4e564305fe953528258",
+        "bytes": 2243740,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "waterbottle",
+      "color": "forest",
+      "view": "back",
+      "sourceKitKey": "waterbottle:forest:back",
+      "assetPath": "/mockups/smart-v4/waterbottle/forest/back.png",
+      "sha256": "118fcfeb5c4f91ab53bfbd1b58b324fe4f099a5c7007bb8d8fef16a3b71500a2",
+      "bytes": 889923,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Bottle/back.psb",
+        "sha256": "84d60cf9345bfb18f60e4e699480adf4f9736324a5b7bd71727746a3e7268ae8",
+        "bytes": 1864931,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "waterbottle",
+      "color": "forest",
+      "view": "front",
+      "sourceKitKey": "waterbottle:forest:front",
+      "assetPath": "/mockups/smart-v4/waterbottle/forest/front.png",
+      "sha256": "bb12c9a2a4a99b9d1027958307008abcae1bb23827a717000876cbae5521365a",
+      "bytes": 969287,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Bottle/front.psb",
+        "sha256": "d7d781ae6ceaf2541d0cde3a14a1bf2677f5cac96789e4e564305fe953528258",
+        "bytes": 2243740,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "waterbottle",
+      "color": "navy",
+      "view": "back",
+      "sourceKitKey": "waterbottle:navy:back",
+      "assetPath": "/mockups/smart-v4/waterbottle/navy/back.png",
+      "sha256": "2fd04296eb64409800a2e7f3f493b3431b16637c022f0a1215ce9d81bfe22b7a",
+      "bytes": 889019,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Bottle/back.psb",
+        "sha256": "84d60cf9345bfb18f60e4e699480adf4f9736324a5b7bd71727746a3e7268ae8",
+        "bytes": 1864931,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "waterbottle",
+      "color": "navy",
+      "view": "front",
+      "sourceKitKey": "waterbottle:navy:front",
+      "assetPath": "/mockups/smart-v4/waterbottle/navy/front.png",
+      "sha256": "428f749e3af40e6b206d288d38667d69d20519995f276d99cfe9b23bc4fc673f",
+      "bytes": 970995,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Bottle/front.psb",
+        "sha256": "d7d781ae6ceaf2541d0cde3a14a1bf2677f5cac96789e4e564305fe953528258",
+        "bytes": 2243740,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "waterbottle",
+      "color": "pink",
+      "view": "back",
+      "sourceKitKey": "waterbottle:pink:back",
+      "assetPath": "/mockups/smart-v4/waterbottle/pink/back.png",
+      "sha256": "250615ae490cf14647199b7c65d417e0082edf6f86f18b10a6d045451dc94aa4",
+      "bytes": 894158,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Bottle/back.psb",
+        "sha256": "84d60cf9345bfb18f60e4e699480adf4f9736324a5b7bd71727746a3e7268ae8",
+        "bytes": 1864931,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "waterbottle",
+      "color": "pink",
+      "view": "front",
+      "sourceKitKey": "waterbottle:pink:front",
+      "assetPath": "/mockups/smart-v4/waterbottle/pink/front.png",
+      "sha256": "fcdd894116d04b646c7e3bf0f920f6fc1ae5432d5d00032bf824a0798b078cc8",
+      "bytes": 996099,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Bottle/front.psb",
+        "sha256": "d7d781ae6ceaf2541d0cde3a14a1bf2677f5cac96789e4e564305fe953528258",
+        "bytes": 2243740,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "waterbottle",
+      "color": "red",
+      "view": "back",
+      "sourceKitKey": "waterbottle:red:back",
+      "assetPath": "/mockups/smart-v4/waterbottle/red/back.png",
+      "sha256": "8739aa18c2a16fc732c9b32901898be32bc83d1c8db3528cc50a7dbf93bcf72c",
+      "bytes": 874197,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Bottle/back.psb",
+        "sha256": "84d60cf9345bfb18f60e4e699480adf4f9736324a5b7bd71727746a3e7268ae8",
+        "bytes": 1864931,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "waterbottle",
+      "color": "red",
+      "view": "front",
+      "sourceKitKey": "waterbottle:red:front",
+      "assetPath": "/mockups/smart-v4/waterbottle/red/front.png",
+      "sha256": "c192f5daaceb15d23d5cddffb64a098116113bcf74315e083125bd3d443a7461",
+      "bytes": 961881,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Bottle/front.psb",
+        "sha256": "d7d781ae6ceaf2541d0cde3a14a1bf2677f5cac96789e4e564305fe953528258",
+        "bytes": 2243740,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "waterbottle",
+      "color": "sky-blue",
+      "view": "back",
+      "sourceKitKey": "waterbottle:sky-blue:back",
+      "assetPath": "/mockups/smart-v4/waterbottle/sky-blue/back.png",
+      "sha256": "961f03cc8a1a44224415b1825d438bb9487f5bfd8a5f82dfc02ad1e19874afed",
+      "bytes": 895154,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Bottle/back.psb",
+        "sha256": "84d60cf9345bfb18f60e4e699480adf4f9736324a5b7bd71727746a3e7268ae8",
+        "bytes": 1864931,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "waterbottle",
+      "color": "sky-blue",
+      "view": "front",
+      "sourceKitKey": "waterbottle:sky-blue:front",
+      "assetPath": "/mockups/smart-v4/waterbottle/sky-blue/front.png",
+      "sha256": "f49427d338593d8429f7f37ecdd53ef20961e7260631d377271ad9b0246a878a",
+      "bytes": 989204,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Bottle/front.psb",
+        "sha256": "d7d781ae6ceaf2541d0cde3a14a1bf2677f5cac96789e4e564305fe953528258",
+        "bytes": 2243740,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "waterbottle",
+      "color": "teal",
+      "view": "back",
+      "sourceKitKey": "waterbottle:teal:back",
+      "assetPath": "/mockups/smart-v4/waterbottle/teal/back.png",
+      "sha256": "603e091656fcfc1b015b153afae76848ef8ae02f90476a6be2f5883f5740f451",
+      "bytes": 889835,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Bottle/back.psb",
+        "sha256": "84d60cf9345bfb18f60e4e699480adf4f9736324a5b7bd71727746a3e7268ae8",
+        "bytes": 1864931,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "waterbottle",
+      "color": "teal",
+      "view": "front",
+      "sourceKitKey": "waterbottle:teal:front",
+      "assetPath": "/mockups/smart-v4/waterbottle/teal/front.png",
+      "sha256": "905dbb2a1eaad6138c37ea2af179724b91600b4b6c4b7d8565beeb69f9e692ae",
+      "bytes": 976171,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Bottle/front.psb",
+        "sha256": "d7d781ae6ceaf2541d0cde3a14a1bf2677f5cac96789e4e564305fe953528258",
+        "bytes": 2243740,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "waterbottle",
+      "color": "white",
+      "view": "back",
+      "sourceKitKey": "waterbottle:white:back",
+      "assetPath": "/mockups/smart-v4/waterbottle/white/back.png",
+      "sha256": "0af219f86b2ea75b8e102908d7beca5cc985ecf197cd081457ece21296916790",
+      "bytes": 943361,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Bottle/back.psb",
+        "sha256": "84d60cf9345bfb18f60e4e699480adf4f9736324a5b7bd71727746a3e7268ae8",
+        "bytes": 1864931,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    },
+    {
+      "family": "waterbottle",
+      "color": "white",
+      "view": "front",
+      "sourceKitKey": "waterbottle:white:front",
+      "assetPath": "/mockups/smart-v4/waterbottle/white/front.png",
+      "sha256": "f05e049d4dc67d016ee046a2f06be1bd95555bfd9c7540a26d24457e65306af4",
+      "bytes": 1071411,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alpha": "RGBA",
+      "master": {
+        "path": "trynex-mockup-masters-22-photoreal/masters/Bottle/front.psb",
+        "sha256": "d7d781ae6ceaf2541d0cde3a14a1bf2677f5cac96789e4e564305fe953528258",
+        "bytes": 2243740,
+        "format": "psb"
+      },
+      "masterStatus": "verified-source-package"
+    }
+  ]
+}

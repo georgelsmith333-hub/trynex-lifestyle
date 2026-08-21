@@ -49,12 +49,42 @@ export interface CanonicalMockupSpec {
   };
 }
 
+export const CANONICAL_MOCKUP_COLORS: Record<MockupFamily, ProductColor[]> = {
+  tshirt: [
+    { name: "White", hex: "#f8f7f4" }, { name: "Black", hex: "#1a1a1a" }, { name: "Navy", hex: "#1e3a5f" }, { name: "Maroon", hex: "#7f1d1d" },
+    { name: "Olive", hex: "#4a5240" }, { name: "Sky Blue", hex: "#0ea5e9" }, { name: "Grey", hex: "#6b7280" }, { name: "Red", hex: "#dc2626" },
+  ],
+  longsleeve: [
+    { name: "White", hex: "#f5f3f3" }, { name: "Black", hex: "#1a1a1a" }, { name: "Navy", hex: "#1e3a5f" }, { name: "Maroon", hex: "#7f1d1d" },
+    { name: "Olive", hex: "#4a5240" }, { name: "Grey", hex: "#6b7280" }, { name: "Red", hex: "#dc2626" }, { name: "Sky Blue", hex: "#0ea5e9" },
+    { name: "Burgundy", hex: "#6b1a2c" }, { name: "Forest", hex: "#166534" },
+  ],
+  hoodie: [
+    { name: "White", hex: "#f2efe9" }, { name: "Black", hex: "#1a1a1a" }, { name: "Navy", hex: "#1e3a5f" }, { name: "Grey", hex: "#6b7280" },
+    { name: "Maroon", hex: "#7f1d1d" }, { name: "Olive", hex: "#4a5240" }, { name: "Red", hex: "#dc2626" }, { name: "Sky Blue", hex: "#0ea5e9" },
+    { name: "Forest", hex: "#166534" }, { name: "Burgundy", hex: "#6b1a2c" },
+  ],
+  mug: [
+    { name: "White", hex: "#f5f5f5" }, { name: "Black", hex: "#1c1917" }, { name: "Navy", hex: "#1e3a5f" }, { name: "Red", hex: "#dc2626" },
+    { name: "Green", hex: "#16a34a" }, { name: "Purple", hex: "#7c3aed" }, { name: "Sky Blue", hex: "#0ea5e9" }, { name: "Pink", hex: "#ec4899" },
+    { name: "Maroon", hex: "#7f1d1d" }, { name: "Orange", hex: "#ea580c" },
+  ],
+  cap: [
+    { name: "White", hex: "#f5f2ec" }, { name: "Black", hex: "#1a1a1a" }, { name: "Navy", hex: "#1e3a5f" }, { name: "Maroon", hex: "#7f1d1d" },
+    { name: "Olive", hex: "#4a5240" }, { name: "Red", hex: "#dc2626" }, { name: "Grey", hex: "#6b7280" }, { name: "Forest", hex: "#166534" },
+  ],
+  waterbottle: [
+    { name: "White", hex: "#f4f3f1" }, { name: "Black", hex: "#1c1917" }, { name: "Navy", hex: "#1e3a5f" }, { name: "Forest", hex: "#166534" },
+    { name: "Sky Blue", hex: "#0ea5e9" }, { name: "Red", hex: "#dc2626" }, { name: "Pink", hex: "#f472b6" }, { name: "Teal", hex: "#0f766e" },
+  ],
+};
+
 export const CANONICAL_MOCKUP_SPECS: Record<MockupFamily, CanonicalMockupSpec> = {
   tshirt: {
-    family: "tshirt", productType: "tshirt", displayName: "Unisex T-Shirt",
+family: "tshirt", productType: "tshirt", displayName: "Unisex T-Shirt",
     schema: "trynex-canonical-mockup/v1", masterFormat: "psd", masterStatus: "manifest-only",
     normalizedCanvas: { width: 1000, height: 1000 },
-    colors: [],
+    colors: CANONICAL_MOCKUP_COLORS.tshirt,
     geometry: {
       silhouetteId: "tshirt-unisex-crewneck-v1",
       frontBackPairId: "tshirt-front-back-v1",
@@ -74,7 +104,7 @@ export const CANONICAL_MOCKUP_SPECS: Record<MockupFamily, CanonicalMockupSpec> =
   longsleeve: {
     family: "longsleeve", productType: "longsleeve", displayName: "Unisex Long Sleeve",
     schema: "trynex-canonical-mockup/v1", masterFormat: "psd", masterStatus: "manifest-only",
-    normalizedCanvas: { width: 1000, height: 1000 }, colors: [],
+    normalizedCanvas: { width: 1000, height: 1000 }, colors: CANONICAL_MOCKUP_COLORS.longsleeve,
     geometry: {
       silhouetteId: "longsleeve-unisex-cuff-v1", frontBackPairId: "longsleeve-front-back-v1", colorMaterialId: "longsleeve-cotton-240gsm-v1", aspectLock: true,
       protectedDetails: ["collar", "cuffs", "sleeve-edges", "seams", "hem"],
@@ -91,7 +121,7 @@ export const CANONICAL_MOCKUP_SPECS: Record<MockupFamily, CanonicalMockupSpec> =
   hoodie: {
     family: "hoodie", productType: "hoodie", displayName: "Unisex Hoodie",
     schema: "trynex-canonical-mockup/v1", masterFormat: "psb", masterStatus: "manifest-only",
-    normalizedCanvas: { width: 1000, height: 1000 }, colors: [],
+    normalizedCanvas: { width: 1000, height: 1000 }, colors: CANONICAL_MOCKUP_COLORS.hoodie,
     geometry: {
       silhouetteId: "hoodie-pullover-kangaroo-v1", frontBackPairId: "hoodie-front-back-v1", colorMaterialId: "hoodie-fleece-320gsm-v1", aspectLock: true,
       protectedDetails: ["hood", "drawstrings", "pocket", "cuffs", "seams", "hem"],
@@ -108,7 +138,7 @@ export const CANONICAL_MOCKUP_SPECS: Record<MockupFamily, CanonicalMockupSpec> =
   mug: {
     family: "mug", productType: "mug", displayName: "Ceramic Mug",
     schema: "trynex-canonical-mockup/v1", masterFormat: "psb", masterStatus: "manifest-only",
-    normalizedCanvas: { width: 1000, height: 1000 }, colors: [],
+    normalizedCanvas: { width: 1000, height: 1000 }, colors: CANONICAL_MOCKUP_COLORS.mug,
     geometry: {
       silhouetteId: "mug-ceramic-standard-v1", frontBackPairId: "mug-side-pair-v1", colorMaterialId: "mug-ceramic-v1", aspectLock: true,
       protectedDetails: ["rim", "handle", "base"],
@@ -123,7 +153,7 @@ export const CANONICAL_MOCKUP_SPECS: Record<MockupFamily, CanonicalMockupSpec> =
   cap: {
     family: "cap", productType: "cap", displayName: "Structured Cap",
     schema: "trynex-canonical-mockup/v1", masterFormat: "psd", masterStatus: "manifest-only",
-    normalizedCanvas: { width: 1000, height: 1000 }, colors: [],
+    normalizedCanvas: { width: 1000, height: 1000 }, colors: CANONICAL_MOCKUP_COLORS.cap,
     geometry: {
       silhouetteId: "cap-structured-5panel-v1", frontBackPairId: "cap-front-back-v1", colorMaterialId: "cap-cotton-v1", aspectLock: true,
       protectedDetails: ["brim", "crown-seams", "rear-opening", "strap"],
@@ -137,7 +167,7 @@ export const CANONICAL_MOCKUP_SPECS: Record<MockupFamily, CanonicalMockupSpec> =
   waterbottle: {
     family: "waterbottle", productType: "waterbottle", displayName: "Water Bottle",
     schema: "trynex-canonical-mockup/v1", masterFormat: "psb", masterStatus: "manifest-only",
-    normalizedCanvas: { width: 1000, height: 1000 }, colors: [],
+    normalizedCanvas: { width: 1000, height: 1000 }, colors: CANONICAL_MOCKUP_COLORS.waterbottle,
     geometry: {
       silhouetteId: "waterbottle-aluminium-carabiner-v1", frontBackPairId: "waterbottle-front-back-v1", colorMaterialId: "waterbottle-aluminium-v1", aspectLock: true,
       protectedDetails: ["lid", "key-ring-loop", "side-carabiner", "shoulder", "rounded-base"],
