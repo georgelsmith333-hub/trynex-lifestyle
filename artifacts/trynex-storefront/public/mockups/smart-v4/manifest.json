@@ -397,8 +397,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "hoodie:black:left-sleeve",
       "assetPath": "/mockups/smart-v4/hoodie/black/left-sleeve.png",
-      "sha256": "a0529ccd562c3a27e78768fe83e8b17ab1e4f6699f7d7a98fd5d484be1e79568",
-      "bytes": 163115,
+      "sha256": "8799b46eeff4d8a5aae695fd8de444c54a46ae583a4f0a6ec75a95095f3187b2",
+      "bytes": 207408,
       "dimensions": [
         1024,
         1024
@@ -418,8 +418,8 @@
       "view": "neck-label",
       "sourceKitKey": "hoodie:black:neck-label",
       "assetPath": "/mockups/smart-v4/hoodie/black/neck-label.png",
-      "sha256": "8297c822ecdfdd1c9d8363d88dd31b128fc59cf4735c765fb918e43b1fa0105f",
-      "bytes": 119451,
+      "sha256": "d791ebcd3f114047c09c3ee9ff03f94d83634ec9566b09efe705f3c1abcfc96c",
+      "bytes": 411307,
       "dimensions": [
         1024,
         1024
@@ -439,8 +439,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "hoodie:black:right-sleeve",
       "assetPath": "/mockups/smart-v4/hoodie/black/right-sleeve.png",
-      "sha256": "82dbea68fc4728715c1b844a003b0d759b561232d4b7ea378594d0d7efd90491",
-      "bytes": 167528,
+      "sha256": "46947b43bcfea03c692c749f7105cef258abe5d4474922fcecbab8153e166226",
+      "bytes": 208693,
       "dimensions": [
         1024,
         1024
@@ -502,8 +502,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "hoodie:burgundy:left-sleeve",
       "assetPath": "/mockups/smart-v4/hoodie/burgundy/left-sleeve.png",
-      "sha256": "1c337ee63f059c53390c7cbd19437a7db20de9e045bc50954b0a5563d59a50e1",
-      "bytes": 236902,
+      "sha256": "97726a2690b434db429d03ed6b5b7d32acf8cf39f3bb502c6dfc80afdced6680",
+      "bytes": 288822,
       "dimensions": [
         1024,
         1024
@@ -523,8 +523,8 @@
       "view": "neck-label",
       "sourceKitKey": "hoodie:burgundy:neck-label",
       "assetPath": "/mockups/smart-v4/hoodie/burgundy/neck-label.png",
-      "sha256": "c241c9189abe6884fcb08ea38010d41b1b576bd186dd5d4189de7acd19294ea3",
-      "bytes": 171733,
+      "sha256": "338d190cc8b8ab93e0909c5cd3c6a33a505059eb6f6892075268122852002d9d",
+      "bytes": 639996,
       "dimensions": [
         1024,
         1024
@@ -544,8 +544,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "hoodie:burgundy:right-sleeve",
       "assetPath": "/mockups/smart-v4/hoodie/burgundy/right-sleeve.png",
-      "sha256": "698f40c78be3af972c8e582d85950e728e5ec6fe0ec01ae72462ce5a1566434a",
-      "bytes": 238731,
+      "sha256": "0f93b7f1802d1642890b5b5cb25a9c7d5f34b72c33e91667bc6a9afc4d1be339",
+      "bytes": 288825,
       "dimensions": [
         1024,
         1024
@@ -607,8 +607,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "hoodie:forest:left-sleeve",
       "assetPath": "/mockups/smart-v4/hoodie/forest/left-sleeve.png",
-      "sha256": "bfbc5a6f137493c4b0e935042ca0a233a1ec5ea27ca3aa5e97150735ef3f5e66",
-      "bytes": 237753,
+      "sha256": "c19a726c6da9b70ce4ba4ec3f398725d4771e876efccd4beb2f34f0b8f39fda9",
+      "bytes": 289837,
       "dimensions": [
         1024,
         1024
@@ -628,8 +628,8 @@
       "view": "neck-label",
       "sourceKitKey": "hoodie:forest:neck-label",
       "assetPath": "/mockups/smart-v4/hoodie/forest/neck-label.png",
-      "sha256": "7b34b68e087922934672cedbe902d9e221defd0667074416856f6aa3804235f0",
-      "bytes": 172307,
+      "sha256": "4e89c0fc54b07ec83bbe0879f314fab29fe51a6661b55d4063eb231bd6df9074",
+      "bytes": 637999,
       "dimensions": [
         1024,
         1024
@@ -649,8 +649,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "hoodie:forest:right-sleeve",
       "assetPath": "/mockups/smart-v4/hoodie/forest/right-sleeve.png",
-      "sha256": "0e1c989b127c320881cbcdf7e01b149b6af7dfd81812e7263c11b4072e034f27",
-      "bytes": 239534,
+      "sha256": "60d7cf5841b77148e0899fce705041bb8c2e4e1a10a9ed3a2477fd8535140908",
+      "bytes": 290353,
       "dimensions": [
         1024,
         1024
@@ -712,8 +712,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "hoodie:grey:left-sleeve",
       "assetPath": "/mockups/smart-v4/hoodie/grey/left-sleeve.png",
-      "sha256": "1c8cae5c7c88d7bd39466c0adf0e14d6758aae0e57c886854811354427c09715",
-      "bytes": 217973,
+      "sha256": "840f3ecd1697c274a642818cb95f5b88f3ec5a9c687272b1ebf9272a3aebaeb7",
+      "bytes": 265754,
       "dimensions": [
         1024,
         1024
@@ -733,8 +733,8 @@
       "view": "neck-label",
       "sourceKitKey": "hoodie:grey:neck-label",
       "assetPath": "/mockups/smart-v4/hoodie/grey/neck-label.png",
-      "sha256": "3adda226e9bae58ca068873c60750074d4a373fdfa91b6208a5ffa944bb9d689",
-      "bytes": 160269,
+      "sha256": "b008619bac2a56ecef1637825f4538f862c033f04897400f7f4f2e8eacbfffdb",
+      "bytes": 599964,
       "dimensions": [
         1024,
         1024
@@ -754,8 +754,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "hoodie:grey:right-sleeve",
       "assetPath": "/mockups/smart-v4/hoodie/grey/right-sleeve.png",
-      "sha256": "04423cc9f173b2a52ec6ffbeeaf2a02481fd1be1de263da56861b9f31dd0e02b",
-      "bytes": 219996,
+      "sha256": "c4c0fd54deec91ba02d6094eedf5dbd4f4273346724fbcfa0857d2a181d7a820",
+      "bytes": 265413,
       "dimensions": [
         1024,
         1024
@@ -817,8 +817,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "hoodie:maroon:left-sleeve",
       "assetPath": "/mockups/smart-v4/hoodie/maroon/left-sleeve.png",
-      "sha256": "b19ac5be4b57ae0b090d27bff6dd59a794469e01d2c4616e2b882bd51ff279ac",
-      "bytes": 207998,
+      "sha256": "e883d1db6f30231bf758b85111191bd63bfc8579e70a152f8e7a6c41fe0e34be",
+      "bytes": 255248,
       "dimensions": [
         1024,
         1024
@@ -838,8 +838,8 @@
       "view": "neck-label",
       "sourceKitKey": "hoodie:maroon:neck-label",
       "assetPath": "/mockups/smart-v4/hoodie/maroon/neck-label.png",
-      "sha256": "10bd0c1f38d0251081e69efae1f7f730bc1003ed7447c592640df7fe1c9c27a8",
-      "bytes": 152379,
+      "sha256": "6e7d280286f1924807e07482026ed0b1d74cbe9a6ac5f49c1554d3f71bfa0775",
+      "bytes": 558556,
       "dimensions": [
         1024,
         1024
@@ -859,8 +859,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "hoodie:maroon:right-sleeve",
       "assetPath": "/mockups/smart-v4/hoodie/maroon/right-sleeve.png",
-      "sha256": "26fc8a90dfcd2a77dc318b67c73691a2be9bfa0b2e47b40845498274d4fa7c84",
-      "bytes": 210147,
+      "sha256": "17356fd3b8189c66c2c869bdb03b885dfefe00eb32f4c3e0fa99ff16ca28d97d",
+      "bytes": 255432,
       "dimensions": [
         1024,
         1024
@@ -922,8 +922,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "hoodie:navy:left-sleeve",
       "assetPath": "/mockups/smart-v4/hoodie/navy/left-sleeve.png",
-      "sha256": "6dbd197257f134234171e40cfafbbef9abeb917c5f84cbc7c3207137d388c0af",
-      "bytes": 234963,
+      "sha256": "33c2aed0a38d10f2b49fae03defb70b25b55c16b19bceae59d7cf91d0b8b6546",
+      "bytes": 287487,
       "dimensions": [
         1024,
         1024
@@ -943,8 +943,8 @@
       "view": "neck-label",
       "sourceKitKey": "hoodie:navy:neck-label",
       "assetPath": "/mockups/smart-v4/hoodie/navy/neck-label.png",
-      "sha256": "9767a3ccd2f9c6b796ef98dc910417913de58cae2b992c6ff088b31c531942d8",
-      "bytes": 170473,
+      "sha256": "ec5d206524785038b8a2d63e39ec9e3f976d099a5329dcf1d973ca154da04575",
+      "bytes": 633851,
       "dimensions": [
         1024,
         1024
@@ -964,8 +964,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "hoodie:navy:right-sleeve",
       "assetPath": "/mockups/smart-v4/hoodie/navy/right-sleeve.png",
-      "sha256": "e3446afb667ee4e77e7cca4dd19efc0ca303e28e57b8697a73ba7fc4356658de",
-      "bytes": 237036,
+      "sha256": "53124ca09077f14cd8e61371d493b7574a81d22e7766d1b9209e0601b4aa2b98",
+      "bytes": 287277,
       "dimensions": [
         1024,
         1024
@@ -1027,8 +1027,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "hoodie:olive:left-sleeve",
       "assetPath": "/mockups/smart-v4/hoodie/olive/left-sleeve.png",
-      "sha256": "ca81ecd6983a783a5737fc964af935114db4b6c670037b51b05e52bc726b84b7",
-      "bytes": 229360,
+      "sha256": "48b68b4b99dc798c37dc4003efc8a6fd33833a63ecd540639d99e051347147d0",
+      "bytes": 282394,
       "dimensions": [
         1024,
         1024
@@ -1048,8 +1048,8 @@
       "view": "neck-label",
       "sourceKitKey": "hoodie:olive:neck-label",
       "assetPath": "/mockups/smart-v4/hoodie/olive/neck-label.png",
-      "sha256": "08f309e610b2b98aefe167ec9cea6bd0374c40a525eac627b04f67d4cafcc38d",
-      "bytes": 167132,
+      "sha256": "23238ea1049dc6b5e4a27bfc627282762542bdf8828cbf46012fcd78f5dd2808",
+      "bytes": 623947,
       "dimensions": [
         1024,
         1024
@@ -1069,8 +1069,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "hoodie:olive:right-sleeve",
       "assetPath": "/mockups/smart-v4/hoodie/olive/right-sleeve.png",
-      "sha256": "3b6a16c3d761f9a61da721b2899432a89197ca64f75d338dddc8e9965a2bd413",
-      "bytes": 230674,
+      "sha256": "3defbd7b51aa45e9bbd4ebd7899d61c337811cb690ebdf3f65709f95c01cc7a2",
+      "bytes": 283068,
       "dimensions": [
         1024,
         1024
@@ -1132,8 +1132,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "hoodie:red:left-sleeve",
       "assetPath": "/mockups/smart-v4/hoodie/red/left-sleeve.png",
-      "sha256": "446ee5809d23fd77f3a752b18a083ceec196eb21ad5a4d62e566791eb6c798e2",
-      "bytes": 197364,
+      "sha256": "c2b4297aab19997ce68f92733a34a58c8be0244e3a7dab09bb4521519dbcb368",
+      "bytes": 243117,
       "dimensions": [
         1024,
         1024
@@ -1153,8 +1153,8 @@
       "view": "neck-label",
       "sourceKitKey": "hoodie:red:neck-label",
       "assetPath": "/mockups/smart-v4/hoodie/red/neck-label.png",
-      "sha256": "b2d3366c526b453d5bb495fdd897e0ac28e33c770314b935e710234b7d6fc536",
-      "bytes": 145677,
+      "sha256": "14d12ef8e23fc056e23ff3c9538fcf28cbfc06b46442b08fcffb3f0900abeaaa",
+      "bytes": 542263,
       "dimensions": [
         1024,
         1024
@@ -1174,8 +1174,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "hoodie:red:right-sleeve",
       "assetPath": "/mockups/smart-v4/hoodie/red/right-sleeve.png",
-      "sha256": "dbbccf9074e0a70a3a98655e413dfb5ec379496168219e8218baf508eda5c246",
-      "bytes": 200584,
+      "sha256": "aaceae6a23b7083e9a9333f399dc4335349da108fa9bf2bfc1b28fee62701cc6",
+      "bytes": 243975,
       "dimensions": [
         1024,
         1024
@@ -1237,8 +1237,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "hoodie:sky-blue:left-sleeve",
       "assetPath": "/mockups/smart-v4/hoodie/sky-blue/left-sleeve.png",
-      "sha256": "738007a8ee04e42cbd6c7fd7e0d477c2ba37bc792180858e7736fb5384d0f93b",
-      "bytes": 223046,
+      "sha256": "ca43c2817bd89be94e7d3e5992e8a1cdabea77beda628f72ec97f126fce75c2f",
+      "bytes": 270415,
       "dimensions": [
         1024,
         1024
@@ -1258,8 +1258,8 @@
       "view": "neck-label",
       "sourceKitKey": "hoodie:sky-blue:neck-label",
       "assetPath": "/mockups/smart-v4/hoodie/sky-blue/neck-label.png",
-      "sha256": "4b25471c3a1cd22b309f980c1d58312b25e4e37efc42a5877146d6fd018854f1",
-      "bytes": 161888,
+      "sha256": "9aad475daf4b157f47739d7453d4aafaf631d39e4383acd6350b822112eacc5b",
+      "bytes": 621149,
       "dimensions": [
         1024,
         1024
@@ -1279,8 +1279,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "hoodie:sky-blue:right-sleeve",
       "assetPath": "/mockups/smart-v4/hoodie/sky-blue/right-sleeve.png",
-      "sha256": "2df40c9d40b5fcfb22a757c9191ae0d24af3015b232b23e1207e39c3459fcbeb",
-      "bytes": 225157,
+      "sha256": "c167820c578adae192c956b4036be837a4756514a08d393a21523af3f864b87f",
+      "bytes": 270624,
       "dimensions": [
         1024,
         1024
@@ -1342,8 +1342,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "hoodie:white:left-sleeve",
       "assetPath": "/mockups/smart-v4/hoodie/white/left-sleeve.png",
-      "sha256": "f10395ea39ba9ef54d5b5df37cb0193559b5c380b243a737573a0da5e3944a6d",
-      "bytes": 240394,
+      "sha256": "619ff265854bef66ede5c195ffdf7e30bc9a4a3b0df9c934c3dcd2fabce90a33",
+      "bytes": 287863,
       "dimensions": [
         1024,
         1024
@@ -1363,8 +1363,8 @@
       "view": "neck-label",
       "sourceKitKey": "hoodie:white:neck-label",
       "assetPath": "/mockups/smart-v4/hoodie/white/neck-label.png",
-      "sha256": "f5c4f5c7d41555edc57331333c62654fa9415a50829dea6bc13e5d51528fb552",
-      "bytes": 180121,
+      "sha256": "15bdeeed1f25e10ccb567c22e4ab719926ecf47f49f7a264fb545f060d880806",
+      "bytes": 679007,
       "dimensions": [
         1024,
         1024
@@ -1384,8 +1384,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "hoodie:white:right-sleeve",
       "assetPath": "/mockups/smart-v4/hoodie/white/right-sleeve.png",
-      "sha256": "32342c446e900c93574f1ac2af09f6367a5d5797b72e604e2f701f7b099c5f56",
-      "bytes": 242843,
+      "sha256": "c58c59d3628ebdb0834913182faa17bcd7aa278f2e8df8c4bf830ca4faa0e55e",
+      "bytes": 288564,
       "dimensions": [
         1024,
         1024
@@ -1447,8 +1447,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "longsleeve:black:left-sleeve",
       "assetPath": "/mockups/smart-v4/longsleeve/black/left-sleeve.png",
-      "sha256": "9a526b8001b3c105fce4dcc82eece368e7c0e5e5377c328065fa17cb5cbfdec9",
-      "bytes": 171139,
+      "sha256": "8729270b246a81ab3a697f592d23c83a52122b8be7d004c6d43c7a9f710e1fc7",
+      "bytes": 179437,
       "dimensions": [
         1024,
         1024
@@ -1468,8 +1468,8 @@
       "view": "neck-label",
       "sourceKitKey": "longsleeve:black:neck-label",
       "assetPath": "/mockups/smart-v4/longsleeve/black/neck-label.png",
-      "sha256": "7c60af240d6cad888787e1fe11b3e862cf5f3a6ff4bca9a7ef113a6371dc7bc0",
-      "bytes": 46274,
+      "sha256": "b4fff326d447991c0b8143bddc238e8db502967a238483a338fd49f991f6dd67",
+      "bytes": 309671,
       "dimensions": [
         1024,
         1024
@@ -1489,8 +1489,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "longsleeve:black:right-sleeve",
       "assetPath": "/mockups/smart-v4/longsleeve/black/right-sleeve.png",
-      "sha256": "82f2d535f3a653c7c5f7895728d30a3d2d64b112bf9840adb57e343a37db4958",
-      "bytes": 181710,
+      "sha256": "51f58521169b04b8abb7b84dc9105ed71345c92b8a57a3b77bc6514ee65d0a39",
+      "bytes": 178272,
       "dimensions": [
         1024,
         1024
@@ -1552,8 +1552,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "longsleeve:burgundy:left-sleeve",
       "assetPath": "/mockups/smart-v4/longsleeve/burgundy/left-sleeve.png",
-      "sha256": "fd5fc44250bb0a373ba11c17ec2376156de51f7475b568d4f8e6b4b85eed3ee5",
-      "bytes": 244957,
+      "sha256": "ec651fd0c38a334d0136c04d3659c33f1499459e4153a38f1fee16b26c1b4cf1",
+      "bytes": 239086,
       "dimensions": [
         1024,
         1024
@@ -1573,8 +1573,8 @@
       "view": "neck-label",
       "sourceKitKey": "longsleeve:burgundy:neck-label",
       "assetPath": "/mockups/smart-v4/longsleeve/burgundy/neck-label.png",
-      "sha256": "57ac61e43220aeab4c92d4ad3eda99ff4ae11b67a9786b3070792f2ea7e29e6a",
-      "bytes": 63380,
+      "sha256": "17506958efdd3ee066e7a40d5aee341336753615879b9f373442fef2b1ee4cb7",
+      "bytes": 475271,
       "dimensions": [
         1024,
         1024
@@ -1594,8 +1594,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "longsleeve:burgundy:right-sleeve",
       "assetPath": "/mockups/smart-v4/longsleeve/burgundy/right-sleeve.png",
-      "sha256": "89a9b1b133347cd95fd4f4305a52aa0e053b1983c20aa4bc33be113ea8372468",
-      "bytes": 262218,
+      "sha256": "a3683ce1e3128243ab68c0c39bebce2a6c39b9fd8b4b754d3f94f8f34bf03aa7",
+      "bytes": 239962,
       "dimensions": [
         1024,
         1024
@@ -1657,8 +1657,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "longsleeve:forest:left-sleeve",
       "assetPath": "/mockups/smart-v4/longsleeve/forest/left-sleeve.png",
-      "sha256": "faac60a7bc3892127792160313a6e710af0c5e91e7915046253ffab51fb22c76",
-      "bytes": 246818,
+      "sha256": "210820c34525183838cbe1157da47491c303da4164ce5764cc2ea93ba49f2d8c",
+      "bytes": 240893,
       "dimensions": [
         1024,
         1024
@@ -1678,8 +1678,8 @@
       "view": "neck-label",
       "sourceKitKey": "longsleeve:forest:neck-label",
       "assetPath": "/mockups/smart-v4/longsleeve/forest/neck-label.png",
-      "sha256": "5d678dfeab660ab930200347440e4182741beeb8d04b25315ddf2f145ea169f1",
-      "bytes": 63525,
+      "sha256": "a74cc10fb8770ef7bb97a24b8515152aebd7f3137b07b7f510604c155b9356ef",
+      "bytes": 480784,
       "dimensions": [
         1024,
         1024
@@ -1699,8 +1699,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "longsleeve:forest:right-sleeve",
       "assetPath": "/mockups/smart-v4/longsleeve/forest/right-sleeve.png",
-      "sha256": "e985bb24d12ae1b71160f1b031c871177e6f552e0f25d50f73a67ebf857bbc19",
-      "bytes": 264766,
+      "sha256": "c322b856c2effc38e4ea819d328ef62c06c6ae39d285a8f215ea9989d9c29ee0",
+      "bytes": 240807,
       "dimensions": [
         1024,
         1024
@@ -1762,8 +1762,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "longsleeve:grey:left-sleeve",
       "assetPath": "/mockups/smart-v4/longsleeve/grey/left-sleeve.png",
-      "sha256": "5bfc919ee056b0e10769d60647f0104583d9892c75d2facc2ae7dbf0a15af201",
-      "bytes": 227034,
+      "sha256": "4732783bc5378fb678de8e7973d34df98b6211f1bc27924d9f0344deceeffd14",
+      "bytes": 221919,
       "dimensions": [
         1024,
         1024
@@ -1783,8 +1783,8 @@
       "view": "neck-label",
       "sourceKitKey": "longsleeve:grey:neck-label",
       "assetPath": "/mockups/smart-v4/longsleeve/grey/neck-label.png",
-      "sha256": "7081eba31e1a187269023a941d78e753b94f3fc14990ffc206fa3d1a6d714924",
-      "bytes": 58020,
+      "sha256": "4852d4510235b06edb5bfe7f21ee973b4aedf9d093cac76321282bc493835aa0",
+      "bytes": 435754,
       "dimensions": [
         1024,
         1024
@@ -1804,8 +1804,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "longsleeve:grey:right-sleeve",
       "assetPath": "/mockups/smart-v4/longsleeve/grey/right-sleeve.png",
-      "sha256": "7acfbc58843d10f912e4ee4cda455508f95babc33aa3b64348c9d994a188a4cd",
-      "bytes": 242289,
+      "sha256": "779322e7666b247e6b98a411f7edbeb81844e39fced47a681a70c412c1b9a98f",
+      "bytes": 219754,
       "dimensions": [
         1024,
         1024
@@ -1867,8 +1867,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "longsleeve:maroon:left-sleeve",
       "assetPath": "/mockups/smart-v4/longsleeve/maroon/left-sleeve.png",
-      "sha256": "47baa86e516fe55cf7bafa572a2d0ec43f1b9e9a90e1bfe5b589070a6fc7dd70",
-      "bytes": 214535,
+      "sha256": "a7b1b69263a1e12066c42fa8007e37e1c77ba6a96198182cf8ed6638a8bc402d",
+      "bytes": 214941,
       "dimensions": [
         1024,
         1024
@@ -1888,8 +1888,8 @@
       "view": "neck-label",
       "sourceKitKey": "longsleeve:maroon:neck-label",
       "assetPath": "/mockups/smart-v4/longsleeve/maroon/neck-label.png",
-      "sha256": "9fea51ddcb054cf40c465ead218ee615443497a3885bda3c21a067efd7af19ad",
-      "bytes": 56467,
+      "sha256": "e8cbfa9441d69818497aca958ba85df9a9ad4582838af4ff7fee4843966d9dfc",
+      "bytes": 411159,
       "dimensions": [
         1024,
         1024
@@ -1909,8 +1909,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "longsleeve:maroon:right-sleeve",
       "assetPath": "/mockups/smart-v4/longsleeve/maroon/right-sleeve.png",
-      "sha256": "971700534cb9a2bbf29ea906705225c47a011aa107fa1d7f6a4b14a023f6992b",
-      "bytes": 229401,
+      "sha256": "1cd20949a5aa418e88a3b3cc8f59cb6710f004b1670b2919366e53c24683dcdc",
+      "bytes": 213651,
       "dimensions": [
         1024,
         1024
@@ -1972,8 +1972,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "longsleeve:navy:left-sleeve",
       "assetPath": "/mockups/smart-v4/longsleeve/navy/left-sleeve.png",
-      "sha256": "ba03961b0e72f55e922368793d1537a13ed1e883db472de6f8078d9f82a6ee7e",
-      "bytes": 246230,
+      "sha256": "9df727780e6448fbc8281962687017bd7ca07f6fbb460e38f070ced51d6651d5",
+      "bytes": 240290,
       "dimensions": [
         1024,
         1024
@@ -1993,8 +1993,8 @@
       "view": "neck-label",
       "sourceKitKey": "longsleeve:navy:neck-label",
       "assetPath": "/mockups/smart-v4/longsleeve/navy/neck-label.png",
-      "sha256": "d182701fbaeff0e5b75606cbb8ec127e1a9a910a0b3e34697d75f8f12c316f32",
-      "bytes": 63698,
+      "sha256": "a829aa012fd774ede7faeb209d8c7d55a26e9fe00116da57ef7a1a78f122ee4a",
+      "bytes": 480114,
       "dimensions": [
         1024,
         1024
@@ -2014,8 +2014,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "longsleeve:navy:right-sleeve",
       "assetPath": "/mockups/smart-v4/longsleeve/navy/right-sleeve.png",
-      "sha256": "1cd58a739dd0aecebc5d50f61c905cb3eb133e335cd07d43b4c4fab1a079e26b",
-      "bytes": 265190,
+      "sha256": "45d0b4a42daed5a9db671a2dc78c05d93c647f4783d966adb01d5ff75c2d848c",
+      "bytes": 240773,
       "dimensions": [
         1024,
         1024
@@ -2077,8 +2077,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "longsleeve:olive:left-sleeve",
       "assetPath": "/mockups/smart-v4/longsleeve/olive/left-sleeve.png",
-      "sha256": "26878b596f2071dd714922ea02be1698b58c34590e34fd83384ae7124e8c8524",
-      "bytes": 241264,
+      "sha256": "e9bd89880c46b2e10d4afa0453f089363ab41da1c274e97263ac51fa05792a06",
+      "bytes": 237413,
       "dimensions": [
         1024,
         1024
@@ -2098,8 +2098,8 @@
       "view": "neck-label",
       "sourceKitKey": "longsleeve:olive:neck-label",
       "assetPath": "/mockups/smart-v4/longsleeve/olive/neck-label.png",
-      "sha256": "94e400b72b82fbabacdeadadb1e957d2d8efb3fe80faf86e49391882932ba1eb",
-      "bytes": 62318,
+      "sha256": "b17eea71c5e3ed1cae6b01a4bd5bf918ceedba131692965cef3e06bd16abc4de",
+      "bytes": 467119,
       "dimensions": [
         1024,
         1024
@@ -2119,8 +2119,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "longsleeve:olive:right-sleeve",
       "assetPath": "/mockups/smart-v4/longsleeve/olive/right-sleeve.png",
-      "sha256": "5345148ad7fabd072e9cf0b69f3bf2a76ef40cb97fff15ac005e25f249f9db36",
-      "bytes": 257323,
+      "sha256": "f6f036195b38f5d1126a325ec5a6c640279837eed52e22b825cf1535668ee204",
+      "bytes": 235430,
       "dimensions": [
         1024,
         1024
@@ -2182,8 +2182,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "longsleeve:red:left-sleeve",
       "assetPath": "/mockups/smart-v4/longsleeve/red/left-sleeve.png",
-      "sha256": "96f3dd20aa41ad735fbe90be1f23e2ff87547ff9adab22412816992fedb984e8",
-      "bytes": 205338,
+      "sha256": "a5cc1e9097a695b016849e890fe425b9fe22d2a2ae765f900bd8ebac50a91f2a",
+      "bytes": 204022,
       "dimensions": [
         1024,
         1024
@@ -2203,8 +2203,8 @@
       "view": "neck-label",
       "sourceKitKey": "longsleeve:red:neck-label",
       "assetPath": "/mockups/smart-v4/longsleeve/red/neck-label.png",
-      "sha256": "034277445c488feeb987ec5fa63b5eaef6283e516dffbdf9be7cdfba3cc66e85",
-      "bytes": 53636,
+      "sha256": "1892ae88d80ade329c7b59a1efabd8f1ea8b29614fb9d6de1b9baa41c268b249",
+      "bytes": 384110,
       "dimensions": [
         1024,
         1024
@@ -2224,8 +2224,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "longsleeve:red:right-sleeve",
       "assetPath": "/mockups/smart-v4/longsleeve/red/right-sleeve.png",
-      "sha256": "6b212bfa4d62fbcee32020336ae52f189f5fd67c6def1c0cbf549f35eea7c68f",
-      "bytes": 221298,
+      "sha256": "e55c82868eb0553707664d33e1862ddecaba2efb39e501a5ffbf474a120bdb30",
+      "bytes": 204815,
       "dimensions": [
         1024,
         1024
@@ -2287,8 +2287,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "longsleeve:sky-blue:left-sleeve",
       "assetPath": "/mockups/smart-v4/longsleeve/sky-blue/left-sleeve.png",
-      "sha256": "15daa1a9ffd6962a9bf0af7002dd91be1fc30c19c710d28ced19aadf5bedc61d",
-      "bytes": 231192,
+      "sha256": "5657920037398038611fc3e7af762851c0111d9a9141d4e7886e9da28f27b872",
+      "bytes": 224632,
       "dimensions": [
         1024,
         1024
@@ -2308,8 +2308,8 @@
       "view": "neck-label",
       "sourceKitKey": "longsleeve:sky-blue:neck-label",
       "assetPath": "/mockups/smart-v4/longsleeve/sky-blue/neck-label.png",
-      "sha256": "b2b534a0f7a8e7da8f54bbde055c3107262c460199300e019890c346887610bb",
-      "bytes": 59359,
+      "sha256": "043ed6c8c47642d9f3ebc5830e80d32a40921eedaaf1d113704563686aa7150a",
+      "bytes": 449511,
       "dimensions": [
         1024,
         1024
@@ -2329,8 +2329,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "longsleeve:sky-blue:right-sleeve",
       "assetPath": "/mockups/smart-v4/longsleeve/sky-blue/right-sleeve.png",
-      "sha256": "77e13309401eb9542486435834fa3f17693a592ada803c3a27aa9fa6c60061a6",
-      "bytes": 247080,
+      "sha256": "81a7ce18301d629bb2088d67af7175f6640aa108a56bb6ef20feb6b83c45d87f",
+      "bytes": 223639,
       "dimensions": [
         1024,
         1024
@@ -2392,8 +2392,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "longsleeve:white:left-sleeve",
       "assetPath": "/mockups/smart-v4/longsleeve/white/left-sleeve.png",
-      "sha256": "f90a8387221e0fbff469b5d510ecedd5ca722e9d274b328ef748f84dff9be354",
-      "bytes": 246432,
+      "sha256": "0068f18eb2725a436f6ecb3545d5ad0b88ff228b3ff9a1295786d342186751e0",
+      "bytes": 234590,
       "dimensions": [
         1024,
         1024
@@ -2413,8 +2413,8 @@
       "view": "neck-label",
       "sourceKitKey": "longsleeve:white:neck-label",
       "assetPath": "/mockups/smart-v4/longsleeve/white/neck-label.png",
-      "sha256": "ef81c788a91cf039276a487a2adc5170db2a63468223cc0b997c8631761f4c2c",
-      "bytes": 62700,
+      "sha256": "75475c74f577a40bd0e7fa25c1bdd42bfc2e60b4d40db24b59e1584d5c576af0",
+      "bytes": 452761,
       "dimensions": [
         1024,
         1024
@@ -2434,8 +2434,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "longsleeve:white:right-sleeve",
       "assetPath": "/mockups/smart-v4/longsleeve/white/right-sleeve.png",
-      "sha256": "2b6daf09bdcf6d2f1bb3d62b14dea60082abfcf0c7be2434ae3f670aba4de75b",
-      "bytes": 269572,
+      "sha256": "599deb217e2e02248c985995b9c4cb82c6f75163d2e9a44e0763593693ca261f",
+      "bytes": 235407,
       "dimensions": [
         1024,
         1024
@@ -3127,8 +3127,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "tshirt:black:left-sleeve",
       "assetPath": "/mockups/smart-v4/tshirt/black/left-sleeve.png",
-      "sha256": "614ba2199dab6103382708638940608f5b1af2cb91dd7299833f8268da147518",
-      "bytes": 151576,
+      "sha256": "e3bd13ceeab0ca2bdf6acec952dd1c707d09bcb5522fb0ba7ad789e9c276a740",
+      "bytes": 324569,
       "dimensions": [
         1024,
         1024
@@ -3148,8 +3148,8 @@
       "view": "neck-label",
       "sourceKitKey": "tshirt:black:neck-label",
       "assetPath": "/mockups/smart-v4/tshirt/black/neck-label.png",
-      "sha256": "fdc7e3e7529504670d0f79bb9a43e3045a7549895ac160ff26a26b0b82b92abd",
-      "bytes": 110481,
+      "sha256": "fb32265d77ab46f4ffc9e8d7746b91fb45e8fcffb89e5fd37afed77984120c4a",
+      "bytes": 364419,
       "dimensions": [
         1024,
         1024
@@ -3169,8 +3169,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "tshirt:black:right-sleeve",
       "assetPath": "/mockups/smart-v4/tshirt/black/right-sleeve.png",
-      "sha256": "3e96b6f67a566a32e5c2da5404c4f4d432ef5cb23dd99885db66d188e5b91124",
-      "bytes": 143624,
+      "sha256": "0eb9942f06d14067f591cf8f9fe4e50199228cd5aae1d3932ee76935b75ac111",
+      "bytes": 334934,
       "dimensions": [
         1024,
         1024
@@ -3232,8 +3232,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "tshirt:grey:left-sleeve",
       "assetPath": "/mockups/smart-v4/tshirt/grey/left-sleeve.png",
-      "sha256": "4d8aa7d95dbeb9a644fbf4fd370fbff178616876d34d089f7dabf32f8e65cbed",
-      "bytes": 208755,
+      "sha256": "abca43313b8db5fce346f91791c3adafa71aaedad169b813731e09239e3b4bbe",
+      "bytes": 480299,
       "dimensions": [
         1024,
         1024
@@ -3253,8 +3253,8 @@
       "view": "neck-label",
       "sourceKitKey": "tshirt:grey:neck-label",
       "assetPath": "/mockups/smart-v4/tshirt/grey/neck-label.png",
-      "sha256": "c86180c085daaa0fc9638bcb62ceebcb1ee5d0ea83bbf8d4683fe56d4dc8ef3e",
-      "bytes": 151388,
+      "sha256": "c18aa2b919af90ea474b07c1b4720c785de4153f8b5274d4fa3d978259d9e902",
+      "bytes": 553022,
       "dimensions": [
         1024,
         1024
@@ -3274,8 +3274,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "tshirt:grey:right-sleeve",
       "assetPath": "/mockups/smart-v4/tshirt/grey/right-sleeve.png",
-      "sha256": "aaa1b4198ed3495c4c3a55ffb6975b334be1459b9a1426a961932d7eb3ec1ddb",
-      "bytes": 193249,
+      "sha256": "6552103f483f4473eb1a3a4b861e7052d0cc70c912a38fae64ab874ed47ce38c",
+      "bytes": 479708,
       "dimensions": [
         1024,
         1024
@@ -3337,8 +3337,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "tshirt:maroon:left-sleeve",
       "assetPath": "/mockups/smart-v4/tshirt/maroon/left-sleeve.png",
-      "sha256": "3081f1029296fc0399d1c27c3eddd7dd1b165771be74e2a72db54206c88b862b",
-      "bytes": 194488,
+      "sha256": "a02ffcf33edd7a8fc3f358d28ad91c79ed0be0390a500cf501a2b69d12dc2f3a",
+      "bytes": 432283,
       "dimensions": [
         1024,
         1024
@@ -3358,8 +3358,8 @@
       "view": "neck-label",
       "sourceKitKey": "tshirt:maroon:neck-label",
       "assetPath": "/mockups/smart-v4/tshirt/maroon/neck-label.png",
-      "sha256": "a9df4239d47aeaa2080328466c06162d226d05b9d9c405647676c657a91378db",
-      "bytes": 139240,
+      "sha256": "b799466a5299cc877e61f8f83cd3f33df7ee3c6339bddaf8bb501ef8fc8d88b4",
+      "bytes": 506066,
       "dimensions": [
         1024,
         1024
@@ -3379,8 +3379,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "tshirt:maroon:right-sleeve",
       "assetPath": "/mockups/smart-v4/tshirt/maroon/right-sleeve.png",
-      "sha256": "77bcb61571cd1959a2136213c0eff1a12ad74bf6d4ace6c02a35248cb66c5dd3",
-      "bytes": 185499,
+      "sha256": "923e083e62fcd630cc84e5aaf1012fe1a26de900ed9cb9e0c503fdb3c6cbbf18",
+      "bytes": 452695,
       "dimensions": [
         1024,
         1024
@@ -3442,8 +3442,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "tshirt:navy:left-sleeve",
       "assetPath": "/mockups/smart-v4/tshirt/navy/left-sleeve.png",
-      "sha256": "109cf113f2f86a3f78e13a5d80b3c2bd43a5b94878ec7e623039ea3629dd38e5",
-      "bytes": 223302,
+      "sha256": "e2ad28aa9af572be3fe239cf73856925c48afc4b8a0cbd07a0dada22d55c60b3",
+      "bytes": 505025,
       "dimensions": [
         1024,
         1024
@@ -3463,8 +3463,8 @@
       "view": "neck-label",
       "sourceKitKey": "tshirt:navy:neck-label",
       "assetPath": "/mockups/smart-v4/tshirt/navy/neck-label.png",
-      "sha256": "705d4ff3f9cd7e1729436ac1394e718b4f9c9e7c9ac442ca289f45ab5f220437",
-      "bytes": 163863,
+      "sha256": "6fc51631d905776c8c0c0ede99b6e1955e0472e01371f289b278e765f7902399",
+      "bytes": 606952,
       "dimensions": [
         1024,
         1024
@@ -3484,8 +3484,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "tshirt:navy:right-sleeve",
       "assetPath": "/mockups/smart-v4/tshirt/navy/right-sleeve.png",
-      "sha256": "142ab49418b18449793b646de883bea7e818bb481a68315f7c932511d20f4b32",
-      "bytes": 215776,
+      "sha256": "ffe9481c844ba77ee39c386e0fd22ae95eb1296f92d3257940423ed8afcbff6a",
+      "bytes": 537144,
       "dimensions": [
         1024,
         1024
@@ -3547,8 +3547,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "tshirt:olive:left-sleeve",
       "assetPath": "/mockups/smart-v4/tshirt/olive/left-sleeve.png",
-      "sha256": "6bd3a63095f775108bc18da6600210091b92c0e43e85431bfc929f890cf8ce48",
-      "bytes": 223279,
+      "sha256": "b24d4c94de6a6bad210c164d2f3eae334bc9b84b0f5f0bf9d37500b61a85d7fb",
+      "bytes": 504796,
       "dimensions": [
         1024,
         1024
@@ -3568,8 +3568,8 @@
       "view": "neck-label",
       "sourceKitKey": "tshirt:olive:neck-label",
       "assetPath": "/mockups/smart-v4/tshirt/olive/neck-label.png",
-      "sha256": "c866ef16935e099ec9d1e2bbde6a602f6bb61a0a009a904da5fefcc5bce0edab",
-      "bytes": 162655,
+      "sha256": "0770767f3115c8442325faafe7dc0103379853e51202c5a480bb8f0df6357fd3",
+      "bytes": 602341,
       "dimensions": [
         1024,
         1024
@@ -3589,8 +3589,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "tshirt:olive:right-sleeve",
       "assetPath": "/mockups/smart-v4/tshirt/olive/right-sleeve.png",
-      "sha256": "b1b4e847752b0e03d806996d9c03858e3d8746a084bd8123f5ef3bff94a9b51a",
-      "bytes": 212800,
+      "sha256": "31a2928fe9e78c8adcef1a6bbf2170f4b708d5ecfb0643c480e925855e437b4c",
+      "bytes": 528997,
       "dimensions": [
         1024,
         1024
@@ -3652,8 +3652,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "tshirt:red:left-sleeve",
       "assetPath": "/mockups/smart-v4/tshirt/red/left-sleeve.png",
-      "sha256": "d5b21d02ea6b41edab1c35b15b4feb02adc48032b74eb03c9ba097f9aa7605ee",
-      "bytes": 181961,
+      "sha256": "6e5fc51331f92ef41b8e3da09f8f21e0ba10756a969b43745b672904f6a27bec",
+      "bytes": 395894,
       "dimensions": [
         1024,
         1024
@@ -3673,8 +3673,8 @@
       "view": "neck-label",
       "sourceKitKey": "tshirt:red:neck-label",
       "assetPath": "/mockups/smart-v4/tshirt/red/neck-label.png",
-      "sha256": "81f4c1ef1d8f34e8d7a70c02d00d1727b1504444697f549559a328a668b3256c",
-      "bytes": 132907,
+      "sha256": "672205bd86fe81c5d9baefba71d0354acac570451177d8c89651ffa6ae618cbb",
+      "bytes": 454735,
       "dimensions": [
         1024,
         1024
@@ -3694,8 +3694,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "tshirt:red:right-sleeve",
       "assetPath": "/mockups/smart-v4/tshirt/red/right-sleeve.png",
-      "sha256": "1a5ffccc90e21358b48ba11384f7ca3dde46411af3023630f5846396b1574046",
-      "bytes": 172884,
+      "sha256": "05b1e5a202aedee4b39215585d92c595f745541c444caa794755282026eac190",
+      "bytes": 417459,
       "dimensions": [
         1024,
         1024
@@ -3757,8 +3757,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "tshirt:sky-blue:left-sleeve",
       "assetPath": "/mockups/smart-v4/tshirt/sky-blue/left-sleeve.png",
-      "sha256": "4d02483dae1c2e543e7ebe13e78dca7357f65f781041ba02a97b6fb2a7a27814",
-      "bytes": 208133,
+      "sha256": "e189f085bc59508d324ca7976967f6bc844b6bf568db7233dc9296751c05f418",
+      "bytes": 469749,
       "dimensions": [
         1024,
         1024
@@ -3778,8 +3778,8 @@
       "view": "neck-label",
       "sourceKitKey": "tshirt:sky-blue:neck-label",
       "assetPath": "/mockups/smart-v4/tshirt/sky-blue/neck-label.png",
-      "sha256": "40e390f7da87e3466182fae844fc9c838d59cddd529f895187c5b860a1723ee2",
-      "bytes": 152542,
+      "sha256": "6c2726b9426aa734f5d568e6b9e7d63c913c1926087b9f4630b49116e03580c4",
+      "bytes": 554121,
       "dimensions": [
         1024,
         1024
@@ -3799,8 +3799,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "tshirt:sky-blue:right-sleeve",
       "assetPath": "/mockups/smart-v4/tshirt/sky-blue/right-sleeve.png",
-      "sha256": "e0b27b4d42b93b7a95e12138d7c0d5d5f22ed98ef222872970ab957a8c2a0f79",
-      "bytes": 200542,
+      "sha256": "63695106be8b24f671aca276a2bfec3e64405506fbda756abb1ce6e0f4ffb088",
+      "bytes": 496471,
       "dimensions": [
         1024,
         1024
@@ -3862,8 +3862,8 @@
       "view": "left-sleeve",
       "sourceKitKey": "tshirt:white:left-sleeve",
       "assetPath": "/mockups/smart-v4/tshirt/white/left-sleeve.png",
-      "sha256": "ea2a5b3a3d44b7948c8c12afb27011842aee4e25db36a4cffbda864f944b6f8a",
-      "bytes": 227559,
+      "sha256": "2e19184fe5ce1df282c884f0d66c4f0b3f67469ed3f8784aa9e2197b972a10bc",
+      "bytes": 482302,
       "dimensions": [
         1024,
         1024
@@ -3883,8 +3883,8 @@
       "view": "neck-label",
       "sourceKitKey": "tshirt:white:neck-label",
       "assetPath": "/mockups/smart-v4/tshirt/white/neck-label.png",
-      "sha256": "5474936d64c74c7bdfdfdad83145d771c0209f231010b0e4c9e7b511a19307b2",
-      "bytes": 166314,
+      "sha256": "fb0d276bff0bee5bd3fc07ddf0c4488c00edfd7bdb4f1bbb75ce01b846afa92d",
+      "bytes": 578726,
       "dimensions": [
         1024,
         1024
@@ -3904,8 +3904,8 @@
       "view": "right-sleeve",
       "sourceKitKey": "tshirt:white:right-sleeve",
       "assetPath": "/mockups/smart-v4/tshirt/white/right-sleeve.png",
-      "sha256": "e085f0300e2358f097b22d050c39e8a1eefa5d4645fd7a5419a10a058aee49f7",
-      "bytes": 220300,
+      "sha256": "22d7c42d05adac178f27c3a9678756a7514602fed42a8a9fa23f57b722ea8ed1",
+      "bytes": 508748,
       "dimensions": [
         1024,
         1024
