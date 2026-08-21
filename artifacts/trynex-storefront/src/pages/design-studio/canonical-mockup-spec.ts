@@ -73,9 +73,11 @@ export const CANONICAL_MOCKUP_COLORS: Record<MockupFamily, ProductColor[]> = {
     { name: "White", hex: "#f5f2ec" }, { name: "Black", hex: "#1a1a1a" }, { name: "Navy", hex: "#1e3a5f" }, { name: "Maroon", hex: "#7f1d1d" },
     { name: "Olive", hex: "#4a5240" }, { name: "Red", hex: "#dc2626" }, { name: "Grey", hex: "#6b7280" }, { name: "Forest", hex: "#166534" },
   ],
+  // The supplied bottle is a white sublimation-coated aluminium blank. These are
+  // not literal body-color variants; additional bottle colors require distinct
+  // physical blank masters and must not be simulated by tinting this substrate.
   waterbottle: [
-    { name: "White", hex: "#f4f3f1" }, { name: "Black", hex: "#1c1917" }, { name: "Navy", hex: "#1e3a5f" }, { name: "Forest", hex: "#166534" },
-    { name: "Sky Blue", hex: "#0ea5e9" }, { name: "Red", hex: "#dc2626" }, { name: "Pink", hex: "#f472b6" }, { name: "Teal", hex: "#0f766e" },
+    { name: "White Sublimation Blank", hex: "#f4f3f1" },
   ],
 };
 
@@ -165,7 +167,7 @@ family: "tshirt", productType: "tshirt", displayName: "Unisex T-Shirt",
     acceptance: { noViewFallback: true, noCrossFamilyAssetReuse: true, sameColorIdentityAcrossViews: true, samePrintZoneCoordinateSpace: true },
   },
   waterbottle: {
-    family: "waterbottle", productType: "waterbottle", displayName: "Water Bottle",
+    family: "waterbottle", productType: "waterbottle", displayName: "Water Bottle — White Sublimation Aluminium",
     schema: "trynex-canonical-mockup/v1", masterFormat: "psb", masterStatus: "manifest-only",
     normalizedCanvas: { width: 1000, height: 1000 }, colors: CANONICAL_MOCKUP_COLORS.waterbottle,
     geometry: {
