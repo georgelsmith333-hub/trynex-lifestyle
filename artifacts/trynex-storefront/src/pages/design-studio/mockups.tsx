@@ -9,77 +9,20 @@ import { getCanonicalMockupSpec, type MockupFamily } from "./canonical-mockup-sp
 import { getCompleteMockupEntry, type CompleteMockupFamily, type CompleteMockupView } from "./complete-mockup-matrix";
 
 // ── T-Shirt: unified studio photos from normalized/ folder ──
-const tshirtFront          = "/mockups/smart-v4/tshirt/white/front.png";
-const tshirtBack           = "/mockups/smart-v4/tshirt/white/back.png";
-const tshirtFrontDark      = "/mockups/smart-v4/tshirt/black/front.png";
-const tshirtBackDark       = "/mockups/smart-v4/tshirt/black/back.png";
-const tshirtFrontCutout    = "/mockups/smart-v4/tshirt/white/front.png";
-const tshirtBackCutout     = "/mockups/smart-v4/tshirt/white/back.png";
+const tshirtFront       = "/mockups/smart-v4/tshirt/white/front.png";
+const tshirtBack        = "/mockups/smart-v4/tshirt/white/back.png";
+const longsleeveFront   = "/mockups/smart-v4/longsleeve/white/front.png";
+const longsleeveBack    = "/mockups/smart-v4/longsleeve/white/back.png";
+const hoodieFront       = "/mockups/smart-v4/hoodie/white/front.png";
+const hoodieBack        = "/mockups/smart-v4/hoodie/white/back.png";
+const mugFront          = "/mockups/smart-v4/mug/white/front.png";
+const mugBack           = "/mockups/smart-v4/mug/white/back.png";
+const capFront          = "/mockups/smart-v4/cap/white/front.png";
+const capBack           = "/mockups/smart-v4/cap/white/back.png";
+const waterBottleFront  = "/mockups/smart-v4/waterbottle/white/front.png";
 
-// Color-specific photo mockups — used instead of SVG tint for highest realism
-const navyTshirtFront      = "/mockups/new/navy-tshirt-front.png";
-const navyTshirtBack       = "/mockups/new/navy-tshirt-back.png";
-const redTshirtFront       = "/mockups/new/red-tshirt-front.png";
-const redTshirtBack        = "/mockups/new/red-tshirt-back.png";
-const greyTshirtFront      = "/mockups/grey-tshirt-front.png";
-const greyTshirtBack       = "/mockups/grey-tshirt-back.png";
-const maroonTshirtFront    = "/mockups/maroon-tshirt-front.png";
-const maroonTshirtBack     = "/mockups/maroon-tshirt-back.png";
-const oliveTshirtFront     = "/mockups/olive-tshirt-front.png";
-const oliveTshirtBack      = "/mockups/olive-tshirt-back.png";
-const skyblueTshirtFront   = "/mockups/skyblue-tshirt-front.png";
-const skyblueTshirtBack    = "/mockups/skyblue-tshirt-back.png";
-const longsleeveFront          = "/mockups/smart-v4/longsleeve/white/front.png";
-const longsleeveBack           = "/mockups/smart-v4/longsleeve/white/back.png";
-const longsleeveFrontDark      = "/mockups/smart-v4/longsleeve/black/front.png";
-const longsleeveFrontCutout    = "/mockups/smart-v4/longsleeve/white/front.png";
-const longsleeveBackCutout     = "/mockups/smart-v4/longsleeve/white/back.png";
-const longsleeveFrontDarkCutout = "/mockups/smart-v4/longsleeve/black/front.png";
-const longsleeveBackDarkCutout  = "/mockups/smart-v4/longsleeve/black/back.png";
-const hoodieFront          = "/mockups/smart-v4/hoodie/white/front.png";
-const hoodieBack           = "/mockups/smart-v4/hoodie/white/back.png";
-const hoodieFrontDark      = "/mockups/smart-v4/hoodie/black/front.png";
-const hoodieBackDark       = "/mockups/smart-v4/hoodie/black/back.png";
-const hoodieFrontCutout    = "/mockups/smart-v4/hoodie/white/front.png";
-const hoodieBackCutout     = "/mockups/smart-v4/hoodie/white/back.png";
-const mugFront             = "/mockups/smart-v4/mug/white/front.png";
-const mugFrontDark         = "/mockups/smart-v4/mug/black/front.png";
-const mugBack              = "/mockups/smart-v4/mug/white/back.png";
-const mugBackDark          = "/mockups/smart-v4/mug/black/back.png";
-const mugFrontCutout       = "/mockups/smart-v4/mug/white/front.png";
-const mugFrontDarkCutout   = "/mockups/smart-v4/mug/black/front.png";
-const capFront             = "/mockups/smart-v4/cap/white/front.png";
-const capBack              = "/mockups/smart-v4/cap/white/back.png";
-const capFrontCutout       = "/mockups/smart-v4/cap/white/front.png";
-// Canonical TryNex bottle: upright aluminium body with black key-ring loop and side carabiner.
-// Keep legacy bottle_1 out of the active studio path; it is the wrong product shape.
-const waterBottleFront          = "/mockups/smart-v4/waterbottle/white/front.png";
-const waterBottleCutout         = "/mockups/smart-v4/waterbottle/white/front.png";
-const tshirtFrontDarkCutout     = "/mockups/smart-v4/tshirt/black/front.png";
-const tshirtBackDarkCutout      = "/mockups/smart-v4/tshirt/black/back.png";
-const hoodieFrontDarkCutout     = "/mockups/smart-v4/hoodie/black/front.png";
-const hoodieBackDarkCutout     = "/mockups/smart-v4/hoodie/black/back.png";
-
-// ── Hoodie: per-color front photos (real studio shots, no SVG tint needed) ──
-// Back photos for colored hoodies are not available — back falls through to tint path.
-const navyHoodieFront      = "/mockups/navy-hoodie-front.png";
-const greyHoodieFront      = "/mockups/grey-hoodie-front.png";
-const maroonHoodieFront    = "/mockups/maroon-hoodie-front.png";
-const oliveHoodieFront     = "/mockups/olive-hoodie-front.png";
-const redHoodieFront       = "/mockups/red-hoodie-front.png";
-const skyblueHoodieFront   = "/mockups/skyblue-hoodie-front.png";
-const forestHoodieFront    = "/mockups/forest-hoodie-front.png";
-const burgundyHoodieFront  = "/mockups/burgundy-hoodie-front.png";
-
-// ── Long Sleeve: per-color front photos ─────────────────────────────────────
-const navyLongsleeveFront     = "/mockups/navy-longsleeve-front.png";
-const greyLongsleeveFront     = "/mockups/grey-longsleeve-front.png";
-const maroonLongsleeveFront   = "/mockups/maroon-longsleeve-front.png";
-const oliveLongsleeveFront    = "/mockups/olive-longsleeve-front.png";
-const redLongsleeveFront      = "/mockups/red-longsleeve-front.png";
-const skyblueLongsleeveFront  = "/mockups/skyblue-longsleeve-front.png";
-const forestLongsleeveFront   = "/mockups/forest-longsleeve-front.png";
-const burgundyLongsleeveFront = "/mockups/burgundy-longsleeve-front.png";
+// All active color and view assets resolve through the canonical smart-v4 matrix below.
+// No family-root or /mockups/new fallback paths are permitted in the customer renderer.
 
 /** A single available garment colour (name + hex). */
 export interface ProductColor { name: string; hex: string }
@@ -654,6 +597,15 @@ function normalizeMockupHex(hex: string): string {
   return hex.trim().toLowerCase();
 }
 
+function canonicalMasterPath(category: DesignProduct["category"], face: CompleteMockupView): string {
+  const familyName = category === "tshirt" ? "TShirt"
+    : category === "longsleeve" ? "LongSleeve"
+    : category === "waterbottle" ? "Bottle"
+    : category.charAt(0).toUpperCase() + category.slice(1);
+  const extension = category === "mug" || category === "waterbottle" ? "psb" : "psd";
+  return `source-package/trynex-mockup-masters-22-photoreal/masters/${familyName}/${face}.${extension}`;
+}
+
 function findColorPhoto(
   colorPhotos: Record<string, { front: string; back?: string }> | undefined,
   color: string,
@@ -725,12 +677,12 @@ export function resolveMockup(
   const completeView = getCompleteMockupEntry(category as CompleteMockupFamily, sourceKitSlug, face);
   const normalizedFrame = completeView.geometry.normalizedFrame;
 
-  // Every reviewed source-kit colour/face pair has an opaque normalized photo
-  // and a real editable PSD master. The browser uses the normalized render, while
-  // export/admin tooling can round-trip to the exact source document without
-  // guessing a product, color, or face.
+  // The supplied source package has one shared layered PSD/PSB master per
+  // family/view; its color control is shared across all exported colorways.
+  // The browser renders the validated PNG export. Master files remain source
+  // provenance until an authenticated storage ingestion publishes them.
   const curated = getCuratedMockup(product, color, face);
-  const masterPath = `attached_assets/trynex-mockup-source-kit/${category === "mug" || category === "waterbottle" ? "psb" : "psd"}/${category}-${sourceKitSlug}-${face}.${category === "mug" || category === "waterbottle" ? "psb" : "psd"}`;
+  const masterPath = canonicalMasterPath(category, face);
   const sourceKitKey = `${category}:${sourceKitSlug ?? "white"}:${face}`;
   const runtimeOverride = runtimeMockupOverrides.get(normalizeRuntimeKey(sourceKitKey))
     ?? runtimeMockupOverrides.get(normalizeRuntimeKey(`${category}:${color}:${face}`));

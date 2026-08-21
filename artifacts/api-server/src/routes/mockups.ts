@@ -11,66 +11,40 @@ const router = Router();
  * administrator-uploaded overrides. Keep both sources visible in admin so an
  * empty table cannot masquerade as an empty storefront.
  */
-const CANONICAL_VARIANTS: Array<{ category: string; productName: string; color: string; faces: string[] }> = [
-  { category: "tshirt", productName: "Unisex T-Shirt", color: "white", faces: ["front", "back"] },
-  { category: "tshirt", productName: "Unisex T-Shirt", color: "black", faces: ["front", "back"] },
-  { category: "tshirt", productName: "Unisex T-Shirt", color: "navy", faces: ["front", "back"] },
-  { category: "tshirt", productName: "Unisex T-Shirt", color: "maroon", faces: ["front", "back"] },
-  { category: "tshirt", productName: "Unisex T-Shirt", color: "olive", faces: ["front", "back"] },
-  { category: "tshirt", productName: "Unisex T-Shirt", color: "sky-blue", faces: ["front", "back"] },
-  { category: "tshirt", productName: "Unisex T-Shirt", color: "grey", faces: ["front", "back"] },
-  { category: "tshirt", productName: "Unisex T-Shirt", color: "red", faces: ["front", "back"] },
-  { category: "longsleeve", productName: "Unisex Long Sleeve", color: "white", faces: ["front", "back"] },
-  { category: "longsleeve", productName: "Unisex Long Sleeve", color: "black", faces: ["front", "back"] },
-  { category: "longsleeve", productName: "Unisex Long Sleeve", color: "navy", faces: ["front", "back"] },
-  { category: "longsleeve", productName: "Unisex Long Sleeve", color: "maroon", faces: ["front", "back"] },
-  { category: "longsleeve", productName: "Unisex Long Sleeve", color: "olive", faces: ["front", "back"] },
-  { category: "longsleeve", productName: "Unisex Long Sleeve", color: "grey", faces: ["front", "back"] },
-  { category: "longsleeve", productName: "Unisex Long Sleeve", color: "red", faces: ["front", "back"] },
-  { category: "longsleeve", productName: "Unisex Long Sleeve", color: "sky-blue", faces: ["front", "back"] },
-  { category: "longsleeve", productName: "Unisex Long Sleeve", color: "burgundy", faces: ["front", "back"] },
-  { category: "longsleeve", productName: "Unisex Long Sleeve", color: "forest", faces: ["front", "back"] },
-  { category: "hoodie", productName: "Unisex Hoodie", color: "white", faces: ["front", "back"] },
-  { category: "hoodie", productName: "Unisex Hoodie", color: "black", faces: ["front", "back"] },
-  { category: "hoodie", productName: "Unisex Hoodie", color: "navy", faces: ["front", "back"] },
-  { category: "hoodie", productName: "Unisex Hoodie", color: "grey", faces: ["front", "back"] },
-  { category: "hoodie", productName: "Unisex Hoodie", color: "maroon", faces: ["front", "back"] },
-  { category: "hoodie", productName: "Unisex Hoodie", color: "olive", faces: ["front", "back"] },
-  { category: "hoodie", productName: "Unisex Hoodie", color: "red", faces: ["front", "back"] },
-  { category: "hoodie", productName: "Unisex Hoodie", color: "sky-blue", faces: ["front", "back"] },
-  { category: "hoodie", productName: "Unisex Hoodie", color: "forest", faces: ["front", "back"] },
-  { category: "hoodie", productName: "Unisex Hoodie", color: "burgundy", faces: ["front", "back"] },
-  { category: "mug", productName: "Coffee Mug", color: "white", faces: ["front", "back"] },
-  { category: "mug", productName: "Coffee Mug", color: "black", faces: ["front", "back"] },
-  { category: "mug", productName: "Coffee Mug", color: "navy", faces: ["front", "back"] },
-  { category: "mug", productName: "Coffee Mug", color: "red", faces: ["front", "back"] },
-  { category: "mug", productName: "Coffee Mug", color: "green", faces: ["front", "back"] },
-  { category: "mug", productName: "Coffee Mug", color: "purple", faces: ["front", "back"] },
-  { category: "mug", productName: "Coffee Mug", color: "sky-blue", faces: ["front", "back"] },
-  { category: "mug", productName: "Coffee Mug", color: "pink", faces: ["front", "back"] },
-  { category: "mug", productName: "Coffee Mug", color: "maroon", faces: ["front", "back"] },
-  { category: "mug", productName: "Coffee Mug", color: "orange", faces: ["front", "back"] },
-  { category: "cap", productName: "Classic Cap", color: "white", faces: ["front", "back"] },
-  { category: "cap", productName: "Classic Cap", color: "black", faces: ["front", "back"] },
-  { category: "cap", productName: "Classic Cap", color: "navy", faces: ["front", "back"] },
-  { category: "cap", productName: "Classic Cap", color: "maroon", faces: ["front", "back"] },
-  { category: "cap", productName: "Classic Cap", color: "olive", faces: ["front", "back"] },
-  { category: "cap", productName: "Classic Cap", color: "red", faces: ["front", "back"] },
-  { category: "cap", productName: "Classic Cap", color: "grey", faces: ["front", "back"] },
-  { category: "cap", productName: "Classic Cap", color: "forest", faces: ["front", "back"] },
-  { category: "waterbottle", productName: "Water Bottle", color: "white", faces: ["front", "back"] },
-  { category: "waterbottle", productName: "Water Bottle", color: "black", faces: ["front", "back"] },
-  { category: "waterbottle", productName: "Water Bottle", color: "navy", faces: ["front", "back"] },
-  { category: "waterbottle", productName: "Water Bottle", color: "forest", faces: ["front", "back"] },
-  { category: "waterbottle", productName: "Water Bottle", color: "sky-blue", faces: ["front", "back"] },
-  { category: "waterbottle", productName: "Water Bottle", color: "red", faces: ["front", "back"] },
-  { category: "waterbottle", productName: "Water Bottle", color: "pink", faces: ["front", "back"] },
-  { category: "waterbottle", productName: "Water Bottle", color: "teal", faces: ["front", "back"] },
-];
+type CanonicalCategory = "tshirt" | "longsleeve" | "hoodie" | "mug" | "cap" | "waterbottle";
+
+type CanonicalVariant = { category: CanonicalCategory; productName: string; color: string };
+
+const CANONICAL_COLORS: Record<CanonicalCategory, readonly string[]> = {
+  tshirt: ["white", "black", "navy", "maroon", "olive", "sky-blue", "grey", "red"],
+  longsleeve: ["white", "black", "navy", "maroon", "olive", "grey", "red", "sky-blue", "burgundy", "forest"],
+  hoodie: ["white", "black", "navy", "grey", "maroon", "olive", "red", "sky-blue", "forest", "burgundy"],
+  mug: ["white", "black", "navy", "red", "green", "purple", "sky-blue", "pink", "maroon", "orange"],
+  cap: ["white", "black", "navy", "maroon", "olive", "red", "grey", "forest"],
+  waterbottle: ["white", "black", "navy", "forest", "sky-blue", "red", "pink", "teal"],
+};
+
+const CANONICAL_VIEWS: Record<CanonicalCategory, readonly string[]> = {
+  tshirt: ["front", "back", "left-sleeve", "right-sleeve", "neck-label"],
+  longsleeve: ["front", "back", "left-sleeve", "right-sleeve", "neck-label"],
+  hoodie: ["front", "back", "left-sleeve", "right-sleeve", "neck-label"],
+  mug: ["front", "back", "wrap"],
+  cap: ["front", "back"],
+  waterbottle: ["front", "back"],
+};
+
+const PRODUCT_NAMES: Record<CanonicalCategory, string> = {
+  tshirt: "Unisex T-Shirt", longsleeve: "Unisex Long Sleeve", hoodie: "Unisex Hoodie",
+  mug: "Coffee Mug", cap: "Structured Cap", waterbottle: "Water Bottle",
+};
+
+const CANONICAL_VARIANTS: CanonicalVariant[] = (Object.keys(CANONICAL_COLORS) as CanonicalCategory[]).flatMap((category) =>
+  CANONICAL_COLORS[category].map((color) => ({ category, productName: PRODUCT_NAMES[category], color }))
+);
 
 function canonicalMockups() {
   let id = -1;
-  return CANONICAL_VARIANTS.flatMap((variant) => variant.faces.map((face) => ({
+  return CANONICAL_VARIANTS.flatMap((variant) => CANONICAL_VIEWS[variant.category].map((face) => ({
     id: id--,
     name: `${variant.productName} — ${variant.color} — ${face}`,
     description: "Canonical source-kit mockup used by the Design Studio",
@@ -89,7 +63,13 @@ function canonicalMockups() {
     sourceKitKey: `${variant.category}/${variant.color}/${face}`,
     face,
     color: variant.color,
-    manifestJson: null,
+    manifestJson: {
+      schema: "trynex-photoreal-mockup-manifest/v1",
+      assetPath: `/mockups/smart-v4/${variant.category}/${variant.color}/${face}.png`,
+      sourceKitKey: `${variant.category}:${variant.color}:${face}`,
+      masterStatus: "verified-source-package",
+      masterStorageStatus: "not-uploaded",
+    },
     ingestionStatus: "ready",
     ingestionError: null,
     createdAt: new Date(0).toISOString(),
