@@ -105,6 +105,7 @@ export default function DesignStudioV2() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [canvasSize, setCanvasSize] = useState(600);
+  const [imageAction, setImageAction] = useState<"remove-bg" | "upscale" | null>(null);
   const activeDrawIdRef = useRef<string | null>(null);
   const urlInitializedRef = useRef(false);
 
@@ -372,13 +373,124 @@ export default function DesignStudioV2() {
         addLayer(layer);
         selectLayer(layer.id);
         setActiveTab("layers");
-        toast({ title: "✓ Design placed!", description: "Tap your design to move, resize or adjust it." });
+        if (isMobile) setMobileToolOpen(true);
+        toast({ title: "✓ Design placed!", description: "Your artwork is visible on the product. Use the quick image tools to clean or enhance it." });
       } catch (error) {
         console.error("Design upload failed", error);
         toast({ title: "Upload failed", description: "This image could not be prepared. Try a JPG, PNG, or WebP under 10MB.", variant: "destructive" });
       }
     };
     reader.readAsDataURL(file);
+  };
+
+  const replaceSelectedImage = async (dataUrl: string) => {
+    if (!selectedLayer || selectedLayer.type !== "image") return;
+    const img = new Image();
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error("The processed image could not be decoded."));
+      img.src = dataUrl;
+    });
+    updateLayer(selectedLayer.id, { src: dataUrl, naturalW: img.naturalWidth, naturalH: img.naturalHeight });
+    commit();
+  };
+
+  const blobToDataUrl = (blob: Blob) => new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(new Error("The processed image could not be read."));
+    reader.readAsDataURL(blob);
+  });
+
+  const handleRemoveBackground = async () => {
+    if (!selectedLayer || selectedLayer.type !== "image" || imageAction) return;
+    setImageAction("remove-bg");
+    try {
+      let result: string | null = null;
+      const response = await fetch(getApiUrl("/api/remove-bg"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: selectedLayer.src }),
+      });
+      const json = await response.json().catch(() => ({})) as { result?: string; error?: string };
+      if (response.ok && json.result) {
+        result = json.result;
+      } else if (json.error === "rate_limited") {
+        throw new Error("Background removal is temporarily rate-limited. Please try again later.");
+      } else if (json.error === "image_too_large") {
+        throw new Error("This image is over the 10MB processing limit. Use a smaller image first.");
+      }
+
+      if (!result) {
+        const { removeBackground } = await import("@imgly/background-removal");
+        const blob = await removeBackground(selectedLayer.src, {
+          publicPath: "https://staticimgly.com/@imgly/background-removal-data/1.7.0/dist/",
+          output: { format: "image/png", quality: 0.9 },
+        });
+        result = await blobToDataUrl(blob);
+      }
+
+      await replaceSelectedImage(result);
+      toast({ title: "Background removed", description: "Your transparent cutout is ready on the product." });
+    } catch (error) {
+      console.error("[studio] background removal failed", error);
+      toast({ title: "Background removal unavailable", description: error instanceof Error ? error.message : "Try another image or retry.", variant: "destructive" });
+    } finally {
+      setImageAction(null);
+    }
+  };
+
+  const handleUpscale = async () => {
+    if (!selectedLayer || selectedLayer.type !== "image" || imageAction) return;
+    setImageAction("upscale");
+    try {
+      const img = new Image();
+      if (!selectedLayer.src.startsWith("data:")) img.crossOrigin = "anonymous";
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error("This image could not be decoded for upscaling."));
+        img.src = selectedLayer.src;
+      });
+      try { await img.decode?.(); } catch {}
+
+      const scale = Math.min(2, 4096 / Math.max(img.naturalWidth, img.naturalHeight));
+      const width = Math.max(img.naturalWidth, Math.round(img.naturalWidth * scale));
+      const height = Math.max(img.naturalHeight, Math.round(img.naturalHeight * scale));
+      const enlarged = document.createElement("canvas");
+      enlarged.width = width;
+      enlarged.height = height;
+      const enlargedCtx = enlarged.getContext("2d");
+      if (!enlargedCtx) throw new Error("This browser cannot create an upscale canvas.");
+      enlargedCtx.imageSmoothingEnabled = true;
+      enlargedCtx.imageSmoothingQuality = "high";
+      enlargedCtx.drawImage(img, 0, 0, width, height);
+
+      const blurCanvas = document.createElement("canvas");
+      blurCanvas.width = width;
+      blurCanvas.height = height;
+      const blurCtx = blurCanvas.getContext("2d");
+      if (!blurCtx) throw new Error("This browser cannot prepare the sharpening pass.");
+      (blurCtx as CanvasRenderingContext2D & { filter?: string }).filter = "blur(1.2px)";
+      blurCtx.drawImage(enlarged, 0, 0);
+      (blurCtx as CanvasRenderingContext2D & { filter?: string }).filter = "none";
+
+      const original = enlargedCtx.getImageData(0, 0, width, height);
+      const blurred = blurCtx.getImageData(0, 0, width, height);
+      for (let i = 0; i < original.data.length; i += 4) {
+        for (let channel = 0; channel < 3; channel += 1) {
+          const value = original.data[i + channel] + 0.55 * (original.data[i + channel] - blurred.data[i + channel]);
+          original.data[i + channel] = Math.max(0, Math.min(255, value));
+        }
+      }
+      enlargedCtx.putImageData(original, 0, 0);
+      await replaceSelectedImage(enlarged.toDataURL("image/png"));
+      toast({ title: "HD artwork ready", description: `Prepared a ${width}×${height}px print layer.` });
+    } catch (error) {
+      console.error("[studio] upscale failed", error);
+      toast({ title: "Upscale unavailable", description: error instanceof Error ? error.message : "Try a smaller image or a different format.", variant: "destructive" });
+    } finally {
+      setImageAction(null);
+    }
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -860,7 +972,13 @@ export default function DesignStudioV2() {
                   <div className="p-4 space-y-3">
                     <button onClick={() => fileInputRef.current?.click()} className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm text-white shadow-md active:scale-95 transition-transform" style={{ background: "linear-gradient(135deg,#E85D04,#FB8500)" }}><Upload className="w-4 h-4" /> Upload Image</button>
                     <p className="text-[11px] text-gray-500 text-center">JPG, PNG, or WebP · Max 10MB</p>
-                    {selectedLayer?.type === "image" && <ImagePanel />}
+                          {selectedLayer?.type === "image" && (
+                            <ImagePanel
+                              onRemoveBackground={() => void handleRemoveBackground()}
+                              onUpscale={() => void handleUpscale()}
+                              busyAction={imageAction}
+                            />
+                          )}
                     {!isMug && !isCap && !isWaterBottle && (
                       <div className="pt-3 border-t border-gray-100">
                         <label className="block text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2">Garment Size</label>

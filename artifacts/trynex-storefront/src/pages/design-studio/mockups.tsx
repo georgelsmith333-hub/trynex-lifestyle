@@ -74,6 +74,8 @@ export interface DesignProduct {
   printZoneBack?: PrintZone;
   baseHeight: number;
   frontSrc: string;
+  /** Optional photographic gallery preview; never used for print-zone geometry. */
+  gallerySrc?: string;
   backSrc?: string;
 }
 
@@ -201,7 +203,7 @@ export const PRODUCTS: DesignProduct[] = [
     description: "230GSM Cotton", badge: "Best Seller",
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: TSHIRT_PZ, printZoneBack: TSHIRT_BACK_PZ,
-    frontSrc: tshirtFront, backSrc: tshirtBack,
+    frontSrc: tshirtFront, gallerySrc: "/mockups/gallery-v1/tshirt-white-front.png", backSrc: tshirtBack,
   },
   {
     id: "longsleeve", name: "Unisex Long Sleeve", icon: "👔", category: "longsleeve",
@@ -216,7 +218,7 @@ export const PRODUCTS: DesignProduct[] = [
     description: "240GSM Cotton",
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: LONGSLEEVE_PZ, printZoneBack: LONGSLEEVE_BACK_PZ,
-    frontSrc: longsleeveFront, backSrc: longsleeveBack,
+    frontSrc: longsleeveFront, gallerySrc: "/mockups/gallery-v1/longsleeve-white-front.png", backSrc: longsleeveBack,
   },
   {
     id: "hoodie", name: "Unisex Hoodie", icon: "🧥", category: "hoodie",
@@ -231,7 +233,7 @@ export const PRODUCTS: DesignProduct[] = [
     description: "320GSM Fleece", badge: "New",
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: HOODIE_PZ, printZoneBack: HOODIE_BACK_PZ,
-    frontSrc: hoodieFront, backSrc: hoodieBack,
+    frontSrc: hoodieFront, gallerySrc: "/mockups/gallery-v1/hoodie-white-front.png", backSrc: hoodieBack,
   },
   {
     id: "mug", name: "Coffee Mug", icon: "☕", category: "mug",
@@ -246,7 +248,7 @@ export const PRODUCTS: DesignProduct[] = [
     description: "11oz Ceramic", badge: "Popular",
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: MUG_SIDE_PZ,
-    frontSrc: mugFront, backSrc: mugBack,
+    frontSrc: mugFront, gallerySrc: "/mockups/gallery-v1/mug-white-front.png", backSrc: mugBack,
   },
   {
     id: "cap", name: "Structured Cap", icon: "🧢", category: "cap",
@@ -260,7 +262,7 @@ export const PRODUCTS: DesignProduct[] = [
     description: "Cotton Twill",
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: CAP_PZ, printZoneBack: CAP_BACK_PZ,
-    frontSrc: capFront, backSrc: capBack,
+    frontSrc: capFront, gallerySrc: "/mockups/gallery-v1/cap-white-front.png", backSrc: capBack,
   },
   {
     id: "waterbottle", name: "Water Bottle", icon: "🥤", category: "waterbottle",
@@ -273,7 +275,7 @@ export const PRODUCTS: DesignProduct[] = [
     description: "600ml White Sublimation Aluminium",
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: WATERBOTTLE_PZ,
-    frontSrc: WATERBOTTLE_MOCKUP_URL, backSrc: "/mockups/smart-v4/waterbottle/white/back.png",
+    frontSrc: WATERBOTTLE_MOCKUP_URL, gallerySrc: "/mockups/gallery-v1/waterbottle-white-front.png", backSrc: "/mockups/smart-v4/waterbottle/white/back.png",
   },
   // NOTE: Water Tumbler removed — it was a duplicate of Water Bottle with identical
   // mockup, colors, and print zone. Re-add if a distinct tumbler mockup is provided.
