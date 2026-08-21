@@ -17,7 +17,7 @@ export interface SmartMockupManifest {
   colorSlug: string;
   face: SmartMockupFace;
   sourceKitKey: string;
-  editableMasterPath: string;
+  editableMasterPath?: string;
   assets: {
     baseSrc: string;
     cutoutSrc: string;
@@ -69,7 +69,7 @@ export function createSmartMockupManifest(args: {
   colorSlug?: string;
   face?: SmartMockupFace;
   sourceKitKey: string;
-  editableMasterPath: string;
+  editableMasterPath?: string;
   masterStatus?: SmartMockupManifest["masterStatus"];
   baseSrc?: string;
   cutoutSrc?: string;
@@ -83,7 +83,7 @@ export function createSmartMockupManifest(args: {
   const cutoutSrc = args.cutoutSrc ?? baseSrc;
   return {
     schema: "trynex-smart-mockup/v3",
-    masterFormat: args.category === "waterbottle" || args.category === "mug" ? "psb" : "psd",
+    masterFormat: args.editableMasterPath?.toLowerCase().endsWith(".psb") ? "psb" : "psd",
     masterStatus: args.masterStatus ?? "manifest-only",
     category: args.category,
     colorSlug,

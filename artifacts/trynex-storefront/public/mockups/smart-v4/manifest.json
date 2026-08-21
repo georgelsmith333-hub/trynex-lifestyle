@@ -10,8 +10,8 @@
     "tshirt",
     "waterbottle"
   ],
-  "sourcePackage": "material-aware canonical surfaces derived from corrected neutral bases; waterbottle is a white sublimation-coated aluminium blank; layered PSD/PSB masters retained as source provenance",
-  "masterDeploymentStatus": "source-package-verified; all 22 PSD/PSB masters contain Photoshop Smart Object resources; master files are not browser-rendered and are not yet uploaded to production storage",
+  "sourcePackage": "material-aware canonical surfaces derived from corrected neutral bases; waterbottle is a white sublimation-coated aluminium blank; attached per-color PSDs are provenance only and are not browser-rendered",
+  "masterDeploymentStatus": "attached-source-kit-partially-verified; front/back PSDs exist for the current 94 front/back surfaces; sleeve, neck-label, wrap, and canonical 22-master photoreal paths are manifest-only; no PSD/PSB master upload/edit service is active in production",
   "assets": [
     {
       "family": "cap",
@@ -27,12 +27,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/back.psd",
-        "sha256": "1db3173bca18adda68cfeb35294702b9a2a3c70316b57cc6b1123cb0823cd446",
-        "bytes": 2592578,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/cap-black-back.psd",
+        "sha256": "d068e44621cedfb1ebe913118a2ac57d647dc9742c932a6afb0144691b56eeaf",
+        "bytes": 2972951,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "cap",
@@ -48,12 +48,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/front.psd",
-        "sha256": "cb99838cb91e1f58baa15b94392bdab8e71816b1a34390e9af0efa0d7bec5942",
-        "bytes": 3094953,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/cap-black-front.psd",
+        "sha256": "91acadf5ec9d3a218c19fe897496ce8551f46083812e921ba1d7bf43a6d6541b",
+        "bytes": 1656992,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "cap",
@@ -69,12 +69,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/back.psd",
-        "sha256": "1db3173bca18adda68cfeb35294702b9a2a3c70316b57cc6b1123cb0823cd446",
-        "bytes": 2592578,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/cap-forest-back.psd",
+        "sha256": "a0e180248fa8aa5ab9870a83aa4222c33167640d6246ecfc49b876f34e541a18",
+        "bytes": 3220542,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "cap",
@@ -90,12 +90,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/front.psd",
-        "sha256": "cb99838cb91e1f58baa15b94392bdab8e71816b1a34390e9af0efa0d7bec5942",
-        "bytes": 3094953,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/cap-forest-front.psd",
+        "sha256": "39d12feb88678e4cf572eaf1feb2380510925141e5d29db5daed6c485a479b23",
+        "bytes": 2170939,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "cap",
@@ -111,12 +111,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/back.psd",
-        "sha256": "1db3173bca18adda68cfeb35294702b9a2a3c70316b57cc6b1123cb0823cd446",
-        "bytes": 2592578,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/cap-grey-back.psd",
+        "sha256": "e82220b5dd6fb76e75ba1b65a1f6f45dd3ba69216861fc9367bdc05120a25728",
+        "bytes": 3609882,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "cap",
@@ -132,12 +132,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/front.psd",
-        "sha256": "cb99838cb91e1f58baa15b94392bdab8e71816b1a34390e9af0efa0d7bec5942",
-        "bytes": 3094953,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/cap-grey-front.psd",
+        "sha256": "151b42f1b85d92b3e2b5385bedb4fba13c42ecfc527885db5c29659a1333fc9b",
+        "bytes": 2962602,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "cap",
@@ -153,12 +153,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/back.psd",
-        "sha256": "1db3173bca18adda68cfeb35294702b9a2a3c70316b57cc6b1123cb0823cd446",
-        "bytes": 2592578,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/cap-maroon-back.psd",
+        "sha256": "71b3d150f9f6f79107c59fe40bd42ae5c2d20433f4f0520fb1c1286b1ffd3f8c",
+        "bytes": 3210805,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "cap",
@@ -174,12 +174,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/front.psd",
-        "sha256": "cb99838cb91e1f58baa15b94392bdab8e71816b1a34390e9af0efa0d7bec5942",
-        "bytes": 3094953,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/cap-maroon-front.psd",
+        "sha256": "f08ab1593c076349f3763da7a169bc17249dc764a26eed5c6755dcc30854f353",
+        "bytes": 2146354,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "cap",
@@ -195,12 +195,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/back.psd",
-        "sha256": "1db3173bca18adda68cfeb35294702b9a2a3c70316b57cc6b1123cb0823cd446",
-        "bytes": 2592578,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/cap-navy-back.psd",
+        "sha256": "48855a324d2e219ece57525f82877c728e5bdd0700a3d1b678c2adf004a3e962",
+        "bytes": 3338982,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "cap",
@@ -216,12 +216,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/front.psd",
-        "sha256": "cb99838cb91e1f58baa15b94392bdab8e71816b1a34390e9af0efa0d7bec5942",
-        "bytes": 3094953,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/cap-navy-front.psd",
+        "sha256": "a794abb927bf637cdf905dacc3c3d0de17a4d289e322715f864f6d6d3fd32f70",
+        "bytes": 2314589,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "cap",
@@ -237,12 +237,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/back.psd",
-        "sha256": "1db3173bca18adda68cfeb35294702b9a2a3c70316b57cc6b1123cb0823cd446",
-        "bytes": 2592578,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/cap-olive-back.psd",
+        "sha256": "62b0b0d0b6f4bc8e349d0f13b3b1dd8927702f342a29cc89deea2aea121ae37e",
+        "bytes": 3360673,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "cap",
@@ -258,12 +258,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/front.psd",
-        "sha256": "cb99838cb91e1f58baa15b94392bdab8e71816b1a34390e9af0efa0d7bec5942",
-        "bytes": 3094953,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/cap-olive-front.psd",
+        "sha256": "ad1ee08ef0649850612d0f3e8b00fcf74388bd679f6cd8518f6a8d8ae73526a1",
+        "bytes": 2544239,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "cap",
@@ -279,12 +279,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/back.psd",
-        "sha256": "1db3173bca18adda68cfeb35294702b9a2a3c70316b57cc6b1123cb0823cd446",
-        "bytes": 2592578,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/cap-red-back.psd",
+        "sha256": "2b33a8e588e893c706de186077aa46381f5a7cf7a8de237350ceff954146c3f4",
+        "bytes": 3490213,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "cap",
@@ -300,12 +300,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/front.psd",
-        "sha256": "cb99838cb91e1f58baa15b94392bdab8e71816b1a34390e9af0efa0d7bec5942",
-        "bytes": 3094953,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/cap-red-front.psd",
+        "sha256": "7a04923d5256898a61e83f7deddadd015af5c757fba920e77ef18f252a19545c",
+        "bytes": 2514880,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "cap",
@@ -321,12 +321,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/back.psd",
-        "sha256": "1db3173bca18adda68cfeb35294702b9a2a3c70316b57cc6b1123cb0823cd446",
-        "bytes": 2592578,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/cap-white-back.psd",
+        "sha256": "1a2c3ccff0a64a8262dcb97f564b36c3eacdce60d6ebb94ba0b0759b7828a9db",
+        "bytes": 4559540,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "cap",
@@ -342,12 +342,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Cap/front.psd",
-        "sha256": "cb99838cb91e1f58baa15b94392bdab8e71816b1a34390e9af0efa0d7bec5942",
-        "bytes": 3094953,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/cap-white-front.psd",
+        "sha256": "538fe33de10359571d4ce38387c519355d6cac2e2c7e7cbc7ec48c49df51c46f",
+        "bytes": 4089661,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "hoodie",
@@ -363,12 +363,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/back.psd",
-        "sha256": "991638164396d08fae3a1b827994aaa52b27a5953c343e62262a678139d4e3f2",
-        "bytes": 3607779,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/hoodie-black-back.psd",
+        "sha256": "1e880b05082f6d7c64a2bfc13b0b8b30facefefe41777b0f440d78b7305c8c03",
+        "bytes": 4800685,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "hoodie",
@@ -384,12 +384,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/front.psd",
-        "sha256": "06064f802e019e8d055bc6247736fa7af4b54832257e305298815f52d480f447",
-        "bytes": 3449709,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/hoodie-black-front.psd",
+        "sha256": "b0e829816291695b6a8e86df2d2527dd7312e408c676e428bf51aa8f7c2a6371",
+        "bytes": 4879836,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "hoodie",
@@ -404,13 +404,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/left-sleeve.psd",
-        "sha256": "80dc01b2624e115ae78c23179542e687201a8a8e66f4c50df36bf471fbe35a38",
-        "bytes": 2128080,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -425,13 +420,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/neck-label.psd",
-        "sha256": "50cb3f1f496ba5751d77608d5be6b6db6d600ebfbb6657716fe3cca96255e393",
-        "bytes": 5286763,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -446,13 +436,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/right-sleeve.psd",
-        "sha256": "c7c321368a8dd517a230dee853b8f413743c6ea69319b9a2a2dc01b2ac639ba2",
-        "bytes": 2000808,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -468,12 +453,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/back.psd",
-        "sha256": "991638164396d08fae3a1b827994aaa52b27a5953c343e62262a678139d4e3f2",
-        "bytes": 3607779,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/hoodie-burgundy-back.psd",
+        "sha256": "2086918057b78104adb3e75529d6056c2e846e45eb580f8d2c1572e329e9544c",
+        "bytes": 2251458,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "hoodie",
@@ -489,12 +474,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/front.psd",
-        "sha256": "06064f802e019e8d055bc6247736fa7af4b54832257e305298815f52d480f447",
-        "bytes": 3449709,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/hoodie-burgundy-front.psd",
+        "sha256": "afbcfc8aa95881ce101445d6f56d75193a92badddc150c7f34eee6297d89a0ad",
+        "bytes": 5032611,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "hoodie",
@@ -509,13 +494,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/left-sleeve.psd",
-        "sha256": "80dc01b2624e115ae78c23179542e687201a8a8e66f4c50df36bf471fbe35a38",
-        "bytes": 2128080,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -530,13 +510,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/neck-label.psd",
-        "sha256": "50cb3f1f496ba5751d77608d5be6b6db6d600ebfbb6657716fe3cca96255e393",
-        "bytes": 5286763,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -551,13 +526,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/right-sleeve.psd",
-        "sha256": "c7c321368a8dd517a230dee853b8f413743c6ea69319b9a2a2dc01b2ac639ba2",
-        "bytes": 2000808,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -573,12 +543,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/back.psd",
-        "sha256": "991638164396d08fae3a1b827994aaa52b27a5953c343e62262a678139d4e3f2",
-        "bytes": 3607779,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/hoodie-forest-back.psd",
+        "sha256": "4f7ab42834a9365708678cc24c6400abd74b090a2653b5243bc1c06ff273b05f",
+        "bytes": 2206869,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "hoodie",
@@ -594,12 +564,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/front.psd",
-        "sha256": "06064f802e019e8d055bc6247736fa7af4b54832257e305298815f52d480f447",
-        "bytes": 3449709,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/hoodie-forest-front.psd",
+        "sha256": "542b19ac93fb22cae6c2cddb0b67ac92df30cad794adf3f4394b83bf69eb3014",
+        "bytes": 4991087,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "hoodie",
@@ -614,13 +584,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/left-sleeve.psd",
-        "sha256": "80dc01b2624e115ae78c23179542e687201a8a8e66f4c50df36bf471fbe35a38",
-        "bytes": 2128080,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -635,13 +600,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/neck-label.psd",
-        "sha256": "50cb3f1f496ba5751d77608d5be6b6db6d600ebfbb6657716fe3cca96255e393",
-        "bytes": 5286763,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -656,13 +616,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/right-sleeve.psd",
-        "sha256": "c7c321368a8dd517a230dee853b8f413743c6ea69319b9a2a2dc01b2ac639ba2",
-        "bytes": 2000808,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -678,12 +633,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/back.psd",
-        "sha256": "991638164396d08fae3a1b827994aaa52b27a5953c343e62262a678139d4e3f2",
-        "bytes": 3607779,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/hoodie-grey-back.psd",
+        "sha256": "b83776bedd2ae3442b23a38d704eaf063169b711c4f0bb934299270ede44a8ba",
+        "bytes": 3588122,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "hoodie",
@@ -699,12 +654,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/front.psd",
-        "sha256": "06064f802e019e8d055bc6247736fa7af4b54832257e305298815f52d480f447",
-        "bytes": 3449709,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/hoodie-grey-front.psd",
+        "sha256": "6256ce91b3f89f08aa9d205bde0e2a28593409180f202a8d4629c7773b124023",
+        "bytes": 4412552,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "hoodie",
@@ -719,13 +674,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/left-sleeve.psd",
-        "sha256": "80dc01b2624e115ae78c23179542e687201a8a8e66f4c50df36bf471fbe35a38",
-        "bytes": 2128080,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -740,13 +690,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/neck-label.psd",
-        "sha256": "50cb3f1f496ba5751d77608d5be6b6db6d600ebfbb6657716fe3cca96255e393",
-        "bytes": 5286763,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -761,13 +706,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/right-sleeve.psd",
-        "sha256": "c7c321368a8dd517a230dee853b8f413743c6ea69319b9a2a2dc01b2ac639ba2",
-        "bytes": 2000808,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -783,12 +723,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/back.psd",
-        "sha256": "991638164396d08fae3a1b827994aaa52b27a5953c343e62262a678139d4e3f2",
-        "bytes": 3607779,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/hoodie-maroon-back.psd",
+        "sha256": "0ed05a45e9fb39e8ffd8fe09b28dc77b8eadd85b8a700d9694c72d7cb0904136",
+        "bytes": 2216126,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "hoodie",
@@ -804,12 +744,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/front.psd",
-        "sha256": "06064f802e019e8d055bc6247736fa7af4b54832257e305298815f52d480f447",
-        "bytes": 3449709,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/hoodie-maroon-front.psd",
+        "sha256": "fdcb9d40b75d556f31136b00e0dfeff62ff139730c654310c545a394b9502ed9",
+        "bytes": 5068445,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "hoodie",
@@ -824,13 +764,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/left-sleeve.psd",
-        "sha256": "80dc01b2624e115ae78c23179542e687201a8a8e66f4c50df36bf471fbe35a38",
-        "bytes": 2128080,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -845,13 +780,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/neck-label.psd",
-        "sha256": "50cb3f1f496ba5751d77608d5be6b6db6d600ebfbb6657716fe3cca96255e393",
-        "bytes": 5286763,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -866,13 +796,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/right-sleeve.psd",
-        "sha256": "c7c321368a8dd517a230dee853b8f413743c6ea69319b9a2a2dc01b2ac639ba2",
-        "bytes": 2000808,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -888,12 +813,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/back.psd",
-        "sha256": "991638164396d08fae3a1b827994aaa52b27a5953c343e62262a678139d4e3f2",
-        "bytes": 3607779,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/hoodie-navy-back.psd",
+        "sha256": "5c93519e306c18a85ea78c83c3083cc44a98d0662bcad6a3c68b08de1f9d9a2c",
+        "bytes": 2366314,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "hoodie",
@@ -909,12 +834,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/front.psd",
-        "sha256": "06064f802e019e8d055bc6247736fa7af4b54832257e305298815f52d480f447",
-        "bytes": 3449709,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/hoodie-navy-front.psd",
+        "sha256": "9128bbe33a3daf4893a68abf63f2907eb030e3a46347a3b903d0e0816254b5a1",
+        "bytes": 4608815,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "hoodie",
@@ -929,13 +854,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/left-sleeve.psd",
-        "sha256": "80dc01b2624e115ae78c23179542e687201a8a8e66f4c50df36bf471fbe35a38",
-        "bytes": 2128080,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -950,13 +870,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/neck-label.psd",
-        "sha256": "50cb3f1f496ba5751d77608d5be6b6db6d600ebfbb6657716fe3cca96255e393",
-        "bytes": 5286763,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -971,13 +886,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/right-sleeve.psd",
-        "sha256": "c7c321368a8dd517a230dee853b8f413743c6ea69319b9a2a2dc01b2ac639ba2",
-        "bytes": 2000808,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -993,12 +903,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/back.psd",
-        "sha256": "991638164396d08fae3a1b827994aaa52b27a5953c343e62262a678139d4e3f2",
-        "bytes": 3607779,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/hoodie-olive-back.psd",
+        "sha256": "a92fb40e22b5fbd09bacabe663b483c0f13bf5ffc7492b5d13cce27ab1f88ca3",
+        "bytes": 2696494,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "hoodie",
@@ -1014,12 +924,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/front.psd",
-        "sha256": "06064f802e019e8d055bc6247736fa7af4b54832257e305298815f52d480f447",
-        "bytes": 3449709,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/hoodie-olive-front.psd",
+        "sha256": "324fe04fb9ae92b68726bb01a0d77b94fec047c061333354be8ca32de908f09d",
+        "bytes": 5072418,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "hoodie",
@@ -1034,13 +944,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/left-sleeve.psd",
-        "sha256": "80dc01b2624e115ae78c23179542e687201a8a8e66f4c50df36bf471fbe35a38",
-        "bytes": 2128080,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -1055,13 +960,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/neck-label.psd",
-        "sha256": "50cb3f1f496ba5751d77608d5be6b6db6d600ebfbb6657716fe3cca96255e393",
-        "bytes": 5286763,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -1076,13 +976,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/right-sleeve.psd",
-        "sha256": "c7c321368a8dd517a230dee853b8f413743c6ea69319b9a2a2dc01b2ac639ba2",
-        "bytes": 2000808,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -1098,12 +993,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/back.psd",
-        "sha256": "991638164396d08fae3a1b827994aaa52b27a5953c343e62262a678139d4e3f2",
-        "bytes": 3607779,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/hoodie-red-back.psd",
+        "sha256": "c167c57f9f315459cdef22cdf96cceb5fac50005bac13d523b70cbf57b7e1675",
+        "bytes": 2655360,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "hoodie",
@@ -1119,12 +1014,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/front.psd",
-        "sha256": "06064f802e019e8d055bc6247736fa7af4b54832257e305298815f52d480f447",
-        "bytes": 3449709,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/hoodie-red-front.psd",
+        "sha256": "c4c3554a055d6db7b4c0e4e18766e18ad707d4ac1ba032d0fd48cc8049a58f65",
+        "bytes": 5173858,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "hoodie",
@@ -1139,13 +1034,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/left-sleeve.psd",
-        "sha256": "80dc01b2624e115ae78c23179542e687201a8a8e66f4c50df36bf471fbe35a38",
-        "bytes": 2128080,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -1160,13 +1050,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/neck-label.psd",
-        "sha256": "50cb3f1f496ba5751d77608d5be6b6db6d600ebfbb6657716fe3cca96255e393",
-        "bytes": 5286763,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -1181,13 +1066,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/right-sleeve.psd",
-        "sha256": "c7c321368a8dd517a230dee853b8f413743c6ea69319b9a2a2dc01b2ac639ba2",
-        "bytes": 2000808,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -1203,12 +1083,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/back.psd",
-        "sha256": "991638164396d08fae3a1b827994aaa52b27a5953c343e62262a678139d4e3f2",
-        "bytes": 3607779,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/hoodie-sky-blue-back.psd",
+        "sha256": "f4bfdc677661b53124c5c588451d2f6a63faee787b4892f9d9be8dc27ac1dee4",
+        "bytes": 3146019,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "hoodie",
@@ -1224,12 +1104,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/front.psd",
-        "sha256": "06064f802e019e8d055bc6247736fa7af4b54832257e305298815f52d480f447",
-        "bytes": 3449709,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/hoodie-sky-blue-front.psd",
+        "sha256": "c557971bb3a0fafe4f1c812cf7991f5aba136070ce63ba95baa5490df61ccd8c",
+        "bytes": 4321673,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "hoodie",
@@ -1244,13 +1124,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/left-sleeve.psd",
-        "sha256": "80dc01b2624e115ae78c23179542e687201a8a8e66f4c50df36bf471fbe35a38",
-        "bytes": 2128080,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -1265,13 +1140,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/neck-label.psd",
-        "sha256": "50cb3f1f496ba5751d77608d5be6b6db6d600ebfbb6657716fe3cca96255e393",
-        "bytes": 5286763,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -1286,13 +1156,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/right-sleeve.psd",
-        "sha256": "c7c321368a8dd517a230dee853b8f413743c6ea69319b9a2a2dc01b2ac639ba2",
-        "bytes": 2000808,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -1308,12 +1173,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/back.psd",
-        "sha256": "991638164396d08fae3a1b827994aaa52b27a5953c343e62262a678139d4e3f2",
-        "bytes": 3607779,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/hoodie-white-back.psd",
+        "sha256": "5032b896886a7c03339a08bef0bafbf6de471c447df80055cbcddf67ba762c5e",
+        "bytes": 4996042,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "hoodie",
@@ -1329,12 +1194,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/front.psd",
-        "sha256": "06064f802e019e8d055bc6247736fa7af4b54832257e305298815f52d480f447",
-        "bytes": 3449709,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/hoodie-white-front.psd",
+        "sha256": "95cf649beb86e149fbf9b4779c8d6a133e0e3044ee6f36ca9f89ef6d31b24b9a",
+        "bytes": 4554153,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "hoodie",
@@ -1349,13 +1214,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/left-sleeve.psd",
-        "sha256": "80dc01b2624e115ae78c23179542e687201a8a8e66f4c50df36bf471fbe35a38",
-        "bytes": 2128080,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -1370,13 +1230,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/neck-label.psd",
-        "sha256": "50cb3f1f496ba5751d77608d5be6b6db6d600ebfbb6657716fe3cca96255e393",
-        "bytes": 5286763,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "hoodie",
@@ -1391,13 +1246,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Hoodie/right-sleeve.psd",
-        "sha256": "c7c321368a8dd517a230dee853b8f413743c6ea69319b9a2a2dc01b2ac639ba2",
-        "bytes": 2000808,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -1413,12 +1263,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/back.psd",
-        "sha256": "f84a023446ea3562a35abef58d20033a08348a7f6f0161f137556afb5463d118",
-        "bytes": 3146795,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-black-back.psd",
+        "sha256": "66f68c582579d8d71e16ceee7846bd4f07f758fbef4aa6a627bdbef768b1d4cc",
+        "bytes": 5315882,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "longsleeve",
@@ -1434,12 +1284,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/front.psd",
-        "sha256": "08d457e809bf1ff450f37020233c55960604f54dc4356f9cad762712a877ac60",
-        "bytes": 4461272,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-black-front.psd",
+        "sha256": "c1f3fb5fce2d7bc7a430c6cd9e18ab905473bf0be3bf21341e90e6d2ba19e5d1",
+        "bytes": 5196373,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "longsleeve",
@@ -1454,13 +1304,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/left-sleeve.psd",
-        "sha256": "e5a01c8f9e05786f46157ed0d28682337f227653781180267b4a0a5d35ca319d",
-        "bytes": 1855724,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -1475,13 +1320,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/neck-label.psd",
-        "sha256": "b752a4a671c9f7818d235e669be3cdd2ea4fd51e1dcb501cba15d275667d8cf8",
-        "bytes": 2986471,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -1496,13 +1336,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/right-sleeve.psd",
-        "sha256": "92df71693e5b04b348da18d0fd5fd2b871758a137ff6f847aa4a0085d328b2d4",
-        "bytes": 1852603,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -1518,12 +1353,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/back.psd",
-        "sha256": "f84a023446ea3562a35abef58d20033a08348a7f6f0161f137556afb5463d118",
-        "bytes": 3146795,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-burgundy-back.psd",
+        "sha256": "91dbd7ec0be693133db3ab8b839ccf3acba530614b5547b9b5ff57bb8242314f",
+        "bytes": 2121555,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "longsleeve",
@@ -1539,12 +1374,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/front.psd",
-        "sha256": "08d457e809bf1ff450f37020233c55960604f54dc4356f9cad762712a877ac60",
-        "bytes": 4461272,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-burgundy-front.psd",
+        "sha256": "bd9379ac3ec8785a507aa0896e3d0c9dafe6d38fadb588708b4996d47629fd37",
+        "bytes": 4754649,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "longsleeve",
@@ -1559,13 +1394,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/left-sleeve.psd",
-        "sha256": "e5a01c8f9e05786f46157ed0d28682337f227653781180267b4a0a5d35ca319d",
-        "bytes": 1855724,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -1580,13 +1410,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/neck-label.psd",
-        "sha256": "b752a4a671c9f7818d235e669be3cdd2ea4fd51e1dcb501cba15d275667d8cf8",
-        "bytes": 2986471,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -1601,13 +1426,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/right-sleeve.psd",
-        "sha256": "92df71693e5b04b348da18d0fd5fd2b871758a137ff6f847aa4a0085d328b2d4",
-        "bytes": 1852603,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -1623,12 +1443,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/back.psd",
-        "sha256": "f84a023446ea3562a35abef58d20033a08348a7f6f0161f137556afb5463d118",
-        "bytes": 3146795,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-forest-back.psd",
+        "sha256": "1d48c9e7f3cb468b01e95bf1cdfa525ff24f13f19496d9e78d60ecfc788e0bc2",
+        "bytes": 2169984,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "longsleeve",
@@ -1644,12 +1464,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/front.psd",
-        "sha256": "08d457e809bf1ff450f37020233c55960604f54dc4356f9cad762712a877ac60",
-        "bytes": 4461272,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-forest-front.psd",
+        "sha256": "6c349b63ff445c14850cb7dcd73828bcbb7874c330aadd29d187cf6283f9f523",
+        "bytes": 4684585,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "longsleeve",
@@ -1664,13 +1484,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/left-sleeve.psd",
-        "sha256": "e5a01c8f9e05786f46157ed0d28682337f227653781180267b4a0a5d35ca319d",
-        "bytes": 1855724,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -1685,13 +1500,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/neck-label.psd",
-        "sha256": "b752a4a671c9f7818d235e669be3cdd2ea4fd51e1dcb501cba15d275667d8cf8",
-        "bytes": 2986471,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -1706,13 +1516,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/right-sleeve.psd",
-        "sha256": "92df71693e5b04b348da18d0fd5fd2b871758a137ff6f847aa4a0085d328b2d4",
-        "bytes": 1852603,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -1728,12 +1533,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/back.psd",
-        "sha256": "f84a023446ea3562a35abef58d20033a08348a7f6f0161f137556afb5463d118",
-        "bytes": 3146795,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-grey-back.psd",
+        "sha256": "6c961c624ddaa406b5075640d4b14406b3af74df2f20b0f42502d5e4757727d5",
+        "bytes": 3364043,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "longsleeve",
@@ -1749,12 +1554,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/front.psd",
-        "sha256": "08d457e809bf1ff450f37020233c55960604f54dc4356f9cad762712a877ac60",
-        "bytes": 4461272,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-grey-front.psd",
+        "sha256": "ea9cb3fda82511a138c9a2e6ea7de7539dfebbb763437cbd379a2c7a90d6a122",
+        "bytes": 5205987,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "longsleeve",
@@ -1769,13 +1574,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/left-sleeve.psd",
-        "sha256": "e5a01c8f9e05786f46157ed0d28682337f227653781180267b4a0a5d35ca319d",
-        "bytes": 1855724,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -1790,13 +1590,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/neck-label.psd",
-        "sha256": "b752a4a671c9f7818d235e669be3cdd2ea4fd51e1dcb501cba15d275667d8cf8",
-        "bytes": 2986471,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -1811,13 +1606,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/right-sleeve.psd",
-        "sha256": "92df71693e5b04b348da18d0fd5fd2b871758a137ff6f847aa4a0085d328b2d4",
-        "bytes": 1852603,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -1833,12 +1623,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/back.psd",
-        "sha256": "f84a023446ea3562a35abef58d20033a08348a7f6f0161f137556afb5463d118",
-        "bytes": 3146795,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-maroon-back.psd",
+        "sha256": "4054c824ff2a5f95de4f70b315b111dcd8295035e736d6cb2b3d7344170daacd",
+        "bytes": 2113790,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "longsleeve",
@@ -1854,12 +1644,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/front.psd",
-        "sha256": "08d457e809bf1ff450f37020233c55960604f54dc4356f9cad762712a877ac60",
-        "bytes": 4461272,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-maroon-front.psd",
+        "sha256": "381fc3f3d1289a086e02af332b8b7e412b8645689e81fe08353cbb897ab7846a",
+        "bytes": 4771474,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "longsleeve",
@@ -1874,13 +1664,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/left-sleeve.psd",
-        "sha256": "e5a01c8f9e05786f46157ed0d28682337f227653781180267b4a0a5d35ca319d",
-        "bytes": 1855724,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -1895,13 +1680,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/neck-label.psd",
-        "sha256": "b752a4a671c9f7818d235e669be3cdd2ea4fd51e1dcb501cba15d275667d8cf8",
-        "bytes": 2986471,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -1916,13 +1696,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/right-sleeve.psd",
-        "sha256": "92df71693e5b04b348da18d0fd5fd2b871758a137ff6f847aa4a0085d328b2d4",
-        "bytes": 1852603,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -1938,12 +1713,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/back.psd",
-        "sha256": "f84a023446ea3562a35abef58d20033a08348a7f6f0161f137556afb5463d118",
-        "bytes": 3146795,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-navy-back.psd",
+        "sha256": "803c374f686d2dd974ce1d16202bb04434ae68e5de46ebe649e693e4d618c34e",
+        "bytes": 2171864,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "longsleeve",
@@ -1959,12 +1734,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/front.psd",
-        "sha256": "08d457e809bf1ff450f37020233c55960604f54dc4356f9cad762712a877ac60",
-        "bytes": 4461272,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-navy-front.psd",
+        "sha256": "38a4a88a76da2d11c3e8791dd16a632c6a07208d4e60ec1b6261229aadfc837e",
+        "bytes": 5136114,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "longsleeve",
@@ -1979,13 +1754,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/left-sleeve.psd",
-        "sha256": "e5a01c8f9e05786f46157ed0d28682337f227653781180267b4a0a5d35ca319d",
-        "bytes": 1855724,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -2000,13 +1770,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/neck-label.psd",
-        "sha256": "b752a4a671c9f7818d235e669be3cdd2ea4fd51e1dcb501cba15d275667d8cf8",
-        "bytes": 2986471,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -2021,13 +1786,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/right-sleeve.psd",
-        "sha256": "92df71693e5b04b348da18d0fd5fd2b871758a137ff6f847aa4a0085d328b2d4",
-        "bytes": 1852603,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -2043,12 +1803,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/back.psd",
-        "sha256": "f84a023446ea3562a35abef58d20033a08348a7f6f0161f137556afb5463d118",
-        "bytes": 3146795,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-olive-back.psd",
+        "sha256": "3004c1d7753efe509b7a885ce1b2e73367076d7fc909e5cee77721565257a94c",
+        "bytes": 2496080,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "longsleeve",
@@ -2064,12 +1824,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/front.psd",
-        "sha256": "08d457e809bf1ff450f37020233c55960604f54dc4356f9cad762712a877ac60",
-        "bytes": 4461272,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-olive-front.psd",
+        "sha256": "de66eff5ad1bba7bb04df11d0d8dc006752a83483bcde40e590d8498845d0395",
+        "bytes": 5416568,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "longsleeve",
@@ -2084,13 +1844,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/left-sleeve.psd",
-        "sha256": "e5a01c8f9e05786f46157ed0d28682337f227653781180267b4a0a5d35ca319d",
-        "bytes": 1855724,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -2105,13 +1860,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/neck-label.psd",
-        "sha256": "b752a4a671c9f7818d235e669be3cdd2ea4fd51e1dcb501cba15d275667d8cf8",
-        "bytes": 2986471,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -2126,13 +1876,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/right-sleeve.psd",
-        "sha256": "92df71693e5b04b348da18d0fd5fd2b871758a137ff6f847aa4a0085d328b2d4",
-        "bytes": 1852603,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -2148,12 +1893,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/back.psd",
-        "sha256": "f84a023446ea3562a35abef58d20033a08348a7f6f0161f137556afb5463d118",
-        "bytes": 3146795,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-red-back.psd",
+        "sha256": "558d3fbca988f5adaffea6d559fc4d3cbd06772128c40f95ccb9edd9c740e12e",
+        "bytes": 2519214,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "longsleeve",
@@ -2169,12 +1914,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/front.psd",
-        "sha256": "08d457e809bf1ff450f37020233c55960604f54dc4356f9cad762712a877ac60",
-        "bytes": 4461272,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-red-front.psd",
+        "sha256": "357b7c1e8a8ff5542df8ad6817cb4814122ac26acf8dcca69071cc0a0a8baf15",
+        "bytes": 4999771,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "longsleeve",
@@ -2189,13 +1934,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/left-sleeve.psd",
-        "sha256": "e5a01c8f9e05786f46157ed0d28682337f227653781180267b4a0a5d35ca319d",
-        "bytes": 1855724,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -2210,13 +1950,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/neck-label.psd",
-        "sha256": "b752a4a671c9f7818d235e669be3cdd2ea4fd51e1dcb501cba15d275667d8cf8",
-        "bytes": 2986471,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -2231,13 +1966,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/right-sleeve.psd",
-        "sha256": "92df71693e5b04b348da18d0fd5fd2b871758a137ff6f847aa4a0085d328b2d4",
-        "bytes": 1852603,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -2253,12 +1983,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/back.psd",
-        "sha256": "f84a023446ea3562a35abef58d20033a08348a7f6f0161f137556afb5463d118",
-        "bytes": 3146795,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-sky-blue-back.psd",
+        "sha256": "0762184ecf1979ced7cafc2ad068d69a5617882815da7612d2ec9609c128e720",
+        "bytes": 2991981,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "longsleeve",
@@ -2274,12 +2004,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/front.psd",
-        "sha256": "08d457e809bf1ff450f37020233c55960604f54dc4356f9cad762712a877ac60",
-        "bytes": 4461272,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-sky-blue-front.psd",
+        "sha256": "cc345c664eb83bfdd1bed70b628ef60fcc510f666e333748d435ec652a9a8b59",
+        "bytes": 4678941,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "longsleeve",
@@ -2294,13 +2024,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/left-sleeve.psd",
-        "sha256": "e5a01c8f9e05786f46157ed0d28682337f227653781180267b4a0a5d35ca319d",
-        "bytes": 1855724,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -2315,13 +2040,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/neck-label.psd",
-        "sha256": "b752a4a671c9f7818d235e669be3cdd2ea4fd51e1dcb501cba15d275667d8cf8",
-        "bytes": 2986471,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -2336,13 +2056,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/right-sleeve.psd",
-        "sha256": "92df71693e5b04b348da18d0fd5fd2b871758a137ff6f847aa4a0085d328b2d4",
-        "bytes": 1852603,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -2358,12 +2073,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/back.psd",
-        "sha256": "f84a023446ea3562a35abef58d20033a08348a7f6f0161f137556afb5463d118",
-        "bytes": 3146795,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-white-back.psd",
+        "sha256": "b381a029ada8e0aafba34bd0e12893ec83981db7229dc34e7c57015dc444c1e0",
+        "bytes": 4900613,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "longsleeve",
@@ -2379,12 +2094,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/front.psd",
-        "sha256": "08d457e809bf1ff450f37020233c55960604f54dc4356f9cad762712a877ac60",
-        "bytes": 4461272,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-white-front.psd",
+        "sha256": "d0e89fcda364662003847bb33222f11e6f99cba1c2b9dbe66521214731290f35",
+        "bytes": 4977685,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "longsleeve",
@@ -2399,13 +2114,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/left-sleeve.psd",
-        "sha256": "e5a01c8f9e05786f46157ed0d28682337f227653781180267b4a0a5d35ca319d",
-        "bytes": 1855724,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -2420,13 +2130,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/neck-label.psd",
-        "sha256": "b752a4a671c9f7818d235e669be3cdd2ea4fd51e1dcb501cba15d275667d8cf8",
-        "bytes": 2986471,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "longsleeve",
@@ -2441,13 +2146,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/LongSleeve/right-sleeve.psd",
-        "sha256": "92df71693e5b04b348da18d0fd5fd2b871758a137ff6f847aa4a0085d328b2d4",
-        "bytes": 1852603,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "mug",
@@ -2455,20 +2155,20 @@
       "view": "back",
       "sourceKitKey": "mug:black:back",
       "assetPath": "/mockups/smart-v4/mug/black/back.png",
-      "sha256": "b0370ab473838506efea95f5cd71a4d814b0f733f252b691e6b2da7870c9ffef",
-      "bytes": 1050866,
+      "sha256": "c73641d763d27461d3a96da1b3a6811832877e4abac70661df4f4146a238cef6",
+      "bytes": 369784,
       "dimensions": [
         1024,
         1024
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/back.psb",
-        "sha256": "4739db3d3e76ae27bf57568e24bd26d5a8116a27c4d68eeba4b87c090e96d827",
-        "bytes": 2861954,
-        "format": "psb"
+        "path": "attached_assets/trynex-mockup-source-kit/psd/mug-black-back.psd",
+        "sha256": "8b9f0e8cdcdc4c7ea11592c54a7d6fc75208efb72579d45300011438f58b529b",
+        "bytes": 3871425,
+        "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "mug",
@@ -2484,12 +2184,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/front.psb",
-        "sha256": "e184d4e7a769bfb932ca6a47e214d7048a0f90b89fa32fd29823afe0977f96b4",
-        "bytes": 2863444,
-        "format": "psb"
+        "path": "attached_assets/trynex-mockup-source-kit/psd/mug-black-front.psd",
+        "sha256": "8860f53dc7044f6d5c7ac4ade731accd6d4674a3e4ce99f4a58e649a6b716a43",
+        "bytes": 3871434,
+        "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "mug",
@@ -2504,13 +2204,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/wrap.psb",
-        "sha256": "7be8daf262d6d64f2e16e1c0cd52e106af7c653766a9d88e39448976431bc15f",
-        "bytes": 3079043,
-        "format": "psb"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "mug",
@@ -2518,20 +2213,20 @@
       "view": "back",
       "sourceKitKey": "mug:green:back",
       "assetPath": "/mockups/smart-v4/mug/green/back.png",
-      "sha256": "f20ce4a577de1adba5629a1aac03b9576225b7f64fd89e5a647584c143bf1844",
-      "bytes": 1037175,
+      "sha256": "fa741851e7ad79912220eccf1b303afd1b672f02c494d0e387661fa90e021367",
+      "bytes": 360037,
       "dimensions": [
         1024,
         1024
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/back.psb",
-        "sha256": "4739db3d3e76ae27bf57568e24bd26d5a8116a27c4d68eeba4b87c090e96d827",
-        "bytes": 2861954,
-        "format": "psb"
+        "path": "attached_assets/trynex-mockup-source-kit/psd/mug-green-back.psd",
+        "sha256": "c0cff1ef91ce42f4c56240052bae0e5b751f3acb930654e8160d93bd8eda9734",
+        "bytes": 2037847,
+        "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "mug",
@@ -2547,12 +2242,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/front.psb",
-        "sha256": "e184d4e7a769bfb932ca6a47e214d7048a0f90b89fa32fd29823afe0977f96b4",
-        "bytes": 2863444,
-        "format": "psb"
+        "path": "attached_assets/trynex-mockup-source-kit/psd/mug-green-front.psd",
+        "sha256": "1eb533ee2485686d54bdcf001951e40c1368d452de9af01703773067290f5777",
+        "bytes": 2037859,
+        "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "mug",
@@ -2567,13 +2262,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/wrap.psb",
-        "sha256": "7be8daf262d6d64f2e16e1c0cd52e106af7c653766a9d88e39448976431bc15f",
-        "bytes": 3079043,
-        "format": "psb"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "mug",
@@ -2581,20 +2271,20 @@
       "view": "back",
       "sourceKitKey": "mug:maroon:back",
       "assetPath": "/mockups/smart-v4/mug/maroon/back.png",
-      "sha256": "00e7882026c30262d796f4d183598ecdc8164aabbecd67194a6af48422d8e715",
-      "bytes": 981983,
+      "sha256": "39c79cb8ffcdc3b6148d38086b88da0ae9aefea6f806eb35312c472346b8e739",
+      "bytes": 311552,
       "dimensions": [
         1024,
         1024
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/back.psb",
-        "sha256": "4739db3d3e76ae27bf57568e24bd26d5a8116a27c4d68eeba4b87c090e96d827",
-        "bytes": 2861954,
-        "format": "psb"
+        "path": "attached_assets/trynex-mockup-source-kit/psd/mug-maroon-back.psd",
+        "sha256": "1802a8b49f7142cfa9490d7546124e289e3192a11ac72714ce79ca5c0a755136",
+        "bytes": 1654397,
+        "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "mug",
@@ -2610,12 +2300,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/front.psb",
-        "sha256": "e184d4e7a769bfb932ca6a47e214d7048a0f90b89fa32fd29823afe0977f96b4",
-        "bytes": 2863444,
-        "format": "psb"
+        "path": "attached_assets/trynex-mockup-source-kit/psd/mug-maroon-front.psd",
+        "sha256": "eb050cfb4e1444519cacbeb181b3294df2efa97ce49178767a021266dc847182",
+        "bytes": 1654408,
+        "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "mug",
@@ -2630,13 +2320,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/wrap.psb",
-        "sha256": "7be8daf262d6d64f2e16e1c0cd52e106af7c653766a9d88e39448976431bc15f",
-        "bytes": 3079043,
-        "format": "psb"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "mug",
@@ -2644,20 +2329,20 @@
       "view": "back",
       "sourceKitKey": "mug:navy:back",
       "assetPath": "/mockups/smart-v4/mug/navy/back.png",
-      "sha256": "eecc5c9d03dbe3ef39796c558daf58ad45f816b172a1108dc3c976a0793cf8c1",
-      "bytes": 1052226,
+      "sha256": "feb6397a9564f41382ca44903249d6830f3eb714287e7e0123075704979dc8c2",
+      "bytes": 371704,
       "dimensions": [
         1024,
         1024
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/back.psb",
-        "sha256": "4739db3d3e76ae27bf57568e24bd26d5a8116a27c4d68eeba4b87c090e96d827",
-        "bytes": 2861954,
-        "format": "psb"
+        "path": "attached_assets/trynex-mockup-source-kit/psd/mug-navy-back.psd",
+        "sha256": "5194f995f595995eef552f5ed392de0ae524b147fba3eb02d7156464f4cc2d0e",
+        "bytes": 1741027,
+        "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "mug",
@@ -2673,12 +2358,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/front.psb",
-        "sha256": "e184d4e7a769bfb932ca6a47e214d7048a0f90b89fa32fd29823afe0977f96b4",
-        "bytes": 2863444,
-        "format": "psb"
+        "path": "attached_assets/trynex-mockup-source-kit/psd/mug-navy-front.psd",
+        "sha256": "2e4b67fe60878d1f3329047a38760bc513dc57eb50a53d024efd2deaef0c196e",
+        "bytes": 1741038,
+        "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "mug",
@@ -2693,13 +2378,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/wrap.psb",
-        "sha256": "7be8daf262d6d64f2e16e1c0cd52e106af7c653766a9d88e39448976431bc15f",
-        "bytes": 3079043,
-        "format": "psb"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "mug",
@@ -2707,20 +2387,20 @@
       "view": "back",
       "sourceKitKey": "mug:orange:back",
       "assetPath": "/mockups/smart-v4/mug/orange/back.png",
-      "sha256": "4f767ccab9c04b1a41e5852398aee72af378e1b0bf68a08c2a348c4b78a39cf6",
-      "bytes": 1034468,
+      "sha256": "a41c7fe112bb0e29d7a77b4483b3d3d70f8e3da12abb93c5279122f7ff2e29ed",
+      "bytes": 357314,
       "dimensions": [
         1024,
         1024
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/back.psb",
-        "sha256": "4739db3d3e76ae27bf57568e24bd26d5a8116a27c4d68eeba4b87c090e96d827",
-        "bytes": 2861954,
-        "format": "psb"
+        "path": "attached_assets/trynex-mockup-source-kit/psd/mug-orange-back.psd",
+        "sha256": "3a4c79d11a48f8276165913c4c7d82b4b89532e7c70030cea5e37fa02f4f6d74",
+        "bytes": 2184659,
+        "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "mug",
@@ -2736,12 +2416,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/front.psb",
-        "sha256": "e184d4e7a769bfb932ca6a47e214d7048a0f90b89fa32fd29823afe0977f96b4",
-        "bytes": 2863444,
-        "format": "psb"
+        "path": "attached_assets/trynex-mockup-source-kit/psd/mug-orange-front.psd",
+        "sha256": "b0ce5dd16d6c1154b52a05b706a69e376f8aaa839ab86ff127e4359a16f413bb",
+        "bytes": 2184666,
+        "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "mug",
@@ -2756,13 +2436,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/wrap.psb",
-        "sha256": "7be8daf262d6d64f2e16e1c0cd52e106af7c653766a9d88e39448976431bc15f",
-        "bytes": 3079043,
-        "format": "psb"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "mug",
@@ -2770,20 +2445,20 @@
       "view": "back",
       "sourceKitKey": "mug:pink:back",
       "assetPath": "/mockups/smart-v4/mug/pink/back.png",
-      "sha256": "22cb045a4563e0f5fe0f0b7a45b60d9f837e3257601eb198ca0dd7c7e275fbd2",
-      "bytes": 1001024,
+      "sha256": "0eb826228434ebcbf2d1e6b38bf6f5901be463703c7e1262d6a49414a56db9c1",
+      "bytes": 330084,
       "dimensions": [
         1024,
         1024
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/back.psb",
-        "sha256": "4739db3d3e76ae27bf57568e24bd26d5a8116a27c4d68eeba4b87c090e96d827",
-        "bytes": 2861954,
-        "format": "psb"
+        "path": "attached_assets/trynex-mockup-source-kit/psd/mug-pink-back.psd",
+        "sha256": "3785332040a2a60ad0b994e1dc62209d6483fb4a8b8c232a9d2a6c1881021925",
+        "bytes": 2816936,
+        "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "mug",
@@ -2799,12 +2474,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/front.psb",
-        "sha256": "e184d4e7a769bfb932ca6a47e214d7048a0f90b89fa32fd29823afe0977f96b4",
-        "bytes": 2863444,
-        "format": "psb"
+        "path": "attached_assets/trynex-mockup-source-kit/psd/mug-pink-front.psd",
+        "sha256": "6116270b8491c9b507c8423d1246d5235bf64b3a2d10158d48398b68c4d36ea0",
+        "bytes": 2816947,
+        "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "mug",
@@ -2819,13 +2494,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/wrap.psb",
-        "sha256": "7be8daf262d6d64f2e16e1c0cd52e106af7c653766a9d88e39448976431bc15f",
-        "bytes": 3079043,
-        "format": "psb"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "mug",
@@ -2833,20 +2503,20 @@
       "view": "back",
       "sourceKitKey": "mug:purple:back",
       "assetPath": "/mockups/smart-v4/mug/purple/back.png",
-      "sha256": "e84c390e0a503906a6a7132ab631210046a5ebce60dcbe2514ab40529ef1e115",
-      "bytes": 1012155,
+      "sha256": "a7a9b614dc7631439ad5797f6dc3df63ccce0c2c19b5d21576b4560e8281fad0",
+      "bytes": 340652,
       "dimensions": [
         1024,
         1024
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/back.psb",
-        "sha256": "4739db3d3e76ae27bf57568e24bd26d5a8116a27c4d68eeba4b87c090e96d827",
-        "bytes": 2861954,
-        "format": "psb"
+        "path": "attached_assets/trynex-mockup-source-kit/psd/mug-purple-back.psd",
+        "sha256": "628acbd46e2d4ef6757df713a44a503c65d58a395c3b0d3940fa75d74b929ecc",
+        "bytes": 2629231,
+        "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "mug",
@@ -2862,12 +2532,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/front.psb",
-        "sha256": "e184d4e7a769bfb932ca6a47e214d7048a0f90b89fa32fd29823afe0977f96b4",
-        "bytes": 2863444,
-        "format": "psb"
+        "path": "attached_assets/trynex-mockup-source-kit/psd/mug-purple-front.psd",
+        "sha256": "88e529168eeb481e6af070841ed2d621bb18a6a4323affb783a2a78886165def",
+        "bytes": 2629238,
+        "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "mug",
@@ -2882,13 +2552,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/wrap.psb",
-        "sha256": "7be8daf262d6d64f2e16e1c0cd52e106af7c653766a9d88e39448976431bc15f",
-        "bytes": 3079043,
-        "format": "psb"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "mug",
@@ -2896,20 +2561,20 @@
       "view": "back",
       "sourceKitKey": "mug:red:back",
       "assetPath": "/mockups/smart-v4/mug/red/back.png",
-      "sha256": "d56481b477d60452181d5ab3621098c687be93f4a6736658aa38671cf8e6b1fa",
-      "bytes": 957778,
+      "sha256": "9210b9d6ea9942e4228f4cbd9703fb12764bf33be3687c79b86c515216a59992",
+      "bytes": 294104,
       "dimensions": [
         1024,
         1024
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/back.psb",
-        "sha256": "4739db3d3e76ae27bf57568e24bd26d5a8116a27c4d68eeba4b87c090e96d827",
-        "bytes": 2861954,
-        "format": "psb"
+        "path": "attached_assets/trynex-mockup-source-kit/psd/mug-red-back.psd",
+        "sha256": "3a03529df8228a0a28b5152e70e6aa6eedfb0fe01a9faf535253b32691a1e4b3",
+        "bytes": 2097110,
+        "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "mug",
@@ -2925,12 +2590,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/front.psb",
-        "sha256": "e184d4e7a769bfb932ca6a47e214d7048a0f90b89fa32fd29823afe0977f96b4",
-        "bytes": 2863444,
-        "format": "psb"
+        "path": "attached_assets/trynex-mockup-source-kit/psd/mug-red-front.psd",
+        "sha256": "bb6a08bf775ec6ec1d518fc374fdf90df9a650ba6976b693095f39ecc21aa4ba",
+        "bytes": 2097117,
+        "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "mug",
@@ -2945,13 +2610,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/wrap.psb",
-        "sha256": "7be8daf262d6d64f2e16e1c0cd52e106af7c653766a9d88e39448976431bc15f",
-        "bytes": 3079043,
-        "format": "psb"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "mug",
@@ -2959,20 +2619,20 @@
       "view": "back",
       "sourceKitKey": "mug:sky-blue:back",
       "assetPath": "/mockups/smart-v4/mug/sky-blue/back.png",
-      "sha256": "2d9a6332b2d492eb629c25d6c7a830b0a6a295c37fb4f057306c73b120e856b1",
-      "bytes": 1020663,
+      "sha256": "4e7345702496db57b86d6071379891a1f67e4a22f3ad49c615489e584c686270",
+      "bytes": 348809,
       "dimensions": [
         1024,
         1024
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/back.psb",
-        "sha256": "4739db3d3e76ae27bf57568e24bd26d5a8116a27c4d68eeba4b87c090e96d827",
-        "bytes": 2861954,
-        "format": "psb"
+        "path": "attached_assets/trynex-mockup-source-kit/psd/mug-sky-blue-back.psd",
+        "sha256": "b68a9fa0e0ff82ce6e68f69e8dcef36a0d64a8e41516db66a172c1c982639780",
+        "bytes": 2502787,
+        "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "mug",
@@ -2988,12 +2648,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/front.psb",
-        "sha256": "e184d4e7a769bfb932ca6a47e214d7048a0f90b89fa32fd29823afe0977f96b4",
-        "bytes": 2863444,
-        "format": "psb"
+        "path": "attached_assets/trynex-mockup-source-kit/psd/mug-sky-blue-front.psd",
+        "sha256": "6083c966fb0eafe37042e03452a2ea561f8a59017a89530badf9e7f284c7d464",
+        "bytes": 2502806,
+        "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "mug",
@@ -3008,13 +2668,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/wrap.psb",
-        "sha256": "7be8daf262d6d64f2e16e1c0cd52e106af7c653766a9d88e39448976431bc15f",
-        "bytes": 3079043,
-        "format": "psb"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "mug",
@@ -3022,20 +2677,20 @@
       "view": "back",
       "sourceKitKey": "mug:white:back",
       "assetPath": "/mockups/smart-v4/mug/white/back.png",
-      "sha256": "9698a40d985dd3ebdfcdd57651ccba767f84bb92c2b27b05cf93a754427a19de",
-      "bytes": 1042302,
+      "sha256": "e1c17ac01320fbf02f2f2f4445759a318519bf76994bb42226e61e2ebdef5116",
+      "bytes": 365317,
       "dimensions": [
         1024,
         1024
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/back.psb",
-        "sha256": "4739db3d3e76ae27bf57568e24bd26d5a8116a27c4d68eeba4b87c090e96d827",
-        "bytes": 2861954,
-        "format": "psb"
+        "path": "attached_assets/trynex-mockup-source-kit/psd/mug-white-back.psd",
+        "sha256": "61cb873e833acfa2dcd0f3ce5bbd9cb31682298fcdbe96478716543889e08c9f",
+        "bytes": 4220764,
+        "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "mug",
@@ -3051,12 +2706,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/front.psb",
-        "sha256": "e184d4e7a769bfb932ca6a47e214d7048a0f90b89fa32fd29823afe0977f96b4",
-        "bytes": 2863444,
-        "format": "psb"
+        "path": "attached_assets/trynex-mockup-source-kit/psd/mug-white-front.psd",
+        "sha256": "a7ca33c45519922e86549090a6e6a9cd3d7e9343aed480de55b98eef726f6c20",
+        "bytes": 4220771,
+        "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "mug",
@@ -3071,13 +2726,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Mug/wrap.psb",
-        "sha256": "7be8daf262d6d64f2e16e1c0cd52e106af7c653766a9d88e39448976431bc15f",
-        "bytes": 3079043,
-        "format": "psb"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3093,12 +2743,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/back.psd",
-        "sha256": "bb780c870185528f3b2551e089fd2b7acee832a5d3f4365d789ef88b34efa114",
-        "bytes": 3756932,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/tshirt-black-back.psd",
+        "sha256": "ee43b82889e950779fe5fcf140189077c67f11b7e2ff67b440ea99a42138a4a8",
+        "bytes": 4447052,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "tshirt",
@@ -3114,12 +2764,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/front.psd",
-        "sha256": "8ecdbaefa4a7b0f4e397ac5a503333b02182561ee026552cf055a6a498f4bd8a",
-        "bytes": 3840890,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/tshirt-black-front.psd",
+        "sha256": "7336f37f2cb1f96ae6e9fc94ca99d3aaa128724d510f17b58a619fbbb31fd383",
+        "bytes": 5166690,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "tshirt",
@@ -3134,13 +2784,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/left-sleeve.psd",
-        "sha256": "e003d579811cd536bf509b5e40345b71457be632d7200f0352538fc2ca2b8772",
-        "bytes": 1571777,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3155,13 +2800,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/neck-label.psd",
-        "sha256": "191a83a9e5743758c90d106f72e2d27b1187fc0a9e2de6f3b72fc5f19160de1d",
-        "bytes": 2689952,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3176,13 +2816,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/right-sleeve.psd",
-        "sha256": "7c7550c1e9fb71cb4b3304fedf28da935a1d4ab07cddb1dcea3d6a155200409e",
-        "bytes": 1570779,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3198,12 +2833,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/back.psd",
-        "sha256": "bb780c870185528f3b2551e089fd2b7acee832a5d3f4365d789ef88b34efa114",
-        "bytes": 3756932,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/tshirt-grey-back.psd",
+        "sha256": "0b451bc735507b12cda25ab989e41e69eb75d8cc96ffbf1472eda6ec21846513",
+        "bytes": 4956660,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "tshirt",
@@ -3219,12 +2854,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/front.psd",
-        "sha256": "8ecdbaefa4a7b0f4e397ac5a503333b02182561ee026552cf055a6a498f4bd8a",
-        "bytes": 3840890,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/tshirt-grey-front.psd",
+        "sha256": "1acc06aca632a7f0aea4870427644b97a4edf2786416e7a069b7f19ec1f5d22c",
+        "bytes": 5126533,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "tshirt",
@@ -3239,13 +2874,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/left-sleeve.psd",
-        "sha256": "e003d579811cd536bf509b5e40345b71457be632d7200f0352538fc2ca2b8772",
-        "bytes": 1571777,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3260,13 +2890,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/neck-label.psd",
-        "sha256": "191a83a9e5743758c90d106f72e2d27b1187fc0a9e2de6f3b72fc5f19160de1d",
-        "bytes": 2689952,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3281,13 +2906,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/right-sleeve.psd",
-        "sha256": "7c7550c1e9fb71cb4b3304fedf28da935a1d4ab07cddb1dcea3d6a155200409e",
-        "bytes": 1570779,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3303,12 +2923,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/back.psd",
-        "sha256": "bb780c870185528f3b2551e089fd2b7acee832a5d3f4365d789ef88b34efa114",
-        "bytes": 3756932,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/tshirt-maroon-back.psd",
+        "sha256": "dac21a200bf442322b6e9907cde810323e7a5577ffc028f97d4288a0d33832c3",
+        "bytes": 5097303,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "tshirt",
@@ -3324,12 +2944,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/front.psd",
-        "sha256": "8ecdbaefa4a7b0f4e397ac5a503333b02182561ee026552cf055a6a498f4bd8a",
-        "bytes": 3840890,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/tshirt-maroon-front.psd",
+        "sha256": "b4ce388b1a2c9f32262d72079eff1d563969964c8b32506e1bf695b0c5758867",
+        "bytes": 4480116,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "tshirt",
@@ -3344,13 +2964,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/left-sleeve.psd",
-        "sha256": "e003d579811cd536bf509b5e40345b71457be632d7200f0352538fc2ca2b8772",
-        "bytes": 1571777,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3365,13 +2980,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/neck-label.psd",
-        "sha256": "191a83a9e5743758c90d106f72e2d27b1187fc0a9e2de6f3b72fc5f19160de1d",
-        "bytes": 2689952,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3386,13 +2996,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/right-sleeve.psd",
-        "sha256": "7c7550c1e9fb71cb4b3304fedf28da935a1d4ab07cddb1dcea3d6a155200409e",
-        "bytes": 1570779,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3408,12 +3013,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/back.psd",
-        "sha256": "bb780c870185528f3b2551e089fd2b7acee832a5d3f4365d789ef88b34efa114",
-        "bytes": 3756932,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/tshirt-navy-back.psd",
+        "sha256": "6ac4d2ac0cf84ac80b877c6c330a71f03a554cd39d6362e6f2396b6cd947a77d",
+        "bytes": 4302453,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "tshirt",
@@ -3429,12 +3034,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/front.psd",
-        "sha256": "8ecdbaefa4a7b0f4e397ac5a503333b02182561ee026552cf055a6a498f4bd8a",
-        "bytes": 3840890,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/tshirt-navy-front.psd",
+        "sha256": "8ec1b287589e692ce0d1f38d462123df10e7a2fa53ee11ce3da2a1d6fae0512b",
+        "bytes": 4741513,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "tshirt",
@@ -3449,13 +3054,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/left-sleeve.psd",
-        "sha256": "e003d579811cd536bf509b5e40345b71457be632d7200f0352538fc2ca2b8772",
-        "bytes": 1571777,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3470,13 +3070,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/neck-label.psd",
-        "sha256": "191a83a9e5743758c90d106f72e2d27b1187fc0a9e2de6f3b72fc5f19160de1d",
-        "bytes": 2689952,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3491,13 +3086,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/right-sleeve.psd",
-        "sha256": "7c7550c1e9fb71cb4b3304fedf28da935a1d4ab07cddb1dcea3d6a155200409e",
-        "bytes": 1570779,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3513,12 +3103,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/back.psd",
-        "sha256": "bb780c870185528f3b2551e089fd2b7acee832a5d3f4365d789ef88b34efa114",
-        "bytes": 3756932,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/tshirt-olive-back.psd",
+        "sha256": "53e7524e9c5b9712f530020378e34f2bc29d1e461a349394d3fcfc61d135262c",
+        "bytes": 4439343,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "tshirt",
@@ -3534,12 +3124,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/front.psd",
-        "sha256": "8ecdbaefa4a7b0f4e397ac5a503333b02182561ee026552cf055a6a498f4bd8a",
-        "bytes": 3840890,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/tshirt-olive-front.psd",
+        "sha256": "144a186a15f2f2bc43ccc4e829d2573546b607160ef665c7dee39f47ab81f06e",
+        "bytes": 4331560,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "tshirt",
@@ -3554,13 +3144,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/left-sleeve.psd",
-        "sha256": "e003d579811cd536bf509b5e40345b71457be632d7200f0352538fc2ca2b8772",
-        "bytes": 1571777,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3575,13 +3160,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/neck-label.psd",
-        "sha256": "191a83a9e5743758c90d106f72e2d27b1187fc0a9e2de6f3b72fc5f19160de1d",
-        "bytes": 2689952,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3596,13 +3176,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/right-sleeve.psd",
-        "sha256": "7c7550c1e9fb71cb4b3304fedf28da935a1d4ab07cddb1dcea3d6a155200409e",
-        "bytes": 1570779,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3618,12 +3193,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/back.psd",
-        "sha256": "bb780c870185528f3b2551e089fd2b7acee832a5d3f4365d789ef88b34efa114",
-        "bytes": 3756932,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/tshirt-red-back.psd",
+        "sha256": "1c3e1c12b1992e0cb81e678d61cbe5ab48ec372c833397f29f01da1de79c9a52",
+        "bytes": 5198543,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "tshirt",
@@ -3639,12 +3214,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/front.psd",
-        "sha256": "8ecdbaefa4a7b0f4e397ac5a503333b02182561ee026552cf055a6a498f4bd8a",
-        "bytes": 3840890,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/tshirt-red-front.psd",
+        "sha256": "0e3550d227aaa1402e739ab3eaf1c96dd3dc3d946a332583c2b3829eeffcb4ec",
+        "bytes": 4710310,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "tshirt",
@@ -3659,13 +3234,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/left-sleeve.psd",
-        "sha256": "e003d579811cd536bf509b5e40345b71457be632d7200f0352538fc2ca2b8772",
-        "bytes": 1571777,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3680,13 +3250,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/neck-label.psd",
-        "sha256": "191a83a9e5743758c90d106f72e2d27b1187fc0a9e2de6f3b72fc5f19160de1d",
-        "bytes": 2689952,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3701,13 +3266,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/right-sleeve.psd",
-        "sha256": "7c7550c1e9fb71cb4b3304fedf28da935a1d4ab07cddb1dcea3d6a155200409e",
-        "bytes": 1570779,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3723,12 +3283,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/back.psd",
-        "sha256": "bb780c870185528f3b2551e089fd2b7acee832a5d3f4365d789ef88b34efa114",
-        "bytes": 3756932,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/tshirt-sky-blue-back.psd",
+        "sha256": "fb161673d4475ab96f2db153428f09014647614a0d5496ee8e76f46b026b1032",
+        "bytes": 4446814,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "tshirt",
@@ -3744,12 +3304,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/front.psd",
-        "sha256": "8ecdbaefa4a7b0f4e397ac5a503333b02182561ee026552cf055a6a498f4bd8a",
-        "bytes": 3840890,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/tshirt-sky-blue-front.psd",
+        "sha256": "942854ae40539e5658f129d3b9c4edb4d1bb6080d15fb053e9f4819ace303b12",
+        "bytes": 4310769,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "tshirt",
@@ -3764,13 +3324,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/left-sleeve.psd",
-        "sha256": "e003d579811cd536bf509b5e40345b71457be632d7200f0352538fc2ca2b8772",
-        "bytes": 1571777,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3785,13 +3340,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/neck-label.psd",
-        "sha256": "191a83a9e5743758c90d106f72e2d27b1187fc0a9e2de6f3b72fc5f19160de1d",
-        "bytes": 2689952,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3806,13 +3356,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/right-sleeve.psd",
-        "sha256": "7c7550c1e9fb71cb4b3304fedf28da935a1d4ab07cddb1dcea3d6a155200409e",
-        "bytes": 1570779,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3828,12 +3373,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/back.psd",
-        "sha256": "bb780c870185528f3b2551e089fd2b7acee832a5d3f4365d789ef88b34efa114",
-        "bytes": 3756932,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/tshirt-white-back.psd",
+        "sha256": "cd30e1afcbfdaac77e1cb109b65dca5624d2df03e93827e18dd01dd015493854",
+        "bytes": 4623701,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "tshirt",
@@ -3849,12 +3394,12 @@
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/front.psd",
-        "sha256": "8ecdbaefa4a7b0f4e397ac5a503333b02182561ee026552cf055a6a498f4bd8a",
-        "bytes": 3840890,
+        "path": "attached_assets/trynex-mockup-source-kit/psd/tshirt-white-front.psd",
+        "sha256": "9a479275a1a5afbf6be712fbabd9cdd0367559b4f0048593d22cf5979e216e5d",
+        "bytes": 4734630,
         "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "tshirt",
@@ -3869,13 +3414,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/left-sleeve.psd",
-        "sha256": "e003d579811cd536bf509b5e40345b71457be632d7200f0352538fc2ca2b8772",
-        "bytes": 1571777,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3890,13 +3430,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/neck-label.psd",
-        "sha256": "191a83a9e5743758c90d106f72e2d27b1187fc0a9e2de6f3b72fc5f19160de1d",
-        "bytes": 2689952,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "tshirt",
@@ -3911,13 +3446,8 @@
         1024
       ],
       "alpha": "RGBA",
-      "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/TShirt/right-sleeve.psd",
-        "sha256": "7c7550c1e9fb71cb4b3304fedf28da935a1d4ab07cddb1dcea3d6a155200409e",
-        "bytes": 1570779,
-        "format": "psd"
-      },
-      "masterStatus": "verified-source-package"
+      "master": null,
+      "masterStatus": "manifest-only"
     },
     {
       "family": "waterbottle",
@@ -3925,20 +3455,20 @@
       "view": "back",
       "sourceKitKey": "waterbottle:white:back",
       "assetPath": "/mockups/smart-v4/waterbottle/white/back.png",
-      "sha256": "0af219f86b2ea75b8e102908d7beca5cc985ecf197cd081457ece21296916790",
-      "bytes": 943361,
+      "sha256": "f3214733ce0687ec4cb8f42d520e810de8aed6ebcdf2b2b7ff94251a2d39e68a",
+      "bytes": 199143,
       "dimensions": [
         1024,
         1024
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Bottle/back.psb",
-        "sha256": "84d60cf9345bfb18f60e4e699480adf4f9736324a5b7bd71727746a3e7268ae8",
-        "bytes": 1864931,
-        "format": "psb"
+        "path": "attached_assets/trynex-mockup-source-kit/psd/waterbottle-white-back.psd",
+        "sha256": "8d6dc591ba1116a51b157ef3f0005167edf0040bd1e8ed01353a20f2040a1da2",
+        "bytes": 3468184,
+        "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     },
     {
       "family": "waterbottle",
@@ -3946,20 +3476,20 @@
       "view": "front",
       "sourceKitKey": "waterbottle:white:front",
       "assetPath": "/mockups/smart-v4/waterbottle/white/front.png",
-      "sha256": "f05e049d4dc67d016ee046a2f06be1bd95555bfd9c7540a26d24457e65306af4",
-      "bytes": 1071411,
+      "sha256": "19591c0934d008da06316296e9fa1de3cc693d7db0fd39bbd82db917ea4d8fb9",
+      "bytes": 194684,
       "dimensions": [
         1024,
         1024
       ],
       "alpha": "RGBA",
       "master": {
-        "path": "trynex-mockup-masters-22-photoreal/masters/Bottle/front.psb",
-        "sha256": "d7d781ae6ceaf2541d0cde3a14a1bf2677f5cac96789e4e564305fe953528258",
-        "bytes": 2243740,
-        "format": "psb"
+        "path": "attached_assets/trynex-mockup-source-kit/psd/waterbottle-white-front.psd",
+        "sha256": "c4966b1b6dd05d7505adc3968e67b28ff509fd8d0d8ad636b8c91f24a685fd61",
+        "bytes": 3468187,
+        "format": "psd"
       },
-      "masterStatus": "verified-source-package"
+      "masterStatus": "attached-source-kit"
     }
   ]
 }

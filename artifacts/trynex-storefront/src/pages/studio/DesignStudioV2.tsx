@@ -124,7 +124,7 @@ export default function DesignStudioV2() {
   const isMug = selectedProduct.category === "mug";
   const isCap = selectedProduct.category === "cap";
   const isWaterBottle = selectedProduct.category === "waterbottle";
-  const supportsBack = ["tshirt", "longsleeve", "hoodie", "mug"].includes(selectedProduct.category);
+  const supportsBack = ["tshirt", "longsleeve", "hoodie", "mug", "cap", "waterbottle"].includes(selectedProduct.category);
   const isZoneTabs = ["tshirt", "longsleeve", "hoodie"].includes(selectedProduct.category);
   const frontMockup = useMemo(
     () => resolveMockup(selectedProduct, selectedColor.hex, "front"),
@@ -524,8 +524,8 @@ export default function DesignStudioV2() {
     // opaque photo is source metadata only and must not create a second silhouette.
     const garmentSrc = frontMockup.cutoutSrc;
     const isColorPhoto = frontMockup.isColorPhoto;
-    const frontPZ = isMug ? MUG_SIDE_PZ : selectedProduct.printZone;
-    const backPZ = isMug ? MUG_SIDE_BACK_PZ : (selectedProduct.printZoneBack ?? selectedProduct.printZone);
+    const frontPZ = isMug ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ) : selectedProduct.printZone;
+    const backPZ = isMug ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ) : (selectedProduct.printZoneBack ?? selectedProduct.printZone);
     const leftSleeveLayers = layers.filter(l => l.face === "left-sleeve") as unknown as ComposerLayer[];
     const rightSleeveLayers = layers.filter(l => l.face === "right-sleeve") as unknown as ComposerLayer[];
     const neckLabelLayers = layers.filter(l => l.face === "neck-label") as unknown as ComposerLayer[];
@@ -630,21 +630,36 @@ export default function DesignStudioV2() {
   const handleExportPNG = async () => {
     const activeLayers = layers.filter(l => (l.face ?? "front") === activeFace) as unknown as ComposerLayer[];
     if (activeLayers.length === 0) { toast({ title: "Nothing to export", description: "Add a layer first." }); return; }
-    const garmentSrc = frontMockup.cutoutSrc;
+    const exportMockup = activeFace === "front" ? frontMockup : activeFace === "back" ? backMockup : activeMockup;
+    const garmentSrc = exportMockup.cutoutSrc;
     const canvas = document.createElement("canvas");
-    await composeGarmentMockup({ canvas, garmentSrc, garmentColor: selectedColor.hex, printZone: isMug ? (activeFace === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ) : selectedProduct.printZone, layers: activeLayers, outSize: 1200, isColorPhoto: frontMockup.isColorPhoto, requiresTint: frontMockup.requiresTint, fabricTexture });
+    const exportPrintZone = isMug
+      ? (mugMode === "wrap" ? (activeFace === "back" ? MUG_WRAP_BACK_PZ : MUG_PZ) : (activeFace === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ))
+      : activeFace === "front"
+        ? selectedProduct.printZone
+        : activeFace === "back"
+          ? (selectedProduct.printZoneBack ?? selectedProduct.printZone)
+          : activeZoneConfig?.pz ?? selectedProduct.printZone;
+    await composeGarmentMockup({ canvas, garmentSrc, garmentColor: selectedColor.hex, printZone: exportPrintZone, layers: activeLayers, outSize: 1200, isColorPhoto: exportMockup.isColorPhoto, requiresTint: exportMockup.requiresTint, fabricTexture });
     const a = document.createElement("a"); a.href = canvas.toDataURL("image/png"); a.download = `trynex-${selectedProduct.id}-${activeFace}-design.png`; a.click();
     toast({ title: "PNG exported!", description: "High-res PNG saved to your downloads." });
   };
 
   const studioColors = useMemo(() => {
     try {
-      const raw = isMug ? settings.studioMugColors : (!isCap && !isWaterBottle) ? settings.studioTshirtColors : null;
+      const raw = isMug ? settings.studioMugColors : selectedProduct.category === "tshirt" ? settings.studioTshirtColors : null;
       const arr = raw ? JSON.parse(raw) : null;
-      if (Array.isArray(arr)) return arr;
+      if (Array.isArray(arr) && arr.length > 0) {
+        const canonical = new Map(selectedProduct.colors.map(color => [color.hex.toLowerCase(), color]));
+        const filtered = arr
+          .map((color: any) => typeof color === "string" ? { name: color, hex: color } : color)
+          .filter((color: any) => color?.hex && canonical.has(String(color.hex).toLowerCase()))
+          .map((color: any) => canonical.get(String(color.hex).toLowerCase())!);
+        if (filtered.length > 0) return filtered;
+      }
     } catch {}
     return selectedProduct.colors;
-  }, [isMug, isCap, isWaterBottle, settings, selectedProduct]);
+  }, [isMug, settings.studioMugColors, settings.studioTshirtColors, selectedProduct]);
 
   const currentFaceLayers = useMemo(() => layers.filter(l => (l.face ?? "front") === activeFace), [layers, activeFace]);
 
@@ -723,6 +738,15 @@ export default function DesignStudioV2() {
                 {(["side1", "side2", "wrap"] as const).map(v => (
                   <button key={v} onClick={() => { setMugMode(v); setFace(v === "side2" ? "back" : "front"); }} className="shrink-0 px-4 py-2 rounded-xl text-xs font-black transition-all active:scale-95" style={{ background: mugMode === v ? "#1C1C1E" : "white", color: mugMode === v ? "white" : "#374151", border: mugMode === v ? "1.5px solid #3a3a3c" : "1.5px solid #e5e7eb", boxShadow: mugMode === v ? "0 4px 12px rgba(0,0,0,0.15)" : "none" }}>
                     {v === "side1" ? "Left Side" : v === "side2" ? "Right Side" : "Wrap"}
+                  </button>
+                ))}
+              </div>
+            )}
+            {(!isMug && !isZoneTabs && (isCap || isWaterBottle)) && (
+              <div className="flex gap-1.5 mb-3 overflow-x-auto pb-1 no-scrollbar" aria-label="Product view">
+                {(["front", "back"] as const).map(view => (
+                  <button key={view} onClick={() => setFace(view)} className="shrink-0 px-4 py-2 rounded-xl text-xs font-black transition-all active:scale-95" style={{ background: activeFace === view ? "#1C1C1E" : "white", color: activeFace === view ? "white" : "#374151", border: activeFace === view ? "1.5px solid #3a3a3c" : "1.5px solid #e5e7eb", boxShadow: activeFace === view ? "0 4px 12px rgba(0,0,0,0.15)" : "none" }}>
+                    {view === "front" ? "Front" : "Back"}
                   </button>
                 ))}
               </div>
