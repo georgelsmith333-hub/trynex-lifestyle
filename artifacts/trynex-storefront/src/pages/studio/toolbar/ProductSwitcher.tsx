@@ -36,7 +36,7 @@ function ProductCardImage({ product }: { product: DesignProduct }) {
     <div className={`relative flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-gradient-to-br ${CARD_TONE[product.category]}`}>
       <div className="pointer-events-none absolute inset-x-[14%] bottom-[10%] h-5 rounded-[50%] bg-black/10 blur-xl" aria-hidden="true" />
       <img
-        src={product.frontSrc}
+        src={product.gallerySrc ?? product.frontSrc}
         alt=""
         aria-hidden="true"
         loading="lazy"
