@@ -4,21 +4,21 @@ import { motion } from "framer-motion";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 
 const FEED_IMAGES = [
-  "/mockups/smart-v7/tshirt/white/front.png",
-  "/mockups/smart-v7/hoodie/white/front.png",
-  "/mockups/smart-v7/mug/white/front.png",
-  "/mockups/smart-v7/cap/white/front.png",
-  "/mockups/smart-v7/tshirt/black/front.png",
-  "/mockups/smart-v7/hoodie/grey/front.png",
+  "/mockups/smart-v4/tshirt/white/front.png",
+  "/mockups/smart-v4/hoodie/white/front.png",
+  "/mockups/smart-v4/mug/white/front.png",
+  "/mockups/smart-v4/cap/white/front.png",
+  "/mockups/smart-v4/tshirt/black/front.png",
+  "/mockups/smart-v4/hoodie/grey/front.png",
 ];
 
 const FALLBACK_IMAGES = [
-  "/mockups/smart-v7/tshirt/white/front.png",
-  "/mockups/smart-v7/hoodie/white/front.png",
-  "/mockups/smart-v7/mug/white/front.png",
-  "/mockups/smart-v7/cap/white/front.png",
-  "/mockups/smart-v7/tshirt/black/front.png",
-  "/mockups/smart-v7/tshirt/white/front.png",
+  "/mockups/smart-v4/tshirt/white/front.png",
+  "/mockups/smart-v4/hoodie/white/front.png",
+  "/mockups/smart-v4/mug/white/front.png",
+  "/mockups/smart-v4/cap/white/front.png",
+  "/mockups/smart-v4/tshirt/black/front.png",
+  "/mockups/smart-v4/tshirt/white/front.png",
 ];
 
 const LIKES = [1284, 976, 2103, 843, 1567, 729];
