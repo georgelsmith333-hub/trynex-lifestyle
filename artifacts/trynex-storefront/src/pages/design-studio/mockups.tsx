@@ -904,9 +904,8 @@ export function GarmentSVG({
 
 /* ═══════════════════════════════════════════════════════
    FLAT ZONE RENDERER — used for sleeve and neck-label zones.
-   Shows the real garment photo as a dimmed background for context,
-   with an artboard overlay highlighting the printable area.
-   No more pure-SVG artboard — real product photography is always shown.
+   Renders the active canonical detail asset inside the print artboard.
+   These are explicit flat print-detail templates, not alternate full-product views.
 ════════════════════════════════════════════════════════ */
 export function FlatZoneSVG({
   zone,
@@ -967,10 +966,18 @@ export function FlatZoneSVG({
       {/* Canvas background: Clean white studio for all flat zones. */}
       <rect width={1000} height={1000} fill={canvasBg} />
 
-      {/* Flat zones (sleeve, neck) show a blank template canvas.
-          The garment photo is removed to provide a clean, focused editing surface. */}
-      {!garmentPhotoSrc && (
-        <rect width={1000} height={1000} fill="#d4d0ca" />
+      {/* The active canonical detail asset is the editing surface. Transparent pixels
+          reveal the clean artboard; the asset itself carries the product silhouette
+          and color-specific material shading. */}
+      {garmentPhotoSrc && (
+        <image
+          href={garmentPhotoSrc}
+          x="0" y="0" width="1000" height="1000"
+          preserveAspectRatio="xMidYMid meet"
+          opacity={0.96}
+          style={{ pointerEvents: "none" }}
+          filter={useTint ? "url(#flat-color-tint)" : undefined}
+        />
       )}
 
       {/* Subtle vignette — lifts the artboard off the background.
