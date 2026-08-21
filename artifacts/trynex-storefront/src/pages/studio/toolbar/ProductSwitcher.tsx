@@ -41,6 +41,13 @@ function ProductCardImage({ product }: { product: DesignProduct }) {
         aria-hidden="true"
         loading="lazy"
         decoding="async"
+        onError={(event) => {
+          const image = event.currentTarget;
+          if (image.src !== product.frontSrc) {
+            image.onerror = null;
+            image.src = product.frontSrc;
+          }
+        }}
         className={`relative z-[1] max-h-full max-w-full object-contain drop-shadow-[0_14px_18px_rgba(28,25,23,0.14)] transition duration-300 ease-out group-hover/card:scale-[1.035] ${CARD_IMAGE_CLASS[product.category]}`}
       />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_25%,rgba(255,255,255,0.68),transparent_58%)]" aria-hidden="true" />
