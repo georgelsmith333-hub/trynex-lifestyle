@@ -22,7 +22,7 @@ const capBack           = "/mockups/smart-v4/cap/white/back.png";
 const waterBottleFront  = "/mockups/smart-v4/waterbottle/white/front.png";
 
 // All active color and view assets resolve through the canonical smart-v4 matrix below.
-// No family-root or /mockups/new fallback paths are permitted in the customer renderer.
+// No family-root or legacy fallback paths are permitted in the customer renderer.
 
 /** A single available garment colour (name + hex). */
 export interface ProductColor { name: string; hex: string }
@@ -596,13 +596,13 @@ function normalizeMockupHex(hex: string): string {
   return hex.trim().toLowerCase();
 }
 
-function canonicalMasterPath(category: DesignProduct["category"], face: CompleteMockupView): string {
-  const familyName = category === "tshirt" ? "TShirt"
-    : category === "longsleeve" ? "LongSleeve"
-    : category === "waterbottle" ? "Bottle"
-    : category.charAt(0).toUpperCase() + category.slice(1);
-  const extension = category === "mug" || category === "waterbottle" ? "psb" : "psd";
-  return `source-package/trynex-mockup-masters-22-photoreal/masters/${familyName}/${face}.${extension}`;
+function canonicalMasterPath(category: DesignProduct["category"], colorSlug: string, face: CompleteMockupView): string | undefined {
+  // The checked-in source kit contains real per-color PSDs for front/back only.
+  // Detail and wrap PNGs are canonical runtime exports but do not have a
+  // corresponding editable master in this repository, so they remain explicitly
+  // manifest-only instead of pointing at a nonexistent generic PSD/PSB path.
+  if (face !== "front" && face !== "back") return undefined;
+  return `attached_assets/trynex-mockup-source-kit/psd/${category}-${colorSlug}-${face}.psd`;
 }
 
 function findColorPhoto(
@@ -681,7 +681,7 @@ export function resolveMockup(
   // The browser renders the validated PNG export. Master files remain source
   // provenance until an authenticated storage ingestion publishes them.
   const curated = getCuratedMockup(product, color, face);
-  const masterPath = canonicalMasterPath(category, face);
+  const masterPath = canonicalMasterPath(category, sourceKitSlug, face);
   const sourceKitKey = `${category}:${sourceKitSlug ?? "white"}:${face}`;
   const runtimeOverride = runtimeMockupOverrides.get(normalizeRuntimeKey(sourceKitKey))
     ?? runtimeMockupOverrides.get(normalizeRuntimeKey(`${category}:${color}:${face}`));
