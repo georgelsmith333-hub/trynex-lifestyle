@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 
-const root = join(process.cwd(), "artifacts/trynex-storefront/public/mockups/smart-v7");
+const root = join(process.cwd(), "artifacts/trynex-storefront/public/mockups/smart-v4");
 const manifestPath = join(root, "manifest.json");
 const colors = {
   tshirt: ["white", "black", "navy", "maroon", "olive", "sky-blue", "grey", "red"],
@@ -32,7 +32,7 @@ function pngInfo(buffer) {
 for (const [family, familyColors] of Object.entries(colors)) {
   for (const color of familyColors) for (const view of views[family]) {
     expected++;
-    const rel = `/mockups/smart-v7/${family}/${color}/${view}.png`;
+    const rel = `/mockups/smart-v4/${family}/${color}/${view}.png`;
     const path = join(root, family, color, `${view}.png`);
     if (!existsSync(path)) { errors.push(`${rel}: missing`); continue; }
     const stat = statSync(path);

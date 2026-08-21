@@ -9,19 +9,19 @@ import { getCanonicalMockupSpec, type MockupFamily } from "./canonical-mockup-sp
 import { getCompleteMockupEntry, type CompleteMockupFamily, type CompleteMockupView } from "./complete-mockup-matrix";
 
 // ── T-Shirt: unified studio photos from normalized/ folder ──
-const tshirtFront       = "/mockups/smart-v7/tshirt/white/front.png";
-const tshirtBack        = "/mockups/smart-v7/tshirt/white/back.png";
-const longsleeveFront   = "/mockups/smart-v7/longsleeve/white/front.png";
-const longsleeveBack    = "/mockups/smart-v7/longsleeve/white/back.png";
-const hoodieFront       = "/mockups/smart-v7/hoodie/white/front.png";
-const hoodieBack        = "/mockups/smart-v7/hoodie/white/back.png";
-const mugFront          = "/mockups/smart-v7/mug/white/front.png";
-const mugBack           = "/mockups/smart-v7/mug/white/back.png";
-const capFront          = "/mockups/smart-v7/cap/white/front.png";
-const capBack           = "/mockups/smart-v7/cap/white/back.png";
-const waterBottleFront  = "/mockups/smart-v7/waterbottle/white/front.png";
+const tshirtFront       = "/mockups/smart-v4/tshirt/white/front.png";
+const tshirtBack        = "/mockups/smart-v4/tshirt/white/back.png";
+const longsleeveFront   = "/mockups/smart-v4/longsleeve/white/front.png";
+const longsleeveBack    = "/mockups/smart-v4/longsleeve/white/back.png";
+const hoodieFront       = "/mockups/smart-v4/hoodie/white/front.png";
+const hoodieBack        = "/mockups/smart-v4/hoodie/white/back.png";
+const mugFront          = "/mockups/smart-v4/mug/white/front.png";
+const mugBack           = "/mockups/smart-v4/mug/white/back.png";
+const capFront          = "/mockups/smart-v4/cap/white/front.png";
+const capBack           = "/mockups/smart-v4/cap/white/back.png";
+const waterBottleFront  = "/mockups/smart-v4/waterbottle/white/front.png";
 
-// All active color and view assets resolve through the canonical smart-v7 matrix below.
+// All active color and view assets resolve through the canonical smart-v4 matrix below.
 // No family-root or legacy fallback paths are permitted in the customer renderer.
 
 /** A single available garment colour (name + hex). */
@@ -273,7 +273,7 @@ export const PRODUCTS: DesignProduct[] = [
     description: "600ml White Sublimation Aluminium",
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: WATERBOTTLE_PZ,
-    frontSrc: WATERBOTTLE_MOCKUP_URL, backSrc: "/mockups/smart-v7/waterbottle/white/back.png",
+    frontSrc: WATERBOTTLE_MOCKUP_URL, backSrc: "/mockups/smart-v4/waterbottle/white/back.png",
   },
   // NOTE: Water Tumbler removed — it was a duplicate of Water Bottle with identical
   // mockup, colors, and print zone. Re-add if a distinct tumbler mockup is provided.
@@ -298,7 +298,7 @@ export const BASE_BY_CATEGORY: Record<
   longsleeve:  { front: longsleeveFront, back: longsleeveBack, frontCutout: longsleeveFront, backCutout: longsleeveBack },
   hoodie:      { front: hoodieFront, back: hoodieBack, frontCutout: hoodieFront, backCutout: hoodieBack },
   mug:         { front: mugFront, back: mugBack, frontCutout: mugFront, backCutout: mugBack },
-  cap:         { front: capFront, back: capBack, frontCutout: capFront, backCutout: "/mockups/smart-v7/cap/white/back.png" },
+  cap:         { front: capFront, back: capBack, frontCutout: capFront, backCutout: "/mockups/smart-v4/cap/white/back.png" },
   waterbottle: { front: waterBottleFront, frontCutout: waterBottleFront },
   // watertumbler uses category "waterbottle" — shares the same base entry
 };
@@ -599,7 +599,7 @@ function normalizeMockupHex(hex: string): string {
 function canonicalMasterPath(category: DesignProduct["category"], _colorSlug: string, face: CompleteMockupView): string {
   // The attached 22-master package contains one layered PSD/PSB per family/view.
   // Colorways are controlled by the source layer contract and exported into the
-  // color-scoped smart-v7 derivatives; the master is therefore view-scoped rather
+  // color-scoped smart-v4 derivatives; the master is therefore view-scoped rather
   // than falsely represented as a nonexistent per-color editable document.
   const familyDir: Record<DesignProduct["category"], string> = {
     tshirt: "TShirt",
@@ -641,7 +641,7 @@ function getCuratedMockup(
   const hex = normalizeMockupHex(color);
   const slug = SOURCE_KIT_COLOR_SLUGS[category]?.[hex] || "white";
   const completeView = getCompleteMockupEntry(category as CompleteMockupFamily, slug, face);
-  const cutoutSrc = completeView.assetPath + "?v=smart-v7";
+  const cutoutSrc = completeView.assetPath + "?v=smart-v4";
   const photoSrc = cutoutSrc;
   return {
     photoSrc,
@@ -659,7 +659,7 @@ function getCuratedMockup(
 /**
  * Resolves one canonical mockup key for every customer-facing surface.
  *
- * Smart-v7 PNGs (public/mockups/smart-v7/*) are bound for all
+ * Smart-v7 PNGs (public/mockups/smart-v4/*) are bound for all
  * products, colors, and faces after the layered-master derivative has passed clean-alpha validation. The initial generated hoodie pair is intentionally not activated
  * because its checkerboard background was baked into the pixels.
  *
