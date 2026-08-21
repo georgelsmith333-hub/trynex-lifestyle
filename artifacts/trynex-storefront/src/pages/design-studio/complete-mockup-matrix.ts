@@ -90,7 +90,7 @@ export function completeMockupEntry(family: CompleteMockupFamily, color: string,
     family,
     color,
     view,
-    assetPath: `/mockups/smart-v4/${family}/${color}/${view}.png`,
+    assetPath: `/mockups/smart-v7/${family}/${color}/${view}.png`,
     sourceKey: `${family}:${color}:${view}`,
     geometry: { normalizedFrame: frames[family], printZone: zone, warp: warp[family], protectedDetails: protectedDetails[family] },
   };
@@ -111,7 +111,7 @@ export function validateCompleteMockupMatrix(): string[] {
     if (keys.has(entry.sourceKey)) errors.push(`duplicate source key: ${entry.sourceKey}`);
     keys.add(entry.sourceKey);
     if (entry.geometry.normalizedFrame.canvasWidth !== 1024 || entry.geometry.normalizedFrame.canvasHeight !== 1024) errors.push(`bad frame: ${entry.sourceKey}`);
-    if (!entry.assetPath.startsWith("/mockups/smart-v4/")) errors.push(`legacy asset path: ${entry.sourceKey}`);
+    if (!entry.assetPath.startsWith("/mockups/smart-v7/")) errors.push(`legacy asset path: ${entry.sourceKey}`);
   }
   return errors;
 }

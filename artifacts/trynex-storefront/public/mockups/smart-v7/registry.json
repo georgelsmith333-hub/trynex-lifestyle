@@ -1,0 +1,1699 @@
+{
+  "schemaVersion": 1,
+  "root": "/mockups/smart-v7",
+  "surfaceCount": 188,
+  "surfaces": [
+    {
+      "family": "tshirt",
+      "color": "white",
+      "view": "front",
+      "path": "/mockups/smart-v7/tshirt/white/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/white/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "tshirt",
+      "color": "white",
+      "view": "back",
+      "path": "/mockups/smart-v7/tshirt/white/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/white/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "tshirt",
+      "color": "white",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/tshirt/white/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/white/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "white",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/tshirt/white/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/white/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "white",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/tshirt/white/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/white/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "black",
+      "view": "front",
+      "path": "/mockups/smart-v7/tshirt/black/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/black/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "tshirt",
+      "color": "black",
+      "view": "back",
+      "path": "/mockups/smart-v7/tshirt/black/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/black/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "tshirt",
+      "color": "black",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/tshirt/black/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/black/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "black",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/tshirt/black/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/black/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "black",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/tshirt/black/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/black/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "navy",
+      "view": "front",
+      "path": "/mockups/smart-v7/tshirt/navy/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/navy/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "tshirt",
+      "color": "navy",
+      "view": "back",
+      "path": "/mockups/smart-v7/tshirt/navy/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/navy/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "tshirt",
+      "color": "navy",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/tshirt/navy/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/navy/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "navy",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/tshirt/navy/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/navy/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "navy",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/tshirt/navy/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/navy/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "maroon",
+      "view": "front",
+      "path": "/mockups/smart-v7/tshirt/maroon/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/maroon/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "tshirt",
+      "color": "maroon",
+      "view": "back",
+      "path": "/mockups/smart-v7/tshirt/maroon/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/maroon/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "tshirt",
+      "color": "maroon",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/tshirt/maroon/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/maroon/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "maroon",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/tshirt/maroon/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/maroon/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "maroon",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/tshirt/maroon/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/maroon/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "olive",
+      "view": "front",
+      "path": "/mockups/smart-v7/tshirt/olive/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/olive/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "tshirt",
+      "color": "olive",
+      "view": "back",
+      "path": "/mockups/smart-v7/tshirt/olive/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/olive/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "tshirt",
+      "color": "olive",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/tshirt/olive/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/olive/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "olive",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/tshirt/olive/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/olive/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "olive",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/tshirt/olive/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/olive/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "sky-blue",
+      "view": "front",
+      "path": "/mockups/smart-v7/tshirt/sky-blue/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/sky-blue/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "tshirt",
+      "color": "sky-blue",
+      "view": "back",
+      "path": "/mockups/smart-v7/tshirt/sky-blue/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/sky-blue/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "tshirt",
+      "color": "sky-blue",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/tshirt/sky-blue/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/sky-blue/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "sky-blue",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/tshirt/sky-blue/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/sky-blue/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "sky-blue",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/tshirt/sky-blue/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/sky-blue/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "grey",
+      "view": "front",
+      "path": "/mockups/smart-v7/tshirt/grey/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/grey/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "tshirt",
+      "color": "grey",
+      "view": "back",
+      "path": "/mockups/smart-v7/tshirt/grey/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/grey/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "tshirt",
+      "color": "grey",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/tshirt/grey/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/grey/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "grey",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/tshirt/grey/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/grey/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "grey",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/tshirt/grey/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/grey/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "red",
+      "view": "front",
+      "path": "/mockups/smart-v7/tshirt/red/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/red/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "tshirt",
+      "color": "red",
+      "view": "back",
+      "path": "/mockups/smart-v7/tshirt/red/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/red/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "tshirt",
+      "color": "red",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/tshirt/red/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/red/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "red",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/tshirt/red/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/red/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "tshirt",
+      "color": "red",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/tshirt/red/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/tshirt/red/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "white",
+      "view": "front",
+      "path": "/mockups/smart-v7/longsleeve/white/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/white/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "white",
+      "view": "back",
+      "path": "/mockups/smart-v7/longsleeve/white/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/white/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "white",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/longsleeve/white/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/white/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "white",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/longsleeve/white/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/white/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "white",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/longsleeve/white/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/white/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "black",
+      "view": "front",
+      "path": "/mockups/smart-v7/longsleeve/black/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/black/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "black",
+      "view": "back",
+      "path": "/mockups/smart-v7/longsleeve/black/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/black/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "black",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/longsleeve/black/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/black/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "black",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/longsleeve/black/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/black/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "black",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/longsleeve/black/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/black/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "navy",
+      "view": "front",
+      "path": "/mockups/smart-v7/longsleeve/navy/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/navy/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "navy",
+      "view": "back",
+      "path": "/mockups/smart-v7/longsleeve/navy/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/navy/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "navy",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/longsleeve/navy/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/navy/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "navy",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/longsleeve/navy/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/navy/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "navy",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/longsleeve/navy/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/navy/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "maroon",
+      "view": "front",
+      "path": "/mockups/smart-v7/longsleeve/maroon/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/maroon/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "maroon",
+      "view": "back",
+      "path": "/mockups/smart-v7/longsleeve/maroon/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/maroon/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "maroon",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/longsleeve/maroon/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/maroon/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "maroon",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/longsleeve/maroon/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/maroon/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "maroon",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/longsleeve/maroon/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/maroon/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "olive",
+      "view": "front",
+      "path": "/mockups/smart-v7/longsleeve/olive/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/olive/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "olive",
+      "view": "back",
+      "path": "/mockups/smart-v7/longsleeve/olive/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/olive/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "olive",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/longsleeve/olive/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/olive/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "olive",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/longsleeve/olive/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/olive/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "olive",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/longsleeve/olive/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/olive/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "grey",
+      "view": "front",
+      "path": "/mockups/smart-v7/longsleeve/grey/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/grey/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "grey",
+      "view": "back",
+      "path": "/mockups/smart-v7/longsleeve/grey/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/grey/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "grey",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/longsleeve/grey/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/grey/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "grey",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/longsleeve/grey/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/grey/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "grey",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/longsleeve/grey/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/grey/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "red",
+      "view": "front",
+      "path": "/mockups/smart-v7/longsleeve/red/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/red/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "red",
+      "view": "back",
+      "path": "/mockups/smart-v7/longsleeve/red/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/red/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "red",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/longsleeve/red/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/red/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "red",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/longsleeve/red/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/red/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "red",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/longsleeve/red/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/red/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "sky-blue",
+      "view": "front",
+      "path": "/mockups/smart-v7/longsleeve/sky-blue/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/sky-blue/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "sky-blue",
+      "view": "back",
+      "path": "/mockups/smart-v7/longsleeve/sky-blue/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/sky-blue/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "sky-blue",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/longsleeve/sky-blue/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/sky-blue/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "sky-blue",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/longsleeve/sky-blue/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/sky-blue/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "sky-blue",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/longsleeve/sky-blue/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/sky-blue/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "burgundy",
+      "view": "front",
+      "path": "/mockups/smart-v7/longsleeve/burgundy/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/burgundy/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "burgundy",
+      "view": "back",
+      "path": "/mockups/smart-v7/longsleeve/burgundy/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/burgundy/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "burgundy",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/longsleeve/burgundy/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/burgundy/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "burgundy",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/longsleeve/burgundy/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/burgundy/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "burgundy",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/longsleeve/burgundy/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/burgundy/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "forest",
+      "view": "front",
+      "path": "/mockups/smart-v7/longsleeve/forest/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/forest/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "forest",
+      "view": "back",
+      "path": "/mockups/smart-v7/longsleeve/forest/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/forest/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "forest",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/longsleeve/forest/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/forest/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "forest",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/longsleeve/forest/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/forest/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "longsleeve",
+      "color": "forest",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/longsleeve/forest/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/longsleeve/forest/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "white",
+      "view": "front",
+      "path": "/mockups/smart-v7/hoodie/white/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/white/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "hoodie",
+      "color": "white",
+      "view": "back",
+      "path": "/mockups/smart-v7/hoodie/white/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/white/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "hoodie",
+      "color": "white",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/hoodie/white/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/white/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "white",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/hoodie/white/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/white/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "white",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/hoodie/white/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/white/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "black",
+      "view": "front",
+      "path": "/mockups/smart-v7/hoodie/black/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/black/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "hoodie",
+      "color": "black",
+      "view": "back",
+      "path": "/mockups/smart-v7/hoodie/black/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/black/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "hoodie",
+      "color": "black",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/hoodie/black/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/black/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "black",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/hoodie/black/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/black/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "black",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/hoodie/black/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/black/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "navy",
+      "view": "front",
+      "path": "/mockups/smart-v7/hoodie/navy/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/navy/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "hoodie",
+      "color": "navy",
+      "view": "back",
+      "path": "/mockups/smart-v7/hoodie/navy/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/navy/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "hoodie",
+      "color": "navy",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/hoodie/navy/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/navy/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "navy",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/hoodie/navy/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/navy/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "navy",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/hoodie/navy/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/navy/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "grey",
+      "view": "front",
+      "path": "/mockups/smart-v7/hoodie/grey/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/grey/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "hoodie",
+      "color": "grey",
+      "view": "back",
+      "path": "/mockups/smart-v7/hoodie/grey/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/grey/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "hoodie",
+      "color": "grey",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/hoodie/grey/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/grey/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "grey",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/hoodie/grey/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/grey/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "grey",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/hoodie/grey/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/grey/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "maroon",
+      "view": "front",
+      "path": "/mockups/smart-v7/hoodie/maroon/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/maroon/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "hoodie",
+      "color": "maroon",
+      "view": "back",
+      "path": "/mockups/smart-v7/hoodie/maroon/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/maroon/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "hoodie",
+      "color": "maroon",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/hoodie/maroon/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/maroon/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "maroon",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/hoodie/maroon/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/maroon/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "maroon",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/hoodie/maroon/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/maroon/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "olive",
+      "view": "front",
+      "path": "/mockups/smart-v7/hoodie/olive/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/olive/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "hoodie",
+      "color": "olive",
+      "view": "back",
+      "path": "/mockups/smart-v7/hoodie/olive/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/olive/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "hoodie",
+      "color": "olive",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/hoodie/olive/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/olive/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "olive",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/hoodie/olive/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/olive/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "olive",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/hoodie/olive/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/olive/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "red",
+      "view": "front",
+      "path": "/mockups/smart-v7/hoodie/red/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/red/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "hoodie",
+      "color": "red",
+      "view": "back",
+      "path": "/mockups/smart-v7/hoodie/red/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/red/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "hoodie",
+      "color": "red",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/hoodie/red/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/red/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "red",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/hoodie/red/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/red/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "red",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/hoodie/red/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/red/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "sky-blue",
+      "view": "front",
+      "path": "/mockups/smart-v7/hoodie/sky-blue/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/sky-blue/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "hoodie",
+      "color": "sky-blue",
+      "view": "back",
+      "path": "/mockups/smart-v7/hoodie/sky-blue/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/sky-blue/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "hoodie",
+      "color": "sky-blue",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/hoodie/sky-blue/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/sky-blue/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "sky-blue",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/hoodie/sky-blue/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/sky-blue/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "sky-blue",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/hoodie/sky-blue/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/sky-blue/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "forest",
+      "view": "front",
+      "path": "/mockups/smart-v7/hoodie/forest/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/forest/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "hoodie",
+      "color": "forest",
+      "view": "back",
+      "path": "/mockups/smart-v7/hoodie/forest/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/forest/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "hoodie",
+      "color": "forest",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/hoodie/forest/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/forest/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "forest",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/hoodie/forest/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/forest/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "forest",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/hoodie/forest/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/forest/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "burgundy",
+      "view": "front",
+      "path": "/mockups/smart-v7/hoodie/burgundy/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/burgundy/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "hoodie",
+      "color": "burgundy",
+      "view": "back",
+      "path": "/mockups/smart-v7/hoodie/burgundy/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/burgundy/back.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": false
+    },
+    {
+      "family": "hoodie",
+      "color": "burgundy",
+      "view": "left-sleeve",
+      "path": "/mockups/smart-v7/hoodie/burgundy/left-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/burgundy/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "burgundy",
+      "view": "right-sleeve",
+      "path": "/mockups/smart-v7/hoodie/burgundy/right-sleeve.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/burgundy/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "hoodie",
+      "color": "burgundy",
+      "view": "neck-label",
+      "path": "/mockups/smart-v7/hoodie/burgundy/neck-label.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/hoodie/burgundy/front.png",
+      "generatedBy": "full-apparel-detail-v7",
+      "detailGeometry": true
+    },
+    {
+      "family": "mug",
+      "color": "white",
+      "view": "front",
+      "path": "/mockups/smart-v7/mug/white/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/white/front.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "white",
+      "view": "back",
+      "path": "/mockups/smart-v7/mug/white/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/white/back.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "white",
+      "view": "wrap",
+      "path": "/mockups/smart-v7/mug/white/wrap.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/white/wrap.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "black",
+      "view": "front",
+      "path": "/mockups/smart-v7/mug/black/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/black/front.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "black",
+      "view": "back",
+      "path": "/mockups/smart-v7/mug/black/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/black/back.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "black",
+      "view": "wrap",
+      "path": "/mockups/smart-v7/mug/black/wrap.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/black/wrap.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "navy",
+      "view": "front",
+      "path": "/mockups/smart-v7/mug/navy/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/navy/front.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "navy",
+      "view": "back",
+      "path": "/mockups/smart-v7/mug/navy/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/navy/back.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "navy",
+      "view": "wrap",
+      "path": "/mockups/smart-v7/mug/navy/wrap.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/navy/wrap.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "red",
+      "view": "front",
+      "path": "/mockups/smart-v7/mug/red/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/red/front.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "red",
+      "view": "back",
+      "path": "/mockups/smart-v7/mug/red/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/red/back.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "red",
+      "view": "wrap",
+      "path": "/mockups/smart-v7/mug/red/wrap.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/red/wrap.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "green",
+      "view": "front",
+      "path": "/mockups/smart-v7/mug/green/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/green/front.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "green",
+      "view": "back",
+      "path": "/mockups/smart-v7/mug/green/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/green/back.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "green",
+      "view": "wrap",
+      "path": "/mockups/smart-v7/mug/green/wrap.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/green/wrap.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "purple",
+      "view": "front",
+      "path": "/mockups/smart-v7/mug/purple/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/purple/front.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "purple",
+      "view": "back",
+      "path": "/mockups/smart-v7/mug/purple/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/purple/back.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "purple",
+      "view": "wrap",
+      "path": "/mockups/smart-v7/mug/purple/wrap.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/purple/wrap.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "sky-blue",
+      "view": "front",
+      "path": "/mockups/smart-v7/mug/sky-blue/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/sky-blue/front.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "sky-blue",
+      "view": "back",
+      "path": "/mockups/smart-v7/mug/sky-blue/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/sky-blue/back.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "sky-blue",
+      "view": "wrap",
+      "path": "/mockups/smart-v7/mug/sky-blue/wrap.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/sky-blue/wrap.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "pink",
+      "view": "front",
+      "path": "/mockups/smart-v7/mug/pink/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/pink/front.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "pink",
+      "view": "back",
+      "path": "/mockups/smart-v7/mug/pink/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/pink/back.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "pink",
+      "view": "wrap",
+      "path": "/mockups/smart-v7/mug/pink/wrap.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/pink/wrap.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "maroon",
+      "view": "front",
+      "path": "/mockups/smart-v7/mug/maroon/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/maroon/front.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "maroon",
+      "view": "back",
+      "path": "/mockups/smart-v7/mug/maroon/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/maroon/back.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "maroon",
+      "view": "wrap",
+      "path": "/mockups/smart-v7/mug/maroon/wrap.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/maroon/wrap.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "orange",
+      "view": "front",
+      "path": "/mockups/smart-v7/mug/orange/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/orange/front.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "orange",
+      "view": "back",
+      "path": "/mockups/smart-v7/mug/orange/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/orange/back.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "mug",
+      "color": "orange",
+      "view": "wrap",
+      "path": "/mockups/smart-v7/mug/orange/wrap.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/mug/orange/wrap.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "cap",
+      "color": "white",
+      "view": "front",
+      "path": "/mockups/smart-v7/cap/white/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/cap/white/front.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "cap",
+      "color": "white",
+      "view": "back",
+      "path": "/mockups/smart-v7/cap/white/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/cap/white/back.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "cap",
+      "color": "black",
+      "view": "front",
+      "path": "/mockups/smart-v7/cap/black/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/cap/black/front.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "cap",
+      "color": "black",
+      "view": "back",
+      "path": "/mockups/smart-v7/cap/black/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/cap/black/back.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "cap",
+      "color": "navy",
+      "view": "front",
+      "path": "/mockups/smart-v7/cap/navy/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/cap/navy/front.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "cap",
+      "color": "navy",
+      "view": "back",
+      "path": "/mockups/smart-v7/cap/navy/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/cap/navy/back.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "cap",
+      "color": "maroon",
+      "view": "front",
+      "path": "/mockups/smart-v7/cap/maroon/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/cap/maroon/front.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "cap",
+      "color": "maroon",
+      "view": "back",
+      "path": "/mockups/smart-v7/cap/maroon/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/cap/maroon/back.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "cap",
+      "color": "olive",
+      "view": "front",
+      "path": "/mockups/smart-v7/cap/olive/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/cap/olive/front.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "cap",
+      "color": "olive",
+      "view": "back",
+      "path": "/mockups/smart-v7/cap/olive/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/cap/olive/back.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "cap",
+      "color": "red",
+      "view": "front",
+      "path": "/mockups/smart-v7/cap/red/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/cap/red/front.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "cap",
+      "color": "red",
+      "view": "back",
+      "path": "/mockups/smart-v7/cap/red/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/cap/red/back.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "cap",
+      "color": "grey",
+      "view": "front",
+      "path": "/mockups/smart-v7/cap/grey/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/cap/grey/front.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "cap",
+      "color": "grey",
+      "view": "back",
+      "path": "/mockups/smart-v7/cap/grey/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/cap/grey/back.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "cap",
+      "color": "forest",
+      "view": "front",
+      "path": "/mockups/smart-v7/cap/forest/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/cap/forest/front.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "cap",
+      "color": "forest",
+      "view": "back",
+      "path": "/mockups/smart-v7/cap/forest/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/cap/forest/back.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "waterbottle",
+      "color": "white",
+      "view": "front",
+      "path": "/mockups/smart-v7/waterbottle/white/front.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/waterbottle/white/front.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    },
+    {
+      "family": "waterbottle",
+      "color": "white",
+      "view": "back",
+      "path": "/mockups/smart-v7/waterbottle/white/back.png",
+      "source": "artifacts/trynex-storefront/public/mockups/smart-v6/waterbottle/white/back.png",
+      "generatedBy": "layered-master-v6-pass-through",
+      "detailGeometry": false
+    }
+  ]
+}
