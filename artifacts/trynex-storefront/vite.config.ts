@@ -100,7 +100,13 @@ export default defineConfig({
       manifest: false,
       injectManifest: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
-        globIgnores: ["**/mockups/**"],
+        globIgnores: [
+          "**/mockups/**",
+          // Product imagery is large and already covered by the bounded
+          // runtime image cache in src/sw.ts. Precaching it can exceed 300 MB,
+          // delay first boot, and make free-tier deployments needlessly heavy.
+          "**/assets/products/**",
+        ],
         maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
         additionalManifestEntries: [{ url: `${basePath}offline.html`, revision: null }],
       },
