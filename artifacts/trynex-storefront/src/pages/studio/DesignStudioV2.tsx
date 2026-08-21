@@ -134,6 +134,10 @@ export default function DesignStudioV2() {
     () => resolveMockup(selectedProduct, selectedColor.hex, "back"),
     [selectedProduct, selectedColor.hex],
   );
+  const activeMockup = useMemo(
+    () => resolveMockup(selectedProduct, selectedColor.hex, activeFace as Face),
+    [selectedProduct, selectedColor.hex, activeFace],
+  );
 
   const apparelZones = useMemo(() => getApparelZones(selectedProduct.category, selectedProduct.printZone, selectedProduct.printZoneBack), [selectedProduct]);
   const activeZoneConfig = useMemo(() => apparelZones.find(z => z.face === activeFace) ?? apparelZones[0], [apparelZones, activeFace]);
@@ -763,7 +767,7 @@ export default function DesignStudioV2() {
                   onPickColor={handlePickColor}
                   mockup={
                     isFlatZone && activeZoneConfig
-                      ? <FlatZoneSVG zone={activeZoneConfig} showPrintZone={showPrintZone} mockup={frontMockup} />
+                      ? <FlatZoneSVG zone={activeZoneConfig} showPrintZone={showPrintZone} mockup={activeMockup} />
                       : <GarmentSVG product={selectedProduct} color={selectedColor.hex} showPrintZone={showPrintZone} face={activeFace} mugMode={isMug ? mugMode : undefined} />
                   }
                 />
