@@ -24,7 +24,9 @@ const colors: Record<CompleteMockupFamily, readonly string[]> = {
   hoodie: ["white", "black", "navy", "grey", "maroon", "olive", "red", "sky-blue", "forest", "burgundy"],
   mug: ["white", "black", "navy", "red", "green", "purple", "sky-blue", "pink", "maroon", "orange"],
   cap: ["white", "black", "navy", "maroon", "olive", "red", "grey", "forest"],
-  waterbottle: ["white", "black", "navy", "forest", "sky-blue", "red", "pink", "teal"],
+  // This product is a white sublimation-coated aluminium blank. Do not expose
+  // literal colored-body variants without distinct physical blank masters.
+  waterbottle: ["white"],
 };
 
 const views: Record<CompleteMockupFamily, readonly CompleteMockupView[]> = {

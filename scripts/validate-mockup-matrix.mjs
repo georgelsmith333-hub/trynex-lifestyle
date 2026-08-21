@@ -10,7 +10,9 @@ const colors = {
   hoodie: ["white", "black", "navy", "grey", "maroon", "olive", "red", "sky-blue", "forest", "burgundy"],
   mug: ["white", "black", "navy", "red", "green", "purple", "sky-blue", "pink", "maroon", "orange"],
   cap: ["white", "black", "navy", "maroon", "olive", "red", "grey", "forest"],
-  waterbottle: ["white", "black", "navy", "forest", "sky-blue", "red", "pink", "teal"],
+  // White sublimation-coated aluminium blank; colored-body variants require
+  // distinct physical masters and are intentionally not generated.
+  waterbottle: ["white"],
 };
 const views = {
   tshirt: ["front", "back", "left-sleeve", "right-sleeve", "neck-label"],

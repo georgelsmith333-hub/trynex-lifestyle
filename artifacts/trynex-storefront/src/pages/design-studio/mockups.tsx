@@ -265,13 +265,12 @@ export const PRODUCTS: DesignProduct[] = [
   {
     id: "waterbottle", name: "Water Bottle", icon: "🥤", category: "waterbottle",
     garmentColor: "#F4F3F1",
+    // The supplied product is a white sublimation-coated aluminium blank. A
+    // swatch would falsely imply a colored body and unsupported substrate.
     colors: [
-      { name: "White",    hex: "#F4F3F1" }, { name: "Black",    hex: "#1C1917" },
-      { name: "Navy",     hex: "#1e3a5f" }, { name: "Forest",   hex: "#166534" },
-      { name: "Sky Blue", hex: "#0ea5e9" }, { name: "Red",      hex: "#dc2626" },
-      { name: "Pink",     hex: "#f472b6" }, { name: "Teal",     hex: "#0f766e" },
+      { name: "White Sublimation Blank", hex: "#F4F3F1" },
     ],
-    description: "600ml Aluminium",
+    description: "600ml White Sublimation Aluminium",
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: WATERBOTTLE_PZ,
     frontSrc: WATERBOTTLE_MOCKUP_URL, backSrc: "/mockups/smart-v4/waterbottle/white/back.png",
@@ -346,9 +345,9 @@ const SOURCE_KIT_COLOR_SLUGS: Record<
     "#6b7280": "grey", "#166534": "forest",
   },
   waterbottle: {
-    "#f4f3f1": "white", "#1c1917": "black", "#1e3a5f": "navy",
-    "#166534": "forest", "#0ea5e9": "sky-blue", "#dc2626": "red",
-    "#f472b6": "pink", "#0f766e": "teal",
+    // White sublimation-coated aluminium blank. Additional literal bottle colors
+    // require their own physical masters and are intentionally not synthesized.
+    "#f4f3f1": "white",
   },
 };
 

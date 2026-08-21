@@ -21,7 +21,8 @@ const CANONICAL_COLORS: Record<CanonicalCategory, readonly string[]> = {
   hoodie: ["white", "black", "navy", "grey", "maroon", "olive", "red", "sky-blue", "forest", "burgundy"],
   mug: ["white", "black", "navy", "red", "green", "purple", "sky-blue", "pink", "maroon", "orange"],
   cap: ["white", "black", "navy", "maroon", "olive", "red", "grey", "forest"],
-  waterbottle: ["white", "black", "navy", "forest", "sky-blue", "red", "pink", "teal"],
+  // White sublimation-coated aluminium blank; do not synthesize colored-body variants.
+  waterbottle: ["white"],
 };
 
 const CANONICAL_VIEWS: Record<CanonicalCategory, readonly string[]> = {
@@ -35,7 +36,7 @@ const CANONICAL_VIEWS: Record<CanonicalCategory, readonly string[]> = {
 
 const PRODUCT_NAMES: Record<CanonicalCategory, string> = {
   tshirt: "Unisex T-Shirt", longsleeve: "Unisex Long Sleeve", hoodie: "Unisex Hoodie",
-  mug: "Coffee Mug", cap: "Structured Cap", waterbottle: "Water Bottle",
+  mug: "Coffee Mug", cap: "Structured Cap", waterbottle: "Water Bottle — White Sublimation Aluminium",
 };
 
 const CANONICAL_VARIANTS: CanonicalVariant[] = (Object.keys(CANONICAL_COLORS) as CanonicalCategory[]).flatMap((category) =>

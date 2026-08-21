@@ -3369,8 +3369,15 @@ export default function DesignStudio() {
                   );
                 })}
               </div>
-              {/* Custom hex/colour picker — toggle STUDIO_CUSTOM_COLOR_ENABLED to re-enable */}
-              {STUDIO_CUSTOM_COLOR_ENABLED && (
+              {/* The bottle is a white sublimation blank; never expose a custom
+                  substrate-color picker without a distinct physical master. */}
+              {isWaterBottle && (
+                <p className="mt-2.5 text-[10px] font-medium text-gray-500">
+                  White sublimation-coated aluminium blank — your artwork is printed onto this substrate.
+                </p>
+              )}
+              {/* Custom hex/colour picker — disabled for the physical bottle blank */}
+              {STUDIO_CUSTOM_COLOR_ENABLED && !isWaterBottle && (
                 <div className="flex items-center gap-2 mt-2.5">
                   <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 shrink-0">Custom</label>
                   <div className="flex items-center gap-1.5 flex-1">

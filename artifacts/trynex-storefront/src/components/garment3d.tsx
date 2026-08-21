@@ -864,11 +864,16 @@ export function PhotoMockupMesh({
  */
 export function WaterBottleBody({
   wrapTex,
-  garmentColor,
+  garmentColor: _legacyGarmentColor,
 }: {
   wrapTex?: THREE.Texture | null;
   garmentColor: string;
 }) {
+  // The supplied product is a white sublimation-coated aluminium blank. Keep
+  // the substrate neutral even if a legacy draft contains a colored swatch;
+  // only the artwork layer varies.
+  const sublimationBlank = "#f4f3f1";
+
   // ── Main printable body: straight cylinder (open-ended for UV wrap) ──
   // Uniform radius 0.38 — no taper — matches the real bottle silhouette.
   const bodyGeo = useMemo(
@@ -933,11 +938,11 @@ export function WaterBottleBody({
 
   return (
     <group scale={0.60}>
-      {/* ── Main glossy body (sublimation-coated aluminium) ── */}
+      {/* ── Main glossy body (white sublimation-coated aluminium) ── */}
       <mesh geometry={bodyGeo} castShadow receiveShadow>
         <meshPhysicalMaterial
-          color={garmentColor}
-          roughness={0.06}
+          color={sublimationBlank}
+          roughness={0.22}
           metalness={0.0}
           clearcoat={1.0}
           clearcoatRoughness={0.04}
@@ -961,32 +966,32 @@ export function WaterBottleBody({
         </mesh>
       )}
 
-      {/* ── Bottom cap disk ── */}
+      {/* ── Bottom blank disk ── */}
       <mesh geometry={bodyBotGeo} position={[0, -1.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <meshPhysicalMaterial
-          color={garmentColor}
-          roughness={0.25}
+          color={sublimationBlank}
+          roughness={0.30}
           metalness={0.0}
           clearcoat={0.5}
         />
       </mesh>
 
-      {/* ── Shoulder taper ── */}
+      {/* ── White blank shoulder taper ── */}
       <mesh geometry={shoulderGeo} position={[0, 1.16, 0]} castShadow>
         <meshPhysicalMaterial
-          color={garmentColor}
-          roughness={0.06}
+          color={sublimationBlank}
+          roughness={0.22}
           metalness={0.0}
           clearcoat={1.0}
           clearcoatRoughness={0.04}
         />
       </mesh>
 
-      {/* ── Neck ── */}
+      {/* ── White blank neck thread section ── */}
       <mesh geometry={neckGeo} position={[0, 1.35, 0]} castShadow>
         <meshPhysicalMaterial
-          color={garmentColor}
-          roughness={0.10}
+          color={sublimationBlank}
+          roughness={0.24}
           metalness={0.0}
           clearcoat={0.8}
         />
