@@ -188,6 +188,7 @@ overrides:
   uuid: "^11.1.1"
   nanoid: "^3.3.18"
   "brace-expansion@4": "^5.0.9"
+  dompurify: "^3.4.13"
 
 allowBuilds:
   core-js: true
