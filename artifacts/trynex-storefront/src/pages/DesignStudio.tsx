@@ -26,7 +26,7 @@ import {
 import {
   PRODUCTS, type DesignProduct, GarmentSVG, FlatZoneSVG,
   STICKERS, MUG_PZ, MUG_WRAP_BACK_PZ, MUG_SIDE_PZ, MUG_SIDE_BACK_PZ,
-  getApparelZones, getZonePZ, resolveMockup, printZonePath, isPrintZonePointInside,
+  getApparelZones, getZonePZ, resolveMockup, getActiveMockupReleaseVersion, printZonePath, isPrintZonePointInside,
   type ApparelZone, isNearBlack, isLightTint, type PrintZone,
 } from "./design-studio/mockups";
 import { composeLayers, composeGarmentMockup, composeDesignTexture, autoFixImage, type ComposerLayer } from "./design-studio/composer";
@@ -2577,6 +2577,7 @@ export default function DesignStudio() {
       }
 
       const displayPrice = studioPrice;
+      const mockupRelease = getActiveMockupReleaseVersion();
 
       // Save full session for cart re-edit — MUST match the studio's
       // DraftPayload format exactly (version, color (not selectedColor),
@@ -2590,6 +2591,7 @@ export default function DesignStudio() {
           color: selectedColor,
           size: selectedSize,
           mugMode,
+          mockupRelease,
           savedAt: Date.now(),
           ...(linkedStoreProduct ? {
             linkedStoreProductId: linkedStoreProduct.id,
@@ -2634,6 +2636,7 @@ export default function DesignStudio() {
           neckLabelLayerCount: neckLabelLayers.length,
           // Garment provenance — used by useCartItemPreview fallback composer
           mockupSrc: garmentSrc,
+          mockupRelease,
           mockupSource: frontMockup.source,
           mockupPhotoSrc: frontMockup.photoSrc,
           printZone: frontPZ,
