@@ -19,6 +19,7 @@ const checks = {
   allOrNothingSmartV8Gate: mockups.includes("activateSmartV8Release") && mockups.includes("REQUIRED_SMART_V8_SURFACE_KEYS"),
   retiredSmartV7Blocked: mockups.includes('url.includes("smart-v7")'),
   activeRouteUsesProductionResolver: studio.includes("resolveMockup(") && studio.includes("getActiveMockupReleaseVersion"),
+  staticPickerUsesAcceptedRelease: mockups.includes('const STATIC_MOCKUP_RELEASE = ACCEPTED_SMART_V8_RELEASE ? "smart-v8" : "smart-v4"') && mockups.includes("const staticMockup ="),
   cartAndSessionReleaseProvenance: studio.includes("mockupRelease") && studio.includes("studio_session_") && studio.includes("addToCart({"),
   originalArtworkHandoff: studio.includes("originalAssets") && studio.includes("/api/storage/uploads/request-url"),
   canvasAndLayerWorkflow: studio.includes("composeGarmentMockup") && studio.includes("layers.filter") && studio.includes("LayerPanel"),
