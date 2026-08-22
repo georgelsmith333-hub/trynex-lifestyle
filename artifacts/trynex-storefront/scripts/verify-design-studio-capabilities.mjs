@@ -5,6 +5,7 @@ const root = path.resolve(import.meta.dirname, "..");
 const app = await readFile(path.join(root, "src", "App.tsx"), "utf8");
 const studio = await readFile(path.join(root, "src", "pages", "studio", "DesignStudioV2.tsx"), "utf8");
 const aiPanel = await readFile(path.join(root, "src", "pages", "studio", "AIPanel.tsx"), "utf8");
+const layerPanel = await readFile(path.join(root, "src", "pages", "studio", "panels", "LayerPanel.tsx"), "utf8");
 const styles = await readFile(path.join(root, "src", "index.css"), "utf8");
 const mockups = await readFile(path.join(root, "src", "pages", "design-studio", "mockups.tsx"), "utf8");
 const removeBgApi = await readFile(path.join(root, "..", "api-server", "src", "routes", "removeBg.ts"), "utf8");
@@ -31,7 +32,7 @@ const checks = {
   exportWorkflow: studio.includes("handleExportPNG") && studio.includes("composeDesignTexture"),
   responsiveLayout: studio.includes("isMobile") && studio.includes("md:hidden") && studio.includes("containerRef"),
   undoRedoWorkflow: studio.includes("undo") && studio.includes("redo") && studio.includes("MainToolbar"),
-  keyboardFocusAndReducedMotion: studio.includes('event.key.toLowerCase() !== "z"') && styles.includes("focus-visible") && styles.includes("prefers-reduced-motion"),
+  keyboardFocusAndReducedMotion: studio.includes('event.key.toLowerCase() !== "z"') && styles.includes("focus-visible") && styles.includes("prefers-reduced-motion") && layerPanel.includes('aria-label={`${layer.visible ? "Hide" : "Show"}') && layerPanel.includes('aria-label={`Delete ${layer.name || "layer"}`}'),
 };
 
 const missing = Object.entries(checks).filter(([, passed]) => !passed).map(([name]) => name);

@@ -48,6 +48,7 @@ export function LayerPanel() {
                       e.stopPropagation();
                       setLayerVisibility(layer.id, !layer.visible);
                     }}
+                    aria-label={`${layer.visible ? "Hide" : "Show"} ${layer.name || "layer"}`}
                     className="p-1 rounded-md hover:bg-gray-100"
                   >
                     {layer.visible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5 text-gray-300" />}
@@ -57,17 +58,18 @@ export function LayerPanel() {
                       e.stopPropagation();
                       setLayerLock(layer.id, !layer.locked);
                     }}
+                    aria-label={`${layer.locked ? "Unlock" : "Lock"} ${layer.name || "layer"}`}
                     className="p-1 rounded-md hover:bg-gray-100"
                   >
                     {layer.locked ? <Lock className="w-3.5 h-3.5 text-orange-500" /> : <Unlock className="w-3.5 h-3.5" />}
                   </button>
-                  <button onClick={(e) => { e.stopPropagation(); moveLayer(layer.id, "up"); }} disabled={idx === 0} className="p-1 rounded-md hover:bg-gray-100 disabled:opacity-30">
+                  <button onClick={(e) => { e.stopPropagation(); moveLayer(layer.id, "up"); }} disabled={idx === 0} aria-label={`Move ${layer.name || "layer"} up`} className="p-1 rounded-md hover:bg-gray-100 disabled:opacity-30">
                     <ChevronUp className="w-3.5 h-3.5" />
                   </button>
-                  <button onClick={(e) => { e.stopPropagation(); moveLayer(layer.id, "down"); }} disabled={idx === layers.length - 1} className="p-1 rounded-md hover:bg-gray-100 disabled:opacity-30">
+                  <button onClick={(e) => { e.stopPropagation(); moveLayer(layer.id, "down"); }} disabled={idx === layers.length - 1} aria-label={`Move ${layer.name || "layer"} down`} className="p-1 rounded-md hover:bg-gray-100 disabled:opacity-30">
                     <ChevronDown className="w-3.5 h-3.5" />
                   </button>
-                  <button onClick={(e) => { e.stopPropagation(); deleteLayer(layer.id); }} className="p-1 rounded-md hover:bg-red-50 text-red-500">
+                  <button onClick={(e) => { e.stopPropagation(); deleteLayer(layer.id); }} aria-label={`Delete ${layer.name || "layer"}`} className="p-1 rounded-md hover:bg-red-50 text-red-500">
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
