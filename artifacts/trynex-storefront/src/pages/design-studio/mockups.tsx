@@ -7,6 +7,7 @@
 import { createSmartMockupManifest, type SmartMockupManifest } from "./smart-mockup-manifest";
 import { getCanonicalMockupSpec, type MockupFamily } from "./canonical-mockup-spec";
 import { COMPLETE_MOCKUP_MATRIX, getCompleteMockupEntry, type CompleteMockupFamily, type CompleteMockupView } from "./complete-mockup-matrix";
+import { ACCEPTED_SMART_V8_RELEASE } from "./smart-v8-release";
 
 // ── T-Shirt: unified studio photos from normalized/ folder ──
 const tshirtFront       = "/mockups/smart-v4/tshirt/white/front.png";
@@ -501,6 +502,10 @@ export function activateSmartV8Release(acceptance: SmartV8ReleaseAcceptance): vo
 export function getActiveMockupReleaseVersion(): "smart-v4" | "smart-v8" {
   return acceptedSmartV8Release ? "smart-v8" : "smart-v4";
 }
+
+// This module is included only by the isolated smart-v8 review branch. The
+// all-or-nothing guard above remains the sole activation path.
+activateSmartV8Release(ACCEPTED_SMART_V8_RELEASE);
 
 function normalizeRuntimeKey(value: string): string {
   return value.trim().toLowerCase().replace(/[\\/]+/g, ":");

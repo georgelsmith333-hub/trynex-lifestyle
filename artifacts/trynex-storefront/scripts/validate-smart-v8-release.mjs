@@ -16,4 +16,4 @@ for (const asset of manifest.assets) {
   if (!targetStat.isFile() || sourceHash !== asset.sha256 || targetHash !== asset.sha256) throw new Error(`Hash or file validation failed for ${asset.sourceKey}`);
 }
 
-console.log(JSON.stringify({ version: manifest.version, sourceVersion: manifest.sourceVersion, assetCount: manifest.assetCount, technicalGate: "passed", activation: "blocked-pending-visual-acceptance" }));
+console.log(JSON.stringify({ version: manifest.version, sourceVersion: manifest.sourceVersion, assetCount: manifest.assetCount, technicalGate: "passed", visualGate: manifest.visualGatePassed ? "passed" : "pending", activation: manifest.visualGatePassed && manifest.technicalGatePassed ? "accepted" : "blocked-pending-acceptance" }));
