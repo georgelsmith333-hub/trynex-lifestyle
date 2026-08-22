@@ -334,6 +334,7 @@ export default function DesignStudio() {
   const { addToCart } = useCartActions();
   const settings = useSiteSettings();
   const { toast } = useToast();
+  const activeMockupRelease = getActiveMockupReleaseVersion();
 
   /* Linked real store product for this design session */
   const [linkedStoreProduct, setLinkedStoreProduct] = useState<LinkedStoreProduct | null>(null);
@@ -2900,6 +2901,9 @@ export default function DesignStudio() {
                   ? (mugMode === "side1" ? "Left Side" : mugMode === "side2" ? "Right Side" : "Full Wrap")
                   : (activeZoneConfig?.label ?? activeFace)
               }</span>
+              <span className="hidden md:inline-flex ml-2 items-center gap-1 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-emerald-700" title="Every active product surface is mapped through the verified smart-v8 release contract.">
+                <ShieldCheck className="h-2.5 w-2.5" /> {activeMockupRelease} verified
+              </span>
             </p>
           </div>
           <div className="flex items-center justify-end gap-1 sm:gap-2 flex-shrink-0">
