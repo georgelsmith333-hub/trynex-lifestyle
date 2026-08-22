@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import {
   PRODUCTS, GarmentSVG, FlatZoneSVG, MUG_PZ, MUG_WRAP_BACK_PZ, MUG_SIDE_PZ, MUG_SIDE_BACK_PZ, resolveMockup,
-  getApparelZones, getZonePZ, setRuntimeMockupOverrides, type ApparelZone, isNearBlack, isLightTint,
+  getActiveMockupReleaseVersion, getApparelZones, getZonePZ, setRuntimeMockupOverrides, type ApparelZone, isNearBlack, isLightTint,
   type PrintZone, type DesignProduct, type Face,
 } from "../design-studio/mockups";
 import {
@@ -296,7 +296,7 @@ export default function DesignStudioV2() {
     const handle = window.setTimeout(async () => {
       const payload = {
         version: DRAFT_VERSION, layers, productId: selectedProduct.id, color: selectedColor, size: selectedSize,
-        mugMode, savedAt: Date.now(),
+        mugMode, mockupRelease: getActiveMockupReleaseVersion(), savedAt: Date.now(),
         ...(linkedStoreProduct ? { linkedStoreProductId: linkedStoreProduct.id, linkedStoreProductName: linkedStoreProduct.name, linkedStoreProductPrice: linkedStoreProduct.price } : {}),
       };
       try { localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(payload)); } catch {}
@@ -714,9 +714,10 @@ export default function DesignStudioV2() {
                 ? Number(settings.studioCapPrice) + Number(settings.studioCapCustomizationFee)
                 : Number(settings.studioTshirtPrice) + Number(settings.studioTshirtCustomizationFee);
     const studioPrice = linkedStoreProduct?.price ?? configuredStudioPrice;
+    const mockupRelease = getActiveMockupReleaseVersion();
     const sessionId = Date.now().toString(36);
     try {
-      localStorage.setItem(`studio_session_${sessionId}`, JSON.stringify({ version: DRAFT_VERSION, layers, productId: selectedProduct.id, color: selectedColor, size: selectedSize, savedAt: Date.now() }));
+      localStorage.setItem(`studio_session_${sessionId}`, JSON.stringify({ version: DRAFT_VERSION, layers, productId: selectedProduct.id, color: selectedColor, size: selectedSize, mugMode, mockupRelease, savedAt: Date.now() }));
     } catch {}
 
     addToCart({
@@ -730,7 +731,7 @@ export default function DesignStudioV2() {
       customImages: [frontTexUrl, ...(backTexUrl ? [backTexUrl] : []), ...(leftSleeveTexUrl ? [leftSleeveTexUrl] : []), ...(rightSleeveTexUrl ? [rightSleeveTexUrl] : []), ...(neckLabelTexUrl ? [neckLabelTexUrl] : [])],
       originalAssetUrls,
       originalAssets,
-      customNote: JSON.stringify({ studioDesign: true, sessionId, product: selectedProduct.name, category: selectedProduct.category, color: selectedColor.name, colorHex: selectedColor.hex, size: selectedSize, layerCount: layers.length, frontLayerCount: frontLayers.length, backLayerCount: backLayers.length, mockupSrc: garmentSrc, mockupSource: frontMockup.source, mockupPhotoSrc: frontMockup.photoSrc, mockupIsColorPhoto: frontMockup.isColorPhoto, printZone: frontPZ, printZoneBack: backPZ, originalAssets }),
+      customNote: JSON.stringify({ studioDesign: true, sessionId, mockupRelease, product: selectedProduct.name, category: selectedProduct.category, color: selectedColor.name, colorHex: selectedColor.hex, size: selectedSize, layerCount: layers.length, frontLayerCount: frontLayers.length, backLayerCount: backLayers.length, mockupSrc: garmentSrc, mockupSource: frontMockup.source, mockupPhotoSrc: frontMockup.photoSrc, mockupIsColorPhoto: frontMockup.isColorPhoto, printZone: frontPZ, printZoneBack: backPZ, originalAssets }),
     });
     toast({ title: "✓ Added to cart!", description: `Custom ${selectedProduct.name} (${selectedColor.name}) is ready.` });
     try { localStorage.removeItem(DRAFT_STORAGE_KEY); } catch {}
