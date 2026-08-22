@@ -9,6 +9,7 @@ const mockups = await readFile(path.join(root, "src", "pages", "design-studio", 
 
 const checks = {
   actualRouteUsesStudioV2: app.includes('<Route path="/design-studio" component={DesignStudioV2} />'),
+  legacyPublicStudioPathsConverge: app.includes('<Route path="/design-studio-v1" component={() => <Redirect to="/design-studio" />} />') && app.includes('<Route path="/design-studio-v2" component={() => <Redirect to="/design-studio" />} />'),
   allSixProductFamilies: ["tshirt", "longsleeve", "hoodie", "mug", "cap", "waterbottle"].every((family) => mockups.includes(`id: "${family}"`)),
   allOrNothingSmartV8Gate: mockups.includes("activateSmartV8Release") && mockups.includes("REQUIRED_SMART_V8_SURFACE_KEYS"),
   retiredSmartV7Blocked: mockups.includes('url.includes("smart-v7")'),
