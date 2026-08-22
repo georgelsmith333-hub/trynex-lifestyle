@@ -698,9 +698,9 @@ function getCuratedMockup(
 /**
  * Resolves one canonical mockup key for every customer-facing surface.
  *
- * Smart-v7 PNGs (public/mockups/smart-v4/*) are bound for all
- * products, colors, and faces after the layered-master derivative has passed clean-alpha validation. The initial generated hoodie pair is intentionally not activated
- * because its checkerboard background was baked into the pixels.
+ * Smart-v4 PNGs (public/mockups/smart-v4/*) remain bound for all
+ * products, colors, and faces until the complete smart-v8 acceptance contract
+ * has passed. Retired smart-v7 assets are never permitted in this renderer.
  *
  * Rendering path summary:
  *   Every family/color/face resolves to one v3 transparent cutout at runtime.
