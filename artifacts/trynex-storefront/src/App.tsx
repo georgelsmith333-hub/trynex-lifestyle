@@ -129,7 +129,6 @@ const HamperDetail   = lazyWithRetry(() => import("./pages/HamperDetail"));
 const HamperBuilder  = lazyWithRetry(() => import("./pages/HamperBuilder"));
 const Referral       = lazyWithRetry(() => import("./pages/Referral"));
 const DesignStudioV2 = lazyWithRetry(() => import("./pages/studio/DesignStudioV2"));
-const DesignStudioV1 = lazyWithRetry(() => import("./pages/DesignStudio"));
 const SalePage       = lazyWithRetry(() => import("./pages/SalePage"));
 const FAQ            = lazyWithRetry(() => import("./pages/FAQ"));
 const About          = lazyWithRetry(() => import("./pages/About"));
@@ -184,8 +183,8 @@ function Router() {
             <Route path="/referral" component={Referral} />
              {/* V2 is the active responsive production design studio */}
              <Route path="/design-studio" component={DesignStudioV2} />
-            <Route path="/design-studio-v1" component={DesignStudioV1} />
-             <Route path="/design-studio-v2" component={DesignStudioV2} />
+            <Route path="/design-studio-v1" component={() => <Redirect to="/design-studio" />} />
+            <Route path="/design-studio-v2" component={() => <Redirect to="/design-studio" />} />
             <Route path="/hampers" component={Hampers} />
             <Route path="/hampers/build" component={HamperBuilder} />
             <Route path="/hampers/:slug" component={HamperDetail} />

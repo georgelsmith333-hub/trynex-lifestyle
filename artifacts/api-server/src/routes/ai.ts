@@ -6,6 +6,7 @@ import { requireAdmin } from "../middlewares/adminAuth";
 import { ObjectStorageService } from "../lib/objectStorage";
 import { db, productsTable, ordersTable, categoriesTable, settingsTable } from "@workspace/db";
 import { desc, sql } from "drizzle-orm";
+import { validateAiArtworkOutput } from "../lib/transformedImageValidation";
 
 const router = Router();
 
@@ -323,9 +324,16 @@ router.get("/ai/generate", async (req: Request, res: Response) => {
         console.warn("[ai/generate] Empty image response, trying next…");
         continue;
       }
+      const outputBuffer = Buffer.from(buf);
+      const validation = await validateAiArtworkOutput(outputBuffer);
+      if (!validation.valid) {
+        lastError = `AI returned an unaccepted ${validation.reason} output`;
+        console.warn(`[ai/generate] model=${m} returned ${validation.reason}, trying next…`);
+        continue;
+      }
       const mime = imgRes.headers.get("content-type") || "image/jpeg";
-      const b64 = Buffer.from(buf).toString("base64");
-      return res.json({ dataUrl: `data:${mime};base64,${b64}`, model: m });
+      const b64 = outputBuffer.toString("base64");
+      return res.json({ dataUrl: `data:${mime};base64,${b64}`, model: m, validation });
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       lastError = msg;

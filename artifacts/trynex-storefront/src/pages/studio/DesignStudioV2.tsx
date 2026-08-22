@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import {
   PRODUCTS, GarmentSVG, FlatZoneSVG, MUG_PZ, MUG_WRAP_BACK_PZ, MUG_SIDE_PZ, MUG_SIDE_BACK_PZ, resolveMockup,
-  getApparelZones, getZonePZ, setRuntimeMockupOverrides, type ApparelZone, isNearBlack, isLightTint,
+  getActiveMockupReleaseVersion, getApparelZones, getZonePZ, setRuntimeMockupOverrides, type ApparelZone, isNearBlack, isLightTint,
   type PrintZone, type DesignProduct, type Face,
 } from "../design-studio/mockups";
 import {
@@ -168,6 +168,19 @@ export default function DesignStudioV2() {
     return () => window.removeEventListener("resize", onResize);
   }, [setIsMobile]);
 
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("input, textarea, select, [contenteditable='true']")) return;
+      if (!(event.metaKey || event.ctrlKey) || event.key.toLowerCase() !== "z") return;
+      event.preventDefault();
+      if (event.shiftKey) redo();
+      else undo();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [redo, undo]);
+
   // Gallery records never replace canonical geometry. Only explicitly approved
   // ready records may replace the visual preview; failures fall back silently.
   useEffect(() => {
@@ -296,7 +309,7 @@ export default function DesignStudioV2() {
     const handle = window.setTimeout(async () => {
       const payload = {
         version: DRAFT_VERSION, layers, productId: selectedProduct.id, color: selectedColor, size: selectedSize,
-        mugMode, savedAt: Date.now(),
+        mugMode, mockupRelease: getActiveMockupReleaseVersion(), savedAt: Date.now(),
         ...(linkedStoreProduct ? { linkedStoreProductId: linkedStoreProduct.id, linkedStoreProductName: linkedStoreProduct.name, linkedStoreProductPrice: linkedStoreProduct.price } : {}),
       };
       try { localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(payload)); } catch {}
@@ -402,6 +415,36 @@ export default function DesignStudioV2() {
     reader.readAsDataURL(blob);
   });
 
+  const inspectProcessedImage = async (dataUrl: string, operation: "remove-bg" | "upscale", minimum?: { width: number; height: number }) => {
+    const image = new Image();
+    await new Promise<void>((resolve, reject) => {
+      image.onload = () => resolve();
+      image.onerror = () => reject(new Error("The processed image could not be decoded for validation."));
+      image.src = dataUrl;
+    });
+    const width = image.naturalWidth;
+    const height = image.naturalHeight;
+    if (!width || !height || width * height > 16_000_000) throw new Error("The processed image dimensions are not safe for the Studio.");
+    if (operation === "upscale" && minimum && (width < minimum.width || height < minimum.height)) {
+      throw new Error("The HD result did not preserve the original image dimensions.");
+    }
+    if (operation === "remove-bg") {
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      if (!context) throw new Error("This browser cannot validate the removed-background output.");
+      context.drawImage(image, 0, 0, width, height);
+      const pixels = context.getImageData(0, 0, width, height).data;
+      let hasTransparency = false;
+      for (let offset = 3; offset < pixels.length; offset += 4) {
+        if (pixels[offset] < 255) { hasTransparency = true; break; }
+      }
+      if (!hasTransparency) throw new Error("The removed-background result has no transparent pixels, so your original artwork was kept.");
+    }
+    return { width, height };
+  };
+
   const handleRemoveBackground = async () => {
     if (!selectedLayer || selectedLayer.type !== "image" || imageAction) return;
     setImageAction("remove-bg");
@@ -430,6 +473,7 @@ export default function DesignStudioV2() {
         result = await blobToDataUrl(blob);
       }
 
+      await inspectProcessedImage(result, "remove-bg");
       await replaceSelectedImage(result);
       toast({ title: "Background removed", description: "Your transparent cutout is ready on the product." });
     } catch (error) {
@@ -483,7 +527,9 @@ export default function DesignStudioV2() {
         }
       }
       enlargedCtx.putImageData(original, 0, 0);
-      await replaceSelectedImage(enlarged.toDataURL("image/png"));
+      const output = enlarged.toDataURL("image/png");
+      await inspectProcessedImage(output, "upscale", { width: img.naturalWidth, height: img.naturalHeight });
+      await replaceSelectedImage(output);
       toast({ title: "HD artwork ready", description: `Prepared a ${width}×${height}px print layer.` });
     } catch (error) {
       console.error("[studio] upscale failed", error);
@@ -714,9 +760,10 @@ export default function DesignStudioV2() {
                 ? Number(settings.studioCapPrice) + Number(settings.studioCapCustomizationFee)
                 : Number(settings.studioTshirtPrice) + Number(settings.studioTshirtCustomizationFee);
     const studioPrice = linkedStoreProduct?.price ?? configuredStudioPrice;
+    const mockupRelease = getActiveMockupReleaseVersion();
     const sessionId = Date.now().toString(36);
     try {
-      localStorage.setItem(`studio_session_${sessionId}`, JSON.stringify({ version: DRAFT_VERSION, layers, productId: selectedProduct.id, color: selectedColor, size: selectedSize, savedAt: Date.now() }));
+      localStorage.setItem(`studio_session_${sessionId}`, JSON.stringify({ version: DRAFT_VERSION, layers, productId: selectedProduct.id, color: selectedColor, size: selectedSize, mugMode, mockupRelease, savedAt: Date.now() }));
     } catch {}
 
     addToCart({
@@ -730,7 +777,7 @@ export default function DesignStudioV2() {
       customImages: [frontTexUrl, ...(backTexUrl ? [backTexUrl] : []), ...(leftSleeveTexUrl ? [leftSleeveTexUrl] : []), ...(rightSleeveTexUrl ? [rightSleeveTexUrl] : []), ...(neckLabelTexUrl ? [neckLabelTexUrl] : [])],
       originalAssetUrls,
       originalAssets,
-      customNote: JSON.stringify({ studioDesign: true, sessionId, product: selectedProduct.name, category: selectedProduct.category, color: selectedColor.name, colorHex: selectedColor.hex, size: selectedSize, layerCount: layers.length, frontLayerCount: frontLayers.length, backLayerCount: backLayers.length, mockupSrc: garmentSrc, mockupSource: frontMockup.source, mockupPhotoSrc: frontMockup.photoSrc, mockupIsColorPhoto: frontMockup.isColorPhoto, printZone: frontPZ, printZoneBack: backPZ, originalAssets }),
+      customNote: JSON.stringify({ studioDesign: true, sessionId, mockupRelease, product: selectedProduct.name, category: selectedProduct.category, color: selectedColor.name, colorHex: selectedColor.hex, size: selectedSize, layerCount: layers.length, frontLayerCount: frontLayers.length, backLayerCount: backLayers.length, mockupSrc: garmentSrc, mockupSource: frontMockup.source, mockupPhotoSrc: frontMockup.photoSrc, mockupIsColorPhoto: frontMockup.isColorPhoto, printZone: frontPZ, printZoneBack: backPZ, originalAssets }),
     });
     toast({ title: "✓ Added to cart!", description: `Custom ${selectedProduct.name} (${selectedColor.name}) is ready.` });
     try { localStorage.removeItem(DRAFT_STORAGE_KEY); } catch {}

@@ -6,7 +6,8 @@
 
 import { createSmartMockupManifest, type SmartMockupManifest } from "./smart-mockup-manifest";
 import { getCanonicalMockupSpec, type MockupFamily } from "./canonical-mockup-spec";
-import { getCompleteMockupEntry, type CompleteMockupFamily, type CompleteMockupView } from "./complete-mockup-matrix";
+import { COMPLETE_MOCKUP_MATRIX, getCompleteMockupEntry, type CompleteMockupFamily, type CompleteMockupView } from "./complete-mockup-matrix";
+import { ACCEPTED_SMART_V8_RELEASE } from "./smart-v8-release";
 
 // ── T-Shirt: unified studio photos from normalized/ folder ──
 const tshirtFront       = "/mockups/smart-v4/tshirt/white/front.png";
@@ -466,6 +467,46 @@ export interface RuntimeMockupOverride {
 
 const runtimeMockupOverrides = new Map<string, RuntimeMockupOverride>();
 
+/**
+ * Smart-v8 is deliberately inactive until every canonical surface has supplied
+ * a reviewed asset URL and both visual and technical gates have passed. This
+ * keeps smart-v4 as the only customer-facing resolver root during a rebuild.
+ */
+export interface SmartV8ReleaseAcceptance {
+  version: "smart-v8";
+  assetUrls: Record<string, string>;
+  visualGatePassed: boolean;
+  technicalGatePassed: boolean;
+}
+
+const REQUIRED_SMART_V8_SURFACE_KEYS = COMPLETE_MOCKUP_MATRIX.map((entry) => entry.sourceKey);
+let acceptedSmartV8Release: SmartV8ReleaseAcceptance | null = null;
+
+export function activateSmartV8Release(acceptance: SmartV8ReleaseAcceptance): void {
+  if (!acceptance.visualGatePassed || !acceptance.technicalGatePassed) {
+    throw new Error("smart-v8 cannot activate before visual and technical acceptance.");
+  }
+  const suppliedKeys = Object.keys(acceptance.assetUrls);
+  if (suppliedKeys.length !== REQUIRED_SMART_V8_SURFACE_KEYS.length) {
+    throw new Error(`smart-v8 requires ${REQUIRED_SMART_V8_SURFACE_KEYS.length} accepted surfaces; received ${suppliedKeys.length}.`);
+  }
+  for (const key of REQUIRED_SMART_V8_SURFACE_KEYS) {
+    const url = acceptance.assetUrls[key];
+    if (!url || url.includes("smart-v7")) {
+      throw new Error(`smart-v8 asset is missing or invalid for ${key}.`);
+    }
+  }
+  acceptedSmartV8Release = acceptance;
+}
+
+export function getActiveMockupReleaseVersion(): "smart-v4" | "smart-v8" {
+  return acceptedSmartV8Release ? "smart-v8" : "smart-v4";
+}
+
+// This module is included only by the isolated smart-v8 review branch. The
+// all-or-nothing guard above remains the sole activation path.
+activateSmartV8Release(ACCEPTED_SMART_V8_RELEASE);
+
 function normalizeRuntimeKey(value: string): string {
   return value.trim().toLowerCase().replace(/[\\/]+/g, ":");
 }
@@ -643,7 +684,8 @@ function getCuratedMockup(
   const hex = normalizeMockupHex(color);
   const slug = SOURCE_KIT_COLOR_SLUGS[category]?.[hex] || "white";
   const completeView = getCompleteMockupEntry(category as CompleteMockupFamily, slug, face);
-  const cutoutSrc = completeView.assetPath + "?v=smart-v4";
+  const cutoutSrc = acceptedSmartV8Release?.assetUrls[completeView.sourceKey]
+    ?? (completeView.assetPath + "?v=smart-v4");
   const photoSrc = cutoutSrc;
   return {
     photoSrc,
@@ -661,9 +703,9 @@ function getCuratedMockup(
 /**
  * Resolves one canonical mockup key for every customer-facing surface.
  *
- * Smart-v7 PNGs (public/mockups/smart-v4/*) are bound for all
- * products, colors, and faces after the layered-master derivative has passed clean-alpha validation. The initial generated hoodie pair is intentionally not activated
- * because its checkerboard background was baked into the pixels.
+ * Smart-v4 PNGs (public/mockups/smart-v4/*) remain bound for all
+ * products, colors, and faces until the complete smart-v8 acceptance contract
+ * has passed. Retired smart-v7 assets are never permitted in this renderer.
  *
  * Rendering path summary:
  *   Every family/color/face resolves to one v3 transparent cutout at runtime.

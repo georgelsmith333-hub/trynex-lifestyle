@@ -153,6 +153,16 @@ const initialState: DesignStoreState = {
 
 type DS = Draft<DesignStoreState>;
 
+function captureHistory(state: DS) {
+  state.history.push({
+    layers: JSON.parse(JSON.stringify(state.layers)) as Layer[],
+    productId: state.selectedProduct.id,
+    color: { ...state.selectedColor },
+  });
+  if (state.history.length > 50) state.history.shift();
+  state.future = [];
+}
+
 export const useDesignStore = create<DesignStore>()(
   immer((set, get) => ({
     ...initialState,
@@ -194,9 +204,9 @@ export const useDesignStore = create<DesignStore>()(
 
     addLayer: (layer) => {
       set((state: DS) => {
+        captureHistory(state);
         state.layers.push(layer);
       });
-      get().commit();
     },
     updateLayer: (id, patch) => {
       set((state: DS) => {
@@ -208,10 +218,10 @@ export const useDesignStore = create<DesignStore>()(
     },
     deleteLayer: (id) => {
       set((state: DS) => {
+        captureHistory(state);
         state.layers = state.layers.filter((l: Layer) => l.id !== id);
         state.selectedIds = state.selectedIds.filter((sid: string) => sid !== id);
       });
-      get().commit();
     },
     moveLayer: (id, direction) => {
       set((state: DS) => {
@@ -219,6 +229,7 @@ export const useDesignStore = create<DesignStore>()(
         if (idx === -1) return;
         const target = direction === "up" ? idx + 1 : idx - 1;
         if (target < 0 || target >= state.layers.length) return;
+        captureHistory(state);
         const temp = state.layers[idx];
         state.layers[idx] = state.layers[target];
         state.layers[target] = temp;
@@ -226,19 +237,26 @@ export const useDesignStore = create<DesignStore>()(
     },
     reorderLayers: (layers) => {
       set((state: DS) => {
+        captureHistory(state);
         state.layers = layers;
       });
     },
     setLayerVisibility: (id, visible) => {
       set((state: DS) => {
         const l = state.layers.find((x: Layer) => x.id === id);
-        if (l) l.visible = visible;
+        if (l && l.visible !== visible) {
+          captureHistory(state);
+          l.visible = visible;
+        }
       });
     },
     setLayerLock: (id, locked) => {
       set((state: DS) => {
         const l = state.layers.find((x: Layer) => x.id === id);
-        if (l) l.locked = locked;
+        if (l && l.locked !== locked) {
+          captureHistory(state);
+          l.locked = locked;
+        }
       });
     },
     selectLayer: (id, multi) => {
