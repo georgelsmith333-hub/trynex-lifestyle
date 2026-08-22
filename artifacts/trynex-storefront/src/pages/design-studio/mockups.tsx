@@ -9,21 +9,25 @@ import { getCanonicalMockupSpec, type MockupFamily } from "./canonical-mockup-sp
 import { COMPLETE_MOCKUP_MATRIX, getCompleteMockupEntry, type CompleteMockupFamily, type CompleteMockupView } from "./complete-mockup-matrix";
 import { ACCEPTED_SMART_V8_RELEASE } from "./smart-v8-release";
 
-// ── T-Shirt: unified studio photos from normalized/ folder ──
-const tshirtFront       = "/mockups/smart-v4/tshirt/white/front.png";
-const tshirtBack        = "/mockups/smart-v4/tshirt/white/back.png";
-const longsleeveFront   = "/mockups/smart-v4/longsleeve/white/front.png";
-const longsleeveBack    = "/mockups/smart-v4/longsleeve/white/back.png";
-const hoodieFront       = "/mockups/smart-v4/hoodie/white/front.png";
-const hoodieBack        = "/mockups/smart-v4/hoodie/white/back.png";
-const mugFront          = "/mockups/smart-v4/mug/white/front.png";
-const mugBack           = "/mockups/smart-v4/mug/white/back.png";
-const capFront          = "/mockups/smart-v4/cap/white/front.png";
-const capBack           = "/mockups/smart-v4/cap/white/back.png";
-const waterBottleFront  = "/mockups/smart-v4/waterbottle/white/front.png";
+// Static picker/gallery previews use the same fully accepted release as the
+// canvas resolver. This prevents inactive smart-v4 thumbnails from preloading
+// beside an active smart-v8 customer mockup.
+const STATIC_MOCKUP_RELEASE = ACCEPTED_SMART_V8_RELEASE ? "smart-v8" : "smart-v4";
+const staticMockup = (family: string, view: "front" | "back") => `/mockups/${STATIC_MOCKUP_RELEASE}/${family}/white/${view}.png`;
+const tshirtFront       = staticMockup("tshirt", "front");
+const tshirtBack        = staticMockup("tshirt", "back");
+const longsleeveFront   = staticMockup("longsleeve", "front");
+const longsleeveBack    = staticMockup("longsleeve", "back");
+const hoodieFront       = staticMockup("hoodie", "front");
+const hoodieBack        = staticMockup("hoodie", "back");
+const mugFront          = staticMockup("mug", "front");
+const mugBack           = staticMockup("mug", "back");
+const capFront          = staticMockup("cap", "front");
+const capBack           = staticMockup("cap", "back");
+const waterBottleFront  = staticMockup("waterbottle", "front");
 
-// All active color and view assets resolve through the canonical smart-v4 matrix below.
-// No family-root or legacy fallback paths are permitted in the customer renderer.
+// All active color and view assets resolve through the canonical release matrix below.
+// No family-root or retired-release fallback paths are permitted in the customer renderer.
 
 /** A single available garment colour (name + hex). */
 export interface ProductColor { name: string; hex: string }
@@ -276,7 +280,7 @@ export const PRODUCTS: DesignProduct[] = [
     description: "600ml White Sublimation Aluminium",
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: WATERBOTTLE_PZ,
-    frontSrc: WATERBOTTLE_MOCKUP_URL, gallerySrc: "/mockups/gallery-v1/waterbottle-white-front.png", backSrc: "/mockups/smart-v4/waterbottle/white/back.png",
+    frontSrc: WATERBOTTLE_MOCKUP_URL, gallerySrc: "/mockups/gallery-v1/waterbottle-white-front.png", backSrc: staticMockup("waterbottle", "back"),
   },
   // NOTE: Water Tumbler removed — it was a duplicate of Water Bottle with identical
   // mockup, colors, and print zone. Re-add if a distinct tumbler mockup is provided.
@@ -301,7 +305,7 @@ export const BASE_BY_CATEGORY: Record<
   longsleeve:  { front: longsleeveFront, back: longsleeveBack, frontCutout: longsleeveFront, backCutout: longsleeveBack },
   hoodie:      { front: hoodieFront, back: hoodieBack, frontCutout: hoodieFront, backCutout: hoodieBack },
   mug:         { front: mugFront, back: mugBack, frontCutout: mugFront, backCutout: mugBack },
-  cap:         { front: capFront, back: capBack, frontCutout: capFront, backCutout: "/mockups/smart-v4/cap/white/back.png" },
+  cap:         { front: capFront, back: capBack, frontCutout: capFront, backCutout: capBack },
   waterbottle: { front: waterBottleFront, frontCutout: waterBottleFront },
   // watertumbler uses category "waterbottle" — shares the same base entry
 };
