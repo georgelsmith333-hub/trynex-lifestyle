@@ -12,6 +12,14 @@ const PROMPT_PRESETS = [
 ];
 
 type Request = { prompt: string; negative: string };
+type PendingArtwork = {
+  src: string;
+  naturalW: number;
+  naturalH: number;
+  request: Request;
+  model: string;
+  face: string;
+};
 
 export function AIPanel() {
   const [prompt, setPrompt] = useState("");
@@ -22,6 +30,7 @@ export function AIPanel() {
   const [lastRequest, setLastRequest] = useState<Request | null>(null);
   const [referenceSrc, setReferenceSrc] = useState<string | null>(null);
   const [referenceName, setReferenceName] = useState<string | null>(null);
+  const [pendingArtwork, setPendingArtwork] = useState<PendingArtwork | null>(null);
   const progressTimer = useRef<number | null>(null);
   const referenceInputRef = useRef<HTMLInputElement>(null);
   const addLayer = useDesignStore((s) => s.addLayer);
@@ -57,7 +66,7 @@ export function AIPanel() {
     reader.readAsDataURL(file);
   };
 
-  const loadGeneratedImage = async (src: string, request: Request, model: string) => {
+  const prepareGeneratedImage = async (src: string, request: Request, model: string): Promise<PendingArtwork> => {
     const img = new Image();
     if (!src.startsWith("data:")) img.crossOrigin = "anonymous";
     await new Promise<void>((resolve, reject) => {
@@ -67,11 +76,11 @@ export function AIPanel() {
     });
     try { await img.decode?.(); } catch {}
 
-    const id = typeof crypto !== "undefined" && "randomUUID" in crypto
-      ? crypto.randomUUID()
-      : Math.random().toString(36).slice(2, 12);
     const naturalW = img.naturalWidth || 1024;
     const naturalH = img.naturalHeight || 1024;
+    if (naturalW < 256 || naturalH < 256 || naturalW * naturalH > 16_000_000) {
+      throw new Error("The generated artwork dimensions did not pass the Studio acceptance check.");
+    }
     let stableSrc = src;
     try {
       const snapshot = document.createElement("canvas");
@@ -83,21 +92,34 @@ export function AIPanel() {
       // Keep the original server/direct URL if the browser blocks canvas readback.
     }
 
-    addLayer({
-      id,
-      name: request.prompt.slice(0, 42),
-      type: "image",
+    return {
       src: stableSrc,
       naturalW,
       naturalH,
+      face: activeFace,
+      request,
+      model,
+    };
+  };
+
+  const approvePendingArtwork = () => {
+    if (!pendingArtwork) return;
+    const layerId = crypto.randomUUID?.() ?? Math.random().toString(36).slice(2, 12);
+    addLayer({
+      id: layerId,
+      name: pendingArtwork.request.prompt.slice(0, 42),
+      type: "image",
+      src: pendingArtwork.src,
+      naturalW: pendingArtwork.naturalW,
+      naturalH: pendingArtwork.naturalH,
       visible: true,
       locked: false,
-      transform: fitImageTransform(naturalW, naturalH, { w: printZone.w, h: printZone.h }, { padding: 0.88, maxScale: 4 }),
-      face: activeFace,
+      transform: fitImageTransform(pendingArtwork.naturalW, pendingArtwork.naturalH, { w: printZone.w, h: printZone.h }, { padding: 0.88, maxScale: 4 }),
+      face: pendingArtwork.face as typeof activeFace,
     });
-    selectLayer(id);
+    setPendingArtwork(null);
+    selectLayer(layerId);
     setActiveTab("layers");
-    return model;
   };
 
   const handleGenerate = async (request = { prompt: prompt.trim(), negative: negative.trim() }) => {
@@ -111,9 +133,10 @@ export function AIPanel() {
     stopProgress();
 
     try {
-      let generatedSrc: string;
-      let usedModel = "flux-realism";
       const seed = Math.floor(Math.random() * 999999);
+      let generationPrompt: string;
+      let model = "flux-realism";
+      const params = new URLSearchParams({ width: "1024", height: "1024", nologo: "true", enhance: "true", negative: request.negative, seed: String(seed), model });
 
       if (referenceSrc) {
         setProgress(18);
@@ -126,22 +149,25 @@ export function AIPanel() {
         if (!uploadRes.ok || !uploadJson.url) throw new Error(uploadJson.error || "Reference upload failed.");
 
         setProgress(35);
-        const editPrompt = `${request.prompt}. Use the supplied reference image as the visual source. Preserve the recognizable subject and overall composition, remove unwanted background artifacts, and produce a clean centered print-ready result. ${request.negative ? `Avoid: ${request.negative}.` : ""}`;
-        const params = new URLSearchParams({ prompt: editPrompt, seed: String(seed), model: "flux-kontext", imageUrl: uploadJson.url, width: "1024", height: "1024" });
-        const genRes = await fetch(getApiUrl(`/api/ai/generate?${params.toString()}`));
-        const genJson = await genRes.json().catch(() => ({})) as { dataUrl?: string; model?: string; error?: string };
-        if (!genRes.ok || !genJson.dataUrl) throw new Error(genJson.error || "Reference editing failed.");
-        generatedSrc = genJson.dataUrl;
-        usedModel = genJson.model ?? "flux-kontext";
+        generationPrompt = `${request.prompt}. Use the supplied reference image as the visual source. Preserve the recognizable subject and overall composition, remove unwanted background artifacts, and produce a clean centered print-ready result. ${request.negative ? `Avoid: ${request.negative}.` : ""}`;
+        model = "flux-kontext";
+        params.set("imageUrl", uploadJson.url);
       } else {
         const suffix = ", product design artwork, high detail, clean centered composition, print-ready, no mockup background";
-        const fullPrompt = request.prompt + suffix + (request.negative ? `, avoid: ${request.negative}` : "");
-        const query = new URLSearchParams({ width: "1024", height: "1024", nologo: "true", enhance: "true", negative: request.negative, seed: String(seed), model: "flux-realism" });
-        generatedSrc = `https://image.pollinations.ai/prompt/${encodeURIComponent(fullPrompt)}?${query.toString()}`;
+        generationPrompt = request.prompt + suffix + (request.negative ? `, avoid: ${request.negative}` : "");
+      }
+
+      params.set("prompt", generationPrompt);
+      params.set("model", model);
+      const genRes = await fetch(getApiUrl(`/api/ai/generate?${params.toString()}`));
+      const genJson = await genRes.json().catch(() => ({})) as { dataUrl?: string; model?: string; validation?: { width?: number; height?: number }; error?: string };
+      if (!genRes.ok || !genJson.dataUrl || !genJson.validation?.width || !genJson.validation?.height) {
+        throw new Error(genJson.error || "The server did not accept the generated artwork.");
       }
 
       setProgress(82);
-      await loadGeneratedImage(generatedSrc, request, usedModel);
+      const candidate = await prepareGeneratedImage(genJson.dataUrl, request, genJson.model ?? model);
+      setPendingArtwork(candidate);
       setProgress(100);
       setError(null);
     } catch (generationError) {
@@ -157,14 +183,14 @@ export function AIPanel() {
     <div className="space-y-3 p-4">
       <div className="flex items-center justify-between">
         <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">AI Design Assistant</label>
-        {(prompt || referenceSrc) && <button type="button" onClick={() => { setPrompt(""); setReferenceSrc(null); setReferenceName(null); setError(null); }} className="flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-gray-700"><X className="h-3 w-3" /> Clear</button>}
+        {(prompt || referenceSrc || pendingArtwork) && <button type="button" onClick={() => { setPrompt(""); setReferenceSrc(null); setReferenceName(null); setPendingArtwork(null); setError(null); }} className="flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-gray-700"><X className="h-3 w-3" /> Clear</button>}
       </div>
 
       <div className="rounded-2xl border border-violet-100 bg-violet-50/70 p-3">
         <div className="flex items-center justify-between gap-2">
           <div>
             <div className="flex items-center gap-1.5 text-[11px] font-black text-violet-800"><Link2 className="h-3.5 w-3.5" /> Use a reference image</div>
-            <p className="mt-1 text-[10px] leading-4 text-violet-600">Upload an image, describe the change, and the AI result will be placed on the current print zone.</p>
+            <p className="mt-1 text-[10px] leading-4 text-violet-600">Upload an image, describe the change, then approve the server-validated result before it enters the current print zone.</p>
           </div>
           <div className="flex shrink-0 flex-col gap-1.5">
             <button type="button" onClick={() => referenceInputRef.current?.click()} disabled={generating} className="rounded-xl bg-white px-3 py-2 text-[10px] font-black text-violet-700 shadow-sm transition hover:bg-violet-100 active:scale-95"><ImagePlus className="mr-1 inline h-3.5 w-3.5" />Choose</button>
@@ -192,10 +218,11 @@ export function AIPanel() {
         <summary className="flex cursor-pointer select-none list-none items-center gap-1 text-[10px] font-black uppercase tracking-widest text-gray-400"><span className="inline-block transition-transform group-open:rotate-90">▶</span> Negative prompt</summary>
         <input value={negative} onChange={(e) => setNegative(e.target.value.slice(0, 300))} placeholder="blurry, watermark, cropped" className="mt-2 w-full rounded-xl border border-gray-200 px-3 py-2 text-xs outline-none focus:border-purple-400" disabled={generating} />
       </details>
-      <p className="text-[10px] text-gray-400">The result is added as an editable layer, fitted to the active print zone, and shown on the product before checkout.</p>
+      <p className="text-[10px] text-gray-400">Generated artwork is server-validated first, then requires your approval before it becomes an editable layer in the recorded print zone.</p>
       {generating && <div className="space-y-1.5 rounded-xl border border-purple-100 bg-purple-50 p-3"><div className="flex items-center justify-between text-[11px] font-bold text-purple-700"><span className="flex items-center gap-1.5"><Loader2 className="h-3 w-3 animate-spin" /> {referenceSrc ? "Editing reference…" : "Creating print-ready art…"}</span><span className="text-[10px] font-black text-purple-400">{Math.round(progress)}%</span></div><div className="h-1.5 overflow-hidden rounded-full bg-purple-200"><div className="h-full rounded-full bg-gradient-to-r from-purple-600 to-purple-400 transition-all duration-500" style={{ width: `${progress}%` }} /></div></div>}
       {error && <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-700"><Info className="mt-0.5 h-3.5 w-3.5 shrink-0" /><span className="flex-1">{error}</span>{lastRequest && <button type="button" onClick={() => void handleGenerate(lastRequest)} className="flex items-center gap-1 font-black underline"><RefreshCw className="h-3 w-3" /> Retry</button>}</div>}
-      <button type="button" onClick={() => void handleGenerate()} disabled={generating || !prompt.trim()} className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-purple-500 py-3 text-sm font-black text-white disabled:opacity-50"><Wand2 className="h-4 w-4" /> {generating ? "Working…" : referenceSrc ? "Edit reference & add design" : "Generate AI image"}</button>
+      {pendingArtwork && <div className="space-y-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3"><div className="flex items-center gap-2"><img src={pendingArtwork.src} alt="Server-validated AI artwork candidate" className="h-14 w-14 rounded-lg border border-emerald-100 bg-white object-cover" /><div className="min-w-0 flex-1"><div className="text-[11px] font-black text-emerald-800">Ready for print-zone approval</div><p className="mt-0.5 text-[10px] leading-4 text-emerald-700">{pendingArtwork.naturalW} × {pendingArtwork.naturalH}px · {pendingArtwork.model}</p></div></div><div className="flex gap-2"><button type="button" onClick={approvePendingArtwork} className="flex-1 rounded-lg bg-emerald-600 px-3 py-2 text-[11px] font-black text-white">Approve & add layer</button><button type="button" onClick={() => setPendingArtwork(null)} className="rounded-lg border border-emerald-200 bg-white px-3 py-2 text-[11px] font-black text-emerald-700">Discard</button></div></div>}
+      <button type="button" onClick={() => void handleGenerate()} disabled={generating || !prompt.trim()} className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-purple-500 py-3 text-sm font-black text-white disabled:opacity-50"><Wand2 className="h-4 w-4" /> {generating ? "Working…" : referenceSrc ? "Edit reference preview" : "Generate AI preview"}</button>
     </div>
   );
 }

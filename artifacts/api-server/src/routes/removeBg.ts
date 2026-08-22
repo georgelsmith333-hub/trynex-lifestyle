@@ -1,6 +1,7 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import { db, settingsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
+import { validateBackgroundRemovalOutput } from "../lib/transformedImageValidation";
 
 const router: IRouter = Router();
 
@@ -108,8 +109,16 @@ router.post("/remove-bg", async (req: Request, res: Response) => {
     }
 
     const resultBuffer = Buffer.from(await response.arrayBuffer());
+    const validation = await validateBackgroundRemovalOutput(resultBuffer);
+    if (!validation.valid) {
+      req.log?.warn?.({ reason: validation.reason }, "remove.bg returned an unaccepted transformed image");
+      return res.status(422).json({
+        error: "invalid_transformed_output",
+        message: "The background-removal output did not pass transparency and image validation. Your original artwork was kept.",
+      });
+    }
     const resultBase64 = `data:image/png;base64,${resultBuffer.toString("base64")}`;
-    return res.json({ result: resultBase64 });
+    return res.json({ result: resultBase64, validation });
   } catch (err) {
     req.log?.error?.({ err }, "remove-bg error");
     return res.status(500).json({ error: "internal_error", message: "Failed to remove background — please try again." });
