@@ -1,7 +1,7 @@
 {
   "version": "smart-v8",
   "sourceVersion": "smart-v4",
-  "generatedAt": "2026-08-22T01:02:04.411Z",
+  "generatedAt": "2026-08-22T01:10:53.364Z",
   "assetCount": 188,
   "assets": [
     {
@@ -12,9 +12,14 @@
       "sourcePath": "/mockups/smart-v4/cap/black/back.png",
       "assetPath": "/mockups/smart-v8/cap/black/back.png",
       "sha256": "4339ae99717d9c14800b234dae11c1ee3e27cf9e852f3501012ed5c8b3624164",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -25,9 +30,14 @@
       "sourcePath": "/mockups/smart-v4/cap/black/front.png",
       "assetPath": "/mockups/smart-v8/cap/black/front.png",
       "sha256": "5e0cc40b50f5e42f51191764a51c1040ff58cffccf325622fc08d9451300bcb0",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -38,9 +48,14 @@
       "sourcePath": "/mockups/smart-v4/cap/forest/back.png",
       "assetPath": "/mockups/smart-v8/cap/forest/back.png",
       "sha256": "340cc95947ef6ce542cbf735187b5dad2ff0cd22eda710a8b695a2b7aa442aa5",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -51,9 +66,14 @@
       "sourcePath": "/mockups/smart-v4/cap/forest/front.png",
       "assetPath": "/mockups/smart-v8/cap/forest/front.png",
       "sha256": "aa4f8d9b473873645f334ad08aa079bc4ae056dc287160e924f4fa09f4cfbecb",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -64,9 +84,14 @@
       "sourcePath": "/mockups/smart-v4/cap/grey/back.png",
       "assetPath": "/mockups/smart-v8/cap/grey/back.png",
       "sha256": "607c0219b1f6a4288955348c61de2f74a264f8c4694a6700e2467d5e246baa8e",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -77,9 +102,14 @@
       "sourcePath": "/mockups/smart-v4/cap/grey/front.png",
       "assetPath": "/mockups/smart-v8/cap/grey/front.png",
       "sha256": "1ff67ed38f9c363a08ff1ce377f40e9ad2a1cf4290bf84b0497ea3b847f8ee2d",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -90,9 +120,14 @@
       "sourcePath": "/mockups/smart-v4/cap/maroon/back.png",
       "assetPath": "/mockups/smart-v8/cap/maroon/back.png",
       "sha256": "06a484b631b1f27ff73ba13fcc7596b75e2d42bbdaaf0cda19926115c699cd0b",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -103,9 +138,14 @@
       "sourcePath": "/mockups/smart-v4/cap/maroon/front.png",
       "assetPath": "/mockups/smart-v8/cap/maroon/front.png",
       "sha256": "45a8b12fae6a41b5e12d96ad3107a96196f5c6f3957d10f89ef9da2a4b47b5c5",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -116,9 +156,14 @@
       "sourcePath": "/mockups/smart-v4/cap/navy/back.png",
       "assetPath": "/mockups/smart-v8/cap/navy/back.png",
       "sha256": "139daf0f377db08b7a32de702bb52a734de9a8ad294d1221312d2331515ff7b1",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -129,9 +174,14 @@
       "sourcePath": "/mockups/smart-v4/cap/navy/front.png",
       "assetPath": "/mockups/smart-v8/cap/navy/front.png",
       "sha256": "b3e476a72d664d24560dcd18744a064bf9a19b82b7a439bd8a4d6841ed491dc0",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -142,9 +192,14 @@
       "sourcePath": "/mockups/smart-v4/cap/olive/back.png",
       "assetPath": "/mockups/smart-v8/cap/olive/back.png",
       "sha256": "6d1fb7d12dfd3b700442185e36bdddb7b7123bd0b6243cf1cbb11554c52adf6f",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -155,9 +210,14 @@
       "sourcePath": "/mockups/smart-v4/cap/olive/front.png",
       "assetPath": "/mockups/smart-v8/cap/olive/front.png",
       "sha256": "a8b3f31811dd49c693bcfb6efa39d1b98bc2e9e3bb8b897aa270f08050c46842",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -168,9 +228,14 @@
       "sourcePath": "/mockups/smart-v4/cap/red/back.png",
       "assetPath": "/mockups/smart-v8/cap/red/back.png",
       "sha256": "28bb8f4613afc8604e6fe73741310e68f8bd24b22bde9ffa3ff9d38a79e4a533",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -181,9 +246,14 @@
       "sourcePath": "/mockups/smart-v4/cap/red/front.png",
       "assetPath": "/mockups/smart-v8/cap/red/front.png",
       "sha256": "7acefc74954345fe8187b060e7aa89090b3a54988594fd26762c7bd5c3737e67",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -194,9 +264,14 @@
       "sourcePath": "/mockups/smart-v4/cap/white/back.png",
       "assetPath": "/mockups/smart-v8/cap/white/back.png",
       "sha256": "fd400554b20942ab809d0f1484aa6581714dabfdb34013f99c48e16709009279",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -207,9 +282,14 @@
       "sourcePath": "/mockups/smart-v4/cap/white/front.png",
       "assetPath": "/mockups/smart-v8/cap/white/front.png",
       "sha256": "58158b23b45c906a2a1a5078f9343b95911d95915b2ffbe6e2b326240e9f2028",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -220,9 +300,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/black/back.png",
       "assetPath": "/mockups/smart-v8/hoodie/black/back.png",
       "sha256": "0c5e2b7c01b3a3246f0d40371f435be10ebcc40ac30ff9410d3e53660ea795a4",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -233,9 +318,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/black/front.png",
       "assetPath": "/mockups/smart-v8/hoodie/black/front.png",
       "sha256": "b872d385cac324d59f6b55bf25ec3120c282adad3ee71b59ec5243a063bb6bd6",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -246,9 +336,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/black/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/hoodie/black/left-sleeve.png",
       "sha256": "8799b46eeff4d8a5aae695fd8de444c54a46ae583a4f0a6ec75a95095f3187b2",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -259,9 +354,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/black/neck-label.png",
       "assetPath": "/mockups/smart-v8/hoodie/black/neck-label.png",
       "sha256": "d791ebcd3f114047c09c3ee9ff03f94d83634ec9566b09efe705f3c1abcfc96c",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -272,9 +372,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/black/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/hoodie/black/right-sleeve.png",
       "sha256": "46947b43bcfea03c692c749f7105cef258abe5d4474922fcecbab8153e166226",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -285,9 +390,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/burgundy/back.png",
       "assetPath": "/mockups/smart-v8/hoodie/burgundy/back.png",
       "sha256": "26fb5e016ba54fe8b42e7343ec1c01db2dbe93d32711021ca997ce4f03297dce",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -298,9 +408,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/burgundy/front.png",
       "assetPath": "/mockups/smart-v8/hoodie/burgundy/front.png",
       "sha256": "1c9e1bae5b13f90d0b73732c0af1eba6f4c2cb1542aff75b6fffdb8d4be46a6b",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -311,9 +426,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/burgundy/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/hoodie/burgundy/left-sleeve.png",
       "sha256": "97726a2690b434db429d03ed6b5b7d32acf8cf39f3bb502c6dfc80afdced6680",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -324,9 +444,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/burgundy/neck-label.png",
       "assetPath": "/mockups/smart-v8/hoodie/burgundy/neck-label.png",
       "sha256": "338d190cc8b8ab93e0909c5cd3c6a33a505059eb6f6892075268122852002d9d",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -337,9 +462,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/burgundy/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/hoodie/burgundy/right-sleeve.png",
       "sha256": "0f93b7f1802d1642890b5b5cb25a9c7d5f34b72c33e91667bc6a9afc4d1be339",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -350,9 +480,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/forest/back.png",
       "assetPath": "/mockups/smart-v8/hoodie/forest/back.png",
       "sha256": "035d567af78df6bfa96e6dcf3eb45f168ee8ea70e8c172499edf27167f98d6e8",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -363,9 +498,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/forest/front.png",
       "assetPath": "/mockups/smart-v8/hoodie/forest/front.png",
       "sha256": "4278728d921787c11b5b217f8db87b1c0800be4c20578ca0178a4d69bfc70003",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -376,9 +516,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/forest/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/hoodie/forest/left-sleeve.png",
       "sha256": "c19a726c6da9b70ce4ba4ec3f398725d4771e876efccd4beb2f34f0b8f39fda9",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -389,9 +534,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/forest/neck-label.png",
       "assetPath": "/mockups/smart-v8/hoodie/forest/neck-label.png",
       "sha256": "4e89c0fc54b07ec83bbe0879f314fab29fe51a6661b55d4063eb231bd6df9074",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -402,9 +552,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/forest/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/hoodie/forest/right-sleeve.png",
       "sha256": "60d7cf5841b77148e0899fce705041bb8c2e4e1a10a9ed3a2477fd8535140908",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -415,9 +570,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/grey/back.png",
       "assetPath": "/mockups/smart-v8/hoodie/grey/back.png",
       "sha256": "ac205d4170fba2375eb6b405978b5690b17fae1d86a0c6b3e4395cb4435d3ba5",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -428,9 +588,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/grey/front.png",
       "assetPath": "/mockups/smart-v8/hoodie/grey/front.png",
       "sha256": "41ae6591df79c79b8bbd9f71b04b91b2fd474c6e8ea126951386d3c79a796331",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -441,9 +606,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/grey/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/hoodie/grey/left-sleeve.png",
       "sha256": "840f3ecd1697c274a642818cb95f5b88f3ec5a9c687272b1ebf9272a3aebaeb7",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -454,9 +624,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/grey/neck-label.png",
       "assetPath": "/mockups/smart-v8/hoodie/grey/neck-label.png",
       "sha256": "b008619bac2a56ecef1637825f4538f862c033f04897400f7f4f2e8eacbfffdb",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -467,9 +642,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/grey/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/hoodie/grey/right-sleeve.png",
       "sha256": "c4c0fd54deec91ba02d6094eedf5dbd4f4273346724fbcfa0857d2a181d7a820",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -480,9 +660,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/maroon/back.png",
       "assetPath": "/mockups/smart-v8/hoodie/maroon/back.png",
       "sha256": "42a169a1e60cf97aa358a2d928805f328194ee0613d11b153bd917dfe1722fed",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -493,9 +678,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/maroon/front.png",
       "assetPath": "/mockups/smart-v8/hoodie/maroon/front.png",
       "sha256": "a01a58153de3b3677ff473518eaf1f36cc74fe980fbacc5de4daab409c86cde5",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -506,9 +696,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/maroon/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/hoodie/maroon/left-sleeve.png",
       "sha256": "e883d1db6f30231bf758b85111191bd63bfc8579e70a152f8e7a6c41fe0e34be",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -519,9 +714,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/maroon/neck-label.png",
       "assetPath": "/mockups/smart-v8/hoodie/maroon/neck-label.png",
       "sha256": "6e7d280286f1924807e07482026ed0b1d74cbe9a6ac5f49c1554d3f71bfa0775",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -532,9 +732,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/maroon/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/hoodie/maroon/right-sleeve.png",
       "sha256": "17356fd3b8189c66c2c869bdb03b885dfefe00eb32f4c3e0fa99ff16ca28d97d",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -545,9 +750,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/navy/back.png",
       "assetPath": "/mockups/smart-v8/hoodie/navy/back.png",
       "sha256": "ccc20992fe3039a513a4ddf0e295a3efb2c6dbe68d0df708fe5fe79679eccd24",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -558,9 +768,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/navy/front.png",
       "assetPath": "/mockups/smart-v8/hoodie/navy/front.png",
       "sha256": "13a01f4b74421f6a356812b027f5a0b83cbde2b6312519609999fc4154213584",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -571,9 +786,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/navy/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/hoodie/navy/left-sleeve.png",
       "sha256": "33c2aed0a38d10f2b49fae03defb70b25b55c16b19bceae59d7cf91d0b8b6546",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -584,9 +804,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/navy/neck-label.png",
       "assetPath": "/mockups/smart-v8/hoodie/navy/neck-label.png",
       "sha256": "ec5d206524785038b8a2d63e39ec9e3f976d099a5329dcf1d973ca154da04575",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -597,9 +822,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/navy/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/hoodie/navy/right-sleeve.png",
       "sha256": "53124ca09077f14cd8e61371d493b7574a81d22e7766d1b9209e0601b4aa2b98",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -610,9 +840,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/olive/back.png",
       "assetPath": "/mockups/smart-v8/hoodie/olive/back.png",
       "sha256": "bf60c54f6ef9d36c204a90c033448bbed2c5865806557cfef9bad32b49abe2c0",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -623,9 +858,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/olive/front.png",
       "assetPath": "/mockups/smart-v8/hoodie/olive/front.png",
       "sha256": "7886de3308fe9a1424fce17cb3df641f7c564f4cf7769df5145f8d92c9014942",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -636,9 +876,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/olive/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/hoodie/olive/left-sleeve.png",
       "sha256": "48b68b4b99dc798c37dc4003efc8a6fd33833a63ecd540639d99e051347147d0",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -649,9 +894,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/olive/neck-label.png",
       "assetPath": "/mockups/smart-v8/hoodie/olive/neck-label.png",
       "sha256": "23238ea1049dc6b5e4a27bfc627282762542bdf8828cbf46012fcd78f5dd2808",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -662,9 +912,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/olive/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/hoodie/olive/right-sleeve.png",
       "sha256": "3defbd7b51aa45e9bbd4ebd7899d61c337811cb690ebdf3f65709f95c01cc7a2",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -675,9 +930,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/red/back.png",
       "assetPath": "/mockups/smart-v8/hoodie/red/back.png",
       "sha256": "791aa1b695e5ddb808ab2929a902b242f355120bd223913b9146e19caf2b1308",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -688,9 +948,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/red/front.png",
       "assetPath": "/mockups/smart-v8/hoodie/red/front.png",
       "sha256": "ec58244446c9ad0b3249031304d43ce9d329bf9f8701f8f6b0a023d66a0e0f34",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -701,9 +966,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/red/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/hoodie/red/left-sleeve.png",
       "sha256": "c2b4297aab19997ce68f92733a34a58c8be0244e3a7dab09bb4521519dbcb368",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -714,9 +984,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/red/neck-label.png",
       "assetPath": "/mockups/smart-v8/hoodie/red/neck-label.png",
       "sha256": "14d12ef8e23fc056e23ff3c9538fcf28cbfc06b46442b08fcffb3f0900abeaaa",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -727,9 +1002,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/red/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/hoodie/red/right-sleeve.png",
       "sha256": "aaceae6a23b7083e9a9333f399dc4335349da108fa9bf2bfc1b28fee62701cc6",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -740,9 +1020,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/sky-blue/back.png",
       "assetPath": "/mockups/smart-v8/hoodie/sky-blue/back.png",
       "sha256": "72867cc313500c353be00a4cb44e845c733c59a8bd11ca9fb47ced5fc6331e70",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -753,9 +1038,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/sky-blue/front.png",
       "assetPath": "/mockups/smart-v8/hoodie/sky-blue/front.png",
       "sha256": "d6d837de3f0c524df82df148448c9b63a84a19ce6144d5ff35ac4a852998668a",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -766,9 +1056,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/sky-blue/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/hoodie/sky-blue/left-sleeve.png",
       "sha256": "ca43c2817bd89be94e7d3e5992e8a1cdabea77beda628f72ec97f126fce75c2f",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -779,9 +1074,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/sky-blue/neck-label.png",
       "assetPath": "/mockups/smart-v8/hoodie/sky-blue/neck-label.png",
       "sha256": "9aad475daf4b157f47739d7453d4aafaf631d39e4383acd6350b822112eacc5b",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -792,9 +1092,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/sky-blue/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/hoodie/sky-blue/right-sleeve.png",
       "sha256": "c167820c578adae192c956b4036be837a4756514a08d393a21523af3f864b87f",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -805,9 +1110,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/white/back.png",
       "assetPath": "/mockups/smart-v8/hoodie/white/back.png",
       "sha256": "43a7aa22d8c466b3327331d5b3183a99da3d8dc5714557b8df37e9ccfed9ed34",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -818,9 +1128,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/white/front.png",
       "assetPath": "/mockups/smart-v8/hoodie/white/front.png",
       "sha256": "f599960c852d170f2b3f8f6654959ea5b7f382375e599a4566956ebe1a27beae",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -831,9 +1146,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/white/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/hoodie/white/left-sleeve.png",
       "sha256": "619ff265854bef66ede5c195ffdf7e30bc9a4a3b0df9c934c3dcd2fabce90a33",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -844,9 +1164,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/white/neck-label.png",
       "assetPath": "/mockups/smart-v8/hoodie/white/neck-label.png",
       "sha256": "15bdeeed1f25e10ccb567c22e4ab719926ecf47f49f7a264fb545f060d880806",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -857,9 +1182,14 @@
       "sourcePath": "/mockups/smart-v4/hoodie/white/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/hoodie/white/right-sleeve.png",
       "sha256": "c58c59d3628ebdb0834913182faa17bcd7aa278f2e8df8c4bf830ca4faa0e55e",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -870,9 +1200,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/black/back.png",
       "assetPath": "/mockups/smart-v8/longsleeve/black/back.png",
       "sha256": "72fe2d91e3928e532ffbf09324890bc7df7e23e85aa9b74e9ea2fd6697171677",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -883,9 +1218,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/black/front.png",
       "assetPath": "/mockups/smart-v8/longsleeve/black/front.png",
       "sha256": "39e5a8ca764f31429b41825d17df94c31670452ef100f377c1c1f180d04ca153",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -896,9 +1236,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/black/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/longsleeve/black/left-sleeve.png",
       "sha256": "8729270b246a81ab3a697f592d23c83a52122b8be7d004c6d43c7a9f710e1fc7",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -909,9 +1254,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/black/neck-label.png",
       "assetPath": "/mockups/smart-v8/longsleeve/black/neck-label.png",
       "sha256": "b4fff326d447991c0b8143bddc238e8db502967a238483a338fd49f991f6dd67",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -922,9 +1272,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/black/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/longsleeve/black/right-sleeve.png",
       "sha256": "51f58521169b04b8abb7b84dc9105ed71345c92b8a57a3b77bc6514ee65d0a39",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -935,9 +1290,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/burgundy/back.png",
       "assetPath": "/mockups/smart-v8/longsleeve/burgundy/back.png",
       "sha256": "e12f3c679599b1ce993b0c497488cab24c429dd02d26d06ade55e57c879ecd48",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -948,9 +1308,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/burgundy/front.png",
       "assetPath": "/mockups/smart-v8/longsleeve/burgundy/front.png",
       "sha256": "1caffe8eea9ae59d0f5b9c9a6df89b0f58fec35666cda6647e8ba629384d5cfc",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -961,9 +1326,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/burgundy/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/longsleeve/burgundy/left-sleeve.png",
       "sha256": "ec651fd0c38a334d0136c04d3659c33f1499459e4153a38f1fee16b26c1b4cf1",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -974,9 +1344,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/burgundy/neck-label.png",
       "assetPath": "/mockups/smart-v8/longsleeve/burgundy/neck-label.png",
       "sha256": "17506958efdd3ee066e7a40d5aee341336753615879b9f373442fef2b1ee4cb7",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -987,9 +1362,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/burgundy/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/longsleeve/burgundy/right-sleeve.png",
       "sha256": "a3683ce1e3128243ab68c0c39bebce2a6c39b9fd8b4b754d3f94f8f34bf03aa7",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1000,9 +1380,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/forest/back.png",
       "assetPath": "/mockups/smart-v8/longsleeve/forest/back.png",
       "sha256": "1a9ab6e7099026e03452952dda08f7255a0c7f8ca96eec901d2c8c16fcef35ec",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1013,9 +1398,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/forest/front.png",
       "assetPath": "/mockups/smart-v8/longsleeve/forest/front.png",
       "sha256": "d79ccbf05b0cd0359ac0c46e2d79d0282735659c244bd4cbf1a98c835fb562a4",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1026,9 +1416,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/forest/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/longsleeve/forest/left-sleeve.png",
       "sha256": "210820c34525183838cbe1157da47491c303da4164ce5764cc2ea93ba49f2d8c",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1039,9 +1434,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/forest/neck-label.png",
       "assetPath": "/mockups/smart-v8/longsleeve/forest/neck-label.png",
       "sha256": "a74cc10fb8770ef7bb97a24b8515152aebd7f3137b07b7f510604c155b9356ef",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1052,9 +1452,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/forest/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/longsleeve/forest/right-sleeve.png",
       "sha256": "c322b856c2effc38e4ea819d328ef62c06c6ae39d285a8f215ea9989d9c29ee0",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1065,9 +1470,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/grey/back.png",
       "assetPath": "/mockups/smart-v8/longsleeve/grey/back.png",
       "sha256": "6b90f961bf4387549670cc54c8dd0b1ddeb76a737ef83296d043891ba83b4028",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1078,9 +1488,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/grey/front.png",
       "assetPath": "/mockups/smart-v8/longsleeve/grey/front.png",
       "sha256": "3233c4a32be9c675018bfdc06bca5989cfc22c1d86061efcca862f9c1749b03a",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1091,9 +1506,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/grey/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/longsleeve/grey/left-sleeve.png",
       "sha256": "4732783bc5378fb678de8e7973d34df98b6211f1bc27924d9f0344deceeffd14",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1104,9 +1524,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/grey/neck-label.png",
       "assetPath": "/mockups/smart-v8/longsleeve/grey/neck-label.png",
       "sha256": "4852d4510235b06edb5bfe7f21ee973b4aedf9d093cac76321282bc493835aa0",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1117,9 +1542,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/grey/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/longsleeve/grey/right-sleeve.png",
       "sha256": "779322e7666b247e6b98a411f7edbeb81844e39fced47a681a70c412c1b9a98f",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1130,9 +1560,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/maroon/back.png",
       "assetPath": "/mockups/smart-v8/longsleeve/maroon/back.png",
       "sha256": "4df62ed6a6c80bd66551897a11315820f4851cc45fd26796b0ee955ad7ac214e",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1143,9 +1578,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/maroon/front.png",
       "assetPath": "/mockups/smart-v8/longsleeve/maroon/front.png",
       "sha256": "63b080592df72cce386a6b587892254cb9226f337d0cca66731ee14104224b25",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1156,9 +1596,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/maroon/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/longsleeve/maroon/left-sleeve.png",
       "sha256": "a7b1b69263a1e12066c42fa8007e37e1c77ba6a96198182cf8ed6638a8bc402d",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1169,9 +1614,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/maroon/neck-label.png",
       "assetPath": "/mockups/smart-v8/longsleeve/maroon/neck-label.png",
       "sha256": "e8cbfa9441d69818497aca958ba85df9a9ad4582838af4ff7fee4843966d9dfc",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1182,9 +1632,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/maroon/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/longsleeve/maroon/right-sleeve.png",
       "sha256": "1cd20949a5aa418e88a3b3cc8f59cb6710f004b1670b2919366e53c24683dcdc",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1195,9 +1650,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/navy/back.png",
       "assetPath": "/mockups/smart-v8/longsleeve/navy/back.png",
       "sha256": "41a8e742fc67f7f6bf7e73294cc37d235d2469010452488c8b15beaf73d843ab",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1208,9 +1668,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/navy/front.png",
       "assetPath": "/mockups/smart-v8/longsleeve/navy/front.png",
       "sha256": "e74ab3d4dafd6f9400aa01b22996e07270b764718146f6ba7e06993c4c880701",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1221,9 +1686,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/navy/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/longsleeve/navy/left-sleeve.png",
       "sha256": "9df727780e6448fbc8281962687017bd7ca07f6fbb460e38f070ced51d6651d5",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1234,9 +1704,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/navy/neck-label.png",
       "assetPath": "/mockups/smart-v8/longsleeve/navy/neck-label.png",
       "sha256": "a829aa012fd774ede7faeb209d8c7d55a26e9fe00116da57ef7a1a78f122ee4a",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1247,9 +1722,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/navy/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/longsleeve/navy/right-sleeve.png",
       "sha256": "45d0b4a42daed5a9db671a2dc78c05d93c647f4783d966adb01d5ff75c2d848c",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1260,9 +1740,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/olive/back.png",
       "assetPath": "/mockups/smart-v8/longsleeve/olive/back.png",
       "sha256": "1b27b5a18609a7adf31f43004cee803e3f623709bda7d771613c016a4c8ff554",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1273,9 +1758,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/olive/front.png",
       "assetPath": "/mockups/smart-v8/longsleeve/olive/front.png",
       "sha256": "e4e067ef9bfdd3e5b53eb9dc478ce2d7e0975eee3d0b8ed79d162267d653f535",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1286,9 +1776,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/olive/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/longsleeve/olive/left-sleeve.png",
       "sha256": "e9bd89880c46b2e10d4afa0453f089363ab41da1c274e97263ac51fa05792a06",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1299,9 +1794,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/olive/neck-label.png",
       "assetPath": "/mockups/smart-v8/longsleeve/olive/neck-label.png",
       "sha256": "b17eea71c5e3ed1cae6b01a4bd5bf918ceedba131692965cef3e06bd16abc4de",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1312,9 +1812,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/olive/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/longsleeve/olive/right-sleeve.png",
       "sha256": "f6f036195b38f5d1126a325ec5a6c640279837eed52e22b825cf1535668ee204",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1325,9 +1830,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/red/back.png",
       "assetPath": "/mockups/smart-v8/longsleeve/red/back.png",
       "sha256": "4e4bdf77cdeb0082e241af0390a84dd54812f0fadd7885d1da2f564b889f1010",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1338,9 +1848,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/red/front.png",
       "assetPath": "/mockups/smart-v8/longsleeve/red/front.png",
       "sha256": "c05f128e7e95d6a1ea9b7cb8d02c2054eff15b277372265720bacac82042a2bc",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1351,9 +1866,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/red/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/longsleeve/red/left-sleeve.png",
       "sha256": "a5cc1e9097a695b016849e890fe425b9fe22d2a2ae765f900bd8ebac50a91f2a",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1364,9 +1884,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/red/neck-label.png",
       "assetPath": "/mockups/smart-v8/longsleeve/red/neck-label.png",
       "sha256": "1892ae88d80ade329c7b59a1efabd8f1ea8b29614fb9d6de1b9baa41c268b249",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1377,9 +1902,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/red/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/longsleeve/red/right-sleeve.png",
       "sha256": "e55c82868eb0553707664d33e1862ddecaba2efb39e501a5ffbf474a120bdb30",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1390,9 +1920,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/sky-blue/back.png",
       "assetPath": "/mockups/smart-v8/longsleeve/sky-blue/back.png",
       "sha256": "e410e905319b9a70c560451e6218d43c0e1866988632891b2cff45c499b27ac4",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1403,9 +1938,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/sky-blue/front.png",
       "assetPath": "/mockups/smart-v8/longsleeve/sky-blue/front.png",
       "sha256": "9534f7caaf510b179fdbda3db1b3995e86681dc0e690e784f85d7bafe6664527",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1416,9 +1956,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/sky-blue/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/longsleeve/sky-blue/left-sleeve.png",
       "sha256": "5657920037398038611fc3e7af762851c0111d9a9141d4e7886e9da28f27b872",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1429,9 +1974,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/sky-blue/neck-label.png",
       "assetPath": "/mockups/smart-v8/longsleeve/sky-blue/neck-label.png",
       "sha256": "043ed6c8c47642d9f3ebc5830e80d32a40921eedaaf1d113704563686aa7150a",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1442,9 +1992,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/sky-blue/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/longsleeve/sky-blue/right-sleeve.png",
       "sha256": "81a7ce18301d629bb2088d67af7175f6640aa108a56bb6ef20feb6b83c45d87f",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1455,9 +2010,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/white/back.png",
       "assetPath": "/mockups/smart-v8/longsleeve/white/back.png",
       "sha256": "bff5faa6929fa9f567150a09a8cecd310c7f23c7ce5e3ff3557189d841f1b4c2",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1468,9 +2028,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/white/front.png",
       "assetPath": "/mockups/smart-v8/longsleeve/white/front.png",
       "sha256": "e3a7f9c62d100abcce42f9ed302d1c84c60ee29480e3ef81537419e03958bbb4",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1481,9 +2046,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/white/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/longsleeve/white/left-sleeve.png",
       "sha256": "0068f18eb2725a436f6ecb3545d5ad0b88ff228b3ff9a1295786d342186751e0",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1494,9 +2064,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/white/neck-label.png",
       "assetPath": "/mockups/smart-v8/longsleeve/white/neck-label.png",
       "sha256": "75475c74f577a40bd0e7fa25c1bdd42bfc2e60b4d40db24b59e1584d5c576af0",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1507,9 +2082,14 @@
       "sourcePath": "/mockups/smart-v4/longsleeve/white/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/longsleeve/white/right-sleeve.png",
       "sha256": "599deb217e2e02248c985995b9c4cb82c6f75163d2e9a44e0763593693ca261f",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1520,9 +2100,14 @@
       "sourcePath": "/mockups/smart-v4/mug/black/back.png",
       "assetPath": "/mockups/smart-v8/mug/black/back.png",
       "sha256": "c73641d763d27461d3a96da1b3a6811832877e4abac70661df4f4146a238cef6",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1533,9 +2118,14 @@
       "sourcePath": "/mockups/smart-v4/mug/black/front.png",
       "assetPath": "/mockups/smart-v8/mug/black/front.png",
       "sha256": "60d534235b07831da0dab662f4fd6757044748f807439ae448d5c113e331fe2b",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1546,9 +2136,14 @@
       "sourcePath": "/mockups/smart-v4/mug/black/wrap.png",
       "assetPath": "/mockups/smart-v8/mug/black/wrap.png",
       "sha256": "483004cc738d1f8616c6b043367192f7088881953b2931ea6fdb3c3f7583191a",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1559,9 +2154,14 @@
       "sourcePath": "/mockups/smart-v4/mug/green/back.png",
       "assetPath": "/mockups/smart-v8/mug/green/back.png",
       "sha256": "fa741851e7ad79912220eccf1b303afd1b672f02c494d0e387661fa90e021367",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1572,9 +2172,14 @@
       "sourcePath": "/mockups/smart-v4/mug/green/front.png",
       "assetPath": "/mockups/smart-v8/mug/green/front.png",
       "sha256": "00c421b3aef7b6287c00be8067dbf9e81c2ed3417b6789358f1e1b8814240acd",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1585,9 +2190,14 @@
       "sourcePath": "/mockups/smart-v4/mug/green/wrap.png",
       "assetPath": "/mockups/smart-v8/mug/green/wrap.png",
       "sha256": "059af30ad01c13a38ffc906af94c99c452c4dc2eff76915b78cb130673b0eb8b",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1598,9 +2208,14 @@
       "sourcePath": "/mockups/smart-v4/mug/maroon/back.png",
       "assetPath": "/mockups/smart-v8/mug/maroon/back.png",
       "sha256": "39c79cb8ffcdc3b6148d38086b88da0ae9aefea6f806eb35312c472346b8e739",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1611,9 +2226,14 @@
       "sourcePath": "/mockups/smart-v4/mug/maroon/front.png",
       "assetPath": "/mockups/smart-v8/mug/maroon/front.png",
       "sha256": "7e11aaed39d4ec364a255174a4777ba61c5b358b10cb694cd82ff2ee5b217bc7",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1624,9 +2244,14 @@
       "sourcePath": "/mockups/smart-v4/mug/maroon/wrap.png",
       "assetPath": "/mockups/smart-v8/mug/maroon/wrap.png",
       "sha256": "bbbae3f841a5acbd7315bebc62699d1195e090db2759db8540fab90669441e15",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1637,9 +2262,14 @@
       "sourcePath": "/mockups/smart-v4/mug/navy/back.png",
       "assetPath": "/mockups/smart-v8/mug/navy/back.png",
       "sha256": "feb6397a9564f41382ca44903249d6830f3eb714287e7e0123075704979dc8c2",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1650,9 +2280,14 @@
       "sourcePath": "/mockups/smart-v4/mug/navy/front.png",
       "assetPath": "/mockups/smart-v8/mug/navy/front.png",
       "sha256": "e7410539a4e04fcf4eb5cf614d5a5405cb0d5e830e422d261e1e1a615c7508b1",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1663,9 +2298,14 @@
       "sourcePath": "/mockups/smart-v4/mug/navy/wrap.png",
       "assetPath": "/mockups/smart-v8/mug/navy/wrap.png",
       "sha256": "ff551696a8a99970168883af040fe9cafeca7791af5199dd75b51aa61b3bf7b2",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1676,9 +2316,14 @@
       "sourcePath": "/mockups/smart-v4/mug/orange/back.png",
       "assetPath": "/mockups/smart-v8/mug/orange/back.png",
       "sha256": "a41c7fe112bb0e29d7a77b4483b3d3d70f8e3da12abb93c5279122f7ff2e29ed",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1689,9 +2334,14 @@
       "sourcePath": "/mockups/smart-v4/mug/orange/front.png",
       "assetPath": "/mockups/smart-v8/mug/orange/front.png",
       "sha256": "548e789313b41df4416896efd8e6d0260fbb0af82dee8c36dd54fcec9c3a0341",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1702,9 +2352,14 @@
       "sourcePath": "/mockups/smart-v4/mug/orange/wrap.png",
       "assetPath": "/mockups/smart-v8/mug/orange/wrap.png",
       "sha256": "1ee573ee0e2a38a6be3fca1c459eb9676acdc736fbeec66f6761d2caf09d1772",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1715,9 +2370,14 @@
       "sourcePath": "/mockups/smart-v4/mug/pink/back.png",
       "assetPath": "/mockups/smart-v8/mug/pink/back.png",
       "sha256": "0eb826228434ebcbf2d1e6b38bf6f5901be463703c7e1262d6a49414a56db9c1",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1728,9 +2388,14 @@
       "sourcePath": "/mockups/smart-v4/mug/pink/front.png",
       "assetPath": "/mockups/smart-v8/mug/pink/front.png",
       "sha256": "2e54bfa7e90806bafebefb8b7a28d33908c74bbf4f7ea327df5f2d14ea8f6ada",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1741,9 +2406,14 @@
       "sourcePath": "/mockups/smart-v4/mug/pink/wrap.png",
       "assetPath": "/mockups/smart-v8/mug/pink/wrap.png",
       "sha256": "d8cddf25e9eee4f4a476aebeb312f2d2caba453c89340b0c35df75f3f8f5fb34",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1754,9 +2424,14 @@
       "sourcePath": "/mockups/smart-v4/mug/purple/back.png",
       "assetPath": "/mockups/smart-v8/mug/purple/back.png",
       "sha256": "a7a9b614dc7631439ad5797f6dc3df63ccce0c2c19b5d21576b4560e8281fad0",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1767,9 +2442,14 @@
       "sourcePath": "/mockups/smart-v4/mug/purple/front.png",
       "assetPath": "/mockups/smart-v8/mug/purple/front.png",
       "sha256": "d4fefa2824a24d40c77ba41a261377c80204af2350a890531502c1e2a78b3dd5",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1780,9 +2460,14 @@
       "sourcePath": "/mockups/smart-v4/mug/purple/wrap.png",
       "assetPath": "/mockups/smart-v8/mug/purple/wrap.png",
       "sha256": "0409adfd43491c2fb405d15fcd7d127cffc976e5c2df6b1c402c1f295b92c459",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1793,9 +2478,14 @@
       "sourcePath": "/mockups/smart-v4/mug/red/back.png",
       "assetPath": "/mockups/smart-v8/mug/red/back.png",
       "sha256": "9210b9d6ea9942e4228f4cbd9703fb12764bf33be3687c79b86c515216a59992",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1806,9 +2496,14 @@
       "sourcePath": "/mockups/smart-v4/mug/red/front.png",
       "assetPath": "/mockups/smart-v8/mug/red/front.png",
       "sha256": "bc0f3dd0d8005a4653b827a267c9a8383594e085cc1dd8a9927172698ab3d6ef",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1819,9 +2514,14 @@
       "sourcePath": "/mockups/smart-v4/mug/red/wrap.png",
       "assetPath": "/mockups/smart-v8/mug/red/wrap.png",
       "sha256": "01de4268923189ac09b6a46fd8d42e0f30846a9f9abc8364bc81233226ae867e",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1832,9 +2532,14 @@
       "sourcePath": "/mockups/smart-v4/mug/sky-blue/back.png",
       "assetPath": "/mockups/smart-v8/mug/sky-blue/back.png",
       "sha256": "4e7345702496db57b86d6071379891a1f67e4a22f3ad49c615489e584c686270",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1845,9 +2550,14 @@
       "sourcePath": "/mockups/smart-v4/mug/sky-blue/front.png",
       "assetPath": "/mockups/smart-v8/mug/sky-blue/front.png",
       "sha256": "67f59479ccfbd9fc082431c567552f7710ecf64845446b9a79ee7255f5990b74",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1858,9 +2568,14 @@
       "sourcePath": "/mockups/smart-v4/mug/sky-blue/wrap.png",
       "assetPath": "/mockups/smart-v8/mug/sky-blue/wrap.png",
       "sha256": "705bc1a8c523d7b7c8cd3b0c3dde46c1ebe2f764428a01bb845c98f57937b236",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1871,9 +2586,14 @@
       "sourcePath": "/mockups/smart-v4/mug/white/back.png",
       "assetPath": "/mockups/smart-v8/mug/white/back.png",
       "sha256": "e1c17ac01320fbf02f2f2f4445759a318519bf76994bb42226e61e2ebdef5116",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1884,9 +2604,14 @@
       "sourcePath": "/mockups/smart-v4/mug/white/front.png",
       "assetPath": "/mockups/smart-v8/mug/white/front.png",
       "sha256": "45e3ffac3d9e325d9c47a129a4648de0b8adf20fd75562ed526b39158b66e878",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1897,9 +2622,14 @@
       "sourcePath": "/mockups/smart-v4/mug/white/wrap.png",
       "assetPath": "/mockups/smart-v8/mug/white/wrap.png",
       "sha256": "ac6e33bbc198500ca109a7e7489be16737d1acea0200c835c16e9cc3832585ad",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1910,9 +2640,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/black/back.png",
       "assetPath": "/mockups/smart-v8/tshirt/black/back.png",
       "sha256": "50cd0d904277fb6d4dd628c85a55dbcf355b4cae94fc14eed146353bb7c8936e",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1923,9 +2658,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/black/front.png",
       "assetPath": "/mockups/smart-v8/tshirt/black/front.png",
       "sha256": "14e1ed843a6ca90202b796943f552fe511d5b0d5546c61707d71524453c9afab",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1936,9 +2676,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/black/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/tshirt/black/left-sleeve.png",
       "sha256": "e3bd13ceeab0ca2bdf6acec952dd1c707d09bcb5522fb0ba7ad789e9c276a740",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1949,9 +2694,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/black/neck-label.png",
       "assetPath": "/mockups/smart-v8/tshirt/black/neck-label.png",
       "sha256": "fb32265d77ab46f4ffc9e8d7746b91fb45e8fcffb89e5fd37afed77984120c4a",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1962,9 +2712,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/black/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/tshirt/black/right-sleeve.png",
       "sha256": "0eb9942f06d14067f591cf8f9fe4e50199228cd5aae1d3932ee76935b75ac111",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1975,9 +2730,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/grey/back.png",
       "assetPath": "/mockups/smart-v8/tshirt/grey/back.png",
       "sha256": "49b5850d122e474c92d029f912dfea6a1339b495df4eb5556342d28559708937",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -1988,9 +2748,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/grey/front.png",
       "assetPath": "/mockups/smart-v8/tshirt/grey/front.png",
       "sha256": "af4f165cbb2eeb2aab528dd8d7f72b94460e90c9aef5835b0786e910f49821a2",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2001,9 +2766,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/grey/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/tshirt/grey/left-sleeve.png",
       "sha256": "abca43313b8db5fce346f91791c3adafa71aaedad169b813731e09239e3b4bbe",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2014,9 +2784,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/grey/neck-label.png",
       "assetPath": "/mockups/smart-v8/tshirt/grey/neck-label.png",
       "sha256": "c18aa2b919af90ea474b07c1b4720c785de4153f8b5274d4fa3d978259d9e902",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2027,9 +2802,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/grey/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/tshirt/grey/right-sleeve.png",
       "sha256": "6552103f483f4473eb1a3a4b861e7052d0cc70c912a38fae64ab874ed47ce38c",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2040,9 +2820,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/maroon/back.png",
       "assetPath": "/mockups/smart-v8/tshirt/maroon/back.png",
       "sha256": "6e35388f68bed9af0d0e583744d6d923387f4d03a68fbd6ab084b0eac52dcc46",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2053,9 +2838,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/maroon/front.png",
       "assetPath": "/mockups/smart-v8/tshirt/maroon/front.png",
       "sha256": "fcae22c7e6852fb7c24b395163b946fd07f8343a9da47077e7a5d0d1db2b9ab5",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2066,9 +2856,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/maroon/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/tshirt/maroon/left-sleeve.png",
       "sha256": "a02ffcf33edd7a8fc3f358d28ad91c79ed0be0390a500cf501a2b69d12dc2f3a",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2079,9 +2874,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/maroon/neck-label.png",
       "assetPath": "/mockups/smart-v8/tshirt/maroon/neck-label.png",
       "sha256": "b799466a5299cc877e61f8f83cd3f33df7ee3c6339bddaf8bb501ef8fc8d88b4",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2092,9 +2892,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/maroon/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/tshirt/maroon/right-sleeve.png",
       "sha256": "923e083e62fcd630cc84e5aaf1012fe1a26de900ed9cb9e0c503fdb3c6cbbf18",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2105,9 +2910,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/navy/back.png",
       "assetPath": "/mockups/smart-v8/tshirt/navy/back.png",
       "sha256": "e59c54bab6a9aebd8d7f25d10bfb4bcc3eca1b1d06223c5b604444037d6d3a6f",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2118,9 +2928,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/navy/front.png",
       "assetPath": "/mockups/smart-v8/tshirt/navy/front.png",
       "sha256": "82ec2d090a5339648da5851ae5df1748a83dede12f8e72e97754f78257f70c86",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2131,9 +2946,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/navy/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/tshirt/navy/left-sleeve.png",
       "sha256": "e2ad28aa9af572be3fe239cf73856925c48afc4b8a0cbd07a0dada22d55c60b3",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2144,9 +2964,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/navy/neck-label.png",
       "assetPath": "/mockups/smart-v8/tshirt/navy/neck-label.png",
       "sha256": "6fc51631d905776c8c0c0ede99b6e1955e0472e01371f289b278e765f7902399",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2157,9 +2982,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/navy/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/tshirt/navy/right-sleeve.png",
       "sha256": "ffe9481c844ba77ee39c386e0fd22ae95eb1296f92d3257940423ed8afcbff6a",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2170,9 +3000,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/olive/back.png",
       "assetPath": "/mockups/smart-v8/tshirt/olive/back.png",
       "sha256": "0b19848140f3f55cf2ca1808846767d2db9c6948424ab865c073537c09f2a35b",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2183,9 +3018,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/olive/front.png",
       "assetPath": "/mockups/smart-v8/tshirt/olive/front.png",
       "sha256": "95ca23d770d2f19e8ca8e438ccd20050d2e6a948d668f9e8223fe028f938e280",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2196,9 +3036,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/olive/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/tshirt/olive/left-sleeve.png",
       "sha256": "b24d4c94de6a6bad210c164d2f3eae334bc9b84b0f5f0bf9d37500b61a85d7fb",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2209,9 +3054,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/olive/neck-label.png",
       "assetPath": "/mockups/smart-v8/tshirt/olive/neck-label.png",
       "sha256": "0770767f3115c8442325faafe7dc0103379853e51202c5a480bb8f0df6357fd3",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2222,9 +3072,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/olive/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/tshirt/olive/right-sleeve.png",
       "sha256": "31a2928fe9e78c8adcef1a6bbf2170f4b708d5ecfb0643c480e925855e437b4c",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2235,9 +3090,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/red/back.png",
       "assetPath": "/mockups/smart-v8/tshirt/red/back.png",
       "sha256": "99ad9fadc0f43d5d34f387e643c00b89da82abc0d08befd8c5d001f89ae72e86",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2248,9 +3108,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/red/front.png",
       "assetPath": "/mockups/smart-v8/tshirt/red/front.png",
       "sha256": "d4ae7b3c49f2e8691f0aad68b0ffb59fa508fb4d63f8b1f6664ecd3b4ef0419c",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2261,9 +3126,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/red/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/tshirt/red/left-sleeve.png",
       "sha256": "6e5fc51331f92ef41b8e3da09f8f21e0ba10756a969b43745b672904f6a27bec",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2274,9 +3144,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/red/neck-label.png",
       "assetPath": "/mockups/smart-v8/tshirt/red/neck-label.png",
       "sha256": "672205bd86fe81c5d9baefba71d0354acac570451177d8c89651ffa6ae618cbb",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2287,9 +3162,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/red/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/tshirt/red/right-sleeve.png",
       "sha256": "05b1e5a202aedee4b39215585d92c595f745541c444caa794755282026eac190",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2300,9 +3180,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/sky-blue/back.png",
       "assetPath": "/mockups/smart-v8/tshirt/sky-blue/back.png",
       "sha256": "4c16aa65f0616e5d9ddfc3f4cf259e9c00760f85239727c83b937c5b66eee702",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2313,9 +3198,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/sky-blue/front.png",
       "assetPath": "/mockups/smart-v8/tshirt/sky-blue/front.png",
       "sha256": "b049d571604903ad60d97449db0d6500b8e708d1acb0707843bd2050879d587e",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2326,9 +3216,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/sky-blue/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/tshirt/sky-blue/left-sleeve.png",
       "sha256": "e189f085bc59508d324ca7976967f6bc844b6bf568db7233dc9296751c05f418",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2339,9 +3234,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/sky-blue/neck-label.png",
       "assetPath": "/mockups/smart-v8/tshirt/sky-blue/neck-label.png",
       "sha256": "6c2726b9426aa734f5d568e6b9e7d63c913c1926087b9f4630b49116e03580c4",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2352,9 +3252,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/sky-blue/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/tshirt/sky-blue/right-sleeve.png",
       "sha256": "63695106be8b24f671aca276a2bfec3e64405506fbda756abb1ce6e0f4ffb088",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2365,9 +3270,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/white/back.png",
       "assetPath": "/mockups/smart-v8/tshirt/white/back.png",
       "sha256": "6ed7a95585dc6bbb9747287f8ecaf09cdcd128709cc98cea07606c57b95adaa3",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2378,9 +3288,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/white/front.png",
       "assetPath": "/mockups/smart-v8/tshirt/white/front.png",
       "sha256": "e91754f959cdf7f87206be27e9499d5ffb17779732666cda079fb6c1073f3c2f",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2391,9 +3306,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/white/left-sleeve.png",
       "assetPath": "/mockups/smart-v8/tshirt/white/left-sleeve.png",
       "sha256": "2e19184fe5ce1df282c884f0d66c4f0b3f67469ed3f8784aa9e2197b972a10bc",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2404,9 +3324,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/white/neck-label.png",
       "assetPath": "/mockups/smart-v8/tshirt/white/neck-label.png",
       "sha256": "fb0d276bff0bee5bd3fc07ddf0c4488c00edfd7bdb4f1bbb75ce01b846afa92d",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2417,9 +3342,14 @@
       "sourcePath": "/mockups/smart-v4/tshirt/white/right-sleeve.png",
       "assetPath": "/mockups/smart-v8/tshirt/white/right-sleeve.png",
       "sha256": "22d7c42d05adac178f27c3a9678756a7514602fed42a8a9fa23f57b722ea8ed1",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2430,9 +3360,14 @@
       "sourcePath": "/mockups/smart-v4/waterbottle/white/back.png",
       "assetPath": "/mockups/smart-v8/waterbottle/white/back.png",
       "sha256": "f3214733ce0687ec4cb8f42d520e810de8aed6ebcdf2b2b7ff94251a2d39e68a",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     },
     {
@@ -2443,13 +3378,18 @@
       "sourcePath": "/mockups/smart-v4/waterbottle/white/front.png",
       "assetPath": "/mockups/smart-v8/waterbottle/white/front.png",
       "sha256": "19591c0934d008da06316296e9fa1de3cc693d7db0fd39bbd82db917ea4d8fb9",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
       "provenance": "copied-byte-for-byte from smart-v4 validated source surface",
       "visualAcceptance": "passed",
       "technicalAcceptance": "passed",
+      "releaseStatus": "active",
       "acceptanceNotes": "Passed source-hash technical validation and complete six-family contact-sheet visual review."
     }
   ],
   "visualGatePassed": true,
   "technicalGatePassed": true,
-  "acceptedAt": "2026-08-22T01:09:26.570Z"
+  "acceptedAt": "2026-08-22T01:10:53.391Z"
 }

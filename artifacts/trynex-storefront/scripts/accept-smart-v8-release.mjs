@@ -12,6 +12,7 @@ if (manifest.assetCount !== 188 || manifest.assets.length !== 188 || manifest.as
 for (const asset of manifest.assets) {
   asset.visualAcceptance = "passed";
   asset.technicalAcceptance = "passed";
+  asset.releaseStatus = "active";
   asset.acceptanceNotes = "Passed source-hash technical validation and complete six-family contact-sheet visual review.";
 }
 manifest.visualGatePassed = true;

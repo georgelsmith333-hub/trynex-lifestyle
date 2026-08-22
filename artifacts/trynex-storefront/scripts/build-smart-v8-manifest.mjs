@@ -30,6 +30,7 @@ for (const sourcePath of sourceFiles) {
   await copyFile(sourcePath, targetPath);
   const bytes = await readFile(sourcePath);
   const sha256 = createHash("sha256").update(bytes).digest("hex");
+  if (!bytes.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]))) throw new Error(`Expected PNG source: ${relative}`);
   assets.push({
     sourceKey: `${family}:${color}:${view}`,
     family,
@@ -38,9 +39,11 @@ for (const sourcePath of sourceFiles) {
     sourcePath: `/mockups/smart-v4/${relative}`,
     assetPath: `/mockups/smart-v8/${relative}`,
     sha256,
+    dimensions: { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) },
     provenance: "copied-byte-for-byte from smart-v4 validated source surface",
     visualAcceptance: "pending",
     technicalAcceptance: "pending",
+    releaseStatus: "pending",
   });
 }
 
