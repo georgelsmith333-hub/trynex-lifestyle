@@ -45,4 +45,14 @@ describe("smart-v9 release acceptance", () => {
     bottle.sha256 = "b".repeat(64);
     expect(() => acceptSmartV9Release(candidate)).toThrow("does not match the authentic source");
   });
+
+  it("rejects malformed release metadata and asset paths", () => {
+    const wrongVersion = acceptedCandidate();
+    wrongVersion.version = "smart-v8" as "smart-v9";
+    expect(() => acceptSmartV9Release(wrongVersion)).toThrow("candidate version is invalid");
+
+    const traversalPath = acceptedCandidate();
+    traversalPath.assets[0] = { ...traversalPath.assets[0], assetUrl: "/mockups/smart-v9/../smart-v8/tshirt/white/front.png" };
+    expect(() => acceptSmartV9Release(traversalPath)).toThrow("asset path is invalid");
+  });
 });
