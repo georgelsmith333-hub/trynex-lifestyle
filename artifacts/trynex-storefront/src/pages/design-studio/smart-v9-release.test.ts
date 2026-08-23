@@ -30,6 +30,12 @@ describe("smart-v9 release acceptance", () => {
     expect(() => acceptSmartV9Release(candidate)).toThrow("not accepted");
   });
 
+  it("rejects a complete-count manifest with a non-canonical surface key", () => {
+    const candidate = acceptedCandidate();
+    candidate.assets[0] = { ...candidate.assets[0], sourceKey: "tshirt:white:not-a-view" };
+    expect(() => acceptSmartV9Release(candidate)).toThrow("asset is missing");
+  });
+
   it("rejects a generated Water Bottle substitute", () => {
     const candidate = acceptedCandidate();
     const bottle = candidate.assets.find((asset) => asset.sourceKey.startsWith("waterbottle:"));
