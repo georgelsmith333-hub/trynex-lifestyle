@@ -6,6 +6,7 @@ const app = await readFile(path.join(root, "src", "App.tsx"), "utf8");
 const studio = await readFile(path.join(root, "src", "pages", "studio", "DesignStudioV2.tsx"), "utf8");
 const aiPanel = await readFile(path.join(root, "src", "pages", "studio", "AIPanel.tsx"), "utf8");
 const layerPanel = await readFile(path.join(root, "src", "pages", "studio", "panels", "LayerPanel.tsx"), "utf8");
+const productSwitcher = await readFile(path.join(root, "src", "pages", "studio", "toolbar", "ProductSwitcher.tsx"), "utf8");
 const styles = await readFile(path.join(root, "src", "index.css"), "utf8");
 const mockups = await readFile(path.join(root, "src", "pages", "design-studio", "mockups.tsx"), "utf8");
 const smartV9Release = await readFile(path.join(root, "src", "pages", "design-studio", "smart-v9-release.ts"), "utf8");
@@ -23,6 +24,7 @@ const checks = {
   smartV9PreparationRequiresReviewAndTechnicalEvidence: smartV9Preparer.includes('asset.visualReviewStatus !== "accepted"') && smartV9Preparer.includes("expected 1024px RGBA PNG") && smartV9Preparer.includes("hash mismatch") && smartV9Preparer.includes("Water Bottle hash mismatch"),
   retiredSmartV7Blocked: mockups.includes('url.includes("smart-v7")'),
   activeRouteUsesProductionResolver: studio.includes("resolveMockup(") && studio.includes("getActiveMockupReleaseVersion"),
+  smartV9ProductPickerUsesReleaseAwarePreview: mockups.includes("getProductPickerPreviewSrc") && mockups.includes("getProductPickerFallbackSrc") && productSwitcher.includes("getProductPickerPreviewSrc(product)") && productSwitcher.includes("getProductPickerFallbackSrc(product)"),
   cartAndSessionReleaseProvenance: studio.includes("mockupRelease") && studio.includes("studio_session_") && studio.includes("addToCart({"),
   originalArtworkHandoff: studio.includes("originalAssets") && studio.includes("/api/storage/uploads/request-url"),
   canvasAndLayerWorkflow: studio.includes("composeGarmentMockup") && studio.includes("layers.filter") && studio.includes("LayerPanel"),

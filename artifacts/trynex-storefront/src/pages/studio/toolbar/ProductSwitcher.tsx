@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Check, ChevronRight, Package, Search, Sparkles, X } from "lucide-react";
-import { PRODUCTS, type DesignProduct } from "@/pages/design-studio/mockups";
+import { getProductPickerFallbackSrc, getProductPickerPreviewSrc, PRODUCTS, type DesignProduct } from "@/pages/design-studio/mockups";
 import { useDesignStore } from "@/hooks/useDesignStore";
 
 const CATEGORY_LABELS: Array<{ id: "all" | DesignProduct["category"]; label: string }> = [
@@ -32,20 +32,22 @@ const CARD_TONE: Record<DesignProduct["category"], string> = {
 };
 
 function ProductCardImage({ product }: { product: DesignProduct }) {
+  const previewSrc = getProductPickerPreviewSrc(product);
+  const fallbackSrc = getProductPickerFallbackSrc(product);
   return (
     <div className={`relative flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-gradient-to-br ${CARD_TONE[product.category]}`}>
       <div className="pointer-events-none absolute inset-x-[14%] bottom-[10%] h-5 rounded-[50%] bg-black/10 blur-xl" aria-hidden="true" />
       <img
-        src={product.gallerySrc ?? product.frontSrc}
+        src={previewSrc}
         alt=""
         aria-hidden="true"
         loading="lazy"
         decoding="async"
         onError={(event) => {
           const image = event.currentTarget;
-          if (image.src !== product.frontSrc) {
+          if (fallbackSrc) {
             image.onerror = null;
-            image.src = product.frontSrc;
+            image.src = fallbackSrc;
           }
         }}
         className={`relative z-[1] max-h-full max-w-full object-contain drop-shadow-[0_14px_18px_rgba(28,25,23,0.14)] transition duration-300 ease-out group-hover/card:scale-[1.035] ${CARD_IMAGE_CLASS[product.category]}`}

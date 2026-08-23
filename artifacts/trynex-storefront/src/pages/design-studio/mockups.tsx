@@ -511,6 +511,22 @@ export function getActiveMockupReleaseVersion(): "smart-v4" | "smart-v8" | "smar
   return acceptedSmartV8Release ? "smart-v8" : "smart-v4";
 }
 
+/**
+ * Product picker thumbnails remain on their curated gallery assets until a
+ * complete smart-v9 release is explicitly accepted. Once v9 is active, the
+ * picker moves to the same accepted white-front surface as the Studio canvas
+ * and never falls back to an older release if that v9 asset fails to load.
+ */
+export function getProductPickerPreviewSrc(product: DesignProduct): string {
+  if (!acceptedSmartV9Release) return product.gallerySrc ?? product.frontSrc;
+  const baseColor = product.colors[0]?.hex ?? product.garmentColor;
+  return getCuratedMockup(product, baseColor, "front").photoSrc;
+}
+
+export function getProductPickerFallbackSrc(product: DesignProduct): string | undefined {
+  return acceptedSmartV9Release ? undefined : product.frontSrc;
+}
+
 // This module is included only by the isolated smart-v8 review branch. The
 // all-or-nothing guard above remains the sole activation path.
 activateSmartV8Release(ACCEPTED_SMART_V8_RELEASE);
