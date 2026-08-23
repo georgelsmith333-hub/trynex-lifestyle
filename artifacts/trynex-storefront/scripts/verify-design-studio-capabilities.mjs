@@ -18,7 +18,7 @@ const checks = {
   legacyPublicStudioPathsConverge: app.includes('<Route path="/design-studio-v1" component={() => <Redirect to="/design-studio" />} />') && app.includes('<Route path="/design-studio-v2" component={() => <Redirect to="/design-studio" />} />'),
   allSixProductFamilies: ["tshirt", "longsleeve", "hoodie", "mug", "cap", "waterbottle"].every((family) => mockups.includes(`id: "${family}"`)),
   allOrNothingSmartV8Gate: mockups.includes("activateSmartV8Release") && mockups.includes("REQUIRED_SMART_V8_SURFACE_KEYS"),
-  allOrNothingSmartV9CandidateGate: mockups.includes("activateSmartV9Release") && smartV9Release.includes("smart-v9 requires exactly") && smartV9Release.includes('asset.status !== "accepted"') && smartV9Release.includes("authentic Water Bottle"),
+  allOrNothingSmartV9CandidateGate: mockups.includes("activateSmartV9Release") && smartV9Release.includes("smart-v9 requires exactly") && smartV9Release.includes('asset.status !== "accepted"') && smartV9Release.includes("authentic Water Bottle") && smartV9Release.includes("AUTHENTIC_WATER_BOTTLE_SHA256_BY_SOURCE_KEY"),
   retiredSmartV7Blocked: mockups.includes('url.includes("smart-v7")'),
   activeRouteUsesProductionResolver: studio.includes("resolveMockup(") && studio.includes("getActiveMockupReleaseVersion"),
   cartAndSessionReleaseProvenance: studio.includes("mockupRelease") && studio.includes("studio_session_") && studio.includes("addToCart({"),

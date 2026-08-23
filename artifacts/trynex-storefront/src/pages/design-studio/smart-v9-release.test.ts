@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { COMPLETE_MOCKUP_MATRIX } from "./complete-mockup-matrix";
-import { acceptSmartV9Release, type SmartV9CandidateRelease } from "./smart-v9-release";
+import { acceptSmartV9Release, AUTHENTIC_WATER_BOTTLE_SHA256_BY_SOURCE_KEY, type SmartV9CandidateRelease } from "./smart-v9-release";
 
 function acceptedCandidate(): SmartV9CandidateRelease {
   return {
@@ -10,7 +10,9 @@ function acceptedCandidate(): SmartV9CandidateRelease {
     assets: COMPLETE_MOCKUP_MATRIX.map((entry) => ({
       sourceKey: entry.sourceKey,
       assetUrl: entry.assetPath.replace("/mockups/smart-v4/", "/mockups/smart-v9/"),
-      sha256: "a".repeat(64),
+      sha256: entry.family === "waterbottle"
+        ? AUTHENTIC_WATER_BOTTLE_SHA256_BY_SOURCE_KEY[entry.sourceKey]
+        : "a".repeat(64),
       status: "accepted" as const,
       provenance: entry.family === "waterbottle" ? "authentic-preserved" as const : "generated-master" as const,
     })),
@@ -34,5 +36,13 @@ describe("smart-v9 release acceptance", () => {
     if (!bottle) throw new Error("fixture requires Water Bottle surface");
     bottle.provenance = "generated-master";
     expect(() => acceptSmartV9Release(candidate)).toThrow("authentic Water Bottle");
+  });
+
+  it("rejects a relabeled Water Bottle substitute with a different hash", () => {
+    const candidate = acceptedCandidate();
+    const bottle = candidate.assets.find((asset) => asset.sourceKey.startsWith("waterbottle:"));
+    if (!bottle) throw new Error("fixture requires Water Bottle surface");
+    bottle.sha256 = "b".repeat(64);
+    expect(() => acceptSmartV9Release(candidate)).toThrow("does not match the authentic source");
   });
 });
