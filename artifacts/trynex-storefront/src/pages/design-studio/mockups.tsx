@@ -8,6 +8,7 @@ import { createSmartMockupManifest, type SmartMockupManifest } from "./smart-moc
 import { getCanonicalMockupSpec, type MockupFamily } from "./canonical-mockup-spec";
 import { COMPLETE_MOCKUP_MATRIX, getCompleteMockupEntry, type CompleteMockupFamily, type CompleteMockupView } from "./complete-mockup-matrix";
 import { ACCEPTED_SMART_V8_RELEASE } from "./smart-v8-release";
+import { acceptSmartV9Release, type AcceptedSmartV9Release, type SmartV9CandidateRelease } from "./smart-v9-release";
 
 // ── T-Shirt: unified studio photos from normalized/ folder ──
 const tshirtFront       = "/mockups/smart-v4/tshirt/white/front.png";
@@ -481,6 +482,7 @@ export interface SmartV8ReleaseAcceptance {
 
 const REQUIRED_SMART_V8_SURFACE_KEYS = COMPLETE_MOCKUP_MATRIX.map((entry) => entry.sourceKey);
 let acceptedSmartV8Release: SmartV8ReleaseAcceptance | null = null;
+let acceptedSmartV9Release: AcceptedSmartV9Release | null = null;
 
 export function activateSmartV8Release(acceptance: SmartV8ReleaseAcceptance): void {
   if (!acceptance.visualGatePassed || !acceptance.technicalGatePassed) {
@@ -499,7 +501,13 @@ export function activateSmartV8Release(acceptance: SmartV8ReleaseAcceptance): vo
   acceptedSmartV8Release = acceptance;
 }
 
-export function getActiveMockupReleaseVersion(): "smart-v4" | "smart-v8" {
+/** Smart-v9 stays inert until its full candidate manifest passes the stricter gate. */
+export function activateSmartV9Release(candidate: SmartV9CandidateRelease): void {
+  acceptedSmartV9Release = acceptSmartV9Release(candidate);
+}
+
+export function getActiveMockupReleaseVersion(): "smart-v4" | "smart-v8" | "smart-v9" {
+  if (acceptedSmartV9Release) return "smart-v9";
   return acceptedSmartV8Release ? "smart-v8" : "smart-v4";
 }
 
@@ -684,7 +692,8 @@ function getCuratedMockup(
   const hex = normalizeMockupHex(color);
   const slug = SOURCE_KIT_COLOR_SLUGS[category]?.[hex] || "white";
   const completeView = getCompleteMockupEntry(category as CompleteMockupFamily, slug, face);
-  const cutoutSrc = acceptedSmartV8Release?.assetUrls[completeView.sourceKey]
+  const cutoutSrc = acceptedSmartV9Release?.assetUrls[completeView.sourceKey]
+    ?? acceptedSmartV8Release?.assetUrls[completeView.sourceKey]
     ?? (completeView.assetPath + "?v=smart-v4");
   const photoSrc = cutoutSrc;
   return {

@@ -8,6 +8,7 @@ const aiPanel = await readFile(path.join(root, "src", "pages", "studio", "AIPane
 const layerPanel = await readFile(path.join(root, "src", "pages", "studio", "panels", "LayerPanel.tsx"), "utf8");
 const styles = await readFile(path.join(root, "src", "index.css"), "utf8");
 const mockups = await readFile(path.join(root, "src", "pages", "design-studio", "mockups.tsx"), "utf8");
+const smartV9Release = await readFile(path.join(root, "src", "pages", "design-studio", "smart-v9-release.ts"), "utf8");
 const removeBgApi = await readFile(path.join(root, "..", "api-server", "src", "routes", "removeBg.ts"), "utf8");
 const aiApi = await readFile(path.join(root, "..", "api-server", "src", "routes", "ai.ts"), "utf8");
 const transformedImageValidation = await readFile(path.join(root, "..", "api-server", "src", "lib", "transformedImageValidation.ts"), "utf8");
@@ -17,6 +18,7 @@ const checks = {
   legacyPublicStudioPathsConverge: app.includes('<Route path="/design-studio-v1" component={() => <Redirect to="/design-studio" />} />') && app.includes('<Route path="/design-studio-v2" component={() => <Redirect to="/design-studio" />} />'),
   allSixProductFamilies: ["tshirt", "longsleeve", "hoodie", "mug", "cap", "waterbottle"].every((family) => mockups.includes(`id: "${family}"`)),
   allOrNothingSmartV8Gate: mockups.includes("activateSmartV8Release") && mockups.includes("REQUIRED_SMART_V8_SURFACE_KEYS"),
+  allOrNothingSmartV9CandidateGate: mockups.includes("activateSmartV9Release") && smartV9Release.includes("smart-v9 requires exactly") && smartV9Release.includes('asset.status !== "accepted"') && smartV9Release.includes("authentic Water Bottle"),
   retiredSmartV7Blocked: mockups.includes('url.includes("smart-v7")'),
   activeRouteUsesProductionResolver: studio.includes("resolveMockup(") && studio.includes("getActiveMockupReleaseVersion"),
   cartAndSessionReleaseProvenance: studio.includes("mockupRelease") && studio.includes("studio_session_") && studio.includes("addToCart({"),
