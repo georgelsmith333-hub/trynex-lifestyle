@@ -1,5 +1,16 @@
 import type { SmartMockupManifest } from "./smart-mockup-manifest";
 
+export interface PsdDerivedTshirtStagingProfile {
+  sourceKey: "tshirt:white:front";
+  supportedColors: readonly ["white"];
+  supportedFaces: readonly ["front"];
+  previewMode: "isolated-staging-only";
+  cartEnabled: false;
+  exportEnabled: false;
+  customerRuntimeEnabled: false;
+  requiredEffectStack: readonly ["multiply:0.77", "screen:0.38"];
+}
+
 /**
  * A provenance-safe description of the licensed PSD source process for the
  * pending T-shirt front master. The browser never receives the PSD/PSB; it can
@@ -58,6 +69,23 @@ export const PSD_DERIVED_TSHIRT_FRONT_WORKFLOW: PsdDerivedTshirtWorkflow = {
     allowPartialActivation: false,
     allowPsdOrPsbInBrowser: false,
   },
+};
+
+/**
+ * The first rollout surface is intentionally limited to one licensed derived
+ * white-front source. This profile cannot be used as a production-release
+ * switch: it has neither accepted material-effect URLs nor a customer runtime
+ * permission. It exists to keep a staged preview's boundaries explicit.
+ */
+export const PSD_DERIVED_TSHIRT_STAGING_PROFILE: PsdDerivedTshirtStagingProfile = {
+  sourceKey: "tshirt:white:front",
+  supportedColors: ["white"],
+  supportedFaces: ["front"],
+  previewMode: "isolated-staging-only",
+  cartEnabled: false,
+  exportEnabled: false,
+  customerRuntimeEnabled: false,
+  requiredEffectStack: ["multiply:0.77", "screen:0.38"],
 };
 
 /** A source manifest remains unchanged until an accepted flat runtime asset exists. */
