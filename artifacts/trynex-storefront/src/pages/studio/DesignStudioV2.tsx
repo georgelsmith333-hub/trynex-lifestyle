@@ -45,6 +45,17 @@ const LazyProductViewer3D = lazy(() => import("../design-studio/ProductViewer3D"
 
 const DRAFT_STORAGE_KEY = "trynex-design-draft-v2";
 const LOCAL_PSD_TSHIRT_STAGE_ROOT = "/@fs/home/ubuntu/webdev-static-assets/trynex-tshirt-psd-staging";
+const LOCAL_PSD_TSHIRT_STAGE_SESSION_KEY = "trynex-local-psd-tshirt-staging";
+const PSD_TSHIRT_STAGE_COLOR_SLUGS: Record<string, string> = {
+  "#f8f7f4": "white",
+  "#1a1a1a": "black",
+  "#1e3a5f": "navy",
+  "#7f1d1d": "maroon",
+  "#4a5240": "olive",
+  "#0ea5e9": "sky-blue",
+  "#6b7280": "grey",
+  "#dc2626": "red",
+};
 const SIZE_CHART = [
   { size: "XS", chest: "36", length: "26" }, { size: "S", chest: "38", length: "27" },
   { size: "M", chest: "40", length: "28" }, { size: "L", chest: "42", length: "29" },
@@ -103,10 +114,19 @@ export default function DesignStudioV2() {
   const { addToCart } = useCartActions();
   const settings = useSiteSettings();
   const { toast } = useToast();
-  const [psdTshirtStageRequested] = useState(() => (
-    import.meta.env.DEV
-    && new URLSearchParams(window.location.search).get("psdTshirtStage") === "1"
-  ));
+  const [psdTshirtStageRequested] = useState(() => {
+    if (!import.meta.env.DEV) return false;
+    const request = new URLSearchParams(window.location.search).get("psdTshirtStage");
+    if (request === "0") {
+      sessionStorage.removeItem(LOCAL_PSD_TSHIRT_STAGE_SESSION_KEY);
+      return false;
+    }
+    if (request === "1") {
+      sessionStorage.setItem(LOCAL_PSD_TSHIRT_STAGE_SESSION_KEY, "1");
+      return true;
+    }
+    return sessionStorage.getItem(LOCAL_PSD_TSHIRT_STAGE_SESSION_KEY) === "1";
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [canvasSize, setCanvasSize] = useState(600);
@@ -131,16 +151,36 @@ export default function DesignStudioV2() {
   const isCap = selectedProduct.category === "cap";
   const isWaterBottle = selectedProduct.category === "waterbottle";
   const isPsdTshirtStaging = useMemo(() => {
+    const colorSlug = PSD_TSHIRT_STAGE_COLOR_SLUGS[selectedColor.hex.toLowerCase()];
     return psdTshirtStageRequested
       && selectedProduct.category === "tshirt"
-      && selectedColor.hex.toLowerCase() === "#f8f7f4"
-      && activeFace === "front";
+      && !!colorSlug
+      && (activeFace === "front" || activeFace === "back");
   }, [activeFace, psdTshirtStageRequested, selectedColor.hex, selectedProduct.category]);
-  const psdTshirtStageAssets = useMemo(() => isPsdTshirtStaging ? {
-    base: `${LOCAL_PSD_TSHIRT_STAGE_ROOT}/tshirt-white-front.png`,
-    multiply: `${LOCAL_PSD_TSHIRT_STAGE_ROOT}/tshirt-white-front-multiply.png`,
-    screen: `${LOCAL_PSD_TSHIRT_STAGE_ROOT}/tshirt-white-front-screen.png`,
-  } : null, [isPsdTshirtStaging]);
+  const psdTshirtStageAssets = useMemo(() => {
+    if (!isPsdTshirtStaging || (activeFace !== "front" && activeFace !== "back")) return null;
+    const colorSlug = PSD_TSHIRT_STAGE_COLOR_SLUGS[selectedColor.hex.toLowerCase()];
+    if (!colorSlug) return null;
+    return {
+      base: `${LOCAL_PSD_TSHIRT_STAGE_ROOT}/colors/tshirt-${colorSlug}-${activeFace}.png?v=psd-stage-color-v2`,
+      multiply: `${LOCAL_PSD_TSHIRT_STAGE_ROOT}/tshirt-white-${activeFace}-multiply.png`,
+      screen: `${LOCAL_PSD_TSHIRT_STAGE_ROOT}/tshirt-white-${activeFace}-screen.png`,
+    };
+  }, [activeFace, isPsdTshirtStaging, selectedColor.hex]);
+  const psdTshirtStageEffectOpacity = useMemo(() => {
+    const hex = selectedColor.hex.replace("#", "");
+    const red = Number.parseInt(hex.slice(0, 2), 16) || 0;
+    const green = Number.parseInt(hex.slice(2, 4), 16) || 0;
+    const blue = Number.parseInt(hex.slice(4, 6), 16) || 0;
+    const luminance = (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255;
+    return {
+      multiply: 0.77,
+      // The supplied screen map was authored for a white garment. Preserve the
+      // native 38% behavior for white but attenuate highlights on tint-derived
+      // fabrics to avoid a full-shirt grey wash in local staging.
+      screen: 0.38 * Math.max(0.1, luminance),
+    };
+  }, [selectedColor.hex]);
   const supportsBack = ["tshirt", "longsleeve", "hoodie", "mug", "cap", "waterbottle"].includes(selectedProduct.category);
   const isZoneTabs = ["tshirt", "longsleeve", "hoodie"].includes(selectedProduct.category);
   const frontMockup = useMemo(
@@ -978,8 +1018,8 @@ export default function DesignStudioV2() {
                   onPickColor={handlePickColor}
                   overlay={psdTshirtStageAssets ? (
                     <div className="absolute inset-0 z-[5] pointer-events-none" aria-hidden="true">
-                      <img src={psdTshirtStageAssets.multiply} alt="" className="absolute inset-0 h-full w-full" style={{ mixBlendMode: "multiply", opacity: 0.77 }} />
-                      <img src={psdTshirtStageAssets.screen} alt="" className="absolute inset-0 h-full w-full" style={{ mixBlendMode: "screen", opacity: 0.38 }} />
+                      <img src={psdTshirtStageAssets.multiply} alt="" className="absolute inset-0 h-full w-full" style={{ mixBlendMode: "multiply", opacity: psdTshirtStageEffectOpacity.multiply }} />
+                      <img src={psdTshirtStageAssets.screen} alt="" className="absolute inset-0 h-full w-full" style={{ mixBlendMode: "screen", opacity: psdTshirtStageEffectOpacity.screen }} />
                     </div>
                   ) : undefined}
                   mockup={
@@ -990,7 +1030,7 @@ export default function DesignStudioV2() {
                 />
                 {isPsdTshirtStaging && (
                   <div className="absolute left-3 right-3 bottom-3 z-10 pointer-events-none rounded-xl border border-amber-300 bg-amber-50/95 px-3 py-2 text-center text-[11px] font-semibold text-amber-950 shadow-sm backdrop-blur">
-                    Local PSD T-shirt staging · White front only · 2D review · Cart and export disabled
+                    Local PSD T-shirt staging · {selectedColor.name} {activeFace} · 2D review · Cart and export disabled
                   </div>
                 )}
                 {!show3D && !isFlatZone && layers.length === 0 && (

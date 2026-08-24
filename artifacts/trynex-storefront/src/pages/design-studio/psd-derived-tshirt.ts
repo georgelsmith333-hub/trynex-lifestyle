@@ -2,8 +2,8 @@ import type { SmartMockupManifest } from "./smart-mockup-manifest";
 
 export interface PsdDerivedTshirtStagingProfile {
   sourceKey: "tshirt:white:front";
-  supportedColors: readonly ["white"];
-  supportedFaces: readonly ["front"];
+  supportedColors: readonly ["white", "black", "navy", "maroon", "olive", "sky-blue", "grey", "red"];
+  supportedFaces: readonly ["front", "back"];
   previewMode: "isolated-staging-only";
   cartEnabled: false;
   exportEnabled: false;
@@ -79,8 +79,8 @@ export const PSD_DERIVED_TSHIRT_FRONT_WORKFLOW: PsdDerivedTshirtWorkflow = {
  */
 export const PSD_DERIVED_TSHIRT_STAGING_PROFILE: PsdDerivedTshirtStagingProfile = {
   sourceKey: "tshirt:white:front",
-  supportedColors: ["white"],
-  supportedFaces: ["front"],
+  supportedColors: ["white", "black", "navy", "maroon", "olive", "sky-blue", "grey", "red"],
+  supportedFaces: ["front", "back"],
   previewMode: "isolated-staging-only",
   cartEnabled: false,
   exportEnabled: false,

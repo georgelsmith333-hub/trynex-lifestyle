@@ -23,9 +23,9 @@ describe("licensed PSD-derived T-shirt workflow", () => {
     expect(isPsdDerivedTshirtReadyForRuntime(PSD_DERIVED_TSHIRT_FRONT_WORKFLOW, manifest)).toBe(false);
   });
 
-  it("limits the first PSD-native rollout to a non-customer white-front staging profile", () => {
-    expect(PSD_DERIVED_TSHIRT_STAGING_PROFILE.supportedColors).toEqual(["white"]);
-    expect(PSD_DERIVED_TSHIRT_STAGING_PROFILE.supportedFaces).toEqual(["front"]);
+  it("limits the PSD-native rollout to audited front/back T-shirt staging profiles, not customer runtime", () => {
+    expect(PSD_DERIVED_TSHIRT_STAGING_PROFILE.supportedColors).toEqual(["white", "black", "navy", "maroon", "olive", "sky-blue", "grey", "red"]);
+    expect(PSD_DERIVED_TSHIRT_STAGING_PROFILE.supportedFaces).toEqual(["front", "back"]);
     expect(PSD_DERIVED_TSHIRT_STAGING_PROFILE.requiredEffectStack).toEqual(["multiply:0.77", "screen:0.38"]);
     expect(PSD_DERIVED_TSHIRT_STAGING_PROFILE.cartEnabled).toBe(false);
     expect(PSD_DERIVED_TSHIRT_STAGING_PROFILE.exportEnabled).toBe(false);
