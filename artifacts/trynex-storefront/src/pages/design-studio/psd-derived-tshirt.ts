@@ -20,6 +20,8 @@ export interface PsdDerivedTshirtWorkflow {
     smartObjectBlend: "multiply";
     smartObjectCanvas: { width: 3043; height: 2925 };
     parentSmartObjectBounds: { x: 536; y: 343; w: 2985; h: 2868 };
+    storedSmartObjectWarp: "flat-affine";
+    displacementMap: "auxiliary-requires-calibration";
     sourceEffectStack: readonly ["multiply:0.77", "screen:0.38"];
     requiresValidatedDisplacement: true;
     requiresOutputReview: true;
@@ -45,6 +47,8 @@ export const PSD_DERIVED_TSHIRT_FRONT_WORKFLOW: PsdDerivedTshirtWorkflow = {
     smartObjectBlend: "multiply",
     smartObjectCanvas: { width: 3043, height: 2925 },
     parentSmartObjectBounds: { x: 536, y: 343, w: 2985, h: 2868 },
+    storedSmartObjectWarp: "flat-affine",
+    displacementMap: "auxiliary-requires-calibration",
     sourceEffectStack: ["multiply:0.77", "screen:0.38"],
     requiresValidatedDisplacement: true,
     requiresOutputReview: true,

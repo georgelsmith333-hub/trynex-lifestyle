@@ -15,6 +15,8 @@ describe("licensed PSD-derived T-shirt workflow", () => {
     });
 
     expect(PSD_DERIVED_TSHIRT_FRONT_WORKFLOW.source.embeddedSmartObjectFormat).toBe("psb");
+    expect(PSD_DERIVED_TSHIRT_FRONT_WORKFLOW.composition.storedSmartObjectWarp).toBe("flat-affine");
+    expect(PSD_DERIVED_TSHIRT_FRONT_WORKFLOW.composition.displacementMap).toBe("auxiliary-requires-calibration");
     expect(PSD_DERIVED_TSHIRT_FRONT_WORKFLOW.composition.sourceEffectStack).toEqual(["multiply:0.77", "screen:0.38"]);
     expect(PSD_DERIVED_TSHIRT_FRONT_WORKFLOW.runtime.allowPsdOrPsbInBrowser).toBe(false);
     expect(isPsdDerivedTshirtReadyForRuntime(PSD_DERIVED_TSHIRT_FRONT_WORKFLOW, manifest)).toBe(false);
