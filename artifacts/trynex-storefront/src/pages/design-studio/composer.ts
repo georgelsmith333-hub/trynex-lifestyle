@@ -63,6 +63,18 @@ export interface ComposerPrintZone {
   shape?: "rect" | "mug-front-body" | "mug-back-body" | "mug-wrap-body" | "cap-front" | "bottle-body";
 }
 
+/**
+ * A separately reviewed raster effect exported from a licensed PSD layer.
+ * It is intentionally opt-in: existing products continue using their current
+ * resolver/composition behavior until a source-specific staging path supplies
+ * both reviewed effect URLs and a matching front-view garment source.
+ */
+export interface PsdMaterialEffectLayer {
+  src: string;
+  blendMode: "multiply" | "screen";
+  opacity: number;
+}
+
 export function tracePrintZone(
   ctx: CanvasRenderingContext2D,
   zone: ComposerPrintZone,
@@ -554,6 +566,8 @@ export async function composeGarmentMockup(opts: {
   smartShading?: boolean;
   /** Shading opacity for the multiply/screen passes. */
   shadingStrength?: number;
+  /** Optional reviewed PSD-native fold/detail passes for an isolated staging source. */
+  psdMaterialEffects?: readonly PsdMaterialEffectLayer[];
 }): Promise<HTMLCanvasElement> {
   const {
     canvas,
@@ -569,6 +583,7 @@ export async function composeGarmentMockup(opts: {
     fabricTexture = false,
     smartShading = false,
     shadingStrength = 0.025,
+    psdMaterialEffects = [],
   } = opts;
   canvas.width = outSize;
   canvas.height = outSize;
@@ -681,6 +696,30 @@ export async function composeGarmentMockup(opts: {
     tracePrintZone(ctx, printZone, s, s);
     ctx.clip();
     applyFabricGrain(ctx, outSize, outSize, 0.035);
+    ctx.restore();
+  }
+
+  // PSD-native material passes are deliberately scoped to the product print
+  // zone. They can affect ink already painted there, but cannot alter the
+  // silhouette, the customer artwork payload, cart metadata, or unrelated
+  // products. Invalid/CORS-blocked files are non-fatal like the legacy
+  // smart-shading fallback.
+  if (psdMaterialEffects.length > 0 && layers.some(l => l.visible)) {
+    ctx.save();
+    ctx.beginPath();
+    tracePrintZone(ctx, printZone, s, s);
+    ctx.clip();
+    for (const effect of psdMaterialEffects) {
+      if (!effect.src || !Number.isFinite(effect.opacity) || effect.opacity <= 0) continue;
+      try {
+        const effectImage = await loadImage(effect.src, imageCache);
+        ctx.globalCompositeOperation = effect.blendMode;
+        ctx.globalAlpha = Math.max(0, Math.min(1, effect.opacity));
+        ctx.drawImage(effectImage, 0, 0, outSize, outSize);
+      } catch (err) {
+        console.warn("[composer] PSD material effect skipped:", err);
+      }
+    }
     ctx.restore();
   }
 

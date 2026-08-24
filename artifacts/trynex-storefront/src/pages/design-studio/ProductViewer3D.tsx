@@ -11,7 +11,10 @@ import { Environment, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
 import {
   composeLayers,
+  loadImage,
+  tracePrintZone,
   type ComposerLayer,
+  type PsdMaterialEffectLayer,
   type ComposerPrintZone,
 } from "./composer";
 import { resolveMockup, type DesignProduct } from "./mockups";
@@ -31,6 +34,7 @@ interface FacePayload {
   layers: ComposerLayer[];
   printZone: ComposerPrintZone;
   baseHeight: number;
+  psdMaterialEffects?: readonly PsdMaterialEffectLayer[];
 }
 
 export interface ProductViewer3DProps {
@@ -47,7 +51,7 @@ export interface ProductViewer3DProps {
 function useFaceTexture(
   face: FacePayload | undefined,
   garmentColor: string | null,
-  opts: { outW: number; outH: number; clipToPrintZone?: boolean; curvature?: number }
+  opts: { outW: number; outH: number; clipToPrintZone?: boolean; curvature?: number; psdMaterialEffects?: readonly PsdMaterialEffectLayer[] }
 ): THREE.CanvasTexture | null {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const cacheRef = useRef<Map<string, HTMLImageElement>>(new Map());
@@ -67,6 +71,7 @@ function useFaceTexture(
         g: garmentColor,
         z: face.printZone,
         h: face.baseHeight,
+        m: opts.psdMaterialEffects?.map((effect) => [effect.src, effect.blendMode, effect.opacity]),
         l: face.layers.map((l) =>
             l.type === "image"
             ? [
@@ -108,14 +113,36 @@ function useFaceTexture(
       clipToPrintZone: clipFlag,
       blendMode: "multiply",
       curvature: opts.curvature ?? 0,
-    }).then(() => {
+    }).then(async () => {
+      const effects = opts.psdMaterialEffects ?? [];
+      if (effects.length > 0 && f.layers.some((layer) => layer.visible)) {
+        const canvas = canvasRef.current!;
+        const context = canvas.getContext("2d");
+        if (context) {
+          context.save();
+          context.beginPath();
+          tracePrintZone(context, f.printZone, opts.outW / f.baseHeight, opts.outH / f.baseHeight);
+          context.clip();
+          for (const effect of effects) {
+            try {
+              const image = await loadImage(effect.src, cacheRef.current);
+              context.globalCompositeOperation = effect.blendMode;
+              context.globalAlpha = effect.opacity;
+              context.drawImage(image, 0, 0, opts.outW, opts.outH);
+            } catch {
+              // A missing reviewed effect must not prevent the existing 3D preview.
+            }
+          }
+          context.restore();
+        }
+      }
       if (cancelled) return;
       if (textureRef.current) textureRef.current.needsUpdate = true;
       setVersion((v) => v + 1);
     });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sig, garmentColor, opts.outW, opts.outH, clipFlag]);
+  }, [sig, garmentColor, opts.outW, opts.outH, clipFlag, opts.psdMaterialEffects]);
 
   return face ? textureRef.current : null;
 }
@@ -278,12 +305,12 @@ export default function ProductViewer3D({
   const frontTex = useFaceTexture(
     front,
     null,
-    { outW: 1024, outH: 1024, clipToPrintZone: true, curvature: surfaceCurvature }
+    { outW: 1024, outH: 1024, clipToPrintZone: true, curvature: surfaceCurvature, psdMaterialEffects: front?.psdMaterialEffects }
   );
   const backTex = useFaceTexture(
     back,
     null,
-    { outW: 1024, outH: 1024, clipToPrintZone: true, curvature: surfaceCurvature }
+    { outW: 1024, outH: 1024, clipToPrintZone: true, curvature: surfaceCurvature, psdMaterialEffects: back?.psdMaterialEffects }
   );
   const mugWrapTex = useMugWrapTexture(
     isMug && isWrapMode ? front : undefined,
@@ -297,6 +324,7 @@ export default function ProductViewer3D({
   useEffect(() => {
     if (supports3D || !front) return;
     const c = document.createElement("canvas");
+    const fallbackImageCache = new Map<string, HTMLImageElement>();
     composeLayers({
       canvas: c,
       baseHeight: front.baseHeight,
@@ -308,7 +336,28 @@ export default function ProductViewer3D({
       imageCache: new Map(),
       clipToPrintZone: true,
       blendMode: "source-over",
-    }).then(() => setFallbackUrl(c.toDataURL("image/png")));
+    }).then(async () => {
+      const effects = front.psdMaterialEffects ?? [];
+      if (effects.length > 0 && front.layers.some((layer) => layer.visible)) {
+        const context = c.getContext("2d");
+        if (context) {
+          context.save();
+          context.beginPath();
+          tracePrintZone(context, front.printZone, 1024 / front.baseHeight, 1024 / front.baseHeight);
+          context.clip();
+          for (const effect of effects) {
+            try {
+              const image = await loadImage(effect.src, fallbackImageCache);
+              context.globalCompositeOperation = effect.blendMode;
+              context.globalAlpha = effect.opacity;
+              context.drawImage(image, 0, 0, 1024, 1024);
+            } catch {}
+          }
+          context.restore();
+        }
+      }
+      setFallbackUrl(c.toDataURL("image/png"));
+    });
   }, [supports3D, front]);
 
   /* No WebGL2 → flat 2D photo mockup fallback. */

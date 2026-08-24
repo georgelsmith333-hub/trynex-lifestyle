@@ -44,6 +44,18 @@ import { FONT_FAMILIES, type Layer, type ImageLayer, type TextLayer, type ShapeL
 const LazyProductViewer3D = lazy(() => import("../design-studio/ProductViewer3D"));
 
 const DRAFT_STORAGE_KEY = "trynex-design-draft-v2";
+const LOCAL_PSD_TSHIRT_STAGE_ROOT = "/@fs/home/ubuntu/webdev-static-assets/trynex-tshirt-psd-staging";
+const LOCAL_PSD_TSHIRT_STAGE_SESSION_KEY = "trynex-local-psd-tshirt-staging";
+const PSD_TSHIRT_STAGE_COLOR_SLUGS: Record<string, string> = {
+  "#f8f7f4": "white",
+  "#1a1a1a": "black",
+  "#1e3a5f": "navy",
+  "#7f1d1d": "maroon",
+  "#4a5240": "olive",
+  "#0ea5e9": "sky-blue",
+  "#6b7280": "grey",
+  "#dc2626": "red",
+};
 const SIZE_CHART = [
   { size: "XS", chest: "36", length: "26" }, { size: "S", chest: "38", length: "27" },
   { size: "M", chest: "40", length: "28" }, { size: "L", chest: "42", length: "29" },
@@ -102,6 +114,19 @@ export default function DesignStudioV2() {
   const { addToCart } = useCartActions();
   const settings = useSiteSettings();
   const { toast } = useToast();
+  const [psdTshirtStageRequested] = useState(() => {
+    if (!import.meta.env.DEV) return false;
+    const request = new URLSearchParams(window.location.search).get("psdTshirtStage");
+    if (request === "0") {
+      sessionStorage.removeItem(LOCAL_PSD_TSHIRT_STAGE_SESSION_KEY);
+      return false;
+    }
+    if (request === "1") {
+      sessionStorage.setItem(LOCAL_PSD_TSHIRT_STAGE_SESSION_KEY, "1");
+      return true;
+    }
+    return sessionStorage.getItem(LOCAL_PSD_TSHIRT_STAGE_SESSION_KEY) === "1";
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [canvasSize, setCanvasSize] = useState(600);
@@ -125,6 +150,37 @@ export default function DesignStudioV2() {
   const isMug = selectedProduct.category === "mug";
   const isCap = selectedProduct.category === "cap";
   const isWaterBottle = selectedProduct.category === "waterbottle";
+  const isPsdTshirtStaging = useMemo(() => {
+    const colorSlug = PSD_TSHIRT_STAGE_COLOR_SLUGS[selectedColor.hex.toLowerCase()];
+    return psdTshirtStageRequested
+      && selectedProduct.category === "tshirt"
+      && !!colorSlug
+      && (activeFace === "front" || activeFace === "back");
+  }, [activeFace, psdTshirtStageRequested, selectedColor.hex, selectedProduct.category]);
+  const psdTshirtStageAssets = useMemo(() => {
+    if (!isPsdTshirtStaging || (activeFace !== "front" && activeFace !== "back")) return null;
+    const colorSlug = PSD_TSHIRT_STAGE_COLOR_SLUGS[selectedColor.hex.toLowerCase()];
+    if (!colorSlug) return null;
+    return {
+      base: `${LOCAL_PSD_TSHIRT_STAGE_ROOT}/colors/tshirt-${colorSlug}-${activeFace}.png?v=psd-stage-color-v2`,
+      multiply: `${LOCAL_PSD_TSHIRT_STAGE_ROOT}/tshirt-white-${activeFace}-multiply.png`,
+      screen: `${LOCAL_PSD_TSHIRT_STAGE_ROOT}/tshirt-white-${activeFace}-screen.png`,
+    };
+  }, [activeFace, isPsdTshirtStaging, selectedColor.hex]);
+  const psdTshirtStageEffectOpacity = useMemo(() => {
+    const hex = selectedColor.hex.replace("#", "");
+    const red = Number.parseInt(hex.slice(0, 2), 16) || 0;
+    const green = Number.parseInt(hex.slice(2, 4), 16) || 0;
+    const blue = Number.parseInt(hex.slice(4, 6), 16) || 0;
+    const luminance = (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255;
+    return {
+      multiply: 0.77,
+      // The supplied screen map was authored for a white garment. Preserve the
+      // native 38% behavior for white but attenuate highlights on tint-derived
+      // fabrics to avoid a full-shirt grey wash in local staging.
+      screen: 0.38 * Math.max(0.1, luminance),
+    };
+  }, [selectedColor.hex]);
   const supportsBack = ["tshirt", "longsleeve", "hoodie", "mug", "cap", "waterbottle"].includes(selectedProduct.category);
   const isZoneTabs = ["tshirt", "longsleeve", "hoodie"].includes(selectedProduct.category);
   const frontMockup = useMemo(
@@ -139,6 +195,15 @@ export default function DesignStudioV2() {
     () => resolveMockup(selectedProduct, selectedColor.hex, activeFace as Face),
     [selectedProduct, selectedColor.hex, activeFace],
   );
+  const activePsdMaterialEffects = useMemo(() => {
+    if (psdTshirtStageAssets) {
+      return [
+        { src: psdTshirtStageAssets.multiply, blendMode: "multiply" as const, opacity: psdTshirtStageEffectOpacity.multiply },
+        { src: psdTshirtStageAssets.screen, blendMode: "screen" as const, opacity: psdTshirtStageEffectOpacity.screen },
+      ];
+    }
+    return activeMockup.psdMaterialEffects ?? [];
+  }, [activeMockup.psdMaterialEffects, psdTshirtStageAssets, psdTshirtStageEffectOpacity]);
 
   const apparelZones = useMemo(() => getApparelZones(selectedProduct.category, selectedProduct.printZone, selectedProduct.printZoneBack), [selectedProduct]);
   const activeZoneConfig = useMemo(() => apparelZones.find(z => z.face === activeFace) ?? apparelZones[0], [apparelZones, activeFace]);
@@ -154,6 +219,10 @@ export default function DesignStudioV2() {
 
   const isBlackGarment = isNearBlack(selectedColor.hex);
   const isLightGarment = isLightTint(selectedColor.hex);
+
+  useEffect(() => {
+    if (isPsdTshirtStaging) setShow3D(false);
+  }, [isPsdTshirtStaging, setShow3D]);
 
   useEffect(() => {
     const onResize = () => {
@@ -647,6 +716,10 @@ export default function DesignStudioV2() {
   const backLayers = useMemo(() => layers.filter(l => (l.face ?? "front") === "back") as unknown as ComposerLayer[], [layers]);
 
   const handleAddToCart = async () => {
+    if (isPsdTshirtStaging) {
+      toast({ title: "Local PSD staging preview", description: "This white-front T-shirt review mode cannot be added to cart." });
+      return;
+    }
     if (layers.length === 0) {
       toast({ title: "No design", description: "Add an image or text layer first.", variant: "destructive" });
       return;
@@ -691,7 +764,7 @@ export default function DesignStudioV2() {
     let mockupUrl: string;
     try {
       const mockupCanvas = document.createElement("canvas");
-      await composeGarmentMockup({ canvas: mockupCanvas, garmentSrc, garmentColor: selectedColor.hex, printZone: frontPZ, layers: frontLayers, outSize: 400, imageCache, isColorPhoto, requiresTint: frontMockup.requiresTint, fabricTexture });
+      await composeGarmentMockup({ canvas: mockupCanvas, garmentSrc, garmentColor: selectedColor.hex, printZone: frontPZ, layers: frontLayers, outSize: 400, imageCache, isColorPhoto, requiresTint: frontMockup.requiresTint, fabricTexture, psdMaterialEffects: frontMockup.psdMaterialEffects });
       mockupUrl = mockupCanvas.toDataURL("image/webp", 0.8);
     } catch (err) {
       console.error("Mockup compose failed", err);
@@ -787,6 +860,10 @@ export default function DesignStudioV2() {
   };
 
   const handleExportPNG = async () => {
+    if (isPsdTshirtStaging) {
+      toast({ title: "Local PSD staging preview", description: "Export is disabled until this source passes the reviewed release workflow." });
+      return;
+    }
     const activeLayers = layers.filter(l => (l.face ?? "front") === activeFace) as unknown as ComposerLayer[];
     if (activeLayers.length === 0) { toast({ title: "Nothing to export", description: "Add a layer first." }); return; }
     const exportMockup = activeFace === "front" ? frontMockup : activeFace === "back" ? backMockup : activeMockup;
@@ -799,7 +876,7 @@ export default function DesignStudioV2() {
         : activeFace === "back"
           ? (selectedProduct.printZoneBack ?? selectedProduct.printZone)
           : activeZoneConfig?.pz ?? selectedProduct.printZone;
-    await composeGarmentMockup({ canvas, garmentSrc, garmentColor: selectedColor.hex, printZone: exportPrintZone, layers: activeLayers, outSize: 1200, isColorPhoto: exportMockup.isColorPhoto, requiresTint: exportMockup.requiresTint, fabricTexture });
+    await composeGarmentMockup({ canvas, garmentSrc, garmentColor: selectedColor.hex, printZone: exportPrintZone, layers: activeLayers, outSize: 1200, isColorPhoto: exportMockup.isColorPhoto, requiresTint: exportMockup.requiresTint, fabricTexture, psdMaterialEffects: exportMockup.psdMaterialEffects });
     const a = document.createElement("a"); a.href = canvas.toDataURL("image/png"); a.download = `trynex-${selectedProduct.id}-${activeFace}-design.png`; a.click();
     toast({ title: "PNG exported!", description: "High-res PNG saved to your downloads." });
   };
@@ -931,10 +1008,10 @@ export default function DesignStudioV2() {
 
             <div className="relative rounded-3xl overflow-hidden select-none" style={{ background: "radial-gradient(ellipse at 50% 35%, #ffffff 0%, #f8f8f8 55%, #f0f0f0 100%)", border: "1px solid #e5e5e7", boxShadow: "0 6px 40px rgba(0,0,0,0.08)" }} onDrop={handleDrop} onDragOver={e => e.preventDefault()}>
               <div style={{ position: "relative", width: canvasSize, height: canvasSize, margin: "0 auto" }}>
-                {show3D && !isFlatZone && (
+                {show3D && !isFlatZone && !isPsdTshirtStaging && (
                   <div className="absolute inset-0 z-20 rounded-3xl overflow-hidden flex items-center justify-center" style={{ background: "radial-gradient(ellipse at 50% 40%, #f4f4f4 0%, #e8e8e8 100%)" }}>
                     <Suspense fallback={<Loader2 className="w-8 h-8 animate-spin text-blue-400" />}>
-                      <LazyProductViewer3D product={selectedProduct} garmentColor={selectedColor.hex} front={{ layers: frontLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ) : selectedProduct.printZone, baseHeight: selectedProduct.baseHeight }} back={supportsBack && backLayers.length > 0 ? { layers: backLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ) : (selectedProduct.printZoneBack ?? selectedProduct.printZone), baseHeight: selectedProduct.baseHeight } : undefined} activeFace={activeFace as "front" | "back"} isWrapMode={isMug && mugMode === "wrap"} />
+                      <LazyProductViewer3D product={selectedProduct} garmentColor={selectedColor.hex} front={{ layers: frontLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ) : selectedProduct.printZone, baseHeight: selectedProduct.baseHeight, psdMaterialEffects: frontMockup.psdMaterialEffects }} back={supportsBack && backLayers.length > 0 ? { layers: backLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ) : (selectedProduct.printZoneBack ?? selectedProduct.printZone), baseHeight: selectedProduct.baseHeight, psdMaterialEffects: backMockup.psdMaterialEffects } : undefined} activeFace={activeFace as "front" | "back"} isWrapMode={isMug && mugMode === "wrap"} />
                     </Suspense>
                     <button onClick={() => setShow3D(false)} className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full text-xs font-bold text-white shadow-xl" style={{ background: "rgba(17,24,39,0.85)", backdropFilter: "blur(8px)" }}><Eye className="w-3 h-3 inline mr-1" /> Back to 2D</button>
                   </div>
@@ -948,12 +1025,24 @@ export default function DesignStudioV2() {
                   onDrawMove={handleDrawMove}
                   onDrawEnd={handleDrawEnd}
                   onPickColor={handlePickColor}
+                  overlay={activePsdMaterialEffects.length > 0 ? (
+                    <div className="absolute inset-0 z-[5] pointer-events-none" aria-hidden="true">
+                      {activePsdMaterialEffects.map((effect) => (
+                        <img key={`${effect.src}-${effect.blendMode}`} src={effect.src} alt="" className="absolute inset-0 h-full w-full" style={{ mixBlendMode: effect.blendMode, opacity: effect.opacity }} />
+                      ))}
+                    </div>
+                  ) : undefined}
                   mockup={
                     isFlatZone && activeZoneConfig
                       ? <FlatZoneSVG zone={activeZoneConfig} showPrintZone={showPrintZone} mockup={activeMockup} />
-                      : <GarmentSVG product={selectedProduct} color={selectedColor.hex} showPrintZone={showPrintZone} face={activeFace} mugMode={isMug ? mugMode : undefined} />
+                      : <GarmentSVG product={selectedProduct} color={selectedColor.hex} showPrintZone={showPrintZone} face={activeFace} mugMode={isMug ? mugMode : undefined} baseSrcOverride={psdTshirtStageAssets?.base} />
                   }
                 />
+                {isPsdTshirtStaging && (
+                  <div className="absolute left-3 right-3 bottom-3 z-10 pointer-events-none rounded-xl border border-amber-300 bg-amber-50/95 px-3 py-2 text-center text-[11px] font-semibold text-amber-950 shadow-sm backdrop-blur">
+                    Local PSD T-shirt staging · {selectedColor.name} {activeFace} · 2D review · Cart and export disabled
+                  </div>
+                )}
                 {!show3D && !isFlatZone && layers.length === 0 && (
                   <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
                     <button

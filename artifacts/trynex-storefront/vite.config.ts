@@ -241,6 +241,14 @@ export default defineConfig({
     },
     fs: {
       strict: true,
+      // Local PSD T-shirt staging assets stay outside the repository so they
+      // cannot be committed or deployed. This directory is reachable only by
+      // Vite's development server; production builds still contain no staging
+      // asset path because the route branch is gated by import.meta.env.DEV.
+      allow: [
+        path.resolve(import.meta.dirname),
+        path.resolve("/home/ubuntu/webdev-static-assets"),
+      ],
       deny: ["**/.*"],
     },
   },
