@@ -195,6 +195,15 @@ export default function DesignStudioV2() {
     () => resolveMockup(selectedProduct, selectedColor.hex, activeFace as Face),
     [selectedProduct, selectedColor.hex, activeFace],
   );
+  const activePsdMaterialEffects = useMemo(() => {
+    if (psdTshirtStageAssets) {
+      return [
+        { src: psdTshirtStageAssets.multiply, blendMode: "multiply" as const, opacity: psdTshirtStageEffectOpacity.multiply },
+        { src: psdTshirtStageAssets.screen, blendMode: "screen" as const, opacity: psdTshirtStageEffectOpacity.screen },
+      ];
+    }
+    return activeMockup.psdMaterialEffects ?? [];
+  }, [activeMockup.psdMaterialEffects, psdTshirtStageAssets, psdTshirtStageEffectOpacity]);
 
   const apparelZones = useMemo(() => getApparelZones(selectedProduct.category, selectedProduct.printZone, selectedProduct.printZoneBack), [selectedProduct]);
   const activeZoneConfig = useMemo(() => apparelZones.find(z => z.face === activeFace) ?? apparelZones[0], [apparelZones, activeFace]);
@@ -755,7 +764,7 @@ export default function DesignStudioV2() {
     let mockupUrl: string;
     try {
       const mockupCanvas = document.createElement("canvas");
-      await composeGarmentMockup({ canvas: mockupCanvas, garmentSrc, garmentColor: selectedColor.hex, printZone: frontPZ, layers: frontLayers, outSize: 400, imageCache, isColorPhoto, requiresTint: frontMockup.requiresTint, fabricTexture });
+      await composeGarmentMockup({ canvas: mockupCanvas, garmentSrc, garmentColor: selectedColor.hex, printZone: frontPZ, layers: frontLayers, outSize: 400, imageCache, isColorPhoto, requiresTint: frontMockup.requiresTint, fabricTexture, psdMaterialEffects: frontMockup.psdMaterialEffects });
       mockupUrl = mockupCanvas.toDataURL("image/webp", 0.8);
     } catch (err) {
       console.error("Mockup compose failed", err);
@@ -867,7 +876,7 @@ export default function DesignStudioV2() {
         : activeFace === "back"
           ? (selectedProduct.printZoneBack ?? selectedProduct.printZone)
           : activeZoneConfig?.pz ?? selectedProduct.printZone;
-    await composeGarmentMockup({ canvas, garmentSrc, garmentColor: selectedColor.hex, printZone: exportPrintZone, layers: activeLayers, outSize: 1200, isColorPhoto: exportMockup.isColorPhoto, requiresTint: exportMockup.requiresTint, fabricTexture });
+    await composeGarmentMockup({ canvas, garmentSrc, garmentColor: selectedColor.hex, printZone: exportPrintZone, layers: activeLayers, outSize: 1200, isColorPhoto: exportMockup.isColorPhoto, requiresTint: exportMockup.requiresTint, fabricTexture, psdMaterialEffects: exportMockup.psdMaterialEffects });
     const a = document.createElement("a"); a.href = canvas.toDataURL("image/png"); a.download = `trynex-${selectedProduct.id}-${activeFace}-design.png`; a.click();
     toast({ title: "PNG exported!", description: "High-res PNG saved to your downloads." });
   };
@@ -1002,7 +1011,7 @@ export default function DesignStudioV2() {
                 {show3D && !isFlatZone && !isPsdTshirtStaging && (
                   <div className="absolute inset-0 z-20 rounded-3xl overflow-hidden flex items-center justify-center" style={{ background: "radial-gradient(ellipse at 50% 40%, #f4f4f4 0%, #e8e8e8 100%)" }}>
                     <Suspense fallback={<Loader2 className="w-8 h-8 animate-spin text-blue-400" />}>
-                      <LazyProductViewer3D product={selectedProduct} garmentColor={selectedColor.hex} front={{ layers: frontLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ) : selectedProduct.printZone, baseHeight: selectedProduct.baseHeight }} back={supportsBack && backLayers.length > 0 ? { layers: backLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ) : (selectedProduct.printZoneBack ?? selectedProduct.printZone), baseHeight: selectedProduct.baseHeight } : undefined} activeFace={activeFace as "front" | "back"} isWrapMode={isMug && mugMode === "wrap"} />
+                      <LazyProductViewer3D product={selectedProduct} garmentColor={selectedColor.hex} front={{ layers: frontLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ) : selectedProduct.printZone, baseHeight: selectedProduct.baseHeight, psdMaterialEffects: frontMockup.psdMaterialEffects }} back={supportsBack && backLayers.length > 0 ? { layers: backLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ) : (selectedProduct.printZoneBack ?? selectedProduct.printZone), baseHeight: selectedProduct.baseHeight, psdMaterialEffects: backMockup.psdMaterialEffects } : undefined} activeFace={activeFace as "front" | "back"} isWrapMode={isMug && mugMode === "wrap"} />
                     </Suspense>
                     <button onClick={() => setShow3D(false)} className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full text-xs font-bold text-white shadow-xl" style={{ background: "rgba(17,24,39,0.85)", backdropFilter: "blur(8px)" }}><Eye className="w-3 h-3 inline mr-1" /> Back to 2D</button>
                   </div>
@@ -1016,10 +1025,11 @@ export default function DesignStudioV2() {
                   onDrawMove={handleDrawMove}
                   onDrawEnd={handleDrawEnd}
                   onPickColor={handlePickColor}
-                  overlay={psdTshirtStageAssets ? (
+                  overlay={activePsdMaterialEffects.length > 0 ? (
                     <div className="absolute inset-0 z-[5] pointer-events-none" aria-hidden="true">
-                      <img src={psdTshirtStageAssets.multiply} alt="" className="absolute inset-0 h-full w-full" style={{ mixBlendMode: "multiply", opacity: psdTshirtStageEffectOpacity.multiply }} />
-                      <img src={psdTshirtStageAssets.screen} alt="" className="absolute inset-0 h-full w-full" style={{ mixBlendMode: "screen", opacity: psdTshirtStageEffectOpacity.screen }} />
+                      {activePsdMaterialEffects.map((effect) => (
+                        <img key={`${effect.src}-${effect.blendMode}`} src={effect.src} alt="" className="absolute inset-0 h-full w-full" style={{ mixBlendMode: effect.blendMode, opacity: effect.opacity }} />
+                      ))}
                     </div>
                   ) : undefined}
                   mockup={

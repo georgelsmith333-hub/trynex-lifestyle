@@ -9,6 +9,11 @@ import { getCanonicalMockupSpec, type MockupFamily } from "./canonical-mockup-sp
 import { COMPLETE_MOCKUP_MATRIX, getCompleteMockupEntry, type CompleteMockupFamily, type CompleteMockupView } from "./complete-mockup-matrix";
 import { ACCEPTED_SMART_V8_RELEASE } from "./smart-v8-release";
 import { acceptSmartV9Release, type AcceptedSmartV9Release, type SmartV9CandidateRelease } from "./smart-v9-release";
+import type { PsdMaterialEffectLayer } from "./composer";
+import {
+  PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE,
+  isPsdDerivedTshirtCustomerReleaseSurface,
+} from "./psd-derived-tshirt";
 
 // ── T-Shirt: unified studio photos from normalized/ folder ──
 const tshirtFront       = "/mockups/smart-v4/tshirt/white/front.png";
@@ -447,6 +452,8 @@ export interface MockupResolution {
   sourceKitKey?: string;
   /** Explicit PSD/PSB smart-object recipe used by compositor/export tooling. */
   smartObject: SmartMockupManifest;
+  /** Reviewed raster effects for the isolated PSD-derived T-shirt release only. */
+  psdMaterialEffects?: readonly PsdMaterialEffectLayer[];
   source: "source-kit" | "curated";
 }
 
@@ -663,6 +670,24 @@ function normalizeMockupHex(hex: string): string {
   return hex.trim().toLowerCase();
 }
 
+function colorLuminance(hex: string): number {
+  const normalized = hex.replace("#", "");
+  if (normalized.length !== 6) return 1;
+  const red = Number.parseInt(normalized.slice(0, 2), 16) || 0;
+  const green = Number.parseInt(normalized.slice(2, 4), 16) || 0;
+  const blue = Number.parseInt(normalized.slice(4, 6), 16) || 0;
+  return (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255;
+}
+
+function getPsdTshirtMaterialEffects(color: string, face: "front" | "back"): readonly PsdMaterialEffectLayer[] {
+  const luminance = colorLuminance(color);
+  const root = PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE.assetRoot;
+  return [
+    { src: `${root}/effects/${face}-multiply.png`, blendMode: "multiply", opacity: 0.77 },
+    { src: `${root}/effects/${face}-screen.png`, blendMode: "screen", opacity: 0.38 * Math.max(0.1, luminance) },
+  ];
+}
+
 function canonicalMasterPath(category: DesignProduct["category"], _colorSlug: string, face: CompleteMockupView): string {
   // The attached 22-master package contains one layered PSD/PSB per family/view.
   // Colorways are controlled by the source layer contract and exported into the
@@ -762,11 +787,19 @@ export function resolveMockup(
   const runtimeOverride = runtimeMockupOverrides.get(normalizeRuntimeKey(sourceKitKey))
     ?? runtimeMockupOverrides.get(normalizeRuntimeKey(`${category}:${color}:${face}`));
   const runtimePhoto = runtimeOverride?.imageUrl;
+  const isPsdTshirtRuntime = category === "tshirt"
+    && (face === "front" || face === "back")
+    && isPsdDerivedTshirtCustomerReleaseSurface(sourceKitSlug, face);
+  const psdPhoto = isPsdTshirtRuntime
+    ? `${PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE.assetRoot}/${sourceKitSlug}/${face}.png`
+    : undefined;
+  const photoSrc = runtimePhoto ?? psdPhoto ?? curated.photoSrc;
+  const cutoutSrc = runtimePhoto ?? psdPhoto ?? curated.cutoutSrc;
 
   return {
     colorHex: hex,
-    photoSrc: runtimePhoto ?? curated.photoSrc,
-    cutoutSrc: runtimePhoto ?? curated.cutoutSrc,
+    photoSrc,
+    cutoutSrc,
     isColorPhoto: runtimePhoto ? true : curated.isColorPhoto,
     cutoutNeedsTint: runtimePhoto ? false : curated.cutoutNeedsTint,
     photoKind: runtimePhoto ? "opaque-photo" : curated.photoKind,
@@ -784,12 +817,13 @@ export function resolveMockup(
       sourceKitKey,
       editableMasterPath: masterPath,
       masterStatus: "verified",
-      baseSrc: curated.photoSrc,
-      cutoutSrc: curated.cutoutSrc,
+      baseSrc: photoSrc,
+      cutoutSrc,
       normalizedFrame,
       printZone: completeView.geometry.printZone,
     }),
-    source: runtimePhoto ? "curated" : "source-kit",
+    psdMaterialEffects: isPsdTshirtRuntime ? getPsdTshirtMaterialEffects(color, face) : undefined,
+    source: runtimePhoto || psdPhoto ? "curated" : "source-kit",
   };
 }
 

@@ -12,10 +12,27 @@ export interface PsdDerivedTshirtStagingProfile {
 }
 
 /**
- * A provenance-safe description of the licensed PSD source process for the
- * pending T-shirt front master. The browser never receives the PSD/PSB; it can
- * receive only a separately reviewed 1024px PNG export after the full v9 gate
- * accepts every canonical surface.
+ * Customer-runtime boundary for reviewed derived PNG outputs only. This is a
+ * T-shirt-specific source release; it cannot activate smart-v9, change another
+ * product family, or transfer the licensed PSD/PSB into the browser.
+ */
+export interface PsdDerivedTshirtCustomerRelease {
+  version: "psd-tshirt-v1";
+  supportedColors: readonly ["white", "black", "navy", "maroon", "olive", "sky-blue", "grey", "red"];
+  supportedFaces: readonly ["front", "back"];
+  assetRoot: "/mockups/psd-tshirt-v1";
+  cartEnabled: true;
+  exportEnabled: true;
+  customerRuntimeEnabled: true;
+  activatesSmartV9: false;
+  allowsPsdOrPsbInBrowser: false;
+  displacementStatus: "not-claimed-as-native-photoshop";
+}
+
+/**
+ * A provenance-safe description of the licensed PSD source process. The
+ * browser never receives the PSD/PSB: only separately reviewed PNG derivatives
+ * may be supplied to either the staging path or the T-shirt-only release.
  */
 export interface PsdDerivedTshirtWorkflow {
   sourceKey: "tshirt:white:front";
@@ -72,10 +89,7 @@ export const PSD_DERIVED_TSHIRT_FRONT_WORKFLOW: PsdDerivedTshirtWorkflow = {
 };
 
 /**
- * The first rollout surface is intentionally limited to one licensed derived
- * white-front source. This profile cannot be used as a production-release
- * switch: it has neither accepted material-effect URLs nor a customer runtime
- * permission. It exists to keep a staged preview's boundaries explicit.
+ * The local review profile cannot be used as a production-release switch.
  */
 export const PSD_DERIVED_TSHIRT_STAGING_PROFILE: PsdDerivedTshirtStagingProfile = {
   sourceKey: "tshirt:white:front",
@@ -87,6 +101,24 @@ export const PSD_DERIVED_TSHIRT_STAGING_PROFILE: PsdDerivedTshirtStagingProfile 
   customerRuntimeEnabled: false,
   requiredEffectStack: ["multiply:0.77", "screen:0.38"],
 };
+
+export const PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE: PsdDerivedTshirtCustomerRelease = {
+  version: "psd-tshirt-v1",
+  supportedColors: ["white", "black", "navy", "maroon", "olive", "sky-blue", "grey", "red"],
+  supportedFaces: ["front", "back"],
+  assetRoot: "/mockups/psd-tshirt-v1",
+  cartEnabled: true,
+  exportEnabled: true,
+  customerRuntimeEnabled: true,
+  activatesSmartV9: false,
+  allowsPsdOrPsbInBrowser: false,
+  displacementStatus: "not-claimed-as-native-photoshop",
+};
+
+export function isPsdDerivedTshirtCustomerReleaseSurface(color: string, face: string): boolean {
+  return PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE.supportedColors.includes(color as never)
+    && PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE.supportedFaces.includes(face as never);
+}
 
 /** A source manifest remains unchanged until an accepted flat runtime asset exists. */
 export function isPsdDerivedTshirtReadyForRuntime(
