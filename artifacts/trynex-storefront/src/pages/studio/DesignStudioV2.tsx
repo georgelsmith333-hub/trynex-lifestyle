@@ -44,6 +44,7 @@ import { FONT_FAMILIES, type Layer, type ImageLayer, type TextLayer, type ShapeL
 const LazyProductViewer3D = lazy(() => import("../design-studio/ProductViewer3D"));
 
 const DRAFT_STORAGE_KEY = "trynex-design-draft-v2";
+const LOCAL_PSD_TSHIRT_STAGE_ROOT = "/@fs/home/ubuntu/webdev-static-assets/trynex-tshirt-psd-staging";
 const SIZE_CHART = [
   { size: "XS", chest: "36", length: "26" }, { size: "S", chest: "38", length: "27" },
   { size: "M", chest: "40", length: "28" }, { size: "L", chest: "42", length: "29" },
@@ -102,6 +103,10 @@ export default function DesignStudioV2() {
   const { addToCart } = useCartActions();
   const settings = useSiteSettings();
   const { toast } = useToast();
+  const [psdTshirtStageRequested] = useState(() => (
+    import.meta.env.DEV
+    && new URLSearchParams(window.location.search).get("psdTshirtStage") === "1"
+  ));
   const fileInputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [canvasSize, setCanvasSize] = useState(600);
@@ -125,6 +130,17 @@ export default function DesignStudioV2() {
   const isMug = selectedProduct.category === "mug";
   const isCap = selectedProduct.category === "cap";
   const isWaterBottle = selectedProduct.category === "waterbottle";
+  const isPsdTshirtStaging = useMemo(() => {
+    return psdTshirtStageRequested
+      && selectedProduct.category === "tshirt"
+      && selectedColor.hex.toLowerCase() === "#f8f7f4"
+      && activeFace === "front";
+  }, [activeFace, psdTshirtStageRequested, selectedColor.hex, selectedProduct.category]);
+  const psdTshirtStageAssets = useMemo(() => isPsdTshirtStaging ? {
+    base: `${LOCAL_PSD_TSHIRT_STAGE_ROOT}/tshirt-white-front.png`,
+    multiply: `${LOCAL_PSD_TSHIRT_STAGE_ROOT}/tshirt-white-front-multiply.png`,
+    screen: `${LOCAL_PSD_TSHIRT_STAGE_ROOT}/tshirt-white-front-screen.png`,
+  } : null, [isPsdTshirtStaging]);
   const supportsBack = ["tshirt", "longsleeve", "hoodie", "mug", "cap", "waterbottle"].includes(selectedProduct.category);
   const isZoneTabs = ["tshirt", "longsleeve", "hoodie"].includes(selectedProduct.category);
   const frontMockup = useMemo(
@@ -154,6 +170,10 @@ export default function DesignStudioV2() {
 
   const isBlackGarment = isNearBlack(selectedColor.hex);
   const isLightGarment = isLightTint(selectedColor.hex);
+
+  useEffect(() => {
+    if (isPsdTshirtStaging) setShow3D(false);
+  }, [isPsdTshirtStaging, setShow3D]);
 
   useEffect(() => {
     const onResize = () => {
@@ -647,6 +667,10 @@ export default function DesignStudioV2() {
   const backLayers = useMemo(() => layers.filter(l => (l.face ?? "front") === "back") as unknown as ComposerLayer[], [layers]);
 
   const handleAddToCart = async () => {
+    if (isPsdTshirtStaging) {
+      toast({ title: "Local PSD staging preview", description: "This white-front T-shirt review mode cannot be added to cart." });
+      return;
+    }
     if (layers.length === 0) {
       toast({ title: "No design", description: "Add an image or text layer first.", variant: "destructive" });
       return;
@@ -787,6 +811,10 @@ export default function DesignStudioV2() {
   };
 
   const handleExportPNG = async () => {
+    if (isPsdTshirtStaging) {
+      toast({ title: "Local PSD staging preview", description: "Export is disabled until this source passes the reviewed release workflow." });
+      return;
+    }
     const activeLayers = layers.filter(l => (l.face ?? "front") === activeFace) as unknown as ComposerLayer[];
     if (activeLayers.length === 0) { toast({ title: "Nothing to export", description: "Add a layer first." }); return; }
     const exportMockup = activeFace === "front" ? frontMockup : activeFace === "back" ? backMockup : activeMockup;
@@ -931,7 +959,7 @@ export default function DesignStudioV2() {
 
             <div className="relative rounded-3xl overflow-hidden select-none" style={{ background: "radial-gradient(ellipse at 50% 35%, #ffffff 0%, #f8f8f8 55%, #f0f0f0 100%)", border: "1px solid #e5e5e7", boxShadow: "0 6px 40px rgba(0,0,0,0.08)" }} onDrop={handleDrop} onDragOver={e => e.preventDefault()}>
               <div style={{ position: "relative", width: canvasSize, height: canvasSize, margin: "0 auto" }}>
-                {show3D && !isFlatZone && (
+                {show3D && !isFlatZone && !isPsdTshirtStaging && (
                   <div className="absolute inset-0 z-20 rounded-3xl overflow-hidden flex items-center justify-center" style={{ background: "radial-gradient(ellipse at 50% 40%, #f4f4f4 0%, #e8e8e8 100%)" }}>
                     <Suspense fallback={<Loader2 className="w-8 h-8 animate-spin text-blue-400" />}>
                       <LazyProductViewer3D product={selectedProduct} garmentColor={selectedColor.hex} front={{ layers: frontLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ) : selectedProduct.printZone, baseHeight: selectedProduct.baseHeight }} back={supportsBack && backLayers.length > 0 ? { layers: backLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ) : (selectedProduct.printZoneBack ?? selectedProduct.printZone), baseHeight: selectedProduct.baseHeight } : undefined} activeFace={activeFace as "front" | "back"} isWrapMode={isMug && mugMode === "wrap"} />
@@ -948,12 +976,23 @@ export default function DesignStudioV2() {
                   onDrawMove={handleDrawMove}
                   onDrawEnd={handleDrawEnd}
                   onPickColor={handlePickColor}
+                  overlay={psdTshirtStageAssets ? (
+                    <div className="absolute inset-0 z-[5] pointer-events-none" aria-hidden="true">
+                      <img src={psdTshirtStageAssets.multiply} alt="" className="absolute inset-0 h-full w-full" style={{ mixBlendMode: "multiply", opacity: 0.77 }} />
+                      <img src={psdTshirtStageAssets.screen} alt="" className="absolute inset-0 h-full w-full" style={{ mixBlendMode: "screen", opacity: 0.38 }} />
+                    </div>
+                  ) : undefined}
                   mockup={
                     isFlatZone && activeZoneConfig
                       ? <FlatZoneSVG zone={activeZoneConfig} showPrintZone={showPrintZone} mockup={activeMockup} />
-                      : <GarmentSVG product={selectedProduct} color={selectedColor.hex} showPrintZone={showPrintZone} face={activeFace} mugMode={isMug ? mugMode : undefined} />
+                      : <GarmentSVG product={selectedProduct} color={selectedColor.hex} showPrintZone={showPrintZone} face={activeFace} mugMode={isMug ? mugMode : undefined} baseSrcOverride={psdTshirtStageAssets?.base} />
                   }
                 />
+                {isPsdTshirtStaging && (
+                  <div className="absolute left-3 right-3 bottom-3 z-10 pointer-events-none rounded-xl border border-amber-300 bg-amber-50/95 px-3 py-2 text-center text-[11px] font-semibold text-amber-950 shadow-sm backdrop-blur">
+                    Local PSD T-shirt staging · White front only · 2D review · Cart and export disabled
+                  </div>
+                )}
                 {!show3D && !isFlatZone && layers.length === 0 && (
                   <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
                     <button

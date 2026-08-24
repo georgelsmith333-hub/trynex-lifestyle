@@ -826,12 +826,15 @@ export function GarmentSVG({
   showPrintZone,
   face = "front",
   mugMode,
+  baseSrcOverride,
 }: {
   product: DesignProduct;
   color?: string;
   showPrintZone: boolean;
   face?: Face;
   mugMode?: "side1" | "side2" | "wrap";
+  /** Local review-only source override. Never supplied by the customer resolver. */
+  baseSrcOverride?: string;
 }) {
   const isMug = product.category === "mug";
   const tintHex = color || product.garmentColor;
@@ -846,7 +849,7 @@ export function GarmentSVG({
   // opaque normalized photo remains available as source metadata and for admin
   // inspection, but it must never be stacked beneath or above the cutout in the
   // live editor because that creates the pale duplicate wedges seen in production.
-  const canonicalBaseSrc = resolvedMockup.cutoutSrc;
+  const canonicalBaseSrc = baseSrcOverride ?? resolvedMockup.cutoutSrc;
 
   // Canvas background colour: clean white for all products so the mockup reads
   // as a premium product shot on a light, neutral studio surface. Cutout garments

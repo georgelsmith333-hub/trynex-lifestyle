@@ -15,6 +15,8 @@ interface Props {
   height: number;
   /** Optional React node rendered behind the Konva stage as the mockup (e.g. GarmentSVG). */
   mockup?: React.ReactNode;
+  /** Optional pointer-safe raster detail pass rendered above editable artwork. */
+  overlay?: React.ReactNode;
   /** Optional native image element to use as the mockup background inside Konva. */
   mockupImg?: HTMLImageElement;
   /** Print zone in the 1000×1000 coordinate space. CanvasArea maps it to the stage size. */
@@ -36,7 +38,7 @@ function rgbaToHex(r: number, g: number, b: number, a: number) {
   return `#${[r, g, b].map((value) => value.toString(16).padStart(2, "0")).join("")}`;
 }
 
-export function CanvasArea({ width, height, mockup, mockupImg, printZone, onCanvasAction, onDrawStart, onDrawMove, onDrawEnd, onPickColor }: Props) {
+export function CanvasArea({ width, height, mockup, overlay, mockupImg, printZone, onCanvasAction, onDrawStart, onDrawMove, onDrawEnd, onPickColor }: Props) {
   const trRef = useRef<Konva.Transformer>(null);
   const drawingRef = useRef(false);
   const { layers, selectedIds, activeTool, selectLayer, clearSelection, setActiveTool } = useDesignStore();
@@ -203,6 +205,7 @@ export function CanvasArea({ width, height, mockup, mockupImg, printZone, onCanv
           />
         </Layer>
       </Stage>
+      {overlay}
     </div>
   );
 }
