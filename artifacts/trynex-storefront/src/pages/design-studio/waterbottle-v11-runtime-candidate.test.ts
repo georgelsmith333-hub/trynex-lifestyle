@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { PRODUCTS, resolveMockup } from "./mockups";
+import { PRODUCTS, resolveMockup, setRuntimeMockupOverrides } from "./mockups";
 import {
   validateWaterBottleV11RuntimeCandidate,
   WATER_BOTTLE_V11_RUNTIME_CANDIDATE,
@@ -22,5 +22,26 @@ describe("Water Bottle v1.1 runtime candidate", () => {
     expect(resolveMockup(bottle!, bottle!.colors[0]!.hex, "back").photoSrc).toBe(
       WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.back.url,
     );
+  });
+
+  it("rejects a stale ready Water Bottle gallery record instead of requesting smart-v4", () => {
+    const bottle = PRODUCTS.find((product) => product.id === "waterbottle");
+    expect(bottle).toBeDefined();
+
+    try {
+      setRuntimeMockupOverrides([
+        {
+          sourceKitKey: "waterbottle/white/front",
+          imageUrl: "/mockups/smart-v4/waterbottle/white/front.png?v=smart-v4",
+          ingestionStatus: "ready",
+        },
+      ]);
+
+      expect(resolveMockup(bottle!, bottle!.colors[0]!.hex, "front").photoSrc).toBe(
+        WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.front.url,
+      );
+    } finally {
+      setRuntimeMockupOverrides([]);
+    }
   });
 });

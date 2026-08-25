@@ -556,7 +556,18 @@ export function setRuntimeMockupOverrides(overrides: RuntimeMockupOverride[]): v
   runtimeMockupOverrides.clear();
   for (const override of overrides) {
     if (override.ingestionStatus !== "ready" || !override.sourceKitKey || !override.imageUrl) continue;
-    runtimeMockupOverrides.set(normalizeRuntimeKey(override.sourceKitKey), override);
+    const normalizedKey = normalizeRuntimeKey(override.sourceKitKey);
+    // Water Bottle v1.1 is a reviewed two-face, hash-pinned browser contract.
+    // Older gallery records still reference smart-v4 and must never override it
+    // merely because their ingestion status is "ready". Permit only the exact
+    // reviewed v1.1 URL for the face encoded in the metadata key.
+    if (normalizedKey.startsWith("waterbottle:")) {
+      const expectedUrl = normalizedKey.endsWith(":back")
+        ? WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.back.url
+        : WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.front.url;
+      if (override.imageUrl !== expectedUrl) continue;
+    }
+    runtimeMockupOverrides.set(normalizedKey, override);
   }
 }
 
