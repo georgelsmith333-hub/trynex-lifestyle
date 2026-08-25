@@ -7,6 +7,7 @@ import {
   PSD_DERIVED_TSHIRT_STAGING_PROFILE,
   PSD_DERIVED_TSHIRT_FRONT_WORKFLOW,
 } from "./psd-derived-tshirt";
+import { PRODUCTS, resolveMockup } from "./mockups";
 
 describe("licensed PSD-derived T-shirt workflow", () => {
   it("documents the native smart-object stack but keeps the partial source out of runtime", () => {
@@ -42,5 +43,20 @@ describe("licensed PSD-derived T-shirt workflow", () => {
     expect(PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE.allowsPsdOrPsbInBrowser).toBe(false);
     expect(isPsdDerivedTshirtCustomerReleaseSurface("black", "back")).toBe(true);
     expect(isPsdDerivedTshirtCustomerReleaseSurface("white", "left-sleeve")).toBe(false);
+  });
+
+  it("keeps each reviewed PSD-derived color base exact through the runtime resolver", () => {
+    const tshirt = PRODUCTS.find((product) => product.category === "tshirt");
+    expect(tshirt).toBeDefined();
+
+    for (const color of tshirt!.colors) {
+      for (const face of ["front", "back"] as const) {
+        const resolution = resolveMockup(tshirt!, color.hex, face);
+        expect(resolution.cutoutSrc).toContain("/mockups/psd-tshirt-v1/");
+        expect(resolution.isColorPhoto).toBe(true);
+        expect(resolution.cutoutNeedsTint).toBe(false);
+        expect(resolution.requiresTint).toBe(false);
+      }
+    }
   });
 });

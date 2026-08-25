@@ -454,9 +454,12 @@ export default function DesignStudioV2() {
         };
         addLayer(layer);
         selectLayer(layer.id);
-        setActiveTab("layers");
+        // A successful upload should land on the image-edit tab rather than the
+        // layer list, so mobile customers immediately see background removal,
+        // HD preparation, and brightness/contrast controls for the selected art.
+        setActiveTab("upload");
         if (isMobile) setMobileToolOpen(true);
-        toast({ title: "✓ Design placed!", description: "Your artwork is visible on the product. Use the quick image tools to clean or enhance it." });
+        toast({ title: "✓ Design placed!", description: "Your image tools are open—remove the background, improve print quality, or adjust it before checkout." });
       } catch (error) {
         console.error("Design upload failed", error);
         toast({ title: "Upload failed", description: "This image could not be prepared. Try a JPG, PNG, or WebP under 10MB.", variant: "destructive" });
@@ -1112,6 +1115,7 @@ export default function DesignStudioV2() {
                             <ImagePanel
                               onRemoveBackground={() => void handleRemoveBackground()}
                               onUpscale={() => void handleUpscale()}
+                              onOpenAiReference={() => setActiveTab("ai")}
                               busyAction={imageAction}
                             />
                           )}

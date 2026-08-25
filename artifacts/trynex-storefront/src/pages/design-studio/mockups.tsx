@@ -795,15 +795,20 @@ export function resolveMockup(
     : undefined;
   const photoSrc = runtimePhoto ?? psdPhoto ?? curated.photoSrc;
   const cutoutSrc = runtimePhoto ?? psdPhoto ?? curated.cutoutSrc;
+  const hasExactColorBase = Boolean(runtimePhoto || psdPhoto);
 
   return {
     colorHex: hex,
     photoSrc,
     cutoutSrc,
-    isColorPhoto: runtimePhoto ? true : curated.isColorPhoto,
-    cutoutNeedsTint: runtimePhoto ? false : curated.cutoutNeedsTint,
+    // Admin overrides and the reviewed PSD-derived T-shirt files already hold
+    // the final colorway. Treat them as exact color photos through every 2D,
+    // 3D, cart, and export consumer; adding any synthetic tint would corrupt
+    // the selected physical color.
+    isColorPhoto: hasExactColorBase ? true : curated.isColorPhoto,
+    cutoutNeedsTint: hasExactColorBase ? false : curated.cutoutNeedsTint,
     photoKind: runtimePhoto ? "opaque-photo" : curated.photoKind,
-    requiresTint: runtimePhoto ? false : curated.requiresTint,
+    requiresTint: hasExactColorBase ? false : curated.requiresTint,
     allowSilhouetteShadow: false,
     printZone: completeView.geometry.printZone,
     normalizedFrame,

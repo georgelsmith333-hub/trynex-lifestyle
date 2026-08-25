@@ -1,5 +1,5 @@
 import { Slider } from "@/components/ui/slider";
-import { FlipHorizontal, FlipVertical, Sun, Contrast, Droplets, Eraser, Maximize2, Loader2 } from "lucide-react";
+import { FlipHorizontal, FlipVertical, Sun, Contrast, Droplets, Eraser, Maximize2, Loader2, Wand2 } from "lucide-react";
 import { useDesignStore, useSelectedLayer } from "@/hooks/useDesignStore";
 
 type ImageAction = "remove-bg" | "upscale" | null;
@@ -7,10 +7,11 @@ type ImageAction = "remove-bg" | "upscale" | null;
 interface ImagePanelProps {
   onRemoveBackground?: () => void;
   onUpscale?: () => void;
+  onOpenAiReference?: () => void;
   busyAction?: ImageAction;
 }
 
-export function ImagePanel({ onRemoveBackground, onUpscale, busyAction = null }: ImagePanelProps) {
+export function ImagePanel({ onRemoveBackground, onUpscale, onOpenAiReference, busyAction = null }: ImagePanelProps) {
   const layer = useSelectedLayer();
   const updateLayer = useDesignStore((s) => s.updateLayer);
 
@@ -44,8 +45,16 @@ export function ImagePanel({ onRemoveBackground, onUpscale, busyAction = null }:
             {busyAction === "upscale" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Maximize2 className="h-4 w-4" />}
             {busyAction === "upscale" ? "Preparing…" : "HD upscale"}
           </button>
+          <button
+            type="button"
+            onClick={onOpenAiReference}
+            disabled={busy || !onOpenAiReference}
+            className="col-span-2 flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-violet-200 bg-violet-50 px-2 py-2 text-[10px] font-black text-violet-700 transition hover:bg-violet-100 active:scale-[0.98] disabled:cursor-wait disabled:opacity-60"
+          >
+            <Wand2 className="h-3.5 w-3.5" /> Refine this image with AI
+          </button>
         </div>
-        <p className="mt-2 text-[10px] leading-4 text-gray-400">These actions replace the selected layer and remain visible on the product preview and export.</p>
+        <p className="mt-2 text-[10px] leading-4 text-gray-400">Image changes stay visible on the product preview and export. AI reference edits require your approval before becoming a layer.</p>
       </div>
 
       <div className="space-y-1">
