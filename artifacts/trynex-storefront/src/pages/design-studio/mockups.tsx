@@ -682,9 +682,14 @@ function colorLuminance(hex: string): number {
 function getPsdTshirtMaterialEffects(color: string, face: "front" | "back"): readonly PsdMaterialEffectLayer[] {
   const luminance = colorLuminance(color);
   const root = PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE.assetRoot;
+  const isDarkGarment = luminance < 0.35;
+
+  // The reviewed color-specific bases already contain their garment lighting.
+  // A shared white screen map turns dark bases into pale streaked variants in
+  // the live preview, so retain only restrained ink shading for those colors.
   return [
-    { src: `${root}/effects/${face}-multiply.png`, blendMode: "multiply", opacity: 0.77 },
-    { src: `${root}/effects/${face}-screen.png`, blendMode: "screen", opacity: 0.38 * Math.max(0.1, luminance) },
+    { src: `${root}/effects/${face}-multiply.png`, blendMode: "multiply", opacity: isDarkGarment ? 0.35 : 0.77 },
+    { src: `${root}/effects/${face}-screen.png`, blendMode: "screen", opacity: isDarkGarment ? 0 : 0.38 * Math.max(0.1, luminance) },
   ];
 }
 
@@ -795,15 +800,20 @@ export function resolveMockup(
     : undefined;
   const photoSrc = runtimePhoto ?? psdPhoto ?? curated.photoSrc;
   const cutoutSrc = runtimePhoto ?? psdPhoto ?? curated.cutoutSrc;
+  const hasExactColorBase = Boolean(runtimePhoto || psdPhoto);
 
   return {
     colorHex: hex,
     photoSrc,
     cutoutSrc,
-    isColorPhoto: runtimePhoto ? true : curated.isColorPhoto,
-    cutoutNeedsTint: runtimePhoto ? false : curated.cutoutNeedsTint,
+    // Admin overrides and the reviewed PSD-derived T-shirt files already hold
+    // the final colorway. Treat them as exact color photos through every 2D,
+    // 3D, cart, and export consumer; adding any synthetic tint would corrupt
+    // the selected physical color.
+    isColorPhoto: hasExactColorBase ? true : curated.isColorPhoto,
+    cutoutNeedsTint: hasExactColorBase ? false : curated.cutoutNeedsTint,
     photoKind: runtimePhoto ? "opaque-photo" : curated.photoKind,
-    requiresTint: runtimePhoto ? false : curated.requiresTint,
+    requiresTint: hasExactColorBase ? false : curated.requiresTint,
     allowSilhouetteShadow: false,
     printZone: completeView.geometry.printZone,
     normalizedFrame,

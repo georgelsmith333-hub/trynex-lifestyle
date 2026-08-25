@@ -454,9 +454,12 @@ export default function DesignStudioV2() {
         };
         addLayer(layer);
         selectLayer(layer.id);
-        setActiveTab("layers");
+        // A successful upload should land on the image-edit tab rather than the
+        // layer list, so mobile customers immediately see background removal,
+        // HD preparation, and brightness/contrast controls for the selected art.
+        setActiveTab("upload");
         if (isMobile) setMobileToolOpen(true);
-        toast({ title: "✓ Design placed!", description: "Your artwork is visible on the product. Use the quick image tools to clean or enhance it." });
+        toast({ title: "✓ Design placed!", description: "Your image tools are open—remove the background, improve print quality, or adjust it before checkout." });
       } catch (error) {
         console.error("Design upload failed", error);
         toast({ title: "Upload failed", description: "This image could not be prepared. Try a JPG, PNG, or WebP under 10MB.", variant: "destructive" });
@@ -898,6 +901,14 @@ export default function DesignStudioV2() {
   }, [isMug, settings.studioMugColors, settings.studioTshirtColors, selectedProduct]);
 
   const currentFaceLayers = useMemo(() => layers.filter(l => (l.face ?? "front") === activeFace), [layers, activeFace]);
+  const hasVisibleArtworkOnFace = currentFaceLayers.some((layer) => layer.visible);
+  const materialEffectClipPath = useMemo(() => {
+    const left = Math.max(0, Math.min(100, pz.x / 10));
+    const top = Math.max(0, Math.min(100, pz.y / 10));
+    const right = Math.max(left, Math.min(100, (pz.x + pz.w) / 10));
+    const bottom = Math.max(top, Math.min(100, (pz.y + pz.h) / 10));
+    return `polygon(${left}% ${top}%, ${right}% ${top}%, ${right}% ${bottom}%, ${left}% ${bottom}%)`;
+  }, [pz]);
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#F5F3F0" }}>
@@ -1025,8 +1036,8 @@ export default function DesignStudioV2() {
                   onDrawMove={handleDrawMove}
                   onDrawEnd={handleDrawEnd}
                   onPickColor={handlePickColor}
-                  overlay={activePsdMaterialEffects.length > 0 ? (
-                    <div className="absolute inset-0 z-[5] pointer-events-none" aria-hidden="true">
+                  overlay={activePsdMaterialEffects.length > 0 && hasVisibleArtworkOnFace ? (
+                    <div className="absolute inset-0 z-[5] pointer-events-none" style={{ clipPath: materialEffectClipPath }} aria-hidden="true">
                       {activePsdMaterialEffects.map((effect) => (
                         <img key={`${effect.src}-${effect.blendMode}`} src={effect.src} alt="" className="absolute inset-0 h-full w-full" style={{ mixBlendMode: effect.blendMode, opacity: effect.opacity }} />
                       ))}
@@ -1112,6 +1123,7 @@ export default function DesignStudioV2() {
                             <ImagePanel
                               onRemoveBackground={() => void handleRemoveBackground()}
                               onUpscale={() => void handleUpscale()}
+                              onOpenAiReference={() => setActiveTab("ai")}
                               busyAction={imageAction}
                             />
                           )}
