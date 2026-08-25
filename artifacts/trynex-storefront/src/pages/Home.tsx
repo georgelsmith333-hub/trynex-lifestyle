@@ -940,8 +940,8 @@ export default function Home() {
                 hoodie:      "/mockups/smart-v4/hoodie/white/front.png",
                 cap:         "/mockups/smart-v4/cap/white/front.png",
                 mug:         "/mockups/smart-v4/mug/white/front.png",
-                waterbottle: "/mockups/smart-v4/waterbottle/white/front.png",
-                watertumbler:"/mockups/smart-v4/waterbottle/white/front.png",
+                waterbottle: "/mockups/waterbottle-v11/white/front.png",
+                watertumbler:"/mockups/waterbottle-v11/white/front.png",
               };
 
               return (

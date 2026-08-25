@@ -14,7 +14,7 @@ export function prefetchDesignStudio(): void {
     designStudioPrefetched = false;
   });
   // Warm one canonical front/back pair per product family so the active
-  // V2 studio resolves smart-v4 assets without falling back to legacy cutouts.
+  // V2 studio resolves reviewed sources without falling back to retired previews.
   try {
     [
       "/mockups/smart-v4/tshirt/white/front.png",
@@ -27,8 +27,8 @@ export function prefetchDesignStudio(): void {
       "/mockups/smart-v4/mug/white/back.png",
       "/mockups/smart-v4/cap/white/front.png",
       "/mockups/smart-v4/cap/white/back.png",
-      "/mockups/smart-v4/waterbottle/white/front.png",
-      "/mockups/smart-v4/waterbottle/white/back.png",
+      "/mockups/waterbottle-v11/white/front.png",
+      "/mockups/waterbottle-v11/white/back.png",
     ].forEach((src) => {
       const img = new Image();
       img.src = src;
