@@ -14,6 +14,7 @@ import {
   PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE,
   isPsdDerivedTshirtCustomerReleaseSurface,
 } from "./psd-derived-tshirt";
+import { WATER_BOTTLE_V11_RUNTIME_CANDIDATE } from "./waterbottle-v11-runtime-candidate";
 
 // ── T-Shirt: unified studio photos from normalized/ folder ──
 const tshirtFront       = "/mockups/smart-v4/tshirt/white/front.png";
@@ -26,7 +27,7 @@ const mugFront          = "/mockups/smart-v4/mug/white/front.png";
 const mugBack           = "/mockups/smart-v4/mug/white/back.png";
 const capFront          = "/mockups/smart-v4/cap/white/front.png";
 const capBack           = "/mockups/smart-v4/cap/white/back.png";
-const waterBottleFront  = "/mockups/smart-v4/waterbottle/white/front.png";
+const waterBottleFront  = WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.front.url;
 
 // All active color and view assets resolve through the canonical smart-v4 matrix below.
 // No family-root or legacy fallback paths are permitted in the customer renderer.
@@ -282,7 +283,9 @@ export const PRODUCTS: DesignProduct[] = [
     description: "600ml White Sublimation Aluminium",
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: WATERBOTTLE_PZ,
-    frontSrc: WATERBOTTLE_MOCKUP_URL, gallerySrc: "/mockups/gallery-v1/waterbottle-white-front.png", backSrc: "/mockups/smart-v4/waterbottle/white/back.png",
+    frontSrc: WATERBOTTLE_MOCKUP_URL,
+    gallerySrc: WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.front.url,
+    backSrc: WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.back.url,
   },
   // NOTE: Water Tumbler removed — it was a duplicate of Water Bottle with identical
   // mockup, colors, and print zone. Re-add if a distinct tumbler mockup is provided.
@@ -308,7 +311,12 @@ export const BASE_BY_CATEGORY: Record<
   hoodie:      { front: hoodieFront, back: hoodieBack, frontCutout: hoodieFront, backCutout: hoodieBack },
   mug:         { front: mugFront, back: mugBack, frontCutout: mugFront, backCutout: mugBack },
   cap:         { front: capFront, back: capBack, frontCutout: capFront, backCutout: "/mockups/smart-v4/cap/white/back.png" },
-  waterbottle: { front: waterBottleFront, frontCutout: waterBottleFront },
+  waterbottle: {
+    front: waterBottleFront,
+    back: WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.back.url,
+    frontCutout: waterBottleFront,
+    backCutout: WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.back.url,
+  },
   // watertumbler uses category "waterbottle" — shares the same base entry
 };
 
@@ -525,6 +533,7 @@ export function getActiveMockupReleaseVersion(): "smart-v4" | "smart-v8" | "smar
  * and never falls back to an older release if that v9 asset fails to load.
  */
 export function getProductPickerPreviewSrc(product: DesignProduct): string {
+  if (product.category === "waterbottle") return WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.front.url;
   if (!acceptedSmartV9Release) return product.gallerySrc ?? product.frontSrc;
   const baseColor = product.colors[0]?.hex ?? product.garmentColor;
   return getCuratedMockup(product, baseColor, "front").photoSrc;
@@ -798,9 +807,12 @@ export function resolveMockup(
   const psdPhoto = isPsdTshirtRuntime
     ? `${PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE.assetRoot}/${sourceKitSlug}/${face}.png`
     : undefined;
-  const photoSrc = runtimePhoto ?? psdPhoto ?? curated.photoSrc;
-  const cutoutSrc = runtimePhoto ?? psdPhoto ?? curated.cutoutSrc;
-  const hasExactColorBase = Boolean(runtimePhoto || psdPhoto);
+  const waterBottleV11Photo = category === "waterbottle"
+    ? WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets[face === "back" ? "back" : "front"].url
+    : undefined;
+  const photoSrc = runtimePhoto ?? psdPhoto ?? waterBottleV11Photo ?? curated.photoSrc;
+  const cutoutSrc = runtimePhoto ?? psdPhoto ?? waterBottleV11Photo ?? curated.cutoutSrc;
+  const hasExactColorBase = Boolean(runtimePhoto || psdPhoto || waterBottleV11Photo);
 
   return {
     colorHex: hex,

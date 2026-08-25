@@ -11,7 +11,7 @@ const mugSrc    = "/mockups/smart-v4/mug/white/front.png";
 const capSrc    = "/mockups/smart-v4/cap/white/front.png";
 const hoodieSrc = "/mockups/smart-v4/hoodie/white/front.png";
 const longsleeveSrc = "/mockups/smart-v4/longsleeve/white/front.png";
-const bottleSrc = "/mockups/smart-v4/waterbottle/white/front.png";
+const bottleSrc = "/mockups/waterbottle-v11/white/front.png";
 
 const DEFAULT_PHRASES: string[] = [
   "T-Shirts.",
