@@ -126,6 +126,17 @@ export default defineConfig({
     outDir: path.resolve(import.meta.dirname, "dist"),
     emptyOutDir: true,
     reportCompressedSize: false,
+    modulePreload: {
+      // Keep dynamic-import dependencies available when their route is opened,
+      // but do not force public Home visitors to download Studio-only 3D code
+      // or admin-chart code from the entry HTML.
+      resolveDependencies(_filename, dependencies, context) {
+        if (context.hostType !== "html") return dependencies;
+        return dependencies.filter(
+          (dependency) => !/vendor-(3d|charts)-/.test(dependency),
+        );
+      },
+    },
     rollupOptions: {
       output: {
         manualChunks: {

@@ -828,7 +828,7 @@ export default function Home() {
             <ErrorBoundary section="featured products">
               <div className="product-grid-responsive">
                 {featuredProducts.map((product, i) => (
-                  <ProductCard key={product.id} product={product} index={i} />
+                  <ProductCard key={product.id} product={product} index={i} eagerImage={false} />
                 ))}
               </div>
               <div className="flex justify-center mt-10">
