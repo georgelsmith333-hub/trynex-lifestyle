@@ -167,9 +167,3 @@ id = "sX3NiHZhNiv6fbpB6cQWr"
 uri = "file://TryNex_DesignStudio_MasterPlan.pdf"
 type = "pdf"
 title = "TryNex Design Studio — Master Rebuild & Fix Plan"
-
-[[outputs]]
-id = "qRx9d60ZL-L59rWJ5Or-K"
-uri = "file://attached_assets/trynex-mockup-source-kit.zip"
-type = "unspecified"
-title = "TryNex mockup source kit — 108 PSDs + previews"
