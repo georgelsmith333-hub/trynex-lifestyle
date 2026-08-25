@@ -45,7 +45,7 @@ export function ConnectWithUs() {
       Icon: Facebook,
       gradient: "linear-gradient(135deg, #1877F2, #0a5fcf)",
       shadow: "0 8px 24px rgba(24,119,242,0.25)",
-      description: "Daily updates, customer reviews & live drops",
+      description: "Daily updates and live drops",
       cta: "Like our page",
     }] : []),
     ...(instagramUrl ? [{
@@ -152,7 +152,7 @@ export function ConnectWithUs() {
         </div>
 
         <p className="text-center text-xs text-gray-400 mt-8">
-          Trusted by 10,000+ customers across Bangladesh
+          Follow TryNex for custom-design ideas and product updates.
         </p>
       </div>
     </section>

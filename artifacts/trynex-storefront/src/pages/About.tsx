@@ -1,15 +1,15 @@
 import { motion } from "framer-motion";
-import { Shirt, Star, Heart, Award, Zap, Globe, Users, Package } from "lucide-react";
+import { Shirt, Heart, Award, Globe, Package, Layers } from "lucide-react";
 import { Link } from "wouter";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SEOHead } from "@/components/SEOHead";
 
 const stats = [
-  { value: "5,000+", label: "Happy Customers", icon: Users },
+  { value: "6", label: "Product Families", icon: Shirt },
   { value: "64", label: "Districts Covered", icon: Globe },
-  { value: "48h", label: "Production Time", icon: Zap },
-  { value: "98%", label: "Satisfaction Rate", icon: Star },
+  { value: "2", label: "T-Shirt Print Sides", icon: Layers },
+  { value: "Custom", label: "Made to Order", icon: Package },
 ];
 
 const values = [
@@ -58,8 +58,8 @@ const timeline = [
   },
   {
     year: "2024",
-    title: "5,000+ Happy Customers",
-    desc: "Today, TryNex serves thousands of customers from Dhaka to Cox's Bazar. Our 98% satisfaction rate reflects our commitment to quality and service.",
+    title: "Growing Our Design Studio",
+    desc: "We continue improving the online Design Studio so customers can prepare and preview custom apparel before ordering.",
   },
 ];
 
@@ -67,8 +67,8 @@ export default function About() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <SEOHead
-        title="About TryNex Lifestyle | Bangladesh's Premium Custom Apparel Brand"
-        description="The story behind TryNex Lifestyle — Bangladesh's #1 custom apparel brand. Learn about our mission, values, and commitment to premium manufacturing."
+        title="About TryNex Lifestyle | Custom Apparel in Bangladesh"
+        description="Learn about TryNex Lifestyle, our custom apparel process, and our commitment to thoughtful production in Bangladesh."
       />
       <Navbar />
 

@@ -53,7 +53,7 @@ function isSizedApparelProduct(product: any): boolean {
 }
 
 
-function ReviewsSection({ productId, rating }: { productId: number; rating: number }) {
+function ReviewsSection({ productId }: { productId: number }) {
   const [reviews, setReviews] = useState<any[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -106,8 +106,8 @@ function ReviewsSection({ productId, rating }: { productId: number; rating: numb
     finally { setSubmitting(false); }
   };
 
-  const avg = stats?.average || rating;
-  const total = stats?.total || 0;
+  const total = stats?.total ?? 0;
+  const avg = total > 0 ? stats?.average : null;
 
   if (loading) return (
     <div className="flex items-center justify-center py-12">
@@ -126,13 +126,22 @@ function ReviewsSection({ productId, rating }: { productId: number; rating: numb
     <motion.div key="reviews" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-5">
       <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 p-4 sm:p-6 bg-white rounded-2xl border border-gray-100 shadow-sm mb-6">
         <div className="text-center w-full sm:w-auto">
-          <div className="text-4xl sm:text-5xl font-black text-gray-900">{avg}</div>
-          <div className="flex justify-center mt-1 sm:mt-2">
-            {Array.from({ length: 5 }).map((_, j) => (
-              <Star key={j} className="w-4 h-4" style={{ fill: j < Math.floor(avg) ? '#FB8500' : '#e5e7eb', color: j < Math.floor(avg) ? '#FB8500' : '#e5e7eb' }} />
-            ))}
-          </div>
-          <p className="text-xs text-gray-500 mt-1">{total} review{total !== 1 ? "s" : ""}</p>
+          {avg !== null ? (
+            <>
+              <div className="text-4xl sm:text-5xl font-black text-gray-900">{avg}</div>
+              <div className="flex justify-center mt-1 sm:mt-2">
+                {Array.from({ length: 5 }).map((_, j) => (
+                  <Star key={j} className="w-4 h-4" style={{ fill: j < Math.floor(avg) ? '#FB8500' : '#e5e7eb', color: j < Math.floor(avg) ? '#FB8500' : '#e5e7eb' }} />
+                ))}
+              </div>
+              <p className="text-xs text-gray-500 mt-1">{total} review{total !== 1 ? "s" : ""}</p>
+            </>
+          ) : (
+            <>
+              <p className="font-bold text-gray-900">No reviews yet</p>
+              <p className="text-xs text-gray-500 mt-1">Be the first to share your experience.</p>
+            </>
+          )}
         </div>
         <div className="flex-1 space-y-1.5 w-full">
           {[5, 4, 3, 2, 1].map((s) => {
@@ -622,7 +631,6 @@ export default function ProductDetail() {
 
   const displayImage = activeImage || product.imageUrl || "";
   const wishlisted = isWishlisted(product.id);
-  const rating = product.rating ? parseFloat(String(product.rating)) : 4.9;
   const itemPrice = selectedProductPrice + (customNote || customImages.length > 0 ? variantCustomizationFee : 0);
   const advanceAmount = Math.round(itemPrice * 0.25);
 
@@ -698,16 +706,6 @@ export default function ProductDetail() {
                     "@type": "AggregateRating",
                     "ratingValue": stats.average,
                     "reviewCount": stats.total,
-                    "bestRating": "5",
-                    "worstRating": "1",
-                  },
-                }
-              : product.rating && product.rating > 0
-              ? {
-                  "aggregateRating": {
-                    "@type": "AggregateRating",
-                    "ratingValue": product.rating,
-                    "reviewCount": product.reviewCount ?? 1,
                     "bestRating": "5",
                     "worstRating": "1",
                   },
@@ -967,19 +965,18 @@ export default function ProductDetail() {
                 {product.name}
               </h1>
 
-              {/* Rating */}
-              <div className="flex items-center gap-3 mb-6">
-                <div className="flex">
-                  {Array.from({ length: 5 }).map((_, j) => (
-                    <Star key={j} className="w-4 h-4"
-                      style={{ fill: j < Math.floor(rating) ? '#FB8500' : '#e5e7eb', color: j < Math.floor(rating) ? '#FB8500' : '#e5e7eb' }} />
-                  ))}
-                </div>
-                <span className="font-bold text-sm text-gray-700">{rating}</span>
-                {stats?.total > 0 && (
+              {stats?.total > 0 && (
+                <div className="flex items-center gap-3 mb-6" aria-label={`${stats.average} from ${stats.total} approved review${stats.total !== 1 ? "s" : ""}`}>
+                  <div className="flex" aria-hidden="true">
+                    {Array.from({ length: 5 }).map((_, j) => (
+                      <Star key={j} className="w-4 h-4"
+                        style={{ fill: j < Math.floor(stats.average) ? '#FB8500' : '#e5e7eb', color: j < Math.floor(stats.average) ? '#FB8500' : '#e5e7eb' }} />
+                    ))}
+                  </div>
+                  <span className="font-bold text-sm text-gray-700">{stats.average}</span>
                   <span className="text-sm text-gray-400">({stats.total} review{stats.total !== 1 ? "s" : ""})</span>
-                )}
-              </div>
+                </div>
+              )}
 
               {/* Price */}
                <div className="mb-8 p-5 rounded-2xl" style={{ background: '#fff8f5', border: '1px solid #fde4d0' }}>
@@ -1008,7 +1005,7 @@ export default function ProductDetail() {
                     className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-black uppercase tracking-wide"
                     style={{ background: '#fef3c7', color: '#92400e', border: '1px solid #fcd34d' }}
                   >
-                    🇧🇩 5,000+ happy customers
+                    🇧🇩 Nationwide delivery
                   </span>
                 </div>
                  <div className="mt-3 rounded-xl border border-green-200 bg-green-50 px-3 py-2.5 text-xs text-green-800">
@@ -1566,7 +1563,7 @@ export default function ProductDetail() {
                   </div>
                 </motion.div>
               ) : (
-                <ReviewsSection productId={product.id} rating={rating} />
+                <ReviewsSection productId={product.id} />
               )}
             </AnimatePresence>
           </div>

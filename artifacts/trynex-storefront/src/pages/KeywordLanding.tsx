@@ -283,10 +283,10 @@ export default function KeywordLanding({ params }: { params: { slug: string } })
       <section className="py-14 px-4 bg-neutral-900 text-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-black mb-3">
-            Why TryNex is Bangladesh's Best Custom Gift Brand
+            Why Choose TryNex for Custom Gifts
           </h2>
           <p className="text-neutral-400 mb-10 max-w-xl mx-auto">
-            Trusted by 50,000+ customers across all 64 districts since 2020.
+            Custom gifts and apparel with nationwide delivery across Bangladesh.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-5 text-left">
             {[
@@ -295,7 +295,7 @@ export default function KeywordLanding({ params }: { params: { slug: string } })
               { title: "Fast Nationwide Delivery", desc: "Ships to all 64 districts. Same-day delivery in Dhaka for urgent orders." },
               { title: "bKash & Nagad Accepted", desc: "Pay in full or just 25% in advance via bKash or Nagad — the rest is collected on delivery." },
               { title: "Free Design Help", desc: "Not a designer? No problem. Our team will help you create the perfect design." },
-              { title: "100% Satisfaction Guarantee", desc: "Not happy with your order? We'll reprint or refund — no questions asked." },
+              { title: "Order Support", desc: "Our team is available to help with product, artwork, and order questions." },
             ].map((item, i) => (
               <div key={i} className="bg-neutral-800 rounded-xl p-4">
                 <div className="font-bold text-white mb-1 text-sm">{item.title}</div>
@@ -362,7 +362,7 @@ export default function KeywordLanding({ params }: { params: { slug: string } })
             Ready to Order Your {config.h1}?
           </h2>
           <p className="text-orange-100 mb-8">
-            Join 50,000+ happy customers. Fast delivery. Premium quality. 100% satisfaction.
+            Start your custom order with product options, design support, and nationwide delivery.
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
             <Link
