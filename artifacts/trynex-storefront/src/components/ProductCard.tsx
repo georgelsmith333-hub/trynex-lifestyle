@@ -15,6 +15,8 @@ import { QuickViewModal } from "@/components/QuickViewModal";
 interface ProductCardProps {
   product: Product;
   index?: number;
+  /** Keep high-priority loading for the leading card on catalogue routes only. */
+  eagerImage?: boolean;
 }
 
 const COLOR_MAP: Record<string, string> = {
@@ -36,7 +38,7 @@ function getProductFallback(product: Product): string {
   return "/mockups/smart-v4/tshirt/white/front.png";
 }
 
-export function ProductCard({ product, index = 0 }: ProductCardProps) {
+export function ProductCard({ product, index = 0, eagerImage = true }: ProductCardProps) {
     const [, navigate] = useLocation();
     const { addToCart } = useCartActions();
     const { toggleWishlist, isWishlisted } = useWishlist();
@@ -49,6 +51,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
     const cardRef = useRef<HTMLDivElement>(null);
     const [tilt, setTilt] = useState({ x: 0, y: 0, glare: { x: 50, y: 50 } });
     const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 768);
+    const [shouldLoadImage, setShouldLoadImage] = useState(eagerImage && index === 0);
 
     // Track mobile breakpoint correctly
     useEffect(() => {
@@ -56,6 +59,31 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       window.addEventListener('resize', check, { passive: true });
       return () => window.removeEventListener('resize', check);
     }, []);
+
+    // Browser `loading="lazy"` is only a hint and can fetch a long catalogue
+    // on some mobile engines. Keep distant cards source-free until their layout
+    // is near the viewport; the leading catalogue card remains prioritized.
+    useEffect(() => {
+      if (eagerImage && index === 0) {
+        setShouldLoadImage(true);
+        return;
+      }
+      const card = cardRef.current;
+      if (!card || typeof IntersectionObserver === 'undefined') {
+        setShouldLoadImage(true);
+        return;
+      }
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry?.isIntersecting) return;
+          setShouldLoadImage(true);
+          observer.disconnect();
+        },
+        { rootMargin: '400px 0px' },
+      );
+      observer.observe(card);
+      return () => observer.disconnect();
+    }, [eagerImage, index]);
 
     const price = parseFloat(String(product.price)) || 0;
     const fallbackImage = getProductFallback(product);
@@ -245,13 +273,13 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                 <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-gray-100 to-gray-200" aria-hidden="true" />
               )}
               <img
-                  src={imageSrc}
+                  src={shouldLoadImage ? imageSrc : undefined}
                   alt={product.name}
                   width={400}
                   height={500}
-                  loading={index < 4 ? "eager" : "lazy"}
+                  loading={eagerImage && index === 0 ? "eager" : "lazy"}
                   decoding="async"
-                  fetchPriority={index === 0 ? "high" : "auto"}
+                  fetchPriority={eagerImage && index === 0 ? "high" : "auto"}
                   onLoad={() => setImgLoaded(true)}
                   onError={e => {
                     const img = e.currentTarget as HTMLImageElement;

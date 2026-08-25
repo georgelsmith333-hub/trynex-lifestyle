@@ -26,28 +26,13 @@ import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 import { useUtmCapture } from "@/hooks/useUtm";
 import { Loader } from "@/components/ui/Loader";
 import { AppErrorBoundary } from "@/components/AppErrorBoundary";
-import { getApiBaseUrl, getApiUrl } from "@/lib/utils";
+import { getApiBaseUrl } from "@/lib/utils";
 import { setBaseUrl } from "@workspace/api-client-react";
 
 // Keep generated hooks (orders, stats, products) on the same API origin as
 // the hand-written fetches. In production this avoids a Pages proxy request
 // hanging while direct authenticated Render requests remain healthy.
 setBaseUrl(getApiBaseUrl());
-
-// Warm up the API on mount so the first real request is fast.
-function useWarmUpApi() {
-  useEffect(() => {
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    const ping = () =>
-      fetch(getApiUrl("/api/healthz"), { method: "GET", cache: "no-store" }).catch(() => {});
-    ping();
-    timers.push(setTimeout(ping, 3000));
-    timers.push(setTimeout(ping, 8000));
-    timers.push(setTimeout(ping, 15000));
-    timers.push(setTimeout(ping, 25000));
-    return () => { timers.forEach(clearTimeout); };
-  }, []);
-}
 
 /**
  * lazyWithRetry — wraps lazy() with a single automatic retry on chunk load
@@ -284,7 +269,6 @@ function CaptureReferralCode() {
 function AppInner() {
   useLenis();
   useUtmCapture();
-  useWarmUpApi();
   return null;
 }
 
