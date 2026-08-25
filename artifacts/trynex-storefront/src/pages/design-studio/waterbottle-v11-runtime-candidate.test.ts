@@ -44,4 +44,25 @@ describe("Water Bottle v1.1 runtime candidate", () => {
       setRuntimeMockupOverrides([]);
     }
   });
+
+  it("keeps reviewed PSD-derived T-shirt colour bases ahead of stale smart-v4 gallery metadata", () => {
+    const tshirt = PRODUCTS.find((product) => product.id === "tshirt");
+    expect(tshirt).toBeDefined();
+
+    try {
+      setRuntimeMockupOverrides([
+        {
+          sourceKitKey: "tshirt/navy/front",
+          imageUrl: "/mockups/smart-v4/tshirt/navy/front.png?v=smart-v4",
+          ingestionStatus: "ready",
+        },
+      ]);
+
+      expect(resolveMockup(tshirt!, "#1e3a5f", "front").photoSrc).toBe(
+        "/mockups/psd-tshirt-v1/navy/front.png",
+      );
+    } finally {
+      setRuntimeMockupOverrides([]);
+    }
+  });
 });

@@ -567,6 +567,18 @@ export function setRuntimeMockupOverrides(overrides: RuntimeMockupOverride[]): v
         : WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.front.url;
       if (override.imageUrl !== expectedUrl) continue;
     }
+    // Reviewed PSD-derived T-shirt Front/Back bases are authoritative for the
+    // colour/face matrix they actually cover. Older gallery records point at
+    // green-contaminated smart-v4 files and otherwise take precedence merely
+    // because their ingestion status is "ready".
+    if (normalizedKey.startsWith("tshirt:")) {
+      const [, colorSlug, face] = normalizedKey.split(":");
+      const isReviewedFace = face === "front" || face === "back";
+      if (colorSlug && isReviewedFace && isPsdDerivedTshirtCustomerReleaseSurface(colorSlug, face)) {
+        const expectedUrl = `${PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE.assetRoot}/${colorSlug}/${face}.png`;
+        if (override.imageUrl !== expectedUrl) continue;
+      }
+    }
     runtimeMockupOverrides.set(normalizedKey, override);
   }
 }
@@ -821,9 +833,12 @@ export function resolveMockup(
   const waterBottleV11Photo = category === "waterbottle"
     ? WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets[face === "back" ? "back" : "front"].url
     : undefined;
-  const photoSrc = runtimePhoto ?? psdPhoto ?? waterBottleV11Photo ?? curated.photoSrc;
-  const cutoutSrc = runtimePhoto ?? psdPhoto ?? waterBottleV11Photo ?? curated.cutoutSrc;
-  const hasExactColorBase = Boolean(runtimePhoto || psdPhoto || waterBottleV11Photo);
+  // A reviewed T-shirt base is selected ahead of remote metadata. Runtime
+  // gallery records remain useful for unsupported T-shirt views and other
+  // families, but cannot replace an accepted PSD-derived colour/face pair.
+  const photoSrc = psdPhoto ?? runtimePhoto ?? waterBottleV11Photo ?? curated.photoSrc;
+  const cutoutSrc = psdPhoto ?? runtimePhoto ?? waterBottleV11Photo ?? curated.cutoutSrc;
+  const hasExactColorBase = Boolean(psdPhoto || runtimePhoto || waterBottleV11Photo);
 
   return {
     colorHex: hex,
@@ -835,12 +850,12 @@ export function resolveMockup(
     // the selected physical color.
     isColorPhoto: hasExactColorBase ? true : curated.isColorPhoto,
     cutoutNeedsTint: hasExactColorBase ? false : curated.cutoutNeedsTint,
-    photoKind: runtimePhoto ? "opaque-photo" : curated.photoKind,
+    photoKind: (psdPhoto || runtimePhoto) ? "opaque-photo" : curated.photoKind,
     requiresTint: hasExactColorBase ? false : curated.requiresTint,
     allowSilhouetteShadow: false,
     printZone: completeView.geometry.printZone,
     normalizedFrame,
-    isOpaquePhoto: runtimePhoto ? true : curated.photoKind === "opaque-photo",
+    isOpaquePhoto: (psdPhoto || runtimePhoto) ? true : curated.photoKind === "opaque-photo",
     editableMasterPath: runtimeOverride?.masterFileUrl ?? masterPath,
     sourceKitKey,
     smartObject: createSmartMockupManifest({

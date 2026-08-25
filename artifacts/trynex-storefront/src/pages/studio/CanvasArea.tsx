@@ -31,6 +31,8 @@ interface Props {
   onDrawEnd?: () => void;
   /** Called with a sampled hex colour when the eyedropper is used. */
   onPickColor?: (hex: string) => void;
+  /** Opens the full image tools workflow for an image-layer double activation. */
+  onOpenImageTools?: () => void;
 }
 
 function rgbaToHex(r: number, g: number, b: number, a: number) {
@@ -38,7 +40,7 @@ function rgbaToHex(r: number, g: number, b: number, a: number) {
   return `#${[r, g, b].map((value) => value.toString(16).padStart(2, "0")).join("")}`;
 }
 
-export function CanvasArea({ width, height, mockup, overlay, mockupImg, printZone, onCanvasAction, onDrawStart, onDrawMove, onDrawEnd, onPickColor }: Props) {
+export function CanvasArea({ width, height, mockup, overlay, mockupImg, printZone, onCanvasAction, onDrawStart, onDrawMove, onDrawEnd, onPickColor, onOpenImageTools }: Props) {
   const trRef = useRef<Konva.Transformer>(null);
   const drawingRef = useRef(false);
   const { layers, selectedIds, activeTool, selectLayer, clearSelection, setActiveTool } = useDesignStore();
@@ -189,6 +191,7 @@ export function CanvasArea({ width, height, mockup, overlay, mockupImg, printZon
               layer={layer}
               isSelected={selectedIds.includes(layer.id)}
               onSelect={() => selectLayer(layer.id)}
+              onOpenImageTools={layer.type === "image" ? onOpenImageTools : undefined}
               stageScale={scale}
               printZoneCenter={center}
               printZoneSize={{ w: pz.w, h: pz.h }}
