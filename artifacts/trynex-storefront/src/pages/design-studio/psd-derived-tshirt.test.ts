@@ -59,4 +59,17 @@ describe("licensed PSD-derived T-shirt workflow", () => {
       }
     }
   });
+
+  it("does not apply the shared white screen effect to dark T-shirt colorways", () => {
+    const tshirt = PRODUCTS.find((product) => product.category === "tshirt")!;
+    for (const colorName of ["Black", "Navy", "Maroon"]) {
+      const color = tshirt.colors.find((entry) => entry.name === colorName)!;
+      const effects = resolveMockup(tshirt, color.hex, "front").psdMaterialEffects ?? [];
+      expect(effects.find((effect) => effect.blendMode === "screen")?.opacity).toBe(0);
+      expect(effects.find((effect) => effect.blendMode === "multiply")?.opacity).toBe(0.35);
+    }
+    const white = tshirt.colors.find((entry) => entry.name === "White")!;
+    const whiteEffects = resolveMockup(tshirt, white.hex, "front").psdMaterialEffects ?? [];
+    expect(whiteEffects.find((effect) => effect.blendMode === "screen")?.opacity).toBeGreaterThan(0);
+  });
 });

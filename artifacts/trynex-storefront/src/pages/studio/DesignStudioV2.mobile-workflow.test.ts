@@ -19,4 +19,12 @@ describe("mobile Design Studio upload workflow", () => {
     expect(imagePanel).toContain("Refine this image with AI");
     expect(imagePanel).toContain("AI reference edits require your approval");
   });
+
+  it("shows material effects only over visible artwork in the matching print zone", () => {
+    const studio = readFileSync(new URL("./DesignStudioV2.tsx", import.meta.url), "utf8");
+
+    expect(studio).toContain("hasVisibleArtworkOnFace");
+    expect(studio).toContain("materialEffectClipPath");
+    expect(studio).toContain("activePsdMaterialEffects.length > 0 && hasVisibleArtworkOnFace");
+  });
 });

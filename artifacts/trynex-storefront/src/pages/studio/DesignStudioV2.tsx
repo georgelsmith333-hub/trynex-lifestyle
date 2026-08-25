@@ -901,6 +901,14 @@ export default function DesignStudioV2() {
   }, [isMug, settings.studioMugColors, settings.studioTshirtColors, selectedProduct]);
 
   const currentFaceLayers = useMemo(() => layers.filter(l => (l.face ?? "front") === activeFace), [layers, activeFace]);
+  const hasVisibleArtworkOnFace = currentFaceLayers.some((layer) => layer.visible);
+  const materialEffectClipPath = useMemo(() => {
+    const left = Math.max(0, Math.min(100, pz.x / 10));
+    const top = Math.max(0, Math.min(100, pz.y / 10));
+    const right = Math.max(left, Math.min(100, (pz.x + pz.w) / 10));
+    const bottom = Math.max(top, Math.min(100, (pz.y + pz.h) / 10));
+    return `polygon(${left}% ${top}%, ${right}% ${top}%, ${right}% ${bottom}%, ${left}% ${bottom}%)`;
+  }, [pz]);
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#F5F3F0" }}>
@@ -1028,8 +1036,8 @@ export default function DesignStudioV2() {
                   onDrawMove={handleDrawMove}
                   onDrawEnd={handleDrawEnd}
                   onPickColor={handlePickColor}
-                  overlay={activePsdMaterialEffects.length > 0 ? (
-                    <div className="absolute inset-0 z-[5] pointer-events-none" aria-hidden="true">
+                  overlay={activePsdMaterialEffects.length > 0 && hasVisibleArtworkOnFace ? (
+                    <div className="absolute inset-0 z-[5] pointer-events-none" style={{ clipPath: materialEffectClipPath }} aria-hidden="true">
                       {activePsdMaterialEffects.map((effect) => (
                         <img key={`${effect.src}-${effect.blendMode}`} src={effect.src} alt="" className="absolute inset-0 h-full w-full" style={{ mixBlendMode: effect.blendMode, opacity: effect.opacity }} />
                       ))}

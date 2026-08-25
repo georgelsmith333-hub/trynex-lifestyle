@@ -682,9 +682,14 @@ function colorLuminance(hex: string): number {
 function getPsdTshirtMaterialEffects(color: string, face: "front" | "back"): readonly PsdMaterialEffectLayer[] {
   const luminance = colorLuminance(color);
   const root = PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE.assetRoot;
+  const isDarkGarment = luminance < 0.35;
+
+  // The reviewed color-specific bases already contain their garment lighting.
+  // A shared white screen map turns dark bases into pale streaked variants in
+  // the live preview, so retain only restrained ink shading for those colors.
   return [
-    { src: `${root}/effects/${face}-multiply.png`, blendMode: "multiply", opacity: 0.77 },
-    { src: `${root}/effects/${face}-screen.png`, blendMode: "screen", opacity: 0.38 * Math.max(0.1, luminance) },
+    { src: `${root}/effects/${face}-multiply.png`, blendMode: "multiply", opacity: isDarkGarment ? 0.35 : 0.77 },
+    { src: `${root}/effects/${face}-screen.png`, blendMode: "screen", opacity: isDarkGarment ? 0 : 0.38 * Math.max(0.1, luminance) },
   ];
 }
 
