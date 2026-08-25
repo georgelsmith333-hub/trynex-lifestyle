@@ -106,6 +106,16 @@ export default defineConfig({
           // runtime image cache in src/sw.ts. Precaching it can exceed 300 MB,
           // delay first boot, and make free-tier deployments needlessly heavy.
           "**/assets/products/**",
+          // Route-split Studio and admin modules are not required for an
+          // offline public storefront shell. Precaching them causes a fresh
+          // PWA install to fetch 3D/editor and admin analytics code before a
+          // customer has requested either route.
+          "**/assets/DesignStudioV2-*.js",
+          "**/assets/vendor-3d-*.js",
+          "**/assets/vendor-charts-*.js",
+          "**/assets/vendor-editor-*.js",
+          "**/assets/ort*.js",
+          "**/assets/*Admin*.js",
         ],
         maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
         additionalManifestEntries: [{ url: `${basePath}offline.html`, revision: null }],
