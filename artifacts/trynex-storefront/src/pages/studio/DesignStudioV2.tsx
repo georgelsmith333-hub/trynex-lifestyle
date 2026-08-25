@@ -487,6 +487,20 @@ export default function DesignStudioV2() {
     reader.readAsDataURL(blob);
   });
 
+  const withOperationTimeout = async <T,>(operation: Promise<T>, timeoutMs: number, message: string): Promise<T> => {
+    let timeoutId: number | undefined;
+    try {
+      return await Promise.race([
+        operation,
+        new Promise<T>((_, reject) => {
+          timeoutId = window.setTimeout(() => reject(new Error(message)), timeoutMs);
+        }),
+      ]);
+    } finally {
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+    }
+  };
+
   const inspectProcessedImage = async (dataUrl: string, operation: "remove-bg" | "upscale", minimum?: { width: number; height: number }) => {
     const image = new Image();
     await new Promise<void>((resolve, reject) => {
@@ -522,11 +536,24 @@ export default function DesignStudioV2() {
     setImageAction("remove-bg");
     try {
       let result: string | null = null;
-      const response = await fetch(getApiUrl("/api/remove-bg"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image: selectedLayer.src }),
-      });
+      const controller = new AbortController();
+      const serverTimeout = window.setTimeout(() => controller.abort(), 18_000);
+      let response: Response;
+      try {
+        response = await fetch(getApiUrl("/api/remove-bg"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image: selectedLayer.src }),
+          signal: controller.signal,
+        });
+      } catch (error) {
+        if ((error as DOMException).name === "AbortError") {
+          throw new Error("Background removal timed out. Your original image is unchanged; please retry.");
+        }
+        throw error;
+      } finally {
+        window.clearTimeout(serverTimeout);
+      }
       const json = await response.json().catch(() => ({})) as { result?: string; error?: string };
       if (response.ok && json.result) {
         result = json.result;
@@ -537,11 +564,19 @@ export default function DesignStudioV2() {
       }
 
       if (!result) {
-        const { removeBackground } = await import("@imgly/background-removal");
-        const blob = await removeBackground(selectedLayer.src, {
-          publicPath: "https://staticimgly.com/@imgly/background-removal-data/1.7.0/dist/",
-          output: { format: "image/png", quality: 0.9 },
-        });
+        const { removeBackground } = await withOperationTimeout(
+          import("@imgly/background-removal"),
+          20_000,
+          "Background removal could not start on this connection. Your original image is unchanged; please retry.",
+        );
+        const blob = await withOperationTimeout(
+          removeBackground(selectedLayer.src, {
+            publicPath: "https://staticimgly.com/@imgly/background-removal-data/1.7.0/dist/",
+            output: { format: "image/png", quality: 0.9 },
+          }),
+          45_000,
+          "Background removal took too long. Your original image is unchanged; please retry.",
+        );
         result = await blobToDataUrl(blob);
       }
 
@@ -1036,6 +1071,10 @@ export default function DesignStudioV2() {
                   onDrawMove={handleDrawMove}
                   onDrawEnd={handleDrawEnd}
                   onPickColor={handlePickColor}
+                  onOpenImageTools={() => {
+                    setActiveTab("upload");
+                    if (isMobile) setMobileToolOpen(true);
+                  }}
                   overlay={activePsdMaterialEffects.length > 0 && hasVisibleArtworkOnFace ? (
                     <div className="absolute inset-0 z-[5] pointer-events-none" style={{ clipPath: materialEffectClipPath }} aria-hidden="true">
                       {activePsdMaterialEffects.map((effect) => (

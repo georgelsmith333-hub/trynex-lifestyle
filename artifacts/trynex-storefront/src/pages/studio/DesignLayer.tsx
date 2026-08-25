@@ -9,6 +9,7 @@ interface Props {
   layer: Layer;
   isSelected: boolean;
   onSelect: () => void;
+  onOpenImageTools?: () => void;
   stageScale?: number;
   printZoneCenter?: { x: number; y: number };
   printZoneSize?: { w: number; h: number };
@@ -18,6 +19,7 @@ export function DesignLayer({
   layer,
   isSelected,
   onSelect,
+  onOpenImageTools,
   stageScale = 1,
   printZoneCenter = { x: 300, y: 300 },
   printZoneSize,
@@ -119,6 +121,14 @@ export function DesignLayer({
           visible={layer.visible}
           onClick={onSelect}
           onTap={onSelect}
+          onDblClick={() => {
+            onSelect();
+            onOpenImageTools?.();
+          }}
+          onDblTap={() => {
+            onSelect();
+            onOpenImageTools?.();
+          }}
           onDragEnd={dragEnd}
           onTransformEnd={transformEnd}
           filters={[
