@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import {
-  ArrowRight, Pen, Flame, Zap, Truck, Layers, ShieldCheck, Star, Sparkles,
+  ArrowRight, Pen, Flame, Zap, Truck, Layers, ShieldCheck, Sparkles,
 } from "lucide-react";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 
@@ -23,10 +23,10 @@ const DEFAULT_PHRASES: string[] = [
 ];
 
 const HERO_STATS = [
-  { value: "5,000+", label: "Happy Customers" },
-  { value: "24hr", label: "Production" },
+  { value: "6", label: "Product Families" },
+  { value: "2", label: "T-Shirt Print Sides" },
   { value: "64", label: "Districts" },
-  { value: "4.9★", label: "Rated" },
+  { value: "Custom", label: "Made for Your Idea" },
 ];
 
 function usePrefersReducedMotion() {
@@ -220,7 +220,7 @@ export function TypewriterHero() {
               }}
             >
               <Flame className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-              <span>Bangladesh's #1 Custom Apparel Brand</span>
+              <span>Custom apparel made for your idea</span>
               <span
                 className="px-1.5 py-0.5 rounded-full text-[9px] text-white font-black tracking-wider shrink-0"
                 style={{ background: "var(--color-primary)" }}
@@ -537,15 +537,14 @@ export function TypewriterHero() {
               border: "1px solid rgba(232,93,4,0.12)",
             }}
           >
-            <div className="flex items-center gap-0.5">
-              {[0, 1, 2, 3, 4].map(i => (
-                <Star key={i} className="w-2.5 h-2.5 lg:w-3 lg:h-3 fill-amber-400 text-amber-400" />
-              ))}
+            <div className="flex items-center gap-1 text-[10px] lg:text-xs font-bold text-gray-700">
+              <ShieldCheck className="w-3 h-3 lg:w-3.5 lg:h-3.5 text-green-600" />
+              Secure ordering
             </div>
-            <div className="text-[10px] lg:text-xs font-black text-gray-800">4.9/5 · 5,000+ Reviews</div>
+            <div className="text-[10px] lg:text-xs font-black text-gray-800">Custom design support</div>
             <div className="flex items-center gap-1 text-[10px] lg:text-xs font-bold text-orange-600">
               <Truck className="w-3 h-3 lg:w-3.5 lg:h-3.5" />
-              24hr Delivery
+              Nationwide delivery
             </div>
           </motion.div>
         </div>

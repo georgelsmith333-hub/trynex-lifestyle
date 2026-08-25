@@ -20,7 +20,6 @@ import { BackToTop } from "@/components/BackToTop";
 import { AbandonedCartPopup } from "@/components/AbandonedCartPopup";
 import { DesignDraftReminder } from "@/components/DesignDraftReminder";
 import { ScrollProgressBar } from "@/components/ScrollProgressBar";
-import { SocialProofToast } from "@/components/SocialProofToast";
 import { SocialAuthLoader } from "@/components/SocialAuthLoader";
 import { FlashSaleBar } from "@/components/FlashSaleBar";
 import { ExitIntentPopup } from "@/components/ExitIntentPopup";
@@ -316,7 +315,6 @@ function App() {
                 <AbandonedCartPopup />
                 <DesignDraftReminder />
                 <ExitIntentPopup />
-                <SocialProofToast />
               </ScrollProvider>
               </WouterRouter>
               <Toaster />

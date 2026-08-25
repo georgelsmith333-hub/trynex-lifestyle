@@ -136,7 +136,7 @@ export function InstagramFeed() {
             <Instagram className="w-5 h-5" /> Follow @{instaHandle}
           </a>
           <span className="text-sm text-gray-400 font-medium">
-            5,000+ happy customers &amp; counting 🚀
+            See recent custom creations and design ideas.
           </span>
         </div>
       </div>

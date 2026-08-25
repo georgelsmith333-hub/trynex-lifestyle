@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { ShoppingCart, Star, Heart, Check, Eye, ArrowRight, MessageCircle, Flame, Loader2 } from "lucide-react";
+import { ShoppingCart, Heart, Check, Eye, ArrowRight, MessageCircle, Flame, Loader2 } from "lucide-react";
 import { formatPrice, resolveImageUrl, cn, getApiUrl } from "@/lib/utils";
 import type { Product } from "@workspace/api-client-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -65,7 +65,6 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       ? Math.round(((price - discountPrice) / price) * 100)
       : 0;
 
-    const rating = product.rating ? parseFloat(String(product.rating)) : 4.9;
     const wishlisted = isWishlisted(product.id);
     const isLowStock = product.stock > 0 && product.stock <= (scarcityThreshold || 10);
 
@@ -361,18 +360,6 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
 
           {/* Product Info */}
           <div className="p-3 sm:p-4 flex-1 flex flex-col relative z-20 pointer-events-none">
-            {/* Rating */}
-            <div className="flex items-center gap-1 mb-1.5">
-              {Array.from({ length: 5 }).map((_, j) => (
-                <Star key={j} className="w-3 h-3"
-                  style={{ fill: j < Math.floor(rating) ? '#FB8500' : '#e5e7eb', color: j < Math.floor(rating) ? '#FB8500' : '#e5e7eb' }} />
-              ))}
-              <span className="text-xs text-gray-400 ml-1 font-semibold">{rating}</span>
-              {discount > 0 && (
-                <span className="ml-auto savings-badge">Save {discount}%</span>
-              )}
-            </div>
-
             {/* Name */}
             <h3 className="font-bold text-gray-900 text-sm leading-snug mb-2 line-clamp-2 group-hover:text-orange-600 transition-colors">
               {product.name}
@@ -487,4 +474,3 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       </>
     );
   }
-  

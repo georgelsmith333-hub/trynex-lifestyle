@@ -16,7 +16,7 @@ import { useSiteSettings } from "@/context/SiteSettingsContext";
 import {
   ArrowRight, Sparkles, Zap, Package, Star, Check, Truck,
   ShieldCheck, Clock, Palette, Layers, Award, ChevronRight,
-  Users, BadgeCheck, Flame, Shirt, Coffee, Crown, TrendingUp, Eye
+  Users, Flame, Shirt, Coffee, Crown, TrendingUp, Eye
 } from "lucide-react";
 import { motion, useInView } from "framer-motion";
 import React, { useRef, useEffect, useState, useCallback, useMemo } from "react";
@@ -61,35 +61,10 @@ const PROCESS = [
   { step: "03", title: "Fast Delivery", desc: "Packed with care, delivered express anywhere in Bangladesh within 3-7 business days.", icon: Truck },
 ];
 
-const TESTIMONIALS = [
-  {
-    name: "Rakib Hasan", role: "Fashion Influencer", stars: 5,
-    text: "TryNex is literally the best custom apparel brand in BD. The hoodie quality is insane — thick, premium, and the print doesn't fade. 10/10!",
-    location: "Dhaka"
-  },
-  {
-    name: "Mithila Chowdhury", role: "Small Business Owner", stars: 5,
-    text: "Ordered 50 custom tees for my brand launch. Every single one was perfect. The colors were exactly what I wanted. Will order again!",
-    location: "Chittagong"
-  },
-  {
-    name: "Farhan Ahmed", role: "University Student", stars: 5,
-    text: "Got a custom hoodie for my crew. Everyone was shocked at how premium it felt. The delivery was super fast too. Highly recommend!",
-    location: "Sylhet"
-  },
-  {
-    name: "Nadia Islam", role: "Corporate Manager", stars: 5,
-    text: "We use TryNex for all our company merch now. Professional quality, great service, and the best prices in Bangladesh. Absolutely love it!",
-    location: "Rajshahi"
-  },
-];
-
-// Stats are seeded with strong baseline values and updated live from the API
-// when available (publicStats.totalOrders reflects real order volume).
 const BASE_STATS = [
-  { key: "customers", value: "5000", suffix: "+", label: "Happy Customers", icon: Users, color: "var(--color-primary)" },
-  { value: "98", suffix: "%", label: "Satisfaction Rate", icon: Star, color: "#eab308" },
-  { value: "48", suffix: "h", label: "Production Time", icon: Zap, color: "#d97706" },
+  { value: "6", suffix: "", label: "Product Families", icon: Shirt, color: "var(--color-primary)" },
+  { value: "2", suffix: "", label: "T-Shirt Print Sides", icon: Layers, color: "#2563eb" },
+  { value: "25", suffix: "%", label: "Advance at Checkout", icon: ShieldCheck, color: "#d97706" },
   { value: "64", suffix: "", label: "Districts Served", icon: Truck, color: "#16a34a" },
 ];
 
@@ -470,25 +445,7 @@ function usePublicStats(): PublicStats {
 }
 
 function LiveSocialProof({ stats, primaryColor = 'var(--color-primary)' }: { stats: PublicStats; primaryColor?: string }) {
-  if (!stats) return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.92 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.4 }}
-      className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mt-3"
-    >
-      <span className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold"
-        style={{ background: '#fff4ee', color: primaryColor, border: '1.5px solid #fdd5b4' }}>
-        <span className="w-2 h-2 rounded-full inline-block" style={{ background: primaryColor }} />
-        5,000+ happy customers
-      </span>
-      <span className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold"
-        style={{ background: '#f0fdf4', color: '#16a34a', border: '1.5px solid #bbf7d0' }}>
-        <span className="w-2 h-2 rounded-full inline-block bg-green-500" />
-        4.9★ rated nationwide
-      </span>
-    </motion.div>
-  );
+  if (!stats) return null;
 
   const lastOrderLabel = stats.minutesSinceLastOrder === null
     ? null
@@ -528,7 +485,7 @@ function LiveSocialProof({ stats, primaryColor = 'var(--color-primary)' }: { sta
             className="w-2 h-2 rounded-full inline-block"
             style={{ background: primaryColor }}
           />
-          {stats.totalOrders.toLocaleString()}+ happy customers
+          {stats.totalOrders.toLocaleString()} orders placed
         </span>
       )}
       {lastOrderLabel && (
@@ -698,15 +655,19 @@ export default function Home() {
   const howItWorksInView = useInView(howItWorksRef, { once: true, margin: "-80px" });
   const settings = useSiteSettings();
 
-  const testimonials = dynamicTestimonials.length > 0
-    ? dynamicTestimonials.map(t => ({ name: t.name, role: t.role || "", stars: t.stars ?? 5, text: t.body, location: t.location || "" }))
-    : TESTIMONIALS;
+  const testimonials = dynamicTestimonials.map(t => ({
+    name: t.name,
+    role: t.role || "",
+    stars: typeof t.stars === "number" && t.stars > 0 ? t.stars : null,
+    text: t.body,
+    location: t.location || "",
+  }));
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <SEOHead
         title="Premium Custom Apparel Bangladesh | Custom T-Shirts, Hoodies & Gifts"
-        description="TryNex Lifestyle — Bangladesh's #1 custom apparel brand. Order custom T-shirts, hoodies, mugs & gift hampers with fast delivery to all 64 districts. Pay just 25% in advance."
+        description="TryNex Lifestyle offers custom T-shirts, hoodies, mugs, and gift hampers with delivery across Bangladesh."
         canonical="/"
         keywords="custom t-shirt bangladesh, premium apparel bangladesh, custom hoodie bd, custom mug bd, custom cap bangladesh, gift hamper dhaka, personalized gifts bd, কাস্টম টি-শার্ট, কাস্টম হুডি বাংলাদেশ, ট্রাইনেক্স"
         jsonLd={[
@@ -1400,10 +1361,7 @@ export default function Home() {
         <div className="container-wide mx-auto px-4 md:px-8 lg:px-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
             {BASE_STATS.map((stat, i) => {
-              // Use live order count for customers stat when API data is available
-              const liveValue = stat.key === "customers" && publicStats?.totalOrders
-                ? String(Math.max(5000, publicStats.totalOrders))
-                : (stat as any).value as string;
+              const liveValue = stat.value;
               return (
                 <motion.div
                   key={stat.label}
@@ -1432,7 +1390,7 @@ export default function Home() {
       {/* ═══════════════════════════════════════
           TESTIMONIALS
       ═══════════════════════════════════════ */}
-      {settings.sectionTestimonialsEnabled !== false && <section className="py-20 px-4" style={{ background: 'linear-gradient(180deg, #FAFAFA 0%, #FFF4EC 100%)' }}>
+      {settings.sectionTestimonialsEnabled !== false && testimonials.length > 0 && <section className="py-20 px-4" style={{ background: 'linear-gradient(180deg, #FAFAFA 0%, #FFF4EC 100%)' }}>
         <div className="container-wide mx-auto px-4 md:px-8 lg:px-16">
           <div className="text-center mb-12">
             <motion.span
@@ -1441,10 +1399,10 @@ export default function Home() {
               viewport={{ once: true }}
               className="section-eyebrow mb-4"
             >
-              <Star className="w-3 h-3" /> Testimonials
+              <Star className="w-3 h-3" /> Customer Feedback
             </motion.span>
             <h2 className="section-heading mt-4">
-              <SplitTextReveal text="Loved Across Bangladesh" delay={0.025} />
+              <SplitTextReveal text="Feedback From Our Customers" delay={0.025} />
             </h2>
             <motion.p
               initial={{ opacity: 0, y: 10 }}
@@ -1453,35 +1411,9 @@ export default function Home() {
               transition={{ delay: 0.2 }}
               className="text-gray-500 mt-4"
             >
-              Real reviews from real customers — from Dhaka to Chittagong.
+              Approved feedback shared by customers who have ordered with TryNex.
             </motion.p>
           </div>
-
-          {/* Summary row */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="flex flex-wrap items-center justify-center gap-6 mb-10"
-          >
-            <div className="flex items-center gap-2">
-              {[1,2,3,4,5].map(s => <Star key={s} className="w-5 h-5 fill-amber-400 text-amber-400" />)}
-              <span className="font-black text-gray-900 ml-1">4.9</span>
-              <span className="text-gray-400 text-sm">/5</span>
-            </div>
-            <div className="w-px h-5 bg-gray-200" />
-            <span className="text-gray-500 text-sm font-semibold">Based on 5,000+ reviews</span>
-            <div className="w-px h-5 bg-gray-200" />
-            <div className="flex -space-x-2">
-              {['#E85D04','#2563eb','#16a34a','#9333ea'].map((c, i) => (
-                <div key={i} className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-white text-xs font-black"
-                  style={{ background: `linear-gradient(135deg, ${c}, ${c}dd)` }}>
-                  {['R','M','F','N'][i]}
-                </div>
-              ))}
-            </div>
-            <span className="text-xs text-gray-500 font-semibold">+5,000 happy customers</span>
-          </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {(() => {
@@ -1512,11 +1444,13 @@ export default function Home() {
                   {/* Quote mark */}
                   <div className="absolute top-4 right-5 text-5xl font-black text-gray-100 leading-none select-none" aria-hidden="true">"</div>
 
-                  <div className="flex mb-3">
-                    {Array.from({ length: t.stars }).map((_, j) => (
-                      <Star key={j} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    ))}
-                  </div>
+                  {t.stars !== null && (
+                    <div className="flex mb-3" aria-label={`${t.stars} out of 5 stars`}>
+                      {Array.from({ length: t.stars }).map((_, j) => (
+                        <Star key={j} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                      ))}
+                    </div>
+                  )}
                   <p className="text-sm text-gray-600 leading-relaxed mb-5 relative">"{t.text}"</p>
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full flex items-center justify-center font-black text-white text-sm shrink-0"
@@ -1526,7 +1460,6 @@ export default function Home() {
                     <div>
                       <p className="font-bold text-sm text-gray-900 flex items-center gap-1.5">
                         {t.name}
-                        <BadgeCheck className="w-3.5 h-3.5 text-blue-500" />
                       </p>
                       <p className="text-xs text-gray-400">{t.role}{t.location ? ` · ${t.location}` : ''}</p>
                     </div>
@@ -1548,7 +1481,7 @@ export default function Home() {
               { iconKey: settings.trustBadge1Icon || "shield", title: settings.trustBadge1Title || "100% Secure Payments", desc: settings.trustBadge1Desc || "bKash, Nagad & uPay — 25% advance", color: "#16a34a", bg: "#f0fdf4" },
               { iconKey: settings.trustBadge2Icon || "truck", title: settings.trustBadge2Title || "Nationwide Delivery", desc: settings.trustBadge2Desc || "All 64 districts of Bangladesh", color: "#2563eb", bg: "#eff6ff" },
               { iconKey: settings.trustBadge3Icon || "award", title: settings.trustBadge3Title || "Quality Guarantee", desc: settings.trustBadge3Desc || "230-320GSM premium fabric", color: 'var(--color-primary)', bg: "#fff4ee" },
-              { iconKey: settings.trustBadge4Icon || "users", title: settings.trustBadge4Title || "5,000+ Happy Customers", desc: settings.trustBadge4Desc || "98% satisfaction rate", color: "#9333ea", bg: "#fdf4ff" },
+              { iconKey: settings.trustBadge4Icon || "layers", title: settings.trustBadge4Title || "Design Studio Ready", desc: settings.trustBadge4Desc || "Preview artwork before checkout", color: "#9333ea", bg: "#fdf4ff" },
             ].map(({ iconKey, title, desc, color, bg }, i) => {
               const iconMap: Record<string, React.ElementType> = {
                 shield: ShieldCheck, truck: Truck, award: Award,
@@ -1644,7 +1577,7 @@ export default function Home() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-6 mt-12 text-sm font-semibold text-gray-500">
-            {["Free shipping above ৳1,500", "24-hour production", "100% satisfaction guarantee"].map(t => (
+            {["Free shipping above ৳1,500", "Design support", "Artwork preview before checkout"].map(t => (
               <span key={t} className="flex items-center gap-2">
                 <Check className="w-4 h-4 text-orange-500" /> {t}
               </span>

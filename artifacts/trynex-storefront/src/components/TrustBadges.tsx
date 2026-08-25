@@ -5,7 +5,7 @@ export function TrustBadges() {
     { icon: Shield, label: "SSL Secure", sub: "256-bit encrypted" },
     { icon: RotateCcw, label: "Easy Returns", sub: "Within 7 days" },
     { icon: Truck, label: "25% Advance Only", sub: "Rest paid on delivery" },
-    { icon: BadgeCheck, label: "5,000+ Customers", sub: "Verified reviews" },
+    { icon: BadgeCheck, label: "Custom-Made Orders", sub: "Artwork reviewed before production" },
   ];
 
   return (

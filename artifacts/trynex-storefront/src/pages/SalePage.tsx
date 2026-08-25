@@ -101,10 +101,6 @@ function ProductCard({ product }: { product: any }) {
         </div>
 
         <div className="p-5">
-          <div className="flex items-center gap-1 mb-1.5">
-            {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />)}
-            <span className="text-xs text-gray-400 ml-1">({20 + (product.id % 60)} reviews)</span>
-          </div>
           <h3 className="font-bold text-gray-900 mb-3 leading-tight">{product.name}</h3>
 
           <div className="flex items-center gap-2 mb-4">
@@ -209,7 +205,7 @@ export default function SalePage() {
           >
             <span className="flex items-center gap-1.5"><Shield className="w-4 h-4" /> 100% Secure</span>
             <span className="flex items-center gap-1.5"><Truck className="w-4 h-4" /> Free over ৳{freeShippingThreshold}</span>
-            <span className="flex items-center gap-1.5"><Star className="w-4 h-4" /> 5,000+ Happy Customers</span>
+            <span className="flex items-center gap-1.5"><Star className="w-4 h-4" /> Custom design support</span>
           </motion.div>
 
           <motion.div
