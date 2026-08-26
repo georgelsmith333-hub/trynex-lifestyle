@@ -166,14 +166,6 @@ export default defineConfig({
             "@tiptap/react",
             "@tiptap/starter-kit",
           ],
-          "vendor-charts": ["recharts"],
-          // Three.js + React Three Fiber/Drei only needed in DesignStudio.
-          // Splitting them keeps the storefront critical path bundle lean.
-          "vendor-3d": [
-            "three",
-            "@react-three/fiber",
-            "@react-three/drei",
-          ],
         },
       },
     },

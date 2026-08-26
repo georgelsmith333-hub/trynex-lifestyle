@@ -56,14 +56,16 @@ function lazyWithRetry<T extends ComponentType<any>>(
   );
 }
 
-// Top-5 most-visited routes loaded eagerly — navigation to these never
-// triggers Suspense, so there's zero spinner flash on the most common paths.
+// Only Home is needed for an initial storefront visit. Product detail, cart,
+// and checkout can carry indirect visual/editor dependencies, so keep them
+// behind the existing retrying lazy boundary rather than loading their chunks
+// before a customer requests those routes.
 import Home from "./pages/Home";
-import Products from "./pages/Products";
-import ProductDetail from "./pages/ProductDetail";
-import Cart from "./pages/Cart";
-import Checkout from "./pages/Checkout";
 
+const Products       = lazyWithRetry(() => import("./pages/Products"));
+const ProductDetail  = lazyWithRetry(() => import("./pages/ProductDetail"));
+const Cart           = lazyWithRetry(() => import("./pages/Cart"));
+const Checkout       = lazyWithRetry(() => import("./pages/Checkout"));
 const TrackOrder     = lazyWithRetry(() => import("./pages/TrackOrder"));
 const Blog           = lazyWithRetry(() => import("./pages/Blog"));
 const BlogPost       = lazyWithRetry(() => import("./pages/BlogPost"));
