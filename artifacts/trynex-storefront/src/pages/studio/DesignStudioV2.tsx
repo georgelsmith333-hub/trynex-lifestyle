@@ -205,7 +205,10 @@ export default function DesignStudioV2() {
     return activeMockup.psdMaterialEffects ?? [];
   }, [activeMockup.psdMaterialEffects, psdTshirtStageAssets, psdTshirtStageEffectOpacity]);
 
-  const apparelZones = useMemo(() => getApparelZones(selectedProduct.category, selectedProduct.printZone, selectedProduct.printZoneBack), [selectedProduct]);
+  const apparelZones = useMemo(
+    () => getApparelZones(selectedProduct.category, selectedProduct.printZone, selectedProduct.printZoneBack, selectedColor.hex),
+    [selectedProduct, selectedColor.hex],
+  );
   const activeZoneConfig = useMemo(() => apparelZones.find(z => z.face === activeFace) ?? apparelZones[0], [apparelZones, activeFace]);
   const isFlatZone = activeFace === "left-sleeve" || activeFace === "right-sleeve" || activeFace === "neck-label";
 
@@ -214,8 +217,8 @@ export default function DesignStudioV2() {
       if (mugMode === "wrap") return activeFace === "back" ? MUG_WRAP_BACK_PZ : MUG_PZ;
       return activeFace === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ;
     }
-    return getZonePZ(activeFace, selectedProduct);
-  }, [isMug, mugMode, activeFace, selectedProduct]);
+    return getZonePZ(activeFace, selectedProduct, selectedColor.hex);
+  }, [isMug, mugMode, activeFace, selectedProduct, selectedColor.hex]);
 
   const isBlackGarment = isNearBlack(selectedColor.hex);
   const isLightGarment = isLightTint(selectedColor.hex);
@@ -793,8 +796,12 @@ export default function DesignStudioV2() {
     // opaque photo is source metadata only and must not create a second silhouette.
     const garmentSrc = frontMockup.cutoutSrc;
     const isColorPhoto = frontMockup.isColorPhoto;
-    const frontPZ = isMug ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ) : selectedProduct.printZone;
-    const backPZ = isMug ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ) : (selectedProduct.printZoneBack ?? selectedProduct.printZone);
+    const frontPZ = isMug
+      ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ)
+      : getZonePZ("front", selectedProduct, selectedColor.hex);
+    const backPZ = isMug
+      ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ)
+      : getZonePZ("back", selectedProduct, selectedColor.hex);
     const leftSleeveLayers = layers.filter(l => l.face === "left-sleeve") as unknown as ComposerLayer[];
     const rightSleeveLayers = layers.filter(l => l.face === "right-sleeve") as unknown as ComposerLayer[];
     const neckLabelLayers = layers.filter(l => l.face === "neck-label") as unknown as ComposerLayer[];
@@ -909,11 +916,7 @@ export default function DesignStudioV2() {
     const canvas = document.createElement("canvas");
     const exportPrintZone = isMug
       ? (mugMode === "wrap" ? (activeFace === "back" ? MUG_WRAP_BACK_PZ : MUG_PZ) : (activeFace === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ))
-      : activeFace === "front"
-        ? selectedProduct.printZone
-        : activeFace === "back"
-          ? (selectedProduct.printZoneBack ?? selectedProduct.printZone)
-          : activeZoneConfig?.pz ?? selectedProduct.printZone;
+      : getZonePZ(activeFace, selectedProduct, selectedColor.hex);
     await composeGarmentMockup({ canvas, garmentSrc, garmentColor: selectedColor.hex, printZone: exportPrintZone, layers: activeLayers, outSize: 1200, isColorPhoto: exportMockup.isColorPhoto, requiresTint: exportMockup.requiresTint, fabricTexture, psdMaterialEffects: exportMockup.psdMaterialEffects });
     const a = document.createElement("a"); a.href = canvas.toDataURL("image/png"); a.download = `trynex-${selectedProduct.id}-${activeFace}-design.png`; a.click();
     toast({ title: "PNG exported!", description: "High-res PNG saved to your downloads." });
@@ -1057,7 +1060,7 @@ export default function DesignStudioV2() {
                 {show3D && !isFlatZone && !isPsdTshirtStaging && (
                   <div className="absolute inset-0 z-20 rounded-3xl overflow-hidden flex items-center justify-center" style={{ background: "radial-gradient(ellipse at 50% 40%, #f4f4f4 0%, #e8e8e8 100%)" }}>
                     <Suspense fallback={<Loader2 className="w-8 h-8 animate-spin text-blue-400" />}>
-                      <LazyProductViewer3D product={selectedProduct} garmentColor={selectedColor.hex} front={{ layers: frontLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ) : selectedProduct.printZone, baseHeight: selectedProduct.baseHeight, psdMaterialEffects: frontMockup.psdMaterialEffects }} back={supportsBack && backLayers.length > 0 ? { layers: backLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ) : (selectedProduct.printZoneBack ?? selectedProduct.printZone), baseHeight: selectedProduct.baseHeight, psdMaterialEffects: backMockup.psdMaterialEffects } : undefined} activeFace={activeFace as "front" | "back"} isWrapMode={isMug && mugMode === "wrap"} />
+                      <LazyProductViewer3D product={selectedProduct} garmentColor={selectedColor.hex} front={{ layers: frontLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ) : getZonePZ("front", selectedProduct, selectedColor.hex), baseHeight: selectedProduct.baseHeight, psdMaterialEffects: frontMockup.psdMaterialEffects }} back={supportsBack && backLayers.length > 0 ? { layers: backLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ) : getZonePZ("back", selectedProduct, selectedColor.hex), baseHeight: selectedProduct.baseHeight, psdMaterialEffects: backMockup.psdMaterialEffects } : undefined} activeFace={activeFace as "front" | "back"} isWrapMode={isMug && mugMode === "wrap"} />
                     </Suspense>
                     <button onClick={() => setShow3D(false)} className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full text-xs font-bold text-white shadow-xl" style={{ background: "rgba(17,24,39,0.85)", backdropFilter: "blur(8px)" }}><Eye className="w-3 h-3 inline mr-1" /> Back to 2D</button>
                   </div>
