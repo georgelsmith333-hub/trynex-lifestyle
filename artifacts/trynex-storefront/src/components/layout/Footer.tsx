@@ -38,10 +38,10 @@ export function Footer() {
   const contactAddress = settings.address?.trim() || "";
   const phoneHref = contactPhone.replace(/[^+0-9]/g, '');
   const socialLinks = [
-    facebookUrl ? { icon: Facebook, href: facebookUrl, color: "#1877f2" } : null,
-    instagramUrl ? { icon: Instagram, href: instagramUrl, color: "#e1306c" } : null,
-    youtubeUrl ? { icon: Youtube, href: youtubeUrl, color: "#ff0000" } : null,
-  ].filter(Boolean) as Array<{ icon: typeof Facebook; href: string; color: string }>;
+    facebookUrl ? { icon: Facebook, label: "Facebook", href: facebookUrl, color: "#1877f2" } : null,
+    instagramUrl ? { icon: Instagram, label: "Instagram", href: instagramUrl, color: "#e1306c" } : null,
+    youtubeUrl ? { icon: Youtube, label: "YouTube", href: youtubeUrl, color: "#ff0000" } : null,
+  ].filter(Boolean) as Array<{ icon: typeof Facebook; label: string; href: string; color: string }>;
 
   const handleSecretTap = useCallback(() => {
     setTapFeedback(true);
@@ -129,6 +129,7 @@ export function Footer() {
               <form onSubmit={handleNewsletter} className="flex flex-col sm:flex-row gap-2 max-w-sm mx-auto">
                 <input
                   type="email"
+                  aria-label="Email address for newsletter updates"
                   placeholder="your@email.com"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
@@ -219,8 +220,9 @@ export function Footer() {
             </div>
 
             <div className="flex gap-3">
-              {socialLinks.map(({ icon: Icon, href, color }) => (
+              {socialLinks.map(({ icon: Icon, label, href, color }) => (
                 <a key={href} href={href} target="_blank" rel="noopener noreferrer"
+                  aria-label={`Visit TryNex Lifestyle on ${label}`}
                   className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 hover:-translate-y-1 hover:scale-110"
                   style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}
                   onMouseEnter={e => {
