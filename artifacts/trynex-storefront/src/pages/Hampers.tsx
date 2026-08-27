@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "wouter";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SEOHead } from "@/components/SEOHead";
 import { formatPrice, getApiUrl } from "@/lib/utils";
-import { Gift, Sparkles, ArrowRight, Package, Heart } from "lucide-react";
+import { Gift, Sparkles, ArrowRight, Package, Heart, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface HamperLite {
@@ -24,15 +24,25 @@ interface HamperLite {
 
 export default function Hampers() {
   const [hampers, setHampers] = useState<HamperLite[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [requestState, setRequestState] = useState<"loading" | "ready" | "error">("loading");
+
+  const loadHampers = useCallback(async () => {
+    setRequestState("loading");
+    try {
+      const response = await fetch(getApiUrl("/api/hampers"));
+      if (!response.ok) throw new Error(`Unable to load hampers (${response.status})`);
+      const data = await response.json() as { hampers?: HamperLite[] };
+      setHampers(Array.isArray(data.hampers) ? data.hampers : []);
+      setRequestState("ready");
+    } catch {
+      setHampers([]);
+      setRequestState("error");
+    }
+  }, []);
 
   useEffect(() => {
-    fetch(getApiUrl("/api/hampers"))
-      .then(r => r.json())
-      .then(d => setHampers(d.hampers || []))
-      .catch(() => setHampers([]))
-      .finally(() => setLoading(false));
-  }, []);
+    void loadHampers();
+  }, [loadHampers]);
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -113,12 +123,34 @@ export default function Hampers() {
           </Link>
 
           {/* Hamper grid */}
-          {loading ? (
+          {requestState === "loading" ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3, 4, 5, 6].map(i => (
                 <div key={i} className="rounded-3xl bg-gray-50 animate-pulse h-80" />
               ))}
             </div>
+          ) : requestState === "error" ? (
+            <section
+              data-testid="hampers-unavailable"
+              role="alert"
+              className="text-center py-16 px-6 rounded-3xl bg-amber-50 border border-dashed border-amber-200"
+            >
+              <Gift className="w-12 h-12 text-amber-500 mx-auto mb-3" />
+              <h2 className="text-xl font-black text-gray-900 mb-2">Gift hampers are temporarily unavailable</h2>
+              <p className="text-sm text-gray-600 max-w-md mx-auto mb-5">
+                Please try again in a moment. You can still build a personal gift bundle now.
+              </p>
+              <button
+                type="button"
+                data-testid="button-retry-hampers"
+                onClick={() => void loadHampers()}
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-white text-sm transition-transform active:scale-[0.98]"
+                style={{ background: 'linear-gradient(135deg, #E85D04, #FB8500)', boxShadow: '0 4px 16px rgba(232,93,4,0.22)' }}
+              >
+                <RefreshCw className="w-4 h-4" />
+                Try again
+              </button>
+            </section>
           ) : hampers.length === 0 ? (
             <div className="text-center py-16 rounded-3xl bg-gray-50 border border-dashed border-gray-200">
               <Gift className="w-12 h-12 text-gray-300 mx-auto mb-3" />
