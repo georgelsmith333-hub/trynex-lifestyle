@@ -121,7 +121,7 @@ export function WhatsAppButton() {
             initial={{ opacity: 0, x: -10, scale: 0.9 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: -10, scale: 0.9 }}
-            className="px-3 py-2 rounded-xl bg-gray-900 text-white text-xs font-semibold shadow-lg whitespace-nowrap"
+            className="hidden md:block px-3 py-2 rounded-xl bg-gray-900 text-white text-xs font-semibold shadow-lg whitespace-nowrap"
           >
             Need help? Chat with us!
             <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 w-2 h-2 bg-gray-900 rotate-45" />
