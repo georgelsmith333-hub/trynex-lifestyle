@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Gift, Sparkles, X, Copy, Check } from "lucide-react";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { lockBodyScroll } from "@/lib/scrollLock";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type Prize = {
   id: string;
@@ -151,10 +152,12 @@ interface Props {
 
 export default function SpinWheel({ autoOpen = true, forceOpen = false, onClose }: Props) {
   const settings = useSiteSettings();
+  const isMobile = useIsMobile();
   const enabled = settings.spinWheelEnabled !== false;
   const delaySeconds = Math.max(1, settings.spinWheelDelay ?? 20);
   const title = settings.spinWheelTitle || "Spin & Win an Offer!";
   const subtitle = settings.spinWheelSubtitle || "One free spin — no purchase needed.";
+  const allowAutoOpen = autoOpen && !isMobile;
 
   const [open, setOpen] = useState(false);
   const [spinning, setSpinning] = useState(false);
@@ -171,7 +174,10 @@ export default function SpinWheel({ autoOpen = true, forceOpen = false, onClose 
   useEffect(() => {
     if (!enabled || dismissed) return;
     if (forceOpen) { setOpen(true); return; }
-    if (!autoOpen) return;
+    // A full-screen promotion before the mobile visitor sees the storefront
+    // blocks the primary value proposition. Keep desktop campaign timing
+    // configurable, while mobile opens only from an explicit user action.
+    if (!allowAutoOpen) return;
     try {
       const stored = localStorage.getItem(STORAGE_SHOWN);
       if (stored) {
@@ -190,7 +196,7 @@ export default function SpinWheel({ autoOpen = true, forceOpen = false, onClose 
       try { localStorage.setItem(STORAGE_SHOWN, String(Date.now())); } catch {}
     }, delaySeconds * 1000);
     return () => clearTimeout(t);
-  }, [autoOpen, forceOpen, enabled, delaySeconds, resetAt, cooldownHours, dismissed]);
+  }, [allowAutoOpen, forceOpen, enabled, delaySeconds, resetAt, cooldownHours, dismissed]);
 
   useEffect(() => {
     try { spunTodayRef.current = localStorage.getItem(STORAGE_LAST_SPIN) === todayKey(); } catch {}

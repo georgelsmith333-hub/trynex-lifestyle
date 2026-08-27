@@ -618,6 +618,7 @@ export default function Home() {
   const { data: productsData, isLoading, isError, refetch } = useListProducts({ limit: 100 });
   const { data: testimonialsData } = useGetTestimonials();
   const publicStats = usePublicStats();
+  const [spinWheelOpen, setSpinWheelOpen] = useState(false);
   const allProducts = productsData?.products || [];
   const featuredProducts = useMemo(() => {
     const categoryMatchers: Array<(product: typeof allProducts[number]) => boolean> = [
@@ -742,7 +743,7 @@ export default function Home() {
         ]}
       />
       <Navbar />
-      <SpinWheel autoOpen />
+      <SpinWheel autoOpen forceOpen={spinWheelOpen} onClose={() => setSpinWheelOpen(false)} />
 
       <TypewriterHero />
 
@@ -796,11 +797,24 @@ export default function Home() {
                   Hand-picked best sellers at exclusive prices. Free design preview &amp; fast nationwide delivery.
                 </p>
               </div>
-              <Link href="/products?tab=offers"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-sm bg-white text-orange-600 hover:bg-orange-50 transition-colors shadow-lg shrink-0 group">
-                Shop All Offers
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
+              <div className="flex flex-wrap items-center gap-3 shrink-0">
+                <Link href="/products?tab=offers"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-sm bg-white text-orange-600 hover:bg-orange-50 transition-colors shadow-lg group focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-orange-700">
+                  Shop All Offers
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+                {settings.spinWheelEnabled !== false && (
+                  <button
+                    type="button"
+                    onClick={() => setSpinWheelOpen(true)}
+                    data-testid="button-open-spin-wheel"
+                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-white/50 bg-white/10 px-5 py-3 text-sm font-bold text-white transition hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-orange-700"
+                  >
+                    <Sparkles className="h-4 w-4" aria-hidden="true" />
+                    Spin &amp; Win
+                  </button>
+                )}
+              </div>
             </div>
           </motion.div>
 
