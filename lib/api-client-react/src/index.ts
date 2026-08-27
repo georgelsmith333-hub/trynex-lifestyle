@@ -1,6 +1,6 @@
 export * from "./generated/api";
 export * from "./generated/api.schemas";
-export { setBaseUrl, setAuthTokenGetter } from "./custom-fetch";
+export { ApiError, setBaseUrl, setAuthTokenGetter } from "./custom-fetch";
 export type { AuthTokenGetter } from "./custom-fetch";
 
 // ─── Core domain types (defined in trynex-hooks.ts because generated/api is a skeleton) ───

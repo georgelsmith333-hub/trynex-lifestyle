@@ -27,7 +27,7 @@ import { useUtmCapture } from "@/hooks/useUtm";
 import { Loader } from "@/components/ui/Loader";
 import { AppErrorBoundary } from "@/components/AppErrorBoundary";
 import { getApiBaseUrl } from "@/lib/utils";
-import { setBaseUrl } from "@workspace/api-client-react";
+import { ApiError, setBaseUrl } from "@workspace/api-client-react";
 
 // Keep generated hooks (orders, stats, products) on the same API origin as
 // the hand-written fetches. In production this avoids a Pages proxy request
@@ -124,7 +124,15 @@ const SizeGuide      = lazyWithRetry(() => import("./pages/SizeGuide"));
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 1,
+      // The Pages gateway already exhausts safe-read origin failover before it
+      // returns an explicit 503. Retrying that response blindly can keep a
+      // visitor on a loading skeleton for another full failover window. Let
+      // page-level recovery UI appear immediately for this terminal gateway
+      // state while retaining one retry for other transient client failures.
+      retry: (failureCount, error) => {
+        if (error instanceof ApiError && error.status === 503) return false;
+        return failureCount < 1;
+      },
       staleTime: 20 * 1000,
       gcTime: 5 * 60 * 1000,
       refetchOnWindowFocus: false,
