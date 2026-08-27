@@ -16,12 +16,13 @@ import {
 } from "./psd-derived-tshirt";
 import { WATER_BOTTLE_V11_RUNTIME_CANDIDATE } from "./waterbottle-v11-runtime-candidate";
 import { getSourceMatrixV3Entry, isSourceMatrixV3Family } from "./source-matrix-v3";
+import { getSourceMatrixV4LongSleeveEntry } from "./source-matrix-v4";
 
 // ── T-Shirt: unified studio photos from normalized/ folder ──
 const tshirtFront       = "/mockups/smart-v4/tshirt/white/front.png";
 const tshirtBack        = "/mockups/smart-v4/tshirt/white/back.png";
-const longsleeveFront   = "/mockups/source-matrix-v3/longsleeve/white/front.jpg";
-const longsleeveBack    = "/mockups/source-matrix-v3/longsleeve/white/back.jpg";
+const longsleeveFront   = "/mockups/source-matrix-v4/longsleeve/white/front.jpg";
+const longsleeveBack    = "/mockups/source-matrix-v4/longsleeve/white/back.jpg";
 const hoodieFront       = "/mockups/source-matrix-v3/hoodie/white/front.jpg";
 const hoodieBack        = "/mockups/source-matrix-v3/hoodie/white/back.jpg";
 const mugFront          = "/mockups/smart-v4/mug/white/front.png";
@@ -170,8 +171,8 @@ export function getApparelZones(
   const frontPZ = productPZ ?? TSHIRT_PZ;
   const backPZ  = productBackPZ ?? frontPZ;
   const sourceColour = colourHex ? SOURCE_KIT_COLOR_SLUGS[category]?.[normalizeMockupHex(colourHex)] : undefined;
-  const sourceMatrix = isSourceMatrixV3Family(category) && sourceColour
-    ? (face: CompleteMockupView) => getSourceMatrixV3Entry(category, sourceColour, face)?.printZone
+  const sourceMatrix = sourceColour
+    ? (face: CompleteMockupView) => getApprovedSourceMatrixEntry(category, sourceColour, face)?.printZone
     : undefined;
   switch (category) {
     case "tshirt":
@@ -445,7 +446,7 @@ const SOURCE_KIT_FRAMES: Record<
 export interface MockupResolution {
   /** Normalized selected colour used only by fallback tint consumers. */
   colorHex: string;
-  /** Source-kit-v3 transparent runtime asset used by every surface. */
+  /** Source-controlled browser runtime asset used by every surface. */
   photoSrc: string;
   /** Alias retained for backward-compatible compositor contracts. */
   cutoutSrc: string;
@@ -713,6 +714,20 @@ function normalizeMockupHex(hex: string): string {
   return hex.trim().toLowerCase();
 }
 
+/**
+ * The source-controlled v4 corrective matrix is deliberately limited to Long
+ * Sleeve. All other v3-family products retain their independently reviewed v3
+ * contracts and assets.
+ */
+function getApprovedSourceMatrixEntry(
+  category: DesignProduct["category"],
+  colour: string,
+  face: CompleteMockupView,
+) {
+  if (category === "longsleeve") return getSourceMatrixV4LongSleeveEntry(colour, face);
+  return isSourceMatrixV3Family(category) ? getSourceMatrixV3Entry(category, colour, face) : undefined;
+}
+
 function colorLuminance(hex: string): number {
   const normalized = hex.replace("#", "");
   if (normalized.length !== 6) return 1;
@@ -841,19 +856,17 @@ export function resolveMockup(
   const psdPhoto = isPsdTshirtRuntime
     ? `${PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE.assetRoot}/${sourceKitSlug}/${face}.png`
     : undefined;
-  const sourceMatrixV3 = isSourceMatrixV3Family(category)
-    ? getSourceMatrixV3Entry(category, sourceKitSlug, face)
-    : undefined;
-  const sourceMatrixV3Photo = sourceMatrixV3?.assetPath;
+  const sourceMatrix = getApprovedSourceMatrixEntry(category, sourceKitSlug, face);
+  const sourceMatrixPhoto = sourceMatrix?.assetPath;
   const waterBottleV11Photo = category === "waterbottle"
     ? WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets[face === "back" ? "back" : "front"].url
     : undefined;
   // A reviewed T-shirt base is selected ahead of remote metadata. Runtime
   // gallery records remain useful for unsupported T-shirt views and other
   // families, but cannot replace an accepted PSD-derived colour/face pair.
-  const photoSrc = psdPhoto ?? sourceMatrixV3Photo ?? runtimePhoto ?? waterBottleV11Photo ?? curated.photoSrc;
-  const cutoutSrc = psdPhoto ?? sourceMatrixV3Photo ?? runtimePhoto ?? waterBottleV11Photo ?? curated.cutoutSrc;
-  const hasExactColorBase = Boolean(psdPhoto || sourceMatrixV3Photo || runtimePhoto || waterBottleV11Photo);
+  const photoSrc = psdPhoto ?? sourceMatrixPhoto ?? runtimePhoto ?? waterBottleV11Photo ?? curated.photoSrc;
+  const cutoutSrc = psdPhoto ?? sourceMatrixPhoto ?? runtimePhoto ?? waterBottleV11Photo ?? curated.cutoutSrc;
+  const hasExactColorBase = Boolean(psdPhoto || sourceMatrixPhoto || runtimePhoto || waterBottleV11Photo);
 
   return {
     colorHex: hex,
@@ -865,28 +878,28 @@ export function resolveMockup(
     // the selected physical color.
     isColorPhoto: hasExactColorBase ? true : curated.isColorPhoto,
     cutoutNeedsTint: hasExactColorBase ? false : curated.cutoutNeedsTint,
-    photoKind: (psdPhoto || sourceMatrixV3Photo || runtimePhoto) ? "opaque-photo" : curated.photoKind,
+    photoKind: (psdPhoto || sourceMatrixPhoto || runtimePhoto) ? "opaque-photo" : curated.photoKind,
     requiresTint: hasExactColorBase ? false : curated.requiresTint,
     allowSilhouetteShadow: false,
-    printZone: sourceMatrixV3?.printZone ?? completeView.geometry.printZone,
-    normalizedFrame: sourceMatrixV3?.normalizedFrame ?? normalizedFrame,
-    isOpaquePhoto: (psdPhoto || sourceMatrixV3Photo || runtimePhoto) ? true : curated.photoKind === "opaque-photo",
-    editableMasterPath: sourceMatrixV3?.editableMasterPath ?? runtimeOverride?.masterFileUrl ?? masterPath,
+    printZone: sourceMatrix?.printZone ?? completeView.geometry.printZone,
+    normalizedFrame: sourceMatrix?.normalizedFrame ?? normalizedFrame,
+    isOpaquePhoto: (psdPhoto || sourceMatrixPhoto || runtimePhoto) ? true : curated.photoKind === "opaque-photo",
+    editableMasterPath: sourceMatrix?.editableMasterPath ?? runtimeOverride?.masterFileUrl ?? masterPath,
     sourceKitKey,
     smartObject: createSmartMockupManifest({
       category,
       colorSlug: sourceKitSlug ?? "white",
       face,
       sourceKitKey,
-      editableMasterPath: sourceMatrixV3?.editableMasterPath ?? masterPath,
+      editableMasterPath: sourceMatrix?.editableMasterPath ?? masterPath,
       masterStatus: "verified",
       baseSrc: photoSrc,
       cutoutSrc,
-      normalizedFrame: sourceMatrixV3?.normalizedFrame ?? normalizedFrame,
-      printZone: sourceMatrixV3?.printZone ?? completeView.geometry.printZone,
+      normalizedFrame: sourceMatrix?.normalizedFrame ?? normalizedFrame,
+      printZone: sourceMatrix?.printZone ?? completeView.geometry.printZone,
     }),
     psdMaterialEffects: isPsdTshirtRuntime ? getPsdTshirtMaterialEffects(color, face) : undefined,
-    source: sourceMatrixV3Photo || runtimePhoto || psdPhoto ? "curated" : "source-kit",
+    source: sourceMatrixPhoto || runtimePhoto || psdPhoto ? "curated" : "source-kit",
   };
 }
 

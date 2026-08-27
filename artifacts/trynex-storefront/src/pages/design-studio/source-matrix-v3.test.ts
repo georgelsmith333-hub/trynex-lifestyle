@@ -2,12 +2,13 @@ import { describe, expect, it } from "vitest";
 import { getApparelZones, getZonePZ, PRODUCTS, resolveMockup, setRuntimeMockupOverrides } from "./mockups";
 import { getSourceMatrixV3Entry, validateSourceMatrixV3 } from "./source-matrix-v3";
 
-describe("Long Sleeve and Hoodie source matrix v3", () => {
+describe("Hoodie source matrix v3", () => {
   it("declares every verified colour and apparel view as a browser-only derivative", () => {
     expect(validateSourceMatrixV3()).toEqual([]);
   });
 
-  it.each(["longsleeve", "hoodie"] as const)("resolves every %s colour and view to the reviewed v3 browser JPG", (family) => {
+  it("resolves every Hoodie colour and view to the reviewed v3 browser JPG", () => {
+    const family = "hoodie";
     const product = PRODUCTS.find((candidate) => candidate.category === family)!;
     for (const colour of product.colors) for (const face of ["front", "back", "left-sleeve", "right-sleeve", "neck-label"] as const) {
       const resolved = resolveMockup(product, colour.hex, face);
@@ -16,7 +17,7 @@ describe("Long Sleeve and Hoodie source matrix v3", () => {
       expect(entry).toBeDefined();
       expect(resolved.photoSrc).toBe(entry!.assetPath);
       expect(resolved.cutoutSrc).toBe(entry!.assetPath);
-      expect(resolved.photoSrc).toMatch(/^\/mockups\/source-matrix-v3\/(longsleeve|hoodie)\//);
+      expect(resolved.photoSrc).toMatch(/^\/mockups\/source-matrix-v3\/hoodie\//);
       expect(resolved.photoSrc).not.toContain("smart-v4");
       expect(resolved.editableMasterPath).toMatch(/^quarantine\/source-matrix-v3\//);
       expect(resolved.printZone).toEqual(entry!.printZone);
