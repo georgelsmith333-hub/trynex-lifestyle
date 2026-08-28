@@ -75,14 +75,37 @@ Every Agent must keep the following status fields current before ending a chat,
 pausing work, or transferring the project:
 
 ```text
-Status: ready for publish; interactive verification pending
-Last completed: Reconciled shape-aware mug geometry across the V1 editor, print-safe warnings, SVG mask/guide, canvas compositor, export/cart texture paths, and live 3D preview; Full Wrap now uses one continuous cylindrical MugBody texture, while Side 1/Side 2 remain independent reviewed photo views; removed orbit controls from the Design Studio viewer
-Stopped at: Final storefront restart, health/asset route checks, deployment metadata check, and automated verification
-Files/areas changed: `artifacts/trynex-storefront/src/pages/DesignStudio.tsx`, `artifacts/trynex-storefront/src/pages/design-studio/mockups.tsx`, `artifacts/trynex-storefront/src/pages/design-studio/composer.ts`, `artifacts/trynex-storefront/src/pages/design-studio/ProductViewer3D.tsx`, `.agents/memory/mug-print-zones.md`, and this handoff; unrelated API/mobile/promo/brand-system changes were preserved
-Remaining work: Run the browser-level responsive interaction matrix across all six product categories, colors, editor tools, save/restore, export, add-to-cart, cart/checkout/admin previews, and the editable PSD visual review; then publish the storefront
-Blocker: The artifact registry reports no registered artifacts, the screenshot helper cannot resolve `trynex-storefront`, and the `browser-use` executable is unavailable in the shell. Direct HTTP and workflow checks are available and pass. Deployment metadata reports `isDeployed: false` with no production URL.
-Next safe action: Use an approved browser/preview path for the six-product responsive matrix, then publish the validated storefront; do not create a duplicate artifact or weaken the valid storefront manifest to work around the registry state
-Verification: Storefront typecheck passed; production build passed; mockup audit passed with 108 pairs and 0 errors; diff check passed; storefront workflow restarted cleanly; `/`, `/design-studio`, `/api/healthz`, `/api/products`, and reviewed mug assets returned successfully; API/database/Redis/R2 health is green; browser console showed only normal Vite/API startup messages. Screenshot/CDP interaction verification remains unperformed because the registry is empty and the browser executable is unavailable.
+Status: blocked — design decision required (mockup master layer system)
+Last completed: Direct binary audit of all 108 PSD/PSB masters in attached_assets/trynex-mockup-source-kit/psd using psd-tools 1.18.0. Findings written to MOCKUP_MASTER_AUDIT_2026-08-28.md and committed (8ee94e1). Re-runnable auditor added at tools/audit_psd_masters.py.
+Stopped at: After publishing the audit and pushing the session branch. No master has been rebuilt; no smart-v9 candidate exists.
+Files/areas changed: MOCKUP_MASTER_AUDIT_2026-08-28.md (new), tools/audit_psd_masters.py (new), audit/psd-composites/*.png (6 renders), and this handoff. No product or runtime code was modified.
+Remaining work: Decide the mockup layer strategy, then rebuild the 94 missing canonical surfaces. See "Mockup rebuild decision" below.
+Blocker: There is no smart-object system to repair — none of the 108 masters contains a smart object, and the "Artwork — Place Design Here" layer is a fully transparent empty pixel layer. psd-tools can READ smart objects but cannot author them, and no Photoshop/GIMP/Inkscape binary exists in the shell. Building genuine smart-object masters therefore requires either an external Photoshop step by the owner or a deliberate move to a documented image+geometry pipeline.
+Next safe action: Get the owner's decision on the three options in "Mockup rebuild decision" before writing any asset or runtime code. Meanwhile PR #45 (mobile Spin & Win) is complete, green, and awaiting merge authorization.
+Verification: 108/108 masters opened cleanly; all 1024x1024 8-bit RGB 4-channel; 6 layers each; 0 smart objects in all 108; artwork layer measured 0/1048576 non-zero alpha pixels; colour variants measured at luminance correlation ~0.0 against the white master; coverage arithmetic 188 needed vs 94 canonical present. Composite renders committed for visual confirmation.
+
+## Mockup rebuild decision (open — owner must choose)
+
+The previous chat attempted to build a PSD/PSB smart-object system. The audit
+proved no such system exists in the assets. Three honest paths forward:
+
+  A. True smart-object masters — owner authors/commissions real layered PSD
+     masters in Photoshop with live smart objects + displacement. Highest
+     fidelity, slowest, needs work outside this sandbox.
+  B. Image + geometry pipeline — abandon the PSD claim, ship verified flat
+     renders plus a per-surface geometry model (print zone, warp mesh, shadow
+     map) that the composer already partly supports. Achievable in-sandbox;
+     must stop describing the system as "PSD/PSB smart object".
+  C. Hybrid — keep PSDs as editable source-of-truth for the 94 that exist,
+     generate the missing 94 as geometry-driven renders.
+
+Blocked facts that constrain all three options:
+  - 94 of 188 canonical surfaces have no master at all (see audit §3).
+  - Water bottle is hash-pinned and single-colour; the kit's 14 extra bottle
+     colours are non-canonical and must not ship.
+  - smart-v9 gate requires 188 surfaces, each visually accepted with real
+     provenance. Copying smart-v4 into smart-v9 cannot pass it.
+  - No fallback is permitted: partial shipping blocks release, by contract.
 
 ## Latest audit checkpoint
 
