@@ -1,7 +1,11 @@
 import express from "express";
 import request from "supertest";
 import { describe, expect, it } from "vitest";
-import spinRouter from "./spin";
+
+// The router imports the shared DB proxy. Use a disposable invalid URL so the
+// auth-boundary tests can run without a real database or any test data.
+process.env.DATABASE_URL ??= "postgres://127.0.0.1:1/isolated-spin-test";
+const { default: spinRouter } = await import("./spin");
 
 function app() {
   const server = express();
