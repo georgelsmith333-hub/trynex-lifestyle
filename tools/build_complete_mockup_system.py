@@ -7,7 +7,7 @@ Pipeline:
   2. Derive the 94 missing views from those photos:
        apparel  -> left-sleeve, right-sleeve, neck-label (bbox-relative crop)
        mug      -> wrap (front photo, wider print zone)
-  3. Write all 188 surfaces to dist-mockups/_work/surfaces/
+  3. Write all 188 surfaces to dist-mockups/_work/base/
   4. Upscale a 2048 working set for the smart-object PSD/PSB builder
   5. Write a machine-readable manifest and a contact sheet
 

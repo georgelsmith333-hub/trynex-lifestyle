@@ -64,10 +64,10 @@ mobile app, promotional experience, and brand-system artifact.
 
 ## Current open work
 
-The TryNex Design Studio audit is in progress. The public `/design-studio` route
-is V1; `/design-studio-v1` is its compatibility alias and `/design-studio-v2`
-remains an explicit comparison/rollback route. The source-kit/runtime mockup
-audit now validates the editable manifest as well as public assets.
+The 188-surface smart-object mockup pipeline now exists and regenerates locally.
+The public `/design-studio` route is still V1; smart-v9 is **not** activated.
+Next product work is wiring accepted 188 PNG surfaces into a smart-v9 candidate
+(visual review + `prepare-smart-v9-release.mjs`), which this session did not do.
 
 ## Required status at every handoff
 
@@ -75,37 +75,34 @@ Every Agent must keep the following status fields current before ending a chat,
 pausing work, or transferring the project:
 
 ```text
-Status: blocked — design decision required (mockup master layer system)
-Last completed: Direct binary audit of all 108 PSD/PSB masters in attached_assets/trynex-mockup-source-kit/psd using psd-tools 1.18.0. Findings written to MOCKUP_MASTER_AUDIT_2026-08-28.md and committed (8ee94e1). Re-runnable auditor added at tools/audit_psd_masters.py.
-Stopped at: After publishing the audit and pushing the session branch. No master has been rebuilt; no smart-v9 candidate exists.
-Files/areas changed: MOCKUP_MASTER_AUDIT_2026-08-28.md (new), tools/audit_psd_masters.py (new), audit/psd-composites/*.png (6 renders), and this handoff. No product or runtime code was modified.
-Remaining work: Decide the mockup layer strategy, then rebuild the 94 missing canonical surfaces. See "Mockup rebuild decision" below.
-Blocker: There is no smart-object system to repair — none of the 108 masters contains a smart object, and the "Artwork — Place Design Here" layer is a fully transparent empty pixel layer. psd-tools can READ smart objects but cannot author them, and no Photoshop/GIMP/Inkscape binary exists in the shell. Building genuine smart-object masters therefore requires either an external Photoshop step by the owner or a deliberate move to a documented image+geometry pipeline.
-Next safe action: Get the owner's decision on the three options in "Mockup rebuild decision" before writing any asset or runtime code. Meanwhile PR #45 (mobile Spin & Win) is complete, green, and awaiting merge authorization.
-Verification: 108/108 masters opened cleanly; all 1024x1024 8-bit RGB 4-channel; 6 layers each; 0 smart objects in all 108; artwork layer measured 0/1048576 non-zero alpha pixels; colour variants measured at luminance correlation ~0.0 against the white master; coverage arithmetic 188 needed vs 94 canonical present. Composite renders committed for visual confirmation.
+Status: ready for review
+Last completed: Three-stage mockup rebuild on arena/01a04968-trynex-lifestyle. (1) Extracted 94 canonical 1024 RGBA bases from source-kit Product Photo layers. (2) tools/build_complete_mockup_system.py produced exactly 188 surfaces. (3) tools/build-smartobject-mockups.mjs now uses CANVAS=2048 and writes both .psd (8BPS v1) and .psb (8BPS v2) with a real smart-object artwork layer.
+Stopped at: After generating 188×2048 PSD+PSB masters locally (dist-mockups/masters, gitignored, ~1.9 GB) and committing the pipeline plus a water-bottle 2048 sample zip. Not pushed until the end of this session.
+Files/areas changed: tools/extract_base_pngs.py, tools/mockup_canonical.py, tools/build_complete_mockup_system.py, tools/build-smartobject-mockups.mjs, tools/package.json, dist-mockups/_work/base (188 PNGs), dist-mockups/_work/surfaces-manifest.json, dist-mockups/_work/contact-sheet-188.png, dist-mockups/packages/README.md, dist-mockups/packages/trynex-waterbottle-smartobject-mockups-2048.zip, AGENT_HANDOFF.md. No storefront/runtime code was modified.
+Remaining work: Visual review of the 94 derived views; optional smart-v9 candidate packaging (188 accepted PNGs + provenance + hashes). Do not copy smart-v4 into smart-v9. Do not tint the water bottle.
+Blocker: None for the approved rebuild scope. Full 188 PSD/PSB set is not in git (GitHub 100 MB file limit); regenerate with node tools/build-smartobject-mockups.mjs.
+Next safe action: Review dist-mockups/_work/contact-sheet-188.png and the 2048 water-bottle sample zip. If the derived sleeves/neck/wrap views are accepted, run prepare-smart-v9-release.mjs against dist-mockups/_work/base.
+Verification: extract_base_pngs.py printed bases=94; build_complete_mockup_system.py printed surfaces=188 (tshirt 40 + longsleeve 50 + hoodie 50 + mug 30 + cap 16 + bottle 2); builder printed built=188 failed=0 canvas=2048 formats=psd,psb. Sample masters audited with psd-tools: 2048×2048, exactly one SmartObjectLayer, PSD magic 8BPS\\x00\\x01, PSB magic 8BPS\\x00\\x02. Water bottle remains white-only.
 
-## Mockup rebuild decision (open — owner must choose)
+## Mockup rebuild decision (closed — owner chose execute)
 
-The previous chat attempted to build a PSD/PSB smart-object system. The audit
-proved no such system exists in the assets. Three honest paths forward:
+The owner directed this session to extract the 94 bases, reach 188 surfaces,
+and emit 2048 PSD+PSB smart-object masters. That is the hybrid path:
 
-  A. True smart-object masters — owner authors/commissions real layered PSD
-     masters in Photoshop with live smart objects + displacement. Highest
-     fidelity, slowest, needs work outside this sandbox.
-  B. Image + geometry pipeline — abandon the PSD claim, ship verified flat
-     renders plus a per-surface geometry model (print zone, warp mesh, shadow
-     map) that the composer already partly supports. Achievable in-sandbox;
-     must stop describing the system as "PSD/PSB smart object".
-  C. Hybrid — keep PSDs as editable source-of-truth for the 94 that exist,
-     generate the missing 94 as geometry-driven renders.
+  - 94 authentic product photos from the source-kit PSD Product Photo layer
+  - 94 derived views (sleeves / neck-label / mug wrap) from those photos
+  - ag-psd writes a real smart-object artwork layer into every 2048 master
+    as both `.psd` and `.psb`
 
-Blocked facts that constrain all three options:
-  - 94 of 188 canonical surfaces have no master at all (see audit §3).
+Still true and still binding:
+
   - Water bottle is hash-pinned and single-colour; the kit's 14 extra bottle
      colours are non-canonical and must not ship.
   - smart-v9 gate requires 188 surfaces, each visually accepted with real
      provenance. Copying smart-v4 into smart-v9 cannot pass it.
   - No fallback is permitted: partial shipping blocks release, by contract.
+  - Derived sleeve/neck/wrap views are geometry crops of the front photo,
+    not new photography. They need a visual-accept pass before smart-v9.
 
 ## Latest audit checkpoint
 

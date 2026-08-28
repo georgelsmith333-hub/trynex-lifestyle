@@ -1,0 +1,9 @@
+{
+  "name": "trynex-mockup-tools",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "ag-psd": "^28.0.0",
+    "pngjs": "^7.0.0"
+  }
+}
