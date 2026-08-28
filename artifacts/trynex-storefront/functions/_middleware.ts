@@ -269,15 +269,21 @@ export const onRequest: PagesFunction<{ API_URL: string }> = async ({ request, e
 
   const slug = (productMatch ?? blogMatch)![1];
   const type = productMatch ? "product" : "blog";
-  const apiBase = (env.API_URL || "https://trynex-api.onrender.com").replace(/\/$/, "");
-  const apiUrl = type === "product"
-    ? `${apiBase}/api/products/${encodeURIComponent(slug)}`
-    : `${apiBase}/api/blog/${encodeURIComponent(slug)}`;
+  const apiPath = type === "product"
+    ? `/api/products/${encodeURIComponent(slug)}`
+    : `/api/blog/${encodeURIComponent(slug)}`;
 
-  // Fetch the SPA base HTML and the API data in parallel
+  // Fetch the SPA base HTML and the API data in parallel. Bot prerender must
+  // not probe the suspended primary (that is what was burning the 5 GB cap).
   const [baseRes, apiRes] = await Promise.all([
     env.ASSETS.fetch(new Request(new URL("/", request.url).toString())),
-    fetchTimeout(apiUrl),
+    (async () => {
+      for (const apiBase of botReadBases(env)) {
+        const res = await fetchTimeout(`${apiBase}${apiPath}`);
+        if (res && res.ok) return res;
+      }
+      return null;
+    })(),
   ]);
 
   // Fallback if API failed or returned error

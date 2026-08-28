@@ -85,9 +85,8 @@ describe("three-origin Pages gateway", () => {
     expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   });
 
-  it("defaults public reads across the three Render origins when env is unset", async () => {
+  it("skips the suspended primary for public reads so catalogue traffic never probes it", async () => {
     const fetchMock = vi.fn()
-      .mockResolvedValueOnce(new Response("primary unavailable", { status: 503 }))
       .mockResolvedValueOnce(new Response(JSON.stringify({ source: "standby-2" }), {
         status: 200,
         headers: { "Content-Type": "application/json" },
@@ -98,8 +97,93 @@ describe("three-origin Pages gateway", () => {
 
     expect(response.status).toBe(200);
     expect((await response.json()).source).toBe("standby-2");
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(new Request(fetchMock.mock.calls[0][0]).url).toContain("trynex-api-standby-2.onrender.com");
+    expect(new Request(fetchMock.mock.calls[0][0]).url).not.toContain("://trynex-api.onrender.com");
+  });
+
+  it("still skips the primary when API_ORIGINS lists all three Render hosts", async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ source: "standby-2" }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const response = await onRequest(context("GET", "products", {
+      API_ORIGINS: "https://trynex-api.onrender.com,https://trynex-api-standby-2.onrender.com,https://trynex-api-standby-3.onrender.com",
+    }));
+
+    expect(response.status).toBe(200);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(new Request(fetchMock.mock.calls[0][0]).url).toContain("trynex-api-standby-2.onrender.com");
+    expect(response.headers.get("Cache-Control")).toContain("s-maxage=300");
+  });
+
+  it("keeps standbys even when API_ORIGINS only names the suspended primary", async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ source: "standby-2" }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const response = await onRequest(context("GET", "products", {
+      API_ORIGINS: "https://trynex-api.onrender.com",
+    }));
+
+    expect(response.status).toBe(200);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(new Request(fetchMock.mock.calls[0][0]).url).toContain("trynex-api-standby-2.onrender.com");
+  });
+
+  it("keeps standbys even when API_URL only names the suspended primary", async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ source: "standby-2" }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const response = await onRequest(context("GET", "products", {
+      API_URL: "https://trynex-api.onrender.com",
+    }));
+
+    expect(response.status).toBe(200);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(new Request(fetchMock.mock.calls[0][0]).url).toContain("trynex-api-standby-2.onrender.com");
+  });
+
+  it("still pins mutations to the primary writer", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(new Response("suspended", { status: 503 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const response = await onRequest(context("POST", "orders", {}, JSON.stringify({ customerName: "QA" })));
+
+    expect(response.status).toBe(503);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(new Request(fetchMock.mock.calls[0][0]).url).toContain("trynex-api.onrender.com");
-    expect(new Request(fetchMock.mock.calls[1][0]).url).toContain("trynex-api-standby-2.onrender.com");
+  });
+
+  it("fails over public reads from standby-2 to standby-3 without touching the primary", async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response("standby-2 unavailable", { status: 503 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ source: "standby-3" }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const response = await onRequest(context("GET", "products", {}));
+
+    expect(response.status).toBe(200);
+    expect((await response.json()).source).toBe("standby-3");
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(new Request(fetchMock.mock.calls[0][0]).url).toContain("trynex-api-standby-2.onrender.com");
+    expect(new Request(fetchMock.mock.calls[1][0]).url).toContain("trynex-api-standby-3.onrender.com");
+    for (const call of fetchMock.mock.calls) {
+      expect(new Request(call[0]).url).not.toContain("://trynex-api.onrender.com/");
+    }
   });
 
   it("answers CORS preflight at the edge without reaching Render", async () => {

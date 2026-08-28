@@ -1,21 +1,23 @@
 /*
  * Cloudflare Pages Function — route-aware API gateway.
  *
- * Render 1 is the normal primary. API_ORIGINS may contain an ordered,
- * comma-separated list of Render origins for safe-read failover:
- *   primary,secondary,tertiary
+ * Render 1 (trynex-api) is the mutation primary. It is currently skipped for
+ * public reads because the Hobby workspace 5 GB outbound cap suspended it.
+ * Safe GETs go standby-2 then standby-3. Writes never leave the primary.
  *
- * This gateway deliberately does not round-robin writes and never replays a
- * mutation after an ambiguous timeout. Standby API services also enforce
- * read-only mode server-side through TRYNEX_RUNTIME_ROLE.
+ * Origin env vars are merged with the built-in standbys so a lone API_URL
+ * cannot disable failover. API_SKIP_ORIGINS / API_WRITE_ORIGIN can override.
+ * Standby API services also enforce read-only mode through TRYNEX_RUNTIME_ROLE.
  */
 
-const DEFAULT_ORIGIN = [
-  "https://trynex-api.onrender.com",
+const PRIMARY_ORIGIN = "https://trynex-api.onrender.com";
+const STANDBY_ORIGINS = [
   "https://trynex-api-standby-2.onrender.com",
   "https://trynex-api-standby-3.onrender.com",
-].join(",");
-const REQUEST_TIMEOUT_MS = 12_000;
+];
+const DEFAULT_ORIGIN = [PRIMARY_ORIGIN, ...STANDBY_ORIGINS].join(",");
+const SUSPENDED_READ_HOSTS = new Set(["trynex-api.onrender.com"]);
+const REQUEST_TIMEOUT_MS = 6_000;
 const RETRYABLE_STATUSES = new Set([502, 503, 504]);
 const SAFE_PUBLIC_PREFIXES = [
   "/products",
@@ -35,15 +37,59 @@ interface GatewayEnv {
   API_ORIGIN?: string;
   TRYNEX_API_URL?: string;
   API_ORIGINS?: string;
+  API_WRITE_ORIGIN?: string;
+  API_SKIP_ORIGINS?: string;
 }
 
-function getOrigins(env: GatewayEnv): string[] {
-  const raw = env.API_ORIGINS || env.API_URL || env.API_ORIGIN || env.TRYNEX_API_URL || DEFAULT_ORIGIN;
-  const origins = raw
-    .split(",")
-    .map((value) => value.trim().replace(/\/$/, ""))
-    .filter(Boolean);
-  return [...new Set(origins)];
+function parseOriginList(raw: string | undefined): string[] {
+  if (!raw) return [];
+  return [...new Set(raw.split(",").map((value) => value.trim().replace(/\/$/, "")).filter(Boolean))];
+}
+
+function hostOf(origin: string): string {
+  try {
+    return new URL(origin).host;
+  } catch {
+    return origin;
+  }
+}
+
+function collectConfiguredOrigins(env: GatewayEnv): string[] {
+  const listed = parseOriginList(env.API_ORIGINS);
+  const singles = parseOriginList(env.API_URL || env.API_ORIGIN || env.TRYNEX_API_URL);
+  const base = listed.length > 0
+    ? listed
+    : singles.length > 0
+      ? singles
+      : parseOriginList(DEFAULT_ORIGIN);
+  const hasPrimary = base.some((origin) => hostOf(origin) === "trynex-api.onrender.com");
+  const hasStandby = base.some((origin) => hostOf(origin).includes("standby"));
+  // A list that only names the suspended primary must still keep the standbys.
+  if (hasPrimary && !hasStandby) {
+    return parseOriginList([...base, ...STANDBY_ORIGINS].join(","));
+  }
+  return base;
+}
+
+function getWriteOrigins(env: GatewayEnv): string[] {
+  const explicit = parseOriginList(env.API_WRITE_ORIGIN);
+  if (explicit.length > 0) return explicit;
+  const configured = collectConfiguredOrigins(env);
+  const primary = configured.find((origin) => hostOf(origin) === "trynex-api.onrender.com");
+  return [primary || configured[0]].filter(Boolean);
+}
+
+function getReadOrigins(env: GatewayEnv): string[] {
+  const configured = collectConfiguredOrigins(env);
+  const skipHosts = new Set<string>([
+    ...SUSPENDED_READ_HOSTS,
+    ...parseOriginList(env.API_SKIP_ORIGINS).map(hostOf),
+  ]);
+  const live = configured.filter((origin) => !skipHosts.has(hostOf(origin)));
+  const standbys = live.filter((origin) => hostOf(origin).includes("standby"));
+  const others = live.filter((origin) => !hostOf(origin).includes("standby"));
+  const ordered = [...standbys, ...others];
+  return ordered.length > 0 ? ordered : configured.slice(0, 1);
 }
 
 function isSafePublicRead(method: string, path: string, request: Request): boolean {
@@ -112,8 +158,7 @@ export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
     return new Response(null, { status: 204, headers: responseCors });
   }
 
-  const origins = getOrigins(env);
-  const candidates = safeRead ? origins : origins.slice(0, 1);
+  const candidates = safeRead ? getReadOrigins(env) : getWriteOrigins(env);
   let lastStatus = 503;
   let lastError = "No API origin responded";
 
@@ -146,7 +191,7 @@ export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
       responseCors.forEach((value, key) => responseHeaders.set(key, value));
       responseHeaders.set("X-TryNex-Origin", new URL(apiOrigin).host);
       if (safeRead && response.ok) {
-        responseHeaders.set("Cache-Control", "public, max-age=10, s-maxage=30, stale-while-revalidate=60");
+        responseHeaders.set("Cache-Control", "public, max-age=60, s-maxage=300, stale-while-revalidate=600");
       }
 
       if (cacheable && edgeCache && response.ok) {
