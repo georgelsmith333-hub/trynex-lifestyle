@@ -18,6 +18,7 @@ const DEFAULT_PHRASES: string[] = [
   "Hoodies.",
   "Mugs.",
   "Caps.",
+  "Water Bottles.",
   "Custom Gifts.",
   "আপনার ডিজাইন.",
 ];
@@ -58,13 +59,17 @@ function useTypewriter(phrases: string[], opts?: {
   const indexRef = useRef(0);
 
   useEffect(() => {
+    if (!enabled) return;
+    indexRef.current = 0;
+    setText(safe[0]);
+    setPhase("holding");
+  }, [phrases]);
+
+  useEffect(() => {
     if (enabled) return;
     setText(safe[indexRef.current % safe.length]);
-    const id = window.setInterval(() => {
-      indexRef.current = (indexRef.current + 1) % safe.length;
-      setText(safe[indexRef.current]);
-    }, 2500);
-    return () => window.clearInterval(id);
+    setPhase("holding");
+    return undefined;
   }, [enabled, safe]);
 
   useEffect(() => {
