@@ -78,9 +78,9 @@ export function ImagePanel({ onRemoveBackground, onUpscale, onOpenAiReference, b
         </div>
         <Slider value={[layer.saturation ?? 100]} min={0} max={200} step={1} onValueChange={([v]) => set("saturation", v)} />
       </div>
-      <div className="flex gap-2">
-        <button type="button" onClick={() => updateLayer(layer.id, { flipH: !layer.flipH })} aria-label="Flip horizontally" className={`flex-1 rounded-lg border py-2 text-xs font-bold ${layer.flipH ? "border-orange-300 bg-orange-50 text-orange-600" : "border-gray-200 bg-white"}`}><FlipHorizontal className="mx-auto h-3.5 w-3.5" /></button>
-        <button type="button" onClick={() => updateLayer(layer.id, { flipV: !layer.flipV })} aria-label="Flip vertically" className={`flex-1 rounded-lg border py-2 text-xs font-bold ${layer.flipV ? "border-orange-300 bg-orange-50 text-orange-600" : "border-gray-200 bg-white"}`}><FlipVertical className="mx-auto h-3.5 w-3.5" /></button>
+      <div className="grid grid-cols-2 gap-2">
+        <button type="button" onClick={() => updateLayer(layer.id, { flipH: !layer.flipH })} aria-label="Flip horizontally" aria-pressed={!!layer.flipH} className={`flex min-h-11 items-center justify-center gap-1.5 rounded-lg border px-2 py-2 text-[10px] font-bold transition-colors active:scale-[0.98] ${layer.flipH ? "border-orange-300 bg-orange-50 text-orange-600" : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"}`}><FlipHorizontal className="h-3.5 w-3.5" /><span>{layer.flipH ? "Horizontal on" : "Flip horizontal"}</span></button>
+        <button type="button" onClick={() => updateLayer(layer.id, { flipV: !layer.flipV })} aria-label="Flip vertically" aria-pressed={!!layer.flipV} className={`flex min-h-11 items-center justify-center gap-1.5 rounded-lg border px-2 py-2 text-[10px] font-bold transition-colors active:scale-[0.98] ${layer.flipV ? "border-orange-300 bg-orange-50 text-orange-600" : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"}`}><FlipVertical className="h-3.5 w-3.5" /><span>{layer.flipV ? "Vertical on" : "Flip vertical"}</span></button>
       </div>
     </div>
   );
