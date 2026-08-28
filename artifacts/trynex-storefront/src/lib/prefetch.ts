@@ -17,18 +17,18 @@ export function prefetchDesignStudio(): void {
   // V2 studio resolves reviewed sources without falling back to retired previews.
   try {
     [
-      "/mockups/smart-v4/tshirt/white/front.png",
-      "/mockups/smart-v4/tshirt/white/back.png",
-      "/mockups/smart-v4/longsleeve/white/front.png",
-      "/mockups/smart-v4/longsleeve/white/back.png",
-      "/mockups/smart-v4/hoodie/white/front.png",
-      "/mockups/smart-v4/hoodie/white/back.png",
-      "/mockups/smart-v4/mug/white/front.png",
-      "/mockups/smart-v4/mug/white/back.png",
-      "/mockups/smart-v4/cap/white/front.png",
-      "/mockups/smart-v4/cap/white/back.png",
-      "/mockups/waterbottle-v11/white/front.png",
-      "/mockups/waterbottle-v11/white/back.png",
+      "/mockups/smart-v9/tshirt/white/front.png",
+      "/mockups/smart-v9/tshirt/white/back.png",
+      "/mockups/smart-v9/longsleeve/white/front.png",
+      "/mockups/smart-v9/longsleeve/white/back.png",
+      "/mockups/smart-v9/hoodie/white/front.png",
+      "/mockups/smart-v9/hoodie/white/back.png",
+      "/mockups/smart-v9/mug/white/front.png",
+      "/mockups/smart-v9/mug/white/back.png",
+      "/mockups/smart-v9/cap/white/front.png",
+      "/mockups/smart-v9/cap/white/back.png",
+      "/mockups/smart-v9/waterbottle/white/front.png",
+      "/mockups/smart-v9/waterbottle/white/back.png",
     ].forEach((src) => {
       const img = new Image();
       img.src = src;

@@ -968,13 +968,13 @@ export default function Home() {
             }).map((cat, i) => {
               /* Use crisp mockup photos for category cards — clean on any background */
               const imageMap: Record<string, string> = {
-                tshirt:      "/mockups/smart-v4/tshirt/white/front.png",
-                longsleeve:  "/mockups/smart-v4/longsleeve/white/front.png",
-                hoodie:      "/mockups/smart-v4/hoodie/white/front.png",
-                cap:         "/mockups/smart-v4/cap/white/front.png",
-                mug:         "/mockups/smart-v4/mug/white/front.png",
-                waterbottle: "/mockups/waterbottle-v11/white/front.png",
-                watertumbler:"/mockups/waterbottle-v11/white/front.png",
+                tshirt:      "/mockups/smart-v9/tshirt/white/front.png",
+                longsleeve:  "/mockups/smart-v9/longsleeve/white/front.png",
+                hoodie:      "/mockups/smart-v9/hoodie/white/front.png",
+                cap:         "/mockups/smart-v9/cap/white/front.png",
+                mug:         "/mockups/smart-v9/mug/white/front.png",
+                waterbottle: "/mockups/smart-v9/waterbottle/white/front.png",
+                watertumbler:"/mockups/smart-v9/waterbottle/white/front.png",
               };
 
               return (
