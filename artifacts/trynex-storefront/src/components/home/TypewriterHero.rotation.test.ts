@@ -17,14 +17,23 @@ describe("Home hero keyword rotation", () => {
     expect(source).toContain('"Custom Gifts."');
   });
 
-  it("resets safely after configured phrases change and keeps reduced motion static", () => {
+  it("resets safely after configured phrases change and keeps cycling under reduced motion", () => {
     const source = readHeroSource();
 
-    expect(source).toContain('indexRef.current = 0;');
-    expect(source).toContain('setText(safe[0]);');
+    expect(source).toContain("indexRef.current = 0;");
+    expect(source).toContain("setText(safe[0]);");
     expect(source).toContain('setPhase("holding");');
-    expect(source).toContain('if (enabled) return;');
-    expect(source).not.toContain('const id = window.setInterval(() => {');
-    expect(source).toContain('animation: reduced ? undefined : "twCursorBlink 1s steps(2, start) infinite"');
+    expect(source).toContain("if (enabled) return;");
+    expect(source).toContain("const id = window.setInterval(() => {");
+    expect(source).toContain("custom.length >= 2 ? custom : DEFAULT_PHRASES");
+    expect(source).toContain("animation: reduced ? undefined : \"twCursorBlink 1s steps(2, start) infinite\"");
+  });
+
+  it("cycles a distinct color for each product phrase", () => {
+    const source = readHeroSource();
+    expect(source).toContain("const PHRASE_COLORS");
+    expect(source).toContain("color: typedColor");
+    expect(source).toContain("#7c3aed");
+    expect(source).toContain("#0ea5e9");
   });
 });

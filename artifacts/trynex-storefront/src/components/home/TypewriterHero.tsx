@@ -23,6 +23,16 @@ const DEFAULT_PHRASES: string[] = [
   "আপনার ডিজাইন.",
 ];
 
+const PHRASE_COLORS = [
+  "#E85D04",
+  "#7c3aed",
+  "#2563eb",
+  "#16a34a",
+  "#0ea5e9",
+  "#db2777",
+  "#d97706",
+];
+
 const HERO_STATS = [
   { value: "6", label: "Product Families" },
   { value: "2", label: "T-Shirt Print Sides" },
@@ -52,30 +62,38 @@ function useTypewriter(phrases: string[], opts?: {
   const deleteSpeed = opts?.deleteSpeed ?? 38;
   const holdMs = opts?.holdMs ?? 1400;
   const enabled = opts?.enabled ?? true;
+  const phraseKey = phrases.join("\n");
   const safe = phrases.length > 0 ? phrases : [""];
 
   const [text, setText] = useState(safe[0]);
   const [phase, setPhase] = useState<"typing" | "holding" | "deleting">("holding");
+  const [phraseIndex, setPhraseIndex] = useState(0);
   const indexRef = useRef(0);
 
   useEffect(() => {
-    if (!enabled) return;
     indexRef.current = 0;
+    setPhraseIndex(0);
     setText(safe[0]);
     setPhase("holding");
-  }, [phrases]);
+  }, [phraseKey]);
 
   useEffect(() => {
     if (enabled) return;
     setText(safe[indexRef.current % safe.length]);
     setPhase("holding");
-    return undefined;
-  }, [enabled, safe]);
+    const id = window.setInterval(() => {
+      const next = (indexRef.current + 1) % safe.length;
+      indexRef.current = next;
+      setPhraseIndex(next);
+      setText(safe[next]);
+    }, Math.max(holdMs, 1800));
+    return () => window.clearInterval(id);
+  }, [enabled, phraseKey, holdMs]);
 
   useEffect(() => {
     if (!enabled) return;
     let timer: number | undefined;
-    const current = safe[indexRef.current];
+    const current = safe[indexRef.current % safe.length] ?? "";
 
     if (phase === "typing") {
       if (text.length < current.length) {
@@ -89,14 +107,16 @@ function useTypewriter(phrases: string[], opts?: {
       if (text.length > 0) {
         timer = window.setTimeout(() => setText(current.slice(0, text.length - 1)), deleteSpeed);
       } else {
-        indexRef.current = (indexRef.current + 1) % safe.length;
+        const next = (indexRef.current + 1) % safe.length;
+        indexRef.current = next;
+        setPhraseIndex(next);
         setPhase("typing");
       }
     }
     return () => { if (timer) window.clearTimeout(timer); };
-  }, [text, phase, safe, typeSpeed, deleteSpeed, holdMs, enabled]);
+  }, [text, phase, phraseKey, typeSpeed, deleteSpeed, holdMs, enabled]);
 
-  return text;
+  return { text, phraseIndex, color: PHRASE_COLORS[phraseIndex % PHRASE_COLORS.length] };
 }
 
 // Multi-product grid shown in the hero right column
@@ -116,12 +136,13 @@ export function TypewriterHero() {
 
   const phrases = useMemo(() => {
     const custom = (settings.heroTypewriterPhrases || "")
-      .split("\n")
+      .split(/[\n|]+/)
       .map((p) => p.trim())
       .filter(Boolean);
-    return custom.length > 0 ? custom : DEFAULT_PHRASES;
+    // A single admin line (e.g. "T-Shirts.") used to freeze the headline.
+    return custom.length >= 2 ? custom : DEFAULT_PHRASES;
   }, [settings.heroTypewriterPhrases]);
-  const typed = useTypewriter(phrases, { enabled: !reduced });
+  const { text: typed, color: typedColor } = useTypewriter(phrases, { enabled: !reduced });
 
   // Lightweight scroll-driven parallax for the background blob layer.
   const bgRef = useRef<HTMLDivElement | null>(null);
@@ -261,13 +282,14 @@ export function TypewriterHero() {
                   display: "inline-block",
                   minWidth: "0.6em",
                   maxWidth: "100%",
-                  color: "var(--color-primary)",
+                  color: typedColor,
                   overflowWrap: "anywhere",
                   whiteSpace: "normal",
                   verticalAlign: "baseline",
+                  transition: "color 0.35s ease",
                 }}
               >
-                {reduced ? headlineFallback : typed}
+                {typed || headlineFallback}
                 <span
                   aria-hidden="true"
                   className="inline-block align-baseline ml-1"
