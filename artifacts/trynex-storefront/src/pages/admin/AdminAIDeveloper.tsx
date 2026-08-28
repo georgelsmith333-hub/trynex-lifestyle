@@ -7,7 +7,7 @@ import {
   Code2, Terminal, FileCode, Sparkles, Download, RefreshCw, AlertCircle,
   CheckCircle, Clock, Cpu, Globe, Brain, Plus, X, ChevronRight,
   MessageSquare, Lightbulb, Database, Server, Palette, Upload, Package,
-  BarChart3, ShoppingCart, Users, TrendingUp, Eye, EyeOff, Key, ToggleLeft,
+  BarChart3, ShoppingCart, Users, TrendingUp, Eye, Key, ToggleLeft,
   ToggleRight, Search, Wrench, Activity, Layers, FileText, Image, ChevronUp,
   Hash, Star,
 } from "lucide-react";
@@ -251,8 +251,6 @@ export default function AdminAIDeveloper() {
   }, []);
   const [activeTab,       setActiveTab]       = useState<"chat" | "context" | "tools" | "settings">("chat");
   const [features,        setFeatures]        = useState<FeatureFlags>(DEFAULT_FEATURES);
-  const [openAIKey,       setOpenAIKey]       = useState("");
-  const [showOpenAIKey,   setShowOpenAIKey]   = useState(false);
   const [storeContext,    setStoreContext]    = useState<StoreContext | null>(null);
   const [contextLoading,  setContextLoading]  = useState(false);
   const [attachedFiles,   setAttachedFiles]   = useState<AttachedFile[]>([]);
@@ -430,16 +428,14 @@ System uptime: ${Math.floor(storeContext.health.uptime / 60)} min, Memory: ${sto
     const history = [...messages, userMsg].slice(-30).map(m => ({ role: m.role, content: m.content }));
 
     try {
-      const useOpenAI = !!openAIKey;
       const endpoint = getApiUrl("/api/ai/developer/chat");
       const body: Record<string, unknown> = {
         messages: history,
-        providerId: useOpenAI ? "openai-direct" : selectedProv,
-        model: useOpenAI ? "gpt-4o" : (selectedModel || undefined),
+        providerId: selectedProv,
+        model: selectedModel || undefined,
         systemPrompt: buildSystemPrompt(),
         temperature,
       };
-      if (openAIKey) body.openAIKey = openAIKey;
 
       const r = await fetch(endpoint, {
         method: "POST",
@@ -499,7 +495,7 @@ System uptime: ${Math.floor(storeContext.health.uptime / 60)} min, Memory: ${sto
     } finally {
       setIsStreaming(false);
     }
-  }, [input, isStreaming, messages, selectedProv, selectedModel, temperature, attachedFiles, openAIKey, buildSystemPrompt, buildUserContent, parseAndRunTools, features.toolCalling]);
+  }, [input, isStreaming, messages, selectedProv, selectedModel, temperature, attachedFiles, buildSystemPrompt, buildUserContent, parseAndRunTools, features.toolCalling]);
 
   const handleKey = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
@@ -1085,24 +1081,24 @@ System uptime: ${Math.floor(storeContext.health.uptime / 60)} min, Memory: ${sto
               <h2 className="text-xl font-bold text-gray-900 mb-6">AI Developer Settings</h2>
 
               <div className="space-y-6 max-w-2xl">
-                {/* OpenAI API Key */}
+                {/* Provider configuration */}
                 <div className="bg-white rounded-xl border border-gray-200 p-5">
                   <div className="flex items-center gap-2 mb-3">
-                    <Key className="w-4 h-4 text-orange-500" />
-                    <h3 className="text-sm font-bold text-gray-900">OpenAI API Key (Optional)</h3>
+                    <Settings className="w-4 h-4 text-orange-500" />
+                    <h3 className="text-sm font-bold text-gray-900">Server-managed providers</h3>
                   </div>
-                  <p className="text-xs text-gray-500 mb-3">Enter your key to use GPT-4o directly. Without a key, the system uses free providers automatically.</p>
-                  <div className="flex gap-2">
-                    <div className="flex-1 relative">
-                      <input type={showOpenAIKey ? "text" : "password"} value={openAIKey} onChange={e => setOpenAIKey(e.target.value)}
-                        placeholder="sk-…" className="w-full px-4 py-2.5 pr-10 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 font-mono" />
-                      <button onClick={() => setShowOpenAIKey(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                        {showOpenAIKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
-                    </div>
-                    {openAIKey && <button onClick={() => setOpenAIKey("")} className="px-3 py-2 bg-red-50 text-red-500 rounded-xl text-sm hover:bg-red-100 transition-colors"><X className="w-4 h-4" /></button>}
+                  <p className="text-xs text-gray-500 leading-relaxed">
+                    Providers and credentials are configured on the server. This panel never accepts, stores, or sends provider keys from the browser.
+                    Select a provider marked <strong>Ready</strong>; unavailable providers require secure server configuration by an authorized operator.
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {providers.length > 0 ? providers.map(provider => (
+                      <span key={provider.id} className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${provider.available ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
+                        <ProviderDot color={provider.color} />
+                        {provider.name}: {provider.available ? "Ready" : "Server key required"}
+                      </span>
+                    )) : <span className="text-xs text-gray-400">Provider status loads after secure admin authentication.</span>}
                   </div>
-                  {openAIKey && <p className="text-xs text-green-600 mt-2 flex items-center gap-1"><CheckCircle className="w-3 h-3" />Key set — GPT-4o will be used for next conversation</p>}
                 </div>
 
                 {/* Feature toggles */}

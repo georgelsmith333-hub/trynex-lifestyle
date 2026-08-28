@@ -166,11 +166,46 @@ export default function SpinWheel({ autoOpen = true, forceOpen = false, onClose 
   const [copied, setCopied] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const [spinError, setSpinError] = useState<string | null>(null);
   const spunTodayRef = useRef(false);
+  const pendingPrizeRef = useRef<Prize | null>(null);
+  const spinSettledRef = useRef(false);
+  const spinWatchdogRef = useRef<number | null>(null);
   const reducedMotion = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const resetAt = settings.spinWheelResetAt ?? 0;
   const cooldownHours = Math.max(1, settings.spinWheelCooldownHours ?? 24);
+
+  const clearSpinWatchdog = () => {
+    if (spinWatchdogRef.current !== null) {
+      window.clearTimeout(spinWatchdogRef.current);
+      spinWatchdogRef.current = null;
+    }
+  };
+
+  const settleSpin = () => {
+    const prize = pendingPrizeRef.current;
+    if (!spinning || spinSettledRef.current || !prize) return;
+    spinSettledRef.current = true;
+    pendingPrizeRef.current = null;
+    clearSpinWatchdog();
+    setSpinning(false);
+    setResult(prize);
+    if (prize.code) setShowConfetti(true);
+    try {
+      localStorage.setItem(STORAGE_LAST_SPIN, todayKey());
+      if (prize.code) {
+        localStorage.setItem(STORAGE_REWARD, JSON.stringify({
+          code: prize.code,
+          label: prize.label,
+          wonAt: Date.now(),
+        }));
+      }
+    } catch {}
+    spunTodayRef.current = true;
+  };
+
+  useEffect(() => () => clearSpinWatchdog(), []);
   useEffect(() => {
     if (!enabled || dismissed) return;
     if (forceOpen) { setOpen(true); return; }
@@ -209,14 +244,19 @@ export default function SpinWheel({ autoOpen = true, forceOpen = false, onClose 
   }, [open]);
 
   const close = () => {
+    if (spinning) return;
+    clearSpinWatchdog();
+    pendingPrizeRef.current = null;
     setOpen(false);
     setResult(null);
     setCopied(false);
     setShowConfetti(false);
+    setSpinError(null);
     onClose?.();
   };
 
   const dismissPromo = () => {
+    if (spinning) return;
     setDismissed(true);
     close();
     try { localStorage.setItem(STORAGE_SHOWN, String(Date.now())); } catch {}
@@ -233,25 +273,24 @@ export default function SpinWheel({ autoOpen = true, forceOpen = false, onClose 
     const fullSpins = 6 + Math.floor(Math.random() * 3);
     const finalRotation = rotation + fullSpins * 360 + (targetAngle - (rotation % 360));
 
+    setSpinError(null);
+    spinSettledRef.current = false;
+    pendingPrizeRef.current = prize;
     setSpinning(true);
     setRotation(finalRotation);
 
-    setTimeout(() => {
+    if (reducedMotion) {
+      window.requestAnimationFrame(settleSpin);
+      return;
+    }
+
+    clearSpinWatchdog();
+    spinWatchdogRef.current = window.setTimeout(() => {
+      if (spinSettledRef.current) return;
+      pendingPrizeRef.current = null;
       setSpinning(false);
-      setResult(prize);
-      if (prize.code) setShowConfetti(true);
-      try {
-        localStorage.setItem(STORAGE_LAST_SPIN, todayKey());
-        if (prize.code) {
-          localStorage.setItem(STORAGE_REWARD, JSON.stringify({
-            code: prize.code,
-            label: prize.label,
-            wonAt: Date.now(),
-          }));
-        }
-      } catch {}
-      spunTodayRef.current = true;
-    }, 5200);
+      setSpinError("The wheel animation did not finish. No reward was issued; please try again.");
+    }, 7_000);
   };
 
   const copyCode = async () => {
@@ -318,8 +357,9 @@ export default function SpinWheel({ autoOpen = true, forceOpen = false, onClose 
             <button
               onClick={dismissPromo}
               type="button"
+              disabled={spinning}
               aria-label="Dismiss promotion"
-              className="absolute top-3 left-3 rounded-full bg-white/90 hover:bg-white px-3 h-9 text-xs font-bold text-gray-600 hover:text-gray-900 transition-colors z-30 shadow-md"
+              className="absolute top-3 left-3 rounded-full bg-white/90 hover:bg-white px-3 h-9 text-xs font-bold text-gray-600 hover:text-gray-900 transition-colors z-30 shadow-md disabled:opacity-40"
             >
               Dismiss
             </button>
@@ -347,6 +387,7 @@ export default function SpinWheel({ autoOpen = true, forceOpen = false, onClose 
               <motion.div
                 animate={{ rotate: rotation }}
                 transition={reducedMotion ? { duration: 0 } : { duration: 5, ease: [0.17, 0.67, 0.21, 0.99] }}
+                onAnimationComplete={settleSpin}
                 className="absolute inset-0 rounded-full shadow-xl"
                 style={{
                   ...conicStyle,
@@ -432,6 +473,7 @@ export default function SpinWheel({ autoOpen = true, forceOpen = false, onClose 
                   <p className="text-[10px] text-gray-400 mt-3 uppercase tracking-widest font-bold">
                     One spin per day &middot; T&amp;Cs apply
                   </p>
+                  {spinError && <p role="status" className="mt-2 text-xs font-semibold text-red-600">{spinError}</p>}
                 </>
               ) : (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
