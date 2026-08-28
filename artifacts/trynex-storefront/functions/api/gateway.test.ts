@@ -3,12 +3,12 @@ import { onRequest } from "./[[path]]";
 
 type GatewayContext = Parameters<typeof onRequest>[0];
 
-function context(method: string, path: string, env: Record<string, string>, body?: string): GatewayContext {
+function context(method: string, path: string, env: Record<string, string>, body?: string, extraHeaders?: HeadersInit): GatewayContext {
   return {
     request: new Request(`https://trynex-lifestyle-shop.pages.dev/api/${path}`, {
       method,
       body: method === "GET" || method === "HEAD" ? undefined : body,
-      headers: body ? { "Content-Type": "application/json" } : undefined,
+      headers: body ? { ...extraHeaders, "Content-Type": "application/json" } : extraHeaders,
     }),
     env,
     params: { path: path.split("/") },
@@ -49,6 +49,40 @@ describe("three-origin Pages gateway", () => {
 
     expect(response.status).toBe(503);
     expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("fails an authenticated idempotent read over without placing account data in the public cache", async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response("primary unavailable", { status: 503 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ message: "Authentication required" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const response = await onRequest(context("GET", "admin/stats", {
+      API_ORIGINS: "https://render-1.example,https://render-2.example,https://render-3.example",
+    }, undefined, { cookie: "session=example" }));
+
+    expect(response.status).toBe(401);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(response.headers.get("X-TryNex-Origin")).toBe("render-2.example");
+    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+    expect(new Request(fetchMock.mock.calls[1][0]).headers.get("cookie")).toBe("session=example");
+  });
+
+  it("does not replay provider-consuming generation requests even though they use GET", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(new Response("primary unavailable", { status: 503 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const response = await onRequest(context("GET", "ai/generate", {
+      API_ORIGINS: "https://render-1.example,https://render-2.example,https://render-3.example",
+    }));
+
+    expect(response.status).toBe(503);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(response.headers.get("X-TryNex-Origin")).toBe("render-1.example");
+    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   });
 
   it("answers CORS preflight at the edge without reaching Render", async () => {

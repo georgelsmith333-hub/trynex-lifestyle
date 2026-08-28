@@ -48,6 +48,19 @@ function isSafePublicRead(method: string, path: string, request: Request): boole
   return SAFE_PUBLIC_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
 }
 
+function isIdempotentRead(method: string): boolean {
+  return method === "GET" || method === "HEAD";
+}
+
+// Some API routes use GET but still consume external-provider capacity or create
+// provider-side work. They must not be replayed across origins automatically.
+const PRIMARY_ONLY_READ_PREFIXES = ["/ai/generate"];
+
+function canFailOverRead(method: string, path: string): boolean {
+  if (!isIdempotentRead(method)) return false;
+  return !PRIMARY_ONLY_READ_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
+}
+
 function corsHeaders(origin: string): Headers {
   const headers = new Headers();
   headers.set("Access-Control-Allow-Origin", origin);
@@ -70,6 +83,8 @@ export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
   const method = request.method.toUpperCase();
   const apiPath = `/${path}`;
   const safeRead = isSafePublicRead(method, apiPath, request);
+  const idempotentRead = isIdempotentRead(method);
+  const failoverRead = canFailOverRead(method, apiPath);
   const origin = originalUrl.origin;
   const responseCors = corsHeaders(origin);
   const edgeCache = (globalThis as { caches?: { default?: Cache } }).caches?.default;
@@ -94,7 +109,7 @@ export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
   }
 
   const origins = getOrigins(env);
-  const candidates = safeRead ? origins : origins.slice(0, 1);
+  const candidates = failoverRead ? origins : origins.slice(0, 1);
   let lastStatus = 503;
   let lastError = "No API origin responded";
 
@@ -117,7 +132,7 @@ export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
     try {
       const response = await fetch(proxyRequest, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
       lastStatus = response.status;
-      if (safeRead && RETRYABLE_STATUSES.has(response.status)) {
+      if (failoverRead && RETRYABLE_STATUSES.has(response.status)) {
         lastError = `Origin ${apiOrigin} returned ${response.status}`;
         continue;
       }
@@ -127,6 +142,9 @@ export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
       responseHeaders.set("X-TryNex-Origin", new URL(apiOrigin).host);
       if (safeRead && response.ok) {
         responseHeaders.set("Cache-Control", "public, max-age=10, s-maxage=30, stale-while-revalidate=60");
+      }
+      if (idempotentRead && !safeRead) {
+        responseHeaders.set("Cache-Control", "private, no-store");
       }
 
       if (cacheable && edgeCache && response.ok) {
@@ -147,7 +165,7 @@ export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
       return output;
     } catch (error) {
       lastError = error instanceof Error ? error.message : String(error);
-      if (!safeRead) break;
+      if (!failoverRead) break;
     }
   }
 
