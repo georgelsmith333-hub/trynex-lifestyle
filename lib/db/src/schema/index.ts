@@ -1,4 +1,4 @@
-import { pgTable, serial, text, integer, boolean, numeric, timestamp, jsonb, index, check } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, integer, boolean, numeric, timestamp, jsonb, index, uniqueIndex, check } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
 export const adminTable = pgTable("admins", {
@@ -105,12 +105,15 @@ export const ordersTable = pgTable("orders", {
   // the temp staging area into the order's permanent folder. Order is still
   // created, but admin must follow up to recover the source artwork.
   studioAssetsMissing: boolean("studio_assets_missing").notNull().default(false),
+  // Session-stable checkout key so a 502/timeout retry cannot double-charge stock.
+  idempotencyKey: text("idempotency_key"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 }, (table) => ({
   customerIdIdx: index("orders_customer_id_idx").on(table.customerId),
   statusIdx: index("orders_status_idx").on(table.status),
   createdAtIdx: index("orders_created_at_idx").on(table.createdAt),
+  idempotencyKeyIdx: uniqueIndex("orders_idempotency_key_uidx").on(table.idempotencyKey),
   subtotalCheck: check("orders_subtotal_check", sql`${table.subtotal} >= 0`),
   shippingCostCheck: check("orders_shipping_cost_check", sql`${table.shippingCost} >= 0`),
   totalCheck: check("orders_total_check", sql`${table.total} >= 0`),

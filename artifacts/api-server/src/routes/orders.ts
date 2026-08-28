@@ -12,6 +12,7 @@ import { z } from "zod";
 import { tgSend, getEffectiveChatId } from "../lib/telegram";
 import { checkRevenueMilestone } from "../lib/scheduler";
 import { sendOrderConfirmationEmail, sendStatusUpdateEmail } from "../lib/email";
+import { isUniqueViolation, normalizeIdempotencyKey } from "../lib/idempotency";
 
 // ---------------------------------------------------------------------------
 // Zod schemas for order creation
@@ -95,10 +96,16 @@ async function migrateOrdersTable() {
       ALTER TABLE orders
         ADD COLUMN IF NOT EXISTS utm_source TEXT,
         ADD COLUMN IF NOT EXISTS utm_medium TEXT,
-        ADD COLUMN IF NOT EXISTS utm_campaign TEXT
+        ADD COLUMN IF NOT EXISTS utm_campaign TEXT,
+        ADD COLUMN IF NOT EXISTS idempotency_key TEXT
+    `);
+    await db.execute(sql`
+      CREATE UNIQUE INDEX IF NOT EXISTS orders_idempotency_key_uidx
+        ON orders (idempotency_key)
+        WHERE idempotency_key IS NOT NULL
     `);
   } catch (err) {
-    logger.warn({ err }, "migrateOrdersTable failed; UTM columns may be missing");
+    logger.warn({ err }, "migrateOrdersTable failed; UTM/idempotency columns may be missing");
   }
 }
 // Delay migration until DB failover probe settles so we run against the correct DB
@@ -574,7 +581,18 @@ async function sendAutoConfirmationMessage(orderId: number, orderNumber: string,
 }
 
 router.post("/orders", async (req, res) => {
+  const idempotencyKey = normalizeIdempotencyKey(req.headers["idempotency-key"]);
   try {
+    if (idempotencyKey) {
+      const [replay] = await db.select().from(ordersTable)
+        .where(eq(ordersTable.idempotencyKey, idempotencyKey))
+        .limit(1);
+      if (replay) {
+        res.status(200).json(mapOrder(replay));
+        return;
+      }
+    }
+
     // Zod validation — structured 400 with field-level error messages.
     const zodResult = OrderCreateSchema.safeParse(req.body ?? {});
     if (!zodResult.success) {
@@ -1110,6 +1128,7 @@ router.post("/orders", async (req, res) => {
         total: total.toString(),
         notes,
         studioAssetsMissing,
+        ...(idempotencyKey ? { idempotencyKey } : {}),
       }).returning();
       return created;
     });
@@ -1163,6 +1182,19 @@ router.post("/orders", async (req, res) => {
         productName: err.productName,
       });
       return;
+    }
+    if (idempotencyKey && isUniqueViolation(err, "orders_idempotency_key_uidx")) {
+      try {
+        const [existing] = await db.select().from(ordersTable)
+          .where(eq(ordersTable.idempotencyKey, idempotencyKey))
+          .limit(1);
+        if (existing) {
+          res.status(200).json(mapOrder(existing));
+          return;
+        }
+      } catch (lookupErr) {
+        req.log.warn({ err: lookupErr }, "Idempotent order replay lookup failed");
+      }
     }
     req.log.error({ err }, "Failed to create order");
     res.status(500).json({ error: "internal_error", message: "Something went wrong on our end. Please try again, or contact us on WhatsApp if the issue persists." });
