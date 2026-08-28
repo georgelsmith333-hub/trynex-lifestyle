@@ -68,6 +68,31 @@ const BASE_STATS = [
   { value: "64", suffix: "", label: "Districts Served", icon: Truck, color: "#16a34a" },
 ];
 
+const DEFAULT_TRUST_BADGE_4 = {
+  iconKey: "layers",
+  title: "Design Studio Ready",
+  desc: "Preview artwork before checkout",
+};
+
+/**
+ * Do not present unverified social-proof copy as a factual site claim.
+ * This protects the storefront while allowing a later owner-approved setting
+ * to replace the fallback with an evidence-backed claim.
+ */
+export function getSafeTrustBadge4Copy(title?: string, desc?: string) {
+  const normalized = `${title ?? ""} ${desc ?? ""}`.trim().toLowerCase();
+  const containsUnverifiedSocialProof =
+    normalized.includes("happy customers") || normalized.includes("satisfaction rate");
+
+  return containsUnverifiedSocialProof
+    ? DEFAULT_TRUST_BADGE_4
+    : {
+        iconKey: title ? "users" : DEFAULT_TRUST_BADGE_4.iconKey,
+        title: title || DEFAULT_TRUST_BADGE_4.title,
+        desc: desc || DEFAULT_TRUST_BADGE_4.desc,
+      };
+}
+
 const CATEGORIES = [
   { name: "T-Shirts",      icon: "tshirt",      desc: "230GSM premium cotton",       count: "Starting ৳450",   color: "#fff4ee", accent: "var(--color-primary)", href: "/products?category=t-shirts" },
   { name: "Long Sleeve",  icon: "longsleeve",  desc: "Comfort fit long sleeves",     count: "Starting ৳599",   color: "#f0f7ff", accent: "#2563eb",             href: "/products?category=long-sleeves" },
@@ -1495,7 +1520,7 @@ export default function Home() {
               { iconKey: settings.trustBadge1Icon || "shield", title: settings.trustBadge1Title || "100% Secure Payments", desc: settings.trustBadge1Desc || "bKash, Nagad & uPay — 25% advance", color: "#16a34a", bg: "#f0fdf4" },
               { iconKey: settings.trustBadge2Icon || "truck", title: settings.trustBadge2Title || "Nationwide Delivery", desc: settings.trustBadge2Desc || "All 64 districts of Bangladesh", color: "#2563eb", bg: "#eff6ff" },
               { iconKey: settings.trustBadge3Icon || "award", title: settings.trustBadge3Title || "Quality Guarantee", desc: settings.trustBadge3Desc || "230-320GSM premium fabric", color: 'var(--color-primary)', bg: "#fff4ee" },
-              { iconKey: settings.trustBadge4Icon || "layers", title: settings.trustBadge4Title || "Design Studio Ready", desc: settings.trustBadge4Desc || "Preview artwork before checkout", color: "#9333ea", bg: "#fdf4ff" },
+              { ...getSafeTrustBadge4Copy(settings.trustBadge4Title, settings.trustBadge4Desc), iconKey: settings.trustBadge4Icon || DEFAULT_TRUST_BADGE_4.iconKey, color: "#9333ea", bg: "#fdf4ff" },
             ].map(({ iconKey, title, desc, color, bg }, i) => {
               const iconMap: Record<string, React.ElementType> = {
                 shield: ShieldCheck, truck: Truck, award: Award,
