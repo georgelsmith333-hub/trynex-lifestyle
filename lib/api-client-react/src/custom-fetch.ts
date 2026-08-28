@@ -10,6 +10,24 @@ export type AuthTokenGetter = () => Promise<string | null> | string | null;
 
 const NO_BODY_STATUS = new Set([204, 205, 304]);
 const DEFAULT_JSON_ACCEPT = "application/json, application/problem+json";
+const PUBLIC_GET_TIMEOUT_MS = 8_000;
+
+function mergeAbortSignals(signals: Array<AbortSignal | undefined | null>): AbortSignal | undefined {
+  const active = signals.filter((signal): signal is AbortSignal => Boolean(signal));
+  if (active.length === 0) return undefined;
+  if (active.length === 1) return active[0];
+  if (typeof AbortSignal.any === "function") return AbortSignal.any(active);
+  const controller = new AbortController();
+  const onAbort = () => controller.abort();
+  for (const signal of active) {
+    if (signal.aborted) {
+      controller.abort();
+      return controller.signal;
+    }
+    signal.addEventListener("abort", onAbort, { once: true });
+  }
+  return controller.signal;
+}
 
 // ---------------------------------------------------------------------------
 // Module-level configuration
@@ -366,12 +384,17 @@ export async function customFetch<T = unknown>(
   }
 
   const requestInfo = { method, url: resolveUrl(input) };
+  const timeoutSignal =
+    (method === "GET" || method === "HEAD") && typeof AbortSignal !== "undefined" && typeof AbortSignal.timeout === "function"
+      ? AbortSignal.timeout(PUBLIC_GET_TIMEOUT_MS)
+      : undefined;
 
   const response = await fetch(input, {
     ...init,
     method,
     headers,
     credentials: init.credentials ?? "include",
+    signal: mergeAbortSignals([init.signal, timeoutSignal]),
   });
 
   if (!response.ok) {

@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
+import https from "node:https";
 import { VitePWA } from "vite-plugin-pwa";
 
 const port = Number(process.env.PORT ?? "5173");
@@ -248,6 +249,30 @@ export default defineConfig({
             // rewrites Host, not Origin.
             proxyReq.removeHeader("origin");
             proxyReq.removeHeader("referer");
+          });
+          proxy.on("error", (err, req, res) => {
+            const fallbackHost = process.env.VITE_API_FALLBACK_HOST || "trynex-api-standby-2.onrender.com";
+            const incoming = res as { headersSent?: boolean; writeHead?: (code: number, headers?: unknown) => void; end?: (body?: string) => void };
+            if (!incoming || incoming.headersSent) return;
+            const headers = { ...(req.headers as Record<string, string | string[] | undefined>) };
+            delete headers.origin;
+            delete headers.referer;
+            headers.host = fallbackHost;
+            const upstream = https.request({
+              hostname: fallbackHost,
+              path: req.url,
+              method: req.method,
+              headers,
+            }, (up) => {
+              incoming.writeHead?.(up.statusCode || 502, up.headers);
+              up.pipe(res as NodeJS.WritableStream);
+            });
+            upstream.on("error", () => {
+              incoming.writeHead?.(503, { "Content-Type": "application/json" });
+              incoming.end?.(JSON.stringify({ error: "api_unavailable", detail: String(err) }));
+            });
+            if (req.readable) req.pipe(upstream);
+            else upstream.end();
           });
         },
       },

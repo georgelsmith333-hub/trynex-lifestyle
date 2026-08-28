@@ -85,6 +85,23 @@ describe("three-origin Pages gateway", () => {
     expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   });
 
+  it("defaults public reads across the three Render origins when env is unset", async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response("primary unavailable", { status: 503 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ source: "standby-2" }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const response = await onRequest(context("GET", "products", {}));
+
+    expect(response.status).toBe(200);
+    expect((await response.json()).source).toBe("standby-2");
+    expect(new Request(fetchMock.mock.calls[0][0]).url).toContain("trynex-api.onrender.com");
+    expect(new Request(fetchMock.mock.calls[1][0]).url).toContain("trynex-api-standby-2.onrender.com");
+  });
+
   it("answers CORS preflight at the edge without reaching Render", async () => {
     const fetchMock = vi.fn();
     vi.stubGlobal("fetch", fetchMock);

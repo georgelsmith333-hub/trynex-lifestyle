@@ -10,7 +10,11 @@
  * read-only mode server-side through TRYNEX_RUNTIME_ROLE.
  */
 
-const DEFAULT_ORIGIN = "https://trynex-api.onrender.com";
+const DEFAULT_ORIGIN = [
+  "https://trynex-api.onrender.com",
+  "https://trynex-api-standby-2.onrender.com",
+  "https://trynex-api-standby-3.onrender.com",
+].join(",");
 const REQUEST_TIMEOUT_MS = 12_000;
 const RETRYABLE_STATUSES = new Set([502, 503, 504]);
 const SAFE_PUBLIC_PREFIXES = [

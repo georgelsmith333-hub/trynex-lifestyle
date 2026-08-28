@@ -4,7 +4,7 @@ import { customFetch } from "./custom-fetch";
 
 // Public reads may briefly fail while a free-tier standby wakes up. Keep the
 // retry bounded and GET-only; mutations remain on their explicit mutation paths.
-const PUBLIC_READ_RETRY = 3;
+const PUBLIC_READ_RETRY = 1;
 const PUBLIC_READ_RETRY_DELAY = (attemptIndex: number) => Math.min(1000 * 2 ** attemptIndex, 5000);
 
 // ─── Shared types (generated/api.ts is a skeleton; define types here) ──────

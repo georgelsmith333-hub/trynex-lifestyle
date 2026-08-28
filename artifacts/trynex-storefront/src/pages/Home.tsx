@@ -21,6 +21,7 @@ import {
 import { motion, useInView } from "framer-motion";
 import React, { useRef, useEffect, useState, useCallback, useMemo } from "react";
 import { TypewriterHero } from "@/components/home/TypewriterHero";
+import { FALLBACK_FEATURED_PRODUCTS, FallbackProductCard } from "@/data/fallbackCatalog";
 
 const MARQUEE_ITEMS = [
   "PREMIUM QUALITY", "CUSTOM DESIGNS", "FAST DELIVERY", "MADE IN BANGLADESH",
@@ -619,7 +620,17 @@ export default function Home() {
   const { data: testimonialsData } = useGetTestimonials();
   const publicStats = usePublicStats();
   const [spinWheelOpen, setSpinWheelOpen] = useState(false);
+  const [catalogWaited, setCatalogWaited] = useState(false);
   const allProducts = productsData?.products || [];
+
+  useEffect(() => {
+    if (!isLoading) {
+      setCatalogWaited(false);
+      return;
+    }
+    const timer = window.setTimeout(() => setCatalogWaited(true), 3500);
+    return () => window.clearTimeout(timer);
+  }, [isLoading]);
   const featuredProducts = useMemo(() => {
     const categoryMatchers: Array<(product: typeof allProducts[number]) => boolean> = [
       p => /t-?shirt|tee/i.test(`${p.categoryName || ""} ${p.name}`),
@@ -818,31 +829,39 @@ export default function Home() {
             </div>
           </motion.div>
 
-          {isLoading ? (
+          {isLoading && featuredProducts.length === 0 && !catalogWaited && !isError ? (
             <div className="product-grid-responsive" aria-label="Loading products" aria-busy="true">
-              {Array.from({ length: 20 }).map((_, i) => (
+              {Array.from({ length: 8 }).map((_, i) => (
                 <ProductCardSkeleton key={i} />
               ))}
             </div>
-          ) : isError ? (
-            <div className="rounded-3xl border border-dashed border-orange-200 bg-orange-50/60 px-6 py-12 text-center" role="alert">
-              <Package className="mx-auto mb-3 h-10 w-10 text-orange-400" aria-hidden="true" />
-              <h3 className="font-display text-xl font-black text-gray-900">Featured products are taking a moment</h3>
-              <p className="mx-auto mt-2 max-w-md text-sm text-gray-600">The catalogue could not load right now. Try again or browse the full shop.</p>
-              <div className="mt-5 flex flex-wrap justify-center gap-3">
-                <button type="button" onClick={() => void refetch()} className="min-h-11 rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2" data-testid="button-retry-featured-products">
-                  Try again
-                </button>
-                <Link href="/products" className="inline-flex min-h-11 items-center rounded-xl border border-orange-200 bg-white px-5 py-2.5 text-sm font-bold text-orange-700 transition hover:bg-orange-50 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2">
-                  Browse the shop
-                </Link>
-              </div>
-            </div>
-          ) : featuredProducts.length === 0 ? null : (
+          ) : featuredProducts.length > 0 ? (
             <ErrorBoundary section="featured products">
               <div className="product-grid-responsive">
                 {featuredProducts.map((product, i) => (
                   <ProductCard key={product.id} product={product} index={i} eagerImage={false} />
+                ))}
+              </div>
+              <div className="flex justify-center mt-10">
+                <Link href="/products"
+                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-bold text-sm text-white transition-transform hover:-translate-y-0.5 group"
+                  style={{ background: 'linear-gradient(135deg, #E85D04, #FB8500)', boxShadow: '0 10px 30px -10px rgba(232,93,4,0.5)' }}>
+                  Browse Full Catalogue
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </ErrorBoundary>
+          ) : (
+            <ErrorBoundary section="featured products">
+              <p className="mb-5 text-center text-xs font-semibold text-orange-700" role="status">
+                Live catalogue is reconnecting across Render standbys. Showing our core collection.{" "}
+                <button type="button" onClick={() => void refetch()} className="underline underline-offset-2" data-testid="button-retry-featured-products">
+                  Try again
+                </button>
+              </p>
+              <div className="product-grid-responsive">
+                {FALLBACK_FEATURED_PRODUCTS.map((product, i) => (
+                  <FallbackProductCard key={product.id} product={product} index={i} />
                 ))}
               </div>
               <div className="flex justify-center mt-10">

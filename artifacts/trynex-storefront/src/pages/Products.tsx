@@ -14,6 +14,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { ProductOffersSection } from "@/components/home/ProductOffersSection";
 import { formatPrice } from "@/lib/utils";
+import { FALLBACK_FEATURED_PRODUCTS, FallbackProductCard } from "@/data/fallbackCatalog";
 
 type SortOption = "default" | "price-asc" | "price-desc" | "name" | "rating";
 
@@ -522,13 +523,19 @@ export default function Products() {
                           </div>
                         </motion.div>
                       ) : isError ? (
-                        <div className="rounded-3xl border border-dashed border-orange-200 bg-orange-50/60 px-6 py-16 text-center" role="alert">
-                          <Package className="mx-auto mb-3 h-10 w-10 text-orange-400" aria-hidden="true" />
-                          <h2 className="font-display text-xl font-black text-gray-900">We could not load the shop</h2>
-                          <p className="mx-auto mt-2 max-w-md text-sm text-gray-600">Check your connection and try again. Your filters are still here.</p>
-                          <button type="button" onClick={() => void refetch()} className="mt-5 min-h-11 rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2" data-testid="button-retry-products">
-                            Try again
-                          </button>
+                        <div>
+                          <div className="mb-5 rounded-2xl border border-dashed border-orange-200 bg-orange-50/60 px-6 py-6 text-center" role="alert">
+                            <h2 className="font-display text-lg font-black text-gray-900">Live catalogue is reconnecting</h2>
+                            <p className="mx-auto mt-1 max-w-md text-sm text-gray-600">Render standbys are waking up. Shop our core collection or retry.</p>
+                            <button type="button" onClick={() => void refetch()} className="mt-4 min-h-11 rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2" data-testid="button-retry-products">
+                              Try again
+                            </button>
+                          </div>
+                          <div className="product-grid-responsive">
+                            {FALLBACK_FEATURED_PRODUCTS.map((product, i) => (
+                              <FallbackProductCard key={product.id} product={product} index={i} />
+                            ))}
+                          </div>
                         </div>
                       ) : sortedProducts.length > 0 ? (
                         <ErrorBoundary section="product listing">
