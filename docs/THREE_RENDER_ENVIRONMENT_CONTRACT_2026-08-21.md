@@ -6,10 +6,10 @@
 
 Render 1, Render 2, and Render 3 must deploy the same tested Git commit and the same start/build commands. They must share the compatible application secrets and service integrations required for reads, but each environment must have an explicit runtime role.
 
-| Variable | Render 1 | Render 2 | Render 3 |
+| Variable | Render 1 recovery | Render 2 canonical writer | Render 3 standby / DR |
 |---|---|---|---|
-| `TRYNEX_RUNTIME_ROLE` | `primary` | `standby` | `dr` |
-| `SCHEDULER_ENABLED` | `true` initially, with one-owner controls | `false` | `false` |
+| `TRYNEX_RUNTIME_ROLE` | `primary` (unused until deliberate recovery) | `promoted` after verification | `dr` |
+| `SCHEDULER_ENABLED` | `false` while suspended | not `false` only after promotion | `false` |
 | `BACKUP_SYNC_ENABLED` | `false` until the legacy full mirror is redesigned and measured | `false` | `false` |
 | `DATABASE_URL_MAIN` | Existing canonical binding | Same canonical read contract; no new database | Same canonical read contract; no new database |
 | `DATABASE_FAILOVER` | Existing validated failover binding | Same existing binding only if required for readiness/read failover | Same existing binding only if required for readiness/read failover |

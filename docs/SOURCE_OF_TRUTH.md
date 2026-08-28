@@ -17,8 +17,8 @@ This document defines the production path for TryNex Lifestyle. It must be updat
 | 3D preview | `src/components/garment3d.tsx` and studio viewer components | **ACTIVE** for curved products; must remain consistent with print-zone geometry. |
 | Backend API | `artifacts/api-server/` | **ACTIVE** Express API compiled with esbuild. |
 | API entry/build | `artifacts/api-server/src/index.ts`; `node ./build.mjs` | **ACTIVE**. API source changes require a rebuild before runtime verification. |
-| API production service | Render service `trynex-api` at `https://trynex-api.onrender.com` | **ACTIVE**. Latest verified deployment was commit `3b0e9f070`. |
-| API proxy | `functions/api/[[path]].ts` | **ACTIVE** Cloudflare Pages Function forwarding `/api/*` to the Render API through `API_URL`. |
+| API production service | Render `trynex-api-standby-2` is the intended canonical writer; `trynex-api` (R1) is recovery-only (quota-suspended); `trynex-api-standby-3` is DR | **PARTIAL**. See `docs/CURRENT_PRODUCTION_TRUTH.md`. Live R2/R3 still `standby`/`dr` until dashboard promotion. |
+| API proxy | `artifacts/trynex-storefront/functions/api/[[path]].ts` (and root `functions/api/[[path]].ts`) | **ACTIVE / drift**. Live Pages still `main` `a95903b` (writes pinned to suspended R1). This branch pins writes to R2. |
 | Pages project | `trynex-lifestyle-shop` | **ACTIVE** Cloudflare Pages project serving the storefront. |
 | Pages configuration | `wrangler.toml` | **ACTIVE**. Build is rooted at `artifacts/trynex-storefront`; proxy target remains a Pages environment setting. |
 | Database schema | `lib/db/src/schema/index.ts` and `lib/db/migrations/` | **ACTIVE** Drizzle/PostgreSQL schema and migrations. |
