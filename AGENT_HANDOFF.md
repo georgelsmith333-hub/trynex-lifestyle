@@ -64,10 +64,9 @@ mobile app, promotional experience, and brand-system artifact.
 
 ## Current open work
 
-The 188-surface smart-object mockup pipeline now exists and regenerates locally.
-The public `/design-studio` route is still V1; smart-v9 is **not** activated.
-Next product work is wiring accepted 188 PNG surfaces into a smart-v9 candidate
-(visual review + `prepare-smart-v9-release.mjs`), which this session did not do.
+The 188-surface 2048 PSD/PSB/displacement set is **shipped on this branch** as
+29 zip parts under `dist-mockups/packages/2048/` (every zip < 90 MiB). The
+public `/design-studio` route is still V1; smart-v9 is **not** activated.
 
 ## Required status at every handoff
 
@@ -76,13 +75,13 @@ pausing work, or transferring the project:
 
 ```text
 Status: ready for review
-Last completed: Three-stage mockup rebuild on arena/01a04968-trynex-lifestyle. (1) Extracted 94 canonical 1024 RGBA bases from source-kit Product Photo layers. (2) tools/build_complete_mockup_system.py produced exactly 188 surfaces. (3) tools/build-smartobject-mockups.mjs now uses CANVAS=2048 and writes both .psd (8BPS v1) and .psb (8BPS v2) with a real smart-object artwork layer.
-Stopped at: After generating 188×2048 PSD+PSB masters locally (dist-mockups/masters, gitignored, ~1.9 GB) and committing the pipeline plus a water-bottle 2048 sample zip. Not pushed until the end of this session.
-Files/areas changed: tools/extract_base_pngs.py, tools/mockup_canonical.py, tools/build_complete_mockup_system.py, tools/build-smartobject-mockups.mjs, tools/package.json, dist-mockups/_work/base (188 PNGs), dist-mockups/_work/surfaces-manifest.json, dist-mockups/_work/contact-sheet-188.png, dist-mockups/packages/README.md, dist-mockups/packages/trynex-waterbottle-smartobject-mockups-2048.zip, AGENT_HANDOFF.md. No storefront/runtime code was modified.
-Remaining work: Visual review of the 94 derived views; optional smart-v9 candidate packaging (188 accepted PNGs + provenance + hashes). Do not copy smart-v4 into smart-v9. Do not tint the water bottle.
-Blocker: None for the approved rebuild scope. Full 188 PSD/PSB set is not in git (GitHub 100 MB file limit); regenerate with node tools/build-smartobject-mockups.mjs.
-Next safe action: Review dist-mockups/_work/contact-sheet-188.png and the 2048 water-bottle sample zip. If the derived sleeves/neck/wrap views are accepted, run prepare-smart-v9-release.mjs against dist-mockups/_work/base.
-Verification: extract_base_pngs.py printed bases=94; build_complete_mockup_system.py printed surfaces=188 (tshirt 40 + longsleeve 50 + hoodie 50 + mug 30 + cap 16 + bottle 2); builder printed built=188 failed=0 canvas=2048 formats=psd,psb. Sample masters audited with psd-tools: 2048×2048, exactly one SmartObjectLayer, PSD magic 8BPS\\x00\\x01, PSB magic 8BPS\\x00\\x02. Water bottle remains white-only.
+Last completed: Shipped the full 188-surface 2048 PSD+PSB+displacement set on arena/01a04968-trynex-lifestyle as 29 zip parts under dist-mockups/packages/2048/, each under 90 MiB. Direct-pushed every part (no PR). Verified 188 .psd + 188 .psb + 188 displacement files inside the zips.
+Stopped at: After the last hoodie part and the catalog README/index commit. Design Studio runtime still V1 / smart-v9 not activated.
+Files/areas changed: dist-mockups/packages/2048/*.zip (29), dist-mockups/packages/2048/index.json, dist-mockups/packages/2048/README.md, tools/pack_masters_under_100mb.py, tools/build-smartobject-mockups.mjs, AGENT_HANDOFF.md. No storefront/runtime code was modified.
+Remaining work: Visual review of derived sleeve/neck/wrap views; optional smart-v9 activation in Design Studio. Do not copy smart-v4 into smart-v9. Do not tint the water bottle.
+Blocker: None for shipping the Photoshop masters. Browser Design Studio cannot open PSD/PSB; those stay authoring files.
+Next safe action: Unzip dist-mockups/packages/2048/ into dist-mockups/masters and open a .psd in Photoshop. For the live site, a separate smart-v9 PNG accept pass is still required.
+Verification: 29 zips, all < 90 MiB, all pushed to origin/arena/01a04968-trynex-lifestyle. Inventory: tshirt 7 + longsleeve 7 + hoodie 7 + mug 4 + cap 3 + waterbottle 1. Zip members: 188 psd + 188 psb + 188 displacement. Water bottle white-only.
 
 ## Mockup rebuild decision (closed — owner chose execute)
 

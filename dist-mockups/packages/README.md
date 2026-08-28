@@ -50,10 +50,23 @@ colours in the source-kit are non-canonical and are not shipped.
 PSDs (`authentic-preserved`). The other 94 (sleeves, neck labels, mug wraps)
 are derived from those photos (`generated-master` / `derived-wrap-from-front`).
 
-## Rebuild (not stored in git — ~1.9 GB)
+## Shipped 2048 set (29 zip parts, each < 90 MiB)
 
-GitHub's 100 MB file limit cannot hold 188 × 2048 PSD+PSB masters. Generate
-them locally:
+The full 188-surface 2048 PSD + PSB + displacement set **is in git**, split
+under `dist-mockups/packages/2048/` so every file stays below GitHub's 100 MB
+limit. See that folder's README and `index.json`.
+
+```bash
+mkdir -p dist-mockups/masters
+for z in dist-mockups/packages/2048/trynex-*-2048-smartobject-part*.zip; do
+  unzip -n "$z" -d dist-mockups/masters
+done
+```
+
+The `trynex-*-smartobject-mockups.zip` archives beside this file are the
+previous 1024×1024 94-surface drop (front/back only).
+
+Rebuild from source if needed:
 
 ```bash
 python3 tools/extract_base_pngs.py
@@ -61,17 +74,8 @@ python3 tools/build_complete_mockup_system.py   # must print surfaces=188
 python3 tools/make-displacement-maps.py dist-mockups/_work/base dist-mockups/_work/displace
 cd tools && npm install && cd ..
 node tools/build-smartobject-mockups.mjs        # CANVAS=2048, writes .psd and .psb
+python3 tools/pack_masters_under_100mb.py --all
 ```
-
-Output: `dist-mockups/masters/<family>/<family>-<color>-<view>.{psd,psb}`
-plus a `-DISPLACEMENT.psd` sidecar.
-
-A 2048 sample (water bottle, 2 surfaces × psd/psb + displacement) is committed
-as `trynex-waterbottle-smartobject-mockups-2048.zip` so the dual-format
-output can be inspected without regenerating the full set.
-
-The `trynex-*-smartobject-mockups.zip` archives beside this file are the
-previous 1024×1024 94-surface drop (front/back only).
 
 ## Verification
 
