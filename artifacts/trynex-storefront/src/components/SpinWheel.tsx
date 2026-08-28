@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Gift, Sparkles, X, Copy, Check } from "lucide-react";
@@ -155,6 +155,8 @@ export default function SpinWheel({ autoOpen = true, forceOpen = false, onClose 
   const [showConfetti, setShowConfetti] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const [spinState, setSpinState] = useState<SpinState | null>(null);
+  const [spinStateLoading, setSpinStateLoading] = useState(false);
+  const [spinStateError, setSpinStateError] = useState<string | null>(null);
   const [spinError, setSpinError] = useState<string | null>(null);
   const pendingSpinRef = useRef<PendingSpin | null>(null);
   const watchdogRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -189,25 +191,28 @@ export default function SpinWheel({ autoOpen = true, forceOpen = false, onClose 
     return () => clearTimeout(t);
   }, [allowAutoOpen, forceOpen, enabled, delaySeconds, resetAt, cooldownHours, dismissed]);
 
+  const loadSpinState = useCallback(async () => {
+    setSpinStateLoading(true);
+    setSpinStateError(null);
+    try {
+      const response = await fetch(getApiUrl("/api/spin/state"), { credentials: "include" });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.message || "Spin & Win is temporarily unavailable.");
+      setSpinState({ dailyAvailable: Boolean(payload.dailyAvailable), ticketCount: Math.max(0, Number(payload.ticketCount) || 0) });
+    } catch (error) {
+      setSpinState(null);
+      setSpinStateError(error instanceof Error ? error.message : "Spin & Win is temporarily unavailable.");
+    } finally {
+      setSpinStateLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (!open) return;
-    let active = true;
     setSpinState(null);
     setSpinError(null);
-    fetch(getApiUrl("/api/spin/state"), { credentials: "include" })
-      .then(async (response) => {
-        const payload = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(payload.message || "Spin & Win is temporarily unavailable.");
-        return payload;
-      })
-      .then((payload) => {
-        if (active) setSpinState({ dailyAvailable: Boolean(payload.dailyAvailable), ticketCount: Math.max(0, Number(payload.ticketCount) || 0) });
-      })
-      .catch((error) => {
-        if (active) setSpinError(error instanceof Error ? error.message : "Spin & Win is temporarily unavailable.");
-      });
-    return () => { active = false; };
-  }, [open]);
+    void loadSpinState();
+  }, [open, loadSpinState]);
 
   useEffect(() => {
     if (!open) return;
@@ -461,15 +466,16 @@ export default function SpinWheel({ autoOpen = true, forceOpen = false, onClose 
               {!result ? (
                 <>
                   <button
-                    onClick={spin}
-                    disabled={spinning || spinState === null || (!spinState.dailyAvailable && spinState.ticketCount < 1) || Boolean(spinError)}
+                    onClick={spinStateError ? loadSpinState : spin}
+                    disabled={spinning || spinStateLoading || (spinState === null && !spinStateError) || (!spinStateError && Boolean(spinState) && !spinState!.dailyAvailable && spinState!.ticketCount < 1) || Boolean(spinError)}
                     data-testid="button-spin-wheel"
                     className="w-full py-4 rounded-2xl font-black text-white text-base disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
                     style={{ background: spinning ? "#9ca3af" : "linear-gradient(135deg, #E85D04, #FB8500)", boxShadow: "0 6px 16px rgba(232,93,4,0.35)" }}
                     type="button"
                   >
-                    {spinning ? "Spinning…" : spinState === null ? "Checking eligibility…" : !spinState.dailyAvailable && spinState.ticketCount < 1 ? "No spins available" : "SPIN NOW 🎰"}
+                    {spinning ? "Spinning…" : spinStateLoading ? "Checking eligibility…" : spinStateError ? "Retry eligibility check" : spinState === null ? "Checking eligibility…" : !spinState.dailyAvailable && spinState.ticketCount < 1 ? "No spins available" : "SPIN NOW 🎰"}
                   </button>
+                  {spinStateError && <p role="alert" className="text-xs font-semibold text-red-600 mt-3">{spinStateError}</p>}
                   {spinError && <p role="alert" className="text-xs font-semibold text-red-600 mt-3">{spinError}</p>}
                   {spinState && <p className="text-[10px] text-gray-400 mt-3 uppercase tracking-widest font-bold">{spinState.ticketCount} extra ticket{spinState.ticketCount === 1 ? "" : "s"} available &middot; T&amp;Cs apply</p>}
                 </>
