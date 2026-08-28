@@ -170,8 +170,10 @@ export default function SpinWheel({ autoOpen = true, forceOpen = false, onClose 
   const spunTodayRef = useRef(false);
   const pendingPrizeRef = useRef<Prize | null>(null);
   const spinSettledRef = useRef(false);
+  const spinningRef = useRef(false);
   const spinWatchdogRef = useRef<number | null>(null);
   const reducedMotion = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const SPIN_DURATION_MS = 5000;
 
   const resetAt = settings.spinWheelResetAt ?? 0;
   const cooldownHours = Math.max(1, settings.spinWheelCooldownHours ?? 24);
@@ -185,7 +187,8 @@ export default function SpinWheel({ autoOpen = true, forceOpen = false, onClose 
 
   const settleSpin = () => {
     const prize = pendingPrizeRef.current;
-    if (!spinning || spinSettledRef.current || !prize) return;
+    if (!spinningRef.current || spinSettledRef.current || !prize) return;
+    spinningRef.current = false;
     spinSettledRef.current = true;
     pendingPrizeRef.current = null;
     clearSpinWatchdog();
@@ -275,6 +278,7 @@ export default function SpinWheel({ autoOpen = true, forceOpen = false, onClose 
 
     setSpinError(null);
     spinSettledRef.current = false;
+    spinningRef.current = true;
     pendingPrizeRef.current = prize;
     setSpinning(true);
     setRotation(finalRotation);
@@ -285,12 +289,11 @@ export default function SpinWheel({ autoOpen = true, forceOpen = false, onClose 
     }
 
     clearSpinWatchdog();
+    // Award even if CSS transitionend / motion callbacks are skipped by the
+    // browser. Previously a 7s watchdog dropped the prize and left the UI stuck.
     spinWatchdogRef.current = window.setTimeout(() => {
-      if (spinSettledRef.current) return;
-      pendingPrizeRef.current = null;
-      setSpinning(false);
-      setSpinError("The wheel animation did not finish. No reward was issued; please try again.");
-    }, 7_000);
+      settleSpin();
+    }, SPIN_DURATION_MS + 400);
   };
 
   const copyCode = async () => {
@@ -383,16 +386,24 @@ export default function SpinWheel({ autoOpen = true, forceOpen = false, onClose 
                   borderTop: "26px solid #E85D04",
                   filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.3))",
                 }} />
-              {/* Wheel */}
-              <motion.div
-                animate={{ rotate: rotation }}
-                transition={reducedMotion ? { duration: 0 } : { duration: 5, ease: [0.17, 0.67, 0.21, 0.99] }}
-                onAnimationComplete={settleSpin}
+              {/* Wheel — CSS transform so rotation is visible even when
+                  framer-motion skips onAnimationComplete. */}
+              <div
                 className="absolute inset-0 rounded-full shadow-xl"
                 style={{
                   ...conicStyle,
                   border: "8px solid #fff",
                   boxShadow: "0 0 0 4px #E85D04, 0 14px 40px rgba(0,0,0,0.3)",
+                  transform: `rotate(${rotation}deg)`,
+                  transition: reducedMotion
+                    ? "none"
+                    : `transform ${SPIN_DURATION_MS}ms cubic-bezier(0.17, 0.67, 0.21, 0.99)`,
+                  willChange: spinning ? "transform" : undefined,
+                }}
+                onTransitionEnd={(event) => {
+                  if (event.target !== event.currentTarget) return;
+                  if (event.propertyName !== "transform") return;
+                  settleSpin();
                 }}
               >
                 {/* Separator lines */}
@@ -445,7 +456,7 @@ export default function SpinWheel({ autoOpen = true, forceOpen = false, onClose 
                     </div>
                   );
                 })}
-              </motion.div>
+              </div>
               {/* Hub */}
               <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full flex items-center justify-center z-10"
                 style={{
