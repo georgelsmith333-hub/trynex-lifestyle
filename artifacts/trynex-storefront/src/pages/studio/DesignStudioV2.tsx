@@ -210,7 +210,7 @@ export default function DesignStudioV2() {
     [selectedProduct, selectedColor.hex],
   );
   const activeZoneConfig = useMemo(() => apparelZones.find(z => z.face === activeFace) ?? apparelZones[0], [apparelZones, activeFace]);
-  const isFlatZone = activeFace === "left-sleeve" || activeFace === "right-sleeve" || activeFace === "neck-label";
+  const isFlatZone = Boolean(activeZoneConfig?.isFlat);
 
   const pz = useMemo(() => {
     if (isMug) {

@@ -9,7 +9,7 @@
     "serve": "vite preview --config vite.config.ts --host 0.0.0.0",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
-    "smart-v9:prepare": "node scripts/prepare-smart-v9-release.mjs"
+    "smart-v9:prepare": "node scripts/prepare-smart-v9-release.mjs public/mockups/smart-v9 src/pages/design-studio/smart-v9-candidate.ts"
   },
   "devDependencies": {
     "@hookform/resolvers": "^3.10.0",

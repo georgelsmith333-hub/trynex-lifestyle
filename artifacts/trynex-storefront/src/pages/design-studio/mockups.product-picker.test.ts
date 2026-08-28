@@ -30,9 +30,6 @@ describe("smart-v9 product picker previews", () => {
     const tshirt = PRODUCTS.find((product) => product.id === "tshirt");
     if (!tshirt) throw new Error("fixture requires the T-shirt product");
 
-    expect(getProductPickerPreviewSrc(tshirt)).toBe(tshirt.gallerySrc);
-    expect(getProductPickerFallbackSrc(tshirt)).toBe(tshirt.frontSrc);
-
     activateSmartV9Release(acceptedCandidate());
 
     expect(getProductPickerPreviewSrc(tshirt)).toBe("/mockups/smart-v9/tshirt/white/front.png");

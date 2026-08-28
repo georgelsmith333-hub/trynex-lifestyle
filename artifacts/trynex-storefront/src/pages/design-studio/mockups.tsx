@@ -8,6 +8,7 @@ import { createSmartMockupManifest, type SmartMockupManifest } from "./smart-moc
 import { getCanonicalMockupSpec, type MockupFamily } from "./canonical-mockup-spec";
 import { COMPLETE_MOCKUP_MATRIX, getCompleteMockupEntry, type CompleteMockupFamily, type CompleteMockupView } from "./complete-mockup-matrix";
 import { ACCEPTED_SMART_V8_RELEASE } from "./smart-v8-release";
+import { SMART_V9_CANDIDATE } from "./smart-v9-candidate";
 import { acceptSmartV9Release, type AcceptedSmartV9Release, type SmartV9CandidateRelease } from "./smart-v9-release";
 import type { PsdMaterialEffectLayer } from "./composer";
 import {
@@ -171,19 +172,23 @@ export function getApparelZones(
   const frontPZ = productPZ ?? TSHIRT_PZ;
   const backPZ  = productBackPZ ?? frontPZ;
   const sourceColour = colourHex ? SOURCE_KIT_COLOR_SLUGS[category]?.[normalizeMockupHex(colourHex)] : undefined;
-  const sourceMatrix = sourceColour
+  const liveV9 = Boolean(acceptedSmartV9Release);
+  const sourceMatrix = !liveV9 && sourceColour
     ? (face: CompleteMockupView) => getApprovedSourceMatrixEntry(category, sourceColour, face)?.printZone
+    : undefined;
+  const matrixZone = liveV9 && sourceColour
+    ? (face: CompleteMockupView) => getCompleteMockupEntry(category as CompleteMockupFamily, sourceColour, face).geometry.printZone
     : undefined;
   switch (category) {
     case "tshirt":
     case "longsleeve":
     case "hoodie":
       return [
-        { face: "front",       label: "Front",        shortLabel: "Front",  pxDimensions: FRONT_BACK_DIMS, pz: sourceMatrix?.("front") ?? frontPZ,   isFlat: false },
-        { face: "back",        label: "Back",         shortLabel: "Back",   pxDimensions: FRONT_BACK_DIMS, pz: sourceMatrix?.("back") ?? backPZ,    isFlat: false },
-        { face: "left-sleeve", label: "Left Sleeve",  shortLabel: "L.Sleeve", pxDimensions: SLEEVE_DIMS,  pz: sourceMatrix?.("left-sleeve") ?? SLEEVE_PZ, isFlat: true  },
-        { face: "right-sleeve",label: "Right Sleeve", shortLabel: "R.Sleeve", pxDimensions: SLEEVE_DIMS,  pz: sourceMatrix?.("right-sleeve") ?? SLEEVE_PZ, isFlat: true  },
-        { face: "neck-label",  label: "Neck Label",   shortLabel: "Neck",   pxDimensions: NECK_DIMS,      pz: sourceMatrix?.("neck-label") ?? NECK_LABEL_PZ, isFlat: true },
+        { face: "front",       label: "Front",        shortLabel: "Front",  pxDimensions: FRONT_BACK_DIMS, pz: matrixZone?.("front") ?? sourceMatrix?.("front") ?? frontPZ,   isFlat: false },
+        { face: "back",        label: "Back",         shortLabel: "Back",   pxDimensions: FRONT_BACK_DIMS, pz: matrixZone?.("back") ?? sourceMatrix?.("back") ?? backPZ,    isFlat: false },
+        { face: "left-sleeve", label: "Left Sleeve",  shortLabel: "L.Sleeve", pxDimensions: SLEEVE_DIMS,  pz: matrixZone?.("left-sleeve") ?? sourceMatrix?.("left-sleeve") ?? SLEEVE_PZ, isFlat: !liveV9  },
+        { face: "right-sleeve",label: "Right Sleeve", shortLabel: "R.Sleeve", pxDimensions: SLEEVE_DIMS,  pz: matrixZone?.("right-sleeve") ?? sourceMatrix?.("right-sleeve") ?? SLEEVE_PZ, isFlat: !liveV9  },
+        { face: "neck-label",  label: "Neck Label",   shortLabel: "Neck",   pxDimensions: NECK_DIMS,      pz: matrixZone?.("neck-label") ?? sourceMatrix?.("neck-label") ?? NECK_LABEL_PZ, isFlat: !liveV9 },
       ];
     default:
       return [
@@ -196,6 +201,9 @@ export function getApparelZones(
 export function getZonePZ(face: Face, product: DesignProduct, colourHex?: string): PrintZone {
   if (product.category === "mug") return face === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ;
   const sourceColour = colourHex ? SOURCE_KIT_COLOR_SLUGS[product.category]?.[normalizeMockupHex(colourHex)] : undefined;
+  if (acceptedSmartV9Release && sourceColour) {
+    return getCompleteMockupEntry(product.category as CompleteMockupFamily, sourceColour, face).geometry.printZone;
+  }
   if (isSourceMatrixV3Family(product.category) && sourceColour) {
     const sourceZone = getSourceMatrixV3Entry(product.category, sourceColour, face)?.printZone;
     if (sourceZone) return sourceZone;
@@ -229,11 +237,11 @@ export const PRODUCTS: DesignProduct[] = [
     id: "longsleeve", name: "Unisex Long Sleeve", icon: "👔", category: "longsleeve",
     garmentColor: "#F5F5F3",
     colors: [
-      { name: "White",        hex: "#F5F5F3" }, { name: "Black",        hex: "#1a1a1a" },
-      { name: "Charcoal",     hex: "#303030" }, { name: "Heather Grey", hex: "#a3a3a3" },
-      { name: "Navy",         hex: "#1e3a5f" }, { name: "Royal Blue",   hex: "#2563eb" },
-      { name: "Forest Green", hex: "#166534" }, { name: "Burgundy",     hex: "#6b1a2c" },
-      { name: "Red",          hex: "#dc2626" }, { name: "Sand",         hex: "#d2bd88" },
+      { name: "White",    hex: "#F5F5F3" }, { name: "Black",    hex: "#1a1a1a" },
+      { name: "Navy",     hex: "#1e3a5f" }, { name: "Maroon",   hex: "#7f1d1d" },
+      { name: "Olive",    hex: "#4a5240" }, { name: "Grey",     hex: "#6b7280" },
+      { name: "Red",      hex: "#dc2626" }, { name: "Sky Blue", hex: "#0ea5e9" },
+      { name: "Burgundy", hex: "#6b1a2c" }, { name: "Forest",   hex: "#166534" },
     ],
     description: "240GSM Cotton",
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
@@ -242,13 +250,13 @@ export const PRODUCTS: DesignProduct[] = [
   },
   {
     id: "hoodie", name: "Unisex Hoodie", icon: "🧥", category: "hoodie",
-    garmentColor: "#F2EFE9",
+    garmentColor: "#F5F5F3",
     colors: [
-      { name: "White / Red Trim", hex: "#F2EFE9" }, { name: "Black",        hex: "#1a1a1a" },
-      { name: "Charcoal",        hex: "#303030" }, { name: "Heather Grey", hex: "#a3a3a3" },
-      { name: "Navy",            hex: "#1e3a5f" }, { name: "Royal Blue",   hex: "#2563eb" },
-      { name: "Forest Green",    hex: "#166534" }, { name: "Burgundy",     hex: "#6b1a2c" },
-      { name: "Red",             hex: "#dc2626" }, { name: "Sand",         hex: "#d2bd88" },
+      { name: "White",    hex: "#F5F5F3" }, { name: "Black",    hex: "#1a1a1a" },
+      { name: "Navy",     hex: "#1e3a5f" }, { name: "Grey",     hex: "#6b7280" },
+      { name: "Maroon",   hex: "#7f1d1d" }, { name: "Olive",    hex: "#4a5240" },
+      { name: "Red",      hex: "#dc2626" }, { name: "Sky Blue", hex: "#0ea5e9" },
+      { name: "Forest",   hex: "#166534" }, { name: "Burgundy", hex: "#6b1a2c" },
     ],
     description: "320GSM Fleece", badge: "New",
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
@@ -351,16 +359,20 @@ const SOURCE_KIT_COLOR_SLUGS: Record<
     "#6b7280": "grey", "#dc2626": "red",
   },
   longsleeve: {
-    "#f5f5f3": "white", "#1a1a1a": "black", "#303030": "charcoal",
-    "#a3a3a3": "heather-grey", "#1e3a5f": "navy", "#2563eb": "royal-blue",
-    "#166534": "forest-green", "#6b1a2c": "burgundy", "#dc2626": "red",
-    "#d2bd88": "sand",
+    "#f5f5f3": "white", "#1a1a1a": "black", "#1e3a5f": "navy",
+    "#7f1d1d": "maroon", "#4a5240": "olive", "#6b7280": "grey",
+    "#dc2626": "red", "#0ea5e9": "sky-blue", "#6b1a2c": "burgundy",
+    "#166534": "forest",
+    "#303030": "grey", "#a3a3a3": "grey", "#2563eb": "sky-blue",
+    "#d2bd88": "olive",
   },
   hoodie: {
-    "#f2efe9": "white", "#1a1a1a": "black", "#303030": "charcoal",
-    "#a3a3a3": "heather-grey", "#1e3a5f": "navy", "#2563eb": "royal-blue",
-    "#166534": "forest-green", "#6b1a2c": "burgundy", "#dc2626": "red",
-    "#d2bd88": "sand",
+    "#f5f5f3": "white", "#1a1a1a": "black", "#1e3a5f": "navy",
+    "#6b7280": "grey", "#7f1d1d": "maroon", "#4a5240": "olive",
+    "#dc2626": "red", "#0ea5e9": "sky-blue", "#166534": "forest",
+    "#6b1a2c": "burgundy",
+    "#f2efe9": "white", "#303030": "grey", "#a3a3a3": "grey",
+    "#2563eb": "sky-blue", "#d2bd88": "olive",
   },
   mug: {
     "#f5f5f5": "white", "#1c1917": "black", "#1e3a5f": "navy",
@@ -545,8 +557,10 @@ export function getActiveMockupReleaseVersion(): "smart-v4" | "smart-v8" | "smar
  * and never falls back to an older release if that v9 asset fails to load.
  */
 export function getProductPickerPreviewSrc(product: DesignProduct): string {
-  if (product.category === "waterbottle") return WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.front.url;
-  if (!acceptedSmartV9Release) return product.gallerySrc ?? product.frontSrc;
+  if (!acceptedSmartV9Release) {
+    if (product.category === "waterbottle") return WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.front.url;
+    return product.gallerySrc ?? product.frontSrc;
+  }
   const baseColor = product.colors[0]?.hex ?? product.garmentColor;
   return getCuratedMockup(product, baseColor, "front").photoSrc;
 }
@@ -555,9 +569,10 @@ export function getProductPickerFallbackSrc(product: DesignProduct): string | un
   return acceptedSmartV9Release ? undefined : product.frontSrc;
 }
 
-// This module is included only by the isolated smart-v8 review branch. The
-// all-or-nothing guard above remains the sole activation path.
+// Smart-v8 remains the reviewed fallback inventory. Smart-v9 is the live
+// Design Studio release: 188 RGBA product photos, Water Bottle hash-pinned.
 activateSmartV8Release(ACCEPTED_SMART_V8_RELEASE);
+activateSmartV9Release(SMART_V9_CANDIDATE);
 
 function normalizeRuntimeKey(value: string): string {
   return value.trim().toLowerCase().replace(/[\\/]+/g, ":");
@@ -861,12 +876,16 @@ export function resolveMockup(
   const waterBottleV11Photo = category === "waterbottle"
     ? WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets[face === "back" ? "back" : "front"].url
     : undefined;
-  // A reviewed T-shirt base is selected ahead of remote metadata. Runtime
-  // gallery records remain useful for unsupported T-shirt views and other
-  // families, but cannot replace an accepted PSD-derived colour/face pair.
-  const photoSrc = psdPhoto ?? sourceMatrixPhoto ?? runtimePhoto ?? waterBottleV11Photo ?? curated.photoSrc;
-  const cutoutSrc = psdPhoto ?? sourceMatrixPhoto ?? runtimePhoto ?? waterBottleV11Photo ?? curated.cutoutSrc;
-  const hasExactColorBase = Boolean(psdPhoto || sourceMatrixPhoto || runtimePhoto || waterBottleV11Photo);
+  const liveV9Url = acceptedSmartV9Release?.assetUrls[completeView.sourceKey];
+  // Live Design Studio uses the accepted 188-surface smart-v9 PNG kit. Older
+  // PSD-tshirt, source-matrix, Water Bottle v1.1, and gallery records remain
+  // available only when a v9 surface is missing so a partial candidate cannot
+  // silently drop a family.
+  const photoSrc = liveV9Url ?? psdPhoto ?? sourceMatrixPhoto ?? runtimePhoto ?? waterBottleV11Photo ?? curated.photoSrc;
+  const cutoutSrc = liveV9Url ?? psdPhoto ?? sourceMatrixPhoto ?? runtimePhoto ?? waterBottleV11Photo ?? curated.cutoutSrc;
+  const hasExactColorBase = Boolean(liveV9Url || psdPhoto || sourceMatrixPhoto || runtimePhoto || waterBottleV11Photo);
+  const printZone = liveV9Url ? completeView.geometry.printZone : (sourceMatrix?.printZone ?? completeView.geometry.printZone);
+  const frame = liveV9Url ? normalizedFrame : (sourceMatrix?.normalizedFrame ?? normalizedFrame);
 
   return {
     colorHex: hex,
@@ -878,12 +897,12 @@ export function resolveMockup(
     // the selected physical color.
     isColorPhoto: hasExactColorBase ? true : curated.isColorPhoto,
     cutoutNeedsTint: hasExactColorBase ? false : curated.cutoutNeedsTint,
-    photoKind: (psdPhoto || sourceMatrixPhoto || runtimePhoto) ? "opaque-photo" : curated.photoKind,
+    photoKind: liveV9Url ? "transparent-cutout" : ((psdPhoto || sourceMatrixPhoto || runtimePhoto) ? "opaque-photo" : curated.photoKind),
     requiresTint: hasExactColorBase ? false : curated.requiresTint,
     allowSilhouetteShadow: false,
-    printZone: sourceMatrix?.printZone ?? completeView.geometry.printZone,
-    normalizedFrame: sourceMatrix?.normalizedFrame ?? normalizedFrame,
-    isOpaquePhoto: (psdPhoto || sourceMatrixPhoto || runtimePhoto) ? true : curated.photoKind === "opaque-photo",
+    printZone,
+    normalizedFrame: frame,
+    isOpaquePhoto: liveV9Url ? false : ((psdPhoto || sourceMatrixPhoto || runtimePhoto) ? true : curated.photoKind === "opaque-photo"),
     editableMasterPath: sourceMatrix?.editableMasterPath ?? runtimeOverride?.masterFileUrl ?? masterPath,
     sourceKitKey,
     smartObject: createSmartMockupManifest({
@@ -895,11 +914,11 @@ export function resolveMockup(
       masterStatus: "verified",
       baseSrc: photoSrc,
       cutoutSrc,
-      normalizedFrame: sourceMatrix?.normalizedFrame ?? normalizedFrame,
-      printZone: sourceMatrix?.printZone ?? completeView.geometry.printZone,
+      normalizedFrame: frame,
+      printZone,
     }),
-    psdMaterialEffects: isPsdTshirtRuntime ? getPsdTshirtMaterialEffects(color, face) : undefined,
-    source: sourceMatrixPhoto || runtimePhoto || psdPhoto ? "curated" : "source-kit",
+    psdMaterialEffects: liveV9Url ? undefined : (isPsdTshirtRuntime ? getPsdTshirtMaterialEffects(color, face) : undefined),
+    source: liveV9Url ? "source-kit" : (sourceMatrixPhoto || runtimePhoto || psdPhoto ? "curated" : "source-kit"),
   };
 }
 

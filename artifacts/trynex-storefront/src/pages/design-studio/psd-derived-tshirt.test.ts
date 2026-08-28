@@ -45,14 +45,14 @@ describe("licensed PSD-derived T-shirt workflow", () => {
     expect(isPsdDerivedTshirtCustomerReleaseSurface("white", "left-sleeve")).toBe(false);
   });
 
-  it("keeps each reviewed PSD-derived color base exact through the runtime resolver", () => {
+  it("keeps each reviewed T-shirt color base exact through the live smart-v9 resolver", () => {
     const tshirt = PRODUCTS.find((product) => product.category === "tshirt");
     expect(tshirt).toBeDefined();
 
     for (const color of tshirt!.colors) {
       for (const face of ["front", "back"] as const) {
         const resolution = resolveMockup(tshirt!, color.hex, face);
-        expect(resolution.cutoutSrc).toContain("/mockups/psd-tshirt-v1/");
+        expect(resolution.cutoutSrc).toContain("/mockups/smart-v9/tshirt/");
         expect(resolution.isColorPhoto).toBe(true);
         expect(resolution.cutoutNeedsTint).toBe(false);
         expect(resolution.requiresTint).toBe(false);
@@ -60,16 +60,11 @@ describe("licensed PSD-derived T-shirt workflow", () => {
     }
   });
 
-  it("does not apply the shared white screen effect to dark T-shirt colorways", () => {
+  it("does not overlay the older PSD screen/multiply stack on live smart-v9 T-shirts", () => {
     const tshirt = PRODUCTS.find((product) => product.category === "tshirt")!;
-    for (const colorName of ["Black", "Navy", "Maroon"]) {
+    for (const colorName of ["Black", "Navy", "Maroon", "White"]) {
       const color = tshirt.colors.find((entry) => entry.name === colorName)!;
-      const effects = resolveMockup(tshirt, color.hex, "front").psdMaterialEffects ?? [];
-      expect(effects.find((effect) => effect.blendMode === "screen")?.opacity).toBe(0);
-      expect(effects.find((effect) => effect.blendMode === "multiply")?.opacity).toBe(0.35);
+      expect(resolveMockup(tshirt, color.hex, "front").psdMaterialEffects).toBeUndefined();
     }
-    const white = tshirt.colors.find((entry) => entry.name === "White")!;
-    const whiteEffects = resolveMockup(tshirt, white.hex, "front").psdMaterialEffects ?? [];
-    expect(whiteEffects.find((effect) => effect.blendMode === "screen")?.opacity).toBeGreaterThan(0);
   });
 });
