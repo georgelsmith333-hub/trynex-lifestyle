@@ -71,6 +71,20 @@ describe("three-origin Pages gateway", () => {
     expect(new Request(fetchMock.mock.calls[1][0]).headers.get("cookie")).toBe("session=example");
   });
 
+  it("does not replay provider-consuming generation requests even though they use GET", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(new Response("primary unavailable", { status: 503 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const response = await onRequest(context("GET", "ai/generate", {
+      API_ORIGINS: "https://render-1.example,https://render-2.example,https://render-3.example",
+    }));
+
+    expect(response.status).toBe(503);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(response.headers.get("X-TryNex-Origin")).toBe("render-1.example");
+    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+  });
+
   it("answers CORS preflight at the edge without reaching Render", async () => {
     const fetchMock = vi.fn();
     vi.stubGlobal("fetch", fetchMock);
