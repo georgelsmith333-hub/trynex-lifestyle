@@ -564,6 +564,10 @@ export default function DesignStudioV2() {
         throw new Error("Background removal is temporarily rate-limited. Please try again later.");
       } else if (json.error === "image_too_large") {
         throw new Error("This image is over the 10MB processing limit. Use a smaller image first.");
+      } else if (!response.ok) {
+        throw new Error(response.status === 503
+          ? "Background removal is temporarily unavailable. Your original image is unchanged; please retry when the service is available."
+          : "Background removal could not be completed. Your original image is unchanged; please retry.");
       }
 
       if (!result) {
