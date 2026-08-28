@@ -144,9 +144,14 @@ export function AIPanel() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ image: referenceSrc }),
+          signal: AbortSignal.timeout(20_000),
         });
         const uploadJson = await uploadRes.json().catch(() => ({})) as { url?: string; error?: string };
-        if (!uploadRes.ok || !uploadJson.url) throw new Error(uploadJson.error || "Reference upload failed.");
+        if (!uploadRes.ok || !uploadJson.url) {
+          throw new Error(uploadRes.status === 503
+            ? "Reference upload is temporarily unavailable. Your original reference is unchanged; retry when the service is available."
+            : uploadJson.error || "Reference upload failed. Your original reference is unchanged.");
+        }
 
         setProgress(35);
         generationPrompt = `${request.prompt}. Use the supplied reference image as the visual source. Preserve the recognizable subject and overall composition, remove unwanted background artifacts, and produce a clean centered print-ready result. ${request.negative ? `Avoid: ${request.negative}.` : ""}`;
@@ -159,10 +164,14 @@ export function AIPanel() {
 
       params.set("prompt", generationPrompt);
       params.set("model", model);
-      const genRes = await fetch(getApiUrl(`/api/ai/generate?${params.toString()}`));
+      const genRes = await fetch(getApiUrl(`/api/ai/generate?${params.toString()}`), {
+        signal: AbortSignal.timeout(60_000),
+      });
       const genJson = await genRes.json().catch(() => ({})) as { dataUrl?: string; model?: string; validation?: { width?: number; height?: number }; error?: string };
       if (!genRes.ok || !genJson.dataUrl || !genJson.validation?.width || !genJson.validation?.height) {
-        throw new Error(genJson.error || "The server did not accept the generated artwork.");
+        throw new Error(genRes.status === 503
+          ? "The AI image service is temporarily unavailable. No artwork was added; retry when the service is available."
+          : genJson.error || "The server did not accept the generated artwork. No artwork was added.");
       }
 
       setProgress(82);
@@ -172,7 +181,12 @@ export function AIPanel() {
       setError(null);
     } catch (generationError) {
       console.error("[studio] AI generation failed", generationError);
-      setError(generationError instanceof Error ? generationError.message : "The AI image could not be generated. Try again.");
+      const message = generationError instanceof DOMException && generationError.name === "TimeoutError"
+        ? "The AI request timed out. No artwork was added; retry when the service is available."
+        : generationError instanceof Error
+          ? generationError.message
+          : "The AI image could not be generated. No artwork was added; retry when available.";
+      setError(message);
     } finally {
       stopProgress();
       setGenerating(false);
@@ -219,8 +233,8 @@ export function AIPanel() {
         <input value={negative} onChange={(e) => setNegative(e.target.value.slice(0, 300))} placeholder="blurry, watermark, cropped" className="mt-2 w-full rounded-xl border border-gray-200 px-3 py-2 text-xs outline-none focus:border-purple-400" disabled={generating} />
       </details>
       <p className="text-[10px] text-gray-400">Generated artwork is server-validated first, then requires your approval before it becomes an editable layer in the recorded print zone.</p>
-      {generating && <div className="space-y-1.5 rounded-xl border border-purple-100 bg-purple-50 p-3"><div className="flex items-center justify-between text-[11px] font-bold text-purple-700"><span className="flex items-center gap-1.5"><Loader2 className="h-3 w-3 animate-spin" /> {referenceSrc ? "Editing reference…" : "Creating print-ready art…"}</span><span className="text-[10px] font-black text-purple-400">{Math.round(progress)}%</span></div><div className="h-1.5 overflow-hidden rounded-full bg-purple-200"><div className="h-full rounded-full bg-gradient-to-r from-purple-600 to-purple-400 transition-all duration-500" style={{ width: `${progress}%` }} /></div></div>}
-      {error && <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-700"><Info className="mt-0.5 h-3.5 w-3.5 shrink-0" /><span className="flex-1">{error}</span>{lastRequest && <button type="button" onClick={() => void handleGenerate(lastRequest)} className="flex items-center gap-1 font-black underline"><RefreshCw className="h-3 w-3" /> Retry</button>}</div>}
+      {generating && <div role="status" aria-live="polite" className="space-y-1.5 rounded-xl border border-purple-100 bg-purple-50 p-3"><div className="flex items-center justify-between text-[11px] font-bold text-purple-700"><span className="flex items-center gap-1.5"><Loader2 className="h-3 w-3 animate-spin" /> {referenceSrc ? "Editing reference…" : "Creating print-ready art…"}</span><span className="text-[10px] font-black text-purple-400">{Math.round(progress)}%</span></div><div className="h-1.5 overflow-hidden rounded-full bg-purple-200"><div className="h-full rounded-full bg-gradient-to-r from-purple-600 to-purple-400 transition-all duration-500" style={{ width: `${progress}%` }} /></div></div>}
+      {error && <div role="alert" aria-live="assertive" className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-700"><Info className="mt-0.5 h-3.5 w-3.5 shrink-0" /><span className="flex-1">{error}</span>{lastRequest && <button type="button" onClick={() => void handleGenerate(lastRequest)} className="flex items-center gap-1 font-black underline"><RefreshCw className="h-3 w-3" /> Retry</button>}</div>}
       {pendingArtwork && <div className="space-y-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3"><div className="flex items-center gap-2"><img src={pendingArtwork.src} alt="Server-validated AI artwork candidate" className="h-14 w-14 rounded-lg border border-emerald-100 bg-white object-cover" /><div className="min-w-0 flex-1"><div className="text-[11px] font-black text-emerald-800">Ready for print-zone approval</div><p className="mt-0.5 text-[10px] leading-4 text-emerald-700">{pendingArtwork.naturalW} × {pendingArtwork.naturalH}px · {pendingArtwork.model}</p></div></div><div className="flex gap-2"><button type="button" onClick={approvePendingArtwork} className="flex-1 rounded-lg bg-emerald-600 px-3 py-2 text-[11px] font-black text-white">Approve & add layer</button><button type="button" onClick={() => setPendingArtwork(null)} className="rounded-lg border border-emerald-200 bg-white px-3 py-2 text-[11px] font-black text-emerald-700">Discard</button></div></div>}
       <button type="button" onClick={() => void handleGenerate()} disabled={generating || !prompt.trim()} className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-purple-500 py-3 text-sm font-black text-white disabled:opacity-50"><Wand2 className="h-4 w-4" /> {generating ? "Working…" : referenceSrc ? "Edit reference preview" : "Generate AI preview"}</button>
     </div>
