@@ -17,3 +17,9 @@ build/
 .next/
 out/
 *.tsbuildinfo
+__pycache__/
+
+# Regenerable mockup working sets (2048 upscales, displacement, raw masters)
+dist-mockups/_work/surfaces-2048/
+dist-mockups/_work/displace/
+dist-mockups/masters/

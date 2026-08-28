@@ -1,0 +1,1227 @@
+{
+  "count": 94,
+  "surfaces": [
+    {
+      "family": "tshirt",
+      "color": "white",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/tshirt-white-front.psd",
+      "png": "dist-mockups/_work/base/tshirt__white__front.png",
+      "bytes": 881936,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "tshirt",
+      "color": "white",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/tshirt-white-back.psd",
+      "png": "dist-mockups/_work/base/tshirt__white__back.png",
+      "bytes": 878439,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "tshirt",
+      "color": "black",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/tshirt-black-front.psd",
+      "png": "dist-mockups/_work/base/tshirt__black__front.png",
+      "bytes": 1159389,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "tshirt",
+      "color": "black",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/tshirt-black-back.psd",
+      "png": "dist-mockups/_work/base/tshirt__black__back.png",
+      "bytes": 885541,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "tshirt",
+      "color": "navy",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/tshirt-navy-front.psd",
+      "png": "dist-mockups/_work/base/tshirt__navy__front.png",
+      "bytes": 1024278,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "tshirt",
+      "color": "navy",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/tshirt-navy-back.psd",
+      "png": "dist-mockups/_work/base/tshirt__navy__back.png",
+      "bytes": 934647,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "tshirt",
+      "color": "maroon",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/tshirt-maroon-front.psd",
+      "png": "dist-mockups/_work/base/tshirt__maroon__front.png",
+      "bytes": 1063106,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "tshirt",
+      "color": "maroon",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/tshirt-maroon-back.psd",
+      "png": "dist-mockups/_work/base/tshirt__maroon__back.png",
+      "bytes": 1121213,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "tshirt",
+      "color": "olive",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/tshirt-olive-front.psd",
+      "png": "dist-mockups/_work/base/tshirt__olive__front.png",
+      "bytes": 1042080,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "tshirt",
+      "color": "olive",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/tshirt-olive-back.psd",
+      "png": "dist-mockups/_work/base/tshirt__olive__back.png",
+      "bytes": 1020799,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "tshirt",
+      "color": "sky-blue",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/tshirt-sky-blue-front.psd",
+      "png": "dist-mockups/_work/base/tshirt__sky-blue__front.png",
+      "bytes": 1111677,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "tshirt",
+      "color": "sky-blue",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/tshirt-sky-blue-back.psd",
+      "png": "dist-mockups/_work/base/tshirt__sky-blue__back.png",
+      "bytes": 1060216,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "tshirt",
+      "color": "grey",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/tshirt-grey-front.psd",
+      "png": "dist-mockups/_work/base/tshirt__grey__front.png",
+      "bytes": 1416918,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "tshirt",
+      "color": "grey",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/tshirt-grey-back.psd",
+      "png": "dist-mockups/_work/base/tshirt__grey__back.png",
+      "bytes": 1295069,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "tshirt",
+      "color": "red",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/tshirt-red-front.psd",
+      "png": "dist-mockups/_work/base/tshirt__red__front.png",
+      "bytes": 1203648,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "tshirt",
+      "color": "red",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/tshirt-red-back.psd",
+      "png": "dist-mockups/_work/base/tshirt__red__back.png",
+      "bytes": 1293875,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "white",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-white-front.psd",
+      "png": "dist-mockups/_work/base/longsleeve__white__front.png",
+      "bytes": 985323,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "white",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-white-back.psd",
+      "png": "dist-mockups/_work/base/longsleeve__white__back.png",
+      "bytes": 1017933,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "black",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-black-front.psd",
+      "png": "dist-mockups/_work/base/longsleeve__black__front.png",
+      "bytes": 1170577,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "black",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-black-back.psd",
+      "png": "dist-mockups/_work/base/longsleeve__black__back.png",
+      "bytes": 1034290,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "navy",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-navy-front.psd",
+      "png": "dist-mockups/_work/base/longsleeve__navy__front.png",
+      "bytes": 1237075,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "navy",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-navy-back.psd",
+      "png": "dist-mockups/_work/base/longsleeve__navy__back.png",
+      "bytes": 403551,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "maroon",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-maroon-front.psd",
+      "png": "dist-mockups/_work/base/longsleeve__maroon__front.png",
+      "bytes": 1089725,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "maroon",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-maroon-back.psd",
+      "png": "dist-mockups/_work/base/longsleeve__maroon__back.png",
+      "bytes": 394372,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "olive",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-olive-front.psd",
+      "png": "dist-mockups/_work/base/longsleeve__olive__front.png",
+      "bytes": 1465293,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "olive",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-olive-back.psd",
+      "png": "dist-mockups/_work/base/longsleeve__olive__back.png",
+      "bytes": 509755,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "grey",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-grey-front.psd",
+      "png": "dist-mockups/_work/base/longsleeve__grey__front.png",
+      "bytes": 1441338,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "grey",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-grey-back.psd",
+      "png": "dist-mockups/_work/base/longsleeve__grey__back.png",
+      "bytes": 589463,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "red",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-red-front.psd",
+      "png": "dist-mockups/_work/base/longsleeve__red__front.png",
+      "bytes": 1270921,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "red",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-red-back.psd",
+      "png": "dist-mockups/_work/base/longsleeve__red__back.png",
+      "bytes": 512065,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "sky-blue",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-sky-blue-front.psd",
+      "png": "dist-mockups/_work/base/longsleeve__sky-blue__front.png",
+      "bytes": 1076793,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "sky-blue",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-sky-blue-back.psd",
+      "png": "dist-mockups/_work/base/longsleeve__sky-blue__back.png",
+      "bytes": 601767,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "burgundy",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-burgundy-front.psd",
+      "png": "dist-mockups/_work/base/longsleeve__burgundy__front.png",
+      "bytes": 1119610,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "burgundy",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-burgundy-back.psd",
+      "png": "dist-mockups/_work/base/longsleeve__burgundy__back.png",
+      "bytes": 375929,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "forest",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-forest-front.psd",
+      "png": "dist-mockups/_work/base/longsleeve__forest__front.png",
+      "bytes": 1115788,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "longsleeve",
+      "color": "forest",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/longsleeve-forest-back.psd",
+      "png": "dist-mockups/_work/base/longsleeve__forest__back.png",
+      "bytes": 399209,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "hoodie",
+      "color": "white",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/hoodie-white-front.psd",
+      "png": "dist-mockups/_work/base/hoodie__white__front.png",
+      "bytes": 981118,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "hoodie",
+      "color": "white",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/hoodie-white-back.psd",
+      "png": "dist-mockups/_work/base/hoodie__white__back.png",
+      "bytes": 966836,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "hoodie",
+      "color": "black",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/hoodie-black-front.psd",
+      "png": "dist-mockups/_work/base/hoodie__black__front.png",
+      "bytes": 916688,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "hoodie",
+      "color": "black",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/hoodie-black-back.psd",
+      "png": "dist-mockups/_work/base/hoodie__black__back.png",
+      "bytes": 908539,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "hoodie",
+      "color": "navy",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/hoodie-navy-front.psd",
+      "png": "dist-mockups/_work/base/hoodie__navy__front.png",
+      "bytes": 1102393,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "hoodie",
+      "color": "navy",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/hoodie-navy-back.psd",
+      "png": "dist-mockups/_work/base/hoodie__navy__back.png",
+      "bytes": 441682,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "hoodie",
+      "color": "grey",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/hoodie-grey-front.psd",
+      "png": "dist-mockups/_work/base/hoodie__grey__front.png",
+      "bytes": 1259976,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "hoodie",
+      "color": "grey",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/hoodie-grey-back.psd",
+      "png": "dist-mockups/_work/base/hoodie__grey__back.png",
+      "bytes": 603070,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "hoodie",
+      "color": "maroon",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/hoodie-maroon-front.psd",
+      "png": "dist-mockups/_work/base/hoodie__maroon__front.png",
+      "bytes": 1225128,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "hoodie",
+      "color": "maroon",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/hoodie-maroon-back.psd",
+      "png": "dist-mockups/_work/base/hoodie__maroon__back.png",
+      "bytes": 415052,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "hoodie",
+      "color": "olive",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/hoodie-olive-front.psd",
+      "png": "dist-mockups/_work/base/hoodie__olive__front.png",
+      "bytes": 1341146,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "hoodie",
+      "color": "olive",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/hoodie-olive-back.psd",
+      "png": "dist-mockups/_work/base/hoodie__olive__back.png",
+      "bytes": 513368,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "hoodie",
+      "color": "red",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/hoodie-red-front.psd",
+      "png": "dist-mockups/_work/base/hoodie__red__front.png",
+      "bytes": 1440267,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "hoodie",
+      "color": "red",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/hoodie-red-back.psd",
+      "png": "dist-mockups/_work/base/hoodie__red__back.png",
+      "bytes": 506020,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "hoodie",
+      "color": "sky-blue",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/hoodie-sky-blue-front.psd",
+      "png": "dist-mockups/_work/base/hoodie__sky-blue__front.png",
+      "bytes": 1115727,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "hoodie",
+      "color": "sky-blue",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/hoodie-sky-blue-back.psd",
+      "png": "dist-mockups/_work/base/hoodie__sky-blue__back.png",
+      "bytes": 604285,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "hoodie",
+      "color": "forest",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/hoodie-forest-front.psd",
+      "png": "dist-mockups/_work/base/hoodie__forest__front.png",
+      "bytes": 1239506,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "hoodie",
+      "color": "forest",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/hoodie-forest-back.psd",
+      "png": "dist-mockups/_work/base/hoodie__forest__back.png",
+      "bytes": 389571,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "hoodie",
+      "color": "burgundy",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/hoodie-burgundy-front.psd",
+      "png": "dist-mockups/_work/base/hoodie__burgundy__front.png",
+      "bytes": 1236419,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "hoodie",
+      "color": "burgundy",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/hoodie-burgundy-back.psd",
+      "png": "dist-mockups/_work/base/hoodie__burgundy__back.png",
+      "bytes": 403515,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "mug",
+      "color": "white",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/mug-white-front.psd",
+      "png": "dist-mockups/_work/base/mug__white__front.png",
+      "bytes": 779095,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "mug",
+      "color": "white",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/mug-white-back.psd",
+      "png": "dist-mockups/_work/base/mug__white__back.png",
+      "bytes": 782109,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "mug",
+      "color": "black",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/mug-black-front.psd",
+      "png": "dist-mockups/_work/base/mug__black__front.png",
+      "bytes": 735641,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "mug",
+      "color": "black",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/mug-black-back.psd",
+      "png": "dist-mockups/_work/base/mug__black__back.png",
+      "bytes": 737130,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "mug",
+      "color": "navy",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/mug-navy-front.psd",
+      "png": "dist-mockups/_work/base/mug__navy__front.png",
+      "bytes": 374613,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "mug",
+      "color": "navy",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/mug-navy-back.psd",
+      "png": "dist-mockups/_work/base/mug__navy__back.png",
+      "bytes": 374590,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "mug",
+      "color": "red",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/mug-red-front.psd",
+      "png": "dist-mockups/_work/base/mug__red__front.png",
+      "bytes": 449770,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "mug",
+      "color": "red",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/mug-red-back.psd",
+      "png": "dist-mockups/_work/base/mug__red__back.png",
+      "bytes": 450357,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "mug",
+      "color": "green",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/mug-green-front.psd",
+      "png": "dist-mockups/_work/base/mug__green__front.png",
+      "bytes": 453620,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "mug",
+      "color": "green",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/mug-green-back.psd",
+      "png": "dist-mockups/_work/base/mug__green__back.png",
+      "bytes": 454474,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "mug",
+      "color": "purple",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/mug-purple-front.psd",
+      "png": "dist-mockups/_work/base/mug__purple__front.png",
+      "bytes": 575051,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "mug",
+      "color": "purple",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/mug-purple-back.psd",
+      "png": "dist-mockups/_work/base/mug__purple__back.png",
+      "bytes": 575196,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "mug",
+      "color": "sky-blue",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/mug-sky-blue-front.psd",
+      "png": "dist-mockups/_work/base/mug__sky-blue__front.png",
+      "bytes": 562750,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "mug",
+      "color": "sky-blue",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/mug-sky-blue-back.psd",
+      "png": "dist-mockups/_work/base/mug__sky-blue__back.png",
+      "bytes": 563584,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "mug",
+      "color": "pink",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/mug-pink-front.psd",
+      "png": "dist-mockups/_work/base/mug__pink__front.png",
+      "bytes": 613304,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "mug",
+      "color": "pink",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/mug-pink-back.psd",
+      "png": "dist-mockups/_work/base/mug__pink__back.png",
+      "bytes": 614756,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "mug",
+      "color": "maroon",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/mug-maroon-front.psd",
+      "png": "dist-mockups/_work/base/mug__maroon__front.png",
+      "bytes": 334357,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "mug",
+      "color": "maroon",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/mug-maroon-back.psd",
+      "png": "dist-mockups/_work/base/mug__maroon__back.png",
+      "bytes": 335134,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "mug",
+      "color": "orange",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/mug-orange-front.psd",
+      "png": "dist-mockups/_work/base/mug__orange__front.png",
+      "bytes": 500434,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "mug",
+      "color": "orange",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/mug-orange-back.psd",
+      "png": "dist-mockups/_work/base/mug__orange__back.png",
+      "bytes": 500995,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "cap",
+      "color": "white",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/cap-white-front.psd",
+      "png": "dist-mockups/_work/base/cap__white__front.png",
+      "bytes": 879128,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "cap",
+      "color": "white",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/cap-white-back.psd",
+      "png": "dist-mockups/_work/base/cap__white__back.png",
+      "bytes": 1462361,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "cap",
+      "color": "black",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/cap-black-front.psd",
+      "png": "dist-mockups/_work/base/cap__black__front.png",
+      "bytes": 144269,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "cap",
+      "color": "black",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/cap-black-back.psd",
+      "png": "dist-mockups/_work/base/cap__black__back.png",
+      "bytes": 443269,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "cap",
+      "color": "navy",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/cap-navy-front.psd",
+      "png": "dist-mockups/_work/base/cap__navy__front.png",
+      "bytes": 475564,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "cap",
+      "color": "navy",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/cap-navy-back.psd",
+      "png": "dist-mockups/_work/base/cap__navy__back.png",
+      "bytes": 782794,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "cap",
+      "color": "maroon",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/cap-maroon-front.psd",
+      "png": "dist-mockups/_work/base/cap__maroon__front.png",
+      "bytes": 426153,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "cap",
+      "color": "maroon",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/cap-maroon-back.psd",
+      "png": "dist-mockups/_work/base/cap__maroon__back.png",
+      "bytes": 715128,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "cap",
+      "color": "olive",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/cap-olive-front.psd",
+      "png": "dist-mockups/_work/base/cap__olive__front.png",
+      "bytes": 525465,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "cap",
+      "color": "olive",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/cap-olive-back.psd",
+      "png": "dist-mockups/_work/base/cap__olive__back.png",
+      "bytes": 802328,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "cap",
+      "color": "red",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/cap-red-front.psd",
+      "png": "dist-mockups/_work/base/cap__red__front.png",
+      "bytes": 547010,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "cap",
+      "color": "red",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/cap-red-back.psd",
+      "png": "dist-mockups/_work/base/cap__red__back.png",
+      "bytes": 830178,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "cap",
+      "color": "grey",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/cap-grey-front.psd",
+      "png": "dist-mockups/_work/base/cap__grey__front.png",
+      "bytes": 633733,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "cap",
+      "color": "grey",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/cap-grey-back.psd",
+      "png": "dist-mockups/_work/base/cap__grey__back.png",
+      "bytes": 907719,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "cap",
+      "color": "forest",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/cap-forest-front.psd",
+      "png": "dist-mockups/_work/base/cap__forest__front.png",
+      "bytes": 415492,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "cap",
+      "color": "forest",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/cap-forest-back.psd",
+      "png": "dist-mockups/_work/base/cap__forest__back.png",
+      "bytes": 743270,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "waterbottle",
+      "color": "white",
+      "view": "front",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/waterbottle-white-front.psd",
+      "png": "dist-mockups/_work/base/waterbottle__white__front.png",
+      "bytes": 661766,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    },
+    {
+      "family": "waterbottle",
+      "color": "white",
+      "view": "back",
+      "src": "attached_assets/trynex-mockup-source-kit/psd/waterbottle-white-back.psd",
+      "png": "dist-mockups/_work/base/waterbottle__white__back.png",
+      "bytes": 656739,
+      "size": [
+        1024,
+        1024
+      ],
+      "reused": false
+    }
+  ]
+}
