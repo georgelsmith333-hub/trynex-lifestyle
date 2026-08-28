@@ -1,23 +1,22 @@
 /*
  * Cloudflare Pages Function — route-aware API gateway.
  *
- * Render 1 (trynex-api) is the mutation primary. It is currently skipped for
- * public reads because the Hobby workspace 5 GB outbound cap suspended it.
- * Safe GETs go standby-2 then standby-3. Writes never leave the primary.
+ * Canonical writer: Render 2 (trynex-api-standby-2).
+ * Safe reads: R2 then R3. Writes never round-robin and never auto-promote.
+ * Render 1 (trynex-api) is recovery-only: skipped unless API_RECOVERY_ENABLED=true
+ * (reads) or API_WRITE_ORIGIN explicitly names it (writes).
  *
- * Origin env vars are merged with the built-in standbys so a lone API_URL
- * cannot disable failover. API_SKIP_ORIGINS / API_WRITE_ORIGIN can override.
- * Standby API services also enforce read-only mode through TRYNEX_RUNTIME_ROLE.
+ * HTML 200 from a cold-start Render splash page is treated as retryable on reads.
+ * Mutations are attempted once against the current writer, with Idempotency-Key
+ * forwarded so the API can safely replay.
  */
 
-const PRIMARY_ORIGIN = "https://trynex-api.onrender.com";
-const STANDBY_ORIGINS = [
-  "https://trynex-api-standby-2.onrender.com",
-  "https://trynex-api-standby-3.onrender.com",
-];
-const DEFAULT_ORIGIN = [PRIMARY_ORIGIN, ...STANDBY_ORIGINS].join(",");
-const SUSPENDED_READ_HOSTS = new Set(["trynex-api.onrender.com"]);
-const REQUEST_TIMEOUT_MS = 6_000;
+const RECOVERY_ORIGIN = "https://trynex-api.onrender.com";
+const CANONICAL_WRITER = "https://trynex-api-standby-2.onrender.com";
+const DR_ORIGIN = "https://trynex-api-standby-3.onrender.com";
+const DEFAULT_READ_ORIGINS = [CANONICAL_WRITER, DR_ORIGIN, RECOVERY_ORIGIN].join(",");
+const READ_TIMEOUT_MS = 12_000;
+const WRITE_TIMEOUT_MS = 20_000;
 const RETRYABLE_STATUSES = new Set([502, 503, 504]);
 const SAFE_PUBLIC_PREFIXES = [
   "/products",
@@ -31,6 +30,7 @@ const SAFE_PUBLIC_PREFIXES = [
   "/healthz",
   "/readyz",
 ];
+const PRIMARY_ONLY_READ_PREFIXES = ["/ai/generate"];
 
 interface GatewayEnv {
   API_URL?: string;
@@ -39,6 +39,7 @@ interface GatewayEnv {
   API_ORIGINS?: string;
   API_WRITE_ORIGIN?: string;
   API_SKIP_ORIGINS?: string;
+  API_RECOVERY_ENABLED?: string;
 }
 
 function parseOriginList(raw: string | undefined): string[] {
@@ -54,6 +55,10 @@ function hostOf(origin: string): string {
   }
 }
 
+function recoveryReadsEnabled(env: GatewayEnv): boolean {
+  return env.API_RECOVERY_ENABLED === "true";
+}
+
 function collectConfiguredOrigins(env: GatewayEnv): string[] {
   const listed = parseOriginList(env.API_ORIGINS);
   const singles = parseOriginList(env.API_URL || env.API_ORIGIN || env.TRYNEX_API_URL);
@@ -61,52 +66,62 @@ function collectConfiguredOrigins(env: GatewayEnv): string[] {
     ? listed
     : singles.length > 0
       ? singles
-      : parseOriginList(DEFAULT_ORIGIN);
-  const hasPrimary = base.some((origin) => hostOf(origin) === "trynex-api.onrender.com");
-  const hasStandby = base.some((origin) => hostOf(origin).includes("standby"));
-  // A list that only names the suspended primary must still keep the standbys.
-  if (hasPrimary && !hasStandby) {
-    return parseOriginList([...base, ...STANDBY_ORIGINS].join(","));
+      : parseOriginList(DEFAULT_READ_ORIGINS);
+  const hasRecovery = base.some((origin) => hostOf(origin) === hostOf(RECOVERY_ORIGIN));
+  const hasStandby = base.some((origin) => {
+    const host = hostOf(origin);
+    return host === hostOf(CANONICAL_WRITER) || host === hostOf(DR_ORIGIN) || host.includes("standby");
+  });
+  // A list that only names the suspended recovery origin must still keep R2/R3.
+  if (hasRecovery && !hasStandby) {
+    return parseOriginList([...base, CANONICAL_WRITER, DR_ORIGIN].join(","));
   }
   return base;
 }
 
 function getWriteOrigins(env: GatewayEnv): string[] {
   const explicit = parseOriginList(env.API_WRITE_ORIGIN);
-  if (explicit.length > 0) return explicit;
-  const configured = collectConfiguredOrigins(env);
-  const primary = configured.find((origin) => hostOf(origin) === "trynex-api.onrender.com");
-  return [primary || configured[0]].filter(Boolean);
+  if (explicit.length > 0) return [explicit[0]];
+  return [CANONICAL_WRITER];
 }
 
 function getReadOrigins(env: GatewayEnv): string[] {
+  const skipHosts = new Set<string>(parseOriginList(env.API_SKIP_ORIGINS).map(hostOf));
+  if (!recoveryReadsEnabled(env)) skipHosts.add(hostOf(RECOVERY_ORIGIN));
   const configured = collectConfiguredOrigins(env);
-  const skipHosts = new Set<string>([
-    ...SUSPENDED_READ_HOSTS,
-    ...parseOriginList(env.API_SKIP_ORIGINS).map(hostOf),
-  ]);
   const live = configured.filter((origin) => !skipHosts.has(hostOf(origin)));
-  const standbys = live.filter((origin) => hostOf(origin).includes("standby"));
-  const others = live.filter((origin) => !hostOf(origin).includes("standby"));
-  const ordered = [...standbys, ...others];
-  return ordered.length > 0 ? ordered : configured.slice(0, 1);
+  const writer = live.filter((origin) => hostOf(origin) === hostOf(CANONICAL_WRITER));
+  const dr = live.filter((origin) => hostOf(origin) === hostOf(DR_ORIGIN));
+  const others = live.filter((origin) => {
+    const host = hostOf(origin);
+    return host !== hostOf(CANONICAL_WRITER) && host !== hostOf(DR_ORIGIN);
+  });
+  const ordered = [...writer, ...dr, ...others];
+  return ordered.length > 0 ? ordered : [CANONICAL_WRITER];
 }
 
 function isSafePublicRead(method: string, path: string, request: Request): boolean {
   if (method !== "GET" && method !== "HEAD") return false;
-  // A browser session cookie does not make an allowlisted catalog/health read
-  // a mutation. Authorization-bearing requests remain origin-pinned because
-  // they may be user-specific or otherwise unsafe to replay across standbys.
   if (request.headers.get("authorization")) return false;
   return SAFE_PUBLIC_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
+}
+
+function isIdempotentRead(method: string): boolean {
+  return method === "GET" || method === "HEAD";
+}
+
+function canFailOverRead(method: string, path: string): boolean {
+  if (!isIdempotentRead(method)) return false;
+  return !PRIMARY_ONLY_READ_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
 }
 
 function corsHeaders(origin: string): Headers {
   const headers = new Headers();
   headers.set("Access-Control-Allow-Origin", origin);
   headers.set("Access-Control-Allow-Credentials", "true");
-  headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Idempotency-Key");
+  headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Idempotency-Key, X-Request-Id, X-Correlation-Id");
   headers.set("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS");
+  headers.set("Access-Control-Expose-Headers", "X-TryNex-Origin, X-TryNex-Edge-Cache, X-Correlation-Id, X-Request-Id");
   headers.set("Vary", "Origin");
   return headers;
 }
@@ -115,14 +130,37 @@ function makeTargetUrl(origin: string, path: string, search: string): URL {
   return new URL(`/api/${path}${search}`, `${origin}/`);
 }
 
+function ensureCorrelationId(request: Request): string {
+  const incoming = request.headers.get("x-correlation-id") || request.headers.get("x-request-id");
+  if (incoming && incoming.trim()) return incoming.trim().slice(0, 128);
+  return crypto.randomUUID();
+}
+
+function isRetryableOriginResponse(response: Response, failover: boolean): boolean {
+  if (!failover) return false;
+  if (RETRYABLE_STATUSES.has(response.status)) return true;
+  if (!response.ok) return false;
+  const contentType = (response.headers.get("content-type") || "").toLowerCase();
+  return contentType.includes("text/html");
+}
+
+async function discardBody(response: Response): Promise<void> {
+  try {
+    if (response.body && typeof response.body.cancel === "function") {
+      await response.body.cancel();
+      return;
+    }
+    await response.arrayBuffer();
+  } catch {
+    // Best-effort drain so the origin socket is not held open.
+  }
+}
+
 export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
   const { request, env, params } = context;
   const originalUrl = new URL(request.url);
   const pathSegments = (params["path"] as string[] | string) ?? [];
   const rawPath = Array.isArray(pathSegments) ? pathSegments.join("/") : pathSegments;
-  // The request pathname is authoritative for Pages root catch-all Functions;
-  // params.path may be empty or may include the /api prefix depending on the
-  // runtime route matcher. Keep params only as a compatibility fallback.
   const pathnamePath = originalUrl.pathname
     .replace(/^\/+/, "")
     .replace(/^api(?:\/|$)/i, "")
@@ -132,8 +170,11 @@ export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
   const method = request.method.toUpperCase();
   const apiPath = `/${path}`;
   const safeRead = isSafePublicRead(method, apiPath, request);
+  const idempotentRead = isIdempotentRead(method);
+  const failoverRead = canFailOverRead(method, apiPath);
   const origin = originalUrl.origin;
   const responseCors = corsHeaders(origin);
+  const correlationId = ensureCorrelationId(request);
   const edgeCache = (globalThis as { caches?: { default?: Cache } }).caches?.default;
   const cacheable = safeRead
     && method === "GET"
@@ -149,16 +190,21 @@ export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
       const cachedHeaders = new Headers(cached.headers);
       responseCors.forEach((value, key) => cachedHeaders.set(key, value));
       cachedHeaders.set("X-TryNex-Edge-Cache", "HIT");
+      cachedHeaders.set("X-Correlation-Id", correlationId);
+      cachedHeaders.set("X-Request-Id", correlationId);
       return new Response(cached.body, { status: cached.status, statusText: cached.statusText, headers: cachedHeaders });
     }
   }
 
   if (method === "OPTIONS") {
     responseCors.set("Cache-Control", "public, max-age=600");
+    responseCors.set("X-Correlation-Id", correlationId);
+    responseCors.set("X-Request-Id", correlationId);
     return new Response(null, { status: 204, headers: responseCors });
   }
 
-  const candidates = safeRead ? getReadOrigins(env) : getWriteOrigins(env);
+  const candidates = failoverRead ? getReadOrigins(env) : getWriteOrigins(env);
+  const timeoutMs = failoverRead ? READ_TIMEOUT_MS : WRITE_TIMEOUT_MS;
   let lastStatus = 503;
   let lastError = "No API origin responded";
 
@@ -166,6 +212,8 @@ export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
     const targetUrl = makeTargetUrl(apiOrigin, path, originalUrl.search);
     const headers = new Headers(request.headers);
     headers.set("Host", new URL(apiOrigin).host);
+    headers.set("X-Correlation-Id", correlationId);
+    headers.set("X-Request-Id", correlationId);
     headers.delete("origin");
     headers.delete("referer");
     if (safeRead) headers.delete("cookie");
@@ -180,18 +228,24 @@ export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
     const proxyRequest = new Request(targetUrl.toString(), requestInit);
 
     try {
-      const response = await fetch(proxyRequest, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+      const response = await fetch(proxyRequest, { signal: AbortSignal.timeout(timeoutMs) });
       lastStatus = response.status;
-      if (safeRead && RETRYABLE_STATUSES.has(response.status)) {
-        lastError = `Origin ${apiOrigin} returned ${response.status}`;
+      if (isRetryableOriginResponse(response, failoverRead)) {
+        lastError = `Origin ${apiOrigin} returned ${response.status} ${response.headers.get("content-type") || ""}`.trim();
+        await discardBody(response);
         continue;
       }
 
       const responseHeaders = new Headers(response.headers);
       responseCors.forEach((value, key) => responseHeaders.set(key, value));
       responseHeaders.set("X-TryNex-Origin", new URL(apiOrigin).host);
+      responseHeaders.set("X-Correlation-Id", correlationId);
+      responseHeaders.set("X-Request-Id", correlationId);
       if (safeRead && response.ok) {
         responseHeaders.set("Cache-Control", "public, max-age=60, s-maxage=300, stale-while-revalidate=600");
+      }
+      if (idempotentRead && !safeRead) {
+        responseHeaders.set("Cache-Control", "private, no-store");
       }
 
       if (cacheable && edgeCache && response.ok) {
@@ -212,15 +266,17 @@ export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
       return output;
     } catch (error) {
       lastError = error instanceof Error ? error.message : String(error);
-      if (!safeRead) break;
+      if (!failoverRead) break;
     }
   }
 
   const failed = new Headers(responseCors);
   failed.set("Content-Type", "application/json");
   failed.set("Cache-Control", "no-store");
+  failed.set("X-Correlation-Id", correlationId);
+  failed.set("X-Request-Id", correlationId);
   return new Response(
-    JSON.stringify({ error: "api_unavailable", message: "The API is temporarily unavailable.", status: lastStatus, detail: lastError }),
+    JSON.stringify({ error: "api_unavailable", message: "The API is temporarily unavailable.", status: lastStatus, detail: lastError, correlationId }),
     { status: 503, headers: failed },
   );
 };
