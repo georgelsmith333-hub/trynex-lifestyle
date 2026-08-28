@@ -10,7 +10,7 @@ export type AuthTokenGetter = () => Promise<string | null> | string | null;
 
 const NO_BODY_STATUS = new Set([204, 205, 304]);
 const DEFAULT_JSON_ACCEPT = "application/json, application/problem+json";
-const PUBLIC_GET_TIMEOUT_MS = 8_000;
+const PUBLIC_GET_TIMEOUT_MS = 25_000;
 
 function mergeAbortSignals(signals: Array<AbortSignal | undefined | null>): AbortSignal | undefined {
   const active = signals.filter((signal): signal is AbortSignal => Boolean(signal));

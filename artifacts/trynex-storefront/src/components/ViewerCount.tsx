@@ -44,7 +44,7 @@ export function ViewerCount({ productId, className = "" }: ViewerCountProps) {
     };
 
     heartbeat();
-    const id = setInterval(heartbeat, 30_000);
+    const id = setInterval(heartbeat, 90_000);
     return () => clearInterval(id);
   }, [productId]);
 

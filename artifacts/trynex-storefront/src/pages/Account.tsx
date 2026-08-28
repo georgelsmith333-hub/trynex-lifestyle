@@ -248,7 +248,7 @@ export default function Account() {
   useEffect(() => {
     if (!isAuthenticated) return;
     fetchUnreadCount();
-    const interval = setInterval(fetchUnreadCount, 8000);
+    const interval = setInterval(fetchUnreadCount, 30000);
     return () => clearInterval(interval);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
@@ -256,7 +256,7 @@ export default function Account() {
   // Live message polling — refresh messages every 5s when chat is open
   useEffect(() => {
     if (!isAuthenticated || selectedOrderId === null) return;
-    const interval = setInterval(() => fetchMessages(selectedOrderId), 5000);
+    const interval = setInterval(() => fetchMessages(selectedOrderId), 15000);
     return () => clearInterval(interval);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, selectedOrderId]);

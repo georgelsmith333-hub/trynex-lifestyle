@@ -201,7 +201,7 @@ export default function TrackOrder() {
     return undefined;
   }, []);
 
-  // Live polling every 12 seconds once we have order data
+  // Live polling every 30 seconds once we have order data
   useEffect(() => {
     if (liveOrderData && liveOrderData.orderNumber) {
       setIsPolling(true);
@@ -214,7 +214,7 @@ export default function TrackOrder() {
         );
         if (d) setLiveOrderData(d);
       };
-      pollingRef.current = setInterval(poll, 12000);
+      pollingRef.current = setInterval(poll, 30000);
       return () => {
         if (pollingRef.current) clearInterval(pollingRef.current);
         setIsPolling(false);

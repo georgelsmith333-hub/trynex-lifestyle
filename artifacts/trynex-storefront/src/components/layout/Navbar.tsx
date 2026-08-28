@@ -168,14 +168,14 @@ export function Navbar() {
       } catch {}
     };
 
-    // Initial fetch on mount / re-auth, then poll every 30 s.
+    // Initial fetch on mount / re-auth, then poll every 60 s.
     // Single consolidated interval — no duplicate timers.
     fetchUnread();
     fetchNotifications();
     const interval = setInterval(() => {
       fetchUnread();
       fetchNotifications();
-    }, 30000);
+    }, 60000);
 
     return () => {
       mounted = false;

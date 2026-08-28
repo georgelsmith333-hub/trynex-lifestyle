@@ -603,12 +603,44 @@ export const useDeleteTestimonial = (opts?: ReqOpts) => {
 
 // ─── Order Hooks ─────────────────────────────────────────────────────────────
 
+const ORDER_IDEMPOTENCY_STORAGE_KEY = "trynex_order_idempotency_key";
+
+function randomIdempotencyKey(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return `tn-${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
+}
+
+export function getOrderIdempotencyKey(): string {
+  try {
+    const existing = sessionStorage.getItem(ORDER_IDEMPOTENCY_STORAGE_KEY);
+    if (existing) return existing;
+    const created = randomIdempotencyKey();
+    sessionStorage.setItem(ORDER_IDEMPOTENCY_STORAGE_KEY, created);
+    return created;
+  } catch {
+    return randomIdempotencyKey();
+  }
+}
+
+export function clearOrderIdempotencyKey(): void {
+  try {
+    sessionStorage.removeItem(ORDER_IDEMPOTENCY_STORAGE_KEY);
+  } catch {
+    // sessionStorage may be unavailable (private mode / SSR)
+  }
+}
+
 export const useCreateOrder = () => {
   return useMutation({
     mutationFn: (data: CreateOrderRequest) =>
       customFetch<Order>("/api/orders", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Idempotency-Key": getOrderIdempotencyKey(),
+        },
         body: JSON.stringify(data),
       }),
   });

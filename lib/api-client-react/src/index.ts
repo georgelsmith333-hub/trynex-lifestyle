@@ -46,6 +46,8 @@ export {
   useDeleteCategory,
   // order
   useCreateOrder,
+  getOrderIdempotencyKey,
+  clearOrderIdempotencyKey,
   useTrackOrder,
   getTrynexListOrdersQueryKey,
   useTrynexListOrders,

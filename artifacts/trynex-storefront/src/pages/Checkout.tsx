@@ -4,7 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SEOHead } from "@/components/SEOHead";
 import { useCart } from "@/context/CartContext";
-import { useCreateOrder, type CreateOrderRequest } from "@workspace/api-client-react";
+import { useCreateOrder, clearOrderIdempotencyKey, type CreateOrderRequest } from "@workspace/api-client-react";
 import { formatPrice, getApiUrl } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -529,6 +529,7 @@ export default function Checkout() {
       if (lastErr) throw lastErr;
 
       const orderData = order as unknown as Record<string, unknown>;
+      clearOrderIdempotencyKey();
       setCreatedOrder(orderData);
 
       const rawServerTotal = typeof orderData.total === "number" ? orderData.total : snapTotal;

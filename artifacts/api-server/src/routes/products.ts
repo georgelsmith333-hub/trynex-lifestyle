@@ -484,8 +484,8 @@ router.post("/products/bulk", requireAdmin, async (req, res) => {
 });
 
 /* ── Live Viewer Count ───────────────────────────────────────────────────────
-   Simple in-memory viewer tracker. Clients send a heartbeat every 30s.
-   Viewers expire automatically after 90s without a heartbeat.
+   Simple in-memory viewer tracker. Clients send a heartbeat every 90s.
+   Viewers expire automatically after 180s without a heartbeat.
    No DB needed — counts are ephemeral and decorative.
    ─────────────────────────────────────────────────────────────────────────── */
 const viewerMap = new Map<number, Map<string, number>>(); // productId → {viewerId → expiresAt}
