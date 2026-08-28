@@ -4,6 +4,7 @@ import { desc, sql } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { repairTargetSchemas, runBackupSync } from "../lib/dbBackupSync";
 import { getBackupSyncStatus, recordBackupSyncResults } from "../lib/scheduler";
+import { backupSyncShouldRun } from "../lib/runtimePolicy";
 
 const router: IRouter = Router();
 
@@ -31,10 +32,12 @@ router.post("/admin/backup/repair-schemas", requireAdmin, async (req, res) => {
 });
 
 router.post("/admin/backup/sync-now", requireAdmin, async (req, res) => {
-  if (process.env.BACKUP_SYNC_ENABLED !== "true") {
+  const runtimeRole = process.env.TRYNEX_RUNTIME_ROLE ?? "primary";
+  if (!backupSyncShouldRun(runtimeRole, process.env.BACKUP_SYNC_ENABLED)) {
     res.status(409).json({
       error: "backup_sync_disabled",
-      message: "The legacy full-database mirror is disabled until an explicitly owned, quota-measured sync strategy is enabled.",
+      message: "The legacy full-database mirror is disabled until an explicitly owned, quota-measured sync strategy is enabled on the canonical writer.",
+      runtimeRole,
     });
     return;
   }

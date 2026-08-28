@@ -4,6 +4,7 @@ import { db } from "@workspace/db";
 import { getConfiguredGoogleClientId } from "./auth";
 import { ObjectStorageService } from "../lib/objectStorage";
 import { getRedisStatus } from "../lib/redis";
+import { backupSyncShouldRun, mutationsAllowedForRole, schedulerShouldRun } from "../lib/runtimePolicy";
 
 const router: IRouter = Router();
 
@@ -25,6 +26,7 @@ router.get("/healthz", async (_req, res) => {
   const redisDetail = redisResult.status === "fulfilled" ? redisResult.value.detail : undefined;
 
   const storageBackend = new ObjectStorageService().getBackendName();
+  const runtimeRole = process.env.TRYNEX_RUNTIME_ROLE ?? "primary";
 
   // Overall status hierarchy:
   //   "error"    — DB is unreachable (requests cannot be served)
@@ -45,9 +47,10 @@ router.get("/healthz", async (_req, res) => {
     redis: redisMode,
     ...(redisDetail ? { redis_detail: redisDetail } : {}),
     storage: storageBackend,
-    runtimeRole: process.env.TRYNEX_RUNTIME_ROLE ?? "primary",
-    schedulerEnabled: process.env.SCHEDULER_ENABLED !== "false",
-    backupSyncEnabled: process.env.BACKUP_SYNC_ENABLED === "true",
+    runtimeRole,
+    mutationsAllowed: mutationsAllowedForRole(runtimeRole),
+    schedulerEnabled: schedulerShouldRun(runtimeRole, process.env.SCHEDULER_ENABLED),
+    backupSyncEnabled: backupSyncShouldRun(runtimeRole, process.env.BACKUP_SYNC_ENABLED),
     ts: new Date().toISOString(),
   });
 });
@@ -142,8 +145,9 @@ const readinessHandler = async (_req: Request, res: Response) => {
     uptime: Math.floor(process.uptime()),
     memoryMB: Math.round(process.memoryUsage().rss / 1024 / 1024),
     runtimeRole: process.env.TRYNEX_RUNTIME_ROLE ?? "primary",
-    schedulerEnabled: process.env.SCHEDULER_ENABLED !== "false",
-    backupSyncEnabled: process.env.BACKUP_SYNC_ENABLED === "true",
+    mutationsAllowed: mutationsAllowedForRole(process.env.TRYNEX_RUNTIME_ROLE ?? "primary"),
+    schedulerEnabled: schedulerShouldRun(process.env.TRYNEX_RUNTIME_ROLE ?? "primary", process.env.SCHEDULER_ENABLED),
+    backupSyncEnabled: backupSyncShouldRun(process.env.TRYNEX_RUNTIME_ROLE ?? "primary", process.env.BACKUP_SYNC_ENABLED),
     timestamp: new Date().toISOString(),
   });
 };

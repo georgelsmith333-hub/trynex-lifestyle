@@ -50,6 +50,8 @@ describe("Health endpoints", () => {
     expect(res.status).toBe(200);
     expect(res.body.status).toBe("ok");
     expect(res.body.db).toBe("ok");
+    expect(res.body.mutationsAllowed).toBe(true);
+    expect(res.body.backupSyncEnabled).toBe(false);
   });
 
   it("GET /api/readyz aliases database readiness", async () => {

@@ -3,6 +3,7 @@ import { eq, and, desc, gte, sql, lte } from "drizzle-orm";
 import { logger } from "./logger";
 import { tgSend, tgIsConfigured } from "./telegram";
 import { runBackupSync, type TargetSyncResult } from "./dbBackupSync";
+import { backupSyncShouldRun, schedulerShouldRun } from "./runtimePolicy";
 
 const BST_OFFSET_MS = 6 * 60 * 60 * 1000;
 
@@ -286,7 +287,8 @@ export function getBackupSyncStatus(): BackupSyncStatus {
 }
 
 async function runScheduledBackupSync(): Promise<void> {
-  if (process.env.BACKUP_SYNC_ENABLED !== "true") return;
+  const runtimeRole = process.env.TRYNEX_RUNTIME_ROLE ?? "primary";
+  if (!backupSyncShouldRun(runtimeRole, process.env.BACKUP_SYNC_ENABLED)) return;
   const now = Date.now();
 
   // Circuit open: skip until cooldown expires
