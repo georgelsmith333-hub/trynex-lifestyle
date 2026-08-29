@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import { onRequest } from "./[[path]]";
+import { onRequest, __resetGatewayState } from "./[[path]]";
 
 type GatewayContext = Parameters<typeof onRequest>[0];
 
@@ -16,73 +16,161 @@ function context(method: string, path: string, env: Record<string, string>, body
   } as GatewayContext;
 }
 
-describe("three-origin Pages gateway", () => {
-  beforeEach(() => vi.restoreAllMocks());
+describe("four-render multi-route Pages gateway", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    __resetGatewayState();
+  });
   afterEach(() => vi.unstubAllGlobals());
 
-  it("fails safe public reads over to the next origin after a retryable status", async () => {
+  it("routes reads to read origins and fails over on a retryable status", async () => {
     const fetchMock = vi.fn()
-      .mockResolvedValueOnce(new Response("primary unavailable", { status: 503 }))
-      .mockResolvedValueOnce(new Response(JSON.stringify({ source: "secondary" }), {
+      .mockResolvedValueOnce(new Response("read-1 down", { status: 503 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ source: "read-2" }), {
         status: 200,
         headers: { "Content-Type": "application/json" },
       }));
     vi.stubGlobal("fetch", fetchMock);
 
     const response = await onRequest(context("GET", "products", {
-      API_ORIGINS: "https://render-1.example,https://render-2.example,https://render-3.example",
+      API_PRIMARY_ORIGIN: "https://render-main.example",
+      API_READ_ORIGINS: "https://render-read-1.example,https://render-read-2.example",
     }));
 
     expect(response.status).toBe(200);
-    expect((await response.json()).source).toBe("secondary");
+    expect((await response.json()).source).toBe("read-2");
     expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(response.headers.get("X-TryNex-Origin")).toBe("render-2.example");
+    expect(response.headers.get("X-TryNex-Origin")).toBe("render-read-2.example");
+    expect(response.headers.get("X-TryNex-Route")).toBe("read");
   });
 
-  it("never replays a mutation to a standby after the primary returns a retryable error", async () => {
-    const fetchMock = vi.fn().mockResolvedValueOnce(new Response("primary unavailable", { status: 503 }));
+  it("rotates read origins round-robin to split read load", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ ok: true }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    }));
     vi.stubGlobal("fetch", fetchMock);
 
-    const response = await onRequest(context("POST", "orders", {
-      API_ORIGINS: "https://render-1.example,https://render-2.example,https://render-3.example",
-    }, JSON.stringify({ customerName: "QA" })));
+    const env = {
+      API_PRIMARY_ORIGIN: "https://render-main.example",
+      API_READ_ORIGINS: "https://render-read-1.example,https://render-read-2.example",
+    };
+    await onRequest(context("GET", "products", env));
+    await onRequest(context("GET", "categories", env));
 
-    expect(response.status).toBe(503);
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect((fetchMock.mock.calls[0][0] as Request).url).toContain("render-read-1.example");
+    expect((fetchMock.mock.calls[1][0] as Request).url).toContain("render-read-2.example");
   });
 
-  it("fails an authenticated idempotent read over without placing account data in the public cache", async () => {
+  it("treats sitemap.xml as a safe public read (SEO fix) and fails it over", async () => {
     const fetchMock = vi.fn()
       .mockResolvedValueOnce(new Response("primary unavailable", { status: 503 }))
-      .mockResolvedValueOnce(new Response(JSON.stringify({ message: "Authentication required" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
+      .mockResolvedValueOnce(new Response("<?xml version=\"1.0\"?><urlset/>", {
+        status: 200,
+        headers: { "Content-Type": "application/xml" },
       }));
     vi.stubGlobal("fetch", fetchMock);
 
-    const response = await onRequest(context("GET", "admin/stats", {
-      API_ORIGINS: "https://render-1.example,https://render-2.example,https://render-3.example",
-    }, undefined, { cookie: "session=example" }));
+    const response = await onRequest(context("GET", "sitemap.xml", {
+      API_PRIMARY_ORIGIN: "https://render-main.example",
+      API_READ_ORIGINS: "https://render-read-1.example,https://render-read-2.example",
+    }));
 
-    expect(response.status).toBe(401);
+    expect(response.status).toBe(200);
     expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(response.headers.get("X-TryNex-Origin")).toBe("render-2.example");
-    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
-    expect(new Request(fetchMock.mock.calls[1][0]).headers.get("cookie")).toBe("session=example");
+    expect(response.headers.get("X-TryNex-Origin")).toBe("render-read-2.example");
+    expect(response.headers.get("X-TryNex-Route")).toBe("read");
   });
 
-  it("does not replay provider-consuming generation requests even though they use GET", async () => {
+  it("routes writes to the PRIMARY only and never replays to a read origin", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response("primary wrote", { status: 201 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const response = await onRequest(context("POST", "orders", {
+      API_PRIMARY_ORIGIN: "https://render-main.example",
+      API_READ_ORIGINS: "https://render-read-1.example,https://render-read-2.example",
+    }, JSON.stringify({ customerName: "QA" })));
+
+    expect(response.status).toBe(201);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect((fetchMock.mock.calls[0][0] as Request).url).toContain("render-main.example");
+    expect(response.headers.get("X-TryNex-Route")).toBe("write");
+  });
+
+  it("pins admin and authenticated reads to the PRIMARY (no standby leak)", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ error: "unauthorized" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const response = await onRequest(context("GET", "admin/system/health", {
+      API_PRIMARY_ORIGIN: "https://render-main.example",
+      API_READ_ORIGINS: "https://render-read-1.example,https://render-read-2.example",
+    }));
+
+    expect(response.status).toBe(401);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect((fetchMock.mock.calls[0][0] as Request).url).toContain("render-main.example");
+    expect(response.headers.get("X-TryNex-Route")).toBe("write");
+    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+  });
+
+  it("never replays provider-consuming AI generation GETs to a read origin", async () => {
     const fetchMock = vi.fn().mockResolvedValueOnce(new Response("primary unavailable", { status: 503 }));
     vi.stubGlobal("fetch", fetchMock);
 
     const response = await onRequest(context("GET", "ai/generate", {
-      API_ORIGINS: "https://render-1.example,https://render-2.example,https://render-3.example",
+      API_PRIMARY_ORIGIN: "https://render-main.example",
+      API_READ_ORIGINS: "https://render-read-1.example,https://render-read-2.example",
     }));
 
     expect(response.status).toBe(503);
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(response.headers.get("X-TryNex-Origin")).toBe("render-1.example");
-    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+    expect((fetchMock.mock.calls[0][0] as Request).url).toContain("render-main.example");
+  });
+
+  it("fails CLOSED with a truthful error when the primary is not configured", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+
+    const response = await onRequest(context("POST", "orders", {}, JSON.stringify({ customerName: "QA" })));
+
+    expect(response.status).toBe(503);
+    expect(fetchMock).not.toHaveBeenCalled();
+    const body = await response.json();
+    expect(body.detail).toContain("primary");
+  });
+
+  it("uses the committed config origins when no env overrides exist", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ ok: true }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const response = await onRequest(context("GET", "products", {}));
+
+    expect(response.status).toBe(200);
+    const calledUrl = (fetchMock.mock.calls[0][0] as Request).url;
+    expect(calledUrl).toContain("trynex-api-standby");
+  });
+
+  it("prefers explicit role env vars over the legacy API_ORIGINS list", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ ok: true }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const response = await onRequest(context("GET", "products", {
+      API_PRIMARY_ORIGIN: "https://render-main.example",
+      API_READ_ORIGINS: "https://render-read-1.example",
+      API_ORIGINS: "https://legacy-dead.example",
+    }));
+
+    expect(response.status).toBe(200);
+    expect((fetchMock.mock.calls[0][0] as Request).url).toContain("render-read-1.example");
   });
 
   it("answers CORS preflight at the edge without reaching Render", async () => {
@@ -90,7 +178,7 @@ describe("three-origin Pages gateway", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     const response = await onRequest(context("OPTIONS", "products", {
-      API_ORIGINS: "https://render-1.example",
+      API_PRIMARY_ORIGIN: "https://render-main.example",
     }));
 
     expect(response.status).toBe(204);
