@@ -72,7 +72,60 @@ audit now validates the editable manifest as well as public assets.
 ## Required status at every handoff
 
 Every Agent must keep the following status fields current before ending a chat,
-pausing work, or transferring the project:
+pausing work, or transferring the project.
+
+### Active workstream — 4-Render main promotion
+
+```text
+Status: blocked — owner access step required to run the Render promotion
+Last completed: Confirmed PR #55 is merged (main = 2985b5d) and re-derived the live
+  truth: safe reads + /sitemap.xml are 200 through the gateway; every write/admin/auth
+  route answers the designed fail-closed 503 "No primary API origin configured",
+  because PRODUCTION_ORIGINS.primary is still empty and API_PRIMARY_ORIGIN is not set
+  in Cloudflare Pages. Restored the missing orchestrator workflow body at
+  tools/ci/render-orchestrate.workflow.yml, rewrote the promotion runbook
+  (docs/FOUR_RENDER_MULTI_ROUTE_CONTRACT_2026-08-29.md) with three owner paths, and
+  re-annotated both gateway-config copies. Gateway tests re-run locally: 10/10 green.
+Stopped at: Promotion itself. The agent sandbox can only reach api.github.com
+  (api.render.com, *.onrender.com and Cloudflare are TLS-blocked), and the agent's
+  GitHub App is refused on .github/workflows/** (git push and Contents API both 403),
+  so no CI run can be created until the workflow file exists.
+Files/areas changed: tools/ci/render-orchestrate.workflow.yml (new),
+  docs/FOUR_RENDER_MULTI_ROUTE_CONTRACT_2026-08-29.md (runbook + status),
+  functions/gateway-config.ts and artifacts/trynex-storefront/functions/gateway-config.ts
+  (comments only, still byte-identical), .agents/memory/render-4-main-migration.md,
+  AGENT_HANDOFF.md. No routing behavior was changed.
+Remaining work: Path A/B/C in the contract doc — one of them must complete before the
+  primary URL can be committed; then commit primary into both config copies, PR, merge,
+  run the verification checklist.
+Blocker: Owner action needed — (A) add repo secret RENDER_API_KEY **and** create
+  .github/workflows/render-orchestrate.yml from tools/ci/render-orchestrate.workflow.yml.
+  Those two steps are the ENTIRE remaining ask for path A: the orchestrator now has a
+  `create` mode, so the agent itself can create the 4th service, deploy it as primary,
+  probe it and commit the URL. Or (B) owner configures the 4th service in the Render
+  dashboard and hands the agent its public URL, or (C) interim API_PRIMARY_ORIGIN in
+  Cloudflare Pages pointing at a restored trynex-api to bring writes back today.
+  Unverified premise for A/B: that a 4th TryNex Render service exists at all — no prior
+  session ever completed a Render API inventory (the supplied keys returned HTTP 400 on
+  2026-08-20; only a second-workspace key validated on 2026-08-21).
+Next safe action: Owner picks A, B or C (see the contract doc). Nothing further can be
+  promoted without one of those three. Do NOT invent a primary URL and do NOT re-add a
+  hardcoded Render host to "fix" the 503 — the fail-closed answer is the safety net.
+  Owner approved and PR #56 (workflow body + runbook) was MERGED as 7d9cb2a.
+Verification: Offline orchestrator selftest 18/18 passing (`bash tools/render-orchestrate.sh
+  selftest`) — payload contract, PORT drop, role forcing, no-duplicate keys, both nested and
+  flat shapes, secret-value masking, secret-file detection, role parsing.
+  Live probes via the web fetcher on 2026-08-29:
+  GET /sitemap.xml -> 200 (SEO fix live); GET /api/admin/system/health -> 503
+  "No primary API origin configured" (fail-closed, as designed);
+  GET /api/health/liveness -> 503 while standby-2 serves Render's cold-start page
+  (free-tier spin-up, not a code defect); trynex-api-standby-3 also returned 503.
+  Sandbox egress test: api.github.com 200; api.render.com / render.com / cloudflare.com
+  blocked. git push of a workflow file rejected with "refusing to allow a GitHub App to
+  create or update workflow ... without `workflows` permission"; gh Contents API 403.
+```
+
+### Paused workstream — mockup master layer system
 
 ```text
 Status: blocked — design decision required (mockup master layer system)
@@ -83,6 +136,7 @@ Remaining work: Decide the mockup layer strategy, then rebuild the 94 missing ca
 Blocker: There is no smart-object system to repair — none of the 108 masters contains a smart object, and the "Artwork — Place Design Here" layer is a fully transparent empty pixel layer. psd-tools can READ smart objects but cannot author them, and no Photoshop/GIMP/Inkscape binary exists in the shell. Building genuine smart-object masters therefore requires either an external Photoshop step by the owner or a deliberate move to a documented image+geometry pipeline.
 Next safe action: Get the owner's decision on the three options in "Mockup rebuild decision" before writing any asset or runtime code. Meanwhile PR #45 (mobile Spin & Win) is complete, green, and awaiting merge authorization.
 Verification: 108/108 masters opened cleanly; all 1024x1024 8-bit RGB 4-channel; 6 layers each; 0 smart objects in all 108; artwork layer measured 0/1048576 non-zero alpha pixels; colour variants measured at luminance correlation ~0.0 against the white master; coverage arithmetic 188 needed vs 94 canonical present. Composite renders committed for visual confirmation.
+```
 
 ## Mockup rebuild decision (open — owner must choose)
 
@@ -126,7 +180,6 @@ Blocked facts that constrain all three options:
 - Audit evidence: `audit/live-trynexshop-home.png`,
   `audit/live-trynexshop-products.png`, and
   `audit/live-trynexshop-design-studio.png`.
-```
 
 ## Latest live health check (2026-08-29)
 
@@ -152,40 +205,73 @@ See `.agents/memory/live-health-check-2026-08-29.md` for evidence. Summary:
   (and `_middleware.ts` line 272) — that stale claim caused this diagnosis to be
   missed.
 
-## 4-Render main migration (2026-08-29, in progress)
+## 4-Render main migration (2026-08-29 — gateway LIVE, promotion blocked on owner access)
 
 Owner decision: the 4th Render service becomes the ACTUAL MAIN (sole write
 authority); reads split round-robin across `trynex-api-standby-2` /
 `trynex-api-standby-3`; Render 1 (`trynex-api`) is retired (still suspended).
-Implemented on `arena/01a04ad7-trynex-lifestyle`:
+Implemented and **merged** — PR #55 landed as `2985b5d`, all GitHub checks green
+(CI build+typecheck+lint+audit, active-app verification, Cloudflare Pages build).
 
 - `functions/gateway-config.ts` + rewritten `functions/api/[[path]].ts` (root AND
-  artifacts copy, kept in sync): role-based multi-route gateway — writes/admin/AI
+  artifacts copy, kept byte-identical): role-based multi-route gateway — writes/admin/AI
   → primary only; safe public reads → round-robin + failover + down-skip;
   `/sitemap.xml` is now a safe read (SEO fix); **no hardcoded Render origin
-  anywhere**; fails closed with truthful 503.
+  anywhere**; fails closed with a truthful 503.
 - `_middleware.ts`: stale `trynex-api.onrender.com` fallback removed.
-- Gateway tests rewritten: 10/10 green (`vitest run functions/api/gateway.test.ts`).
-- `tools/render-orchestrate.sh` + `.github/workflows/render-orchestrate.yml`:
-  Render API inventory/promote/deploy/verify. Needs GitHub secret `RENDER_API_KEY`
-  (owner must add it; key is never committed or logged).
-- Docs: `docs/FOUR_RENDER_MULTI_ROUTE_CONTRACT_2026-08-29.md`,
-  `.agents/memory/render-4-main-migration.md`.
-- PR #55 open (`arena/01a04ad7-trynex-lifestyle` → `main`): GitHub checks green
-  (verify, build, security-scan), Cloudflare Pages preview build green.
+- Gateway tests: 10/10 green — re-verified on 2026-08-29 in this sandbox by running
+  `vitest run` against the copied `functions/api/gateway.test.ts` (deps installed with
+  npm in a scratch dir, since the monorepo store is not provisioned here).
+- `tools/render-orchestrate.sh`: Render API inventory/promote/deploy/verify.
+- `.github/workflows/render-orchestrate.yml`: **could never be committed** — GitHub
+  refuses workflow writes from the agent's App, so PR #55 shipped the script without
+  its runner. The workflow body is now versioned at
+  `tools/ci/render-orchestrate.workflow.yml` for the owner to paste into
+  `.github/workflows/render-orchestrate.yml`.
+- Docs: `docs/FOUR_RENDER_MULTI_ROUTE_CONTRACT_2026-08-29.md` now carries the full
+  promotion runbook (Path A CI / Path B Render dashboard / Path C interim restore),
+  the post-wiring verification checklist, and the rollback note.
 - Known pre-existing noise: "Workers Builds: trynex-liestyle" fails on every PR
   (also #45/#54) — stale/typo'd CF Workers project, NOT the Pages deploy; ignore
   or clean up in CF dashboard.
-- BLOCKED on owner (2 small GitHub UI steps): (1) add repo secret
-  `RENDER_API_KEY`; (2) add `.github/workflows/render-orchestrate.yml` (GitHub
-  App cannot push workflow files — exact content supplied in the agent chat and
-  available untracked locally). Then run the workflow (dry-run, then
-  apply=true), paste the primary URL into `functions/gateway-config.ts`
-  (`PRODUCTION_ORIGINS.primary`), and finish the deploy/verification.
 
-For future implementation work, replace these values with the real current
-checkpoint. Do not leave the next Agent to reconstruct the state from chat
-history.
+### Live consequence of the unfinished promotion
+
+Because `PRODUCTION_ORIGINS.primary` is empty and no `API_PRIMARY_ORIGIN` is set in
+Cloudflare Pages, **every mutation is refused by design**: checkout/order placement,
+admin login and settings, Spin & Win settlement, AI generation, and
+`GET /api/admin/system/health` all answer `503 {"detail":"No primary API origin
+configured"}`. Reads (`/api/products`, `/api/public-stats`, `/sitemap.xml`) work. This
+is not a new outage — writes were already dead while `trynex-api` is suspended — but
+the gateway now says so truthfully instead of leaking a dead host, and the fix is the
+promotion, not a fallback.
+
+Second consequence: both read origins are free-tier Render services, so a cold
+visitor can still get a 503 while Render serves its "Application loading" spin-up
+page (observed 2026-08-29 on `trynex-api-standby-2`). The gateway's 15 s down-skip
+bounds it; a dedicated cold-start retry policy is an open idea, deliberately NOT
+implemented without approval.
+
+### Blocker (owner step, exactly one path required)
+
+- **Path A** — add repo secret `RENDER_API_KEY`, then create
+  `.github/workflows/render-orchestrate.yml` from
+  `tools/ci/render-orchestrate.workflow.yml`. The agent then runs `apply=false`
+  (inventory), confirms a 4th TryNex service actually exists and which workspace it is
+  in, runs `apply=true` with an explicit `target`, and commits the returned primary URL.
+- **Path B** — no CI and no key: the owner creates/copies the 4th Render service in the
+  dashboard, sets `TRYNEX_RUNTIME_ROLE=primary`, `SCHEDULER_ENABLED=true`,
+  `BACKUP_SYNC_ENABLED=false`, deploys `main`, and gives the agent the public URL to
+  commit. Exactly one service may hold the primary role at a time.
+- **Path C** — interim: restore `trynex-api` and set
+  `API_PRIMARY_ORIGIN=https://trynex-api.onrender.com` in Cloudflare Pages to bring
+  writes back while A or B completes; clear it immediately after the promotion.
+
+Unverified premise that all three paths inherit: no session has ever completed a Render
+API inventory, and the 2026-08-20 keys returned HTTP 400, so the existence and naming of
+a 4th TryNex service is still an assumption until the inventory (Path A step 3) or the
+owner (Path B) confirms it. A 4th service inside the **same** workspace also adds no new
+5 GB bandwidth allowance — see `docs/RESOURCE_QUOTA_AUDIT_2026-08-20.md`.
 
 ## Completed handoff setup
 

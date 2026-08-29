@@ -25,10 +25,36 @@ description: Owner-approved migration to a 4-Render topology — new 4th Render 
   `RENDER_API_KEY` (user must add it — never commit the key).
 - `docs/FOUR_RENDER_MULTI_ROUTE_CONTRACT_2026-08-29.md`, handoff updated.
 
-## Pending (blocked on one user action)
-1. Add `RENDER_API_KEY` GitHub Actions secret.
-2. Run workflow: dry-run, then apply=true → promotes 4th service, deploys, verifies.
-3. Copy primary URL from job log into `functions/gateway-config.ts`, commit PR.
+## Orchestrator capabilities added in the 2026-08-29 continuation
+`tools/render-orchestrate.sh` now has 5 modes: `inventory`, `create` (creates the 4th
+TryNex web service from the Render API, cloning build/start/rootDir/healthCheckPath/readable
+env from SOURCE_PRIMARY), `promote`, `verify`, and an offline `selftest` (18 assertions,
+no key/network — run it before trusting any payload change). Guards: single-live-writer
+refusal (unset role counts as primary because app.ts defaults to it), null-valued
+secret-FILE keys are reported instead of guessed, secret values masked by key name.
+`CREATE_SHAPE=flat` + `CREATE_EXTRA_JSON` are the escape hatches if Render 400s on field
+placement. Workflow mirrors every knob as an input; every run executes selftest first.
+
+## Pending (2026-08-29 continuation, still blocked on owner access)
+PR #55 is MERGED (main = 2985b5d) → the gateway is live and writes now fail CLOSED
+with `503 {"detail":"No primary API origin configured"}` until a primary exists.
+1. `tools/ci/render-orchestrate.workflow.yml` holds the workflow body (the App cannot
+   push `.github/workflows/**`; the Contents API is refused too — both verified 2026-08-29).
+   Owner pastes it into `.github/workflows/render-orchestrate.yml` + adds repo secret
+   `RENDER_API_KEY`. That is the ENTIRE remaining ask for path A — the agent can then
+   create the 4th service itself (PR #56 with the body + runbook is already merged).
+2. Then: inventory (apply=false) → confirm a 4th TryNex service exists and its
+   workspace → apply=true with an explicit `target` → copy the primary URL from the
+   job summary into BOTH `functions/gateway-config.ts` copies → PR → merge.
+3. Without the key, Path B (owner configures the service in the Render dashboard:
+   `TRYNEX_RUNTIME_ROLE=primary`, `SCHEDULER_ENABLED=true`, `BACKUP_SYNC_ENABLED=false`)
+   reaches the same end state; Path C (`API_PRIMARY_ORIGIN` env in CF Pages pointing at
+   a restored `trynex-api`) is the interim unblock. Full runbook:
+   `docs/FOUR_RENDER_MULTI_ROUTE_CONTRACT_2026-08-29.md`.
+4. Never "fix" the 503 by re-adding a hardcoded Render host or by sending writes to a
+   standby — both were deliberate removals.
+5. Sandbox egress is api.github.com-only (curl to api.render.com / *.onrender.com /
+   cloudflare.com fails at TLS) — use the web fetcher for live probes, CI for Render API.
 
 ## Verify after promotion + deploy
 - `POST /api/__probe` (no route) → 404 JSON from primary (proves write path live).

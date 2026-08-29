@@ -1,0 +1,191 @@
+# TryNex Render orchestrator workflow — SOURCE OF TRUTH COPY
+#
+# The agent's GitHub App cannot create or update files under `.github/workflows/`
+# (GitHub refuses workflow writes for Apps without the `workflows` permission, on
+# both `git push` and the Contents API), so the workflow is versioned here and
+# installed by the owner with one GitHub-UI step:
+#
+#   1. GitHub -> Code -> Add file -> Create new file
+#   2. Name it exactly: .github/workflows/render-orchestrate.yml
+#   3. Paste the full contents of this file (everything below this block) and commit.
+#
+# Required repository secret: RENDER_API_KEY
+#   Settings -> Secrets and variables -> Actions -> New repository secret
+# (the key is only ever passed as an env var to the runner; it is never printed)
+#
+# Runbook: docs/FOUR_RENDER_MULTI_ROUTE_CONTRACT_2026-08-29.md
+# ----------------------------------------------------------------------------
+#
+# Modes:
+#   inventory  read-only Render inventory: services, roles, plan, suspension, last deploy
+#   create     create the NEW 4th TryNex service cloned from the old primary's env and
+#              config, forced to TRYNEX_RUNTIME_ROLE=primary, then deploy + probe it
+#   promote    promote an EXISTING service to primary (copy env, force role, deploy, probe)
+#   verify     probe one URL (liveness / write route / admin route / sitemap)
+# Every mode first runs the offline selftest, so payload construction and secret
+# masking are proven before anything can touch Render.
+name: Render orchestrator (4th main)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "inventory (read-only) | create (new 4th primary) | promote (existing service) | verify (probe a URL)"
+        type: choice
+        required: true
+        default: "inventory"
+        options: [inventory, create, promote, verify]
+      apply:
+        description: "false = dry run (no Render mutation). true required for create/promote."
+        type: boolean
+        required: false
+        default: false
+      target:
+        description: "promote/verify: service id, name or URL. Empty = newest TryNex service."
+        type: string
+        required: false
+        default: ""
+      source_primary:
+        description: "Service to clone env/config from (the old primary)."
+        type: string
+        required: false
+        default: "trynex-api"
+      new_service_name:
+        description: "create: name of the new primary service (becomes its onrender subdomain)."
+        type: string
+        required: false
+        default: "trynex-api-main"
+      new_service_plan:
+        description: "create: Render plan for the new service."
+        type: choice
+        required: false
+        default: "free"
+        options: [free, starter, basic, standard]
+      new_service_region:
+        description: "create: Render region. Keep it the same as the standbys unless you know otherwise."
+        type: string
+        required: false
+        default: "oregon"
+      create_shape:
+        description: "Payload shape. Switch to 'flat' only if Render answers 400 about field placement."
+        type: choice
+        required: false
+        default: "nested"
+        options: [nested, flat]
+      force:
+        description: "Bypass the single-write-primary guard. Almost never correct."
+        type: boolean
+        required: false
+        default: false
+
+run-name: "Render orchestrator — ${{ inputs.mode }}${{ inputs.apply && ' (APPLY)' || ' (dry run)' }}"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: render-orchestrate
+  cancel-in-progress: false
+
+jobs:
+  orchestrate:
+    name: Inventory / create / promote the 4th Render as primary
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+      MODE: ${{ inputs.mode }}
+      APPLY: ${{ inputs.apply && 'true' || 'false' }}
+      SOURCE_PRIMARY: ${{ inputs.source_primary }}
+      NEW_SERVICE_NAME: ${{ inputs.new_service_name }}
+      NEW_SERVICE_PLAN: ${{ inputs.new_service_plan }}
+      NEW_SERVICE_REGION: ${{ inputs.new_service_region }}
+      CREATE_SHAPE: ${{ inputs.create_shape }}
+      FORCE: ${{ inputs.force && 'true' || 'false' }}
+    outputs:
+      primary_url: ${{ steps.summary.outputs.primary_url }}
+      primary_name: ${{ steps.summary.outputs.primary_name }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Selftest (offline — proves payload + secret masking)
+        run: bash tools/render-orchestrate.sh selftest
+
+      - name: Guard — mutating modes need the secret
+        env:
+          KEY: ${{ secrets.RENDER_API_KEY }}
+        run: |
+          if [ "${MODE}" != "inventory" ] || [ "${APPLY}" = "true" ]; then
+            if [ -z "${KEY}" ]; then
+              echo "::error::Repository secret RENDER_API_KEY is not set. Add it in Settings -> Secrets and variables -> Actions."
+              exit 1
+            fi
+            echo "RENDER_API_KEY present (${#KEY} chars; value not printed)"
+          else
+            echo "inventory dry run: secret not required yet"
+          fi
+
+      - name: Run orchestrator
+        env:
+          APPLY_TARGET: ${{ inputs.target }}
+          TARGET_SERVICE: ${{ inputs.target }}
+          VERIFY_URL: ${{ inputs.target }}
+        run: |
+          set -euo pipefail
+          chmod +x tools/render-orchestrate.sh
+          bash tools/render-orchestrate.sh "${MODE}" 2>&1 | tee render-orchestrate.log
+
+      - name: Publish summary (primary URL for functions/gateway-config.ts)
+        id: summary
+        if: always()
+        run: |
+          set -euo pipefail
+          [ -f render-orchestrate.log ] || { echo "no orchestrator output"; exit 0; }
+          JSON=$(awk '/RENDER_SUMMARY_JSON_BEGIN/{f=1;next} /RENDER_SUMMARY_JSON_END/{f=0} f' render-orchestrate.log) || true
+          PRIMARY_URL=$(echo "$JSON" | jq -r '.primary.url // empty' 2>/dev/null || true)
+          PRIMARY_NAME=$(echo "$JSON" | jq -r '.primary.name // empty' 2>/dev/null || true)
+          {
+            echo "## Render orchestration — mode=\`${MODE}\` apply=\`${APPLY}\`"
+            echo
+            echo '```json'
+            echo "$JSON" | jq . 2>/dev/null || echo "$JSON"
+            echo '```'
+            echo
+            echo "Next: set \`PRODUCTION_ORIGINS.primary\` in **both** copies of"
+            echo "\`functions/gateway-config.ts\` (root and \`artifacts/trynex-storefront/functions/\`):"
+            echo
+            echo '```ts'
+            echo "primary: [\"${PRIMARY_URL:-<unknown>\"}],"
+            echo '```'
+            if [ "${APPLY}" != "true" ]; then
+              echo
+              "> This was a dry run — nothing in Render was changed."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "primary_url=${PRIMARY_URL}" >> "$GITHUB_OUTPUT"
+          echo "primary_name=${PRIMARY_NAME}" >> "$GITHUB_OUTPUT"
+          if [ -z "$PRIMARY_URL" ]; then
+            echo "::warning::No primary URL in the orchestrator summary (inventory without a target normally reports the newest TryNex service)"
+          fi
+
+      - name: Post-promotion probes
+        if: ${{ inputs.apply && (inputs.mode == 'create' || inputs.mode == 'promote') }}
+        env:
+          PRIMARY_URL: ${{ steps.summary.outputs.primary_url }}
+        run: |
+          set -uo pipefail
+          if [ -z "${PRIMARY_URL:-}" ]; then
+            echo "::warning::no primary URL reported; skipping probes"
+            exit 0
+          fi
+          echo "probing $PRIMARY_URL"
+          echo "-- liveness (expect runtimeRole=primary) --"
+          curl -fsS --max-time 60 "$PRIMARY_URL/api/health/liveness" || echo "liveness probe failed"
+          echo
+          echo "-- unprovisioned write route (expect 404 JSON, not 503: writes reach the primary) --"
+          curl -sS -o /dev/null -w 'HTTP %{http_code}\n' --max-time 60 -X POST -H 'content-type: application/json' -d '{}' "$PRIMARY_URL/api/__probe" || true
+          echo "-- admin health without credentials (expect 401/403, not 5xx) --"
+          curl -sS -o /dev/null -w 'HTTP %{http_code}\n' --max-time 60 "$PRIMARY_URL/api/admin/system/health" || true
+          echo "-- sitemap (expect 200) --"
+          curl -sS -o /dev/null -w 'HTTP %{http_code}\n' --max-time 60 "$PRIMARY_URL/api/sitemap.xml" || true
