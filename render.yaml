@@ -1,3 +1,12 @@
+# ⚠ NOT THE LIVE CONTRACT — do not treat this blueprint as proof of what Render runs.
+# The deployed API services are named `trynex-api` (suspended/retired),
+# `trynex-api-standby-2` and `trynex-api-standby-3` on the Free plan; the 4th
+# (future primary) is created/promoted through tools/render-orchestrate.sh, not here.
+# The data plane is Neon (DATABASE_URL_MAIN + failover/backup bindings) — this file's
+# `trynex-db` Render Postgres does NOT exist and must never be provisioned by a
+# blueprint sync. Traffic roles live in functions/gateway-config.ts; see
+# docs/FOUR_RENDER_MULTI_ROUTE_CONTRACT_2026-08-29.md and
+# docs/RESOURCE_QUOTA_AUDIT_2026-08-20.md before changing anything in this file.
 services:
   - type: web
     name: trynex-api-server

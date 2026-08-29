@@ -56,6 +56,16 @@ with `503 {"detail":"No primary API origin configured"}` until a primary exists.
 5. Sandbox egress is api.github.com-only (curl to api.render.com / *.onrender.com /
    cloudflare.com fails at TLS) — use the web fetcher for live probes, CI for Render API.
 
+## Mobile/client routing consistency (2026-08-29 continuation)
+`artifacts/trynex-mobile/lib/apiBase.ts` is now the single resolver for the mobile API base;
+`lib/api.ts` and `app/_layout.tsx setBaseUrl()` both use it, and retired hosts
+(`trynex-api.onrender.com`, the two standby hosts, the parked `trynexshop.com`) can never win
+over `https://trynex-lifestyle-shop.pages.dev`. `.env.production` no longer points at Render.
+Tested offline by transpiling with esbuild + 17 assertions (dev-domain override still works).
+Rule for future work: a client never targets a Render host directly — the Pages Functions
+gateway owns role routing, and standbys answer mutations with `standby_read_only`.
+`render.yaml` is NOT the live contract (name/plan/Render-Postgres all differ) — header warns.
+
 ## Verify after promotion + deploy
 - `POST /api/__probe` (no route) → 404 JSON from primary (proves write path live).
 - `GET /api/admin/system/health` → 401 (proves admin reaches primary, not a dead page).

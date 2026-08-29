@@ -90,11 +90,16 @@ Stopped at: Promotion itself. The agent sandbox can only reach api.github.com
   (api.render.com, *.onrender.com and Cloudflare are TLS-blocked), and the agent's
   GitHub App is refused on .github/workflows/** (git push and Contents API both 403),
   so no CI run can be created until the workflow file exists.
-Files/areas changed: tools/ci/render-orchestrate.workflow.yml (new),
-  docs/FOUR_RENDER_MULTI_ROUTE_CONTRACT_2026-08-29.md (runbook + status),
+Files/areas changed: tools/render-orchestrate.sh (create/promote/verify/selftest modes +
+  single-writer guard), tools/ci/render-orchestrate.workflow.yml (mode inputs, selftest gate),
+  docs/FOUR_RENDER_MULTI_ROUTE_CONTRACT_2026-08-29.md (runbook + mode table),
   functions/gateway-config.ts and artifacts/trynex-storefront/functions/gateway-config.ts
-  (comments only, still byte-identical), .agents/memory/render-4-main-migration.md,
-  AGENT_HANDOFF.md. No routing behavior was changed.
+  (comments only, still byte-identical), render.yaml (warning header only — it is NOT the live
+  contract and its Render Postgres must never be provisioned),
+  artifacts/trynex-mobile/lib/apiBase.ts (new) + lib/api.ts + app/_layout.tsx + .env.production
+  (mobile API base now has ONE resolver that can no longer land on the parked trynexshop.com
+  or a retired Render host), .agents/memory/render-4-main-migration.md, AGENT_HANDOFF.md.
+  No gateway routing behavior was changed.
 Remaining work: Path A/B/C in the contract doc — one of them must complete before the
   primary URL can be committed; then commit primary into both config copies, PR, merge,
   run the verification checklist.
@@ -228,6 +233,16 @@ Implemented and **merged** — PR #55 landed as `2985b5d`, all GitHub checks gre
   its runner. The workflow body is now versioned at
   `tools/ci/render-orchestrate.workflow.yml` for the owner to paste into
   `.github/workflows/render-orchestrate.yml`.
+- `tools/render-orchestrate.sh` gained a `create` mode (the owner asked the AGENT to create
+  the 4th service), plus `promote`/`verify`/`selftest`, a single-live-writer guard, secret-file
+  detection, value masking and `CREATE_SHAPE`/`CREATE_EXTRA_JSON` escape hatches. Because the
+  sandbox egress allowlist blocks `api.render.com` (verified: only api.github.com/pypi pass;
+  example.com and Cloudflare fail), this can only run on a GitHub runner.
+- Mobile routing now resolves through `artifacts/trynex-mobile/lib/apiBase.ts`: `lib/api.ts` and
+  `app/_layout.tsx` used to disagree (one fell back to the live Pages origin, the other to the
+  now-parked `trynexshop.com`), so one mobile client was silently pointed at a parking page.
+  `.env.production` no longer names the retired Render host. Share/website text still says
+  `trynexshop.com` on purpose — fix the DNS instead of the copy (open item below).
 - Docs: `docs/FOUR_RENDER_MULTI_ROUTE_CONTRACT_2026-08-29.md` now carries the full
   promotion runbook (Path A CI / Path B Render dashboard / Path C interim restore),
   the post-wiring verification checklist, and the rollback note.
