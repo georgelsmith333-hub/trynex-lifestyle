@@ -59,9 +59,13 @@ export interface OriginRoles {
 
 /**
  * Production origin map. Order within a role is the failover order.
- * `primary` is filled by tools/render-orchestrate workflow output after the
- * 4th Render service is discovered, promoted and verified; the gateway fails
- * CLOSED (503) for writes until a primary URL is set here or via env.
+ * `primary` is intentionally EMPTY until the 4th Render service is promoted
+ * (runbook: docs/FOUR_RENDER_MULTI_ROUTE_CONTRACT_2026-08-29.md). The workflow
+ * body is versioned at tools/ci/render-orchestrate.workflow.yml because the
+ * agent's GitHub App cannot write to .github/workflows/. The gateway fails
+ * CLOSED (503 "No primary API origin configured") for writes/admin/auth/AI
+ * until a primary URL is set here or via the API_PRIMARY_ORIGIN env override —
+ * there is no hardcoded Render host to fall back to, by design.
  */
 export const PRODUCTION_ORIGINS: OriginRoles = {
   primary: [

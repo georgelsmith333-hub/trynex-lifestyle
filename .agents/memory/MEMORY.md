@@ -54,3 +54,4 @@
 - [Mockup normalization source contract](mockup-normalization-source-contract.md) — normalized outputs are never mask inputs; use immutable source photos plus reviewed alpha templates for repeatable regeneration.
 - [Mug print-zone geometry](mug-print-zones.md) — front/back side panels mirror around the handles; only explicit Wrap uses the wider body zone.
 - [Mockup audit roots](mockup-audit-roots.md) — editable manifest paths resolve under attached_assets while flattened previews resolve under public/mockups.
+- [Render 4 main migration](render-4-main-migration.md) — 4th Render is the sole write primary; gateway merged and fails closed until PRODUCTION_ORIGINS.primary is set; workflow body lives at tools/ci/render-orchestrate.workflow.yml because the App cannot push .github/workflows
