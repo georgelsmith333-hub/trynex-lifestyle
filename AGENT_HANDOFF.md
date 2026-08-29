@@ -77,7 +77,8 @@ pausing work, or transferring the project.
 ### Active workstream — 4-Render main promotion
 
 ```text
-Status: blocked — owner access step required to run the Render promotion
+Status: in progress — agent work complete to the access boundary; PR #57 ready (checks
+  green); owner needs 2 GitHub UI steps before the agent can create/promote the 4th Render
 Last completed: Confirmed PR #55 is merged (main = 2985b5d) and re-derived the live
   truth: safe reads + /sitemap.xml are 200 through the gateway; every write/admin/auth
   route answers the designed fail-closed 503 "No primary API origin configured",
@@ -119,7 +120,10 @@ Next safe action: Owner picks A, B or C (see the contract doc). Nothing further 
   Owner approved and PR #56 (workflow body + runbook) was MERGED as 7d9cb2a.
 Verification: Offline orchestrator selftest 18/18 passing (`bash tools/render-orchestrate.sh
   selftest`) — payload contract, PORT drop, role forcing, no-duplicate keys, both nested and
-  flat shapes, secret-value masking, secret-file detection, role parsing.
+  flat shapes, secret-value masking, secret-file detection, role parsing. Mobile resolver
+  unit-checked offline (esbuild transpile + 17 assertions). PR #57 CI: build-and-check,
+  security-scan, active-app verification and the Cloudflare Pages build all PASS (only the
+  stale `Workers Builds: trynex-liestyle` project fails, as on every PR since #45).
   Live probes via the web fetcher on 2026-08-29:
   GET /sitemap.xml -> 200 (SEO fix live); GET /api/admin/system/health -> 503
   "No primary API origin configured" (fail-closed, as designed);
