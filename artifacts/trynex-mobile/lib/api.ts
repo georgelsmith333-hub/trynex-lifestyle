@@ -1,15 +1,11 @@
 // Production domain — always used as the ultimate fallback.
 // The old Render backend (trynex-api.onrender.com) was decommissioned;
 // all traffic now goes through the CF Pages / Vite proxy at the canonical Pages origin.
-const PROD_DOMAIN = "trynex-lifestyle-shop.pages.dev";
-const STALE_RENDER_DOMAIN = "trynex-api.onrender.com";
+// Resolution lives in ./apiBase so the generated API client (setBaseUrl in app/_layout.tsx)
+// and this helper can never disagree again.
+import { resolveApiBaseUrl } from "./apiBase";
 
-const getBaseUrl = () => {
-  const domain = process.env.EXPO_PUBLIC_DOMAIN;
-  // No domain set, or the .env.production still carries the old Render URL → use production
-  if (!domain || domain === STALE_RENDER_DOMAIN) return `https://${PROD_DOMAIN}`;
-  return `https://${domain}`;
-};
+const getBaseUrl = () => resolveApiBaseUrl();
 
 export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const base = getBaseUrl();

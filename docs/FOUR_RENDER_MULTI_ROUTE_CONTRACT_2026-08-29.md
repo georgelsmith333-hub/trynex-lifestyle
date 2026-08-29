@@ -10,7 +10,7 @@ three owner paths (A: CI orchestrator, B: Render dashboard, C: interim restore).
 
 | Slot | Render service | Role env | Workload | Notes |
 |---|---|---|---|---|
-| PRIMARY (new) | 4th Render service (discovered by `tools/render-orchestrate.sh`) | `TRYNEX_RUNTIME_ROLE=primary` | ALL mutations: checkout/orders, admin (login, settings, products), auth, AI generate, scheduler owner | Sole write authority; gateway NEVER replays mutations |
+| PRIMARY (new) | 4th Render service — found by `tools/render-orchestrate.sh` `inventory`, or created by its `create` mode | `TRYNEX_RUNTIME_ROLE=primary` | ALL mutations: checkout/orders, admin (login, settings, products), auth, AI generate, scheduler owner | Sole write authority; gateway NEVER replays mutations |
 | READ-1 | `trynex-api-standby-2` | `standby` | Safe public reads: products, categories, mockups, public-stats, blog, testimonials, settings, health, sitemap.xml | Round-robin; server-side rejects writes (`standby_read_only`) |
 | READ-2 | `trynex-api-standby-3` | `dr` | Same safe public reads | Round-robin; server-side rejects writes |
 | RETIRED | `trynex-api` (Render 1) | old `primary` | — | Suspended by Render (5GB bandwidth allowance). NOT routed to. Re-add to reads ONLY after restored + re-roled standby + verified |
@@ -61,32 +61,69 @@ is wired**. Reads and `/sitemap.xml` are healthy.
   Actions secrets (403). The workflow is therefore versioned at
   `tools/ci/render-orchestrate.workflow.yml` and installed by the owner.
 - Whether the `RENDER_API_KEY` secret exists is not observable from the agent side;
-  the workflow's first step reports it explicitly instead of failing opaquely.
+  the workflow's guard step reports it explicitly instead of failing opaquely.
+
+Consequence: those two owner steps (secret + workflow file) are the **whole** remaining
+ask. Once they exist the agent performs inventory, `create`/`promote`, the post-promotion
+probes, the gateway-config commit and the PR without any further owner action.
+
+### Orchestrator modes (`tools/render-orchestrate.sh`, driven by the workflow)
+
+| Mode | What it does | Mutates Render? |
+|---|---|---|
+| `selftest` | Builds the create payload from an embedded fixture and asserts (a) `TRYNEX_RUNTIME_ROLE=primary`, `BACKUP_SYNC_ENABLED=false`, `SCHEDULER_ENABLED=true` are forced, (b) `PORT` is never copied, (c) no secret **value** ever reaches the printed preview, (d) both `nested` and `flat` payload shapes build. No network, no key — runs in any sandbox. | no |
+| `inventory` | Lists every TryNex service with id, URL, plan, region, suspension state, `TRYNEX_RUNTIME_ROLE` and last deploy status. | no |
+| `create` | Creates the NEW 4th TryNex web service in the key's workspace: clones build/start command, `rootDir`, health-check path and readable env from `SOURCE_PRIMARY`, forces the primary role contract, deploys `main`, waits for `live`, then probes it. | **yes** (`APPLY=true` required) |
+| `promote` | Same contract applied to an EXISTING service (partial env upsert, never a full replace). | **yes** (`APPLY=true` required) |
+| `verify` | Probes one URL: `liveness` (expect `runtimeRole`), `POST /api/__probe` (expect 404 **JSON** — proof a write reaches a writer), `admin/system/health` (expect 401/403), `sitemap.xml` (expect 200). | no |
+
+Safety rails baked into the tool:
+- **Single-writer guard** — `create`/`promote` refuse to run while another *live* (non-suspended)
+  TryNex service reports `primary`, `promoted`, or **unset** (the app defaults `unset` to primary),
+  unless `FORCE=true`. Two schedulers and two backup-sync writers against one Neon topology is the
+  failure this migration exists to remove.
+- **Secret files are detected, not guessed** — Render env entries with a null value (secret files)
+  cannot be read through the API; the tool prints their *names* and warns instead of booting a
+  half-configured service silently.
+- **Nothing secret is printed** — values are masked by key name (`SECRET|TOKEN|KEY|PASSWORD|
+  DATABASE|REDIS|BUCKET|ACCOUNT|WEBHOOK|CHAT|CREDENTIAL|SIGNING|PRIVATE|DSN|CONNECTION|_URL`);
+  the `RENDER_API_KEY` never appears at all.
+- `CREATE_SHAPE=flat` is the escape hatch if Render rejects the nested field placement; the tool
+  echoes Render's own 400 body so the fix is one retry, and `CREATE_EXTRA_JSON` merges arbitrary
+  extra `serviceDetails` fields.
 
 ### Path A — CI-orchestrated promotion (recommended: auditable, no manual env edits)
 
 1. Owner: **Settings → Secrets and variables → Actions → New repository secret**
-   `RENDER_API_KEY` = a Render API key for the workspace that owns the TryNex
-   services (never pasted into chat, source, or logs).
+   `RENDER_API_KEY` = a Render API key for the workspace that should host the new primary
+   (never pasted into chat, source, or logs). Keys that only cover a *different* workspace will
+   create the service in that other workspace — check `owner:` in the inventory output.
 2. Owner: create `.github/workflows/render-orchestrate.yml` by pasting the body of
-   `tools/ci/render-orchestrate.workflow.yml` (Add file → Commit directly).
-3. Agent: run the workflow with **`apply=false`** (inventory). Confirm from the log
-   that a 4th TryNex service actually exists and record `id`, `name`, `url`, plan and
-   `lastDeploy`. If it does not exist, stop — creating services from CI is out of
-   scope for this tool.
-4. Agent: re-run with **`apply=true`** and `target=<4th service id>` so the target is
-   explicit instead of "newest service". The tool copies env from `trynex-api`
-   (a suspended service still keeps readable env), forces
-   `TRYNEX_RUNTIME_ROLE=primary`, mirrors `SCHEDULER_ENABLED`, forces
-   `BACKUP_SYNC_ENABLED=false`, deploys `main`, waits for `live`, and probes
-   readiness + sitemap.
+   `tools/ci/render-orchestrate.workflow.yml` (Add file → Commit directly). This is the only
+   step the agent cannot do itself; GitHub refuses workflow writes from its App identity.
+3. Agent: run **`mode=inventory`, `apply=false`** — read-only. This is the first time anyone has
+   ever completed a Render inventory for this project, so it decides everything downstream:
+   does a 4th TryNex service exist, in which workspace, on which plan, is it suspended, and is
+   its last deploy `live`.
+4. Agent: if no 4th service exists, run **`mode=create`, `apply=false`** (payload preview with
+   masked values) and show it, then re-run with **`apply=true`** to create + deploy + probe. If a
+   suitable service already exists, use **`mode=promote`** with an explicit `target=<service id>`
+   instead of relying on "newest service".
 5. Agent: put the reported primary URL into `PRODUCTION_ORIGINS.primary` in **both**
    `functions/gateway-config.ts` and `artifacts/trynex-storefront/functions/gateway-config.ts`,
-   PR, merge (Pages auto-deploys from `main`), then run the checklist below.
+   PR, merge (Pages auto-deploys from `main`), then run the verification checklist below.
+   Until that commit ships, writes keep failing closed — which is correct.
 
-Bandwidth caveat: a 4th service inside the **same** Render workspace does **not** add
-a second 5 GB allowance (see `docs/RESOURCE_QUOTA_AUDIT_2026-08-20.md` §Quota model).
-Confirm in the inventory which workspace the target lives in before expecting relief.
+Bandwidth caveat: a 4th service inside the **same** Render workspace does **not** add a second
+5 GB allowance (see `docs/RESOURCE_QUOTA_AUDIT_2026-08-20.md` §Quota model). The inventory step
+reports the owner/workspace; if it matches the suspended `trynex-api` workspace, expect the same
+cliff and either choose another workspace for `create` or accept Path B in a separate one.
+
+Offline check available to anyone, no key needed:
+
+```bash
+bash tools/render-orchestrate.sh selftest    # 18 assertions, exits non-zero on any leak
+```
 
 ### Path B — Dashboard-driven promotion (no API key, no CI change)
 

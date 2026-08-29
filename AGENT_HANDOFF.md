@@ -77,7 +77,8 @@ pausing work, or transferring the project.
 ### Active workstream — 4-Render main promotion
 
 ```text
-Status: blocked — owner access step required to run the Render promotion
+Status: in progress — agent work complete to the access boundary; PR #57 ready (checks
+  green); owner needs 2 GitHub UI steps before the agent can create/promote the 4th Render
 Last completed: Confirmed PR #55 is merged (main = 2985b5d) and re-derived the live
   truth: safe reads + /sitemap.xml are 200 through the gateway; every write/admin/auth
   route answers the designed fail-closed 503 "No primary API origin configured",
@@ -90,26 +91,40 @@ Stopped at: Promotion itself. The agent sandbox can only reach api.github.com
   (api.render.com, *.onrender.com and Cloudflare are TLS-blocked), and the agent's
   GitHub App is refused on .github/workflows/** (git push and Contents API both 403),
   so no CI run can be created until the workflow file exists.
-Files/areas changed: tools/ci/render-orchestrate.workflow.yml (new),
-  docs/FOUR_RENDER_MULTI_ROUTE_CONTRACT_2026-08-29.md (runbook + status),
+Files/areas changed: tools/render-orchestrate.sh (create/promote/verify/selftest modes +
+  single-writer guard), tools/ci/render-orchestrate.workflow.yml (mode inputs, selftest gate),
+  docs/FOUR_RENDER_MULTI_ROUTE_CONTRACT_2026-08-29.md (runbook + mode table),
   functions/gateway-config.ts and artifacts/trynex-storefront/functions/gateway-config.ts
-  (comments only, still byte-identical), .agents/memory/render-4-main-migration.md,
-  AGENT_HANDOFF.md. No routing behavior was changed.
+  (comments only, still byte-identical), render.yaml (warning header only — it is NOT the live
+  contract and its Render Postgres must never be provisioned),
+  artifacts/trynex-mobile/lib/apiBase.ts (new) + lib/api.ts + app/_layout.tsx + .env.production
+  (mobile API base now has ONE resolver that can no longer land on the parked trynexshop.com
+  or a retired Render host), .agents/memory/render-4-main-migration.md, AGENT_HANDOFF.md.
+  No gateway routing behavior was changed.
 Remaining work: Path A/B/C in the contract doc — one of them must complete before the
   primary URL can be committed; then commit primary into both config copies, PR, merge,
   run the verification checklist.
 Blocker: Owner action needed — (A) add repo secret RENDER_API_KEY **and** create
-  .github/workflows/render-orchestrate.yml from tools/ci/render-orchestrate.workflow.yml,
-  or (B) create + role-configure the 4th Render service in the dashboard and hand the
-  agent its public URL, or (C) temporarily point API_PRIMARY_ORIGIN in Cloudflare Pages
-  at a restored trynex-api to bring writes back during the migration.
+  .github/workflows/render-orchestrate.yml from tools/ci/render-orchestrate.workflow.yml.
+  Those two steps are the ENTIRE remaining ask for path A: the orchestrator now has a
+  `create` mode, so the agent itself can create the 4th service, deploy it as primary,
+  probe it and commit the URL. Or (B) owner configures the 4th service in the Render
+  dashboard and hands the agent its public URL, or (C) interim API_PRIMARY_ORIGIN in
+  Cloudflare Pages pointing at a restored trynex-api to bring writes back today.
   Unverified premise for A/B: that a 4th TryNex Render service exists at all — no prior
   session ever completed a Render API inventory (the supplied keys returned HTTP 400 on
   2026-08-20; only a second-workspace key validated on 2026-08-21).
 Next safe action: Owner picks A, B or C (see the contract doc). Nothing further can be
   promoted without one of those three. Do NOT invent a primary URL and do NOT re-add a
   hardcoded Render host to "fix" the 503 — the fail-closed answer is the safety net.
-Verification: Live probes via the web fetcher on 2026-08-29:
+  Owner approved and PR #56 (workflow body + runbook) was MERGED as 7d9cb2a.
+Verification: Offline orchestrator selftest 18/18 passing (`bash tools/render-orchestrate.sh
+  selftest`) — payload contract, PORT drop, role forcing, no-duplicate keys, both nested and
+  flat shapes, secret-value masking, secret-file detection, role parsing. Mobile resolver
+  unit-checked offline (esbuild transpile + 17 assertions). PR #57 CI: build-and-check,
+  security-scan, active-app verification and the Cloudflare Pages build all PASS (only the
+  stale `Workers Builds: trynex-liestyle` project fails, as on every PR since #45).
+  Live probes via the web fetcher on 2026-08-29:
   GET /sitemap.xml -> 200 (SEO fix live); GET /api/admin/system/health -> 503
   "No primary API origin configured" (fail-closed, as designed);
   GET /api/health/liveness -> 503 while standby-2 serves Render's cold-start page
@@ -222,6 +237,16 @@ Implemented and **merged** — PR #55 landed as `2985b5d`, all GitHub checks gre
   its runner. The workflow body is now versioned at
   `tools/ci/render-orchestrate.workflow.yml` for the owner to paste into
   `.github/workflows/render-orchestrate.yml`.
+- `tools/render-orchestrate.sh` gained a `create` mode (the owner asked the AGENT to create
+  the 4th service), plus `promote`/`verify`/`selftest`, a single-live-writer guard, secret-file
+  detection, value masking and `CREATE_SHAPE`/`CREATE_EXTRA_JSON` escape hatches. Because the
+  sandbox egress allowlist blocks `api.render.com` (verified: only api.github.com/pypi pass;
+  example.com and Cloudflare fail), this can only run on a GitHub runner.
+- Mobile routing now resolves through `artifacts/trynex-mobile/lib/apiBase.ts`: `lib/api.ts` and
+  `app/_layout.tsx` used to disagree (one fell back to the live Pages origin, the other to the
+  now-parked `trynexshop.com`), so one mobile client was silently pointed at a parking page.
+  `.env.production` no longer names the retired Render host. Share/website text still says
+  `trynexshop.com` on purpose — fix the DNS instead of the copy (open item below).
 - Docs: `docs/FOUR_RENDER_MULTI_ROUTE_CONTRACT_2026-08-29.md` now carries the full
   promotion runbook (Path A CI / Path B Render dashboard / Path C interim restore),
   the post-wiring verification checklist, and the rollback note.

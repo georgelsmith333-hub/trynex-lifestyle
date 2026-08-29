@@ -18,12 +18,12 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { CartProvider } from "@/context/CartContext";
 import { ToastProvider } from "@/context/ToastContext";
 import { WishlistProvider } from "@/context/WishlistContext";
+import { resolveApiBaseUrl } from "@/lib/apiBase";
 
-// Guard against stale .env.production pointing to the decommissioned Render backend.
-// In dev the workflow injects EXPO_PUBLIC_DOMAIN=$REPLIT_DEV_DOMAIN which overrides this.
-const _mobileDomain = process.env.EXPO_PUBLIC_DOMAIN;
-const _STALE_RENDER = "trynex-api.onrender.com";
-setBaseUrl(`https://${(!_mobileDomain || _mobileDomain === _STALE_RENDER) ? "trynexshop.com" : _mobileDomain}`);
+// Single resolver shared with lib/api.ts: dev previews still override via
+// EXPO_PUBLIC_DOMAIN=$REPLIT_DEV_DOMAIN, while stale/retired hosts (the suspended
+// Render backend, the parked trynexshop.com) can never win over the live gateway.
+setBaseUrl(resolveApiBaseUrl());
 
 SplashScreen.preventAutoHideAsync();
 
