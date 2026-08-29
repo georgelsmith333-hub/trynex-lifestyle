@@ -269,7 +269,9 @@ export const onRequest: PagesFunction<{ API_URL: string }> = async ({ request, e
 
   const slug = (productMatch ?? blogMatch)![1];
   const type = productMatch ? "product" : "blog";
-  const apiBase = (env.API_URL || "https://trynex-api.onrender.com").replace(/\/$/, "");
+  // No hardcoded Render fallback: if API_URL is unset, serve the plain SPA.
+  const apiBase = (env.API_URL || "").replace(/\/$/, "");
+  if (!apiBase) return env.ASSETS.fetch(new Request(new URL("/", request.url).toString()));
   const apiUrl = type === "product"
     ? `${apiBase}/api/products/${encodeURIComponent(slug)}`
     : `${apiBase}/api/blog/${encodeURIComponent(slug)}`;

@@ -128,6 +128,61 @@ Blocked facts that constrain all three options:
   `audit/live-trynexshop-design-studio.png`.
 ```
 
+## Latest live health check (2026-08-29)
+
+See `.agents/memory/live-health-check-2026-08-29.md` for evidence. Summary:
+- `https://trynex-lifestyle-shop.pages.dev/` is ONLINE and current with `main`
+  (a95903b). Homepage, products, Design Studio, robots.txt, 404/SPA routing OK.
+- API reads healthy via standby origin: health OK, DB `db:true` (~60ms),
+  `/api/products` returns 70 products, `/api/public-stats` 78 orders.
+- **Primary API origin is SUSPENDED** (`trynex-api.onrender.com` → Render
+  "Service Suspended"). Because the gateway never failovers mutations, checkout
+  and all writes are currently broken; admin/system health also hits the
+  suspended primary. Owner must restore/replace the primary Render service or
+  repoint CF Pages `API_ORIGINS`.
+- **`/sitemap.xml` is not in `SAFE_PUBLIC_PREFIXES`**, so it cannot fail over —
+  Google currently receives a suspended page for the sitemap (SEO regression).
+- **`trynexshop.com` DNS is parked at Namecheap** (NS =
+  `ns1/ns2.lander.d.parity.domains`; A = parking IPs; site shows a Namecheap
+  parking page). Custom domain no longer points to Cloudflare Pages.
+- `trynex-shop-pages.dev` does not resolve — the real hostname is
+  `trynex-lifestyle-shop.pages.dev`.
+- CRITICAL_FINDINGS.md claims the proxy has no hardcoded Render fallback, but
+  `functions/api/[[path]].ts` still sets `DEFAULT_ORIGIN = trynex-api.onrender.com`
+  (and `_middleware.ts` line 272) — that stale claim caused this diagnosis to be
+  missed.
+
+## 4-Render main migration (2026-08-29, in progress)
+
+Owner decision: the 4th Render service becomes the ACTUAL MAIN (sole write
+authority); reads split round-robin across `trynex-api-standby-2` /
+`trynex-api-standby-3`; Render 1 (`trynex-api`) is retired (still suspended).
+Implemented on `arena/01a04ad7-trynex-lifestyle`:
+
+- `functions/gateway-config.ts` + rewritten `functions/api/[[path]].ts` (root AND
+  artifacts copy, kept in sync): role-based multi-route gateway — writes/admin/AI
+  → primary only; safe public reads → round-robin + failover + down-skip;
+  `/sitemap.xml` is now a safe read (SEO fix); **no hardcoded Render origin
+  anywhere**; fails closed with truthful 503.
+- `_middleware.ts`: stale `trynex-api.onrender.com` fallback removed.
+- Gateway tests rewritten: 10/10 green (`vitest run functions/api/gateway.test.ts`).
+- `tools/render-orchestrate.sh` + `.github/workflows/render-orchestrate.yml`:
+  Render API inventory/promote/deploy/verify. Needs GitHub secret `RENDER_API_KEY`
+  (owner must add it; key is never committed or logged).
+- Docs: `docs/FOUR_RENDER_MULTI_ROUTE_CONTRACT_2026-08-29.md`,
+  `.agents/memory/render-4-main-migration.md`.
+- PR #55 open (`arena/01a04ad7-trynex-lifestyle` → `main`): GitHub checks green
+  (verify, build, security-scan), Cloudflare Pages preview build green.
+- Known pre-existing noise: "Workers Builds: trynex-liestyle" fails on every PR
+  (also #45/#54) — stale/typo'd CF Workers project, NOT the Pages deploy; ignore
+  or clean up in CF dashboard.
+- BLOCKED on owner (2 small GitHub UI steps): (1) add repo secret
+  `RENDER_API_KEY`; (2) add `.github/workflows/render-orchestrate.yml` (GitHub
+  App cannot push workflow files — exact content supplied in the agent chat and
+  available untracked locally). Then run the workflow (dry-run, then
+  apply=true), paste the primary URL into `functions/gateway-config.ts`
+  (`PRODUCTION_ORIGINS.primary`), and finish the deploy/verification.
+
 For future implementation work, replace these values with the real current
 checkpoint. Do not leave the next Agent to reconstruct the state from chat
 history.

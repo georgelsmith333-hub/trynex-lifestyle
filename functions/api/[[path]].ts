@@ -1,54 +1,77 @@
 /*
- * Cloudflare Pages Function — route-aware API gateway.
+ * Cloudflare Pages Function — route-aware API gateway for the 4-Render
+ * multi-route topology.
  *
- * Render 1 is the normal primary. API_ORIGINS may contain an ordered,
- * comma-separated list of Render origins for safe-read failover:
- *   primary,secondary,tertiary
+ * Routing:
+ *   WRITES (POST/PUT/PATCH/DELETE), ADMIN, AUTH and AI generation
+ *       → PRIMARY only (4th Render). Never replayed to a standby, even after
+ *         an ambiguous timeout, so a mutation can never be duplicated.
+ *   SAFE PUBLIC READS (anonymous GET/HEAD on the allowlist below)
+ *       → READ origins in round-robin (load splitting across Render 2/3),
+ *         with bounded failover on 502/503/504/network failure and a short
+ *         down-skip so a suspended origin is not hammered. The primary is the
+ *         LAST read candidate so it stays light.
+ *   OPTIONS → answered at the edge.
  *
- * This gateway deliberately does not round-robin writes and never replays a
- * mutation after an ambiguous timeout. Standby API services also enforce
- * read-only mode server-side through TRYNEX_RUNTIME_ROLE.
+ * Origins come from functions/gateway-config.ts (authoritative, committed) or
+ * the dashboard env overrides (API_PRIMARY_ORIGIN / API_READ_ORIGINS). There is
+ * no hardcoded Render fallback: if a role has no origin the gateway fails
+ * closed with a truthful JSON error instead of pinning traffic to a dead host.
  */
 
-const DEFAULT_ORIGIN = "https://trynex-api.onrender.com";
-const REQUEST_TIMEOUT_MS = 12_000;
-const RETRYABLE_STATUSES = new Set([502, 503, 504]);
-const SAFE_PUBLIC_PREFIXES = [
-  "/products",
-  "/categories",
-  "/mockups",
-  "/public-stats",
-  "/blog",
-  "/testimonials",
-  "/settings",
-  "/health",
-  "/healthz",
-  "/readyz",
-];
+import {
+  REQUEST_TIMEOUT_MS,
+  RETRYABLE_STATUSES,
+  ORIGIN_DOWN_SKIP_MS,
+  ORIGIN_DOWN_THRESHOLD,
+  isSafePublicRead,
+  isPrimaryOnlyRead,
+  resolveOrigins,
+} from "../gateway-config";
 
 interface GatewayEnv {
   API_URL?: string;
   API_ORIGIN?: string;
   TRYNEX_API_URL?: string;
   API_ORIGINS?: string;
+  API_PRIMARY_ORIGIN?: string;
+  API_READ_ORIGINS?: string;
 }
 
-function getOrigins(env: GatewayEnv): string[] {
-  const raw = env.API_ORIGINS || env.API_URL || env.API_ORIGIN || env.TRYNEX_API_URL || DEFAULT_ORIGIN;
-  const origins = raw
-    .split(",")
-    .map((value) => value.trim().replace(/\/$/, ""))
-    .filter(Boolean);
-  return [...new Set(origins)];
+const DOWN_STATE = new Map<string, { fails: number; skipUntil: number }>();
+let readCursor = 0;
+
+function markFailure(origin: string): void {
+  const entry = DOWN_STATE.get(origin) ?? { fails: 0, skipUntil: 0 };
+  entry.fails += 1;
+  if (entry.fails >= ORIGIN_DOWN_THRESHOLD) {
+    entry.skipUntil = Date.now() + ORIGIN_DOWN_SKIP_MS;
+  }
+  DOWN_STATE.set(origin, entry);
 }
 
-function isSafePublicRead(method: string, path: string, request: Request): boolean {
-  if (method !== "GET" && method !== "HEAD") return false;
-  // A browser session cookie does not make an allowlisted catalog/health read
-  // a mutation. Authorization-bearing requests remain origin-pinned because
-  // they may be user-specific or otherwise unsafe to replay across standbys.
-  if (request.headers.get("authorization")) return false;
-  return SAFE_PUBLIC_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
+function markSuccess(origin: string): void {
+  DOWN_STATE.delete(origin);
+}
+
+function isSkipped(origin: string): boolean {
+  const entry = DOWN_STATE.get(origin);
+  if (!entry) return false;
+  if (Date.now() >= entry.skipUntil) {
+    DOWN_STATE.delete(origin);
+    return false;
+  }
+  return true;
+}
+
+/** Read origins in round-robin order, skipping origins briefly marked down. */
+function orderedReadOrigins(origins: string[]): string[] {
+  const healthy = origins.filter((origin) => !isSkipped(origin));
+  const pool = healthy.length > 0 ? healthy : origins;
+  if (pool.length === 0) return [];
+  const start = readCursor % pool.length;
+  readCursor += 1;
+  return [...pool.slice(start), ...pool.slice(0, start)];
 }
 
 function corsHeaders(origin: string): Headers {
@@ -63,6 +86,12 @@ function corsHeaders(origin: string): Headers {
 
 function makeTargetUrl(origin: string, path: string, search: string): URL {
   return new URL(`/api/${path}${search}`, `${origin}/`);
+}
+
+/** Reset in-memory routing state; exported for tests only. */
+export function __resetGatewayState(): void {
+  DOWN_STATE.clear();
+  readCursor = 0;
 }
 
 export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
@@ -82,6 +111,7 @@ export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
   const method = request.method.toUpperCase();
   const apiPath = `/${path}`;
   const safeRead = isSafePublicRead(method, apiPath, request);
+  const primaryOnlyRead = isPrimaryOnlyRead(method, apiPath);
   const origin = originalUrl.origin;
   const responseCors = corsHeaders(origin);
   const edgeCache = (globalThis as { caches?: { default?: Cache } }).caches?.default;
@@ -108,8 +138,32 @@ export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
     return new Response(null, { status: 204, headers: responseCors });
   }
 
-  const origins = getOrigins(env);
-  const candidates = safeRead ? origins : origins.slice(0, 1);
+  const roles = resolveOrigins(env as Record<string, string | undefined>);
+  const isMutation = ["POST", "PUT", "PATCH", "DELETE"].includes(method);
+
+  // Writes, admin, auth, and AI generation go to the PRIMARY only.
+  const candidates = (safeRead && !primaryOnlyRead)
+    ? orderedReadOrigins(roles.reads)
+    : roles.primary.slice(0, 1);
+  const routeKind = (safeRead && !primaryOnlyRead) ? "read" : "write";
+
+  if (candidates.length === 0) {
+    const failed = new Headers(responseCors);
+    failed.set("Content-Type", "application/json");
+    failed.set("Cache-Control", "no-store");
+    return new Response(
+      JSON.stringify({
+        error: "api_unavailable",
+        message: "The API is temporarily unavailable.",
+        status: 503,
+        detail: routeKind === "write"
+          ? "No primary API origin configured"
+          : "No read API origin configured",
+      }),
+      { status: 503, headers: failed },
+    );
+  }
+
   let lastStatus = 503;
   let lastError = "No API origin responded";
 
@@ -119,7 +173,7 @@ export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
     headers.set("Host", new URL(apiOrigin).host);
     headers.delete("origin");
     headers.delete("referer");
-    if (safeRead) headers.delete("cookie");
+    if (safeRead && !primaryOnlyRead) headers.delete("cookie");
 
     const requestInit: RequestInit & { duplex?: "half" } = {
       method,
@@ -133,16 +187,21 @@ export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
     try {
       const response = await fetch(proxyRequest, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
       lastStatus = response.status;
-      if (safeRead && RETRYABLE_STATUSES.has(response.status)) {
+      if (routeKind === "read" && RETRYABLE_STATUSES.has(response.status)) {
         lastError = `Origin ${apiOrigin} returned ${response.status}`;
+        markFailure(apiOrigin);
         continue;
       }
 
+      markSuccess(apiOrigin);
       const responseHeaders = new Headers(response.headers);
       responseCors.forEach((value, key) => responseHeaders.set(key, value));
       responseHeaders.set("X-TryNex-Origin", new URL(apiOrigin).host);
+      responseHeaders.set("X-TryNex-Route", routeKind);
       if (safeRead && response.ok) {
         responseHeaders.set("Cache-Control", "public, max-age=10, s-maxage=30, stale-while-revalidate=60");
+      } else if (!safeRead || primaryOnlyRead) {
+        responseHeaders.set("Cache-Control", "private, no-store");
       }
 
       if (cacheable && edgeCache && response.ok) {
@@ -163,7 +222,8 @@ export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
       return output;
     } catch (error) {
       lastError = error instanceof Error ? error.message : String(error);
-      if (!safeRead) break;
+      markFailure(apiOrigin);
+      if (routeKind === "write") break;
     }
   }
 
