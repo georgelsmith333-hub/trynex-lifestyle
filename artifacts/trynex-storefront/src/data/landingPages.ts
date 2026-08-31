@@ -58,7 +58,7 @@ export const LANDING_PAGES: Record<string, LandingPageConfig> = {
       },
       {
         q: "What sizes are available for custom t-shirts?",
-        a: "We offer XS to 5XL including oversized fits. Check our size guide at trynexshop.com/size-guide for detailed measurements.",
+        a: "We offer XS to 5XL including oversized fits. Check our size guide at trynex-lifestyle-shop.pages.dev/size-guide for detailed measurements.",
       },
       {
         q: "How much does a custom t-shirt cost in Bangladesh?",
