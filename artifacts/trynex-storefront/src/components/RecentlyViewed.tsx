@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
-import { formatPrice, getApiUrl } from "@/lib/utils";
+import { formatPrice, resolveImageUrl } from "@/lib/utils";
 import { Clock, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -34,7 +34,7 @@ export function RecentlyViewed() {
                   style={{ border: '1px solid #f0f0f0', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
                   <div className="aspect-square overflow-hidden bg-gray-50" style={{ aspectRatio: '1/1' }}>
                     <img
-                      src={item.imageUrl?.startsWith('http') ? item.imageUrl : (item.imageUrl ? getApiUrl(item.imageUrl) : '')}
+                      src={resolveImageUrl(item.imageUrl)}
                       alt={item.name}
                       width={400}
                       height={400}
