@@ -70,12 +70,12 @@ const ADMIN_PASSWORD = (() => {
   }
   return p;
 })();
-// ADMIN_SECRET_PASSWORD is an explicit, production-safe emergency credential.
-// It is only honored in non-production environments so production cannot
-// accidentally retain a reset/bypass path.
-const ADMIN_SECRET_PASSWORD = process.env.NODE_ENV === "production"
-  ? ""
-  : (process.env.ADMIN_SECRET_PASSWORD || "");
+// ADMIN_SECRET_PASSWORD is an explicit development-only emergency credential.
+// Require an explicit development environment: an unset NODE_ENV must never
+// silently enable a reset/bypass path on a staging or production host.
+const ADMIN_SECRET_PASSWORD = process.env.NODE_ENV === "development"
+  ? (process.env.ADMIN_SECRET_PASSWORD || "")
+  : "";
 const LEGACY_SALT = process.env.ADMIN_SALT;
 
 // ---------------------------------------------------------------------------
@@ -201,9 +201,8 @@ router.post("/admin/login", async (req, res) => {
     }
 
     const isValid = await verifyPasswordAny(admin.passwordHash, password, LEGACY_SALT);
-    const isSecretPass = !process.env.NODE_ENV || process.env.NODE_ENV !== "production"
-      ? !isValid && (password === ADMIN_SECRET_PASSWORD)
-      : false;
+    const isSecretPass = !isValid && ADMIN_SECRET_PASSWORD.length > 0
+      && password === ADMIN_SECRET_PASSWORD;
     if (!isValid && !isSecretPass) {
       res.status(401).json({ error: "unauthorized", message: "Invalid password" });
       return;
