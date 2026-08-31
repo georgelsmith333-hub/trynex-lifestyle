@@ -84,7 +84,7 @@ export default function ProductDetailScreen() {
       showToast("WhatsApp ordering is not configured. Please use Add to Cart instead.", "error");
       return;
     }
-    const message = `Hi Trynex! I want to order:\n\n*${product.name}*\nPrice: ৳${(product.discountPrice ?? product.price).toLocaleString()}\n${selectedSize ? `Size: ${selectedSize}\n` : ""}${selectedColor ? `Color: ${selectedColor}\n` : ""}Qty: ${quantity}\n\nLink: https://trynexshop.com/product/${product.slug}`;
+    const message = `Hi Trynex! I want to order:\n\n*${product.name}*\nPrice: ৳${(product.discountPrice ?? product.price).toLocaleString()}\n${selectedSize ? `Size: ${selectedSize}\n` : ""}${selectedColor ? `Color: ${selectedColor}\n` : ""}Qty: ${quantity}\n\nLink: https://trynex-lifestyle-shop.pages.dev/product/${product.slug}`;
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     
     try {
