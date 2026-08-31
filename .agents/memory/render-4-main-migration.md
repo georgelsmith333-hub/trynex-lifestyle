@@ -25,24 +25,26 @@ description: Owner-approved migration to a 4-Render topology — new 4th Render 
   `RENDER_API_KEY` (user must add it — never commit the key).
 - `docs/FOUR_RENDER_MULTI_ROUTE_CONTRACT_2026-08-29.md`, handoff updated.
 
-## Pending (2026-08-29 continuation, still blocked on owner access)
-PR #55 is MERGED (main = 2985b5d) → the gateway is live and writes now fail CLOSED
-with `503 {"detail":"No primary API origin configured"}` until a primary exists.
-1. `tools/ci/render-orchestrate.workflow.yml` holds the workflow body (the App cannot
-   push `.github/workflows/**`; the Contents API is refused too). Owner pastes it into
-   `.github/workflows/render-orchestrate.yml` + adds repo secret `RENDER_API_KEY`.
-2. Then: inventory (apply=false) → confirm a 4th TryNex service exists and its
-   workspace → apply=true with an explicit `target` → copy the primary URL from the
-   job summary into BOTH `functions/gateway-config.ts` copies → PR → merge.
-3. Without the key, Path B (owner configures the service in the Render dashboard:
-   `TRYNEX_RUNTIME_ROLE=primary`, `SCHEDULER_ENABLED=true`, `BACKUP_SYNC_ENABLED=false`)
-   reaches the same end state; Path C (`API_PRIMARY_ORIGIN` env in CF Pages pointing at
-   a restored `trynex-api`) is the interim unblock. Full runbook:
-   `docs/FOUR_RENDER_MULTI_ROUTE_CONTRACT_2026-08-29.md`.
-4. Never "fix" the 503 by re-adding a hardcoded Render host or by sending writes to a
-   standby — both were deliberate removals.
-5. Sandbox egress is api.github.com-only (curl to api.render.com / *.onrender.com /
-   cloudflare.com fails at TLS) — use the web fetcher for live probes, CI for Render API.
+## Current continuation (2026-09-01)
+The fourth Render primary is committed in the gateway and the local API runs with
+`runtimeRole:"primary"`. The confirmed public URL is
+`https://trynex-lifestyle-shop.pages.dev`; the old custom domain is not a production
+route. The latest local release contains the URL/CORS/notification cleanup.
+
+Delivery remains blocked when the protected GitHub secret is present in the project
+inventory but unavailable to shell or temporary workflow processes, and this checkout
+has no `origin` remote. Do not copy a credential from an attachment or put it in
+source. The correct recovery is an authorized GitHub integration or the normal secure
+source-control flow, followed by Pages auto-deploy verification.
+
+UptimeRobot is optional alerting and not a runtime dependency. Pages is static, while
+the primary Render service is configured to stay available; standby cold starts are
+handled by the gateway's bounded read failover.
+
+Never "fix" production by sending writes to a standby or restoring the retired
+hardcoded Render fallback. After delivery, verify: `/api/__probe` → 404 JSON from the
+primary, `/api/admin/system/health` → 401, `/api/health/liveness` →
+`runtimeRole:"primary"`, and public products/sitemap → 200.
 
 ## Verify after promotion + deploy
 - `POST /api/__probe` (no route) → 404 JSON from primary (proves write path live).
