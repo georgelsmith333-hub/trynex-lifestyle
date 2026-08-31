@@ -376,6 +376,7 @@ export function ProductCard({ product, index = 0, eagerImage = true }: ProductCa
                   <button
                     type="button"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setQuickViewOpen(true); }}
+                    aria-label={`Quick view ${product.name}`}
                     className="btn-press pointer-events-auto w-full py-2 rounded-xl font-bold text-sm text-gray-700 flex items-center justify-center gap-2 transition-all"
                     style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)', border: '1px solid rgba(0,0,0,0.08)' }}
                   >
