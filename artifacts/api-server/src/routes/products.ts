@@ -4,7 +4,7 @@ import { db, productsTable, categoriesTable } from "@workspace/db";
 import { eq, ilike, or, and, sql, desc, asc } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { logActivity, getAdminId } from "../lib/activityLog";
-import { redisCacheGet, redisCacheSet, redisCacheDel } from "../lib/redis";
+import { redisCacheGet, redisCacheSet } from "../lib/redis";
 import { pingSitemaps } from "../lib/sitemapPing";
 
 // ── Zod validation schemas ────────────────────────────────────────────────
@@ -77,17 +77,27 @@ const router: IRouter = Router();
 
 // ── Product list cache ────────────────────────────────────────────────────────
 // Cache simple (no-search) paginated product listings for 60 s.
-// Key encodes all filter dimensions so different queries don't collide.
+// A generation prefix lets mutations invalidate the whole product cache with
+// one replicated write instead of thousands of individual REST deletes.
 const PROD_TTL_S = 60;
-function productCacheKey(params: Record<string, string | undefined>): string | null {
+const PRODUCT_CACHE_VERSION_KEY = "trynex:products:version";
+const PRODUCT_VERSION_TTL_S = 24 * 60 * 60;
+
+async function getProductCacheVersion(): Promise<string> {
+  return (await redisCacheGet<string>(PRODUCT_CACHE_VERSION_KEY)) ?? "1";
+}
+
+async function productCacheKey(params: Record<string, string | undefined>): Promise<string | null> {
   // Never cache search queries — they are unique per user input
   if (params.search) return null;
   const cat  = params.categoryId ?? "all";
   const feat = params.featured ?? "false";
+  const custom = params.customizable ?? "false";
   const pg   = params.page ?? "1";
   const lim  = params.limit ?? "12";
   const srt  = params.sort ?? "newest";
-  return `trynex:products:${cat}:${feat}:${srt}:pg${pg}:lim${lim}`;
+  const version = await getProductCacheVersion();
+  return `trynex:products:${version}:${cat}:${feat}:${custom}:${srt}:pg${pg}:lim${lim}`;
 }
 
 // Map sort param to Drizzle orderBy expression
@@ -106,18 +116,9 @@ function buildProductOrder(sort: string | undefined) {
 
 // Invalidate all product list cache entries when any product is mutated.
 async function invalidateProductCache(): Promise<void> {
-  // Bust all permutations of the cache key space including all sort variants,
-  // category IDs up to 20, pages up to 5, and common limit values.
-  const sorts = ["newest", "oldest", "price_asc", "price_desc", "name_asc", "name_desc", "featured"];
-  const cats  = ["all", ...Array.from({ length: 20 }, (_, i) => String(i + 1))];
-  const keys: string[] = [];
-  for (const cat of cats)
-    for (const feat of ["false", "true"])
-      for (const srt of sorts)
-        for (const pg of ["1", "2", "3", "4", "5"])
-          for (const lim of ["12", "24", "48", "100"])
-            keys.push(`trynex:products:${cat}:${feat}:${srt}:pg${pg}:lim${lim}`);
-  await Promise.allSettled(keys.map(k => redisCacheDel(k)));
+  // Old generation keys expire naturally; the version write is replicated to
+  // every configured backend and also updates the process-local fallback.
+  await redisCacheSet(PRODUCT_CACHE_VERSION_KEY, String(Date.now()), PRODUCT_VERSION_TTL_S);
 }
 
 function mapProduct(p: any, categoryName?: string | null) {
@@ -156,10 +157,11 @@ router.get("/products", async (req, res) => {
     const offset = (pageNum - 1) * limitNum;
 
     // Check cache for non-search requests
-    const cacheKey = productCacheKey({
+    const cacheKey = await productCacheKey({
       categoryId: categoryId as string | undefined,
       search: search as string | undefined,
       featured: featured as string | undefined,
+      customizable: customizable as string | undefined,
       page: page as string,
       limit: limit as string,
       sort: sort as string | undefined,
@@ -243,7 +245,8 @@ router.get("/products", async (req, res) => {
 router.get("/products/featured", async (req, res) => {
   try {
     const limit = Math.min(50, Math.max(1, parseInt(req.query.limit as string || "12", 10)));
-    const cacheKey = `products:featured:${limit}`;
+    const version = await getProductCacheVersion();
+    const cacheKey = `trynex:products:featured:${version}:${limit}`;
     const cached = await redisCacheGet<Record<string, unknown>>(cacheKey);
     if (cached) { res.set("X-Cache-Status", "HIT"); res.json(cached); return; }
 
