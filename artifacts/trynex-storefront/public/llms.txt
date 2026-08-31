@@ -4,7 +4,7 @@
 
 ## About
 
-TryNex Lifestyle (trynexshop.com) is a full-stack custom print-on-demand e-commerce store based in Bangladesh. Founded to bring premium-quality custom apparel to the Bangladeshi market, TryNex allows anyone to design their own t-shirts, hoodies, long sleeves, mugs, caps, and waterbottles using an in-browser Design Studio — with no minimum order quantity.
+TryNex Lifestyle (trynex-lifestyle-shop.pages.dev) is a full-stack custom print-on-demand e-commerce store based in Bangladesh. Founded to bring premium-quality custom apparel to the Bangladeshi market, TryNex allows anyone to design their own t-shirts, hoodies, long sleeves, mugs, caps, and waterbottles using an in-browser Design Studio — with no minimum order quantity.
 
 - **Website**: https://trynex-lifestyle-shop.pages.dev
 - **WhatsApp**: +8801903426915
