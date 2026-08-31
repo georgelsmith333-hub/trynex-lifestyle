@@ -63,10 +63,8 @@ export function requireAdmin(req: Request, res: Response, next: NextFunction): v
           const refererOrigin = referer
             ? (() => { try { return new URL(referer).origin; } catch { return ""; } })()
             : "";
-          const isTrustedTryNexOrigin = (value: string): boolean =>
-            /^https:\/\/(?:[a-z0-9-]+\.)?trynex-lifestyle-shop\.pages\.dev$/i.test(value) ||
-            value === "https://www.trynexshop.com" ||
-            value === "https://trynexshop.com";
+            const isTrustedTryNexOrigin = (value: string): boolean =>
+              /^https:\/\/(?:[a-z0-9-]+\.)?trynex-lifestyle-shop\.pages\.dev$/i.test(value);
           const ok =
             (origin && (allowed.includes(origin) || isTrustedTryNexOrigin(origin))) ||
             (refererOrigin && (allowed.includes(refererOrigin) || isTrustedTryNexOrigin(refererOrigin)));
