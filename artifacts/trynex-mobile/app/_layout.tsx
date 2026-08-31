@@ -23,7 +23,7 @@ import { WishlistProvider } from "@/context/WishlistContext";
 // In dev the workflow injects EXPO_PUBLIC_DOMAIN=$REPLIT_DEV_DOMAIN which overrides this.
 const _mobileDomain = process.env.EXPO_PUBLIC_DOMAIN;
 const _STALE_RENDER = "trynex-api.onrender.com";
-setBaseUrl(`https://${(!_mobileDomain || _mobileDomain === _STALE_RENDER) ? "trynexshop.com" : _mobileDomain}`);
+setBaseUrl(`https://${(!_mobileDomain || _mobileDomain === _STALE_RENDER) ? "trynex-lifestyle-shop.pages.dev" : _mobileDomain}`);
 
 SplashScreen.preventAutoHideAsync();
 
