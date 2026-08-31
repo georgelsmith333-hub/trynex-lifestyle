@@ -40,6 +40,7 @@ import { fitImageTransform } from "./autoFit";
 import { ClipArtBrowser } from "./ClipArtBrowser";
 import { QRCodePanel } from "./QRCodePanel";
 import { FONT_FAMILIES, type Layer, type ImageLayer, type TextLayer, type ShapeLayer, DRAFT_VERSION } from "./types";
+import { StudioFirstUseGuide, StudioQualityBanner } from "./v1-components/V1StudioSupport";
 
 const LazyProductViewer3D = lazy(() => import("../design-studio/ProductViewer3D"));
 
@@ -755,6 +756,31 @@ export default function DesignStudioV2() {
 
   const frontLayers = useMemo(() => layers.filter(l => (l.face ?? "front") === "front") as unknown as ComposerLayer[], [layers]);
   const backLayers = useMemo(() => layers.filter(l => (l.face ?? "front") === "back") as unknown as ComposerLayer[], [layers]);
+  const qualityIssues = useMemo(() => {
+    return layers
+      .filter((layer): layer is ImageLayer => layer.type === "image" && layer.visible)
+      .flatMap((layer) => {
+        const shortestEdge = Math.min(layer.naturalW, layer.naturalH);
+        if (!Number.isFinite(shortestEdge) || shortestEdge >= 1_200) return [];
+        const surface = layer.face === "back" ? "back" : layer.face === "left-sleeve"
+          ? "left sleeve" : layer.face === "right-sleeve" ? "right sleeve"
+          : layer.face === "neck-label" ? "neck label" : "front";
+        const blocking = shortestEdge < 600;
+        return [{
+          id: `resolution-${layer.id}`,
+          label: blocking ? "Image resolution is too low" : "Image resolution needs review",
+          detail: `${layer.name || "This image"} is ${Math.round(layer.naturalW)}×${Math.round(layer.naturalH)}px on the ${surface}. ${blocking ? "Replace it or use HD preparation before checkout to avoid a visibly soft print." : "For the sharpest print, use an image at least 1,200px on its shortest edge."}`,
+          tone: blocking ? "danger" as const : "warning" as const,
+          actionLabel: "Edit image",
+          onAction: () => {
+            setFace(layer.face ?? "front");
+            selectLayer(layer.id);
+            setActiveTab("upload");
+            if (isMobile) setMobileToolOpen(true);
+          },
+        }];
+      });
+  }, [isMobile, layers, selectLayer, setActiveTab, setFace, setMobileToolOpen]);
 
   const handleAddToCart = async () => {
     if (isPsdTshirtStaging) {
@@ -763,6 +789,10 @@ export default function DesignStudioV2() {
     }
     if (layers.length === 0) {
       toast({ title: "No design", description: "Add an image or text layer first.", variant: "destructive" });
+      return;
+    }
+    if (qualityIssues.some((issue) => issue.tone === "danger")) {
+      toast({ title: "Improve image quality first", description: "Replace the low-resolution image or use HD preparation before adding this design to cart.", variant: "destructive" });
       return;
     }
     const imageCache = new Map<string, HTMLImageElement>();
@@ -970,11 +1000,11 @@ export default function DesignStudioV2() {
                 {saveStatus === "saving" ? <><CloudUpload className="w-3 h-3 animate-pulse" /> Saving…</> : <><Check className="w-3 h-3" /> Saved</>}
               </div>
             )}
-            <button onClick={undo} disabled={store.history.length <= 1} className="p-2 rounded-xl bg-gray-100 text-gray-600 disabled:opacity-30 active:scale-95 transition-transform"><Undo2 className="w-3.5 h-3.5" /></button>
-            <button onClick={redo} disabled={store.future.length === 0} className="p-2 rounded-xl bg-gray-100 text-gray-600 disabled:opacity-30 active:scale-95 transition-transform"><Redo2 className="w-3.5 h-3.5" /></button>
-            <button onClick={() => setShowPrintZone(!showPrintZone)} className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold ${showPrintZone ? "text-orange-500 bg-orange-50" : "text-gray-500 bg-gray-100 hover:bg-gray-200"}`}><Eye className="w-3 h-3" /> Print Zone</button>
-            {!isFlatZone && <button onClick={() => setShow3D(!show3D)} className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold ${show3D ? "text-blue-500 bg-blue-50" : "text-gray-500 bg-gray-100 hover:bg-gray-200"}`}><Package className="w-3 h-3" /> {show3D ? "2D Edit" : "3D Preview"}</button>}
-            <motion.button onClick={handleAddToCart} whileTap={{ scale: 0.97 }} className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-5 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm text-white shadow-lg shadow-orange-500/20" style={{ background: "linear-gradient(135deg, #E85D04, #FB8500)" }}>
+            <button type="button" onClick={undo} disabled={store.history.length <= 1} aria-label="Undo last change" className="p-2 rounded-xl bg-gray-100 text-gray-600 disabled:opacity-30 active:scale-95 transition-transform"><Undo2 className="w-3.5 h-3.5" /></button>
+            <button type="button" onClick={redo} disabled={store.future.length === 0} aria-label="Redo last change" className="p-2 rounded-xl bg-gray-100 text-gray-600 disabled:opacity-30 active:scale-95 transition-transform"><Redo2 className="w-3.5 h-3.5" /></button>
+            <button type="button" onClick={() => setShowPrintZone(!showPrintZone)} aria-pressed={showPrintZone} className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold ${showPrintZone ? "text-orange-500 bg-orange-50" : "text-gray-500 bg-gray-100 hover:bg-gray-200"}`}><Eye className="w-3 h-3" /> Print Zone</button>
+            {!isFlatZone && <button type="button" onClick={() => setShow3D(!show3D)} aria-pressed={show3D} className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold ${show3D ? "text-blue-500 bg-blue-50" : "text-gray-500 bg-gray-100 hover:bg-gray-200"}`}><Package className="w-3 h-3" /> {show3D ? "2D Edit" : "3D Preview"}</button>}
+            <motion.button type="button" onClick={handleAddToCart} aria-label="Add design to cart" whileTap={{ scale: 0.97 }} className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-5 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm text-white shadow-lg shadow-orange-500/20" style={{ background: "linear-gradient(135deg, #E85D04, #FB8500)" }}>
               <ShoppingCart className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Add to Cart</span><span className="sm:hidden">Cart</span>
             </motion.button>
           </div>
@@ -982,16 +1012,33 @@ export default function DesignStudioV2() {
       </div>
 
       <div className="flex-1 container-wide mx-auto w-full px-2 sm:px-4 py-4 sm:py-6">
+        <div className="mb-4 space-y-3">
+          <StudioFirstUseGuide
+            steps={[
+              { id: "upload", title: "Upload your artwork", description: "Choose a JPG, PNG, or WebP and it will be fitted to the selected print area." },
+              { id: "refine", title: "Refine the design", description: "Drag, resize, rotate, or add text. Switch surfaces to add artwork to the back or sleeves." },
+              { id: "review", title: "Preview and order", description: "Check print zone and quality warnings, preview curved products in 3D, then add to cart." },
+            ]}
+            onFocusCanvas={() => containerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+          />
+          <StudioQualityBanner
+            issues={qualityIssues}
+            onShowPrintZone={() => {
+              setShowPrintZone(true);
+              containerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+          />
+        </div>
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
           <div className="flex-1 min-w-0" ref={containerRef}>
             <ProductSwitcher />
             <div className="mt-3 mb-3">
               <MainToolbar onExport={handleExportPNG} />
               <div className="mb-3 flex items-center gap-2 overflow-x-auto rounded-2xl border border-orange-100 bg-orange-50/70 p-2 md:hidden no-scrollbar">
-                <button type="button" onClick={() => setShowProductPicker(true)} className="flex shrink-0 items-center gap-1.5 rounded-xl bg-white px-3 py-2 text-[11px] font-black text-gray-800 shadow-sm active:scale-95"><Package className="h-3.5 w-3.5 text-orange-500" /> Product</button>
-                <button type="button" onClick={() => fileInputRef.current?.click()} className="flex shrink-0 items-center gap-1.5 rounded-xl bg-gradient-to-r from-orange-600 to-orange-500 px-3 py-2 text-[11px] font-black text-white shadow-sm active:scale-95"><Upload className="h-3.5 w-3.5" /> Upload</button>
-                <button type="button" onClick={addText} className="flex shrink-0 items-center gap-1.5 rounded-xl bg-white px-3 py-2 text-[11px] font-black text-gray-800 shadow-sm active:scale-95"><Type className="h-3.5 w-3.5 text-blue-500" /> Text</button>
-                <button type="button" onClick={() => setMobileToolOpen(true)} className="flex shrink-0 items-center gap-1.5 rounded-xl bg-gray-900 px-3 py-2 text-[11px] font-black text-white shadow-sm active:scale-95"><Wand2 className="h-3.5 w-3.5" /> All tools</button>
+                <button type="button" onClick={() => setShowProductPicker(true)} aria-label="Choose product" className="flex shrink-0 items-center gap-1.5 rounded-xl bg-white px-3 py-2 text-[11px] font-black text-gray-800 shadow-sm active:scale-95"><Package className="h-3.5 w-3.5 text-orange-500" /> Product</button>
+                <button type="button" onClick={() => fileInputRef.current?.click()} aria-label="Upload design image" className="flex shrink-0 items-center gap-1.5 rounded-xl bg-gradient-to-r from-orange-600 to-orange-500 px-3 py-2 text-[11px] font-black text-white shadow-sm active:scale-95"><Upload className="h-3.5 w-3.5" /> Upload</button>
+                <button type="button" onClick={addText} aria-label="Add text layer" className="flex shrink-0 items-center gap-1.5 rounded-xl bg-white px-3 py-2 text-[11px] font-black text-gray-800 shadow-sm active:scale-95"><Type className="h-3.5 w-3.5 text-blue-500" /> Text</button>
+                <button type="button" onClick={() => setMobileToolOpen(true)} aria-label="Open all design tools" className="flex shrink-0 items-center gap-1.5 rounded-xl bg-gray-900 px-3 py-2 text-[11px] font-black text-white shadow-sm active:scale-95"><Wand2 className="h-3.5 w-3.5" /> All tools</button>
               </div>
             </div>
             <input
@@ -1062,7 +1109,7 @@ export default function DesignStudioV2() {
                     <Suspense fallback={<Loader2 className="w-8 h-8 animate-spin text-blue-400" />}>
                       <LazyProductViewer3D product={selectedProduct} garmentColor={selectedColor.hex} front={{ layers: frontLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ) : getZonePZ("front", selectedProduct, selectedColor.hex), baseHeight: selectedProduct.baseHeight, psdMaterialEffects: frontMockup.psdMaterialEffects }} back={supportsBack && backLayers.length > 0 ? { layers: backLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ) : getZonePZ("back", selectedProduct, selectedColor.hex), baseHeight: selectedProduct.baseHeight, psdMaterialEffects: backMockup.psdMaterialEffects } : undefined} activeFace={activeFace as "front" | "back"} isWrapMode={isMug && mugMode === "wrap"} />
                     </Suspense>
-                    <button onClick={() => setShow3D(false)} className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full text-xs font-bold text-white shadow-xl" style={{ background: "rgba(17,24,39,0.85)", backdropFilter: "blur(8px)" }}><Eye className="w-3 h-3 inline mr-1" /> Back to 2D</button>
+                     <button type="button" onClick={() => setShow3D(false)} aria-label="Return to 2D editor" className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full text-xs font-bold text-white shadow-xl" style={{ background: "rgba(17,24,39,0.85)", backdropFilter: "blur(8px)" }}><Eye className="w-3 h-3 inline mr-1" /> Back to 2D</button>
                   </div>
                 )}
                 <CanvasArea
