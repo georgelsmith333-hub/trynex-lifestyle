@@ -918,7 +918,7 @@ router.post("/ai/developer/chat", requireAdmin, async (req: Request, res: Respon
 
     const extraHeaders: Record<string, string> = {};
     if (provider.id === "openrouter") {
-      extraHeaders["HTTP-Referer"] = "https://trynex.shop";
+      extraHeaders["HTTP-Referer"] = "https://trynex-lifestyle-shop.pages.dev";
       extraHeaders["X-Title"]     = "TryNex AI Developer";
     }
 
