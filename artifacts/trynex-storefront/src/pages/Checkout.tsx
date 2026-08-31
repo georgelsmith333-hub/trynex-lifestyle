@@ -46,7 +46,7 @@ type CheckoutFormData = z.infer<typeof checkoutSchema>;
 
 const DISTRICTS = getAllDistricts();
 
-const inputClass = "w-full px-4 py-3.5 rounded-xl text-base sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-400 transition-all placeholder:text-gray-400";
+const inputClass = "w-full scroll-mt-28 px-4 py-3.5 rounded-xl text-base sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-400 transition-all placeholder:text-gray-400";
 const inputStyle = { background: 'white', border: '1px solid #e5e7eb', color: '#111827' };
 
 type CheckoutStep = 'form' | 'gateway' | 'success';
