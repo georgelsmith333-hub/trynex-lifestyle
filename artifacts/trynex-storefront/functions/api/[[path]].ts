@@ -21,6 +21,7 @@
 
 import {
   REQUEST_TIMEOUT_MS,
+  READ_TOTAL_BUDGET_MS,
   RETRYABLE_STATUSES,
   ORIGIN_DOWN_SKIP_MS,
   ORIGIN_DOWN_THRESHOLD,
@@ -166,8 +167,14 @@ export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
 
   let lastStatus = 503;
   let lastError = "No API origin responded";
+  const readDeadline = routeKind === "read" ? Date.now() + READ_TOTAL_BUDGET_MS : null;
 
   for (const apiOrigin of candidates) {
+    const remainingReadBudget = readDeadline === null ? REQUEST_TIMEOUT_MS : readDeadline - Date.now();
+    if (remainingReadBudget <= 0) {
+      lastError = `Read budget exhausted after ${READ_TOTAL_BUDGET_MS}ms`;
+      break;
+    }
     const targetUrl = makeTargetUrl(apiOrigin, path, originalUrl.search);
     const headers = new Headers(request.headers);
     headers.set("Host", new URL(apiOrigin).host);
@@ -185,7 +192,9 @@ export const onRequest: PagesFunction<GatewayEnv> = async (context) => {
     const proxyRequest = new Request(targetUrl.toString(), requestInit);
 
     try {
-      const response = await fetch(proxyRequest, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+      const response = await fetch(proxyRequest, {
+        signal: AbortSignal.timeout(Math.min(REQUEST_TIMEOUT_MS, remainingReadBudget)),
+      });
       lastStatus = response.status;
       if (routeKind === "read" && RETRYABLE_STATUSES.has(response.status)) {
         lastError = `Origin ${apiOrigin} returned ${response.status}`;
