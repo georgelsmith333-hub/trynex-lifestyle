@@ -37,6 +37,11 @@ export function StudioFirstUseGuide({
     if (!visible) window.localStorage.setItem(storageKey, "1");
   }, [storageKey, visible]);
 
+  const dismissGuide = () => {
+    setVisible(false);
+    onDismiss?.();
+  };
+
   if (!visible) return null;
 
   return (
@@ -47,13 +52,13 @@ export function StudioFirstUseGuide({
             <Sparkles className="h-5 w-5" aria-hidden="true" />
           </div>
           <div className="space-y-1">
-            <p className="text-sm font-semibold text-slate-900">Quick start for the V1 Studio</p>
+             <p className="text-sm font-semibold text-slate-900">Quick start for the TryNex Studio</p>
             <p className="text-sm leading-6 text-slate-600">
               Follow the reviewed workflow, or dismiss this helper and work directly on the canvas.
             </p>
           </div>
         </div>
-        <button type="button" onClick={() => setVisible(false)} className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition hover:bg-slate-50 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500" aria-label="Dismiss studio guidance">
+        <button type="button" onClick={dismissGuide} className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition hover:bg-slate-50 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500" aria-label="Dismiss studio guidance">
           <X className="h-4 w-4" aria-hidden="true" />
         </button>
       </div>
@@ -73,16 +78,11 @@ export function StudioFirstUseGuide({
             Jump to canvas
           </button>
         )}
-        <button type="button" onClick={() => setVisible(false)} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2">
+        <button type="button" onClick={dismissGuide} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2">
           Dismiss guide
           <ChevronRight className="h-4 w-4" aria-hidden="true" />
         </button>
       </div>
-      {onDismiss && (
-        <button type="button" onClick={onDismiss} className="sr-only" aria-hidden="true">
-          Hidden dismiss callback
-        </button>
-      )}
     </section>
   );
 }
