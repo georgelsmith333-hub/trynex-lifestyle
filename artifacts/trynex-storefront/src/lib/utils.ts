@@ -63,7 +63,20 @@ export function resolveImageUrl(url: string | null | undefined): string {
     "https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=700&q=85": "/assets/products/hoodie_abstract.png",
   };
   if (legacyAssetMap[value]) return legacyAssetMap[value];
-  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+  if (value.startsWith("http://") || value.startsWith("https://")) {
+    // Recently-viewed items can outlive a backend migration and retain an old
+    // Render asset URL. Re-enter those paths through the current storefront
+    // so they use the same Pages asset/proxy behavior as fresh catalogue data.
+    if (/^https?:\/\/(?:trynex-api(?:-standby-\d+)?|trynex-lifestyle-main-render)\.onrender\.com\//i.test(value)) {
+      try {
+        const legacyUrl = new URL(value);
+        return `${legacyUrl.pathname}${legacyUrl.search}`;
+      } catch {
+        return PLACEHOLDER;
+      }
+    }
+    return value;
+  }
   // Uploads need the API base URL prepended — check before the generic "/" guard
   if (value.startsWith("/uploads/")) return `${getApiBaseUrl()}${value}`;
   if (value.startsWith("uploads/")) return `${getApiBaseUrl()}/${value}`;
