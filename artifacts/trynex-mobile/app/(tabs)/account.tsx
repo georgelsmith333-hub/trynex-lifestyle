@@ -22,12 +22,12 @@ import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { api } from "@/lib/api";
 
-const WEBSITE_URL = "https://trynexshop.com";
+const WEBSITE_URL = "https://trynex-lifestyle-shop.pages.dev";
 
 async function handleShareApp() {
   try {
     await Share.share({
-      message: "Shop custom fashion at Trynex Lifestyle! T-shirts, hoodies, caps & more — designed by you. 👕✨\n\nhttps://trynexshop.com",
+      message: "Shop custom fashion at Trynex Lifestyle! T-shirts, hoodies, caps & more — designed by you. 👕✨\n\nhttps://trynex-lifestyle-shop.pages.dev",
       title: "Trynex Lifestyle",
     });
   } catch (_) {}
@@ -119,7 +119,7 @@ export default function AccountScreen() {
           <Text style={styles.loginBtnText}>Login / Register on Website</Text>
         </Pressable>
         <Text style={{ color: colors.mutedForeground, fontSize: 12, textAlign: "center", marginTop: 8 }}>
-           Manage your orders, profile and more at trynexshop.com
+           Manage your orders, profile and more at trynex-lifestyle-shop.pages.dev
         </Text>
       </View>
 
