@@ -26,7 +26,8 @@
  *                and re-verified (see docs/FOUR_RENDER_MULTI_ROUTE_CONTRACT).
  */
 
-export const REQUEST_TIMEOUT_MS = 12_000;
+export const REQUEST_TIMEOUT_MS = 3_500;
+export const READ_TOTAL_BUDGET_MS = 7_000;
 export const RETRYABLE_STATUSES = new Set([502, 503, 504]);
 export const ORIGIN_DOWN_SKIP_MS = 15_000;
 export const ORIGIN_DOWN_THRESHOLD = 2;
@@ -50,7 +51,13 @@ export const SAFE_PUBLIC_PREFIXES = [
  * GET routes that cost provider capacity or create provider-side work.
  * They are NEVER replayed to another origin and always go to the primary.
  */
-export const PRIMARY_ONLY_READ_PREFIXES = ["/ai/generate"];
+export const PRIMARY_ONLY_READ_PREFIXES = [
+  "/ai/generate",
+  "/health/liveness",
+  "/health/readiness",
+  "/healthz",
+  "/readyz",
+];
 
 export interface OriginRoles {
   primary: string[];
@@ -59,17 +66,13 @@ export interface OriginRoles {
 
 /**
  * Production origin map. Order within a role is the failover order.
- * `primary` is intentionally EMPTY until the 4th Render service is promoted
- * (runbook: docs/FOUR_RENDER_MULTI_ROUTE_CONTRACT_2026-08-29.md). The workflow
- * body is versioned at tools/ci/render-orchestrate.workflow.yml because the
- * agent's GitHub App cannot write to .github/workflows/. The gateway fails
- * CLOSED (503 "No primary API origin configured") for writes/admin/auth/AI
- * until a primary URL is set here or via the API_PRIMARY_ORIGIN env override —
- * there is no hardcoded Render host to fall back to, by design.
+ * The fourth Render service is the sole write authority. Keep this committed
+ * origin aligned with the promoted service; Cloudflare may override it with
+ * API_PRIMARY_ORIGIN during a controlled migration.
  */
 export const PRODUCTION_ORIGINS: OriginRoles = {
   primary: [
-    // https://<4th-render-service>.onrender.com  ← filled after promotion
+    "https://trynex-lifestyle-main-render.onrender.com",
   ],
   reads: [
     "https://trynex-api-standby-2.onrender.com",
