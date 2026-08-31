@@ -407,7 +407,7 @@ export default function Cart() {
 
       {/* Mobile sticky checkout bar — visible only when cart has items, on small screens */}
       {items.length > 0 && (
-        <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 px-4 pt-3 pb-[max(env(safe-area-inset-bottom),0.75rem)] bg-white/95 backdrop-blur border-t border-gray-200" style={{ boxShadow: '0 -8px 24px rgba(0,0,0,0.06)' }}>
+        <div className="mobile-sticky-bar lg:hidden fixed bottom-0 inset-x-0 z-40 px-4 pt-3 bg-white/95 backdrop-blur border-t border-gray-200" style={{ boxShadow: '0 -8px 24px rgba(0,0,0,0.06)' }}>
           <div className="flex items-center gap-3">
             <div className="flex flex-col min-w-0">
               <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Total</span>
