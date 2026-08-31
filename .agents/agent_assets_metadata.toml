@@ -167,3 +167,10 @@ id = "sX3NiHZhNiv6fbpB6cQWr"
 uri = "file://TryNex_DesignStudio_MasterPlan.pdf"
 type = "pdf"
 title = "TryNex Design Studio — Master Rebuild & Fix Plan"
+
+[[outputs]]
+id = "_cf4ZNLyvIu7NB6tiqgMe"
+uri = "file://reports/trynex-complete-overview-2026-09-01.pdf"
+type = "pdf"
+title = "TryNex complete deployment and audit overview"
+description = "Four-page PDF covering architecture, code changes, automated and live verification, and the remaining GitHub, Cloudflare, DNS, and Upstash release blockers."
