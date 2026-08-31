@@ -36,9 +36,9 @@ import { useGLTF, useProgress, OrbitControls } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import { hasWebGL2 } from "../pages/design-studio/composer";
 
-// Ref type for drei's <OrbitControls> — derived from the component itself so
-// we don't need to depend on `three-stdlib` directly.
-type OrbitControlsRef = React.ElementRef<typeof OrbitControls>;
+// Keep the ref contract local so duplicate React type trees from the mobile
+// workspace cannot collapse ElementRef<typeof OrbitControls> to never.
+type OrbitControlsRef = { reset: () => void };
 
 export { hasWebGL2 };
 
@@ -1328,7 +1328,9 @@ export function ResettableOrbitControls(props: React.ComponentProps<typeof Orbit
     };
   }, [gl]);
 
-  return <OrbitControls ref={ref} {...props} />;
+  // drei's control instance is structurally richer than the reset-only
+  // contract above; the ref is intentionally narrowed at this interop edge.
+  return <OrbitControls ref={ref as never} {...props} />;
 }
 
 /** Studio-quality lighting rig — hemisphere sky/ground + five-point directional.
