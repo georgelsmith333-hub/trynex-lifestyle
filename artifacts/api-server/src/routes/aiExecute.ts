@@ -82,9 +82,9 @@ function getSEOAdvice(topic: string): string {
     return `## Getting "TryNex" to Rank on Google
 
 **1. Google Search Console (Most Important)**
-- Go to [search.google.com/search-console](https://search.google.com/search-console) and add \`trynexshop.com\`
+- Go to [search.google.com/search-console](https://search.google.com/search-console) and add \`trynex-lifestyle-shop.pages.dev\`
 - Verify ownership by adding the Google Site Verification meta tag in Admin → Settings → SEO
-- Submit your sitemap: \`https://trynex-lifestyle-shop.pages.dev/sitemap.xml\`
+- Submit your sitemap: \`https://trynex-lifestyle-shop.pages.dev/api/sitemap.xml\`
 
 **2. Brand Name Signals**
 - Your site title already includes "TryNex Lifestyle" — good ✓
