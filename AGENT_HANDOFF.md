@@ -77,46 +77,45 @@ pausing work, or transferring the project.
 ### Active workstream — 4-Render main promotion
 
 ```text
-Status: blocked — owner access step required to run the Render promotion
-Last completed: Confirmed PR #55 is merged (main = 2985b5d) and re-derived the live
-  truth: safe reads + /sitemap.xml are 200 through the gateway; every write/admin/auth
-  route answers the designed fail-closed 503 "No primary API origin configured",
-  because PRODUCTION_ORIGINS.primary is still empty and API_PRIMARY_ORIGIN is not set
-  in Cloudflare Pages. Restored the missing orchestrator workflow body at
-  tools/ci/render-orchestrate.workflow.yml, rewrote the promotion runbook
-  (docs/FOUR_RENDER_MULTI_ROUTE_CONTRACT_2026-08-29.md) with three owner paths, and
-  re-annotated both gateway-config copies. Gateway tests re-run locally: 10/10 green.
-Stopped at: Promotion itself. The agent sandbox can only reach api.github.com
-  (api.render.com, *.onrender.com and Cloudflare are TLS-blocked), and the agent's
-  GitHub App is refused on .github/workflows/** (git push and Contents API both 403),
-  so no CI run can be created until the workflow file exists.
-Files/areas changed: tools/ci/render-orchestrate.workflow.yml (new),
-  docs/FOUR_RENDER_MULTI_ROUTE_CONTRACT_2026-08-29.md (runbook + status),
-  functions/gateway-config.ts and artifacts/trynex-storefront/functions/gateway-config.ts
-  (comments only, still byte-identical), .agents/memory/render-4-main-migration.md,
-  AGENT_HANDOFF.md. No routing behavior was changed.
-Remaining work: Path A/B/C in the contract doc — one of them must complete before the
-  primary URL can be committed; then commit primary into both config copies, PR, merge,
-  run the verification checklist.
-Blocker: Owner action needed — (A) add repo secret RENDER_API_KEY **and** create
-  .github/workflows/render-orchestrate.yml from tools/ci/render-orchestrate.workflow.yml,
-  or (B) create + role-configure the 4th Render service in the dashboard and hand the
-  agent its public URL, or (C) temporarily point API_PRIMARY_ORIGIN in Cloudflare Pages
-  at a restored trynex-api to bring writes back during the migration.
-  Unverified premise for A/B: that a 4th TryNex Render service exists at all — no prior
-  session ever completed a Render API inventory (the supplied keys returned HTTP 400 on
-  2026-08-20; only a second-workspace key validated on 2026-08-21).
-Next safe action: Owner picks A, B or C (see the contract doc). Nothing further can be
-  promoted without one of those three. Do NOT invent a primary URL and do NOT re-add a
-  hardcoded Render host to "fix" the 503 — the fail-closed answer is the safety net.
-Verification: Live probes via the web fetcher on 2026-08-29:
-  GET /sitemap.xml -> 200 (SEO fix live); GET /api/admin/system/health -> 503
-  "No primary API origin configured" (fail-closed, as designed);
-  GET /api/health/liveness -> 503 while standby-2 serves Render's cold-start page
-  (free-tier spin-up, not a code defect); trynex-api-standby-3 also returned 503.
-  Sandbox egress test: api.github.com 200; api.render.com / render.com / cloudflare.com
-  blocked. git push of a workflow file rejected with "refusing to allow a GitHub App to
-  create or update workflow ... without `workflows` permission"; gh Contents API 403.
+Status: blocked — verified release cannot be delivered with the current GitHub access path
+Last completed: Confirmed the fourth Render service is reachable as the committed
+  primary, standby-2 is healthy, and standby-3 is suspended. Completed a local
+  reliability pass that bounds the homepage catalogue request, prevents
+  customizable-filter cache collisions, replaces product-cache fan-out deletion
+  with one replicated generation write, normalizes legacy Render image URLs, and
+  enforces the gateway's declared total read budget. Rebuilt/restarted the API.
+  Fresh checks passed: API typecheck/tests (5 files, 20 tests), storefront
+  typecheck/tests (21 files, 71 tests)/build, gateway copies identical, local
+  liveness/readiness/products/public-stats checks, and git diff --check.
+Stopped at: Delivering the latest local release to the GitHub repository. The
+  protected GitHub secret is present in the project inventory, but it is not injected
+  into the available push runner; no remote named origin exists in this checkout.
+  A temporary release workflow was tested and removed after reporting
+  github-secret-env-missing.
+Files/areas changed: customer-facing URL references, API CORS defaults, Telegram
+  summary URL, mobile production routing safeguards, operational audit scripts,
+  docs/SOURCE_OF_TRUTH.md, API Redis/product caching and gateway budget handling,
+  storefront homepage payload/image normalization, and this handoff. The attached
+  credential-bearing text file and current evidence screenshots are excluded from
+  the release history.
+Remaining work: Push the latest local release to the connected GitHub main branch,
+  let Cloudflare Pages auto-deploy, then re-run the live write/admin verification
+  checklist. Reconsider or replace suspended standby-3 before relying on it for
+  read failover.
+Blocker: Provider delivery access only. The GitHub connector is not authorized in
+  this environment and the protected token cannot be read by the shell or temporary
+  workflow. Do not copy credentials from attachments or re-add a retired domain.
+Next safe action: Authorize the GitHub integration or push the latest local release
+  through the repository's normal secure source-control flow; then verify the Pages
+  deployment. UptimeRobot is optional alerting, not a runtime dependency: Pages is
+  static, and the fourth Render service is configured with a persistent primary
+  instance.
+Verification: Local app and API are healthy; live Pages storefront, products,
+  readiness, public stats, sitemap, and robots routes returned 200. Live headers
+still show the older standby gateway because the latest local release has not
+reached GitHub. Fresh local API checks and application build passed. A fresh
+browser screenshot could not be captured because this checkout is absent from the
+artifact preview registry and the browser-use CLI is unavailable.
 ```
 
 ### Paused workstream — mockup master layer system
@@ -174,6 +173,38 @@ Blocked facts that constrain all three options:
 - Audit evidence: `audit/live-trynexshop-home.png`,
   `audit/live-trynexshop-products.png`, and
   `audit/live-trynexshop-design-studio.png`.
+
+## Latest local follow-up pass (2026-09-01)
+
+```text
+Status: locally verified — provider-side Redis and production promotion remain blocked
+Last completed: Fixed the Design Studio first-use guide so both visible dismiss
+  controls invoke its onDismiss callback; removed the hidden aria-hidden focusable
+  callback control. Hardened the admin emergency-password path so it is enabled
+  only when NODE_ENV is explicitly development; an unset environment can no longer
+  enable a bypass. Added accessible names/state to remaining Design Studio toolbar
+  and mobile actions, labelled ProductCard quick view, and moved the Cart mobile
+  checkout bar onto the shared mobile-sticky-bar safe-area styling.
+Stopped at: Secure replacement of the rejected Upstash REST token. The user supplied
+  screenshots containing a credential, but it was not copied into source, logs, or
+  Replit Secrets. The secure replacement-token prompt was declined.
+Files/areas changed: API admin login gate; storefront ProductCard, Cart, Design
+  Studio V2 toolbar/mobile actions, and V1 Studio guidance.
+Remaining work: Rotate the exposed Upstash token in Upstash and save the replacement
+  as UPSTASH_REDIS_REST_TOKEN through Replit Secrets; complete the provider-side
+  Render/Cloudflare promotion and live write-path verification.
+Blocker: The currently stored Upstash token is rejected by the provider. Redis
+  fallback is working, but distributed cache health remains degraded until the
+  token is rotated. Production write availability also still depends on the
+  unfinished primary Render promotion documented above.
+Next safe action: Rotate the exposed Upstash token, save only the replacement via
+  the secure Secrets UI, restart the API, and confirm /api/healthz reports Redis
+  healthy. Do not reuse the screenshot credential.
+Verification: Storefront typecheck and 21 test files/71 tests passed; API typecheck
+  and 5 test files/20 tests passed; workflow restarted successfully; local
+  /api/healthz, /api/products, /api/public-stats, and /api/settings returned 200;
+  browser logs showed no runtime errors; git diff --check passed.
+```
 
 ## Latest live health check (2026-08-29)
 
