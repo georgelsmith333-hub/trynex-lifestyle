@@ -74,7 +74,7 @@ function layout(bodyContent: string): string {
           <td style="background:${BRAND_LIGHT};padding:20px 32px;text-align:center;border-top:1px solid #FFE0CC;">
             <p style="margin:0 0 6px;font-size:13px;color:#64748b;">Questions? WhatsApp or call us at <b>${process.env.SUPPORT_PHONE ?? "01903426915"}</b></p>
             <p style="margin:0;font-size:12px;color:#94a3b8;">
-              <a href="https://trynex-lifestyle-shop.pages.dev" style="color:${BRAND_ORANGE};text-decoration:none;">trynexshop.com</a>
+              <a href="https://trynex-lifestyle-shop.pages.dev" style="color:${BRAND_ORANGE};text-decoration:none;">trynex-lifestyle-shop.pages.dev</a>
               &nbsp;·&nbsp; Dhaka, Bangladesh
             </p>
           </td>
