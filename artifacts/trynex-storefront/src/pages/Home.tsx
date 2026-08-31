@@ -615,7 +615,10 @@ function HomeTopPostsWidget() {
 }
 
 export default function Home() {
-  const { data: productsData, isLoading, isError, refetch } = useListProducts({ limit: 100 });
+  // The home page only displays 20 curated cards. Keep the initial payload
+  // bounded so a mobile visitor does not download the full catalogue merely
+  // to choose those cards client-side.
+  const { data: productsData, isLoading, isError, refetch } = useListProducts({ limit: 24 });
   const { data: testimonialsData } = useGetTestimonials();
   const publicStats = usePublicStats();
   const [spinWheelOpen, setSpinWheelOpen] = useState(false);
@@ -976,6 +979,8 @@ export default function Home() {
                           <img
                             src="/images/cat-tshirt.png"
                             alt="Design Studio"
+                            width={400}
+                            height={500}
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-orange-500/15 to-transparent pointer-events-none" />
@@ -989,6 +994,8 @@ export default function Home() {
                         <img 
                           src={imageMap[cat.icon as string] || "/images/product-placeholder.svg"} 
                           alt={cat.name}
+                          width={400}
+                          height={500}
                           className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 p-4"
                         />
                       )}
