@@ -33,4 +33,8 @@ File: `functions/api/[[path]].ts` (at repo root — NOT inside artifacts/)
 2. User provides fresh CF API token → set CF Pages env vars (DATABASE_URL_MAIN, ADMIN_PASSWORD, JWT_SECRET, UPSTASH tokens, R2 keys)
 3. Set `API_URL` in CF Pages env vars to point to working API host
 
+## Verification caveat
+- The confirmed active Pages project/domain is `trynex-lifestyle-shop.pages.dev`. The similarly named `trynex-lifestyle.pages.dev` served stale SPA HTML for several API paths and must not be used as deployment evidence.
+- After workspace reconciliation removed managed artifact registration, a minimal `Start application` workflow can run the API and storefront together locally, but it does not restore artifact registry metadata.
+
 **Why:** User wants zero-cost, Replit-independent hosting. CF Pages = free tier with global CDN.
