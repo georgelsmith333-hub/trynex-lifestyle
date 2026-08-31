@@ -130,16 +130,20 @@ describe("four-render multi-route Pages gateway", () => {
     expect((fetchMock.mock.calls[0][0] as Request).url).toContain("render-main.example");
   });
 
-  it("fails CLOSED with a truthful error when the primary is not configured", async () => {
-    const fetchMock = vi.fn();
+  it("uses the committed primary for writes when no env override exists", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(
+      JSON.stringify({ error: "primary unavailable" }),
+      { status: 503, headers: { "Content-Type": "application/json" } },
+    ));
     vi.stubGlobal("fetch", fetchMock);
 
     const response = await onRequest(context("POST", "orders", {}, JSON.stringify({ customerName: "QA" })));
 
     expect(response.status).toBe(503);
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect((fetchMock.mock.calls[0][0] as Request).url).toContain("trynex-lifestyle-main-render.onrender.com");
     const body = await response.json();
-    expect(body.detail).toContain("primary");
+    expect(body.error).toBe("primary unavailable");
   });
 
   it("uses the committed config origins when no env overrides exist", async () => {
