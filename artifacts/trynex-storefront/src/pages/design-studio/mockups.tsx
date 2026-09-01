@@ -381,6 +381,38 @@ const SOURCE_KIT_COLOR_SLUGS: Record<
   },
 };
 
+/**
+ * The staged release uses the older canonical color vocabulary for hoodies and
+ * long sleeves. Only exact product-color matches are allowed at the runtime
+ * asset boundary; an ambiguous shade must use its reviewed color-specific
+ * source-matrix asset rather than silently showing the wrong garment color.
+ */
+const SMART_V9_EXACT_COLOR_SLUGS: Record<"longsleeve" | "hoodie", Readonly<Record<string, string>>> = {
+  longsleeve: {
+    white: "white",
+    black: "black",
+    "heather-grey": "grey",
+    navy: "navy",
+    "forest-green": "forest",
+    burgundy: "burgundy",
+    red: "red",
+  },
+  hoodie: {
+    white: "white",
+    black: "black",
+    "heather-grey": "grey",
+    navy: "navy",
+    "forest-green": "forest",
+    burgundy: "burgundy",
+    red: "red",
+  },
+};
+
+export function getSmartV9ColorSlug(category: DesignProduct["category"], sourceKitSlug: string): string | undefined {
+  if (category !== "longsleeve" && category !== "hoodie") return sourceKitSlug;
+  return SMART_V9_EXACT_COLOR_SLUGS[category][sourceKitSlug];
+}
+
 const SOURCE_KIT_PRINT_ZONES: Record<
   DesignProduct["category"],
   { front: PrintZone; back: PrintZone }
@@ -797,7 +829,9 @@ function getCuratedMockup(
   const hex = normalizeMockupHex(color);
   const slug = SOURCE_KIT_COLOR_SLUGS[category]?.[hex] || "white";
   const completeView = getCompleteMockupEntry(category as CompleteMockupFamily, slug, face);
-  const cutoutSrc = acceptedSmartV9Release?.assetUrls[completeView.sourceKey]
+  const smartV9ColorSlug = getSmartV9ColorSlug(category, slug);
+  const smartV9SourceKey = smartV9ColorSlug ? `${category}:${smartV9ColorSlug}:${face}` : undefined;
+  const cutoutSrc = (smartV9SourceKey ? acceptedSmartV9Release?.assetUrls[smartV9SourceKey] : undefined)
     ?? acceptedSmartV8Release?.assetUrls[completeView.sourceKey]
     ?? (completeView.assetPath + "?v=smart-v4");
   const photoSrc = cutoutSrc;
@@ -870,10 +904,15 @@ export function resolveMockup(
   // can never put the green-screen runtime back into the Studio.
   const acceptedReleasePhoto = category === "waterbottle"
     ? undefined
-    : acceptedSmartV9Release?.assetUrls[completeView.sourceKey];
-  const photoSrc = acceptedReleasePhoto ?? waterBottleV11Photo ?? psdPhoto ?? sourceMatrixPhoto ?? runtimePhoto ?? curated.photoSrc;
-  const cutoutSrc = acceptedReleasePhoto ?? waterBottleV11Photo ?? psdPhoto ?? sourceMatrixPhoto ?? runtimePhoto ?? curated.cutoutSrc;
-  const hasExactColorBase = Boolean(acceptedReleasePhoto || waterBottleV11Photo || psdPhoto || sourceMatrixPhoto || runtimePhoto);
+    : (() => {
+      const smartV9ColorSlug = getSmartV9ColorSlug(category, sourceKitSlug);
+      return smartV9ColorSlug
+        ? acceptedSmartV9Release?.assetUrls[`${category}:${smartV9ColorSlug}:${face}`]
+        : undefined;
+    })();
+  const photoSrc = psdPhoto ?? acceptedReleasePhoto ?? waterBottleV11Photo ?? sourceMatrixPhoto ?? runtimePhoto ?? curated.photoSrc;
+  const cutoutSrc = psdPhoto ?? acceptedReleasePhoto ?? waterBottleV11Photo ?? sourceMatrixPhoto ?? runtimePhoto ?? curated.cutoutSrc;
+  const hasExactColorBase = Boolean(psdPhoto || acceptedReleasePhoto || waterBottleV11Photo || sourceMatrixPhoto || runtimePhoto);
 
   return {
     colorHex: hex,

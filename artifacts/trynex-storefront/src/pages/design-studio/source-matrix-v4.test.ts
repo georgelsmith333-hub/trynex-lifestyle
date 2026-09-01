@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { PRODUCTS, getApparelZones, getZonePZ, resolveMockup, setRuntimeMockupOverrides } from "./mockups";
+import { PRODUCTS, getApparelZones, getSmartV9ColorSlug, getZonePZ, resolveMockup, setRuntimeMockupOverrides } from "./mockups";
 import { getSourceMatrixV4LongSleeveEntry, validateSourceMatrixV4LongSleeve } from "./source-matrix-v4";
 
 const colours = ["white", "black", "charcoal", "heather-grey", "navy", "royal-blue", "forest-green", "burgundy", "red", "sand"] as const;
@@ -28,8 +28,12 @@ describe("Long Sleeve source-matrix v4 corrective release", () => {
       );
       const resolved = resolveMockup(product, colour.hex, face);
       const sourceColour = colour.name.toLowerCase().replaceAll(" ", "-");
-      expect(resolved.photoSrc).toBe(`/mockups/smart-v9/longsleeve/${sourceColour}/${face}.png`);
-      expect(resolved.cutoutSrc).toBe(`/mockups/smart-v9/longsleeve/${sourceColour}/${face}.png`);
+      const smartV9Colour = getSmartV9ColorSlug("longsleeve", sourceColour);
+      const expectedAsset = smartV9Colour
+        ? `/mockups/smart-v9/longsleeve/${smartV9Colour}/${face}.png`
+        : entry!.assetPath;
+      expect(resolved.photoSrc).toBe(expectedAsset);
+      expect(resolved.cutoutSrc).toBe(expectedAsset);
       expect(resolved.printZone).toEqual(entry?.printZone);
       expect(resolved.normalizedFrame).toEqual(entry?.normalizedFrame);
       expect(resolved.editableMasterPath).toBe(entry?.editableMasterPath);
@@ -43,7 +47,7 @@ describe("Long Sleeve source-matrix v4 corrective release", () => {
     const hoodie = PRODUCTS.find((candidate) => candidate.id === "hoodie");
     if (!hoodie) throw new Error("fixture requires Hoodie");
     expect(resolveMockup(hoodie, "#d2bd88", "front").photoSrc)
-      .toBe("/mockups/smart-v9/hoodie/sand/front.png");
+      .toBe("/mockups/source-matrix-v3/hoodie/sand/front.jpg");
   });
 
   it("rejects stale Long Sleeve smart-v4 metadata in favour of the reviewed v4 matrix", () => {

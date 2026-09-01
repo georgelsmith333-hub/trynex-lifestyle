@@ -76,6 +76,31 @@ It uses existing photos, cutouts, masks, and geometry assets, generates real
 embedded Smart Object masters, and keeps customer rendering local and realtime.
 It must be built and validated in staging before production promotion.
 
+## Current continuation checkpoint (2026-09-01)
+
+```text
+Status: in progress — local runtime resolver repaired and ready for visual review
+Last completed: Activated the tracked 188-surface smart-v9 candidate for exact
+  runtime matches, preserved the reviewed PSD-derived T-shirt front/back bases,
+  and kept ambiguous Hoodie/Long Sleeve catalog shades on their reviewed
+  color-specific source-matrix assets instead of mapping them to the wrong hue.
+Stopped at: After a clean workflow restart and direct proxied asset checks.
+Files/areas changed: Design Studio mockup resolver and the two related source
+  matrix test files.
+Remaining work: Perform a real browser visual review of the Customize/Design
+  Studio flow and, if required, regenerate a product-color-aligned v9 candidate
+  for the currently unmatched Hoodie/Long Sleeve shades before production
+  promotion.
+Blocker: The artifact preview registry cannot resolve this checkout for a
+  screenshot; direct proxy checks are available and passing.
+Next safe action: Review the Customize route with the 188 staged assets, then
+  approve or regenerate only the unmatched product-color surfaces.
+Verification: Storefront tests 22 files/76 tests passed; storefront typecheck,
+  full workspace typecheck, production build, workflow restart, git diff check,
+  and representative v9/source-matrix/PSD asset requests passed. Screenshot
+  capture was unavailable because the artifact was not found in the registry.
+```
+
 ## Latest local studio reliability pass (2026-09-01)
 
 ```text
