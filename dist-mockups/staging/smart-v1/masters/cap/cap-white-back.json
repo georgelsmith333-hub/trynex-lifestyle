@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "cap",
+  "color": "white",
+  "view": "back",
+  "sourceView": "back",
+  "sourcePreview": "previews/cap-white-back.png",
+  "sourceChecksum": "aa60aa0d1c1a9310d5ed5a9147cac7c99774f6aaf610cdfbe5179327dad7546b",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/cap/white/back.png",
+  "baseChecksum": "87c33d91fa4ed5c14046f6d8491a1744248a8f7f9831a8baefc5df125ebf6a70",
+  "printZone": {
+    "x": 285,
+    "y": 270,
+    "w": 430,
+    "h": 230
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "cap-panel",
+    "curvature": 0.1,
+    "seamPadding": 0.025,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - cap-white-back",
+    "id": "68a2cc75-68a2-cc75-68a2-cc7568a2cc75",
+    "placed": "68a2cc75-68a2-cc75-68a2-cc7568a2cc75-placed",
+    "transform": [
+      285,
+      270,
+      715,
+      270,
+      715,
+      500,
+      285,
+      500
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/cap/cap-white-back.psd",
+  "masterChecksum": "52b167231a2e979a5d2a6e8c2d2e5a115fd4ed7469dd74ab13022d7d90c655d8",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/cap/white/back.png",
+  "previewChecksum": "87c33d91fa4ed5c14046f6d8491a1744248a8f7f9831a8baefc5df125ebf6a70",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/cap/white/back.png",
+  "proofPreviewChecksum": "6e2e38f798ecbfe98c63c41db1587c469ce8c9549c4a78e0541d167d303f8815",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

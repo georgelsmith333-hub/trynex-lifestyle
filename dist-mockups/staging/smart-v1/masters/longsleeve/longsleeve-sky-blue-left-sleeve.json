@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "longsleeve",
+  "color": "sky-blue",
+  "view": "left-sleeve",
+  "sourceView": "front",
+  "sourcePreview": "previews/longsleeve-sky-blue-front.png",
+  "sourceChecksum": "1fdee4d7b46068f48a772dcb50c8d69ece268f40868a2b884ab528c4665b717b",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": "dist-mockups/staging/smart-v1/templates/longsleeve/left-sleeve.png",
+  "faceTemplateChecksum": "5368674ee063147773485766c8c859da3d0aa62a4e02837d2b87a54ffa61a7fe",
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v1/templates/longsleeve/left-sleeve-alpha.png",
+  "faceAlphaTemplateChecksum": "0a9f9358d1a64205336a2a439fa236091f58f6915a28e6719b2655b1e295f4ad",
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/longsleeve/sky-blue/left-sleeve.png",
+  "baseChecksum": "abe73914fa5e647033cb55974ed2aa3d990e0b9a91b08a28be5937fc6840c9f6",
+  "printZone": {
+    "x": 175,
+    "y": 175,
+    "w": 650,
+    "h": 650
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "left-sleeve-polygon",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - longsleeve-sky-blue-left-sleeve",
+    "id": "9b48f89b-9b48-f89b-9b48-f89b9b48f89b",
+    "placed": "9b48f89b-9b48-f89b-9b48-f89b9b48f89b-placed",
+    "transform": [
+      175,
+      175,
+      825,
+      175,
+      825,
+      825,
+      175,
+      825
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/longsleeve/longsleeve-sky-blue-left-sleeve.psd",
+  "masterChecksum": "f64f24e34c772abeba92688beff04b682e22a1a9b9234ad006d3430e3c5b8034",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/longsleeve/sky-blue/left-sleeve.png",
+  "previewChecksum": "30a419a6556254de583e861f96b21560581b838d241ae44816b6111a1f341368",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/longsleeve/sky-blue/left-sleeve.png",
+  "proofPreviewChecksum": "708784fec1f65567e4966941452aec137c4abcc0a212a04f9aa320fab76bf42b",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

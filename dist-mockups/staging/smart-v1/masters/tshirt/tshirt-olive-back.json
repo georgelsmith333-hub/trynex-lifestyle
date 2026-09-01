@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "tshirt",
+  "color": "olive",
+  "view": "back",
+  "sourceView": "back",
+  "sourcePreview": "previews/tshirt-olive-back.png",
+  "sourceChecksum": "95c3f6d77346afac4ef034d21b093382f5b0b1e081cc77d10423cfe39892c685",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/tshirt/olive/back.png",
+  "baseChecksum": "11d7a3d9ab4bddd54e406718d4691fc34e0b9a65f14553e8d76dca0415b56dc0",
+  "printZone": {
+    "x": 240,
+    "y": 185,
+    "w": 520,
+    "h": 580
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - tshirt-olive-back",
+    "id": "d0f563a9-d0f5-63a9-d0f5-63a9d0f563a9",
+    "placed": "d0f563a9-d0f5-63a9-d0f5-63a9d0f563a9-placed",
+    "transform": [
+      240,
+      185,
+      760,
+      185,
+      760,
+      765,
+      240,
+      765
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/tshirt/tshirt-olive-back.psd",
+  "masterChecksum": "4be0aadf5d8892cc33912c6a4be7d2613d5a1af575b09a55e222f21c4fffdc2e",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/tshirt/olive/back.png",
+  "previewChecksum": "11d7a3d9ab4bddd54e406718d4691fc34e0b9a65f14553e8d76dca0415b56dc0",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/tshirt/olive/back.png",
+  "proofPreviewChecksum": "594fe8751336c6519353c1f7517e5b17f9f4ee24bfd7fd914ad69f4840a701f0",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

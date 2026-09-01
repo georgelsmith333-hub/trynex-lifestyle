@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "tshirt",
+  "color": "sky-blue",
+  "view": "neck-label",
+  "sourceView": "front",
+  "sourcePreview": "previews/tshirt-sky-blue-front.png",
+  "sourceChecksum": "42ecc2f6850e8321903b9f89aff5b5dca6ddf8d103d290c19cf7707bb61b3d8d",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": "dist-mockups/staging/smart-v1/templates/tshirt/neck-label.png",
+  "faceTemplateChecksum": "430739af219a07602bda44759cd199708382adef526cd0f60c104da0788f0146",
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v1/templates/tshirt/neck-label-alpha.png",
+  "faceAlphaTemplateChecksum": "3e795386d95d6827db54834b83af944b28c30d2e62b6c9fb9e8956fe65afe06e",
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/tshirt/sky-blue/neck-label.png",
+  "baseChecksum": "58494a2faeba2c124defae4b5c002f423af2bff60cd2d26594a1bfb142ac90fd",
+  "printZone": {
+    "x": 150,
+    "y": 265,
+    "w": 700,
+    "h": 470
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "neck-label-crop",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - tshirt-sky-blue-neck-label",
+    "id": "aea32ab7-aea3-2ab7-aea3-2ab7aea32ab7",
+    "placed": "aea32ab7-aea3-2ab7-aea3-2ab7aea32ab7-placed",
+    "transform": [
+      150,
+      265,
+      850,
+      265,
+      850,
+      735,
+      150,
+      735
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/tshirt/tshirt-sky-blue-neck-label.psd",
+  "masterChecksum": "76c85ed88f3df38bf1342c33055d75091fe5d7c57b66ae978f406db30d000d56",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/tshirt/sky-blue/neck-label.png",
+  "previewChecksum": "940d083bb5a7058ef1619a3ca52957d91f6bb15d5661afc699c817eb7400849f",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/tshirt/sky-blue/neck-label.png",
+  "proofPreviewChecksum": "1de67a47e6471adfd75548ecab5fe00f673d10aab0ae80e73843bcfbf2b64e2c",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

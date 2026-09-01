@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "cap",
+  "color": "black",
+  "view": "back",
+  "sourceView": "back",
+  "sourcePreview": "previews/cap-black-back.png",
+  "sourceChecksum": "1f56264315b6a9c43799d7ba83b55f1bf480c2982674ba5aa0142f153d622894",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/cap/black/back.png",
+  "baseChecksum": "9c54d4c4a2402c684b2b0d7ba7fb0fcc9048ba11440d35880aeffe32c8987346",
+  "printZone": {
+    "x": 285,
+    "y": 270,
+    "w": 430,
+    "h": 230
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "cap-panel",
+    "curvature": 0.1,
+    "seamPadding": 0.025,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - cap-black-back",
+    "id": "b5e5e55f-b5e5-e55f-b5e5-e55fb5e5e55f",
+    "placed": "b5e5e55f-b5e5-e55f-b5e5-e55fb5e5e55f-placed",
+    "transform": [
+      285,
+      270,
+      715,
+      270,
+      715,
+      500,
+      285,
+      500
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/cap/cap-black-back.psd",
+  "masterChecksum": "8b6e759ee9edcdf84b7f3d84557c5cd04bb14b9b421ffc1b71de47e03e945616",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/cap/black/back.png",
+  "previewChecksum": "9c54d4c4a2402c684b2b0d7ba7fb0fcc9048ba11440d35880aeffe32c8987346",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/cap/black/back.png",
+  "proofPreviewChecksum": "4ec3736f3dec5436b8dece439a9110de31a355c9d43738bb517f6eec3988f5a6",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

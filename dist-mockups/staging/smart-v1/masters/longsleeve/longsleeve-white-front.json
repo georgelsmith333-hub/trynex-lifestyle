@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "longsleeve",
+  "color": "white",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "previews/longsleeve-white-front.png",
+  "sourceChecksum": "04952c1a2ea4ace06fa4d05e2dd95294364a2fe99b14d0d5306baea111ed4bf9",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/longsleeve/white/front.png",
+  "baseChecksum": "f2fe38d90d36398b0f320c8ae360134a18a80f0e055c097ada3575b009fea7ca",
+  "printZone": {
+    "x": 312,
+    "y": 222,
+    "w": 376,
+    "h": 404
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - longsleeve-white-front",
+    "id": "2f761ff7-2f76-1ff7-2f76-1ff72f761ff7",
+    "placed": "2f761ff7-2f76-1ff7-2f76-1ff72f761ff7-placed",
+    "transform": [
+      312,
+      222,
+      688,
+      222,
+      688,
+      626,
+      312,
+      626
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/longsleeve/longsleeve-white-front.psd",
+  "masterChecksum": "6ab09a0a25a9d28a7479b5e2e32d18db4696cf18dc1c8655987e33a0c370ac9a",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/longsleeve/white/front.png",
+  "previewChecksum": "f2fe38d90d36398b0f320c8ae360134a18a80f0e055c097ada3575b009fea7ca",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/longsleeve/white/front.png",
+  "proofPreviewChecksum": "7d04ca4d55150f2f736c8c5062145496d0fd4e4fe906c4e67e405e10c5101324",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

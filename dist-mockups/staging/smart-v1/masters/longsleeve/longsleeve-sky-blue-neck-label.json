@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "longsleeve",
+  "color": "sky-blue",
+  "view": "neck-label",
+  "sourceView": "front",
+  "sourcePreview": "previews/longsleeve-sky-blue-front.png",
+  "sourceChecksum": "1fdee4d7b46068f48a772dcb50c8d69ece268f40868a2b884ab528c4665b717b",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": "dist-mockups/staging/smart-v1/templates/longsleeve/neck-label.png",
+  "faceTemplateChecksum": "5239dafaa17062ba9d9ae14a9e1c15052bc8a32a3d580778edb85e5484ad524f",
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v1/templates/longsleeve/neck-label-alpha.png",
+  "faceAlphaTemplateChecksum": "bed9cf28705efa61e736459e71bc0bb169ca419c8cc1ad626f8bbaf8d7324956",
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/longsleeve/sky-blue/neck-label.png",
+  "baseChecksum": "a054ab31d8cfe25dbe9845b786d9f2d9e9d7c216eca1880d42d284f7663890c4",
+  "printZone": {
+    "x": 150,
+    "y": 265,
+    "w": 700,
+    "h": 470
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "neck-label-crop",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - longsleeve-sky-blue-neck-label",
+    "id": "237866d9-2378-66d9-2378-66d9237866d9",
+    "placed": "237866d9-2378-66d9-2378-66d9237866d9-placed",
+    "transform": [
+      150,
+      265,
+      850,
+      265,
+      850,
+      735,
+      150,
+      735
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/longsleeve/longsleeve-sky-blue-neck-label.psd",
+  "masterChecksum": "a300b3a2bb344a31f3acf546ce84b14c496a2ac48435e84dfda9f8d2af88d1f1",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/longsleeve/sky-blue/neck-label.png",
+  "previewChecksum": "3bf6f6ab5a061ef8fc793cccf0a260f195ad061f760b33afc6eb92e8645465c3",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/longsleeve/sky-blue/neck-label.png",
+  "proofPreviewChecksum": "c91298dbe54747ea2ec5914b4439552a04a9a3ee67f30212a3d12e40ff701ecd",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

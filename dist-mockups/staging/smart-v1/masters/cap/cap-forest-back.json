@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "cap",
+  "color": "forest",
+  "view": "back",
+  "sourceView": "back",
+  "sourcePreview": "previews/cap-forest-back.png",
+  "sourceChecksum": "0b75c6a19f4758a2525d0208e2066af28b93eede9c2218e1eb2a7583ea456030",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/cap/forest/back.png",
+  "baseChecksum": "db5b694bcd6bdc7fd65ff66c1699285b2bb1a70b5ef7ec253be08876d3686ace",
+  "printZone": {
+    "x": 285,
+    "y": 270,
+    "w": 430,
+    "h": 230
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "cap-panel",
+    "curvature": 0.1,
+    "seamPadding": 0.025,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - cap-forest-back",
+    "id": "9faa5a47-9faa-5a47-9faa-5a479faa5a47",
+    "placed": "9faa5a47-9faa-5a47-9faa-5a479faa5a47-placed",
+    "transform": [
+      285,
+      270,
+      715,
+      270,
+      715,
+      500,
+      285,
+      500
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/cap/cap-forest-back.psd",
+  "masterChecksum": "eca4fd0d52080742fdea30996d97763402592ad8bd839f798584bdacc516009f",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/cap/forest/back.png",
+  "previewChecksum": "db5b694bcd6bdc7fd65ff66c1699285b2bb1a70b5ef7ec253be08876d3686ace",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/cap/forest/back.png",
+  "proofPreviewChecksum": "d0c49e0132c24cc9ef430c9823276a219a7d890a701690b78995e983c903c374",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

@@ -1,0 +1,43 @@
+{
+  "schema": "trynex-smart-mockup-stage1/v1",
+  "status": "candidate",
+  "generatedAt": "2026-09-01",
+  "representatives": [
+    {
+      "family": "tshirt",
+      "color": "white",
+      "view": "front",
+      "master": "dist-mockups/staging/smart-v1/masters/tshirt/tshirt-white-front.psd"
+    },
+    {
+      "family": "longsleeve",
+      "color": "white",
+      "view": "front",
+      "master": "dist-mockups/staging/smart-v1/masters/longsleeve/longsleeve-white-front.psd"
+    },
+    {
+      "family": "hoodie",
+      "color": "white",
+      "view": "front",
+      "master": "dist-mockups/staging/smart-v1/masters/hoodie/hoodie-white-front.psd"
+    },
+    {
+      "family": "mug",
+      "color": "white",
+      "view": "front",
+      "master": "dist-mockups/staging/smart-v1/masters/mug/mug-white-front.psd"
+    },
+    {
+      "family": "cap",
+      "color": "white",
+      "view": "front",
+      "master": "dist-mockups/staging/smart-v1/masters/cap/cap-white-front.psd"
+    },
+    {
+      "family": "waterbottle",
+      "color": "white",
+      "view": "front",
+      "master": "dist-mockups/staging/smart-v1/masters/waterbottle/waterbottle-white-front.psd"
+    }
+  ]
+}

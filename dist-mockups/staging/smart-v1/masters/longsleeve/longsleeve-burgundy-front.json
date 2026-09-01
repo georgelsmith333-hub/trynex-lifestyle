@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "longsleeve",
+  "color": "burgundy",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "previews/longsleeve-burgundy-front.png",
+  "sourceChecksum": "bccf82dd49151e9fb97590a000eb0e587fbc0b415568adb026babeec3027a6b1",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/longsleeve/burgundy/front.png",
+  "baseChecksum": "7b8ac3b02283cb3723a535ff69688f76b36749007e05613af68df4f232ad2250",
+  "printZone": {
+    "x": 312,
+    "y": 222,
+    "w": 376,
+    "h": 404
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - longsleeve-burgundy-front",
+    "id": "ff489486-ff48-9486-ff48-9486ff489486",
+    "placed": "ff489486-ff48-9486-ff48-9486ff489486-placed",
+    "transform": [
+      312,
+      222,
+      688,
+      222,
+      688,
+      626,
+      312,
+      626
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/longsleeve/longsleeve-burgundy-front.psd",
+  "masterChecksum": "0d735970a3c6fc9a6c8600d68ed6d3c85b7a7df37e6505c165e4e2fb91894665",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/longsleeve/burgundy/front.png",
+  "previewChecksum": "7b8ac3b02283cb3723a535ff69688f76b36749007e05613af68df4f232ad2250",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/longsleeve/burgundy/front.png",
+  "proofPreviewChecksum": "87da25736daeaa0da6266f3810586598d1ac19a6149100f748a8da3c2838dabf",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

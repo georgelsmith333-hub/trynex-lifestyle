@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "hoodie",
+  "color": "olive",
+  "view": "neck-label",
+  "sourceView": "front",
+  "sourcePreview": "previews/hoodie-olive-front.png",
+  "sourceChecksum": "008acb1a8d1c559f07950cda51eded78e565054864f054d8ea72d67ad7c703fa",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": "dist-mockups/staging/smart-v1/templates/hoodie/neck-label.png",
+  "faceTemplateChecksum": "80eabbabce6a0a5559b8f1a1649de3ea6cc97d81ab53ab21626e7f90a6689c3c",
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v1/templates/hoodie/neck-label-alpha.png",
+  "faceAlphaTemplateChecksum": "5b3771c5969395891cda8918448c0b222eb311039b3feeeb9e9188991bd7925f",
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/hoodie/olive/neck-label.png",
+  "baseChecksum": "c5bf38ef9690158450d5dd0f824d522b9c042e35a8a1e4e575c8ecf2ad0051e8",
+  "printZone": {
+    "x": 150,
+    "y": 265,
+    "w": 700,
+    "h": 470
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "neck-label-crop",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - hoodie-olive-neck-label",
+    "id": "7ae19052-7ae1-9052-7ae1-90527ae19052",
+    "placed": "7ae19052-7ae1-9052-7ae1-90527ae19052-placed",
+    "transform": [
+      150,
+      265,
+      850,
+      265,
+      850,
+      735,
+      150,
+      735
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/hoodie/hoodie-olive-neck-label.psd",
+  "masterChecksum": "777c1ab7f5eea6abb6c009ff450d381c0b31de45b4df63928c8b3a62a7435df1",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/hoodie/olive/neck-label.png",
+  "previewChecksum": "d2e3a72739ebca00632b3dbb977c60bb3439a2a71d28707d5326114e28883a49",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/hoodie/olive/neck-label.png",
+  "proofPreviewChecksum": "4a10d6ed091e04dcf46ee91f9a637921e1377677bd6ed37eba2f7023b326c919",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

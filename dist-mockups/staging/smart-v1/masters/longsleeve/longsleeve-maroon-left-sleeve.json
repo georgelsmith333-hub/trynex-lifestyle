@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "longsleeve",
+  "color": "maroon",
+  "view": "left-sleeve",
+  "sourceView": "front",
+  "sourcePreview": "previews/longsleeve-maroon-front.png",
+  "sourceChecksum": "1132017d2d678a13e13158ab061043893aa938bf93a878fc056c3332d560f7a9",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": "dist-mockups/staging/smart-v1/templates/longsleeve/left-sleeve.png",
+  "faceTemplateChecksum": "5368674ee063147773485766c8c859da3d0aa62a4e02837d2b87a54ffa61a7fe",
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v1/templates/longsleeve/left-sleeve-alpha.png",
+  "faceAlphaTemplateChecksum": "0a9f9358d1a64205336a2a439fa236091f58f6915a28e6719b2655b1e295f4ad",
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/longsleeve/maroon/left-sleeve.png",
+  "baseChecksum": "3280a0a7fd82273063a61e540331aad42e0b2726c07ebf57a3e787318c9c1d0a",
+  "printZone": {
+    "x": 175,
+    "y": 175,
+    "w": 650,
+    "h": 650
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "left-sleeve-polygon",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - longsleeve-maroon-left-sleeve",
+    "id": "52d2abc5-52d2-abc5-52d2-abc552d2abc5",
+    "placed": "52d2abc5-52d2-abc5-52d2-abc552d2abc5-placed",
+    "transform": [
+      175,
+      175,
+      825,
+      175,
+      825,
+      825,
+      175,
+      825
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/longsleeve/longsleeve-maroon-left-sleeve.psd",
+  "masterChecksum": "f8f533e03b28e102d2620a65b33005c1da2371aa053a31992bf717aaede8f07e",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/longsleeve/maroon/left-sleeve.png",
+  "previewChecksum": "d77325c3c7e4038f20f5390347e04adebf25b95ac18898e4f11e33bd31095e16",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/longsleeve/maroon/left-sleeve.png",
+  "proofPreviewChecksum": "9941b20799ae63602bb82c9c327d853f4036bd63994ef47ae6b6217ee108d22c",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

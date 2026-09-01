@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "hoodie",
+  "color": "grey",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "previews/hoodie-grey-front.png",
+  "sourceChecksum": "536c66723de1cc4c3b7d78f73e148347abc1290815aa2288f3365be34bb67ede",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/hoodie/grey/front.png",
+  "baseChecksum": "8454356ab947173d8b8462585302db65437f4785e58af6f369a331a2c65d1239",
+  "printZone": {
+    "x": 240,
+    "y": 270,
+    "w": 520,
+    "h": 400
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - hoodie-grey-front",
+    "id": "96e3f65b-96e3-f65b-96e3-f65b96e3f65b",
+    "placed": "96e3f65b-96e3-f65b-96e3-f65b96e3f65b-placed",
+    "transform": [
+      240,
+      270,
+      760,
+      270,
+      760,
+      670,
+      240,
+      670
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/hoodie/hoodie-grey-front.psd",
+  "masterChecksum": "f4371a6126fe07d4b1b71a56893443566a852feb9eb9338d957d774209587fca",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/hoodie/grey/front.png",
+  "previewChecksum": "8454356ab947173d8b8462585302db65437f4785e58af6f369a331a2c65d1239",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/hoodie/grey/front.png",
+  "proofPreviewChecksum": "730863d56573418a430ff97e056780a140e5523d74322f354d68cd775850e326",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "hoodie",
+  "color": "sky-blue",
+  "view": "left-sleeve",
+  "sourceView": "front",
+  "sourcePreview": "previews/hoodie-sky-blue-front.png",
+  "sourceChecksum": "5b1c89bb21e209d68b8bad9906b48ed5ed7d5f3ad8f5f01d1df1edf085f3764e",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": "dist-mockups/staging/smart-v1/templates/hoodie/left-sleeve.png",
+  "faceTemplateChecksum": "eb972f16cb676116ae35df3553fbebd34ba4b8624768651fa30cad2ec1a4266b",
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v1/templates/hoodie/left-sleeve-alpha.png",
+  "faceAlphaTemplateChecksum": "f552cd054c906acbbd93ea94572a65d38814f165904ded03eb999710436ff9b1",
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/hoodie/sky-blue/left-sleeve.png",
+  "baseChecksum": "4a6d315c7028c812a79731495b067e980535f774d821841182b95dd7bea094d8",
+  "printZone": {
+    "x": 175,
+    "y": 175,
+    "w": 650,
+    "h": 650
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "left-sleeve-polygon",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - hoodie-sky-blue-left-sleeve",
+    "id": "fb6af007-fb6a-f007-fb6a-f007fb6af007",
+    "placed": "fb6af007-fb6a-f007-fb6a-f007fb6af007-placed",
+    "transform": [
+      175,
+      175,
+      825,
+      175,
+      825,
+      825,
+      175,
+      825
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/hoodie/hoodie-sky-blue-left-sleeve.psd",
+  "masterChecksum": "99988de200da71368491ca7af61ab2c5136b69bbafb3d3ee746f7e1a828a7cc6",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/hoodie/sky-blue/left-sleeve.png",
+  "previewChecksum": "a6aefc3dccfa9dba880aab38f6265d60bc6324618e0aa38cabf988ef28398f0c",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/hoodie/sky-blue/left-sleeve.png",
+  "proofPreviewChecksum": "5d96dc5bc647793035d37afc808e669e7f693ddc8db768c65cd6c4cc3c698f25",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

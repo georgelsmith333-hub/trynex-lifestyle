@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "tshirt",
+  "color": "maroon",
+  "view": "back",
+  "sourceView": "back",
+  "sourcePreview": "previews/tshirt-maroon-back.png",
+  "sourceChecksum": "67bfd587ef420138ef6c2e064a8303f1d6988bed3a97f4e9ef9afb5f6bdc278f",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/tshirt/maroon/back.png",
+  "baseChecksum": "f75f5d2b0c76ed72789806798e6af682a915a182b809b062763d5929b62c7fcf",
+  "printZone": {
+    "x": 240,
+    "y": 185,
+    "w": 520,
+    "h": 580
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - tshirt-maroon-back",
+    "id": "0556596e-0556-596e-0556-596e0556596e",
+    "placed": "0556596e-0556-596e-0556-596e0556596e-placed",
+    "transform": [
+      240,
+      185,
+      760,
+      185,
+      760,
+      765,
+      240,
+      765
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/tshirt/tshirt-maroon-back.psd",
+  "masterChecksum": "bef4e155605e25b4e0cb131b5dab15de386e805e253bbd381db65b587b084fe6",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/tshirt/maroon/back.png",
+  "previewChecksum": "f75f5d2b0c76ed72789806798e6af682a915a182b809b062763d5929b62c7fcf",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/tshirt/maroon/back.png",
+  "proofPreviewChecksum": "fc7fc553fc0f0d35cdff671e480470fc10cef33563eca74b0e390a73ddb4969e",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

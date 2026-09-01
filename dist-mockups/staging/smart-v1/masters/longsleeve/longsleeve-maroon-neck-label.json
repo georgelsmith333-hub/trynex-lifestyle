@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "longsleeve",
+  "color": "maroon",
+  "view": "neck-label",
+  "sourceView": "front",
+  "sourcePreview": "previews/longsleeve-maroon-front.png",
+  "sourceChecksum": "1132017d2d678a13e13158ab061043893aa938bf93a878fc056c3332d560f7a9",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": "dist-mockups/staging/smart-v1/templates/longsleeve/neck-label.png",
+  "faceTemplateChecksum": "5239dafaa17062ba9d9ae14a9e1c15052bc8a32a3d580778edb85e5484ad524f",
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v1/templates/longsleeve/neck-label-alpha.png",
+  "faceAlphaTemplateChecksum": "bed9cf28705efa61e736459e71bc0bb169ca419c8cc1ad626f8bbaf8d7324956",
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/longsleeve/maroon/neck-label.png",
+  "baseChecksum": "469ee2196d03142a14cd5a04df06e013b66fad61649e685df07c9dfe94cb2797",
+  "printZone": {
+    "x": 150,
+    "y": 265,
+    "w": 700,
+    "h": 470
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "neck-label-crop",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - longsleeve-maroon-neck-label",
+    "id": "73b6a66f-73b6-a66f-73b6-a66f73b6a66f",
+    "placed": "73b6a66f-73b6-a66f-73b6-a66f73b6a66f-placed",
+    "transform": [
+      150,
+      265,
+      850,
+      265,
+      850,
+      735,
+      150,
+      735
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/longsleeve/longsleeve-maroon-neck-label.psd",
+  "masterChecksum": "47e6e70bfe6924c45dc4fa5e4ad28f6a97dc163f1a325e493285c437d96ff8be",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/longsleeve/maroon/neck-label.png",
+  "previewChecksum": "079ffb740aaf0a14cf7d5a1f43dc6a39403bca1ef2b423ac5ac727ad12a45d6b",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/longsleeve/maroon/neck-label.png",
+  "proofPreviewChecksum": "8df2b957bc3da864bb19494dfbb6bfb1f1621f0fc624d36098a016ad4b36c48a",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "mug",
+  "color": "black",
+  "view": "back",
+  "sourceView": "back",
+  "sourcePreview": "previews/mug-black-back.png",
+  "sourceChecksum": "d20df58b1371d26b9f68416f05b924165d96bc3292a0a6d7a2bfb0e0bb95f558",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/mug/black/back.png",
+  "baseChecksum": "854701cc0c9261845098ccdd52ed026664d7176de2fd5ca712605872a1801426",
+  "printZone": {
+    "x": 384,
+    "y": 220,
+    "w": 451,
+    "h": 580
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "cylinder",
+    "curvature": 0.16,
+    "seamPadding": 0.035,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - mug-black-back",
+    "id": "244bffd2-244b-ffd2-244b-ffd2244bffd2",
+    "placed": "244bffd2-244b-ffd2-244b-ffd2244bffd2-placed",
+    "transform": [
+      384,
+      220,
+      835,
+      220,
+      835,
+      800,
+      384,
+      800
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/mug/mug-black-back.psd",
+  "masterChecksum": "cd4b4f0df603f2eefad63e90017ea1b7eb04c6c0556655dfec6516cab9a42d41",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/mug/black/back.png",
+  "previewChecksum": "854701cc0c9261845098ccdd52ed026664d7176de2fd5ca712605872a1801426",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/mug/black/back.png",
+  "proofPreviewChecksum": "47feffb208244b67ed54ea7a5134a828365aad7af28a2d4778ee896dde7f170c",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "tshirt",
+  "color": "red",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "previews/tshirt-red-front.png",
+  "sourceChecksum": "4cc7ec3d19069fbc10461aec9a7f6e994db6f19b90f941b84e484237596926e8",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/tshirt/red/front.png",
+  "baseChecksum": "ead03ec6a792bcf017b8d5b0a3ebaafd16a8182132df6dcea9a90763625a6d98",
+  "printZone": {
+    "x": 240,
+    "y": 185,
+    "w": 520,
+    "h": 580
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - tshirt-red-front",
+    "id": "a5f81b7d-a5f8-1b7d-a5f8-1b7da5f81b7d",
+    "placed": "a5f81b7d-a5f8-1b7d-a5f8-1b7da5f81b7d-placed",
+    "transform": [
+      240,
+      185,
+      760,
+      185,
+      760,
+      765,
+      240,
+      765
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/tshirt/tshirt-red-front.psd",
+  "masterChecksum": "aab16c423609100a6f6ae71a1269f39a272390e99f707031ed240e2c87e3765d",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/tshirt/red/front.png",
+  "previewChecksum": "ead03ec6a792bcf017b8d5b0a3ebaafd16a8182132df6dcea9a90763625a6d98",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/tshirt/red/front.png",
+  "proofPreviewChecksum": "0e7534fa8fdf687f23ba373903ad2e047eb093600e2be8515ae38651ecdb6b64",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

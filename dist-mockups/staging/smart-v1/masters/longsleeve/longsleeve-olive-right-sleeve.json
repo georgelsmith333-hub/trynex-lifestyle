@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "longsleeve",
+  "color": "olive",
+  "view": "right-sleeve",
+  "sourceView": "front",
+  "sourcePreview": "previews/longsleeve-olive-front.png",
+  "sourceChecksum": "b6cf3e333eedd8afcb574aac3f095d9bc9de108bea0c070f6cbd901912f945af",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": "dist-mockups/staging/smart-v1/templates/longsleeve/right-sleeve.png",
+  "faceTemplateChecksum": "7645f6e4fa97227e065e20130e7577a2b45d97e00aae5dbd89e98165292abdc7",
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v1/templates/longsleeve/right-sleeve-alpha.png",
+  "faceAlphaTemplateChecksum": "df385738ff5b9a240a691dca19d158c6e977d9072d0d17f85b7aa6c7d919e53a",
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/longsleeve/olive/right-sleeve.png",
+  "baseChecksum": "3b79bf10f424640bff2b8cd2bb676fa60040dd88257b4462be4dbe4705ab09fc",
+  "printZone": {
+    "x": 175,
+    "y": 175,
+    "w": 650,
+    "h": 650
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "right-sleeve-polygon",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - longsleeve-olive-right-sleeve",
+    "id": "941f2559-941f-2559-941f-2559941f2559",
+    "placed": "941f2559-941f-2559-941f-2559941f2559-placed",
+    "transform": [
+      175,
+      175,
+      825,
+      175,
+      825,
+      825,
+      175,
+      825
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/longsleeve/longsleeve-olive-right-sleeve.psd",
+  "masterChecksum": "06749ec4decfae592d1b646a1762c137e6061aac0c07e8e6229e030c79b7e9cd",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/longsleeve/olive/right-sleeve.png",
+  "previewChecksum": "23367b62a2ebbc26ffd37b7d92bfcb53ddfd54724fffd4cf739d0a8a450f61d7",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/longsleeve/olive/right-sleeve.png",
+  "proofPreviewChecksum": "54ba0a7c8f644e2f75baf2c009920b8ceb65e8d64358b192ebf8fddcb66134df",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

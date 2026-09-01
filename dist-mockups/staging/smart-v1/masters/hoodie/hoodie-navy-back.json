@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "hoodie",
+  "color": "navy",
+  "view": "back",
+  "sourceView": "back",
+  "sourcePreview": "previews/hoodie-navy-back.png",
+  "sourceChecksum": "52041d82bdc27b643e0b15db90df2f4b7d7cf5cf74c56b5ac75e2fefb802cdcf",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/hoodie/navy/back.png",
+  "baseChecksum": "cca969ce71cb2d967f27d0f6f0e96e652ab7fe1cae011c6c5f760f521794a9d3",
+  "printZone": {
+    "x": 292,
+    "y": 184,
+    "w": 416,
+    "h": 448
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - hoodie-navy-back",
+    "id": "1e5eeede-1e5e-eede-1e5e-eede1e5eeede",
+    "placed": "1e5eeede-1e5e-eede-1e5e-eede1e5eeede-placed",
+    "transform": [
+      292,
+      184,
+      708,
+      184,
+      708,
+      632,
+      292,
+      632
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/hoodie/hoodie-navy-back.psd",
+  "masterChecksum": "13b3000dd0c47a49688658953a1746d5d01ccbd8fa4541b95981488ffa4a55dd",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/hoodie/navy/back.png",
+  "previewChecksum": "cca969ce71cb2d967f27d0f6f0e96e652ab7fe1cae011c6c5f760f521794a9d3",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/hoodie/navy/back.png",
+  "proofPreviewChecksum": "a01cb1ce805d7a4c924744ca07b8c856a7e5c71bf290fc6e4503230fa1716265",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

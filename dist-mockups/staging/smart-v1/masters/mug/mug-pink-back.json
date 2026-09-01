@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "mug",
+  "color": "pink",
+  "view": "back",
+  "sourceView": "back",
+  "sourcePreview": "previews/mug-pink-back.png",
+  "sourceChecksum": "90625738075451002354acb2d93fed1a0005ebc37255a477227fbd846615d415",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/mug/pink/back.png",
+  "baseChecksum": "b4869b6c4a64a4bd6b7808e01272a5183e69f23afedbdab5f137cd2e3ed873fb",
+  "printZone": {
+    "x": 384,
+    "y": 220,
+    "w": 451,
+    "h": 580
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "cylinder",
+    "curvature": 0.16,
+    "seamPadding": 0.035,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - mug-pink-back",
+    "id": "207b06fb-207b-06fb-207b-06fb207b06fb",
+    "placed": "207b06fb-207b-06fb-207b-06fb207b06fb-placed",
+    "transform": [
+      384,
+      220,
+      835,
+      220,
+      835,
+      800,
+      384,
+      800
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/mug/mug-pink-back.psd",
+  "masterChecksum": "4b702558f64fba1120268ec26cb521b452fc6bbaf4a6f314360916e306ffe517",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/mug/pink/back.png",
+  "previewChecksum": "b4869b6c4a64a4bd6b7808e01272a5183e69f23afedbdab5f137cd2e3ed873fb",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/mug/pink/back.png",
+  "proofPreviewChecksum": "951841c781e112c4e9d83bc4b7276dd78add2db8196e24924ee9787f4136dd48",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

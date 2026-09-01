@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "hoodie",
+  "color": "olive",
+  "view": "left-sleeve",
+  "sourceView": "front",
+  "sourcePreview": "previews/hoodie-olive-front.png",
+  "sourceChecksum": "008acb1a8d1c559f07950cda51eded78e565054864f054d8ea72d67ad7c703fa",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": "dist-mockups/staging/smart-v1/templates/hoodie/left-sleeve.png",
+  "faceTemplateChecksum": "eb972f16cb676116ae35df3553fbebd34ba4b8624768651fa30cad2ec1a4266b",
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v1/templates/hoodie/left-sleeve-alpha.png",
+  "faceAlphaTemplateChecksum": "f552cd054c906acbbd93ea94572a65d38814f165904ded03eb999710436ff9b1",
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/hoodie/olive/left-sleeve.png",
+  "baseChecksum": "2b7ec45d9cd727c85b3d66fbfda8ef71b33d938007d978d974b96a843c8f49fe",
+  "printZone": {
+    "x": 175,
+    "y": 175,
+    "w": 650,
+    "h": 650
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "left-sleeve-polygon",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - hoodie-olive-left-sleeve",
+    "id": "3104fe42-3104-fe42-3104-fe423104fe42",
+    "placed": "3104fe42-3104-fe42-3104-fe423104fe42-placed",
+    "transform": [
+      175,
+      175,
+      825,
+      175,
+      825,
+      825,
+      175,
+      825
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/hoodie/hoodie-olive-left-sleeve.psd",
+  "masterChecksum": "7ea77a955e581862165f7961bf5dafefb9b9c7098d2a212ea4b9b56f194d7dfb",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/hoodie/olive/left-sleeve.png",
+  "previewChecksum": "a27183a4b497c9ef7eaa006f1550f14f54870e36c78e1346e40fde6186590114",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/hoodie/olive/left-sleeve.png",
+  "proofPreviewChecksum": "964e8a5acab2bedf07b09f439fd978288b365ca2ac4bf89fc99f95f38ba3446d",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

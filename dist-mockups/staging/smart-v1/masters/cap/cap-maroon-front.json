@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "cap",
+  "color": "maroon",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "previews/cap-maroon-front.png",
+  "sourceChecksum": "4dd96bb3c32ce6bee5e5175d4f3b193b379c0ccc55b9ad6cb9855ea6b8f5b620",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/cap/maroon/front.png",
+  "baseChecksum": "695dafcbac5940e7ad857a223266c8e81bb13a988f1290ba972cd6e64dcd0f47",
+  "printZone": {
+    "x": 240,
+    "y": 260,
+    "w": 540,
+    "h": 320
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "cap-panel",
+    "curvature": 0.1,
+    "seamPadding": 0.025,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - cap-maroon-front",
+    "id": "99dd30bc-99dd-30bc-99dd-30bc99dd30bc",
+    "placed": "99dd30bc-99dd-30bc-99dd-30bc99dd30bc-placed",
+    "transform": [
+      240,
+      260,
+      780,
+      260,
+      780,
+      580,
+      240,
+      580
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/cap/cap-maroon-front.psd",
+  "masterChecksum": "14ae950b45b625aa76b51f9f0b9b9fb790792d5258abab06ef0ad0cc6f6c7109",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/cap/maroon/front.png",
+  "previewChecksum": "695dafcbac5940e7ad857a223266c8e81bb13a988f1290ba972cd6e64dcd0f47",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/cap/maroon/front.png",
+  "proofPreviewChecksum": "4e2336ddd20915370b98749ad460d92e8f1f2679fe47a97f422a81b2cd0dc907",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

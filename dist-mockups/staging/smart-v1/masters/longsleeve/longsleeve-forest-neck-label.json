@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "longsleeve",
+  "color": "forest",
+  "view": "neck-label",
+  "sourceView": "front",
+  "sourcePreview": "previews/longsleeve-forest-front.png",
+  "sourceChecksum": "ebc93f488eb3fd58e054f0d43dbc5420f96d978578cc37e04d0f608ba055286e",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": "dist-mockups/staging/smart-v1/templates/longsleeve/neck-label.png",
+  "faceTemplateChecksum": "5239dafaa17062ba9d9ae14a9e1c15052bc8a32a3d580778edb85e5484ad524f",
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v1/templates/longsleeve/neck-label-alpha.png",
+  "faceAlphaTemplateChecksum": "bed9cf28705efa61e736459e71bc0bb169ca419c8cc1ad626f8bbaf8d7324956",
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/longsleeve/forest/neck-label.png",
+  "baseChecksum": "6697bcf933894086b9b112cc3a6bfcc8a257cb378fd966191d42f79148dc2845",
+  "printZone": {
+    "x": 150,
+    "y": 265,
+    "w": 700,
+    "h": 470
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "neck-label-crop",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - longsleeve-forest-neck-label",
+    "id": "0ad7b922-0ad7-b922-0ad7-b9220ad7b922",
+    "placed": "0ad7b922-0ad7-b922-0ad7-b9220ad7b922-placed",
+    "transform": [
+      150,
+      265,
+      850,
+      265,
+      850,
+      735,
+      150,
+      735
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/longsleeve/longsleeve-forest-neck-label.psd",
+  "masterChecksum": "3dee3e3f32245e4422237b3a70ae625675ca101c524ffa19fab1b10022fc1360",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/longsleeve/forest/neck-label.png",
+  "previewChecksum": "70ee07dff13cd70d28a7514d0d070e1300cd25ab333c8d2214b996d362818beb",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/longsleeve/forest/neck-label.png",
+  "proofPreviewChecksum": "0696046ffb8cbbf1542e22313fb1dfe4c4d1c96e130e6b0d81e06257a2d2bc3e",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

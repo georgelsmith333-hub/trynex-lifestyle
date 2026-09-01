@@ -19,11 +19,14 @@ import json
 import sys
 from pathlib import Path
 
-from psd_tools import PSDImage
-from psd_tools.api.layers import Group, SmartObjectLayer
-
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_KIT = REPO_ROOT / "attached_assets" / "trynex-mockup-source-kit"
+LOCAL_PYTHON = REPO_ROOT / ".vendor" / "python"
+if LOCAL_PYTHON.is_dir():
+    sys.path.insert(0, str(LOCAL_PYTHON))
+
+from psd_tools import PSDImage
+from psd_tools.api.layers import Group, SmartObjectLayer
 
 # Layer names that indicate a design-placement target.
 ARTWORK_HINTS = ("artwork", "place design", "your design", "smart object", "design here")
@@ -61,6 +64,12 @@ def audit_doc(path: Path) -> dict:
     rec["bit_depth"] = psd.depth
     rec["color_mode"] = str(psd.color_mode)
     rec["has_composite_preview"] = bool(getattr(psd, "has_preview", lambda: False)())
+    try:
+        composite = psd.composite()
+        rec["composite_nonempty"] = composite is not None and composite.getbbox() is not None
+    except Exception as exc:  # noqa: BLE001
+        rec["composite_nonempty"] = False
+        rec["composite_error"] = f"{type(exc).__name__}: {exc}"
 
     layers = list(walk(psd))
     rec["layer_count"] = len(layers)
@@ -79,6 +88,12 @@ def audit_doc(path: Path) -> dict:
         if isinstance(lyr, SmartObjectLayer):
             smart_objects.append(name)
             rec.setdefault("smart_object_kinds", {})[name] = lyr.kind
+            smart_object = lyr.smart_object
+            rec.setdefault("embedded_smart_objects", {})[name] = {
+                "kind": smart_object.kind,
+                "bytes": len(smart_object.data or b"") if smart_object.kind == "data" else 0,
+                "type": getattr(smart_object, "type", None),
+            }
         if any(h in low for h in ARTWORK_HINTS):
             artwork_layers.append(name)
 
@@ -98,8 +113,8 @@ def main() -> int:
         json_out = Path(argv[argv.index("--json") + 1])
         argv = argv[: argv.index("--json")] + argv[argv.index("--json") + 2 :]
     kit = Path(argv[0]) if argv else DEFAULT_KIT
-    psd_dir = kit / "psd"
-    files = sorted([*psd_dir.glob("*.psd"), *psd_dir.glob("*.psb")])
+    psd_dir = kit / "psd" if (kit / "psd").is_dir() else kit
+    files = sorted([*psd_dir.rglob("*.psd"), *psd_dir.rglob("*.psb")])
     if not files:
         print(f"no PSD/PSB found under {psd_dir}", file=sys.stderr)
         return 2
@@ -124,6 +139,7 @@ def main() -> int:
     print(f"  bit depth     : {sorted(field('bit_depth'))}")
     print(f"  color modes   : {sorted(str(m) for m in field('color_mode'))}")
     print(f"  composite prv : {sorted(field('has_composite_preview'))}")
+    print(f"  composite data: {sorted(field('composite_nonempty'))}")
     lc = [r["layer_count"] for r in ok]
     print(f"  layers/doc    : min={min(lc)} max={max(lc)} avg={sum(lc)/len(lc):.1f}")
     so = [r["smart_object_count"] for r in ok]
@@ -138,6 +154,21 @@ def main() -> int:
     for f in no_art[:15]:
         print(f"    ! no artwork layer: {f}")
 
+    required_failures = []
+    if "--require-smart-objects" in sys.argv:
+        required_failures = [
+            r for r in results
+            if "error" in r
+            or r.get("smart_object_count") != 1
+            or not any("artwork" in name.lower() and name in r.get("smart_objects", []) for name in r.get("artwork_layers", []))
+            or not any(item.get("kind") == "data" and item.get("bytes", 0) > 0 for item in r.get("embedded_smart_objects", {}).values())
+            or not r.get("has_composite_preview")
+            or not r.get("composite_nonempty")
+        ]
+        print(f"  required gate : {'pass' if not required_failures else 'FAIL'}")
+        for r in required_failures:
+            print(f"    ! gate failure: {r.get('file', '<unreadable>')}")
+
     if json_out:
         json_out.write_text(json.dumps(results, indent=2, default=str))
         print(f"\nwrote {json_out}")
@@ -147,7 +178,7 @@ def main() -> int:
         if r["file"] == "tshirt-white-front.psd":
             print(json.dumps(r, indent=2, default=str))
             break
-    return 0
+    return 1 if required_failures else 0
 
 
 if __name__ == "__main__":

@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "mug",
+  "color": "purple",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "previews/mug-purple-front.png",
+  "sourceChecksum": "ea23483a29141de92e943ffb82619bfb9b17e0bbc78d865367f630023ee2ab6e",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/mug/purple/front.png",
+  "baseChecksum": "4da84a95d26b80a47ad121f9b063abcb66efb242e52be520e4ada732d3cc76f0",
+  "printZone": {
+    "x": 165,
+    "y": 220,
+    "w": 475,
+    "h": 580
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "cylinder",
+    "curvature": 0.16,
+    "seamPadding": 0.035,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - mug-purple-front",
+    "id": "94ea16bb-94ea-16bb-94ea-16bb94ea16bb",
+    "placed": "94ea16bb-94ea-16bb-94ea-16bb94ea16bb-placed",
+    "transform": [
+      165,
+      220,
+      640,
+      220,
+      640,
+      800,
+      165,
+      800
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/mug/mug-purple-front.psd",
+  "masterChecksum": "10267cafcb4eeafd855430b664790a6b439d2a1853d8f2be3403ab0583863d3a",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/mug/purple/front.png",
+  "previewChecksum": "4da84a95d26b80a47ad121f9b063abcb66efb242e52be520e4ada732d3cc76f0",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/mug/purple/front.png",
+  "proofPreviewChecksum": "8ea03d46dc91d240c8c4c87c45512046d9a75d5664c83cf8c192cf7a44197d77",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

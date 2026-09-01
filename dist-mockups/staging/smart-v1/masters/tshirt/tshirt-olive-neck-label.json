@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "tshirt",
+  "color": "olive",
+  "view": "neck-label",
+  "sourceView": "front",
+  "sourcePreview": "previews/tshirt-olive-front.png",
+  "sourceChecksum": "1b16fee2a06c66e857a8d8f4453a7b9f4c7aaa3d8ba7086c92c15acc70bdcef5",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": "dist-mockups/staging/smart-v1/templates/tshirt/neck-label.png",
+  "faceTemplateChecksum": "430739af219a07602bda44759cd199708382adef526cd0f60c104da0788f0146",
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v1/templates/tshirt/neck-label-alpha.png",
+  "faceAlphaTemplateChecksum": "3e795386d95d6827db54834b83af944b28c30d2e62b6c9fb9e8956fe65afe06e",
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/tshirt/olive/neck-label.png",
+  "baseChecksum": "306d0c073ab995a7e30c203018c6f8fdc04eee84900296ef6ac8eca7aca504ae",
+  "printZone": {
+    "x": 150,
+    "y": 265,
+    "w": 700,
+    "h": 470
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "neck-label-crop",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - tshirt-olive-neck-label",
+    "id": "f79bfbc8-f79b-fbc8-f79b-fbc8f79bfbc8",
+    "placed": "f79bfbc8-f79b-fbc8-f79b-fbc8f79bfbc8-placed",
+    "transform": [
+      150,
+      265,
+      850,
+      265,
+      850,
+      735,
+      150,
+      735
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/tshirt/tshirt-olive-neck-label.psd",
+  "masterChecksum": "2aae1a77e7a585d542e90b225ff6b783ef1ef1cfbbac845bdfe4c7e52b824ff1",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/tshirt/olive/neck-label.png",
+  "previewChecksum": "a53106c9fede10e3cfcbe621dfb96d96fae390a33cea7ca7ccf748f9af040e24",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/tshirt/olive/neck-label.png",
+  "proofPreviewChecksum": "e64f92c82f0d8341d6f8af4aa6209e619ab64fb822670bb453b4467eb65f60fd",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

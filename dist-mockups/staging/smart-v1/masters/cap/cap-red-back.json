@@ -1,0 +1,65 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v1.3",
+  "family": "cap",
+  "color": "red",
+  "view": "back",
+  "sourceView": "back",
+  "sourcePreview": "previews/cap-red-back.png",
+  "sourceChecksum": "3c032fb5323b700afb4066f08ad1a6dbe1cff4916c52dd0929ece221742fc1c7",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v1/sources/cap/red/back.png",
+  "baseChecksum": "1f9c6440d99d90aa540c9bd416333f3330b17fe89d96f3c1b170687e6cd6d983",
+  "printZone": {
+    "x": 285,
+    "y": 270,
+    "w": 430,
+    "h": 230
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "cap-panel",
+    "curvature": 0.1,
+    "seamPadding": 0.025,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - cap-red-back",
+    "id": "ee368c4d-ee36-8c4d-ee36-8c4dee368c4d",
+    "placed": "ee368c4d-ee36-8c4d-ee36-8c4dee368c4d-placed",
+    "transform": [
+      285,
+      270,
+      715,
+      270,
+      715,
+      500,
+      285,
+      500
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v1/masters/cap/cap-red-back.psd",
+  "masterChecksum": "a2ee9bbca298daddb1a912b4707bfd589339f08f94bd5eeeb4caf852e0cc1dc6",
+  "previewPath": "dist-mockups/staging/smart-v1/previews/cap/red/back.png",
+  "previewChecksum": "1f9c6440d99d90aa540c9bd416333f3330b17fe89d96f3c1b170687e6cd6d983",
+  "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/cap/red/back.png",
+  "proofPreviewChecksum": "3c57a9b371f84fc824bf2c73134cd09581b887b66b3212b0a1690321aeeb3e53",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}
