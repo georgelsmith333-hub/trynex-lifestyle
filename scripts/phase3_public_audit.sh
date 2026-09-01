@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -u
 STORE='https://trynex-lifestyle-shop.pages.dev'
-API='https://trynex-api.onrender.com'
+API='https://trynex-lifestyle-shop.pages.dev'
 printf 'PUBLIC ROUTES\n'
 for path in / /products /categories /design-studio /cart /checkout /track /admin/login /hampers /blog; do
   code=$(curl -L -sS --connect-timeout 15 --max-time 40 -o /dev/null -w '%{http_code}' "$STORE$path" || printf 'ERR')
