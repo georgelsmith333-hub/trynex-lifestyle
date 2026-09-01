@@ -191,6 +191,10 @@ overrides:
   nanoid: "^3.3.18"
   "brace-expansion@4": "^5.0.9"
   dompurify: "^3.4.13"
+  # Metro only needs bounded dimensions from local image buffers. The upstream
+  # image-size package remains advisory-vulnerable through its ICNS/JXL/HEIF
+  # parsers, so use the maintained local parser instead of a false version pin.
+  image-size: "file:vendor/image-size-safe"
 
 allowBuilds:
   core-js: true
