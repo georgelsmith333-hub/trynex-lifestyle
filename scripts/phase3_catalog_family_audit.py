@@ -1,7 +1,7 @@
 import json
 import urllib.request
 
-API = 'https://trynex-api.onrender.com'
+API = 'https://trynex-lifestyle-shop.pages.dev'
 def get(path):
     with urllib.request.urlopen(API + path, timeout=45) as response:
         return json.load(response)
