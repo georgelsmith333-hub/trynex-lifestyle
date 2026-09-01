@@ -1,7 +1,7 @@
 {
   "schema": "trynex-smart-master/v3",
   "generator": "tools/build-smartobject-mockups.mjs",
-  "generatorVersion": "smart-v1.3",
+  "generatorVersion": "smart-v1.4",
   "family": "hoodie",
   "color": "red",
   "view": "right-sleeve",

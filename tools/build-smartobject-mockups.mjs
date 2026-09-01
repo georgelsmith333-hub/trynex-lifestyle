@@ -23,7 +23,7 @@ const SOURCE_PREVIEWS = path.join(SOURCE_KIT, "previews");
 const SOURCE_MANIFEST = path.join(SOURCE_KIT, "manifest.json");
 
 const CANVAS = 1024;
-const BUILD_VERSION = "smart-v1.3";
+const BUILD_VERSION = "smart-v1.4";
 
 /** The complete canonical matrix. Missing faces are explicitly derived below. */
 export const CANONICAL = {
@@ -184,8 +184,29 @@ function colorizeTemplate(template, color, alphaMask) {
   return { data, width: template.width, height: template.height };
 }
 
+function clipFaceTemplateAlpha(alphaMask, family, view) {
+  if (!alphaMask || view !== "neck-label") return alphaMask;
+  const points = family === "tshirt"
+    ? [[130, 280], [240, 235], [784, 235], [894, 280], [894, 790], [130, 790]]
+    : family === "longsleeve"
+      ? [[130, 560], [250, 455], [380, 430], [650, 430], [780, 455], [894, 560], [894, 780], [130, 780]]
+      : [[140, 360], [260, 300], [760, 300], [880, 360], [880, 820], [140, 820]];
+  const data = new Uint8Array(alphaMask.data);
+  for (let y = 0; y < alphaMask.height; y++) {
+    for (let x = 0; x < alphaMask.width; x++) {
+      if (polygonContains(x, y, points)) continue;
+      const i = (y * alphaMask.width + x) * 4;
+      data[i] = 0;
+      data[i + 1] = 0;
+      data[i + 2] = 0;
+      data[i + 3] = 255;
+    }
+  }
+  return { data, width: alphaMask.width, height: alphaMask.height };
+}
+
 function deriveSurfaceBase({ family, color, view, source, sourceBack, faceTemplate, faceAlpha }) {
-  if (faceTemplate) return colorizeTemplate(faceTemplate, color, faceAlpha);
+  if (faceTemplate) return colorizeTemplate(faceTemplate, color, clipFaceTemplateAlpha(faceAlpha, family, view));
   if (view === "front" || view === "back") return source;
   const out = transparentCanvas(source.width, source.height);
   const mirror = (x) => source.width - 1 - x;

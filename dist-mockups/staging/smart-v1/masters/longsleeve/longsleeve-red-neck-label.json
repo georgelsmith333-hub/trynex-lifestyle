@@ -1,7 +1,7 @@
 {
   "schema": "trynex-smart-master/v3",
   "generator": "tools/build-smartobject-mockups.mjs",
-  "generatorVersion": "smart-v1.3",
+  "generatorVersion": "smart-v1.4",
   "family": "longsleeve",
   "color": "red",
   "view": "neck-label",
@@ -15,7 +15,7 @@
   "faceAlphaTemplatePath": "dist-mockups/staging/smart-v1/templates/longsleeve/neck-label-alpha.png",
   "faceAlphaTemplateChecksum": "bed9cf28705efa61e736459e71bc0bb169ca419c8cc1ad626f8bbaf8d7324956",
   "derivedBasePath": "dist-mockups/staging/smart-v1/sources/longsleeve/red/neck-label.png",
-  "baseChecksum": "6023b9e8ceb3b6c7f73518e318dafe5c8edc6682aca6e9c36446bf8a52eaea51",
+  "baseChecksum": "1dcf7442a64d28dab9728edb4cab532ebc8d66e68cc8bc0f8346c4c5dab3aecd",
   "printZone": {
     "x": 150,
     "y": 265,
@@ -55,11 +55,11 @@
     "proofDesign": "embedded-linked-file"
   },
   "masterPath": "dist-mockups/staging/smart-v1/masters/longsleeve/longsleeve-red-neck-label.psd",
-  "masterChecksum": "118ab86d25e527174eecc1c78defbe4a2350108c1c160c6db768c017c1bedaf2",
+  "masterChecksum": "c5ea9f74781dcef636f14545607ee4fe13ed76e9b3724e10e7bfb920118b3d23",
   "previewPath": "dist-mockups/staging/smart-v1/previews/longsleeve/red/neck-label.png",
-  "previewChecksum": "06148bca3bb7a21c8550f4f672b7f3cc90bea2c4c9aafdc569d3d3f6dced8552",
+  "previewChecksum": "39e4443b2ee0d7921c6eaa4cf42c2f990ed5eff462d79b2baff48c4b2e7a0077",
   "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/longsleeve/red/neck-label.png",
-  "proofPreviewChecksum": "beec6454fd12509d439444836676c184168f2ebd5ab03c4d2861b20559ffcebe",
+  "proofPreviewChecksum": "cedb661e3507d9152b1493b32d00fd280a709bbfdc06ef9e4dd7d0027e90e84c",
   "masterFormat": "psd",
   "reviewStatus": "candidate"
 }

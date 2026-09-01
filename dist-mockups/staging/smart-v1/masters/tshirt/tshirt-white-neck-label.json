@@ -1,7 +1,7 @@
 {
   "schema": "trynex-smart-master/v3",
   "generator": "tools/build-smartobject-mockups.mjs",
-  "generatorVersion": "smart-v1.3",
+  "generatorVersion": "smart-v1.4",
   "family": "tshirt",
   "color": "white",
   "view": "neck-label",
@@ -15,7 +15,7 @@
   "faceAlphaTemplatePath": "dist-mockups/staging/smart-v1/templates/tshirt/neck-label-alpha.png",
   "faceAlphaTemplateChecksum": "3e795386d95d6827db54834b83af944b28c30d2e62b6c9fb9e8956fe65afe06e",
   "derivedBasePath": "dist-mockups/staging/smart-v1/sources/tshirt/white/neck-label.png",
-  "baseChecksum": "f9eb457d5e8fa89b1435becace3c3e4452544c36070463e3e33a7c9b04a64c60",
+  "baseChecksum": "9b69273f2eaed21568d414c91a0e11c9fa9da86b27ceb6e447edfb01d2704834",
   "printZone": {
     "x": 150,
     "y": 265,
@@ -55,11 +55,11 @@
     "proofDesign": "embedded-linked-file"
   },
   "masterPath": "dist-mockups/staging/smart-v1/masters/tshirt/tshirt-white-neck-label.psd",
-  "masterChecksum": "fb682605b5039c06e4865d10a6ba37435efb128eb3c918b9acbd80cf375a5ddc",
+  "masterChecksum": "6c2e60cc85448c94c0011bad042d871731cf602169b0320f39210f7c7dcb9d17",
   "previewPath": "dist-mockups/staging/smart-v1/previews/tshirt/white/neck-label.png",
-  "previewChecksum": "54ba994f829c993cdf3ef7434cb4256bd9aec5dd86028d1c4d4fc2bf73e74eec",
+  "previewChecksum": "5ddd8084fe94b6c622ddedca88aff4528ce485655cf0efd738c92604746731ba",
   "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/tshirt/white/neck-label.png",
-  "proofPreviewChecksum": "ca0e96e2cc750462d58a325fc4bd9802935773cdf245b6ef8fb3013a988a5cf5",
+  "proofPreviewChecksum": "2236d81f2a499b635197df114109e48025c3996b6c4836b6b225667befac8c36",
   "masterFormat": "psd",
   "reviewStatus": "candidate"
 }

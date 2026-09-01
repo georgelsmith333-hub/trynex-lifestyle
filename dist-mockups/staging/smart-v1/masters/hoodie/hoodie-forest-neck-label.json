@@ -1,7 +1,7 @@
 {
   "schema": "trynex-smart-master/v3",
   "generator": "tools/build-smartobject-mockups.mjs",
-  "generatorVersion": "smart-v1.3",
+  "generatorVersion": "smart-v1.4",
   "family": "hoodie",
   "color": "forest",
   "view": "neck-label",
@@ -15,7 +15,7 @@
   "faceAlphaTemplatePath": "dist-mockups/staging/smart-v1/templates/hoodie/neck-label-alpha.png",
   "faceAlphaTemplateChecksum": "5b3771c5969395891cda8918448c0b222eb311039b3feeeb9e9188991bd7925f",
   "derivedBasePath": "dist-mockups/staging/smart-v1/sources/hoodie/forest/neck-label.png",
-  "baseChecksum": "2d18ccd92fa97a9e837ad05dece57ac079ff4a59548de7e5a517fd818d6ac2a1",
+  "baseChecksum": "3614c8023bc67654685c349b7acb61323fe6423144a55aa9fe6e2d15cae92e90",
   "printZone": {
     "x": 150,
     "y": 265,
@@ -55,11 +55,11 @@
     "proofDesign": "embedded-linked-file"
   },
   "masterPath": "dist-mockups/staging/smart-v1/masters/hoodie/hoodie-forest-neck-label.psd",
-  "masterChecksum": "a6687a731c3743555cf2ebf823013e212366795d9d25dd3cbc7e3f6c7ddb82fd",
+  "masterChecksum": "2cc60b6dc7b0337c23af744facde9a8da4fa2593c736f9f4b769dc6fa03ae7bf",
   "previewPath": "dist-mockups/staging/smart-v1/previews/hoodie/forest/neck-label.png",
-  "previewChecksum": "ee3385ab990ba4c6aea36a70fa97a170736dbfe448540578285ac81e43e7d17b",
+  "previewChecksum": "4053f41f117df31e7dd0e854b7858cc1dccb1a920b389c6da44ff222cdc912f9",
   "proofPreviewPath": "dist-mockups/staging/smart-v1/proof-previews/hoodie/forest/neck-label.png",
-  "proofPreviewChecksum": "57466f48996efe1f112c41a10cd43dc64d13d3d06d744e64ad2df9fbcf701cd6",
+  "proofPreviewChecksum": "89c5bdaba433e0e8f1a6e20c4efe0539e7c48ee3a49c3d57fef9c997ae3b4801",
   "masterFormat": "psd",
   "reviewStatus": "candidate"
 }
