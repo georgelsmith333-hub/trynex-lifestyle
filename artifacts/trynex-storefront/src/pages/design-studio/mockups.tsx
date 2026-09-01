@@ -9,6 +9,7 @@ import { getCanonicalMockupSpec, type MockupFamily } from "./canonical-mockup-sp
 import { COMPLETE_MOCKUP_MATRIX, getCompleteMockupEntry, type CompleteMockupFamily, type CompleteMockupView } from "./complete-mockup-matrix";
 import { ACCEPTED_SMART_V8_RELEASE } from "./smart-v8-release";
 import { acceptSmartV9Release, type AcceptedSmartV9Release, type SmartV9CandidateRelease } from "./smart-v9-release";
+import { SMART_V9_CANDIDATE } from "./smart-v9-candidate.generated";
 import type { PsdMaterialEffectLayer } from "./composer";
 import {
   PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE,
@@ -31,8 +32,8 @@ const capFront          = "/mockups/smart-v4/cap/white/front.png";
 const capBack           = "/mockups/smart-v4/cap/white/back.png";
 const waterBottleFront  = WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.front.url;
 
-// All active color and view assets resolve through the canonical smart-v4 matrix below.
-// No family-root or legacy fallback paths are permitted in the customer renderer.
+// All active color and view assets resolve through the accepted smart-v9 matrix.
+// Older roots remain only as fail-closed compatibility fallbacks.
 
 /** A single available garment colour (name + hex). */
 export interface ProductColor { name: string; hex: string }
@@ -496,9 +497,8 @@ export interface RuntimeMockupOverride {
 const runtimeMockupOverrides = new Map<string, RuntimeMockupOverride>();
 
 /**
- * Smart-v8 is deliberately inactive until every canonical surface has supplied
- * a reviewed asset URL and both visual and technical gates have passed. This
- * keeps smart-v4 as the only customer-facing resolver root during a rebuild.
+ * A release is deliberately inactive until every canonical surface has supplied
+ * a reviewed asset URL and both visual and technical gates have passed.
  */
 export interface SmartV8ReleaseAcceptance {
   version: "smart-v8";
@@ -555,9 +555,10 @@ export function getProductPickerFallbackSrc(product: DesignProduct): string | un
   return acceptedSmartV9Release ? undefined : product.frontSrc;
 }
 
-// This module is included only by the isolated smart-v8 review branch. The
+// These generated assets were promoted from the validated staging matrix. The
 // all-or-nothing guard above remains the sole activation path.
 activateSmartV8Release(ACCEPTED_SMART_V8_RELEASE);
+activateSmartV9Release(SMART_V9_CANDIDATE);
 
 function normalizeRuntimeKey(value: string): string {
   return value.trim().toLowerCase().replace(/[\\/]+/g, ":");
@@ -864,9 +865,15 @@ export function resolveMockup(
   // A reviewed T-shirt base is selected ahead of remote metadata. Runtime
   // gallery records remain useful for unsupported T-shirt views and other
   // families, but cannot replace an accepted PSD-derived colour/face pair.
-  const photoSrc = psdPhoto ?? sourceMatrixPhoto ?? runtimePhoto ?? waterBottleV11Photo ?? curated.photoSrc;
-  const cutoutSrc = psdPhoto ?? sourceMatrixPhoto ?? runtimePhoto ?? waterBottleV11Photo ?? curated.cutoutSrc;
-  const hasExactColorBase = Boolean(psdPhoto || sourceMatrixPhoto || runtimePhoto || waterBottleV11Photo);
+  // The accepted 188-surface release is the customer-facing source of truth.
+  // Keep the older PSD/source-matrix overrides behind it so an old admin record
+  // can never put the green-screen runtime back into the Studio.
+  const acceptedReleasePhoto = category === "waterbottle"
+    ? undefined
+    : acceptedSmartV9Release?.assetUrls[completeView.sourceKey];
+  const photoSrc = acceptedReleasePhoto ?? waterBottleV11Photo ?? psdPhoto ?? sourceMatrixPhoto ?? runtimePhoto ?? curated.photoSrc;
+  const cutoutSrc = acceptedReleasePhoto ?? waterBottleV11Photo ?? psdPhoto ?? sourceMatrixPhoto ?? runtimePhoto ?? curated.cutoutSrc;
+  const hasExactColorBase = Boolean(acceptedReleasePhoto || waterBottleV11Photo || psdPhoto || sourceMatrixPhoto || runtimePhoto);
 
   return {
     colorHex: hex,
@@ -878,12 +885,12 @@ export function resolveMockup(
     // the selected physical color.
     isColorPhoto: hasExactColorBase ? true : curated.isColorPhoto,
     cutoutNeedsTint: hasExactColorBase ? false : curated.cutoutNeedsTint,
-    photoKind: (psdPhoto || sourceMatrixPhoto || runtimePhoto) ? "opaque-photo" : curated.photoKind,
+    photoKind: acceptedReleasePhoto || psdPhoto || sourceMatrixPhoto || runtimePhoto ? "opaque-photo" : curated.photoKind,
     requiresTint: hasExactColorBase ? false : curated.requiresTint,
     allowSilhouetteShadow: false,
     printZone: sourceMatrix?.printZone ?? completeView.geometry.printZone,
     normalizedFrame: sourceMatrix?.normalizedFrame ?? normalizedFrame,
-    isOpaquePhoto: (psdPhoto || sourceMatrixPhoto || runtimePhoto) ? true : curated.photoKind === "opaque-photo",
+    isOpaquePhoto: acceptedReleasePhoto || psdPhoto || sourceMatrixPhoto || runtimePhoto ? true : curated.photoKind === "opaque-photo",
     editableMasterPath: sourceMatrix?.editableMasterPath ?? runtimeOverride?.masterFileUrl ?? masterPath,
     sourceKitKey,
     smartObject: createSmartMockupManifest({
@@ -899,7 +906,7 @@ export function resolveMockup(
       printZone: sourceMatrix?.printZone ?? completeView.geometry.printZone,
     }),
     psdMaterialEffects: isPsdTshirtRuntime ? getPsdTshirtMaterialEffects(color, face) : undefined,
-    source: sourceMatrixPhoto || runtimePhoto || psdPhoto ? "curated" : "source-kit",
+    source: acceptedReleasePhoto || sourceMatrixPhoto || runtimePhoto || psdPhoto ? "curated" : "source-kit",
   };
 }
 

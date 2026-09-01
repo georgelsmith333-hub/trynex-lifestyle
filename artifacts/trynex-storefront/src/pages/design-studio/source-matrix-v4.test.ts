@@ -18,7 +18,7 @@ describe("Long Sleeve source-matrix v4 corrective release", () => {
     }
   });
 
-  it("uses v4 Long Sleeve photos while preserving their v3 source geometry", () => {
+  it("uses accepted smart-v9 Long Sleeve photos while preserving source geometry", () => {
     const product = PRODUCTS.find((candidate) => candidate.id === "longsleeve");
     if (!product) throw new Error("fixture requires Long Sleeve");
     for (const colour of product.colors) for (const face of faces) {
@@ -27,8 +27,9 @@ describe("Long Sleeve source-matrix v4 corrective release", () => {
         face,
       );
       const resolved = resolveMockup(product, colour.hex, face);
-      expect(resolved.photoSrc).toBe(entry?.assetPath);
-      expect(resolved.cutoutSrc).toBe(entry?.assetPath);
+      const sourceColour = colour.name.toLowerCase().replaceAll(" ", "-");
+      expect(resolved.photoSrc).toBe(`/mockups/smart-v9/longsleeve/${sourceColour}/${face}.png`);
+      expect(resolved.cutoutSrc).toBe(`/mockups/smart-v9/longsleeve/${sourceColour}/${face}.png`);
       expect(resolved.printZone).toEqual(entry?.printZone);
       expect(resolved.normalizedFrame).toEqual(entry?.normalizedFrame);
       expect(resolved.editableMasterPath).toBe(entry?.editableMasterPath);
@@ -42,7 +43,7 @@ describe("Long Sleeve source-matrix v4 corrective release", () => {
     const hoodie = PRODUCTS.find((candidate) => candidate.id === "hoodie");
     if (!hoodie) throw new Error("fixture requires Hoodie");
     expect(resolveMockup(hoodie, "#d2bd88", "front").photoSrc)
-      .toBe("/mockups/source-matrix-v3/hoodie/sand/front.jpg");
+      .toBe("/mockups/smart-v9/hoodie/sand/front.png");
   });
 
   it("rejects stale Long Sleeve smart-v4 metadata in favour of the reviewed v4 matrix", () => {
@@ -55,7 +56,7 @@ describe("Long Sleeve source-matrix v4 corrective release", () => {
         ingestionStatus: "ready",
       }]);
       expect(resolveMockup(longsleeve, "#1e3a5f", "front").photoSrc)
-        .toBe("/mockups/source-matrix-v4/longsleeve/navy/front.jpg");
+        .toBe("/mockups/smart-v9/longsleeve/navy/front.png");
     } finally {
       setRuntimeMockupOverrides([]);
     }

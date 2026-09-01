@@ -7,7 +7,7 @@ describe("Hoodie source matrix v3", () => {
     expect(validateSourceMatrixV3()).toEqual([]);
   });
 
-  it("resolves every Hoodie colour and view to the reviewed v3 browser JPG", () => {
+  it("resolves every Hoodie colour and view to the accepted smart-v9 PNG", () => {
     const family = "hoodie";
     const product = PRODUCTS.find((candidate) => candidate.category === family)!;
     for (const colour of product.colors) for (const face of ["front", "back", "left-sleeve", "right-sleeve", "neck-label"] as const) {
@@ -15,9 +15,9 @@ describe("Hoodie source matrix v3", () => {
       const sourceColour = resolved.sourceKitKey.split(":")[1]!;
       const entry = getSourceMatrixV3Entry(family, sourceColour, face);
       expect(entry).toBeDefined();
-      expect(resolved.photoSrc).toBe(entry!.assetPath);
-      expect(resolved.cutoutSrc).toBe(entry!.assetPath);
-      expect(resolved.photoSrc).toMatch(/^\/mockups\/source-matrix-v3\/hoodie\//);
+      expect(resolved.photoSrc).toBe(`/mockups/smart-v9/hoodie/${sourceColour}/${face}.png`);
+      expect(resolved.cutoutSrc).toBe(`/mockups/smart-v9/hoodie/${sourceColour}/${face}.png`);
+      expect(resolved.photoSrc).toMatch(/^\/mockups\/smart-v9\/hoodie\//);
       expect(resolved.photoSrc).not.toContain("smart-v4");
       expect(resolved.editableMasterPath).toMatch(/^quarantine\/source-matrix-v3\//);
       expect(resolved.printZone).toEqual(entry!.printZone);
@@ -36,14 +36,14 @@ describe("Hoodie source matrix v3", () => {
   it("routes the corrected Hoodie Sand surface to the verified v3 browser derivative", () => {
     const hoodie = PRODUCTS.find((product) => product.category === "hoodie")!;
     const sand = hoodie.colors.find((colour) => colour.name === "Sand")!;
-    expect(resolveMockup(hoodie, sand.hex, "front").photoSrc).toBe("/mockups/source-matrix-v3/hoodie/sand/front.jpg");
+    expect(resolveMockup(hoodie, sand.hex, "front").photoSrc).toBe("/mockups/smart-v9/hoodie/sand/front.png");
   });
 
   it("rejects stale runtime smart-v4 metadata for verified Hoodie v3 surfaces", () => {
     const hoodie = PRODUCTS.find((product) => product.category === "hoodie")!;
     try {
       setRuntimeMockupOverrides([{ sourceKitKey: "hoodie/navy/front", imageUrl: "/mockups/smart-v4/hoodie/navy/front.png?v=smart-v4", ingestionStatus: "ready" }]);
-      expect(resolveMockup(hoodie, "#1e3a5f", "front").photoSrc).toBe("/mockups/source-matrix-v3/hoodie/navy/front.jpg");
+      expect(resolveMockup(hoodie, "#1e3a5f", "front").photoSrc).toBe("/mockups/smart-v9/hoodie/navy/front.png");
     } finally {
       setRuntimeMockupOverrides([]);
     }
