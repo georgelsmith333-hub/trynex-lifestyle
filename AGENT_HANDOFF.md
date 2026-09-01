@@ -177,33 +177,47 @@ Blocked facts that constrain all three options:
 ## Latest local follow-up pass (2026-09-01)
 
 ```text
-Status: locally verified — provider-side Redis and production promotion remain blocked
-Last completed: Fixed the Design Studio first-use guide so both visible dismiss
-  controls invoke its onDismiss callback; removed the hidden aria-hidden focusable
-  callback control. Hardened the admin emergency-password path so it is enabled
-  only when NODE_ENV is explicitly development; an unset environment can no longer
-  enable a bypass. Added accessible names/state to remaining Design Studio toolbar
-  and mobile actions, labelled ProductCard quick view, and moved the Cart mobile
-  checkout bar onto the shared mobile-sticky-bar safe-area styling.
-Stopped at: Secure replacement of the rejected Upstash REST token. The user supplied
-  screenshots containing a credential, but it was not copied into source, logs, or
-  Replit Secrets. The secure replacement-token prompt was declined.
-Files/areas changed: API admin login gate; storefront ProductCard, Cart, Design
-  Studio V2 toolbar/mobile actions, and V1 Studio guidance.
-Remaining work: Rotate the exposed Upstash token in Upstash and save the replacement
-  as UPSTASH_REDIS_REST_TOKEN through Replit Secrets; complete the provider-side
-  Render/Cloudflare promotion and live write-path verification.
-Blocker: The currently stored Upstash token is rejected by the provider. Redis
-  fallback is working, but distributed cache health remains degraded until the
-  token is rotated. Production write availability also still depends on the
-  unfinished primary Render promotion documented above.
-Next safe action: Rotate the exposed Upstash token, save only the replacement via
-  the secure Secrets UI, restart the API, and confirm /api/healthz reports Redis
-  healthy. Do not reuse the screenshot credential.
+Status: in progress — CF Pages and Upstash credentials still need provider repair
+Last completed: Added the first-use guide and print-quality gate to the active V2
+Design Studio route. Visible image layers below 600px on their shortest edge now
+block cart until replaced or prepared with HD; 600–1199px layers show a review
+warning. Added actionable issue controls, print-zone jump behavior, reserved
+category-image dimensions on the homepage, and mobile checkout scroll margins.
+The verified local release was published through the GitHub contents API for the
+homepage, checkout, active Studio, Studio guidance, and 48 additional safe text
+files. Credential-bearing attachments, screenshots, PDFs, and mobile cache output
+were excluded.
+Stopped at: Provider delivery for the remaining two files. GitHub's connector
+accepted the targeted storefront files and most safe text files but returned a
+Cloudflare 403 for api-server/src/app.ts and storefront/index.html, including
+when the GitHub GraphQL commit endpoint was tried. Those two files are therefore
+not confirmed on GitHub main.
+Files/areas changed: active Design Studio quality workflow and guidance; homepage
+image layout; checkout mobile focus spacing; plus the earlier admin, API,
+gateway, mobile, and operational reliability work.
+Remaining work: Publish the two provider-rejected files through the normal
+GitHub source-control path, wait for Cloudflare Pages to build that commit,
+rotate the rejected Upstash token through Replit Secrets, and complete the
+Render primary promotion/live write-path verification.
+Blocker: The local API still reports Redis credentials rejected and falls back
+to in-process caching. Replit deployment metadata reports this project is not
+published. The public Pages URL is live and its read-only standby API reports
+healthy, but its runtimeRole remains standby, so production writes are not
+proven available. Do not copy credentials from attachments.
+Next safe action: Push the remaining source files with the repository's normal
+secure GitHub flow, then confirm the Pages build and test a safe invalid-write
+probe plus authenticated admin path. Separately rotate the Upstash token and
+save only the replacement through Replit Secrets.
 Verification: Storefront typecheck and 21 test files/71 tests passed; API typecheck
-  and 5 test files/20 tests passed; workflow restarted successfully; local
-  /api/healthz, /api/products, /api/public-stats, and /api/settings returned 200;
-  browser logs showed no runtime errors; git diff --check passed.
+and 5 test files/20 tests passed; workflow restarted successfully; local
+/api/healthz, /api/products, and /api/settings returned 200; browser logs showed
+no runtime errors; git diff --check passed. GitHub main contains the targeted
+homepage, checkout, and Studio blobs plus 48 additional safe source updates.
+The replacement Render credential authenticates and exposes only one active
+service, trynex-lifestyle-main-render; the Cloudflare token returns Invalid API
+Token and Upstash returns WRONGPASS/user disabled. Live Pages remains on the
+standby runtime until the correct Cloudflare deployment and primary routing are
+restored.
 ```
 
 ## Latest live health check (2026-08-29)

@@ -67,14 +67,10 @@ app.use(
 // silently fall back to a permissive policy.
 const DEFAULT_PROD_ORIGINS = [
   "https://trynex-lifestyle-shop.pages.dev",
-  "https://www.trynexshop.com",
-  "https://trynexshop.com",
 ];
 
 const DEFAULT_DEV_ORIGINS = [
   "https://trynex-lifestyle-shop.pages.dev",
-  "https://www.trynexshop.com",
-  "https://trynexshop.com",
   "http://localhost:5173",
   "http://localhost:8080",
   "http://localhost:8081",
@@ -130,10 +126,8 @@ app.use(
         return callback(null, true);
       }
       // Allow the exact Cloudflare Pages production host plus any Pages preview
-      // hostname belonging to this project. Also accept both custom-domain forms.
-      if (/^https:\/\/(?:[a-z0-9-]+\.)?trynex-lifestyle-shop\.pages\.dev$/i.test(origin)
-        || origin === "https://www.trynexshop.com"
-        || origin === "https://trynexshop.com") {
+      // hostname belonging to this project.
+      if (/^https:\/\/(?:[a-z0-9-]+\.)?trynex-lifestyle-shop\.pages\.dev$/i.test(origin)) {
         return callback(null, true);
       }
       return callback(new Error(`CORS: origin ${origin} not allowed`));
