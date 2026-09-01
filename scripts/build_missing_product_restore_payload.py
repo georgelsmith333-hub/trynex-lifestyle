@@ -3,7 +3,7 @@ import json
 import re
 import requests
 
-API = "https://trynex-api.onrender.com"
+API = "https://trynex-lifestyle-shop.pages.dev"
 source = Path("artifacts/api-server/add-trendy-products.ts").read_text()
 body = source.split("const products = [", 1)[1].split("\n  ];", 1)[0]
 blocks = re.findall(r"\{(.*?)\n\s*\},", body, re.S)
