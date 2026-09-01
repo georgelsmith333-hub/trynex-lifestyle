@@ -70,6 +70,11 @@ the active V2 implementation; `/design-studio-v1` and `/design-studio-v2`
 are compatibility aliases to that route. The source-kit/runtime mockup audit
 now validates the editable manifest as well as public assets.
 
+The next approved workstream is the genuine six-family PSD/PSB Smart Mockup
+system described in `docs/superpowers/specs/2026-09-01-six-family-psd-smart-mockup-design.md`.
+It uses existing photos, cutouts, masks, and geometry assets, generates real
+embedded Smart Object masters, and keeps customer rendering local and realtime.
+
 ## Latest local studio reliability pass (2026-09-01)
 
 ```text
@@ -83,13 +88,13 @@ Stopped at: After pushing the verified source to GitHub main and confirming both
 Files/areas changed: Design Studio V2 state/history and panels, product switcher,
   generated sticker/QR placement, and React type compatibility in sibling
   preview/design-system artifacts.
-Remaining work: Let the GitHub CI and active-app checks finish. The mockup
-  master-layer decision remains paused as documented below.
+Remaining work: The approved six-family Smart Mockup implementation is now the
+  active workstream; the master-layer decision is no longer paused.
 Blocker: None for the approved studio reliability scope. Replit publishing is
   intentionally out of scope; local Redis credentials are degraded but the
   documented fallback is operating.
-Next safe action: Monitor the GitHub checks; no runtime code change is needed
-  unless a check reports a new failure.
+Next safe action: Implement and validate one representative real Smart Object
+  master per family before generating the complete 188-surface release.
 Verification: Storefront typecheck and 76 tests passed; API typecheck passed;
   full workspace typecheck passed; storefront production build passed; the
   managed workflow restarted cleanly; local healthz/products/settings/robots/
@@ -136,35 +141,29 @@ browser screenshot could not be captured because this checkout is absent from th
 artifact preview registry and the browser-use CLI is unavailable.
 ```
 
-### Paused workstream — mockup master layer system
+### Active workstream — mockup master layer system
 
 ```text
-Status: blocked — design decision required (mockup master layer system)
+Status: in progress — approved genuine Smart Object rebuild
 Last completed: Direct binary audit of all 108 PSD/PSB masters in attached_assets/trynex-mockup-source-kit/psd using psd-tools 1.18.0. Findings written to MOCKUP_MASTER_AUDIT_2026-08-28.md and committed (8ee94e1). Re-runnable auditor added at tools/audit_psd_masters.py.
-Stopped at: After publishing the audit and pushing the session branch. No master has been rebuilt; no smart-v9 candidate exists.
-Files/areas changed: MOCKUP_MASTER_AUDIT_2026-08-28.md (new), tools/audit_psd_masters.py (new), audit/psd-composites/*.png (6 renders), and this handoff. No product or runtime code was modified.
-Remaining work: Decide the mockup layer strategy, then rebuild the 94 missing canonical surfaces. See "Mockup rebuild decision" below.
-Blocker: There is no smart-object system to repair — none of the 108 masters contains a smart object, and the "Artwork — Place Design Here" layer is a fully transparent empty pixel layer. psd-tools can READ smart objects but cannot author them, and no Photoshop/GIMP/Inkscape binary exists in the shell. Building genuine smart-object masters therefore requires either an external Photoshop step by the owner or a deliberate move to a documented image+geometry pipeline.
-Next safe action: Get the owner's decision on the three options in "Mockup rebuild decision" before writing any asset or runtime code. Meanwhile PR #45 (mobile Spin & Win) is complete, green, and awaiting merge authorization.
+Stopped at: After the approved design was written. No new master or runtime asset has been released yet.
+Files/areas changed: The audit and auditor remain the baseline; the approved specification is at `docs/superpowers/specs/2026-09-01-six-family-psd-smart-mockup-design.md`, and `AGENTS.md` now records the system inputs, outputs, and fail-closed rules.
+Remaining work: Build and validate the 188 canonical surfaces, including genuine embedded Smart Objects, reviewed missing faces, runtime manifest integration, and browser/PSD composite comparisons.
+Blocker: None for starting the implementation. The writer must prove a real Smart Object round trip; if a free writer cannot produce a document that `psd-tools` reopens as a Smart Object, stop and repair the writer path rather than shipping another raster kit.
+Next safe action: Build one representative surface for each family, run the structural auditor, and review composites before expanding to all 188 surfaces.
 Verification: 108/108 masters opened cleanly; all 1024x1024 8-bit RGB 4-channel; 6 layers each; 0 smart objects in all 108; artwork layer measured 0/1048576 non-zero alpha pixels; colour variants measured at luminance correlation ~0.0 against the white master; coverage arithmetic 188 needed vs 94 canonical present. Composite renders committed for visual confirmation.
 ```
 
 ## Mockup rebuild decision (open — owner must choose)
 
 The previous chat attempted to build a PSD/PSB smart-object system. The audit
-proved no such system exists in the assets. Three honest paths forward:
+proved no such system exists in the assets. The owner has now approved:
 
-  A. True smart-object masters — owner authors/commissions real layered PSD
-     masters in Photoshop with live smart objects + displacement. Highest
-     fidelity, slowest, needs work outside this sandbox.
-  B. Image + geometry pipeline — abandon the PSD claim, ship verified flat
-     renders plus a per-surface geometry model (print zone, warp mesh, shadow
-     map) that the composer already partly supports. Achievable in-sandbox;
-     must stop describing the system as "PSD/PSB smart object".
-  C. Hybrid — keep PSDs as editable source-of-truth for the 94 that exist,
-     generate the missing 94 as geometry-driven renders.
+  Rebuild genuine Smart Object masters from the existing source photos,
+  cutouts, masks, and geometry assets, while using the same manifest to drive
+  the local realtime browser compositor.
 
-Blocked facts that constrain all three options:
+The approved approach retains these constraints:
   - 94 of 188 canonical surfaces have no master at all (see audit §3).
   - Water bottle is hash-pinned and single-colour; the kit's 14 extra bottle
      colours are non-canonical and must not ship.
