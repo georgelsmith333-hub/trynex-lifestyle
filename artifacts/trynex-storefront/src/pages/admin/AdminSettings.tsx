@@ -607,7 +607,7 @@ export default function AdminSettings() {
               Required for <strong>Facebook Login</strong>. Get it from{" "}
               <a href="https://developers.facebook.com/apps" target="_blank" rel="noopener noreferrer" className="text-orange-500 underline">developers.facebook.com</a>{" "}
               → Your App → Settings → Basic.
-              Add <strong>trynexshop.com</strong> as an App Domain.
+              Add <strong>trynex-lifestyle-shop.pages.dev</strong> as an App Domain.
             </p>
           </Field>
         </SectionCard>
@@ -616,7 +616,7 @@ export default function AdminSettings() {
         <SectionCard icon={Search} title="Google Search Console" iconColor="#4285F4">
           <Field label="Google Site Verification Code" full>
             <input {...register("googleSiteVerification")} className={inputClass} style={inputStyle} placeholder="abc123xyz..." />
-            <p className="text-xs text-gray-400 mt-1">Paste the content value from the Google Search Console verification meta tag. This allows Google to verify site ownership for trynexshop.com and enable indexing.</p>
+            <p className="text-xs text-gray-400 mt-1">Paste the content value from the Google Search Console verification meta tag. This allows Google to verify site ownership for trynex-lifestyle-shop.pages.dev and enable indexing.</p>
           </Field>
         </SectionCard>
 
