@@ -1,6 +1,6 @@
 # TryNex Lifestyle — Production Source of Truth
 
-**Last reconciled:** 2026-08-17
+**Last reconciled:** 2026-09-01
 
 This document defines the production path for TryNex Lifestyle. It must be updated when deployment, routing, authentication, database, or storefront ownership changes.
 
@@ -9,7 +9,7 @@ This document defines the production path for TryNex Lifestyle. It must be updat
 | Concern | Production source of truth | Status and evidence |
 |---|---|---|
 | Public storefront | `artifacts/trynex-storefront/` | **ACTIVE**. Vite + React storefront and admin panel. |
-| Storefront route entry | `artifacts/trynex-storefront/src/main.tsx` and `src/App.tsx` | **ACTIVE**. `/design-studio` uses V2; V1 remains a compatibility/rollback route. |
+| Storefront route entry | `artifacts/trynex-storefront/src/main.tsx` and `src/App.tsx` | **ACTIVE**. `/design-studio` is the public V1 studio; V2 remains an explicit comparison/rollback route. |
 | Active design studio | `src/pages/studio/DesignStudioV2.tsx` | **ACTIVE / parity incomplete**. Production route is `/design-studio`; `/design-studio-v2` is explicit comparison. |
 | Legacy design studio | `src/pages/DesignStudio.tsx` | **LEGACY / PRESERVED**. `/design-studio-v1` remains available until parity is evidenced. |
 | Shared product geometry | `src/pages/design-studio/mockups.tsx` | **SHARED**. Product families and print zones must not be duplicated. |
@@ -17,9 +17,9 @@ This document defines the production path for TryNex Lifestyle. It must be updat
 | 3D preview | `src/components/garment3d.tsx` and studio viewer components | **ACTIVE** for curved products; must remain consistent with print-zone geometry. |
 | Backend API | `artifacts/api-server/` | **ACTIVE** Express API compiled with esbuild. |
 | API entry/build | `artifacts/api-server/src/index.ts`; `node ./build.mjs` | **ACTIVE**. API source changes require a rebuild before runtime verification. |
-| API production service | Render service `trynex-api` at `https://trynex-api.onrender.com` | **ACTIVE**. Latest verified deployment was commit `3b0e9f070`. |
+| API production service | Render service `trynex-lifestyle-main-render` at `https://trynex-lifestyle-main-render.onrender.com` | **ACTIVE PRIMARY**. Sole write authority for checkout, admin, auth, AI, and scheduled work. |
 | API proxy | `functions/api/[[path]].ts` | **ACTIVE** Cloudflare Pages Function forwarding `/api/*` to the Render API through `API_URL`. |
-| Pages project | `trynex-lifestyle-shop` | **ACTIVE** Cloudflare Pages project serving the storefront. |
+| Pages project | `trynex-lifestyle-shop` at `https://trynex-lifestyle-shop.pages.dev` | **ACTIVE** Cloudflare Pages project and canonical customer URL. |
 | Pages configuration | `wrangler.toml` | **ACTIVE**. Build is rooted at `artifacts/trynex-storefront`; proxy target remains a Pages environment setting. |
 | Database schema | `lib/db/src/schema/index.ts` and `lib/db/migrations/` | **ACTIVE** Drizzle/PostgreSQL schema and migrations. |
 | Transactional DB routing | `lib/db/src/index.ts` | **ACTIVE / hardened**. Catalog-only Products shards are excluded from transactional failover candidates. |
