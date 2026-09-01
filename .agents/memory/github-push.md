@@ -31,16 +31,13 @@ Replit's `replit-git-askpass` intercepts plain `https://TOKEN@github.com/...` UR
 4. Resolve any conflicts manually, then commit and push.
 5. Force push is only needed when the histories are truly unrelated or the remote has diverged in a way that must be overwritten.
 
-## Token to use
+## Integration fallback
 
-Use the environment variable that is currently valid:
-- `GITHUB_ACCESS_TOKEN`
-- `GITHUB_PERSONAL_ACCESS_TOKEN`
-- `GITHUB_ACCESS_TOKE` (if added by the user)
+Shell Git authentication can reject a stale workspace token even while the installed GitHub integration has a healthy, write-capable connection. In that case, use the integration's SDK Git Data API to create a tree, commit, and update `heads/main`; do not request or expose a token.
 
-If a token returns HTTP 401, try the next one. The user may need to refresh the token in Replit secrets.
+**Why:** The integration can refresh its own authorization, while environment-provided tokens can expire independently. Publishing through the SDK also avoids putting credentials in process arguments or logs.
 
-Token validity flips over time in this project (tokens have previously all failed, then later worked again after a refresh). Don't assume expired from a stale note — verify with a cheap `git ls-remote origin HEAD` before concluding push is blocked. The current `GITHUB_TOKEN` works for fetch/push.
+**How to apply:** Verify the current remote ref first, build the new tree from that parent, create one commit, and update the branch with `force: false`. Record the returned commit SHA and verify the branch again.
 
 ## Push protection
 
