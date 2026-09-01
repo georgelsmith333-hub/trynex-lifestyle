@@ -16,9 +16,9 @@
  * Roles (4-Render multi-route):
  *   primary      4th Render service — SOLE write authority: checkout, orders,
  *                admin, AI generation, auth, edits, backups/scheduler.
- *   reads        Render 2 + Render 3 — stateless, read-only standbys serving
- *                catalog/health/blog/sitemap traffic in round-robin with
- *                bounded failover. They reject mutations server-side via
+ *   reads        Render 2 — the currently healthy stateless, read-only standby
+ *                serving catalog/health/blog/sitemap traffic during bounded
+ *                failover. It rejects mutations server-side via
  *                TRYNEX_RUNTIME_ROLE (standby/dr).
  *   retired      Render 1 (trynex-api) — suspended by Render (5GB bandwidth
  *                allowance). NOT routed to. Re-add below ONLY after it is
@@ -76,7 +76,6 @@ export const PRODUCTION_ORIGINS: OriginRoles = {
   ],
   reads: [
     "https://trynex-api-standby-2.onrender.com",
-    "https://trynex-api-standby-3.onrender.com",
   ],
 };
 

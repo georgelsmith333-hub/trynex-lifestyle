@@ -65,9 +65,9 @@ mobile app, promotional experience, and brand-system artifact.
 ## Current open work
 
 The TryNex Design Studio audit is in progress. The public `/design-studio` route
-is V1; `/design-studio-v1` is its compatibility alias and `/design-studio-v2`
-remains an explicit comparison/rollback route. The source-kit/runtime mockup
-audit now validates the editable manifest as well as public assets.
+is the active V2 implementation; `/design-studio-v1` and `/design-studio-v2`
+are compatibility aliases to that route. The source-kit/runtime mockup audit
+now validates the editable manifest as well as public assets.
 
 ## Required status at every handoff
 
@@ -77,40 +77,30 @@ pausing work, or transferring the project.
 ### Active workstream — 4-Render main promotion
 
 ```text
-Status: blocked — verified release cannot be delivered with the current GitHub access path
-Last completed: Confirmed the fourth Render service is reachable as the committed
-  primary, standby-2 is healthy, and standby-3 is suspended. Completed a local
-  reliability pass that bounds the homepage catalogue request, prevents
-  customizable-filter cache collisions, replaces product-cache fan-out deletion
-  with one replicated generation write, normalizes legacy Render image URLs, and
-  enforces the gateway's declared total read budget. Rebuilt/restarted the API.
-  Fresh checks passed: API typecheck/tests (5 files, 20 tests), storefront
-  typecheck/tests (21 files, 71 tests)/build, gateway copies identical, local
-  liveness/readiness/products/public-stats checks, and git diff --check.
-Stopped at: Delivering the latest local release to the GitHub repository. The
-  protected GitHub secret is present in the project inventory, but it is not injected
-  into the available push runner; no remote named origin exists in this checkout.
-  A temporary release workflow was tested and removed after reporting
-  github-secret-env-missing.
+Status: complete for the external production rollout
+Last completed: Published the verified release to GitHub main through a clean
+  history that excludes credential-bearing attachments. The active Render service
+  auto-deployed commit ca1c202 and reached live status. Cloudflare Pages now
+  routes the gateway to the primary Render service, whose health reports DB
+  healthy, Redis healthy:primary, R2 storage, primary runtime, and scheduler on.
+Stopped at: No runtime blocker remains for the approved CF Pages + Render +
+  Upstash scope. Cloudflare's management API token returns Invalid API Token,
+  but the Pages GitHub deployment and live gateway are functioning.
 Files/areas changed: customer-facing URL references, API CORS defaults, Telegram
   summary URL, mobile production routing safeguards, operational audit scripts,
   docs/SOURCE_OF_TRUTH.md, API Redis/product caching and gateway budget handling,
   storefront homepage payload/image normalization, and this handoff. The attached
   credential-bearing text file and current evidence screenshots are excluded from
   the release history.
-Remaining work: Push the latest local release to the connected GitHub main branch,
-  let Cloudflare Pages auto-deploy, then re-run the live write/admin verification
-  checklist. Reconsider or replace suspended standby-3 before relying on it for
-  read failover.
-Blocker: Provider delivery access only. The GitHub connector is not authorized in
-  this environment and the protected token cannot be read by the shell or temporary
-  workflow. Do not copy credentials from attachments or re-add a retired domain.
-Next safe action: Authorize the GitHub integration or push the latest local release
-  through the repository's normal secure source-control flow; then verify the Pages
-  deployment. UptimeRobot is optional alerting, not a runtime dependency: Pages is
-  static, and the fourth Render service is configured with a persistent primary
-  instance.
-Verification: Local app and API are healthy; live Pages storefront, products,
+Remaining work: None for the external production rollout. The mockup master-layer
+  decision remains paused as documented below.
+Blocker: None for live storefront/API traffic. Do not copy credentials from
+  attachments or re-add a retired domain.
+Next safe action: Monitor the active Render service and Pages gateway. Replace
+  only CLOUDFLARE_API_TOKEN through the secure Secrets UI before future Cloudflare
+  API management, if needed.
+Verification: See the latest external production verification below. Local app
+  and API checks, typechecks, tests, workflow restart, and git diff --check passed.
   readiness, public stats, sitemap, and robots routes returned 200. Live headers
 still show the older standby gateway because the latest local release has not
 reached GitHub. Fresh local API checks and application build passed. A fresh
@@ -177,48 +167,58 @@ Blocked facts that constrain all three options:
 ## Latest local follow-up pass (2026-09-01)
 
 ```text
-Status: in progress — CF Pages and Upstash credentials still need provider repair
-Last completed: Added the first-use guide and print-quality gate to the active V2
-Design Studio route. Visible image layers below 600px on their shortest edge now
-block cart until replaced or prepared with HD; 600–1199px layers show a review
-warning. Added actionable issue controls, print-zone jump behavior, reserved
-category-image dimensions on the homepage, and mobile checkout scroll margins.
-The verified local release was published through the GitHub contents API for the
-homepage, checkout, active Studio, Studio guidance, and 48 additional safe text
-files. Credential-bearing attachments, screenshots, PDFs, and mobile cache output
-were excluded.
-Stopped at: Provider delivery for the remaining two files. GitHub's connector
-accepted the targeted storefront files and most safe text files but returned a
-Cloudflare 403 for api-server/src/app.ts and storefront/index.html, including
-when the GitHub GraphQL commit endpoint was tried. Those two files are therefore
-not confirmed on GitHub main.
-Files/areas changed: active Design Studio quality workflow and guidance; homepage
-image layout; checkout mobile focus spacing; plus the earlier admin, API,
-gateway, mobile, and operational reliability work.
-Remaining work: Publish the two provider-rejected files through the normal
-GitHub source-control path, wait for Cloudflare Pages to build that commit,
-rotate the rejected Upstash token through Replit Secrets, and complete the
-Render primary promotion/live write-path verification.
-Blocker: The local API still reports Redis credentials rejected and falls back
-to in-process caching. Replit deployment metadata reports this project is not
-published. The public Pages URL is live and its read-only standby API reports
-healthy, but its runtimeRole remains standby, so production writes are not
-proven available. Do not copy credentials from attachments.
-Next safe action: Push the remaining source files with the repository's normal
-secure GitHub flow, then confirm the Pages build and test a safe invalid-write
-probe plus authenticated admin path. Separately rotate the Upstash token and
-save only the replacement through Replit Secrets.
-Verification: Storefront typecheck and 21 test files/71 tests passed; API typecheck
-and 5 test files/20 tests passed; workflow restarted successfully; local
-/api/healthz, /api/products, and /api/settings returned 200; browser logs showed
-no runtime errors; git diff --check passed. GitHub main contains the targeted
-homepage, checkout, and Studio blobs plus 48 additional safe source updates.
-The replacement Render credential authenticates and exposes only one active
-service, trynex-lifestyle-main-render; the Cloudflare token returns Invalid API
-Token and Upstash returns WRONGPASS/user disabled. Live Pages remains on the
-standby runtime until the correct Cloudflare deployment and primary routing are
-restored.
+Status: complete — external production rollout verified
+Last completed: Added the Design Studio first-use guide and print-quality gate,
+published the verified source release to GitHub main using a clean history, and
+confirmed the active Render service deployed commit ca1c202. Cloudflare Pages
+now routes to the Render primary. Production health reports DB healthy, Redis
+healthy:primary, R2 storage, primary runtime, and scheduler enabled.
+Stopped at: No runtime blocker remains for the approved CF Pages + Render +
+Upstash scope. Cloudflare's management API token returns Invalid API Token, but
+the GitHub-connected Pages deployment and live gateway are functioning.
+Files/areas changed: Design Studio quality workflow and guidance, homepage image
+layout, mobile checkout spacing, API/gateway reliability, deployment routing,
+and operational handoff. Credential-bearing attachments, screenshots, PDFs, and
+cache output were excluded from the release.
+Remaining work: None for external production. The mockup master-layer decision
+remains paused as documented below. Rotate CLOUDFLARE_API_TOKEN only if future
+automated Cloudflare API administration is needed.
+Blocker: None for live storefront/API traffic. Replit publishing is intentionally
+out of scope. Do not copy credentials from attachments or re-add a retired
+domain.
+Next safe action: Monitor the active Render service and Pages gateway. Replace
+only CLOUDFLARE_API_TOKEN through the secure Secrets UI before future Cloudflare
+API management, if needed.
+Verification: GitHub main is ca1c202; Render deploy
+dep-dab1mv68bjmc7380ovk0 is live on that commit. Both Pages and Render returned
+200 for healthz, liveness, readiness, products, settings, robots.txt, and
+sitemap.xml. Invalid POST /api/orders returned the expected 400 validation
+response without creating an order. Pages health reported runtimeRole=primary,
+redis_detail=healthy:primary, and schedulerEnabled=true. Storefront tests (21
+files, 71 tests), API tests (5 files, 20 tests), typechecks, workflow restart,
+browser logs, and git diff --check passed. The artifact registry could not
+capture a screenshot of the external Pages deployment.
 ```
+
+## Latest external production verification (2026-09-01)
+
+The external production rollout is complete for the approved Cloudflare Pages +
+Render + Upstash scope. GitHub `main` is `ca1c202`; Render deploy
+`dep-dab1mv68bjmc7380ovk0` is live on that commit; and the active service is
+`trynex-lifestyle-main-render`. Cloudflare Pages now routes the gateway to the
+Render primary, whose health reports `runtimeRole=primary`,
+`redis_detail=healthy:primary`, and `schedulerEnabled=true`.
+
+Both `https://trynex-lifestyle-shop.pages.dev` and
+`https://trynex-lifestyle-main-render.onrender.com` returned 200 for healthz,
+liveness, readiness, products, settings, robots.txt, and sitemap.xml. Invalid
+`POST /api/orders` returned the expected 400 validation response without creating
+an order. The legacy Render service is suspended and is not routed.
+
+The current Cloudflare management token returns `Invalid API Token`; this does
+not affect the already-working GitHub-connected Pages deployment. Replit
+publishing is intentionally out of scope for this project. The mockup
+master-layer decision remains paused as documented below.
 
 ## Latest live health check (2026-08-29)
 

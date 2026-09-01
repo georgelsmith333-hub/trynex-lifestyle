@@ -12,7 +12,19 @@ description: Owner-approved migration to a 4-Render topology — new 4th Render 
 
 ## What was implemented (branch `arena/01a04ad7-trynex-lifestyle`)
 - `functions/gateway-config.ts` (root + artifacts copy): authoritative role map
-  `PRODUCTION_ORIGINS` (reads = standby-2, standby-3; primary = filled post-promotion).
+`PRODUCTION_ORIGINS` (reads = standby-2; primary = filled post-promotion).
+## Current provider reality (2026-09-01)
+
+Only the promoted primary and `trynex-api-standby-2` are currently reachable.
+The legacy Render service and `trynex-api-standby-3` are suspended, so the
+gateway must not list either suspended origin as an active read failover target.
+
+**Why:** A configured-but-suspended origin adds avoidable timeout/failure work and
+can make the failover topology look healthier than it is.
+
+**How to apply:** Re-check the Render service inventory before changing
+`PRODUCTION_ORIGINS`; add a standby only after its health endpoint is reachable
+and it is configured as read-only with schedulers disabled.
 - `functions/api/[[path]].ts` (root + artifacts copy): role routing — writes/admin/AI →
   primary only; safe reads → round-robin across read origins with bounded failover +
   15s down-skip; OPTIONS at edge; fail-closed 503 with truthful detail; `/sitemap.xml`

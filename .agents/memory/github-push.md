@@ -40,7 +40,11 @@ Use the environment variable that is currently valid:
 
 If a token returns HTTP 401, try the next one. The user may need to refresh the token in Replit secrets.
 
-Token validity flips over time in this project (tokens have previously all failed, then later worked again after a refresh). Don't assume expired from a stale note — verify with a cheap `git ls-remote origin HEAD` before concluding push is blocked. As of 2026-07-28, the current origin remote's embedded token works fine for fetch/push.
+Token validity flips over time in this project (tokens have previously all failed, then later worked again after a refresh). Don't assume expired from a stale note — verify with a cheap `git ls-remote origin HEAD` before concluding push is blocked. The current `GITHUB_TOKEN` works for fetch/push.
+
+## Push protection
+
+GitHub push protection rejects an outgoing history if it contains an old credential-bearing pasted attachment, even when that file is not part of the intended release. Do not whitelist the secret. Start a clean branch from the current published `main`, copy only the safe current source changes, exclude pasted attachments/evidence/cache output, and fast-forward `main` from that clean branch.
 
 ## Merge conflicts
 

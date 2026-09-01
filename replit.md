@@ -89,7 +89,7 @@ _Populate as you build — explicit user instructions worth remembering across s
 ## Gotchas
 
 - Editing `artifacts/api-server/src/**` requires a manual rebuild (`node ./build.mjs`) + workflow restart — there is no dev-mode source watcher.
-- `git` CLI push to GitHub is blocked by Replit's askpass interception in this environment; push via the GitHub REST API (blobs/trees/commits) instead.
+- Secure GitHub delivery works with the `x-access-token:$GITHUB_TOKEN` HTTPS form; fetch/merge the published main first and keep credential-bearing attachments out of the outgoing history so GitHub push protection does not reject the release.
 - The live `trynexshop.com` site is a client-rendered SPA (no SSR/prerendering) — Googlebot renders JS and indexes it, but non-JS crawlers (some social-share bots) only ever see the generic homepage meta tags baked into `index.html`, not per-page `SEOHead` content.
 
 ## Pointers
