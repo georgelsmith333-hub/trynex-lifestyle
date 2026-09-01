@@ -156,6 +156,15 @@ customer Design Studio fully realtime in the browser.
 - Structural, visual, and functional audit reports for the complete 188-surface
   release.
 
+### Staging rule
+
+Build representatives first, then generate the full matrix into quarantine and
+run the staged browser/PSD comparison before changing the active resolver.
+Production must remain on the current working runtime until all 188 surfaces
+pass structural, visual, and functional gates. Promote only reviewed runtime
+previews, masks, and manifest data, then run production smoke checks and push
+the verified release.
+
 ### Required behavior to preserve
 
 - Upload preview must be immediate and local; no paid AI or per-upload server

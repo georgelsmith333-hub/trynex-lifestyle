@@ -1,6 +1,6 @@
 # TryNex Six-Family PSD/PSB Smart Mockup System
 
-**Status:** Approved design; implementation follows the staged build plan below.
+**Status:** Approved with staging revision; implementation follows the staged build plan below.
 **Date:** 2026-09-01
 **Scope:** T-shirt, long sleeve, hoodie, mug, cap, and water bottle mockups.
 
@@ -208,7 +208,69 @@ non-canonical colored bottle sources. Preserve lid, key-ring loop, carabiner,
 shoulder, and rounded base details. Use cylindrical body geometry for the
 printable area.
 
-## 8. Build stages
+## 8. Staged implementation and promotion
+
+All implementation happens in an isolated staging area first. The existing
+customer runtime remains unchanged until the final release gates pass.
+
+### Stage 0 — baseline and source freeze
+
+- Verify the GitHub baseline and current storefront behavior.
+- Inventory every source, cutout, mask, and checksum.
+- Freeze the canonical 188-surface matrix.
+- Quarantine legacy raster kits, obsolete 202-surface bottle entries, and any
+  unreviewed generated output.
+
+### Stage 1 — six-family Smart Object proof
+
+Build one representative surface per family in staging:
+
+```text
+tshirt/white/front
+longsleeve/white/front
+hoodie/white/front
+mug/white/front
+cap/white/front
+waterbottle/white/front
+```
+
+Before generating the rest of the matrix, each representative must reopen with
+a real Smart Object artwork layer, render a non-empty proof design, and pass
+the browser/PSD placement comparison. A failure stops the stage.
+
+### Stage 2 — full quarantined generation
+
+Generate all 188 masters, previews, masks, and manifest records into a
+versioned staging directory. No staged master is copied to `public/`, the
+production source kit, or the active resolver during this stage.
+
+### Stage 3 — staging runtime integration
+
+Run the Design Studio against the staged manifest behind an explicit local or
+staging-only switch. Test upload, color switching, all faces, curvature,
+export, cart snapshot, reload, and recovery behavior. The current production
+manifest remains the fallback while this comparison runs.
+
+### Stage 4 — review and release candidate
+
+Produce contact sheets, structural audit JSON, browser/PSD difference reports,
+and the 188-surface functional matrix. Reject and regenerate individual
+surfaces without invalidating the known-good runtime fallback.
+
+### Stage 5 — controlled promotion
+
+Only after all structural, visual, and functional gates pass:
+
+1. mark the manifest and masters as a reviewed release;
+2. promote only runtime-safe previews, masks, and manifest data;
+3. switch the resolver to the reviewed manifest;
+4. run the production smoke checks;
+5. push the verified release to GitHub and confirm the external rollout.
+
+If any stage fails, stop at that stage and keep production on the previous
+working runtime. There is no partial production promotion.
+
+## 9. Build commands
 
 The implementation should expose these repeatable stages:
 
@@ -241,7 +303,7 @@ The first implementation should build one representative surface from each
 family, prove the real Smart Object round trip, and only then fan out to all
 188 surfaces. This prevents generating a large invalid kit.
 
-## 9. Free-tier constraints
+## 10. Free-tier constraints
 
 - Render user uploads in the browser, not on Render or a serverless function.
 - Do not add a paid image-generation or Photoshop API dependency.
@@ -254,7 +316,7 @@ family, prove the real Smart Object round trip, and only then fan out to all
 - Use immutable release asset names and long cache headers.
 - Keep generated missing surfaces quarantined until visual review accepts them.
 
-## 10. Release gates
+## 11. Release gates
 
 ### Structural gates
 
@@ -286,7 +348,7 @@ family, prove the real Smart Object round trip, and only then fan out to all
 - Product switching refits artwork and remains undoable.
 - The full 188-surface resolver/compositor matrix passes.
 
-## 11. Non-goals
+## 12. Non-goals
 
 - Replacing the existing storefront architecture.
 - Shipping editable PSD/PSB files to customers.
@@ -296,7 +358,7 @@ family, prove the real Smart Object round trip, and only then fan out to all
 - Adding a paid AI or hosted rendering dependency.
 - Deleting the current runtime fallback before the new masters pass review.
 
-## 12. Completion definition
+## 13. Completion definition
 
 The system is complete only when the structural, visual, and runtime gates pass
 for all six product families. Until then, the current runtime compositor remains
