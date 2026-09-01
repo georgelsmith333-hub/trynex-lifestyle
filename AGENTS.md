@@ -130,6 +130,52 @@ and useful to the next Agent:
 If the current task changes an existing decision, update the handoff instead of
 creating contradictory notes. If a note is stale, correct or remove it.
 
+## Active approved workstream — six-family PSD/PSB Smart Mockups
+
+The approved strategy is to rebuild genuine editable PSD/PSB masters from the
+existing TryNex photos, cutouts, masks, and geometry assets while keeping the
+customer Design Studio fully realtime in the browser.
+
+### Inputs
+
+- The six canonical product families: T-shirt, long sleeve, hoodie, mug, cap,
+  and white sublimation water bottle.
+- The current canonical 188-surface product/color/face contract.
+- Reviewed source photos, transparent cutouts, detail masks, print zones, and
+  geometry parameters.
+- A user's local uploaded artwork, decoded and processed in-browser.
+
+### Outputs
+
+- Genuine PSD/PSB masters with verifiable embedded Smart Object artwork layers.
+- A generated manifest with surface IDs, coordinates, warp settings, masks,
+  provenance, checksums, and review status.
+- Optimized runtime preview derivatives that do not expose editable masters.
+- A browser compositor that uses the same manifest for preview, export, and cart
+  snapshots.
+- Structural, visual, and functional audit reports for the complete 188-surface
+  release.
+
+### Required behavior to preserve
+
+- Upload preview must be immediate and local; no paid AI or per-upload server
+  rendering is allowed.
+- Original uploads must remain available in cart/checkout metadata.
+- Product switching must refit artwork to the target print zone and remain
+  undoable.
+- Curved products must retain their accurate 3D/final-render behavior.
+- The white water bottle is not tintable and has only its canonical front/back
+  surfaces.
+- Existing storefront, admin, auth, payments, storage, and deployment paths
+  remain unchanged unless a direct mockup dependency requires a coordinated
+  update.
+
+### Fail-closed rules
+
+Never ship a raster layer named as a Smart Object, a missing-face fallback, a
+non-canonical bottle color, an unreviewed generated surface, or a source whose
+checksum/provenance is absent. Editable masters remain outside `public/`.
+
 ### Handoff status format
 
 Use this structure in `AGENT_HANDOFF.md` whenever work is in progress or paused:
