@@ -64,10 +64,39 @@ mobile app, promotional experience, and brand-system artifact.
 
 ## Current open work
 
-The TryNex Design Studio audit is in progress. The public `/design-studio` route
-is the active V2 implementation; `/design-studio-v1` and `/design-studio-v2`
+The approved Design Studio V2 reliability pass is complete locally and is ready
+for the GitHub-connected external rollout. The public `/design-studio` route is
+the active V2 implementation; `/design-studio-v1` and `/design-studio-v2`
 are compatibility aliases to that route. The source-kit/runtime mockup audit
 now validates the editable manifest as well as public assets.
+
+## Latest local studio reliability pass (2026-09-01)
+
+```text
+Status: complete locally — external rollout pending the verified GitHub push
+Last completed: Hardened V2 draft recovery, deterministic in-browser image
+  auto-fix, export/cart failure handling, original-asset preservation, active
+  face geometry for generated layers, and product-zone-aware switching. Added
+  undo/redo coverage for direct layer edits and product-aware history frames.
+Stopped at: After passing storefront tests, full workspace typecheck, storefront
+  build, workflow restart, and local/public-path smoke checks.
+Files/areas changed: Design Studio V2 state/history and panels, product switcher,
+  generated sticker/QR placement, and React type compatibility in sibling
+  preview/design-system artifacts.
+Remaining work: Push this verified source change set to GitHub main and confirm
+  the connected Cloudflare Pages/Render rollout. The mockup master-layer
+  decision remains paused as documented below.
+Blocker: None for the approved studio reliability scope. Replit publishing is
+  intentionally out of scope; local Redis credentials are degraded but the
+  documented fallback is operating.
+Next safe action: Push only the explicit source/test files, then re-check the
+  public Pages and Render health/readiness/catalog/settings/SEO routes.
+Verification: Storefront typecheck and 76 tests passed; API typecheck passed;
+  full workspace typecheck passed; storefront production build passed; the
+  managed workflow restarted cleanly; local healthz/products/settings/robots/
+  sitemap and invalid-order checks returned expected responses. The artifact
+  registry and browser-use CLI were unavailable for a screenshot capture.
+```
 
 ## Required status at every handoff
 

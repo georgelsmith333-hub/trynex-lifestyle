@@ -10,7 +10,7 @@ export type Face = "front" | "back" | "left-sleeve" | "right-sleeve" | "neck-lab
 export type MugMode = "side1" | "side2" | "wrap";
 export type ToolType = "select" | "text" | "shape" | "draw" | "eyedrop";
 export type RightTab = "upload" | "text" | "layers" | "templates" | "ai" | "qrcode";
-export type SaveStatus = "idle" | "saving" | "saved";
+export type SaveStatus = "idle" | "saving" | "saved" | "error";
 export type ShapeType = "rect" | "circle" | "star" | "arrow" | "polygon" | "line";
 export type GradientType = "linear" | "radial" | "conic";
 

@@ -3,6 +3,7 @@ import { useDesignStore } from "@/hooks/useDesignStore";
 import { fitImageTransform } from "./autoFit";
 import QRCode from "qrcode";
 import { QrCode } from "lucide-react";
+import { getZonePZ, MUG_PZ, MUG_SIDE_BACK_PZ, MUG_SIDE_PZ } from "@/pages/design-studio/mockups";
 
 export function QRCodePanel() {
   const [url, setUrl] = useState("https://trynex-lifestyle-shop.pages.dev");
@@ -13,8 +14,15 @@ export function QRCodePanel() {
   const addLayer = useDesignStore((s) => s.addLayer);
   const selectLayer = useDesignStore((s) => s.selectLayer);
   const setActiveTab = useDesignStore((s) => s.setActiveTab);
-  const activeFace = useDesignStore((s) => s.activeFace);
-  const printZone = useDesignStore((s) => s.selectedProduct.printZone);
+   const { activeFace, mugMode, selectedProduct, selectedColor } = useDesignStore((s) => ({
+     activeFace: s.activeFace,
+     mugMode: s.mugMode,
+     selectedProduct: s.selectedProduct,
+     selectedColor: s.selectedColor,
+   }));
+   const printZone = selectedProduct.category === "mug"
+     ? mugMode === "wrap" ? MUG_PZ : mugMode === "side2" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ
+     : getZonePZ(activeFace, selectedProduct, selectedColor.hex);
 
   useEffect(() => {
     if (!url.trim()) return;

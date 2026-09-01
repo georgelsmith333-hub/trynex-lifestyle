@@ -131,7 +131,11 @@ export default function DesignStudioV2() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [canvasSize, setCanvasSize] = useState(600);
-  const [imageAction, setImageAction] = useState<"remove-bg" | "upscale" | null>(null);
+  const [imageAction, setImageAction] = useState<"remove-bg" | "upscale" | "auto-fix" | null>(null);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveRetryNonce, setSaveRetryNonce] = useState(0);
   const activeDrawIdRef = useRef<string | null>(null);
   const urlInitializedRef = useRef(false);
 
@@ -379,28 +383,49 @@ export default function DesignStudioV2() {
       return;
     }
     setSaveStatus("saving");
+    setSaveError(null);
     const handle = window.setTimeout(async () => {
       const payload = {
         version: DRAFT_VERSION, layers, productId: selectedProduct.id, color: selectedColor, size: selectedSize,
         mugMode, mockupRelease: getActiveMockupReleaseVersion(), savedAt: Date.now(),
         ...(linkedStoreProduct ? { linkedStoreProductId: linkedStoreProduct.id, linkedStoreProductName: linkedStoreProduct.name, linkedStoreProductPrice: linkedStoreProduct.price } : {}),
       };
-      try { localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(payload)); } catch {}
+      let localSaved = false;
+      let cloudError: string | null = null;
+      try {
+        localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(payload));
+        localSaved = true;
+      } catch {
+        cloudError = "This browser blocked local draft storage.";
+      }
       const token = localStorage.getItem("trynex_customer_token");
       if (token) {
         try {
-          await fetch(getApiUrl("/api/drafts"), {
+          const response = await fetch(getApiUrl("/api/drafts"), {
             method: "PUT",
             headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
             body: JSON.stringify({ payload }),
           });
-        } catch {}
+          if (!response.ok) cloudError = "Cloud draft backup is unavailable.";
+        } catch {
+          cloudError = "Cloud draft backup is unavailable.";
+        }
+      }
+      if (!localSaved && !token) {
+        setSaveError(cloudError ?? "The draft could not be saved.");
+        setSaveStatus("error");
+        return;
+      }
+      if (cloudError) {
+        setSaveError(localSaved ? `${cloudError} Your draft is still saved on this device.` : cloudError);
+        setSaveStatus("error");
+        return;
       }
       setHasDraft(true);
       setSaveStatus("saved");
     }, 500);
     return () => window.clearTimeout(handle);
-  }, [layers, selectedProduct, selectedColor, selectedSize, mugMode, linkedStoreProduct]);
+  }, [layers, selectedProduct, selectedColor, selectedSize, mugMode, linkedStoreProduct, saveRetryNonce]);
 
   // Sync URL params only after the initial query has been applied.
   useEffect(() => {
@@ -418,9 +443,29 @@ export default function DesignStudioV2() {
 
   const handleQuickProductSwitch = (prod: DesignProduct) => {
     if (prod.id === selectedProduct.id) return;
-    setProduct(prod);
     const matchingColor = prod.colors.find(c => c.hex.toLowerCase() === selectedColor.hex.toLowerCase()) ?? prod.colors[0];
+    const layerTransforms = layers.map((layer) => {
+      const face = layer.face ?? "front";
+      const oldZone = getZonePZ(face, selectedProduct, selectedColor.hex);
+      const nextZone = getZonePZ(face, prod, matchingColor.hex);
+      const widthRatio = nextZone.w / Math.max(1, oldZone.w);
+      const heightRatio = nextZone.h / Math.max(1, oldZone.h);
+      const fitRatio = Math.min(widthRatio, heightRatio);
+      return {
+        id: layer.id,
+        transform: {
+          ...layer.transform,
+          x: layer.transform.x * widthRatio,
+          y: layer.transform.y * heightRatio,
+          scale: layer.transform.scale * fitRatio,
+          scaleX: layer.transform.scaleX ? layer.transform.scaleX * fitRatio : undefined,
+          scaleY: layer.transform.scaleY ? layer.transform.scaleY * fitRatio : undefined,
+        },
+      };
+    });
+    setProduct(prod);
     setColor(matchingColor);
+    layerTransforms.forEach(({ id, transform }) => updateLayer(id, { transform }, { history: false }));
     setLinkedStoreProduct(null);
     setQuantity(1);
     setFace("front");
@@ -650,6 +695,28 @@ export default function DesignStudioV2() {
     }
   };
 
+  const handleAutoFix = async () => {
+    if (!selectedLayer || selectedLayer.type !== "image" || imageAction) return;
+    setImageAction("auto-fix");
+    try {
+      const fixed = await withOperationTimeout(
+        autoFixImage(selectedLayer.src),
+        20_000,
+        "Image improvement took too long. Your original image is unchanged; please retry.",
+      );
+      await replaceSelectedImage(fixed.src);
+      toast({
+        title: "Image improved",
+        description: `Adjusted brightness and contrast locally (${fixed.brightness}% brightness, ${fixed.contrast}% contrast).`,
+      });
+    } catch (error) {
+      console.error("[studio] auto-fix failed", error);
+      toast({ title: "Image improvement unavailable", description: error instanceof Error ? error.message : "Your original image is unchanged; please retry.", variant: "destructive" });
+    } finally {
+      setImageAction(null);
+    }
+  };
+
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
@@ -723,11 +790,11 @@ export default function DesignStudioV2() {
     const nextPoints = [...existing, localX, localY];
     const xs = nextPoints.filter((_, index) => index % 2 === 0);
     const ys = nextPoints.filter((_, index) => index % 2 === 1);
-    updateLayer(id, {
+     updateLayer(id, {
       points: nextPoints,
       width: Math.max(1, Math.max(...xs) - Math.min(...xs)),
       height: Math.max(1, Math.max(...ys) - Math.min(...ys)),
-    });
+     }, { history: false });
   };
 
   const handleDrawEnd = () => {
@@ -783,21 +850,25 @@ export default function DesignStudioV2() {
   }, [isMobile, layers, selectLayer, setActiveTab, setFace, setMobileToolOpen]);
 
   const handleAddToCart = async () => {
-    if (isPsdTshirtStaging) {
-      toast({ title: "Local PSD staging preview", description: "This white-front T-shirt review mode cannot be added to cart." });
-      return;
-    }
-    if (layers.length === 0) {
-      toast({ title: "No design", description: "Add an image or text layer first.", variant: "destructive" });
-      return;
-    }
-    if (qualityIssues.some((issue) => issue.tone === "danger")) {
-      toast({ title: "Improve image quality first", description: "Replace the low-resolution image or use HD preparation before adding this design to cart.", variant: "destructive" });
-      return;
-    }
+    if (isAddingToCart) return;
+    setIsAddingToCart(true);
+    try {
+      if (isPsdTshirtStaging) {
+        toast({ title: "Local PSD staging preview", description: "This white-front T-shirt review mode cannot be added to cart." });
+        return;
+      }
+      if (layers.length === 0) {
+        toast({ title: "No design", description: "Add an image or text layer first.", variant: "destructive" });
+        return;
+      }
+      if (qualityIssues.some((issue) => issue.tone === "danger")) {
+        toast({ title: "Improve image quality first", description: "Replace the low-resolution image or use HD preparation before adding this design to cart.", variant: "destructive" });
+        return;
+      }
     const imageCache = new Map<string, HTMLImageElement>();
     const originalAssets: OriginalAsset[] = [];
     const originalAssetUrls: string[] = [];
+    const requiredOriginalAssetCount = layers.filter((layer) => layer.type === "image" && layer.visible && layer.src.startsWith("data:")).length;
     for (const layer of layers) {
       if (layer.type !== "image" || !layer.visible) continue;
       const src = (layer as ImageLayer).src;
@@ -812,14 +883,20 @@ export default function DesignStudioV2() {
           method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name: filename, size: blob.size, contentType: mime }),
         });
-        if (!reqRes.ok) continue;
+        if (!reqRes.ok) throw new Error("Original artwork storage is unavailable. Your design was not added to cart; please retry.");
         const { uploadURL, objectPath } = await reqRes.json();
+        if (!uploadURL || !objectPath) throw new Error("Original artwork storage returned an incomplete upload response. Please retry.");
         const putRes = await fetch(uploadURL, { method: "PUT", headers: { "Content-Type": mime }, body: blob });
-        if (putRes.ok && objectPath) {
-          originalAssets.push({ objectPath, filename, mime, bytes: blob.size, width: (layer as ImageLayer).naturalW, height: (layer as ImageLayer).naturalH });
-          originalAssetUrls.push(objectPath);
-        }
-      } catch {}
+        if (!putRes.ok) throw new Error("Original artwork could not be uploaded. Your design was not added to cart; please retry.");
+        originalAssets.push({ objectPath, filename, mime, bytes: blob.size, width: (layer as ImageLayer).naturalW, height: (layer as ImageLayer).naturalH });
+        originalAssetUrls.push(objectPath);
+      } catch (error) {
+        if (error instanceof Error && error.message.includes("Original artwork")) throw error;
+        throw new Error("Original artwork could not be prepared for checkout. Your design was not added to cart; please retry.");
+      }
+    }
+    if (originalAssets.length !== requiredOriginalAssetCount) {
+      throw new Error("Every uploaded artwork must be preserved before checkout. Your design was not added to cart; please retry.");
     }
 
     // Use the same canonical transparent cutout as the live SVG preview. The
@@ -932,24 +1009,43 @@ export default function DesignStudioV2() {
     setHasDraft(false);
     setSaveStatus("idle");
     setTimeout(() => navigate("/cart"), 800);
+    } catch (error) {
+      console.error("[studio] add to cart failed", error);
+      toast({
+        title: "Couldn’t add design to cart",
+        description: error instanceof Error ? error.message : "Your design was not added. Please retry.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAddingToCart(false);
+    }
   };
 
   const handleExportPNG = async () => {
-    if (isPsdTshirtStaging) {
-      toast({ title: "Local PSD staging preview", description: "Export is disabled until this source passes the reviewed release workflow." });
-      return;
+    if (isExporting) return;
+    setIsExporting(true);
+    try {
+      if (isPsdTshirtStaging) {
+        toast({ title: "Local PSD staging preview", description: "Export is disabled until this source passes the reviewed release workflow." });
+        return;
+      }
+      const activeLayers = layers.filter(l => (l.face ?? "front") === activeFace) as unknown as ComposerLayer[];
+      if (activeLayers.length === 0) { toast({ title: "Nothing to export", description: "Add a layer first." }); return; }
+      const exportMockup = activeFace === "front" ? frontMockup : activeFace === "back" ? backMockup : activeMockup;
+      const garmentSrc = exportMockup.cutoutSrc;
+      const canvas = document.createElement("canvas");
+      const exportPrintZone = isMug
+        ? (mugMode === "wrap" ? (activeFace === "back" ? MUG_WRAP_BACK_PZ : MUG_PZ) : (activeFace === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ))
+        : getZonePZ(activeFace, selectedProduct, selectedColor.hex);
+      await composeGarmentMockup({ canvas, garmentSrc, garmentColor: selectedColor.hex, printZone: exportPrintZone, layers: activeLayers, outSize: 1200, isColorPhoto: exportMockup.isColorPhoto, requiresTint: exportMockup.requiresTint, fabricTexture, psdMaterialEffects: exportMockup.psdMaterialEffects });
+      const a = document.createElement("a"); a.href = canvas.toDataURL("image/png"); a.download = `trynex-${selectedProduct.id}-${activeFace}-design.png`; a.click();
+      toast({ title: "PNG exported!", description: "High-res PNG saved to your downloads." });
+    } catch (error) {
+      console.error("[studio] export failed", error);
+      toast({ title: "Export failed", description: error instanceof Error ? error.message : "The preview could not be exported. Please retry.", variant: "destructive" });
+    } finally {
+      setIsExporting(false);
     }
-    const activeLayers = layers.filter(l => (l.face ?? "front") === activeFace) as unknown as ComposerLayer[];
-    if (activeLayers.length === 0) { toast({ title: "Nothing to export", description: "Add a layer first." }); return; }
-    const exportMockup = activeFace === "front" ? frontMockup : activeFace === "back" ? backMockup : activeMockup;
-    const garmentSrc = exportMockup.cutoutSrc;
-    const canvas = document.createElement("canvas");
-    const exportPrintZone = isMug
-      ? (mugMode === "wrap" ? (activeFace === "back" ? MUG_WRAP_BACK_PZ : MUG_PZ) : (activeFace === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ))
-      : getZonePZ(activeFace, selectedProduct, selectedColor.hex);
-    await composeGarmentMockup({ canvas, garmentSrc, garmentColor: selectedColor.hex, printZone: exportPrintZone, layers: activeLayers, outSize: 1200, isColorPhoto: exportMockup.isColorPhoto, requiresTint: exportMockup.requiresTint, fabricTexture, psdMaterialEffects: exportMockup.psdMaterialEffects });
-    const a = document.createElement("a"); a.href = canvas.toDataURL("image/png"); a.download = `trynex-${selectedProduct.id}-${activeFace}-design.png`; a.click();
-    toast({ title: "PNG exported!", description: "High-res PNG saved to your downloads." });
   };
 
   const studioColors = useMemo(() => {
@@ -995,17 +1091,22 @@ export default function DesignStudioV2() {
             </p>
           </div>
           <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-            {(saveStatus !== "idle" || hasDraft) && (
-              <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-bold" style={{ background: saveStatus === "saving" ? "#f3f4f6" : "#ecfdf5", color: saveStatus === "saving" ? "#6b7280" : "#047857" }}>
-                {saveStatus === "saving" ? <><CloudUpload className="w-3 h-3 animate-pulse" /> Saving…</> : <><Check className="w-3 h-3" /> Saved</>}
-              </div>
-            )}
-            <button type="button" onClick={undo} disabled={store.history.length <= 1} aria-label="Undo last change" className="p-2 rounded-xl bg-gray-100 text-gray-600 disabled:opacity-30 active:scale-95 transition-transform"><Undo2 className="w-3.5 h-3.5" /></button>
+             {(saveStatus !== "idle" || hasDraft) && (
+               <div className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-bold ${saveStatus === "error" ? "bg-red-50 text-red-700" : saveStatus === "saving" ? "bg-gray-100 text-gray-600" : "bg-emerald-50 text-emerald-700"}`} title={saveError ?? undefined}>
+                 {saveStatus === "saving" ? <><CloudUpload className="w-3 h-3 animate-pulse" /> Saving…</> : saveStatus === "error" ? <><Info className="w-3 h-3" /> Save needs attention</> : <><Check className="w-3 h-3" /> Saved</>}
+               </div>
+             )}
+             {saveStatus === "error" && (
+               <button type="button" onClick={() => setSaveRetryNonce((value) => value + 1)} className="hidden sm:inline-flex items-center rounded-lg bg-red-100 px-2.5 py-1.5 text-[11px] font-bold text-red-700 hover:bg-red-200" title={saveError ?? "Retry saving draft"}>
+                 Retry save
+               </button>
+             )}
+            <button type="button" onClick={undo} disabled={store.history.length === 0} aria-label="Undo last change" className="p-2 rounded-xl bg-gray-100 text-gray-600 disabled:opacity-30 active:scale-95 transition-transform"><Undo2 className="w-3.5 h-3.5" /></button>
             <button type="button" onClick={redo} disabled={store.future.length === 0} aria-label="Redo last change" className="p-2 rounded-xl bg-gray-100 text-gray-600 disabled:opacity-30 active:scale-95 transition-transform"><Redo2 className="w-3.5 h-3.5" /></button>
             <button type="button" onClick={() => setShowPrintZone(!showPrintZone)} aria-pressed={showPrintZone} className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold ${showPrintZone ? "text-orange-500 bg-orange-50" : "text-gray-500 bg-gray-100 hover:bg-gray-200"}`}><Eye className="w-3 h-3" /> Print Zone</button>
             {!isFlatZone && <button type="button" onClick={() => setShow3D(!show3D)} aria-pressed={show3D} className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold ${show3D ? "text-blue-500 bg-blue-50" : "text-gray-500 bg-gray-100 hover:bg-gray-200"}`}><Package className="w-3 h-3" /> {show3D ? "2D Edit" : "3D Preview"}</button>}
-            <motion.button type="button" onClick={handleAddToCart} aria-label="Add design to cart" whileTap={{ scale: 0.97 }} className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-5 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm text-white shadow-lg shadow-orange-500/20" style={{ background: "linear-gradient(135deg, #E85D04, #FB8500)" }}>
-              <ShoppingCart className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Add to Cart</span><span className="sm:hidden">Cart</span>
+             <motion.button type="button" onClick={handleAddToCart} disabled={isAddingToCart} aria-label={isAddingToCart ? "Adding design to cart" : "Add design to cart"} whileTap={{ scale: 0.97 }} className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-5 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm text-white shadow-lg shadow-orange-500/20 disabled:cursor-wait disabled:opacity-70" style={{ background: "linear-gradient(135deg, #E85D04, #FB8500)" }}>
+               {isAddingToCart ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShoppingCart className="w-3.5 h-3.5" />} <span className="hidden sm:inline">{isAddingToCart ? "Preparing…" : "Add to Cart"}</span><span className="sm:hidden">{isAddingToCart ? "Wait" : "Cart"}</span>
             </motion.button>
           </div>
         </div>
@@ -1033,7 +1134,7 @@ export default function DesignStudioV2() {
           <div className="flex-1 min-w-0" ref={containerRef}>
             <ProductSwitcher />
             <div className="mt-3 mb-3">
-              <MainToolbar onExport={handleExportPNG} />
+             <MainToolbar onExport={handleExportPNG} isExporting={isExporting} />
               <div className="mb-3 flex items-center gap-2 overflow-x-auto rounded-2xl border border-orange-100 bg-orange-50/70 p-2 md:hidden no-scrollbar">
                 <button type="button" onClick={() => setShowProductPicker(true)} aria-label="Choose product" className="flex shrink-0 items-center gap-1.5 rounded-xl bg-white px-3 py-2 text-[11px] font-black text-gray-800 shadow-sm active:scale-95"><Package className="h-3.5 w-3.5 text-orange-500" /> Product</button>
                 <button type="button" onClick={() => fileInputRef.current?.click()} aria-label="Upload design image" className="flex shrink-0 items-center gap-1.5 rounded-xl bg-gradient-to-r from-orange-600 to-orange-500 px-3 py-2 text-[11px] font-black text-white shadow-sm active:scale-95"><Upload className="h-3.5 w-3.5" /> Upload</button>
@@ -1212,6 +1313,7 @@ export default function DesignStudioV2() {
                             <ImagePanel
                               onRemoveBackground={() => void handleRemoveBackground()}
                               onUpscale={() => void handleUpscale()}
+                              onAutoFix={() => void handleAutoFix()}
                               onOpenAiReference={() => setActiveTab("ai")}
                               busyAction={imageAction}
                             />
@@ -1248,7 +1350,7 @@ export default function DesignStudioV2() {
             <div className={`p-4 rounded-2xl bg-white border border-gray-200 shadow-sm ${isMobile ? 'mx-2 mb-4' : ''}`}>
               <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2 block">Export Design</label>
               <div className="flex gap-2">
-                <button onClick={handleExportPNG} className="flex-1 py-2 rounded-xl text-xs font-bold border border-gray-200 bg-white hover:bg-gray-50 active:scale-95 transition-all flex items-center justify-center gap-1"><Download className="w-3 h-3" /> PNG</button>
+                 <button onClick={handleExportPNG} disabled={isExporting} className="flex-1 py-2 rounded-xl text-xs font-bold border border-gray-200 bg-white hover:bg-gray-50 active:scale-95 transition-all flex items-center justify-center gap-1 disabled:cursor-wait disabled:opacity-60">{isExporting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Download className="w-3 h-3" />} {isExporting ? "Preparing…" : "PNG"}</button>
               </div>
             </div>
           </div>

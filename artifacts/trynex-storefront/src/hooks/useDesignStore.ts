@@ -19,6 +19,8 @@ export interface HistoryFrame {
   layers: Layer[];
   productId: string;
   color: { name: string; hex: string };
+  activeFace: Face;
+  mugMode: MugMode;
 }
 
 export interface DesignStoreState {
@@ -67,7 +69,11 @@ export interface DesignStoreActions {
   setQuantity: (qty: number | ((prev: number) => number)) => void;
 
   addLayer: (layer: Layer) => void;
-  updateLayer: (id: string, patch: Partial<Layer> | ((layer: Layer) => Layer)) => void;
+  updateLayer: (
+    id: string,
+    patch: Partial<Layer> | ((layer: Layer) => Layer),
+    options?: { history?: boolean },
+  ) => void;
   deleteLayer: (id: string) => void;
   moveLayer: (id: string, direction: "up" | "down") => void;
   reorderLayers: (layers: Layer[]) => void;
@@ -158,6 +164,8 @@ function captureHistory(state: DS) {
     layers: JSON.parse(JSON.stringify(state.layers)) as Layer[],
     productId: state.selectedProduct.id,
     color: { ...state.selectedColor },
+    activeFace: state.activeFace,
+    mugMode: state.mugMode,
   });
   if (state.history.length > 50) state.history.shift();
   state.future = [];
@@ -169,6 +177,7 @@ export const useDesignStore = create<DesignStore>()(
 
     setProduct: (product) => {
       set((state: DS) => {
+        if (state.selectedProduct.id !== product.id) captureHistory(state);
         state.selectedProduct = product;
         state.selectedColor = product.colors.find((c: { hex: string; name: string }) => c.hex === state.selectedColor.hex) ?? product.colors[0];
         if (!["mug", "tshirt", "longsleeve", "hoodie"].includes(product.category)) {
@@ -178,6 +187,7 @@ export const useDesignStore = create<DesignStore>()(
     },
     setColor: (color) => {
       set((state: DS) => {
+        if (state.selectedColor.hex.toLowerCase() !== color.hex.toLowerCase()) captureHistory(state);
         state.selectedColor = color;
       });
     },
@@ -208,10 +218,11 @@ export const useDesignStore = create<DesignStore>()(
         state.layers.push(layer);
       });
     },
-    updateLayer: (id, patch) => {
+    updateLayer: (id, patch, options) => {
       set((state: DS) => {
         const idx = state.layers.findIndex((l: Layer) => l.id === id);
         if (idx === -1) return;
+        if (options?.history !== false) captureHistory(state);
         const next = typeof patch === "function" ? patch(state.layers[idx]) : { ...state.layers[idx], ...patch };
         state.layers[idx] = next as Layer;
       });
@@ -306,17 +317,10 @@ export const useDesignStore = create<DesignStore>()(
       });
     },
 
-    commit: () => {
-      set((state: DS) => {
-        state.history.push({
-          layers: state.layers,
-          productId: state.selectedProduct.id,
-          color: state.selectedColor,
-        });
-        if (state.history.length > 50) state.history.shift();
-        state.future = [];
-      });
-    },
+    // Kept as a compatibility action for callers that finish a grouped update.
+    // Each meaningful update already captures its pre-change frame; pushing the
+    // post-change frame here would make the first undo a no-op.
+    commit: () => {},
     undo: () => {
       set((state: DS) => {
         if (state.history.length === 0) return;
@@ -325,10 +329,14 @@ export const useDesignStore = create<DesignStore>()(
           layers: state.layers,
           productId: state.selectedProduct.id,
           color: state.selectedColor,
+          activeFace: state.activeFace,
+          mugMode: state.mugMode,
         });
         state.layers = frame.layers;
         state.selectedProduct = PRODUCTS.find((p: DesignProduct) => p.id === frame.productId) ?? state.selectedProduct;
         state.selectedColor = frame.color;
+        state.activeFace = frame.activeFace;
+        state.mugMode = frame.mugMode;
       });
     },
     redo: () => {
@@ -339,10 +347,14 @@ export const useDesignStore = create<DesignStore>()(
           layers: state.layers,
           productId: state.selectedProduct.id,
           color: state.selectedColor,
+          activeFace: state.activeFace,
+          mugMode: state.mugMode,
         });
         state.layers = frame.layers;
         state.selectedProduct = PRODUCTS.find((p: DesignProduct) => p.id === frame.productId) ?? state.selectedProduct;
         state.selectedColor = frame.color;
+        state.activeFace = frame.activeFace;
+        state.mugMode = frame.mugMode;
       });
     },
 

@@ -31,4 +31,28 @@ describe("Design Studio history", () => {
     useDesignStore.getState().redo();
     expect(useDesignStore.getState().layers[0].visible).toBe(false);
   });
+
+  it("captures direct layer edits so text, image, and transform changes undo cleanly", () => {
+    useDesignStore.getState().addLayer(imageLayer);
+    useDesignStore.getState().updateLayer(imageLayer.id, {
+      brightness: 135,
+      transform: { ...imageLayer.transform, x: 42, rotation: 12 },
+    });
+
+    expect(useDesignStore.getState().layers[0]).toMatchObject({
+      brightness: 135,
+      transform: { x: 42, rotation: 12 },
+    });
+
+    useDesignStore.getState().undo();
+    const undoneLayer = useDesignStore.getState().layers[0];
+    expect(undoneLayer.transform).toEqual(imageLayer.transform);
+    expect(undoneLayer).not.toHaveProperty("brightness");
+
+    useDesignStore.getState().redo();
+    expect(useDesignStore.getState().layers[0]).toMatchObject({
+      brightness: 135,
+      transform: { x: 42, rotation: 12 },
+    });
+  });
 });
