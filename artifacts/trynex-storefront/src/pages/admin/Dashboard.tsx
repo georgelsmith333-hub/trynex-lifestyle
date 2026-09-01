@@ -155,7 +155,7 @@ export default function AdminDashboard() {
           <div className="flex-1" style={{ color: "#92400e" }}>
             <span className="font-black">All changes here are live instantly.</span>{" "}
             Products, orders, blog posts, promo codes and settings you edit in this panel update on{" "}
-            <span className="font-semibold">trynexshop.com</span> in real time. No need to redeploy or restart after making changes.
+            <span className="font-semibold">trynex-lifestyle-shop.pages.dev</span> in real time. No need to redeploy or restart after making changes.
           </div>
           <button type="button" onClick={dismissProdNotice} className="mt-0.5 shrink-0 hover:opacity-70" style={{ color: "#d97706" }}>
             <X className="w-4 h-4" />
