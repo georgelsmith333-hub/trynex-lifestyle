@@ -74,6 +74,7 @@ The next approved workstream is the genuine six-family PSD/PSB Smart Mockup
 system described in `docs/superpowers/specs/2026-09-01-six-family-psd-smart-mockup-design.md`.
 It uses existing photos, cutouts, masks, and geometry assets, generates real
 embedded Smart Object masters, and keeps customer rendering local and realtime.
+It must be built and validated in staging before production promotion.
 
 ## Latest local studio reliability pass (2026-09-01)
 
@@ -88,13 +89,16 @@ Stopped at: After pushing the verified source to GitHub main and confirming both
 Files/areas changed: Design Studio V2 state/history and panels, product switcher,
   generated sticker/QR placement, and React type compatibility in sibling
   preview/design-system artifacts.
-Remaining work: The approved six-family Smart Mockup implementation is now the
-  active workstream; the master-layer decision is no longer paused.
+Remaining work: The six-family Smart Mockup implementation is now the active
+  workstream. The revised spec requires representative proof masters,
+  quarantined full-matrix generation, staged runtime comparison, and controlled
+  production promotion.
 Blocker: None for the approved studio reliability scope. Replit publishing is
   intentionally out of scope; local Redis credentials are degraded but the
   documented fallback is operating.
-Next safe action: Implement and validate one representative real Smart Object
-  master per family before generating the complete 188-surface release.
+Next safe action: After the revised spec gate, implement and validate one
+  representative real Smart Object master per family in staging before
+  generating the complete 188-surface release.
 Verification: Storefront typecheck and 76 tests passed; API typecheck passed;
   full workspace typecheck passed; storefront production build passed; the
   managed workflow restarted cleanly; local healthz/products/settings/robots/
@@ -154,14 +158,15 @@ Next safe action: Build one representative surface for each family, run the stru
 Verification: 108/108 masters opened cleanly; all 1024x1024 8-bit RGB 4-channel; 6 layers each; 0 smart objects in all 108; artwork layer measured 0/1048576 non-zero alpha pixels; colour variants measured at luminance correlation ~0.0 against the white master; coverage arithmetic 188 needed vs 94 canonical present. Composite renders committed for visual confirmation.
 ```
 
-## Mockup rebuild decision (open — owner must choose)
+## Mockup rebuild decision (approved — staged implementation)
 
 The previous chat attempted to build a PSD/PSB smart-object system. The audit
 proved no such system exists in the assets. The owner has now approved:
 
   Rebuild genuine Smart Object masters from the existing source photos,
   cutouts, masks, and geometry assets, while using the same manifest to drive
-  the local realtime browser compositor.
+  the local realtime browser compositor. Build representatives first, quarantine
+  the full matrix, and promote to production only after all written gates pass.
 
 The approved approach retains these constraints:
   - 94 of 188 canonical surfaces have no master at all (see audit §3).
