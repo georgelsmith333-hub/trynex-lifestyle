@@ -1,0 +1,594 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+3 0 obj
+<< /Length 1934 >>
+stream
+q 0.10 0.20 0.28 rg 0 770 612 22 re f Q
+BT /F2 10 Tf 0.98 0.98 0.98 rg 54 777 Td (TRY NEX LIFESTYLE  |  FULL-STACK AUDIT) Tj ET
+BT /F2 18 Tf 0.10 0.12 0.16 rg 54 742 Td (TRY NEX LIFESTYLE) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 721 Td (FULL-STACK AUDIT AND RELEASE OVERVIEW) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 708 Td (Evidence date: 02 September 2026 \(Asia/Dhaka\)) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 695 Td () Tj ET
+BT /F2 11 Tf 0.10 0.12 0.16 rg 54 682 Td (Executive status) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 666 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 653 Td (RUNTIME AND COMMERCE: PASSING THE VERIFIED LOCAL AND PROXIED GATES) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 640 Td (MOCKUP RELEASE: 188/188 SMART-V9 CANDIDATE ASSETS VALIDATED) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 627 Td (NATIVE PHOTOSHOP SMART OBJECTS: NOT COMPLETE; RUNTIME MARKED MANIFEST-ONLY) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 614 Td (OPERATIONS: RUNNING WITH DATABASE, R2, AND PRIMARY RUNTIME HEALTHY) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 601 Td (KNOWN DEGRADED SERVICE: CONFIGURED UPSTASH REDIS BACKENDS UNAVAILABLE) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 588 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 575 Td (This document records what was inspected, what is live, what was changed, what) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 562 Td (was verified, and what must not yet be claimed. It deliberately separates a) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 549 Td (validated browser/runtime PNG matrix from native Photoshop Smart Object masters.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 536 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 523 Td (Prepared from the current repository, running workflow, source-kit audits,) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 510 Td (automated tests, production builds, and proxied endpoint smoke checks.) Tj ET
+BT /F1 8 Tf 0.35 0.40 0.45 rg 54 28 Td (TryNex Lifestyle audit - verified evidence only) Tj ET
+endstream
+endobj
+4 0 obj
+<< /Type /Page /Parent 33 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 3 0 R >>
+endobj
+5 0 obj
+<< /Length 3106 >>
+stream
+q 0.10 0.20 0.28 rg 0 770 612 22 re f Q
+BT /F2 10 Tf 0.98 0.98 0.98 rg 54 777 Td (TRY NEX LIFESTYLE  |  FULL-STACK AUDIT) Tj ET
+BT /F2 18 Tf 0.10 0.12 0.16 rg 54 742 Td (1. SCOPE AND RELEASE VERDICT) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 721 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 708 Td (The audit covered the complete TryNex Lifestyle workspace rather than relying) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 695 Td (on an earlier agent report:) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 682 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 669 Td (- Customer storefront and product catalog) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 656 Td (- Browser Design Studio, 2D editing, 3D preview, composition, and cart flow) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 643 Td (- Six product families: T-shirt, Long Sleeve, Hoodie, Mug, Cap, Water Bottle) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 630 Td (- Product colors, faces, print zones, normalized frames, and runtime paths) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 617 Td (- API routes, database access, failover behavior, storage, cache, and health) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 604 Td (- Admin sessions, TOTP, authorization, AI assistant, and management routes) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 591 Td (- Uploads, checkout, payment metadata, mobile app behavior, and SEO) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 578 Td (- Cloudflare Pages proxy, API service, workflow, and deployment configuration) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 565 Td (- PSD/PSB source documents and genuine Smart Object structure) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 552 Td (- Dependency, SAST, path-safety, and privacy/security evidence) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 539 Td () Tj ET
+BT /F2 11 Tf 0.10 0.12 0.16 rg 54 526 Td (Release verdict) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 510 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 497 Td (The current storefront/API release is operational and passes its automated and) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 484 Td (proxied smoke gates. The 188-surface smart-v9 candidate is technically valid) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 471 Td (\(1024x1024 RGBA PNGs, accepted rows, matching hashes\). Runtime exceptions are) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 458 Td (explicit and source-specific: reviewed PSD-derived T-shirt front/back PNGs,) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 445 Td (authentic Water Bottle v1.1 front/back, and reviewed color-specific source) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 432 Td (matrix assets for Long Sleeve/Hoodie Charcoal, Royal Blue, and Sand.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 419 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 406 Td (The editable source kit is not a native Smart Object release. All 108 audited) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 393 Td (PSD/PSB files open, but all 108 contain zero genuine Smart Object layers. The) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 380 Td (runtime manifest now says manifest-only; no false verified claim is shipped.) Tj ET
+BT /F1 8 Tf 0.35 0.40 0.45 rg 54 28 Td (TryNex Lifestyle audit - verified evidence only) Tj ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 33 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 5 0 R >>
+endobj
+7 0 obj
+<< /Length 2572 >>
+stream
+q 0.10 0.20 0.28 rg 0 770 612 22 re f Q
+BT /F2 10 Tf 0.98 0.98 0.98 rg 54 777 Td (TRY NEX LIFESTYLE  |  FULL-STACK AUDIT) Tj ET
+BT /F2 18 Tf 0.10 0.12 0.16 rg 54 742 Td (2. ARCHITECTURE AND REQUEST FLOW) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 721 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 708 Td (Browser / customer or admin) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 695 Td (        |) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 682 Td (        v) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 669 Td (Vite storefront \(local :8080; static Pages production artifact\)) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 656 Td (        | /api/* through the artifact path and Pages gateway function) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 643 Td (        v) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 630 Td (Express API server \(local :8082; Render/API production service\)) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 617 Td (        |-- Drizzle ORM -> Neon PostgreSQL candidate chain) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 604 Td (        |-- Object storage -> R2 in the current runtime; local fallback exists) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 591 Td (        |-- Upstash Redis -> optional cache/rate-limit backend \(degraded now\)) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 578 Td (        |-- Admin/AI, Telegram, checkout, products, orders, reviews, settings) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 565 Td (        v) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 552 Td (Database, storage, notifications, and controlled external service boundaries) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 539 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 526 Td (The configured workflow builds the API, starts it on port 8082, and starts the) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 513 Td (storefront on port 8080. The API is a compiled esbuild bundle, so API source) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 500 Td (changes require a build and workflow restart; this was done for this audit.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 487 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 474 Td (The public deployment model reviewed in the repository is Cloudflare Pages for) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 461 Td (the static frontend, with a Pages function proxying /api/* to the API service.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 448 Td (The storefront also proxies sitemap.xml to the API in development so the same) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 435 Td (route is testable through the local preview path.) Tj ET
+BT /F1 8 Tf 0.35 0.40 0.45 rg 54 28 Td (TryNex Lifestyle audit - verified evidence only) Tj ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 33 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 7 0 R >>
+endobj
+9 0 obj
+<< /Length 2749 >>
+stream
+q 0.10 0.20 0.28 rg 0 770 612 22 re f Q
+BT /F2 10 Tf 0.98 0.98 0.98 rg 54 777 Td (TRY NEX LIFESTYLE  |  FULL-STACK AUDIT) Tj ET
+BT /F2 18 Tf 0.10 0.12 0.16 rg 54 742 Td (3. PRODUCT, API, DATABASE, AND STORAGE FLOW) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 721 Td () Tj ET
+BT /F2 11 Tf 0.10 0.12 0.16 rg 54 708 Td (Catalog flow) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 692 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 679 Td (1. Storefront requests products/categories/settings from the API.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 666 Td (2. Products route reads the Drizzle/Neon catalog with filtering and pagination.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 653 Td (3. Cached public responses are used where configured; no product data is silently) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 640 Td (   fabricated when the API is unavailable.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 627 Td (4. Product and Design Studio metadata carry category, color, face, print-zone,) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 614 Td (   original artwork, and studio design information into cart and order payloads.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 601 Td () Tj ET
+BT /F2 11 Tf 0.10 0.12 0.16 rg 54 588 Td (Order and asset flow) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 572 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 559 Td (Customer input -> validated POST /api/orders -> order/item records in PostgreSQL) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 546 Td (-> original/design assets referenced by controlled object keys -> admin order) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 533 Td (review, payment status, notifications, and fulfillment workflow.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 520 Td () Tj ET
+BT /F2 11 Tf 0.10 0.12 0.16 rg 54 507 Td (Storage controls verified in this pass) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 491 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 478 Td (- Upload request validates filename, size, MIME type, and a 25 MB ceiling.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 465 Td (- Direct binary upload verifies magic bytes and declared content type.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 452 Td (- JPEG, PNG, GIF, WebP, PSD, and PSB types are explicitly handled.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 439 Td (- Private object paths accept direct upload IDs or the known four-part order key.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 426 Td (- Traversal and encoded traversal are rejected with a not-found response.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 413 Td (- Unsafe input is rejected, not sanitized into a different valid filename.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 400 Td (- Public runtime folders contain no PSD/PSB masters.) Tj ET
+BT /F1 8 Tf 0.35 0.40 0.45 rg 54 28 Td (TryNex Lifestyle audit - verified evidence only) Tj ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 33 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 9 0 R >>
+endobj
+11 0 obj
+<< /Length 3068 >>
+stream
+q 0.10 0.20 0.28 rg 0 770 612 22 re f Q
+BT /F2 10 Tf 0.98 0.98 0.98 rg 54 777 Td (TRY NEX LIFESTYLE  |  FULL-STACK AUDIT) Tj ET
+BT /F2 18 Tf 0.10 0.12 0.16 rg 54 742 Td (4. SIX-FAMILY MOCKUP CONTRACT) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 721 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 708 Td (The release matrix is 188 surfaces:) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 695 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 682 Td (T-shirt       8 colors x 5 views = 40) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 669 Td (Long Sleeve  10 colors x 5 views = 50) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 656 Td (Hoodie       10 colors x 5 views = 50) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 643 Td (Mug          10 colors x 3 views = 30) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 630 Td (Cap           8 colors x 2 views = 16) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 617 Td (Water Bottle  1 color  x 2 views =  2) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 604 Td (                                      ---) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 591 Td (                                      188) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 578 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 565 Td (Every candidate surface has a canonical source key, runtime URL, SHA-256 hash,) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 552 Td (accepted status, provenance, 1024x1024 RGBA PNG dimensions, and a corresponding) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 539 Td (print-zone/geometry entry. The standalone validator checks the actual public) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 526 Td (file, the manifest row, the hash, dimensions, color type, and stale roots.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 513 Td () Tj ET
+BT /F2 11 Tf 0.10 0.12 0.16 rg 54 500 Td (Runtime resolution is intentionally not a blind one-to-one claim:) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 484 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 471 Td (- T-shirt front/back: /mockups/psd-tshirt-v1 color-specific reviewed PNGs.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 458 Td (- T-shirt remaining faces: accepted smart-v9 matrix.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 445 Td (- Long Sleeve/Hoodie: smart-v9 where the exact catalog color exists; Charcoal,) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 432 Td (  Royal Blue, and Sand stay on their reviewed source-matrix color assets.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 419 Td (- Mug and Cap: smart-v9 covers every catalog face.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 406 Td (- Water Bottle: hash-pinned /mockups/waterbottle-v11 white front/back only.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 393 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 380 Td (This avoids silently mapping a catalog shade to a different hue. Water Bottle) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 367 Td (does not expose synthetic colored-body variants because the supplied product is) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 354 Td (a white sublimation-coated aluminum blank without distinct physical masters.) Tj ET
+BT /F1 8 Tf 0.35 0.40 0.45 rg 54 28 Td (TryNex Lifestyle audit - verified evidence only) Tj ET
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 33 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 11 0 R >>
+endobj
+13 0 obj
+<< /Length 2364 >>
+stream
+q 0.10 0.20 0.28 rg 0 770 612 22 re f Q
+BT /F2 10 Tf 0.98 0.98 0.98 rg 54 777 Td (TRY NEX LIFESTYLE  |  FULL-STACK AUDIT) Tj ET
+BT /F2 18 Tf 0.10 0.12 0.16 rg 54 742 Td (5. PRINT ZONES, FACES, AND RENDERING) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 721 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 708 Td (Apparel exposes Front, Back, Left Sleeve, Right Sleeve, and Neck Label. Mug) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 695 Td (exposes front, back, and wrap geometry. Cap exposes front and back. Water Bottle) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 682 Td (exposes front and back with bottle-body clipping.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 669 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 656 Td (Print zones are contract data, not guesses from gallery image bounds. They carry) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 643 Td (shape-aware paths for mug body, cap front, and bottle body. Normalized frames keep) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 630 Td (product scale stable when switching face or color. Curved products use the 3D) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 617 Td (preview by default; flat apparel defaults to 2D precision editing.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 604 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 591 Td (Preserved Design Studio behavior includes:) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 578 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 565 Td (- Product switching re-fits the artwork to the destination print zone.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 552 Td (- Undo/redo and product-aware history remain in place.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 539 Td (- Uploaded original artwork and studio metadata survive cart and checkout.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 526 Td (- Immediate/local uploads remain available instead of requiring a remote upload) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 513 Td (  to preview the design.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 500 Td (- Curved-product composition and final rendering remain separate from precise) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 487 Td (  2D placement, preventing a 2D editor approximation from being called 3D.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 474 Td (- White, dark, and color-specific garment blending rules remain explicit.) Tj ET
+BT /F1 8 Tf 0.35 0.40 0.45 rg 54 28 Td (TryNex Lifestyle audit - verified evidence only) Tj ET
+endstream
+endobj
+14 0 obj
+<< /Type /Page /Parent 33 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 13 0 R >>
+endobj
+15 0 obj
+<< /Length 2518 >>
+stream
+q 0.10 0.20 0.28 rg 0 770 612 22 re f Q
+BT /F2 10 Tf 0.98 0.98 0.98 rg 54 777 Td (TRY NEX LIFESTYLE  |  FULL-STACK AUDIT) Tj ET
+BT /F2 18 Tf 0.10 0.12 0.16 rg 54 742 Td (6. PSD/PSB AND SMART OBJECT TRUTH) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 721 Td () Tj ET
+BT /F2 11 Tf 0.10 0.12 0.16 rg 54 708 Td (Source-kit audit result) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 692 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 679 Td (108/108 PSD/PSB documents opened successfully.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 666 Td (All are 1024x1024, 8-bit RGB/RGBA-compatible documents with composite data.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 653 Td (Each has six named layers and an artwork placeholder layer.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 640 Td (0/108 contains a genuine Photoshop Smart Object layer.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 627 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 614 Td (Therefore these documents are honest raster/source masters with named layers,) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 601 Td (not completed native Smart Object masters. A layer named "Artwork - Place Design) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 588 Td (Here" is not itself proof of Smart Object structure.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 575 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 562 Td (A separate quarantine writer can produce representative embedded-Smart-Object) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 549 Td (proof files, and that writer has been structurally audited for representatives.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 536 Td (However, no production promotion is claimed because the complete 188-surface) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 523 Td (native master set still needs provenance, structural reopen checks, contact-sheet) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 510 Td (review, browser/PSD comparison, and controlled acceptance.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 497 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 484 Td (The runtime manifest correction in this pass is important: resolveMockup now sets) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 471 Td (masterStatus to manifest-only for current surfaces. It will not claim verified) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 458 Td (until the exact master has been reopened and passed the native Smart Object gate.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 445 Td (Source masters remain outside public runtime directories.) Tj ET
+BT /F1 8 Tf 0.35 0.40 0.45 rg 54 28 Td (TryNex Lifestyle audit - verified evidence only) Tj ET
+endstream
+endobj
+16 0 obj
+<< /Type /Page /Parent 33 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 15 0 R >>
+endobj
+17 0 obj
+<< /Length 2316 >>
+stream
+q 0.10 0.20 0.28 rg 0 770 612 22 re f Q
+BT /F2 10 Tf 0.98 0.98 0.98 rg 54 777 Td (TRY NEX LIFESTYLE  |  FULL-STACK AUDIT) Tj ET
+BT /F2 18 Tf 0.10 0.12 0.16 rg 54 742 Td (7. ADMIN, AUTHENTICATION, AND AI) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 721 Td () Tj ET
+BT /F2 11 Tf 0.10 0.12 0.16 rg 54 708 Td (Admin routes reviewed include login, TOTP setup/enable/disable, password change) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 692 Td (and reset, sessions, logout, catalog management, customers, orders, reviews,) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 679 Td (testimonials, Telegram, Facebook import, storage optimization, health, backup,) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 666 Td (settings, mockups, and deployment-related controls.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 653 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 640 Td (Admin authentication is session-based with a database-backed admin/session model) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 627 Td (and TOTP support. CSRF, origin, security headers, and rate-limit middleware are) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 614 Td (part of the API boundary. The emergency development bypass is environment-gated) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 601 Td (and must not activate in unknown or production environments.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 588 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 575 Td (The AI developer route supports natural-language admin preview/execute behavior) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 562 Td (with allowlisted product/order/admin actions and database-configurable system) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 549 Td (prompt settings. The final report does not claim autonomous deployment or unsafe) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 536 Td (self-modifying production behavior.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 523 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 510 Td (Limitation: the protected GET /api/admin/system/health endpoint was not tested) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 497 Td (with an authenticated admin session in this pass. The unauthenticated response) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 484 Td (was an error shape, so no protected-admin-health success claim is made.) Tj ET
+BT /F1 8 Tf 0.35 0.40 0.45 rg 54 28 Td (TryNex Lifestyle audit - verified evidence only) Tj ET
+endstream
+endobj
+18 0 obj
+<< /Type /Page /Parent 33 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 17 0 R >>
+endobj
+19 0 obj
+<< /Length 2547 >>
+stream
+q 0.10 0.20 0.28 rg 0 770 612 22 re f Q
+BT /F2 10 Tf 0.98 0.98 0.98 rg 54 777 Td (TRY NEX LIFESTYLE  |  FULL-STACK AUDIT) Tj ET
+BT /F2 18 Tf 0.10 0.12 0.16 rg 54 742 Td (8. CHECKOUT, MOBILE, SEO, AND CUSTOMER FLOWS) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 721 Td () Tj ET
+BT /F2 11 Tf 0.10 0.12 0.16 rg 54 708 Td (Checkout) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 692 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 679 Td (The checkout contract retains settings-driven shipping, payment contact numbers,) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 666 Td (free-shipping threshold, order validation, and the 25 percent advance/COD deposit) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 653 Td (rule documented across customer and admin paths. Sender/payment evidence and order) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 640 Td (metadata are carried into the API order flow. A real payment transaction was not) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 627 Td (created during this audit, so provider settlement is outside the evidence.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 614 Td () Tj ET
+BT /F2 11 Tf 0.10 0.12 0.16 rg 54 601 Td (Mobile) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 585 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 572 Td (The Expo mobile artifact uses the same API contract, reads checkout settings) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 559 Td (dynamically, preserves studioDesign/originalAssets metadata, and uses inline field) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 546 Td (validation for name, phone, and address rather than interruptive alerts. Mobile) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 533 Td (Render domain fallback behavior is present for the known stale API domain case.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 520 Td () Tj ET
+BT /F2 11 Tf 0.10 0.12 0.16 rg 54 507 Td (SEO and discovery) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 491 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 478 Td (The storefront contains route-aware SEO components, JSON-LD, product review guard) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 465 Td (rails, a dynamic sitemap, robots rules, and public route metadata. The live smoke) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 452 Td (checks returned 200 for sitemap.xml and robots.txt. The SPA limitation remains:) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 439 Td (non-JavaScript social crawlers may see generic index metadata rather than route-specific) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 426 Td (client-rendered SEO content.) Tj ET
+BT /F1 8 Tf 0.35 0.40 0.45 rg 54 28 Td (TryNex Lifestyle audit - verified evidence only) Tj ET
+endstream
+endobj
+20 0 obj
+<< /Type /Page /Parent 33 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 19 0 R >>
+endobj
+21 0 obj
+<< /Length 2543 >>
+stream
+q 0.10 0.20 0.28 rg 0 770 612 22 re f Q
+BT /F2 10 Tf 0.98 0.98 0.98 rg 54 777 Td (TRY NEX LIFESTYLE  |  FULL-STACK AUDIT) Tj ET
+BT /F2 18 Tf 0.10 0.12 0.16 rg 54 742 Td (9. DEPLOYMENT AND LIVE WORKFLOW EVIDENCE) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 721 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 708 Td (Configured application workflow restarted successfully after the final API and) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 695 Td (storefront changes. Logs showed:) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 682 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 669 Td (- Vite storefront listening on 0.0.0.0:8080.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 656 Td (- API server listening on port 8082.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 643 Td (- R2 selected as the active storage backend.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 630 Td (- Database connected to a healthy candidate with current order/product counts.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 617 Td (- Migrations completed without applying pending migrations.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 604 Td (- Scheduler active.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 591 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 578 Td (Proxied runtime checks returned:) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 565 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 552 Td (/api/healthz             200 \(degraded only because Redis is unavailable\)) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 539 Td (/api/health/liveness     200) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 526 Td (/api/health/readiness    200) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 513 Td (/api/products            200) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 500 Td (/api/categories          200) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 487 Td (/api/settings            200) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 474 Td (/sitemap.xml             200) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 461 Td (/robots.txt              200) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 448 Td (Representative mockup PNGs 200) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 435 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 422 Td (The artifact screenshot registry could not resolve this checkout, so no new) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 409 Td (browser screenshot is presented as evidence. Existing repository screenshots are) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 396 Td (historical visual evidence and are not substituted for a fresh browser capture.) Tj ET
+BT /F1 8 Tf 0.35 0.40 0.45 rg 54 28 Td (TryNex Lifestyle audit - verified evidence only) Tj ET
+endstream
+endobj
+22 0 obj
+<< /Type /Page /Parent 33 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 21 0 R >>
+endobj
+23 0 obj
+<< /Length 2757 >>
+stream
+q 0.10 0.20 0.28 rg 0 770 612 22 re f Q
+BT /F2 10 Tf 0.98 0.98 0.98 rg 54 777 Td (TRY NEX LIFESTYLE  |  FULL-STACK AUDIT) Tj ET
+BT /F2 18 Tf 0.10 0.12 0.16 rg 54 742 Td (10. FIXES APPLIED IN THIS PASS) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 721 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 708 Td (1. Object-storage path hardening) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 695 Td (   Added rejection for traversal, encoded separators, invalid private prefixes,) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 682 Td (   and unsupported arbitrary nested paths; preserved legitimate order keys and) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 669 Td (   direct upload IDs. Added focused tests.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 656 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 643 Td (2. Upload validation hardening) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 630 Td (   Added size, MIME, magic-byte, and declared-type consistency checks, including) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 617 Td (   PSD/PSB signature handling without routing masters through image optimization.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 604 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 591 Td (3. Runtime release contract correction) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 578 Td (   The standalone validator now validates the smart-v9 tree and candidate hashes) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 565 Td (   instead of certifying the retired smart-v4 tree. The sitemap Vite proxy was) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 552 Td (   added for the root development route.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 539 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 526 Td (4. Smart Object status honesty) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 513 Td (   Runtime manifests now say manifest-only because the audited source kit has no) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 500 Td (   genuine Smart Object layers. A regression test guards this claim.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 487 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 474 Td (5. Compatible dependency updates) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 461 Td (   Transitive browserslist was refreshed to 4.28.8 and decode-uri-component to) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 448 Td (   0.5.0 through workspace overrides and lockfile regeneration.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 435 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 422 Td (Working commerce, Design Studio, upload metadata, curved-product rendering,) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 409 Td (settings-driven checkout, authentication, failover, and admin behavior were not) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 396 Td (replaced or reset.) Tj ET
+BT /F1 8 Tf 0.35 0.40 0.45 rg 54 28 Td (TryNex Lifestyle audit - verified evidence only) Tj ET
+endstream
+endobj
+24 0 obj
+<< /Type /Page /Parent 33 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 23 0 R >>
+endobj
+25 0 obj
+<< /Length 2726 >>
+stream
+q 0.10 0.20 0.28 rg 0 770 612 22 re f Q
+BT /F2 10 Tf 0.98 0.98 0.98 rg 54 777 Td (TRY NEX LIFESTYLE  |  FULL-STACK AUDIT) Tj ET
+BT /F2 18 Tf 0.10 0.12 0.16 rg 54 742 Td (11. SECURITY FINDINGS AND RISK REGISTER) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 721 Td () Tj ET
+BT /F2 11 Tf 0.10 0.12 0.16 rg 54 708 Td (Resolved or reduced) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 692 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 679 Td (- Storage traversal and arbitrary private-path risk: hardened and covered by tests.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 666 Td (- Upload content mismatch risk: magic-byte/type checks added.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 653 Td (- Outdated browserslist and decode-uri-component: compatible updates applied.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 640 Td () Tj ET
+BT /F2 11 Tf 0.10 0.12 0.16 rg 54 627 Td (Accepted with explicit limitation) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 611 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 598 Td (- image-size: two high advisories remain through Expo/Metro build tooling. The) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 585 Td (  current published image-size line is still affected and the advisory lists no) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 572 Td (  patched version. This is not used as the customer image upload parser in the) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 559 Td (  API path; it remains a dependency/toolchain risk requiring upstream or parent) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 546 Td (  package remediation.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 533 Td (- TOTP SHA-1: SAST flags the HMAC algorithm, but SHA-1 is required for standard) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 520 Td (  RFC-compatible TOTP authenticator interoperability in the current flow. A blind) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 507 Td (  replacement would invalidate existing authenticator codes. Keep the finding) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 494 Td (  documented and revisit with migration support if stronger algorithm policy is) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 481 Td (  required.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 468 Td (- Redis: health is degraded because configured Upstash backends are unavailable;) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 455 Td (  database, storage, primary runtime, and scheduler remain healthy.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 442 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 429 Td (No HoundDog findings were reported in the completed security scan. Security) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 416 Td (status does not imply authenticated admin or payment-provider end-to-end proof.) Tj ET
+BT /F1 8 Tf 0.35 0.40 0.45 rg 54 28 Td (TryNex Lifestyle audit - verified evidence only) Tj ET
+endstream
+endobj
+26 0 obj
+<< /Type /Page /Parent 33 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 25 0 R >>
+endobj
+27 0 obj
+<< /Length 2822 >>
+stream
+q 0.10 0.20 0.28 rg 0 770 612 22 re f Q
+BT /F2 10 Tf 0.98 0.98 0.98 rg 54 777 Td (TRY NEX LIFESTYLE  |  FULL-STACK AUDIT) Tj ET
+BT /F2 18 Tf 0.10 0.12 0.16 rg 54 742 Td (12. VERIFICATION RESULTS) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 721 Td () Tj ET
+BT /F2 11 Tf 0.10 0.12 0.16 rg 54 708 Td (Passed) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 692 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 679 Td (pnpm validate:mockups                 188 expected / 188 candidate assets) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 666 Td (Storefront tests                        22 files / 76 tests) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 653 Td (API tests                                6 files / 26 tests) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 640 Td (Storefront typecheck                    passed) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 627 Td (API typecheck                           passed) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 614 Td (Full workspace typecheck                passed) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 601 Td (Storefront production build             passed) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 588 Td (API production build                   passed) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 575 Td (PSD/PSB structural audit               108 openable / 0 unreadable) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 562 Td (PSD dimensions                         1024x1024 for all 108) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 549 Td (PSD layer structure                    six layers per document) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 536 Td (Genuine Smart Objects                  0 in all 108 source-kit documents) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 523 Td (git diff --check                        passed) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 510 Td (Managed workflow restart                passed) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 497 Td (Proxied health/catalog/SEO smoke         passed) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 484 Td (Invalid order body                       400 validation_error) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 471 Td (Invalid upload request                   400 validation_error) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 458 Td (Unsafe encoded object paths              404 not found) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 445 Td (Public PSD/PSB exposure scan             0 files) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 432 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 419 Td (The only non-passing command was the intentional non-zero exit from pnpm audit) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 406 Td (because two high image-size advisories remain. It produced no other advisory) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 393 Td (classes after the compatible dependency updates.) Tj ET
+BT /F1 8 Tf 0.35 0.40 0.45 rg 54 28 Td (TryNex Lifestyle audit - verified evidence only) Tj ET
+endstream
+endobj
+28 0 obj
+<< /Type /Page /Parent 33 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 27 0 R >>
+endobj
+29 0 obj
+<< /Length 2216 >>
+stream
+q 0.10 0.20 0.28 rg 0 770 612 22 re f Q
+BT /F2 10 Tf 0.98 0.98 0.98 rg 54 777 Td (TRY NEX LIFESTYLE  |  FULL-STACK AUDIT) Tj ET
+BT /F2 18 Tf 0.10 0.12 0.16 rg 54 742 Td (13. INCOMPLETE WORK AND NEXT SAFE ACTION) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 721 Td () Tj ET
+BT /F2 11 Tf 0.10 0.12 0.16 rg 54 708 Td (Incomplete by design) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 692 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 679 Td (- The complete six-family native PSD/PSB Smart Object release is not promoted.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 666 Td (- The 188-surface candidate has not been proven as 188 native Smart Object masters.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 653 Td (- Fresh browser visual screenshot evidence is unavailable because the artifact) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 640 Td (  registry cannot resolve this checkout.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 627 Td (- Protected admin system-health success and real payment settlement were not live) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 614 Td (  verified in this pass.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 601 Td () Tj ET
+BT /F2 11 Tf 0.10 0.12 0.16 rg 54 588 Td (Next safe action) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 572 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 559 Td (Create a quarantine-only Smart Object workstream. Generate or ingest one exact) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 546 Td (master per family/color/face, reopen each with the structural auditor, compare) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 533 Td (rendered composites/contact sheets, validate print zones and protected details,) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 520 Td (then promote only after all 188 provenance and visual gates pass. Keep every) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 507 Td (unproven surface at manifest-only and keep editable masters out of public runtime.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 494 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 481 Td (Do not enable masterStatus: verified merely because a PNG looks correct or a) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 468 Td (layer has an artwork-shaped name.) Tj ET
+BT /F1 8 Tf 0.35 0.40 0.45 rg 54 28 Td (TryNex Lifestyle audit - verified evidence only) Tj ET
+endstream
+endobj
+30 0 obj
+<< /Type /Page /Parent 33 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 29 0 R >>
+endobj
+31 0 obj
+<< /Length 2981 >>
+stream
+q 0.10 0.20 0.28 rg 0 770 612 22 re f Q
+BT /F2 10 Tf 0.98 0.98 0.98 rg 54 777 Td (TRY NEX LIFESTYLE  |  FULL-STACK AUDIT) Tj ET
+BT /F2 18 Tf 0.10 0.12 0.16 rg 54 742 Td (APPENDIX: KEY FILES AND EVIDENCE) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 721 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 708 Td (Runtime and contracts) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 695 Td (artifacts/trynex-storefront/src/pages/design-studio/mockups.tsx) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 682 Td (artifacts/trynex-storefront/src/pages/design-studio/complete-mockup-matrix.ts) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 669 Td (artifacts/trynex-storefront/src/pages/design-studio/smart-v9-release.ts) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 656 Td (artifacts/trynex-storefront/src/pages/design-studio/smart-v9-candidate.generated.ts) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 643 Td (scripts/validate-mockup-matrix.mjs) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 630 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 617 Td (Storage and API) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 604 Td (artifacts/api-server/src/lib/objectStorage.ts) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 591 Td (artifacts/api-server/src/lib/objectStorage.test.ts) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 578 Td (artifacts/api-server/src/routes/storage.ts) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 565 Td (artifacts/api-server/src/routes/orders.ts) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 552 Td (lib/db/src/schema/index.ts) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 539 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 526 Td (Source and audit tools) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 513 Td (attached_assets/trynex-mockup-source-kit/psd) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 500 Td (tools/audit_psd_masters.py) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 487 Td (tools/build-smartobject-mockups.mjs) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 474 Td (docs/superpowers/specs/2026-09-01-six-family-psd-smart-mockup-design.md) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 461 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 448 Td (Operational handoff) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 435 Td (AGENT_HANDOFF.md) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 422 Td (artifacts/trynex-storefront/.replit-artifact/artifact.toml) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 409 Td (artifacts/api-server/.replit-artifact/artifact.toml) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 396 Td () Tj ET
+BT /F2 11 Tf 0.10 0.12 0.16 rg 54 383 Td (Final statement) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 367 Td () Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 354 Td (TryNex is operational for the verified storefront/API and raster mockup runtime.) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 341 Td (It is not accurate to call the current 108 editable PSD/PSB source files native) Tj ET
+BT /F1 9 Tf 0.10 0.12 0.16 rg 54 328 Td (Smart Object masters. The code and handoff now preserve that distinction.) Tj ET
+BT /F1 8 Tf 0.35 0.40 0.45 rg 54 28 Td (TryNex Lifestyle audit - verified evidence only) Tj ET
+endstream
+endobj
+32 0 obj
+<< /Type /Page /Parent 33 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 31 0 R >>
+endobj
+33 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R 10 0 R 12 0 R 14 0 R 16 0 R 18 0 R 20 0 R 22 0 R 24 0 R 26 0 R 28 0 R 30 0 R 32 0 R] /Count 15 >>
+endobj
+34 0 obj
+<< /Type /Catalog /Pages 33 0 R >>
+endobj
+xref
+0 35
+0000000000 65535 f 
+0000000015 00000 n 
+0000000085 00000 n 
+0000000160 00000 n 
+0000002146 00000 n 
+0000002283 00000 n 
+0000005441 00000 n 
+0000005578 00000 n 
+0000008202 00000 n 
+0000008339 00000 n 
+0000011140 00000 n 
+0000011278 00000 n 
+0000014399 00000 n 
+0000014538 00000 n 
+0000016955 00000 n 
+0000017094 00000 n 
+0000019665 00000 n 
+0000019804 00000 n 
+0000022173 00000 n 
+0000022312 00000 n 
+0000024912 00000 n 
+0000025051 00000 n 
+0000027647 00000 n 
+0000027786 00000 n 
+0000030596 00000 n 
+0000030735 00000 n 
+0000033514 00000 n 
+0000033653 00000 n 
+0000036528 00000 n 
+0000036667 00000 n 
+0000038936 00000 n 
+0000039075 00000 n 
+0000042109 00000 n 
+0000042248 00000 n 
+0000042403 00000 n 
+trailer
+<< /Size 35 /Root 34 0 R >>
+startxref
+42454
+%%EOF

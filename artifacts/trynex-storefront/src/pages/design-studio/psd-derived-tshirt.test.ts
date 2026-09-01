@@ -56,6 +56,7 @@ describe("licensed PSD-derived T-shirt workflow", () => {
         expect(resolution.isColorPhoto).toBe(true);
         expect(resolution.cutoutNeedsTint).toBe(false);
         expect(resolution.requiresTint).toBe(false);
+        expect(resolution.smartObject.masterStatus).toBe("manifest-only");
       }
     }
   });

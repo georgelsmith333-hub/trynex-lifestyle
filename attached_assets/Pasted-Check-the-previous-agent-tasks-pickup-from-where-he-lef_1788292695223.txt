@@ -1,0 +1,118 @@
+Check the previous agent tasks pickup from.where he left kfff
+
+I’ll review the previous agent’s handoff, project instructions, and the attached checkpoint note, then I’ll summarize exactly where to resume and the safest next action before changing anything.
+
+Completed
+I read AGENTS.md, AGENT_HANDOFF.md, and replit.md.
+The previous agent completed the Design Studio V2 reliability work and the external storefront/API rollout.
+The staged six-family mockup rebuild reached the important milestone: 188 surfaces were generated and the handoff says the staged manifest/PSD gates passed.
+Last stopping point
+The previous agent had promoted the reviewed smart-v9 runtime previews into the customer-facing resolver.
+The remaining local changes are updates to stale tests that still expect the older smart-v4/source-matrix paths.
+The workflow is currently running cleanly; the API connected to the database and the storefront started successfully.
+Remaining work
+Finish reconciling the stale mockup tests with the accepted 188-surface smart-v9 contract.
+Run the storefront checks and full typecheck.
+Restart the managed app after any source changes.
+Verify representative product/color/face URLs through the same proxied path the Studio uses.
+Update the handoff with the exact result.
+Blockers
+No implementation blocker is currently known.
+Fresh screenshot capture was unavailable in the previous session, so I’ll rely on direct runtime checks and the running app.
+I will not use or expose any credentials from the attached file.
+Plan
+I’ll first inspect the uncommitted mockup changes and test failures, then make the smallest coordinated fix across the resolver and its related expectations. I’ll preserve the existing fallback, checkout, upload, product-switching, curved-product, and white-bottle behavior.
+
+Existing behavior to preserve
+Local/immediate artwork upload.
+Original artwork metadata through cart and checkout.
+Product switching with print-zone refitting.
+Realistic curved-product previews.
+White water bottle as a single non-tintable color.
+Existing storefront, admin, authentication, payments, storage, and deployment behavior.
+Verification
+I’ll run targeted mockup tests, storefront typecheck, the full workspace typecheck where practical, restart the running application, and check representative runtime asset/API paths.
+
+Safe parallel work
+Asset inventory and test/source inspection are independent, but resolver and test edits must stay coordinated. I’m continuing from the previous stopping point now.
+
+I’ve confirmed the handoff is consistent with the current files. I’m now comparing the pending resolver/test changes against the staged matrix so I can finish the exact interrupted step without touching unrelated commerce or deployment code.
+
+The pending code already points the resolver at smart-v9; the interruption is in expectation cleanup, not in a missing route. I’m running the affected mockup tests now to identify the exact remaining failures before editing.
+
+The failing tests pinpoint the bug: source-matrix-v3/v4 still wins over the accepted smart-v9 assets, so the Studio is visibly serving the older paths for hoodies and long sleeves. I’m changing the precedence so the validated 188-surface release is authoritative, while retaining legacy geometry/master metadata and the pinned bottle exception.
+
+The first patch did not apply because the surrounding comment differs slightly from the recorded context; no file was changed by that attempt. I’m applying the same focused precedence fix against the exact current lines.
+
+Use a more capable model when needed for this request?
+Got it, staying on Free.
+I found the remaining contract mismatch: the staged 188-surface release uses canonical folders grey and forest, while the older source-kit compatibility names are heather-grey and forest-green. That is why only some colors still fell through to legacy JPGs. I’m adding an explicit compatibility mapping so the old geometry keys remain intact but the browser always requests the correct smart-v9 asset folder.
+
+The release and product color contracts are not just a two-name alias: hoodie/long-sleeve currently expose labels like Charcoal, Royal Blue, and Sand, while the staged release folders are generic names such as Grey, Sky Blue, and Olive. I’m checking the actual rendered colors before mapping them, rather than guessing and risking another visibly wrong mockup.
+
+The visual check confirms this is a real naming/appearance mismatch, not just a test typo. I’m keeping the validated smart-v9 photo only where it matches the product’s actual color contract; colors without a trustworthy equivalent will stay on their reviewed, color-specific source-matrix image instead of being silently mapped to the wrong shade. This avoids trading the old routing issue for incorrect products.
+
+The resolver now fails closed on ambiguous color names, and the tests reflect that contract: exact matches use smart-v9; Charcoal/Royal Blue/Sand-style mismatches retain their reviewed color-specific source assets. I’m running the affected suite again, then I’ll check the full storefront build/type surface.
+
+The focused mockup tests now pass (11/11), the storefront typecheck and production build pass, and all checked v9/source-matrix asset URLs return successfully through the proxy. I’m doing the required clean restart and final workspace checks now, then I’ll record the exact stopping point for the next agent.
+
+The application restarted successfully. I’m doing the final regression pass now: full storefront tests, workspace typecheck, and fresh workflow logs to ensure the resolver fix didn’t disturb the running app.
+
+The full regression pass caught two expected compatibility failures: the new release was placed ahead of the separately reviewed PSD-derived T-shirt front/back bases, which the project explicitly requires to remain authoritative. I’m restoring that documented T-shirt exception while keeping smart-v9 first for the other eligible surfaces. The app itself restarted cleanly and the workspace typecheck already passes.
+
+The final storefront regression suite is clean: 22 test files and 76 tests pass, and the workspace typecheck/build pass. I’m restarting once more to load the final resolver code, then I’ll capture the running storefront preview and update the handoff with the completed checkpoint.
+
+The final restart is healthy. The preview service could not capture a screenshot because this checkout is not registered in the preview registry, matching the previous handoff’s known limitation; direct proxied asset checks still return 200. I’m recording the completed fix and this verification limitation in the project handoff now.
+
+The final regression pass is clean, but it exposed one important boundary worth documenting: the staged v9 release’s generic hoodie/long-sleeve color names cannot safely replace every catalog shade. I’m preserving the exact-color exception in the handoff and memory so the next agent does not “fix” it by showing the wrong garment color.
+
+The implementation checkpoint is complete for this pass. One genuine follow-on remains outside the repaired resolver: align the unmatched Hoodie/Long Sleeve catalog shades with reviewed v9 assets, then perform browser-level visual QA once preview registration is available. I’m adding that as a follow-up rather than silently treating the ambiguous mappings as finished.
+
+Completed the current Smart Mockup reliability checkpoint.
+
+Changes made:
+
+smart-v9 assets now take precedence for exact catalog-color matches.
+Reviewed PSD-derived T-shirt front/back assets remain authoritative.
+Ambiguous Hoodie/Long Sleeve colors are not incorrectly mapped:
+Charcoal
+Royal Blue
+Sand
+Those unmatched shades continue using their reviewed color-specific source-matrix assets.
+Updated the related source-matrix tests and project handoff/memory documentation.
+Verification:
+
+Storefront tests: 22 files, 76 tests passed
+Storefront typecheck: passed
+Full workspace typecheck: passed
+Production build: passed
+Workflow restarted and running cleanly
+Representative v9, source-matrix, and PSD asset URLs returned HTTP 200
+git diff --check: passed
+The preview screenshot could not be captured because this checkout is missing from the artifact registry, but the proxied app and asset requests are healthy.
+
+A follow-up task was proposed for aligning the remaining Hoodie/Long Sleeve shades with reviewed v9 assets before full production promotion.
+
+Heyy,, dont ask again and again... Match every hoodie- long sleeve and t shirt and other all mockups shades and also psd psb smart object layering and other more things is fully accurated or not and also make sure with that full constancy has done to our website all 6 products all colors mockups with everything all should need must works. Anyway i also want to know a brief pdf summary with what is done and whats not and our full infastrcure how ita noe correctly added with our sites, and also how everything working, like the products how loading and which api or what is using., where the products stored and also how admin panel working how its using and how ai is integrated to our backend routed correctly and users how using them and also more like that which is a full stack site full a to z audit + fix = a great overview pdf. Make sure this is not just for ausit also for fix if u see any issues and then u will do more abd then generate the correct pdf overview.
+
+I’ll handle this end-to-end without interrupting you for repeated confirmations: first inspect the current handoff and architecture, then run the website/security/a11y audit, fix concrete issues (including all six product mockup/color paths and PSD/PSB runtime boundaries), re-test the stack, and finally generate a concise but complete PDF overview of what works, what changed, and any remaining gaps.
+
+I’ve read the project operating rules, handoff, architecture notes, and the required audit/PDF guidance. I will not ask for approval issue-by-issue; I’m doing one read-only baseline pass now, then I’ll present one consolidated A-to-Z fix plan. After that single approval, I’ll make the fixes, rerun all checks, and generate the PDF.
+
+The baseline pass is complete. Two important findings are already confirmed: the website and core public API endpoints are live, but the Squirrel full-site scanner is not installed in this environment; the built-in security scanners found dependency vulnerabilities plus two path-handling findings that need code review before I touch anything. I’m gathering the exact data-flow files now so the single fix plan covers storefront, API, admin, AI, database, storage, mobile, and mockups accurately.
+
+Baseline architecture and security data-flow are now mapped. The consolidated scope I’m proceeding with is:
+
+Mockup correctness: validate all 188 six-family surfaces, reconcile every live catalog shade to the correct runtime asset, preserve the T-shirt PSD-derived and authentic bottle exceptions, and prevent ambiguous/legacy assets from winning.
+PSD/PSB truth check: inspect the actual masters and manifest for embedded Smart Object layers, masks, face coverage, hashes, and public-runtime leakage; fix the writer/manifest path if the audit proves a real defect, otherwise document the hard blocker instead of labeling raster files as Smart Objects.
+Full-stack audit/fix: verify storefront routes, product loading, API/cache/database flow, admin/auth/session flow, storage/uploads, AI routing, checkout/payment, mobile, SEO, deployment proxy, and security. Fix code-level issues found without changing working commerce behavior.
+Verification: rerun tests, typechecks, production build, workflow restart, public endpoint smoke tests, mockup matrix checks, and security scanners. The external Squirrel scanner is unavailable in PATH, so its section will be explicitly marked unavailable rather than fabricated.
+Deliverable: generate a readable PDF with architecture diagrams-in-words, endpoint/data-flow tables, completed fixes, verified behavior, known limitations, and next actions.
+I’m treating your request as the approval for this single scope and will not stop for per-finding confirmations.
+
+You've reached your daily free quota limit. It will reset at 12:00 AM UTC.
+
+
+Start application
+Website
+Open Start application

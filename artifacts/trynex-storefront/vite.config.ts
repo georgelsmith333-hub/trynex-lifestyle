@@ -236,6 +236,14 @@ export default defineConfig({
     host: "0.0.0.0",
     allowedHosts: true,
     proxy: {
+      // Keep the canonical crawler URL working in local development too.
+      // Cloudflare Pages uses public/_redirects in production, while Vite
+      // otherwise falls through to the SPA shell for this XML route.
+      "/sitemap.xml": {
+        target: `http://localhost:${apiPort}`,
+        changeOrigin: true,
+        secure: false,
+      },
       "/api": {
         target: `http://localhost:${apiPort}`,
         changeOrigin: true,

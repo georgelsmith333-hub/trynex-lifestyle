@@ -938,7 +938,11 @@ export function resolveMockup(
       face,
       sourceKitKey,
       editableMasterPath: sourceMatrix?.editableMasterPath ?? masterPath,
-      masterStatus: "verified",
+      // The audited source-kit PSD/PSB files are openable raster masters, but
+      // contain no genuine Photoshop Smart Object layers yet. Keep the runtime
+      // manifest honest and fail closed until a structurally verified master is
+      // promoted for this exact surface.
+      masterStatus: "manifest-only",
       baseSrc: photoSrc,
       cutoutSrc,
       normalizedFrame: sourceMatrix?.normalizedFrame ?? normalizedFrame,

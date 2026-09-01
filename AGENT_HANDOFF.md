@@ -101,6 +101,43 @@ Verification: Storefront tests 22 files/76 tests passed; storefront typecheck,
   capture was unavailable because the artifact was not found in the registry.
 ```
 
+## Current handoff (2026-09-02)
+
+Status: complete — consolidated audit, safe hardening fixes, verification, and
+the requested PDF overview are complete; native Smart Object promotion remains
+intentionally incomplete and fail-closed.
+Last completed: Refreshed compatible transitive security overrides for
+`browserslist` and `decode-uri-component`, changed runtime Smart Object
+manifests from a false `verified` claim to `manifest-only`, reran builds/tests,
+restarted the managed application workflow, and verified the proxied API and
+asset paths.
+Stopped at: After generating the full-stack audit PDF and confirming it can be
+opened and text-extracted.
+Files/areas changed: API object-storage path validation and upload checks;
+storefront mockup contracts, release validation, Vite proxy, and regression
+test; workspace dependency overrides/lockfile; audit PDF.
+Remaining work: Build and visually approve the complete 188-surface native PSD/
+PSB Smart Object release before changing any surface to `masterStatus:
+verified`. Obtain authenticated admin-health evidence and a working browser
+artifact registry if those claims are required. Review the remaining
+unpatched `image-size` advisory in Expo/Metro tooling.
+Blocker: No blocker for the audit or current storefront/API runtime. The native
+Smart Object matrix lacks a completed 188-surface structural and visual gate,
+the artifact screenshot registry cannot resolve this checkout, and Upstash
+Redis is unavailable in the current environment.
+Next safe action: Treat `masterStatus: manifest-only` as authoritative; create
+a follow-up workstream for quarantine Smart Object generation, structural
+reopen checks, contact-sheet review, and controlled promotion.
+Verification: `pnpm validate:mockups` passed (188/188); storefront tests
+22 files/76 tests passed; API tests 6 files/26 tests passed; storefront/API
+typechecks passed; full workspace typecheck passed; storefront and API builds
+passed; PSD audit passed for 108/108 openable 1024x1024 8-bit RGB/RGBA masters
+with 0 Smart Objects; workflow restarted cleanly; healthz/liveness/readiness,
+products/categories/settings, sitemap/robots, representative mockup assets,
+invalid-order, invalid-upload, and unsafe-path smoke checks passed. `pnpm
+audit` is reduced to 2 high `image-size` findings with no patched upstream
+version; the TOTP SHA-1 SAST result remains RFC-compatibility-required.
+
 ## Latest local studio reliability pass (2026-09-01)
 
 ```text
