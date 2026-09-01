@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Check, ChevronRight, Package, Search, Sparkles, X } from "lucide-react";
-import { getProductPickerFallbackSrc, getProductPickerPreviewSrc, PRODUCTS, type DesignProduct } from "@/pages/design-studio/mockups";
+import { getProductPickerFallbackSrc, getProductPickerPreviewSrc, getZonePZ, PRODUCTS, type DesignProduct } from "@/pages/design-studio/mockups";
 import { useDesignStore } from "@/hooks/useDesignStore";
 
 const CATEGORY_LABELS: Array<{ id: "all" | DesignProduct["category"]; label: string }> = [
@@ -67,6 +67,9 @@ export function ProductSwitcher() {
   const setQuantity = useDesignStore((s) => s.setQuantity);
   const setFace = useDesignStore((s) => s.setFace);
   const setMugMode = useDesignStore((s) => s.setMugMode);
+  const layers = useDesignStore((s) => s.layers);
+  const updateLayer = useDesignStore((s) => s.updateLayer);
+  const selectedColor = useDesignStore((s) => s.selectedColor);
   const setShowProductPicker = useDesignStore((s) => s.setShowProductPicker);
   const setProductSearch = useDesignStore((s) => s.setProductSearch);
   const setProductPickerCategory = useDesignStore((s) => s.setProductPickerCategory);
@@ -82,9 +85,37 @@ export function ProductSwitcher() {
 
   const chooseProduct = (product: DesignProduct) => {
     if (product.id !== selectedProduct.id) {
+      const nextColor = product.colors.find((color) => color.hex.toLowerCase() === selectedColor.hex.toLowerCase()) ?? product.colors[0];
+      const layerTransforms = layers.map((layer) => {
+        const face = layer.face ?? "front";
+        const oldZone = getZonePZ(face, selectedProduct, selectedColor.hex);
+        const nextZone = getZonePZ(face, product, nextColor.hex);
+        const widthRatio = nextZone.w / Math.max(1, oldZone.w);
+        const heightRatio = nextZone.h / Math.max(1, oldZone.h);
+        const fitRatio = Math.min(widthRatio, heightRatio);
+        return {
+          id: layer.id,
+          transform: {
+            ...layer.transform,
+            x: layer.transform.x * widthRatio,
+            y: layer.transform.y * heightRatio,
+            scale: layer.transform.scale * fitRatio,
+            scaleX: layer.transform.scaleX ? layer.transform.scaleX * fitRatio : undefined,
+            scaleY: layer.transform.scaleY ? layer.transform.scaleY * fitRatio : undefined,
+          },
+        };
+      });
+      // setProduct captures the complete pre-switch frame. Apply the geometry
+      // remap only after that snapshot so one undo restores the original art.
+      setProduct(product);
+      // Keep the artwork, but scale its position and size into the new product's
+      // active print geometry so switching from (for example) a T-shirt to a
+      // hoodie never leaves artwork outside the target zone.
+      layerTransforms.forEach(({ id, transform }) => {
+        updateLayer(id, { transform }, { history: false });
+      });
       // Preserve artwork for the apply-to-product workflow, but reset product-specific
       // commerce identity, quantity, and incompatible face/mug state.
-      setProduct(product);
       setLinkedStoreProduct(null);
       setQuantity(1);
       setFace("front");

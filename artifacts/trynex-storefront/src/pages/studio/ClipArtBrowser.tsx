@@ -2,15 +2,25 @@ import { useState } from "react";
 import { Search, Image as ImageIcon } from "lucide-react";
 import { useDesignStore } from "@/hooks/useDesignStore";
 import { fitImageTransform } from "./autoFit";
-import { STICKERS } from "@/pages/design-studio/mockups";
+import { getZonePZ, MUG_PZ, MUG_SIDE_BACK_PZ, MUG_SIDE_PZ, STICKERS } from "@/pages/design-studio/mockups";
 
 export function ClipArtBrowser() {
   const [query, setQuery] = useState("");
   const addLayer = useDesignStore((s) => s.addLayer);
   const selectLayer = useDesignStore((s) => s.selectLayer);
   const setActiveTab = useDesignStore((s) => s.setActiveTab);
-  const activeFace = useDesignStore((s) => s.activeFace);
-  const printZone = useDesignStore((s) => s.selectedProduct.printZone);
+   const { activeFace, mugMode, selectedProduct, selectedColor } = useDesignStore((s) => ({
+     activeFace: s.activeFace,
+     mugMode: s.mugMode,
+     selectedProduct: s.selectedProduct,
+     selectedColor: s.selectedColor,
+   }));
+   const printZone = (() => {
+     if (selectedProduct.category === "mug") {
+       return mugMode === "wrap" ? MUG_PZ : mugMode === "side2" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ;
+     }
+     return getZonePZ(activeFace, selectedProduct, selectedColor.hex);
+   })();
 
   const filtered = STICKERS.filter((s) => s.name.toLowerCase().includes(query.toLowerCase()));
 
