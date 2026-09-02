@@ -58,3 +58,4 @@
 - [Render 4 main migration](render-4-main-migration.md) — 4th Render is the sole write primary; gateway merged and fails closed until PRODUCTION_ORIGINS.primary is set; workflow body lives at tools/ci/render-orchestrate.workflow.yml because the App cannot push .github/workflows
 - [Admin bypass environment gate](admin-bypass-environment-gate.md) — development emergency admin credentials require explicit NODE_ENV=development; unset/unknown environments must not enable bypass
 - [Metro image-size remediation](metro-image-size-remediation.md) — patch Metro to import a namespaced bounded parser directly; overrides keyed as image-size can still trigger scanner findings
+- [Admin destructive-action safety](admin-destructive-action-safety.md) — admin mutations should confirm destructive intent, show per-item pending state, and expose retryable failures

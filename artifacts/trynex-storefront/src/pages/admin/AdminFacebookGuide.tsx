@@ -4,20 +4,48 @@ import { useState } from "react";
 
 function CopyBlock({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
-  const handleCopy = () => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const [copyError, setCopyError] = useState(false);
+  const handleCopy = async () => {
+    setCopyError(false);
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error("Clipboard unavailable");
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // A selection fallback still lets users copy in browsers without clipboard permission.
+      const selection = window.getSelection();
+      const range = document.createRange();
+      const code = document.createElement("textarea");
+      code.value = text;
+      code.setAttribute("readonly", "");
+      code.style.position = "fixed";
+      code.style.opacity = "0";
+      document.body.appendChild(code);
+      code.select();
+      const copiedWithFallback = document.execCommand("copy");
+      selection?.removeAllRanges();
+      document.body.removeChild(code);
+      if (copiedWithFallback) {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } else {
+        setCopyError(true);
+      }
+    }
   };
   return (
     <div className="relative bg-gray-900 rounded-lg p-4 mt-2 overflow-x-auto">
       <button
         onClick={handleCopy}
+        type="button"
+        aria-label={copied ? "Copied to clipboard" : "Copy code to clipboard"}
         className="absolute top-2 right-2 text-gray-400 hover:text-white p-1 rounded"
       >
         {copied ? <CheckCircle2 className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
       </button>
       <pre className="text-green-400 text-sm font-mono whitespace-pre-wrap">{text}</pre>
+      {copyError && <p role="status" className="mt-2 text-xs text-amber-300">Copy failed. Select the code and copy it manually.</p>}
     </div>
   );
 }

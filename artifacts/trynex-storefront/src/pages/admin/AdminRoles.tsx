@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { getAuthHeaders, getApiUrl } from "@/lib/utils";
 import { Loader } from "@/components/ui/Loader";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Shield, Plus, X, Check, AlertTriangle, KeyRound } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -23,6 +24,8 @@ export default function AdminRoles() {
   const [sessions, setSessions] = useState<AdminSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [revokeId, setRevokeId] = useState<number | null>(null);
+  const [revoking, setRevoking] = useState(false);
 
   const fetchSessions = async () => {
     setLoading(true);
@@ -46,6 +49,7 @@ export default function AdminRoles() {
   }, []);
 
   const revokeSession = async (id: number) => {
+    setRevoking(true);
     try {
       const res = await fetch(getApiUrl(`/api/admin/sessions/${id}`), {
         method: "DELETE",
@@ -56,6 +60,9 @@ export default function AdminRoles() {
       toast({ title: "Session revoked" });
     } catch {
       toast({ title: "Failed to revoke session", variant: "destructive" });
+    } finally {
+      setRevoking(false);
+      setRevokeId(null);
     }
   };
 
@@ -71,6 +78,9 @@ export default function AdminRoles() {
         </div>
         <button
           onClick={fetchSessions}
+          type="button"
+          aria-label="Refresh admin sessions"
+          disabled={loading}
           className="flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-sm transition-all hover:scale-105 border border-orange-200 text-orange-600 bg-orange-50 hover:bg-orange-100"
         >
           <Shield className="w-4 h-4" /> Refresh
@@ -137,7 +147,10 @@ export default function AdminRoles() {
                       <td className="px-5 py-4 text-right">
                         {!revoked && !expired && (
                           <button
-                            onClick={() => revokeSession(session.id)}
+                            type="button"
+                            aria-label={`Revoke session ${session.id}`}
+                            onClick={() => setRevokeId(session.id)}
+                            disabled={revoking}
                             className="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all"
                           >
                             <X className="w-4 h-4" />
@@ -173,6 +186,15 @@ export default function AdminRoles() {
           </div>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={revokeId !== null}
+        title="Revoke admin session?"
+        description="This signs the selected session out immediately. The admin can sign in again later."
+        confirmText={revoking ? "Revoking…" : "Revoke session"}
+        onConfirm={() => revokeId !== null && void revokeSession(revokeId)}
+        onCancel={() => !revoking && setRevokeId(null)}
+      />
     </AdminLayout>
   );
 }

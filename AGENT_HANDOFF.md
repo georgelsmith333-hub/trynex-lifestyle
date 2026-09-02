@@ -184,6 +184,47 @@ Verification: Full workspace typecheck passed; storefront typecheck and
   registered; no source change was made for it.
 ```
 
+## Latest admin operations checkpoint (2026-09-02)
+
+```text
+Status: ready for review — focused admin operations hardening is complete
+Last completed: Reconciled the unfinished order mutation loading state and
+  date-aware cache updates, then standardized retryable load errors, visible
+  pending states, accessible labels, and explicit destructive confirmations
+  across orders, activity logs, backup/schema repair, deployment/system actions,
+  Facebook import/guide, hampers, mockups, referrals, roles, SEO, and security.
+  Existing routes, API contracts, permissions, registered fields, and Smart
+  Object fail-closed behavior were preserved.
+Stopped at: After the final storefront typecheck, workflow restart, and runtime
+  smoke verification; production promotion and publishing were not attempted.
+Files/areas changed: `artifacts/trynex-storefront/src/pages/admin/` files
+  `AdminActivityLog.tsx`, `AdminBackup.tsx`, `AdminDeployment.tsx`,
+  `AdminFacebookGuide.tsx`, `AdminFacebookImport.tsx`, `AdminHampers.tsx`,
+  `AdminMockups.tsx`, `AdminOrders.tsx`, `AdminReferrals.tsx`, `AdminRoles.tsx`,
+  `AdminSEO.tsx`, and `AdminSecurity.tsx`.
+Remaining work: Review the changed admin screens with a real authenticated
+  browser session. Lower-priority screens such as AI Developer, Designer, Page
+  Builder, Database Cluster, Tech Stack, Secrets, Customers, and Login still
+  need a dedicated visual pass if the owner wants every admin route to share
+  the same interaction language. Smart Object production promotion still
+  requires controlled visual/runtime acceptance of all 188 surfaces.
+Blocker: This checkout is absent from the artifact preview registry and the
+  browser-use CLI is unavailable, so authenticated visual acceptance cannot be
+  claimed. Local Redis credentials remain rejected; the documented fallback is
+  operating. The dependency scanner still lacks its `osv` executable.
+Next safe action: Review the authenticated admin routes and staged Smart Object
+  surfaces, then either approve this batch for delivery or scope the remaining
+  lower-priority admin screens as a separate pass. Keep staged mockups
+  `manifest-only` / `structurally-verified` until visual/runtime evidence is
+  complete.
+Verification: Full workspace typecheck passed; storefront production build
+  passed; API tests (6 files/26 tests) passed; storefront tests (22 files/76
+  tests) passed; Smart Object matrix and 188/188 candidate validators passed;
+  the managed workflow restarted cleanly; proxied health, products, and
+  settings checks returned 200; `git diff --check` passed. The untracked
+  credential-bearing attached note remains excluded from release changes.
+```
+
 ## Latest local studio reliability pass (2026-09-01)
 
 ```text
