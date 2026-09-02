@@ -15,7 +15,7 @@ export default function ShippingPolicy() {
     <div className="min-h-screen flex flex-col bg-white">
       <SEOHead
         title="Shipping Policy"
-        description="TryNex Lifestyle shipping policy. Fast delivery across all 64 districts of Bangladesh. Free shipping on orders above ৳1,500."
+        description="Trynext Lifestyle shipping policy. Fast delivery across all 64 districts of Bangladesh. Free shipping on orders above ৳1,500."
         canonical="/shipping-policy"
         keywords="trynex shipping, bangladesh delivery, free shipping bd"
       />

@@ -671,15 +671,15 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-white">
       <SEOHead
         title="Premium Custom Apparel Bangladesh | Custom T-Shirts, Hoodies & Gifts"
-        description="TryNex Lifestyle offers custom T-shirts, hoodies, mugs, and gift hampers with delivery across Bangladesh."
+        description="Trynext Lifestyle offers custom T-shirts, hoodies, mugs, and gift hampers with delivery across Bangladesh."
         canonical="/"
         keywords="custom t-shirt bangladesh, premium apparel bangladesh, custom hoodie bd, custom mug bd, custom cap bangladesh, gift hamper dhaka, personalized gifts bd, কাস্টম টি-শার্ট, কাস্টম হুডি বাংলাদেশ, ট্রাইনেক্স"
         jsonLd={[
           {
             "@context": "https://schema.org",
             "@type": "ClothingStore",
-            "name": settings.siteName || "TryNex Lifestyle",
-            "alternateName": "TryNex",
+            "name": settings.siteName || "Trynext Lifestyle",
+            "alternateName": "Trynext",
             "url": "https://trynex-lifestyle-shop.pages.dev",
             "logo": "https://trynex-lifestyle-shop.pages.dev/favicon.svg",
             "image": "https://trynex-lifestyle-shop.pages.dev/opengraph.jpg",
@@ -727,7 +727,7 @@ export default function Home() {
           {
             "@context": "https://schema.org",
             "@type": "Organization",
-            "name": settings.siteName || "TryNex Lifestyle",
+             "name": settings.siteName || "Trynext Lifestyle",
             "url": "https://trynex-lifestyle-shop.pages.dev",
             "logo": { "@type": "ImageObject", "url": "https://trynex-lifestyle-shop.pages.dev/favicon.svg", "width": 512, "height": 512 },
              ...(settings.phone ? { "contactPoint": { "@type": "ContactPoint", "telephone": settings.phone, "contactType": "sales", "areaServed": "BD" } } : {}),
@@ -735,7 +735,7 @@ export default function Home() {
           {
             "@context": "https://schema.org",
             "@type": "WebSite",
-            "name": settings.siteName || "TryNex Lifestyle",
+             "name": settings.siteName || "Trynext Lifestyle",
             "url": "https://trynex-lifestyle-shop.pages.dev",
             "potentialAction": {
               "@type": "SearchAction",
@@ -1101,7 +1101,7 @@ export default function Home() {
               viewport={{ once: true }}
               className="section-eyebrow mb-4"
             >
-              <Award className="w-3 h-3" /> Why TryNex?
+              <Award className="w-3 h-3" /> Why Trynext?
             </motion.span>
             <h2 className="section-heading mt-4">
               <SplitTextReveal text="Built for Bangladesh" delay={0.04} />
@@ -1432,7 +1432,7 @@ export default function Home() {
               transition={{ delay: 0.2 }}
               className="text-gray-500 mt-4"
             >
-              Approved feedback shared by customers who have ordered with TryNex.
+              Approved feedback shared by customers who have ordered with Trynext.
             </motion.p>
           </div>
 

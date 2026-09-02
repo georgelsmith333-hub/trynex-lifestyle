@@ -90,7 +90,7 @@ function fallback(value: string | null | undefined, def: string): string {
 
 async function buildSettings(map: Record<string, string | null>) {
   return {
-    siteName: fallback(map["siteName"], "TryNex Lifestyle"),
+    siteName: fallback(map["siteName"], "Trynext Lifestyle"),
     tagline: fallback(map["tagline"], "You imagine, we craft."),
     // Contact details are admin-owned. Empty values stay empty so customers
     // never see invented phone numbers, email addresses, or locations.
@@ -211,9 +211,9 @@ async function buildSettings(map: Record<string, string | null>) {
     spinWheelResetAt: parseInt(map["spinWheelResetAt"] ?? "0", 10),
     spinWheelCooldownHours: parseInt(map["spinWheelCooldownHours"] ?? "24", 10),
     // SEO defaults (used as fallback when page has no override)
-    seoDefaultTitle: map["seoDefaultTitle"] ?? "TryNex Lifestyle — Custom Apparel & Gifts in Bangladesh",
+    seoDefaultTitle: map["seoDefaultTitle"] ?? "Trynext Lifestyle — Custom Apparel & Gifts in Bangladesh",
     seoDefaultDescription: map["seoDefaultDescription"] ?? "Design and order custom T-shirts, hoodies, mugs, caps, and gift hampers in Bangladesh. Premium quality, nationwide delivery, pay just 25% in advance.",
-    seoDefaultKeywords: map["seoDefaultKeywords"] ?? "custom t-shirt bangladesh, personalized mug, gift hamper, custom hoodie, design studio, trynex",
+    seoDefaultKeywords: map["seoDefaultKeywords"] ?? "custom t-shirt bangladesh, personalized mug, gift hamper, custom hoodie, design studio, trynext",
     seoOgImage: map["seoOgImage"] ?? "",
     seoTwitterHandle: map["seoTwitterHandle"] ?? "",
     // Hero typewriter phrases — newline-separated string; blank means use frontend defaults

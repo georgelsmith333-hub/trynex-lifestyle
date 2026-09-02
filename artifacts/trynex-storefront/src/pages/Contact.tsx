@@ -99,7 +99,7 @@ export default function Contact() {
     <div className="min-h-screen flex flex-col bg-white">
       <SEOHead
         title="Contact Us"
-        description="Get in touch with TryNex Lifestyle — Bangladesh's #1 custom apparel brand. We're here to help with orders, custom designs, and any queries."
+        description="Get in touch with Trynext Lifestyle — Bangladesh's #1 custom apparel brand. We're here to help with orders, custom designs, and any queries."
         canonical="/contact"
       />
       <Navbar />

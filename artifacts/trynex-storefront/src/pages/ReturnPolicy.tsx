@@ -8,7 +8,7 @@ export default function ReturnPolicy() {
     <div className="min-h-screen flex flex-col bg-white">
       <SEOHead
         title="Return & Refund Policy"
-        description="TryNex Lifestyle return and refund policy. We stand behind every product. Easy returns within 3 days for defective or incorrect items."
+        description="Trynext Lifestyle return and refund policy. We stand behind every product. Easy returns within 3 days for defective or incorrect items."
         canonical="/return-policy"
         keywords="trynex returns, refund policy, exchange policy bangladesh"
       />

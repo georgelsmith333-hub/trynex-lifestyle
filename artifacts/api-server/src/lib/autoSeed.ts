@@ -15,7 +15,7 @@ export { runMigrations } from "./migrationRunner";
 // Runs every startup so a wiped/blank value gets re-seeded automatically.
 async function seedCoreBrandSettings(): Promise<void> {
   const defaults: Record<string, string> = {
-    siteName: "TryNex Lifestyle",
+    siteName: "Trynext Lifestyle",
     tagline: "You imagine, we craft",
     exitIntentPromoEnabled: "true",
     exitIntentPromoCode: "WELCOME",

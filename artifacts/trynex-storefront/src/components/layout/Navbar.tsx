@@ -345,11 +345,11 @@ export function Navbar() {
             </div>
             <div className="flex flex-col leading-none gap-[3px]">
               <span className="text-[1.3rem] font-black font-display tracking-tight text-gray-900 group-hover:text-orange-600 transition-colors">
-                <span style={{ color: '#E85D04' }}>{(settings.siteName?.trim() || "TryNex").split(' ')[0]}</span>
+                <span style={{ color: '#E85D04' }}>{(settings.siteName?.trim() || "Trynext").split(' ')[0]}</span>
               </span>
               <span className="text-[8px] font-bold tracking-[0.32em] uppercase" style={{ color: '#B8860B' }}>
                 {(() => {
-                  const name = settings.siteName?.trim() || "TryNex Lifestyle";
+                  const name = settings.siteName?.trim() || "Trynext Lifestyle";
                   const rest = name.split(' ').slice(1).join(' ');
                   return rest || settings.tagline || "Lifestyle";
                 })()}

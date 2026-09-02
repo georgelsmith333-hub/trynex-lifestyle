@@ -101,7 +101,7 @@ export default function HamperBuilder() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <SEOHead
-        title="Build Your Own Gift Hamper | TryNex Lifestyle"
+        title="Build Your Own Gift Hamper | Trynext Lifestyle"
         description="Pick any 3+ products and build your custom gift hamper with a personal message. Bangladesh-wide delivery."
         canonical="/hampers/build"
       />

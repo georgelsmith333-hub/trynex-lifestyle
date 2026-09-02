@@ -224,7 +224,7 @@ const defaults: SiteSettings = {
   spinWheelSubtitle: c("spinWheelSubtitle") || "One free spin — no purchase needed.",
   spinWheelResetAt: Number(c("spinWheelResetAt")) || 0,
   spinWheelCooldownHours: Number(c("spinWheelCooldownHours")) || 24,
-  seoDefaultTitle: c("seoDefaultTitle") || "TryNex Lifestyle — Custom Apparel & Gifts in Bangladesh",
+  seoDefaultTitle: c("seoDefaultTitle") || "Trynext Lifestyle — Custom Apparel & Gifts in Bangladesh",
   seoDefaultDescription: c("seoDefaultDescription") || "Design and order custom T-shirts, hoodies, mugs, caps, and gift hampers in Bangladesh. Premium quality, nationwide delivery, pay just 25% in advance.",
   seoDefaultKeywords: c("seoDefaultKeywords") || "custom t-shirt bangladesh, personalized mug, gift hamper, custom hoodie, design studio, trynex",
   seoOgImage: c("seoOgImage") || "",

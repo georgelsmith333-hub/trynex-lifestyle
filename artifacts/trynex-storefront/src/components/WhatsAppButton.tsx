@@ -4,7 +4,7 @@ import { useLocation } from "wouter";
 import { X, MessageCircle, Minus } from "lucide-react";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 
-const DEFAULT_MESSAGE = "Hello TryNex! I'm interested in placing a custom order. Can you help me?";
+const DEFAULT_MESSAGE = "Hello Trynext! I'm interested in placing a custom order. Can you help me?";
 
 export function WhatsAppButton() {
   const [expanded, setExpanded] = useState(false);
@@ -83,7 +83,7 @@ export function WhatsAppButton() {
                 <span className="text-white text-xs font-bold">TN</span>
               </div>
               <div>
-                <p className="font-bold text-sm text-gray-900">TryNex Support</p>
+                <p className="font-bold text-sm text-gray-900">Trynext Support</p>
                 <div className="flex items-center gap-1">
                   <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
                   <p className="text-xs text-green-600 font-semibold">Online Now</p>
@@ -106,7 +106,7 @@ export function WhatsAppButton() {
               className="w-full py-2.5 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2"
               style={{ background: '#25D366' }}
                 type="button"
-                aria-label="Chat with TryNex on WhatsApp"
+                aria-label="Chat with Trynext on WhatsApp"
             >
               <MessageCircle className="w-4 h-4" />
               Chat on WhatsApp

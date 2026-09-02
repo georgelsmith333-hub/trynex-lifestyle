@@ -651,7 +651,7 @@ export default function ProductDetail() {
     const itemPrice = selectedProductPrice + (customNote || customImages.length > 0 ? variantCustomizationFee : 0);
     const totalPrice = itemPrice * quantity;
     const lines = [
-      `Assalamu Alaikum, TryNex!`,
+      `Assalamu Alaikum, Trynext!`,
       ``,
       `I'd like to place an order:`,
       ``,
@@ -676,8 +676,8 @@ export default function ProductDetail() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <SEOHead
-        title={`${product.name} | TryNex Lifestyle`}
-        description={product.description?.substring(0, 160) || `Buy ${product.name} from TryNex Lifestyle. Premium quality custom apparel in Bangladesh. Fast delivery to Dhaka and beyond.`}
+        title={`${product.name} | Trynext Lifestyle`}
+        description={product.description?.substring(0, 160) || `Buy ${product.name} from Trynext Lifestyle. Premium quality custom apparel in Bangladesh. Fast delivery to Dhaka and beyond.`}
         canonical={`/product/${product.slug || product.id}`}
         ogImage={product.imageUrl || undefined}
         ogType="product"
@@ -687,10 +687,10 @@ export default function ProductDetail() {
             "@context": "https://schema.org",
             "@type": "Product",
             "name": product.name,
-            "description": product.description || `Buy ${product.name} from TryNex Lifestyle. Premium quality, fast delivery across Bangladesh.`,
+            "description": product.description || `Buy ${product.name} from Trynext Lifestyle. Premium quality, fast delivery across Bangladesh.`,
             "image": product.imageUrl || "",
             "sku": `TN-${product.id}`,
-            "brand": { "@type": "Brand", "name": "TryNex Lifestyle" },
+            "brand": { "@type": "Brand", "name": "Trynext Lifestyle" },
             "offers": {
               "@type": "Offer",
               "priceCurrency": "BDT",
@@ -698,7 +698,7 @@ export default function ProductDetail() {
               "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
               "url": `https://trynex-lifestyle-shop.pages.dev/product/${product.slug || product.id}`,
               "itemCondition": "https://schema.org/NewCondition",
-              "seller": { "@type": "Organization", "name": "TryNex Lifestyle" }
+              "seller": { "@type": "Organization", "name": "Trynext Lifestyle" }
             },
             ...(stats?.total > 0
               ? {
@@ -751,7 +751,7 @@ export default function ProductDetail() {
                 {displayImage ? (
                   <img
                     src={resolveImageUrl(displayImage)}
-                    alt={`${product.name} — TryNex Lifestyle`}
+                    alt={`${product.name} — Trynext Lifestyle`}
                     onError={(event) => {
                       event.currentTarget.onerror = null;
                       event.currentTarget.src = "/images/product-placeholder.svg";
@@ -1532,7 +1532,7 @@ export default function ProductDetail() {
                   <div>
                     <h3 className="font-black text-gray-900 mb-4">Description</h3>
                     <p className="text-gray-600 leading-relaxed text-sm">
-                      {product.description || "Premium quality product from TryNex Lifestyle. Crafted with care using the finest materials, designed to last and impress. Perfect for custom designs, corporate gifts, or personal style."}
+                      {product.description || "Premium quality product from Trynext Lifestyle. Crafted with care using the finest materials, designed to last and impress. Perfect for custom designs, corporate gifts, or personal style."}
                     </p>
                   </div>
                   <div>

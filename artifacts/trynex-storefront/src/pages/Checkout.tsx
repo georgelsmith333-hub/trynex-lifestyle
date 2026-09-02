@@ -1002,7 +1002,7 @@ export default function Checkout() {
 
           {WHATSAPP_NUMBER_INTL && (
             <a
-              href={`https://wa.me/${WHATSAPP_NUMBER_INTL.replace('+', '')}?text=Hi TryNex! My order number is ${createdOrder?.orderNumber}. I need help.`}
+              href={`https://wa.me/${WHATSAPP_NUMBER_INTL.replace('+', '')}?text=Hi Trynext! My order number is ${createdOrder?.orderNumber}. I need help.`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl font-bold text-white text-sm mb-2"
@@ -1292,7 +1292,7 @@ export default function Checkout() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <SEOHead title="Checkout" description="Complete your order at TryNex Lifestyle." noindex />
+      <SEOHead title="Checkout" description="Complete your order at Trynext Lifestyle." noindex />
       <Navbar />
 
       <main ref={stepPanelRef} tabIndex={-1} className="flex-1 pt-header pb-24 outline-none">
@@ -2050,7 +2050,7 @@ export default function Checkout() {
                 </div>
 
                 <a
-                  href={`https://wa.me/${WHATSAPP_NUMBER_INTL.replace('+', '')}?text=Hi TryNex! I need help with my order.`}
+                  href={`https://wa.me/${WHATSAPP_NUMBER_INTL.replace('+', '')}?text=Hi Trynext! I need help with my order.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-3 flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl font-semibold text-xs transition-all"

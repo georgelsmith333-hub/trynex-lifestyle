@@ -102,7 +102,7 @@ export function ProductCard({ product, index = 0, eagerImage = true }: ProductCa
       ? new URL(`/product/${product.slug || product.id}`, window.location.origin).toString()
       : `/product/${product.slug || product.id}`;
     const whatsappMsg = encodeURIComponent(
-      `Hello TryNex! I want to order:\n*${product.name}*\nPrice: ${formatPrice(discountPrice || price)}\nProduct link: ${productLink}`
+      `Hello Trynext! I want to order:\n*${product.name}*\nPrice: ${formatPrice(discountPrice || price)}\nProduct link: ${productLink}`
     );
     const whatsappUrl = waNumber ? `https://wa.me/${waNumber}?text=${whatsappMsg}` : "";
 

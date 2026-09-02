@@ -63,7 +63,7 @@ export default function Hampers() {
           ...(hampers.length > 0 ? [{
             "@context": "https://schema.org",
             "@type": "ItemList",
-            "name": "TryNex Gift Hampers",
+            "name": "Trynext Gift Hampers",
             "itemListElement": hampers.slice(0, 20).map((h, i) => ({
               "@type": "ListItem",
               "position": i + 1,

@@ -508,7 +508,7 @@ export default function AdminSettings() {
         {/* General */}
         <SectionCard icon={Store} title="General Information">
           <Field label="Store Name">
-            <input {...register("siteName")} className={inputClass} style={inputStyle} placeholder="TryNex Lifestyle" />
+            <input {...register("siteName")} className={inputClass} style={inputStyle} placeholder="Trynext Lifestyle" />
           </Field>
           <Field label="Tagline">
             <input {...register("tagline")} className={inputClass} style={inputStyle} placeholder="You imagine, we craft." />
@@ -876,7 +876,7 @@ export default function AdminSettings() {
 
         <SectionCard icon={Search} title="SEO Defaults & Auto-SEO" iconColor="#16a34a">
           <Field label="Default Page Title" full>
-            <input {...register("seoDefaultTitle")} className={inputClass} style={inputStyle} placeholder="TryNex Lifestyle — Custom Apparel & Gifts in Bangladesh" />
+            <input {...register("seoDefaultTitle")} className={inputClass} style={inputStyle} placeholder="Trynext Lifestyle — Custom Apparel & Gifts in Bangladesh" />
             <p className="text-xs text-gray-400 mt-1">Used on every page that doesn't set its own title. Keep under 60 characters for best Google ranking.</p>
           </Field>
           <Field label="Default Meta Description" full>

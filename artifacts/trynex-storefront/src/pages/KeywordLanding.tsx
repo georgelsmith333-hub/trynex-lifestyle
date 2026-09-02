@@ -121,7 +121,7 @@ export default function KeywordLanding({ params }: { params: { slug: string } })
     url: `${SITE_URL}/${config.slug}`,
     publisher: {
       "@type": "Organization",
-      name: "TryNex Lifestyle",
+      name: "Trynext Lifestyle",
       url: SITE_URL,
     },
   };
@@ -130,7 +130,7 @@ export default function KeywordLanding({ params }: { params: { slug: string } })
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "@id": `${SITE_URL}/#organization`,
-    name: "TryNex Lifestyle",
+    name: "Trynext Lifestyle",
     description: "Bangladesh's leading custom apparel, mug, and gifting brand. Design your own t-shirt, hoodie, or mug with fast nationwide delivery.",
     url: SITE_URL,
     ...(settings.phone ? { telephone: settings.phone } : {}),
@@ -163,7 +163,7 @@ export default function KeywordLanding({ params }: { params: { slug: string } })
   return (
     <>
       <SEOHead
-        title={config.seoTitle.replace(" | TryNex Lifestyle", "").replace(" | TryNex", "")}
+        title={config.seoTitle.replace(" | Trynext Lifestyle", "").replace(" | Trynext", "")}
         description={config.description}
         canonical={`/${config.slug}`}
         keywords={config.keywords}
@@ -283,7 +283,7 @@ export default function KeywordLanding({ params }: { params: { slug: string } })
       <section className="py-14 px-4 bg-neutral-900 text-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-black mb-3">
-            Why Choose TryNex for Custom Gifts
+            Why Choose Trynext for Custom Gifts
           </h2>
           <p className="text-neutral-400 mb-10 max-w-xl mx-auto">
             Custom gifts and apparel with nationwide delivery across Bangladesh.
@@ -313,7 +313,7 @@ export default function KeywordLanding({ params }: { params: { slug: string } })
             Frequently Asked Questions
           </h2>
           <p className="text-neutral-500 text-center mb-8">
-            Everything you need to know about {config.h1.toLowerCase()} from TryNex.
+            Everything you need to know about {config.h1.toLowerCase()} from Trynext.
           </p>
           <div className="space-y-3">
             {config.faqs.map((faq, i) => (
@@ -327,7 +327,7 @@ export default function KeywordLanding({ params }: { params: { slug: string } })
       <section className="py-10 px-4 bg-orange-50">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-lg font-bold text-neutral-700 mb-4 text-center">
-            Explore More from TryNex
+            Explore More from Trynext
           </h2>
           <div className="flex flex-wrap gap-3 justify-center">
             {config.relatedPages.map((p) => (

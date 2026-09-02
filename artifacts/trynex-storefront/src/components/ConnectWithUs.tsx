@@ -99,7 +99,7 @@ export function ConnectWithUs() {
             We're here for you
           </span>
           <h2 className="text-3xl md:text-4xl font-black font-display text-gray-900 mt-4">
-            Connect with TryNex
+            Connect with Trynext
           </h2>
           <p className="text-gray-500 mt-3 max-w-xl mx-auto">
             Reach us on the platform you love — every channel below is monitored daily.
@@ -152,7 +152,7 @@ export function ConnectWithUs() {
         </div>
 
         <p className="text-center text-xs text-gray-400 mt-8">
-          Follow TryNex for custom-design ideas and product updates.
+          Follow Trynext for custom-design ideas and product updates.
         </p>
       </div>
     </section>
