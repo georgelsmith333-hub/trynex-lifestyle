@@ -152,6 +152,38 @@ check passed. The redesigned admin screens retain all previously registered
 product/settings fields and all current admin menu routes. The artifact
 registry could not capture a fresh screenshot.
 
+## Latest admin continuation checkpoint (2026-09-02)
+
+```text
+Status: ready for review — focused admin operations hardening is complete
+Last completed: Extended the existing admin interaction language to Categories,
+  Reviews, Promo Codes, and Newsletter without changing their API contracts.
+  Added searchable category filtering and catalogue KPIs, review queue KPIs and
+  rating summary, promo-code validation/error recovery and operational KPIs, and
+  newsletter refresh/error states plus formula-injection-safe CSV export.
+Stopped at: After a clean full typecheck, storefront production build, API test
+  run, Smart Object matrix validation, managed workflow restart, and proxied
+  public/protected smoke checks.
+Files/areas changed: `artifacts/trynex-storefront/src/pages/admin/AdminCategories.tsx`,
+  `AdminReviews.tsx`, `AdminPromoCodes.tsx`, and `AdminNewsletter.tsx`.
+Remaining work: Review these screens with a real authenticated browser session;
+  continue the same treatment on lower-priority operational screens only if the
+  owner wants the full panel standardized. Smart Object production promotion is
+  still blocked on controlled visual/runtime acceptance of all 188 surfaces.
+Blocker: The artifact registry cannot resolve this checkout for screenshots, so
+  visual acceptance is unavailable here. Replit deployment is not yet published
+  and requires the owner to use the Publish action.
+Next safe action: Push the verified source to GitHub main, then publish this
+  project from Replit after reviewing the authenticated admin and staged mockups.
+Verification: Full workspace typecheck passed; storefront typecheck and
+  production build passed; API tests 6 files/26 tests passed; Smart Object
+  canonical matrix and 188/188 candidate validation passed; workflow restarted
+  cleanly; healthz/products/categories/settings returned 200; unauthenticated
+  admin checks returned 401; git diff --check passed. The proxied
+  `/api/admin/orders` probe was not used as evidence because that path is not
+  registered; no source change was made for it.
+```
+
 ## Latest local studio reliability pass (2026-09-01)
 
 ```text
