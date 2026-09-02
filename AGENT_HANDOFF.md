@@ -102,44 +102,55 @@ Verification: Storefront tests 22 files/76 tests passed; storefront typecheck,
 
 ## Current handoff (2026-09-02)
 
-Status: ready for review — quarantine Smart Object matrix and application
-hardening are complete; production promotion remains fail-closed.
-Last completed: Generated and structurally reopened all 188 native Smart Object
-PSD masters, reviewed the six family contact sheets, reconciled Expo
-compatibility versions, replaced Metro's upstream image-size dependency with a
-namespaced bounded local parser, regenerated the full-stack PDF overview, and
-restarted the managed workflow.
-Stopped at: After final green application gates and direct proxied runtime
-checks. A fresh browser screenshot could not be captured because this checkout
-is absent from the artifact registry and the browser-use CLI is unavailable.
-Files/areas changed: `vendor/image-size-safe/`, Metro patch files, workspace
-package/lock configuration, Expo mobile package versions, Smart Object staging
-release metadata, contact-sheet evidence, `tools/generate-wave2-audit-pdf.py`,
-and `verification/trynex-full-stack-audit-2026-09-02.pdf`.
-Remaining work: Controlled browser/runtime visual comparison and explicit
-visual acceptance for all 188 surfaces; then promote only reviewed runtime
-derivatives and manifest data. Authenticated admin-health success is not
-claimed until a safe existing session or in-process credential path is
-available.
+Status: ready for review — the shared admin shell, Products workspace, and
+Settings workspace have been redesigned in place; Smart Object production
+promotion remains fail-closed.
+Last completed: Applied the approved operator-console redesign while preserving
+the existing admin shell routes and settings/product fields. Added responsive
+navigation and accessibility affordances, catalogue KPIs and filters, clearer
+product create/edit/delete feedback, gallery and cloud-image handling,
+structured variants, color availability, CSV import, AI descriptions, duplicate
+slug protection, grouped settings navigation, dirty/saving/saved states, and a
+sticky settings save action. Reconciled the product API so color availability
+round-trips, sale prices can be cleared, and duplicate slugs return a useful
+conflict response.
+Stopped at: After a clean API/storefront typecheck and production build,
+focused API tests, managed workflow restart, public proxied smoke checks, and
+preservation checks confirming no existing admin route or registered form field
+was removed. A fresh browser screenshot could not be captured because this
+checkout is absent from the artifact registry and the browser-use CLI is
+unavailable.
+Files/areas changed: `artifacts/trynex-storefront/src/components/layout/AdminLayout.tsx`,
+`artifacts/trynex-storefront/src/pages/admin/AdminProducts.tsx`,
+`artifacts/trynex-storefront/src/pages/admin/AdminSettings.tsx`,
+`artifacts/trynex-storefront/src/index.css`, and
+`artifacts/api-server/src/routes/products.ts`.
+Remaining work: Extend the same approved interaction language to the remaining
+admin screens if the owner wants the full panel rewritten; perform controlled
+browser/runtime visual comparison and explicit visual acceptance for all 188
+Smart Object surfaces before promoting any runtime derivatives or manifest
+data. Authenticated admin-health success is not claimed without a safe existing
+session or in-process credential path.
 Blocker: Artifact screenshot registry and browser-use are unavailable in this
-checkout. Upstash Redis is also degraded because the environment rejects its
+checkout. Upstash Redis is degraded because the environment rejects its
 credentials, while the documented fallback is healthy. Replit's dependency
-scanner now fails with `OSV_SCAN_FAILED` because its `osv` executable is absent;
+scanner fails with `OSV_SCAN_FAILED` because its `osv` executable is absent;
 the local `pnpm audit` is clean and the lockfile contains no upstream
 `image-size` package.
-Next safe action: Keep `masterStatus: manifest-only` /
-`structurally-verified`, obtain controlled visual/runtime evidence, then run
-production smoke checks before any promotion.
+Next safe action: Review the redesigned Products and Settings screens with a
+real authenticated browser session, then continue the remaining admin-screen
+redesign only as an explicitly approved follow-up. Keep
+`masterStatus: manifest-only` / `structurally-verified` until Smart Object
+visual/runtime evidence is complete.
 Verification: Smart Object release gate 188/188 passed; PSD reopen audit
 188/188 passed at 1024x1024 8-bit with one non-empty embedded Smart Object and
 composite per file; canonical matrix 188/188 passed; contact sheets reviewed;
-storefront tests 22 files/76 tests passed; API tests 6 files/26 tests passed;
-storefront/API/mobile typechecks passed; storefront/API/mobile builds passed;
-Expo compatibility check passed; safe parser tests and `pnpm audit` passed
-with 0 advisories; SAST has the known medium TOTP SHA-1 RFC-compatibility
-finding; HoundDog has no findings; workflow restart, healthz/liveness/readiness,
-products/categories/settings, sitemap/robots, admin 401, and public PSD/PSB
-separation checks passed; PDF was generated and text-extracted successfully.
+focused API tests 6 files/26 tests passed; storefront and API typechecks passed;
+storefront production build passed; workflow restart, healthz, products,
+categories, settings, and unauthenticated admin 401 checks passed; git diff
+check passed. The redesigned admin screens retain all previously registered
+product/settings fields and all current admin menu routes. The artifact
+registry could not capture a fresh screenshot.
 
 ## Latest local studio reliability pass (2026-09-01)
 

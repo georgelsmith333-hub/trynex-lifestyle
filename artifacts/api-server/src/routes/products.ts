@@ -58,10 +58,12 @@ const ProductUpdateSchema = ProductFieldsSchema.partial().extend({
   name: z.string().min(1).max(255).optional(),
   slug: z.string().min(1).max(255).optional(),
   price: moneyValue.optional(),
+  discountPrice: z.union([moneyValue, z.null()]).optional(),
   stock: z.number().int().min(0).optional(),
 }).superRefine((value, ctx) => {
   if (
     value.discountPrice !== undefined &&
+    value.discountPrice !== null &&
     value.price !== undefined &&
     value.discountPrice > value.price
   ) {
@@ -137,6 +139,7 @@ function mapProduct(p: any, categoryName?: string | null) {
     images: p.images ?? [],
     sizes: oneSizeCategory ? [] : (p.sizes ?? []),
     colors: p.colors ?? [],
+    colorVariants: Array.isArray(p.colorVariants) ? p.colorVariants : [],
     stock: p.stock,
     featured: p.featured ?? false,
     rating: p.rating ? parseFloat(p.rating) : 0,
@@ -330,8 +333,12 @@ router.post("/products", requireAdmin, async (req, res) => {
     await invalidateProductCache();
     pingSitemaps();
     res.status(201).json(mapProduct(product));
-  } catch (err) {
+  } catch (err: any) {
     req.log.error({ err }, "Failed to create product");
+    if (err?.code === "23505") {
+      res.status(409).json({ error: "duplicate", message: "A product with that slug already exists" });
+      return;
+    }
     res.status(500).json({ error: "internal_error", message: "Failed to create product" });
   }
 });
@@ -366,7 +373,7 @@ router.put("/products/:id", requireAdmin, async (req, res) => {
     if (body.slug !== undefined) updateData.slug = body.slug;
     if (body.description !== undefined) updateData.description = body.description;
     if (body.price !== undefined) updateData.price = String(body.price);
-    if (body.discountPrice !== undefined) updateData.discountPrice = body.discountPrice !== undefined ? String(body.discountPrice) : null;
+    if (body.discountPrice !== undefined) updateData.discountPrice = body.discountPrice === null ? null : String(body.discountPrice);
     if (body.categoryId !== undefined) updateData.categoryId = body.categoryId;
     if (body.imageUrl !== undefined) updateData.imageUrl = body.imageUrl;
     if (body.images !== undefined) updateData.images = body.images;
@@ -395,8 +402,12 @@ router.put("/products/:id", requireAdmin, async (req, res) => {
     await invalidateProductCache();
     pingSitemaps();
     res.json(mapProduct(product));
-  } catch (err) {
+  } catch (err: any) {
     req.log.error({ err }, "Failed to update product");
+    if (err?.code === "23505") {
+      res.status(409).json({ error: "duplicate", message: "A product with that slug already exists" });
+      return;
+    }
     res.status(500).json({ error: "internal_error", message: "Failed to update product" });
   }
 });

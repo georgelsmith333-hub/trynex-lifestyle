@@ -78,6 +78,15 @@
   /* BD Green for trust/success */
   --green: 158 64% 34%;
   --green-light: 158 60% 95%;
+
+  /* Admin command-center tokens */
+  --admin-ink: #172019;
+  --admin-shell: #151915;
+  --admin-shell-muted: #8f988e;
+  --admin-canvas: #f3f5f1;
+  --admin-line: #dfe5dd;
+  --admin-orange: #e85d04;
+  --admin-orange-soft: #fff0e5;
 }
 
 @layer base {
@@ -394,6 +403,30 @@
     border: 1px solid hsl(var(--border));
     border-radius: 1rem;
     box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+  }
+
+  .admin-canvas {
+    background:
+      radial-gradient(circle at 90% 0%, rgba(232, 93, 4, 0.05), transparent 30rem),
+      var(--admin-canvas);
+  }
+  .admin-grid {
+    background-image: linear-gradient(rgba(23,32,25,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(23,32,25,.035) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .admin-panel {
+    background: rgba(255,255,255,.9);
+    border: 1px solid var(--admin-line);
+    border-radius: 1.1rem;
+    box-shadow: 0 10px 30px rgba(23,32,25,.055);
+  }
+  .admin-kicker {
+    color: var(--admin-orange);
+    font-size: .68rem;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
   }
 
   /* Trust badge */
