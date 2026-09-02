@@ -26,12 +26,12 @@ function acceptedCandidate() {
 }
 
 describe("smart-v9 product picker previews", () => {
-  it("uses the accepted v9 front surface and refuses an older-image fallback after activation", () => {
+  it("keeps the curated picker asset until activation, then uses the accepted v9 surface", () => {
     const tshirt = PRODUCTS.find((product) => product.id === "tshirt");
     if (!tshirt) throw new Error("fixture requires the T-shirt product");
 
-    expect(getProductPickerPreviewSrc(tshirt)).toBe("/mockups/smart-v9/tshirt/white/front.png");
-    expect(getProductPickerFallbackSrc(tshirt)).toBeUndefined();
+    expect(getProductPickerPreviewSrc(tshirt)).toBe(tshirt.gallerySrc ?? tshirt.frontSrc);
+    expect(getProductPickerFallbackSrc(tshirt)).toBe(tshirt.frontSrc);
 
     activateSmartV9Release(acceptedCandidate());
 

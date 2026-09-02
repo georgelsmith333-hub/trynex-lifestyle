@@ -9,7 +9,6 @@ import { getCanonicalMockupSpec, type MockupFamily } from "./canonical-mockup-sp
 import { COMPLETE_MOCKUP_MATRIX, getCompleteMockupEntry, type CompleteMockupFamily, type CompleteMockupView } from "./complete-mockup-matrix";
 import { ACCEPTED_SMART_V8_RELEASE } from "./smart-v8-release";
 import { acceptSmartV9Release, type AcceptedSmartV9Release, type SmartV9CandidateRelease } from "./smart-v9-release";
-import { SMART_V9_CANDIDATE } from "./smart-v9-candidate.generated";
 import type { PsdMaterialEffectLayer } from "./composer";
 import {
   PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE,
@@ -590,7 +589,9 @@ export function getProductPickerFallbackSrc(product: DesignProduct): string | un
 // These generated assets were promoted from the validated staging matrix. The
 // all-or-nothing guard above remains the sole activation path.
 activateSmartV8Release(ACCEPTED_SMART_V8_RELEASE);
-activateSmartV9Release(SMART_V9_CANDIDATE);
+// Smart v9 remains staged until the complete browser/runtime visual review is
+// explicitly accepted. The working resolver below intentionally falls back to
+// the reviewed runtime assets while this module is not activated.
 
 function normalizeRuntimeKey(value: string): string {
   return value.trim().toLowerCase().replace(/[\\/]+/g, ":");

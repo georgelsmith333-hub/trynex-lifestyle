@@ -110,7 +110,7 @@ export default function Signup() {
     setLoading(true);
     const result = await register({ name, email, phone: phone || undefined, password });
     if (result.success) {
-      toast({ title: "✓ Account created", description: "Welcome to TryNex!" });
+      toast({ title: "✓ Account created", description: "Welcome to Trynext Lifestyle!" });
       navigate(redirectTo);
     } else {
       setError(result.error || "Registration failed");
@@ -132,7 +132,7 @@ export default function Signup() {
         setLoading(true);
         const result = await loginWithFacebook(response.authResponse.accessToken);
         if (result.success) {
-          toast({ title: "✓ Account created", description: "Welcome to TryNex!" });
+          toast({ title: "✓ Account created", description: "Welcome to Trynext Lifestyle!" });
           navigate(redirectTo);
         } else setError(result.error || "Facebook login failed");
         setLoading(false);

@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { PRODUCTS, getApparelZones, getSmartV9ColorSlug, getZonePZ, resolveMockup, setRuntimeMockupOverrides } from "./mockups";
+import { PRODUCTS, getApparelZones, getZonePZ, resolveMockup, setRuntimeMockupOverrides } from "./mockups";
 import { getSourceMatrixV4LongSleeveEntry, validateSourceMatrixV4LongSleeve } from "./source-matrix-v4";
 
 const colours = ["white", "black", "charcoal", "heather-grey", "navy", "royal-blue", "forest-green", "burgundy", "red", "sand"] as const;
@@ -18,7 +18,7 @@ describe("Long Sleeve source-matrix v4 corrective release", () => {
     }
   });
 
-  it("uses accepted smart-v9 Long Sleeve photos while preserving source geometry", () => {
+  it("uses the reviewed v4 Long Sleeve photos while Smart v9 remains staged", () => {
     const product = PRODUCTS.find((candidate) => candidate.id === "longsleeve");
     if (!product) throw new Error("fixture requires Long Sleeve");
     for (const colour of product.colors) for (const face of faces) {
@@ -28,12 +28,8 @@ describe("Long Sleeve source-matrix v4 corrective release", () => {
       );
       const resolved = resolveMockup(product, colour.hex, face);
       const sourceColour = colour.name.toLowerCase().replaceAll(" ", "-");
-      const smartV9Colour = getSmartV9ColorSlug("longsleeve", sourceColour);
-      const expectedAsset = smartV9Colour
-        ? `/mockups/smart-v9/longsleeve/${smartV9Colour}/${face}.png`
-        : entry!.assetPath;
-      expect(resolved.photoSrc).toBe(expectedAsset);
-      expect(resolved.cutoutSrc).toBe(expectedAsset);
+      expect(resolved.photoSrc).toBe(entry!.assetPath);
+      expect(resolved.cutoutSrc).toBe(entry!.assetPath);
       expect(resolved.printZone).toEqual(entry?.printZone);
       expect(resolved.normalizedFrame).toEqual(entry?.normalizedFrame);
       expect(resolved.editableMasterPath).toBe(entry?.editableMasterPath);
@@ -59,8 +55,8 @@ describe("Long Sleeve source-matrix v4 corrective release", () => {
         imageUrl: "/mockups/smart-v4/longsleeve/navy/front.png?v=smart-v4",
         ingestionStatus: "ready",
       }]);
-      expect(resolveMockup(longsleeve, "#1e3a5f", "front").photoSrc)
-        .toBe("/mockups/smart-v9/longsleeve/navy/front.png");
+       expect(resolveMockup(longsleeve, "#1e3a5f", "front").photoSrc)
+         .toBe("/mockups/source-matrix-v4/longsleeve/navy/front.jpg");
     } finally {
       setRuntimeMockupOverrides([]);
     }

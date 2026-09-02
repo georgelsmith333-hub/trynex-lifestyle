@@ -196,7 +196,7 @@ export const api = {
     }),
 
   createOrder: (data: CreateOrderPayload) =>
-    apiFetch<{ order: Order; message?: string }>(`/api/orders`, {
+    apiFetch<Order>(`/api/orders`, {
       method: "POST",
       headers: { "X-Requested-With": "XMLHttpRequest" },
       body: JSON.stringify(data),

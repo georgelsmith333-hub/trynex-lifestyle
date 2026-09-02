@@ -333,11 +333,15 @@ export default function Checkout() {
   const bankConfigured = !!(settings.bankName && settings.bankAccountNumber && settings.bankAccountName);
   const anyWalletConfigured = !!(settings.bkashNumber || settings.nagadNumber || settings.upayNumber);
 
-  // Only payment methods with a configured or canonical fallback number are shown
-  // to customers. bKash/Nagad remain admin-configured; uPay uses the supplied
-  // canonical merchant number when the settings row is empty.
-  const configuredPaymentMethods: PaymentMethod[] = (['bkash', 'nagad', 'upay'] as PaymentMethod[])
-    .filter((m) => !!getPaymentNumber(m));
+  // Keep the visible method list aligned with the API and mobile checkout.
+  // Wallets and bank transfer are shown only when their destination is usable;
+  // COD follows the admin toggle and card-on-delivery is always available.
+  const configuredPaymentMethods: PaymentMethod[] = [
+    ...(['bkash', 'nagad', 'upay'] as PaymentMethod[]).filter((m) => !!getPaymentNumber(m)),
+    ...(bankConfigured ? ['bank' as const] : []),
+    ...(settings.codEnabled ? ['cod' as const] : []),
+    'card',
+  ];
   const validatePromo = async (codeOverride?: string) => {
     const codeToValidate = codeOverride?.trim() ?? promoInput.trim();
     if (!codeToValidate) return;
@@ -870,7 +874,7 @@ export default function Checkout() {
     if (paymentMethod === 'bank') {
       return bankConfigured && senderName.trim().length > 0 && bankReference.trim().length > 0;
     }
-      return false;
+    return paymentMethod === 'cod' || paymentMethod === 'card';
   })();
 
   if (checkoutStatus === 'success') {
@@ -1635,7 +1639,7 @@ export default function Checkout() {
                     Choose how you pay. For wallets, send the amount to our merchant number and enter your sending details below.
                   </p>
 
-                  <div className="grid grid-cols-1 gap-3 mb-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
                     <button
                       type="button"
                       onClick={() => {
@@ -1662,6 +1666,32 @@ export default function Checkout() {
                       </div>
                       <p className="text-xs text-gray-500 leading-relaxed pl-6">
                         Pay <strong className="text-gray-800">{formatPrice(advanceAmount)}</strong> now, rest on delivery.
+                      </p>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (paymentMethod === 'cod') {
+                          const advanceMethod = configuredPaymentMethods.find(m => m !== 'cod' && m !== 'card');
+                          if (advanceMethod) setPaymentMethod(advanceMethod);
+                        }
+                        setPaymentMode('full');
+                      }}
+                      className="text-left p-4 rounded-2xl transition-all duration-200 focus:outline-none relative"
+                      style={{
+                        background: paymentMode === 'full' ? 'rgba(232,93,4,0.05)' : '#f9fafb',
+                        border: paymentMode === 'full' ? '2px solid rgba(232,93,4,0.45)' : '2px solid #e5e7eb',
+                        boxShadow: paymentMode === 'full' ? '0 2px 16px rgba(232,93,4,0.10)' : 'none',
+                      }}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${paymentMode === 'full' ? 'border-orange-500' : 'border-gray-300'}`}>
+                          {paymentMode === 'full' && <div className="w-2 h-2 rounded-full bg-orange-500" />}
+                        </div>
+                        <span className="font-black text-sm text-gray-900">Full Payment</span>
+                      </div>
+                      <p className="text-xs text-gray-500 leading-relaxed pl-6">
+                        Pay the complete <strong className="text-gray-800">{formatPrice(total)}</strong> now.
                       </p>
                     </button>
 

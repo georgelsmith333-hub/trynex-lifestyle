@@ -35,7 +35,7 @@ async function handleShareApp() {
 
 async function handleCustomerSupport(whatsappNum: string) {
   if (!whatsappNum) {
-    Alert.alert("WhatsApp support unavailable", "WhatsApp support has not been configured yet. You can still visit the TryNex website for help.", [
+    Alert.alert("WhatsApp support unavailable", "WhatsApp support has not been configured yet. You can still visit the Trynext Lifestyle website for help.", [
       { text: "Open Website", onPress: () => Linking.openURL(WEBSITE_URL) },
       { text: "Cancel", style: "cancel" },
     ]);
@@ -46,7 +46,7 @@ async function handleCustomerSupport(whatsappNum: string) {
   if (canOpen) {
     await Linking.openURL(url);
   } else {
-    Alert.alert("WhatsApp Not Found", "Please visit the TryNex website for support.", [
+    Alert.alert("WhatsApp Not Found", "Please visit the Trynext Lifestyle website for support.", [
       { text: "Open Website", onPress: () => Linking.openURL(WEBSITE_URL) },
       { text: "Cancel", style: "cancel" },
     ]);

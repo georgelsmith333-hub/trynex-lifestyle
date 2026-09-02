@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getApparelZones, getSmartV9ColorSlug, getZonePZ, PRODUCTS, resolveMockup, setRuntimeMockupOverrides } from "./mockups";
+import { getApparelZones, getZonePZ, PRODUCTS, resolveMockup, setRuntimeMockupOverrides } from "./mockups";
 import { getSourceMatrixV3Entry, validateSourceMatrixV3 } from "./source-matrix-v3";
 
 describe("Hoodie source matrix v3", () => {
@@ -7,7 +7,7 @@ describe("Hoodie source matrix v3", () => {
     expect(validateSourceMatrixV3()).toEqual([]);
   });
 
-  it("resolves every Hoodie colour and view to the accepted smart-v9 PNG", () => {
+  it("resolves every Hoodie colour and view to the reviewed v3 derivative before Smart v9 promotion", () => {
     const family = "hoodie";
     const product = PRODUCTS.find((candidate) => candidate.category === family)!;
     for (const colour of product.colors) for (const face of ["front", "back", "left-sleeve", "right-sleeve", "neck-label"] as const) {
@@ -15,16 +15,9 @@ describe("Hoodie source matrix v3", () => {
       const sourceColour = resolved.sourceKitKey.split(":")[1]!;
       const entry = getSourceMatrixV3Entry(family, sourceColour, face);
       expect(entry).toBeDefined();
-      const smartV9Colour = getSmartV9ColorSlug(family, sourceColour);
-      const expectedAsset = smartV9Colour
-        ? `/mockups/smart-v9/hoodie/${smartV9Colour}/${face}.png`
-        : entry!.assetPath;
-      expect(resolved.photoSrc).toBe(expectedAsset);
-      expect(resolved.cutoutSrc).toBe(expectedAsset);
-      if (smartV9Colour) {
-        expect(resolved.photoSrc).toMatch(/^\/mockups\/smart-v9\/hoodie\//);
-        expect(resolved.photoSrc).not.toContain("smart-v4");
-      }
+      expect(resolved.photoSrc).toBe(entry!.assetPath);
+      expect(resolved.cutoutSrc).toBe(entry!.assetPath);
+      expect(resolved.photoSrc).not.toContain("smart-v4");
       expect(resolved.editableMasterPath).toMatch(/^quarantine\/source-matrix-v3\//);
       expect(resolved.printZone).toEqual(entry!.printZone);
     }
@@ -49,7 +42,7 @@ describe("Hoodie source matrix v3", () => {
     const hoodie = PRODUCTS.find((product) => product.category === "hoodie")!;
     try {
       setRuntimeMockupOverrides([{ sourceKitKey: "hoodie/navy/front", imageUrl: "/mockups/smart-v4/hoodie/navy/front.png?v=smart-v4", ingestionStatus: "ready" }]);
-      expect(resolveMockup(hoodie, "#1e3a5f", "front").photoSrc).toBe("/mockups/smart-v9/hoodie/navy/front.png");
+      expect(resolveMockup(hoodie, "#1e3a5f", "front").photoSrc).toBe("/mockups/source-matrix-v3/hoodie/navy/front.jpg");
     } finally {
       setRuntimeMockupOverrides([]);
     }

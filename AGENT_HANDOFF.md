@@ -75,6 +75,19 @@ quarantine structural gate. The remaining release work is controlled visual and
 runtime acceptance of all 188 surfaces; production promotion is intentionally
 blocked until that evidence is available.
 
+## Latest local commerce and mockup reliability checkpoint (2026-09-03)
+
+```text
+Status: complete for the local commerce-reliability scope; Smart v9 production promotion remains fail-closed
+Last completed: Aligned web/mobile/API payment contracts, fixed mobile direct-order response handling, made payment evidence retry-safe, added server-side bank evidence validation, normalized payment methods, made customer message authorization case-insensitive, and aligned touched customer-facing brand copy.
+Stopped at: After rebuilding the API, restarting the managed Start application workflow, running the full verification suite, and completing non-mutating proxied smoke checks.
+Files/areas changed: API order/payment and order-message routes, API email copy, mobile checkout/API wrapper/app branding, storefront checkout/auth copy, and mockup/accessibility test expectations.
+Remaining work: None for the verified local commerce-reliability scope. Authenticated browser review and visual/runtime acceptance of all 188 Smart v9 surfaces are still required before any production mockup promotion.
+Blocker: The artifact preview registry cannot resolve this checkout for screenshot capture; the previous handoff also records that browser-use is unavailable. Local Redis credentials remain rejected, while the documented fallback is operating.
+Next safe action: Review the authenticated Checkout, Account messages, and Design Studio routes in a real browser. Keep Smart v9 staged until visual/runtime evidence is accepted; do not create test orders during review.
+Verification: API typecheck and 26 tests passed; storefront typecheck, 22 test files/76 tests, and production build passed; mobile typecheck and full workspace typecheck passed; 188/188 mockup candidate validator passed; API rebuilt; managed workflow restarted cleanly; proxied liveness/readiness/products/settings returned 200; invalid payment-info returned 404; unauthorized message access returned 403; anonymous unread count returned 0; invalid order validation returned 400; no order or payment data was mutated; git diff --check passed. Screenshot attempt failed with "Artifact not found: trynex-storefront".
+```
+
 ## Current continuation checkpoint (2026-09-01)
 
 ```text

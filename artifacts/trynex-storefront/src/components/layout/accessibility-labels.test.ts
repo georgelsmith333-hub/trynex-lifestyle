@@ -16,6 +16,6 @@ describe("storefront layout accessible names", () => {
   it("gives every footer social icon link a destination name", () => {
     expect(footer).toContain('label: "Facebook"');
     expect(footer).toContain('label: "Instagram"');
-    expect(footer).toContain('aria-label={`Visit TryNex Lifestyle on ${label}`}');
+    expect(footer).toContain('aria-label={`Visit Trynext Lifestyle on ${label}`}');
   });
 });
