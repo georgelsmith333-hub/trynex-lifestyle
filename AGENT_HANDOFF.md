@@ -88,6 +88,16 @@ Next safe action: Review the authenticated Checkout, Account messages, and Desig
 Verification: `pnpm audit --audit-level=moderate` reports 0 advisories; API tests 6 files/26 tests and storefront tests 22 files/76 tests passed; API/storefront/mobile/full-workspace typechecks passed; storefront production build and mobile Expo web export passed; 188/188 active Smart v9 validation passed; the legacy validator delegates successfully; API rebuilt and the managed workflow restarted cleanly; proxied liveness/readiness/products/categories/settings/blog/sitemap/robots returned expected 200 responses; `/api/settings` now returns `Trynext Lifestyle` despite the legacy persisted value; invalid order/payment-info/message probes rejected without creating records; all 12 audit-PDF pages rendered and were visually inspected; no order or payment data was mutated; `git diff --check` passed. Screenshot attempt failed with "Artifact not found: trynex-storefront".
 ```
 
+### Redis and readiness note
+
+Redis is an optional, disposable cache. PostgreSQL remains the source of truth for
+products, orders, settings, and other persistent data. The configured Upstash Redis
+provider currently rejects its credentials, so the API uses its documented
+process-local in-memory cache fallback with TTLs; a process restart clears that
+cache but does not remove database data. `/api/healthz` may therefore report
+`degraded` with `redis: "error"`, while `/api/health/readiness` can still report
+`status: "ok"` because readiness checks the database required to serve requests.
+
 ## Current continuation checkpoint (2026-09-01)
 
 ```text
