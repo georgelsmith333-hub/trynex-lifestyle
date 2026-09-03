@@ -75,6 +75,33 @@ quarantine structural gate. The remaining release work is controlled visual and
 runtime acceptance of all 188 surfaces; production promotion is intentionally
 blocked until that evidence is available.
 
+
+## Controlled review checkpoint (2026-09-03)
+
+```text
+Status: blocked — controlled review completed without authenticated browser evidence
+Last completed: Restarted the managed application, checked non-mutating customer/admin
+  route and API behavior, validated the complete 188-surface candidate, and compared
+  staged previews with the public Smart v9 tree.
+Stopped at: Owner visual approval could not be recorded because browser-use is not
+  installed and the artifact preview registry cannot resolve this checkout.
+Files/areas changed: verification/task-1-controlled-review-2026-09-03.md and this
+  handoff only; no runtime or release manifest approval flag changed.
+Remaining work: Review authenticated Checkout, Account/messages, admin Orders/Settings/
+  messages, and representative Design Studio views in a real browser; then record
+  per-surface approval or rejection for all 188 surfaces.
+Blocker: No authenticated customer/admin browser session, no browser-use CLI, and no
+  artifact screenshot target. Smart v9 remains staged and visualApproval=false.
+Next safe action: Obtain a real authenticated browser review without creating an order
+  or payment record. Resolve the two water-bottle staged/public hash discrepancies
+  during that review before any promotion decision.
+Verification: Workflow restarted cleanly; SPA route GETs returned 200; invalid order
+  and message probes were rejected without mutation; admin session returned 401;
+  canonical validator reported 188/188; staged previews matched their manifest
+  checksums 188/188; public Smart v9 matched staged previews 186/188; git diff
+  remains limited to the review record and handoff.
+```
+
 ## Latest local commerce and mockup reliability checkpoint (2026-09-03)
 
 ```text
