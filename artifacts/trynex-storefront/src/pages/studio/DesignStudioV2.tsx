@@ -44,6 +44,19 @@ import { StudioFirstUseGuide, StudioQualityBanner } from "./v1-components/V1Stud
 
 const LazyProductViewer3D = lazy(() => import("../design-studio/ProductViewer3D"));
 
+function getSwitchPrintZone(
+  face: Face,
+  product: DesignProduct,
+  colorHex: string,
+  mugMode: "side1" | "side2" | "wrap",
+): PrintZone {
+  if (product.category === "mug") {
+    if (mugMode === "wrap") return face === "back" ? MUG_WRAP_BACK_PZ : MUG_PZ;
+    return face === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ;
+  }
+  return getZonePZ(face, product, colorHex);
+}
+
 const DRAFT_STORAGE_KEY = "trynex-design-draft-v2";
 const LOCAL_PSD_TSHIRT_STAGE_ROOT = "/@fs/home/ubuntu/webdev-static-assets/trynex-tshirt-psd-staging";
 const LOCAL_PSD_TSHIRT_STAGE_SESSION_KEY = "trynex-local-psd-tshirt-staging";
@@ -444,10 +457,12 @@ export default function DesignStudioV2() {
   const handleQuickProductSwitch = (prod: DesignProduct) => {
     if (prod.id === selectedProduct.id) return;
     const matchingColor = prod.colors.find(c => c.hex.toLowerCase() === selectedColor.hex.toLowerCase()) ?? prod.colors[0];
+    const oldMugMode = selectedProduct.category === "mug" ? mugMode : "side1";
+    const nextMugMode = selectedProduct.category === "mug" && prod.category === "mug" ? mugMode : "side1";
     const layerTransforms = layers.map((layer) => {
       const face = layer.face ?? "front";
-      const oldZone = getZonePZ(face, selectedProduct, selectedColor.hex);
-      const nextZone = getZonePZ(face, prod, matchingColor.hex);
+      const oldZone = getSwitchPrintZone(face, selectedProduct, selectedColor.hex, oldMugMode);
+      const nextZone = getSwitchPrintZone(face, prod, matchingColor.hex, nextMugMode);
       const widthRatio = nextZone.w / Math.max(1, oldZone.w);
       const heightRatio = nextZone.h / Math.max(1, oldZone.h);
       const fitRatio = Math.min(widthRatio, heightRatio);
@@ -1076,7 +1091,7 @@ export default function DesignStudioV2() {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#F5F3F0" }}>
-      <SEOHead title="Design Studio | Create Custom Apparel Online — TryNex Lifestyle" description="Design your own custom T-shirts, hoodies, mugs & more." canonical="/design-studio" />
+      <SEOHead title="Design Studio | Create Custom Apparel Online — Trynext Lifestyle" description="Design your own custom T-shirts, hoodies, mugs & more." canonical="/design-studio" />
       <Navbar />
       <div style={{ height: "calc(var(--announcement-height, 0px) + 4.25rem)" }} />
 
@@ -1295,7 +1310,7 @@ export default function DesignStudioV2() {
                   { id: "text" as const, label: "Text", icon: Type },
                   { id: "ai" as const, label: "AI Art", icon: Wand2 },
                   { id: "layers" as const, label: "Layers", icon: LayersIcon },
-                  { id: "templates" as const, label: "Templates", icon: Sparkles },
+                  { id: "templates" as const, label: "Stickers", icon: Sparkles },
                   { id: "qrcode" as const, label: "QR", icon: Crosshair },
                 ].map(({ id, label, icon: Icon }) => (
                   <button key={id} onClick={() => setActiveTab(id)} className="relative flex-1 flex flex-col items-center justify-center gap-0.5 py-2 rounded-xl text-[9px] font-black transition-all active:scale-90" style={{ background: activeTab === id ? "white" : "transparent", color: activeTab === id ? "#E85D04" : "#9ca3af", boxShadow: activeTab === id ? "0 1px 6px rgba(0,0,0,0.10)" : "none" }}>

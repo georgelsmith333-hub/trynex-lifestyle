@@ -27,7 +27,7 @@ function slugify(str: string): string {
 
 const EMPTY_POST: Partial<BlogPost> = {
   title: "", slug: "", excerpt: "", content: "", imageUrl: "",
-  author: "TryNex Team", authorBio: "", authorAvatarUrl: "",
+  author: "Trynext Team", authorBio: "", authorAvatarUrl: "",
   category: "General", tags: [], published: false, featured: false,
 };
 

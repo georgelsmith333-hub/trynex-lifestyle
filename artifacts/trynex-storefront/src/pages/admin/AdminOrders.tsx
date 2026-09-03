@@ -19,7 +19,7 @@ const STATUS_OPTIONS = ["all", "pending", "processing", "shipped", "ongoing", "d
 type StatusFilter = typeof STATUS_OPTIONS[number];
 
 function getPaymentProofUrl(notes?: string | null): string | null {
-  return notes?.match(/Payment proof:\s*(https?:\/\/\S+)/i)?.[1] ?? null;
+  return notes?.match(/Payment proof:\s*((?:https?:\/\/\S+)?\/api\/storage\/objects\/\S+)/i)?.[1] ?? null;
 }
 
 const PAYMENT_LABELS: Record<string, { label: string; color: string }> = {

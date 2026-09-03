@@ -1,6 +1,10 @@
 import { useMemo } from "react";
 import { Check, ChevronRight, Package, Search, Sparkles, X } from "lucide-react";
-import { getProductPickerFallbackSrc, getProductPickerPreviewSrc, getZonePZ, PRODUCTS, type DesignProduct } from "@/pages/design-studio/mockups";
+import {
+  getProductPickerFallbackSrc, getProductPickerPreviewSrc, getZonePZ,
+  MUG_PZ, MUG_WRAP_BACK_PZ, MUG_SIDE_PZ, MUG_SIDE_BACK_PZ,
+  PRODUCTS, type DesignProduct,
+} from "@/pages/design-studio/mockups";
 import { useDesignStore } from "@/hooks/useDesignStore";
 
 const CATEGORY_LABELS: Array<{ id: "all" | DesignProduct["category"]; label: string }> = [
@@ -30,6 +34,19 @@ const CARD_TONE: Record<DesignProduct["category"], string> = {
   cap: "from-[#f3eee7] via-[#fbfaf8] to-[#e7dfd5]",
   waterbottle: "from-[#f0eee9] via-[#fbfaf8] to-[#e4e1da]",
 };
+
+function getSwitchPrintZone(
+  face: "front" | "back" | "left-sleeve" | "right-sleeve" | "neck-label",
+  product: DesignProduct,
+  colorHex: string,
+  mugMode: "side1" | "side2" | "wrap",
+) {
+  if (product.category === "mug") {
+    if (mugMode === "wrap") return face === "back" ? MUG_WRAP_BACK_PZ : MUG_PZ;
+    return face === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ;
+  }
+  return getZonePZ(face, product, colorHex);
+}
 
 function ProductCardImage({ product }: { product: DesignProduct }) {
   const previewSrc = getProductPickerPreviewSrc(product);
@@ -67,6 +84,7 @@ export function ProductSwitcher() {
   const setQuantity = useDesignStore((s) => s.setQuantity);
   const setFace = useDesignStore((s) => s.setFace);
   const setMugMode = useDesignStore((s) => s.setMugMode);
+  const mugMode = useDesignStore((s) => s.mugMode);
   const layers = useDesignStore((s) => s.layers);
   const updateLayer = useDesignStore((s) => s.updateLayer);
   const selectedColor = useDesignStore((s) => s.selectedColor);
@@ -86,10 +104,12 @@ export function ProductSwitcher() {
   const chooseProduct = (product: DesignProduct) => {
     if (product.id !== selectedProduct.id) {
       const nextColor = product.colors.find((color) => color.hex.toLowerCase() === selectedColor.hex.toLowerCase()) ?? product.colors[0];
+      const oldMugMode = selectedProduct.category === "mug" ? mugMode : "side1";
+      const nextMugMode = selectedProduct.category === "mug" && product.category === "mug" ? mugMode : "side1";
       const layerTransforms = layers.map((layer) => {
         const face = layer.face ?? "front";
-        const oldZone = getZonePZ(face, selectedProduct, selectedColor.hex);
-        const nextZone = getZonePZ(face, product, nextColor.hex);
+        const oldZone = getSwitchPrintZone(face, selectedProduct, selectedColor.hex, oldMugMode);
+        const nextZone = getSwitchPrintZone(face, product, nextColor.hex, nextMugMode);
         const widthRatio = nextZone.w / Math.max(1, oldZone.w);
         const heightRatio = nextZone.h / Math.max(1, oldZone.h);
         const fitRatio = Math.min(widthRatio, heightRatio);

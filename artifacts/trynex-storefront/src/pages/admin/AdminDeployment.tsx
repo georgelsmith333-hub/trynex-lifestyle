@@ -90,10 +90,10 @@ export default function AdminDeployment() {
   const [repo, setRepo] = useState("");
   const [branch, setBranch] = useState("main");
   const [token, setToken] = useState("");
-  const [authorName, setAuthorName] = useState("TryNex Admin");
+  const [authorName, setAuthorName] = useState("Trynext Admin");
   const [authorEmail, setAuthorEmail] = useState("admin@trynex.local");
   const [renderDeployHook, setRenderDeployHook] = useState("");
-  const [commitMessage, setCommitMessage] = useState("chore: deploy from TryNex admin");
+  const [commitMessage, setCommitMessage] = useState("chore: deploy from Trynext admin");
 
   const fetchStatus = async () => {
     setLoading(true);

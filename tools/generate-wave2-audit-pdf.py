@@ -10,7 +10,7 @@ from PIL import Image as PILImage
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "verification" / "trynex-full-stack-audit-2026-09-02.pdf"
+OUTPUT = ROOT / "verification" / "trynex-full-stack-audit-2026-09-03.pdf"
 RELEASE_MANIFEST = ROOT / "dist-mockups" / "staging" / "smart-v1" / "release-manifest.json"
 CONTACT_SHEETS = ROOT / "verification" / "smart-object-contact-sheets"
 
@@ -22,7 +22,7 @@ class AuditPdf(FPDF):
         self.line(18, self.get_y(), self.w - 18, self.get_y())
         self.set_font("Helvetica", size=8)
         self.set_text_color(107, 114, 128)
-        self.cell(0, 8, f"TryNex Lifestyle - Wave 2 audit overview - 2026-09-02    Page {self.page_no()}", align="C")
+        self.cell(0, 8, f"Trynext Lifestyle - Wave 2 audit overview - 2026-09-03    Page {self.page_no()}", align="C")
 
     def title_page(self, title, subtitle):
         self.add_page()
@@ -91,10 +91,10 @@ pdf = AuditPdf("P", "mm", "A4")
 pdf.set_margins(18, 16, 18)
 pdf.set_auto_page_break(True, 18)
 
-pdf.title_page("TryNex Lifestyle", "Wave 2 full-stack audit and Smart Object release overview")
+pdf.title_page("Trynext Lifestyle", "Wave 2 full-stack audit and Smart Object release overview")
 pdf.table(
     [
-        ("Audit date", "2026-09-02"),
+        ("Audit date", "2026-09-03"),
         ("Release scope", "Six product families / 188 canonical surfaces"),
         ("Current release state", f"{manifest.get('status', 'unknown')}; visualApproval={manifest.get('visualApproval', False)}"),
         ("Runtime policy", "Current reviewed runtime assets remain active; generated editable masters stay quarantined"),
@@ -147,7 +147,7 @@ pdf.table(
     [
         ("Storefront tests", "PASS - 22 files / 76 tests"),
         ("API tests", "PASS - 6 files / 26 tests"),
-        ("Storefront/API typechecks", "PASS"),
+        ("Storefront/API/Mobile typechecks", "PASS"),
         ("Full workspace typecheck", "PASS"),
         ("Storefront and API builds", "PASS"),
         ("Mobile Expo web export", "PASS"),
@@ -156,6 +156,10 @@ pdf.table(
         ("pnpm audit", "PASS - 0 info/low/moderate/high/critical advisories"),
         ("image-size lock exposure", "PASS - no upstream image-size 1.x entry; Metro resolves local bounded parser"),
         ("git diff --check", "PASS"),
+        ("Payment evidence contract", "PASS - contact-authorized order updates and storage-only proof paths"),
+        ("Mobile order contract", "PASS - direct tracking response and structured HTTP errors"),
+        ("Payment destinations", "PASS - settings-owned; no hardcoded wallet fallback"),
+        ("Mug product switching", "PASS - side and wrap print-zone geometry preserved"),
     ]
 )
 pdf.body("The dependency remediation was validated against Metro's actual contract: its asset scanner can pass either an image buffer or a file path and recognizes PNG, JPEG, BMP, GIF, WebP, PSD, SVG, TIFF, and KTX families. The local parser enforces a 64 MiB input ceiling and fails closed on unsupported or malformed data.")

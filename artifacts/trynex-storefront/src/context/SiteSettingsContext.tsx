@@ -140,10 +140,10 @@ const defaults: SiteSettings = {
   googleAdsId: c("googleAdsId") || "",
   freeShippingThreshold: c("freeShippingThreshold") ?? 0,
   shippingCost: c("shippingCost") ?? 0,
-  bkashNumber: c("bkashNumber") || "01747292277",
-  nagadNumber: c("nagadNumber") || "01747292277",
+  bkashNumber: c("bkashNumber") || "",
+  nagadNumber: c("nagadNumber") || "",
   rocketNumber: c("rocketNumber") || "",
-  upayNumber: c("upayNumber") || "01747292277",
+  upayNumber: c("upayNumber") || "",
   bankName: c("bankName") || "",
   bankAccountName: c("bankAccountName") || "",
   bankAccountNumber: c("bankAccountNumber") || "",
@@ -242,8 +242,9 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
   const settings: SiteSettings = {
     ...defaults,
     ...remote,
-    // An empty admin setting must not hide the canonical fallback wallet.
-    upayNumber: remote.upayNumber?.trim() || defaults.upayNumber || "01747292277",
+    // Keep the configured wallet destination authoritative; empty means the
+    // method is unavailable rather than inventing a customer-facing number.
+    upayNumber: remote.upayNumber?.trim() || defaults.upayNumber || "",
     isLoaded: !!data,
   };
 

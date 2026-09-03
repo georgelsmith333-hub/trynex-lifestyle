@@ -197,3 +197,17 @@ mtime_ms = 1788295850171
 storage_uri = "gcs://replit-rams-assets-pike/rams/assets/repl:e4be849f-caca-4522-84bf-2fdc68a94de8/c8a2195f-1899-4ff0-8010-41f84be15956/ab97a6bc-7170-4d23-be1e-14057db5c63e"
 storage_version_token = "1788295865761427"
 content_type = "application/pdf"
+
+[[outputs]]
+id = "8U-uXZ1jxh5ZEonvzoaTt"
+uri = "file://verification/trynex-full-stack-audit-2026-09-03.pdf"
+type = "pdf"
+title = "Trynext Lifestyle full-stack audit — September 3, 2026"
+description = "Regenerated 12-page audit evidence PDF covering the 188-surface Smart v9 quarantine gate, commerce/payment/mobile verification, dependency audit, protected routes, and the remaining visual-approval limitation."
+logical_id = "a56ee804-3a31-44e2-82eb-2742f2a04dc5"
+content_hash = "sha256:f10fe4d4a710d35013228cd7aa94212679bedf23bd30cdb312f1c2a1d13ffeb9"
+size = 1334621
+mtime_ms = 1788400732012
+storage_uri = "gcs://replit-rams-assets-sisko/rams/assets/repl:93fcfc3e-9531-4b79-82c3-bffd85d9441b/a56ee804-3a31-44e2-82eb-2742f2a04dc5/44eed155-c528-4070-b7a5-0751c2241a32"
+storage_version_token = "1788401991940358"
+content_type = "application/pdf"

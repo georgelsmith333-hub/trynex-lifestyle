@@ -42,6 +42,7 @@
 - [Mobile Render domain fallback](mobile-render-fallback.md) — .env.production had stale trynex-api.onrender.com; lib/api.ts getBaseUrl() + _layout.tsx setBaseUrl() now detect and replace that domain with trynexshop.com automatically.
 - [DB auto-failover re-probe](db-auto-reprobe.md) — periodic 60s re-probe walks the full chain and switches to the first healthy DB; products/analytics added as failover candidates.
 - [Security: untracked secret files](secrets-untracked.md) — `.replit` and `attached_assets/Pasted-*.txt` removed from git index so credentials cannot be committed again.
+- [Dependency audit remediation](dependency-audit-remediation.md) — workspace advisories need lockfile ownership analysis, coordinated direct upgrades, generated-client regeneration, and full-suite verification.
 - [Neon API unreachable from Replit](neon-api-unreachable.md) — `api.neon.tech` returns HTTP 000 from the Replit container; DB endpoints still connect directly, so failover logic is the in-container strategy.
 - [Neon quota + CF token status](neon-quota-cf-token.md) — MAIN + FAILOVER over quota; ANALYTICS DB active (73 orders, 10 products); CF tokens expired (401); CF Pages auto-deploys from GitHub push.
 - [DB failover priority fix](db-failover-priority.md) — DATABASE_ANALYTICS promoted above DATABASE_PRODUCTS in lib/db/src/index.ts; analytics has 73 orders from last healthy sync; products was empty of orders causing admin to show 0.

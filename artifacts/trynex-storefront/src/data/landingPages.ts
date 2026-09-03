@@ -30,19 +30,19 @@ export const LANDING_PAGES: Record<string, LandingPageConfig> = {
   "custom-tshirt-bangladesh": {
     slug: "custom-tshirt-bangladesh",
     h1: "Custom T-Shirt Bangladesh",
-    seoTitle: "Custom T-Shirt Bangladesh — Design Your Own Tee | TryNex Lifestyle",
+    seoTitle: "Custom T-Shirt Bangladesh — Design Your Own Tee | Trynext Lifestyle",
     description:
       "Design your own custom t-shirt in Bangladesh. Premium cotton, unlimited color & print options. Fast delivery to Dhaka & all 64 districts. Pay via bKash or Nagad — just 25% in advance.",
     keywords:
       "custom t-shirt bangladesh, কাস্টম টি-শার্ট বাংলাদেশ, custom tshirt dhaka, personalized tshirt bd, custom print tshirt bangladesh, design your own tshirt bangladesh, oversized tshirt bangladesh, bulk tshirt printing dhaka",
     heroTag: "Bangladesh's #1 Custom T-Shirt Brand",
     intro:
-      "Looking for the best custom t-shirt in Bangladesh? TryNex Lifestyle lets you design exactly what you want — your name, your artwork, your team logo, or any photo — printed on premium 100% cotton tees. Whether you need 1 piece for a birthday gift or 500 pieces for a corporate event, we deliver to every corner of Bangladesh.",
+      "Looking for the best custom t-shirt in Bangladesh? Trynext Lifestyle lets you design exactly what you want — your name, your artwork, your team logo, or any photo — printed on premium 100% cotton tees. Whether you need 1 piece for a birthday gift or 500 pieces for a corporate event, we deliver to every corner of Bangladesh.",
     tagFilter: "t-shirt",
     faqs: [
       {
         q: "What is the minimum order for custom t-shirts in Bangladesh?",
-        a: "TryNex has no minimum order — you can order as few as 1 custom t-shirt. For bulk orders of 50+ pieces, we offer special wholesale pricing.",
+        a: "Trynext has no minimum order — you can order as few as 1 custom t-shirt. For bulk orders of 50+ pieces, we offer special wholesale pricing.",
       },
       {
         q: "How long does custom t-shirt delivery take in Bangladesh?",
@@ -62,7 +62,7 @@ export const LANDING_PAGES: Record<string, LandingPageConfig> = {
       },
       {
         q: "How much does a custom t-shirt cost in Bangladesh?",
-        a: "Custom t-shirts at TryNex start from ৳399. Price depends on design complexity, quantity, and fabric type. Visit our shop to see current pricing.",
+        a: "Custom t-shirts at Trynext start from ৳399. Price depends on design complexity, quantity, and fabric type. Visit our shop to see current pricing.",
       },
     ],
     ctaLabel: "Shop Custom T-Shirts",
@@ -78,14 +78,14 @@ export const LANDING_PAGES: Record<string, LandingPageConfig> = {
   "custom-hoodie-bangladesh": {
     slug: "custom-hoodie-bangladesh",
     h1: "Custom Hoodie Bangladesh",
-    seoTitle: "Custom Hoodie Bangladesh — Premium Oversized Hoodies | TryNex",
+    seoTitle: "Custom Hoodie Bangladesh — Premium Oversized Hoodies | Trynext",
     description:
       "Premium custom hoodies in Bangladesh. Oversized fits, GSM 340+ fleece. Name, logo, or photo printing. Fast delivery Dhaka & all districts. Pay via bKash or Nagad — just 25% in advance.",
     keywords:
       "custom hoodie bangladesh, কাস্টম হুডি বাংলাদেশ, oversized hoodie bangladesh, custom printed hoodie dhaka, couple hoodie bangladesh, corporate hoodie bangladesh, bulk hoodie printing bd",
     heroTag: "Premium Custom Hoodies — Delivered Across Bangladesh",
     intro:
-      "TryNex Lifestyle makes Bangladesh's finest custom hoodies. Choose from our premium heavyweight 340GSM fleece — warm, soft, and built to last — then personalize it with your design, name, couple print, or brand logo. Perfect for team uniforms, corporate gifting, or as a statement fashion piece.",
+      "Trynext Lifestyle makes Bangladesh's finest custom hoodies. Choose from our premium heavyweight 340GSM fleece — warm, soft, and built to last — then personalize it with your design, name, couple print, or brand logo. Perfect for team uniforms, corporate gifting, or as a statement fashion piece.",
     tagFilter: "hoodie",
     faqs: [
       {
@@ -102,7 +102,7 @@ export const LANDING_PAGES: Record<string, LandingPageConfig> = {
       },
       {
         q: "How is a custom hoodie priced in Bangladesh?",
-        a: "Custom hoodies at TryNex start from ৳899. Pricing includes the hoodie and custom printing. No hidden charges.",
+        a: "Custom hoodies at Trynext start from ৳899. Pricing includes the hoodie and custom printing. No hidden charges.",
       },
       {
         q: "What printing styles are available for hoodies?",
@@ -122,18 +122,18 @@ export const LANDING_PAGES: Record<string, LandingPageConfig> = {
   "custom-gift-bangladesh": {
     slug: "custom-gift-bangladesh",
     h1: "Custom Gift Bangladesh",
-    seoTitle: "Custom Gift Bangladesh — Personalized Gifts Delivered | TryNex",
+    seoTitle: "Custom Gift Bangladesh — Personalized Gifts Delivered | Trynext",
     description:
       "Bangladesh's #1 personalized gift shop. Custom t-shirts, mugs, hoodies, caps & hampers. Photo printing, name engraving. Fast delivery Dhaka & all 64 districts.",
     keywords:
       "custom gift bangladesh, কাস্টম গিফট বাংলাদেশ, personalized gift dhaka, customized gift bd, custom photo gift bangladesh, unique gift idea bangladesh, gift shop dhaka, birthday gift bangladesh, anniversary gift bd",
     heroTag: "Bangladesh's #1 Personalized Gift Shop",
     intro:
-      "Give a gift that can't be found in any store. TryNex Lifestyle creates personalized gifts in Bangladesh — from photo mugs and custom t-shirts to premium gift hampers — each made uniquely for the person you care about. Whether it's a birthday, anniversary, graduation, or Eid gift, we make it special.",
+      "Give a gift that can't be found in any store. Trynext Lifestyle creates personalized gifts in Bangladesh — from photo mugs and custom t-shirts to premium gift hampers — each made uniquely for the person you care about. Whether it's a birthday, anniversary, graduation, or Eid gift, we make it special.",
     tagFilter: "gift",
     faqs: [
       {
-        q: "What kinds of custom gifts does TryNex make in Bangladesh?",
+        q: "What kinds of custom gifts does Trynext make in Bangladesh?",
         a: "We make custom t-shirts, hoodies, mugs, caps, water bottles, and curated gift hampers — all with your chosen photo, name, message, or artwork.",
       },
       {
@@ -145,7 +145,7 @@ export const LANDING_PAGES: Record<string, LandingPageConfig> = {
         a: "Yes. We offer premium gift box packaging with ribbon and a personalised message card. Select this at checkout or mention it on WhatsApp.",
       },
       {
-        q: "What is the minimum budget for a custom gift from TryNex?",
+        q: "What is the minimum budget for a custom gift from Trynext?",
         a: "Custom gifts start from ৳399 for a printed mug or t-shirt. Hamper packages start from ৳1,499.",
       },
       {
@@ -166,14 +166,14 @@ export const LANDING_PAGES: Record<string, LandingPageConfig> = {
   "corporate-gift-dhaka": {
     slug: "corporate-gift-dhaka",
     h1: "Corporate Gift Dhaka",
-    seoTitle: "Corporate Gift Dhaka — Bulk Branded Gifts for Companies | TryNex",
+    seoTitle: "Corporate Gift Dhaka — Bulk Branded Gifts for Companies | Trynext",
     description:
       "Premium corporate gifts in Dhaka & across Bangladesh. Branded t-shirts, mugs, hoodies, caps with company logo. Bulk discounts. Fast delivery. Invoice available.",
     keywords:
       "corporate gift dhaka, corporate gift bangladesh, branded gift dhaka, bulk custom gift dhaka, company gift bangladesh, employee gift dhaka, promotional gift bangladesh, bulk tshirt printing dhaka, corporate hamper bangladesh",
     heroTag: "Corporate Gifting Made Simple — Bulk Orders Across Bangladesh",
     intro:
-      "Impress your clients and motivate your team with premium branded corporate gifts from TryNex Lifestyle. We specialize in bulk corporate orders — branded t-shirts, mugs, hoodies, caps, and hampers — with your company logo, event theme, or personalized message. Tax invoice provided for all corporate orders.",
+      "Impress your clients and motivate your team with premium branded corporate gifts from Trynext Lifestyle. We specialize in bulk corporate orders — branded t-shirts, mugs, hoodies, caps, and hampers — with your company logo, event theme, or personalized message. Tax invoice provided for all corporate orders.",
     searchFilter: "corporate",
     faqs: [
       {
@@ -210,18 +210,18 @@ export const LANDING_PAGES: Record<string, LandingPageConfig> = {
   "custom-mug-bangladesh": {
     slug: "custom-mug-bangladesh",
     h1: "Custom Mug Bangladesh",
-    seoTitle: "Custom Mug Bangladesh — Photo & Name Printed Mugs | TryNex",
+    seoTitle: "Custom Mug Bangladesh — Photo & Name Printed Mugs | Trynext",
     description:
       "Personalized custom mugs in Bangladesh. Photo, name & design printing. 11oz & 15oz ceramic mugs. Gift-ready packaging. Fast delivery Dhaka & all districts.",
     keywords:
       "custom mug bangladesh, কাস্টম মগ বাংলাদেশ, photo mug bangladesh, personalized mug dhaka, custom printed mug bd, gift mug bangladesh, couple mug bangladesh, magic mug bangladesh",
     heroTag: "Custom Photo Mugs — Perfectly Personalized",
     intro:
-      "A custom mug from TryNex Lifestyle is the gift people remember. Print any photo, name, special message, or artwork on a premium ceramic mug — available in 11oz everyday size or 15oz large size. Perfect for birthdays, Valentine's Day, anniversaries, or as a desk companion with your favourite motto.",
+      "A custom mug from Trynext Lifestyle is the gift people remember. Print any photo, name, special message, or artwork on a premium ceramic mug — available in 11oz everyday size or 15oz large size. Perfect for birthdays, Valentine's Day, anniversaries, or as a desk companion with your favourite motto.",
     tagFilter: "mug",
     faqs: [
       {
-        q: "What types of custom mugs does TryNex offer in Bangladesh?",
+        q: "What types of custom mugs does Trynext offer in Bangladesh?",
         a: "We offer 11oz standard mugs, 15oz large mugs, magic colour-changing mugs, frosted glass mugs, and travel mugs — all fully customizable.",
       },
       {
@@ -254,14 +254,14 @@ export const LANDING_PAGES: Record<string, LandingPageConfig> = {
   "birthday-gift-bangladesh": {
     slug: "birthday-gift-bangladesh",
     h1: "Birthday Gift Bangladesh",
-    seoTitle: "Birthday Gift Bangladesh — Unique Personalized Birthday Gifts | TryNex",
+    seoTitle: "Birthday Gift Bangladesh — Unique Personalized Birthday Gifts | Trynext",
     description:
       "Best birthday gift ideas in Bangladesh. Personalized t-shirts, mugs, hoodies, hampers with name & photo. Gift wrapping. Fast delivery Dhaka & all districts.",
     keywords:
       "birthday gift bangladesh, জন্মদিনের উপহার বাংলাদেশ, birthday gift dhaka, unique birthday gift bd, personalized birthday gift bangladesh, birthday hamper dhaka, birthday surprise dhaka, custom birthday tshirt bangladesh",
     heroTag: "Make Their Birthday Unforgettable",
     intro:
-      "Still searching for a birthday gift that's truly special? TryNex Lifestyle creates personalized birthday gifts in Bangladesh that feel like they were made just for them — because they were. From custom photo t-shirts and engraved mugs to curated premium hampers, every gift arrives beautifully packaged and ready to surprise.",
+      "Still searching for a birthday gift that's truly special? Trynext Lifestyle creates personalized birthday gifts in Bangladesh that feel like they were made just for them — because they were. From custom photo t-shirts and engraved mugs to curated premium hampers, every gift arrives beautifully packaged and ready to surprise.",
     tagFilter: "birthday",
     faqs: [
       {
@@ -281,7 +281,7 @@ export const LANDING_PAGES: Record<string, LandingPageConfig> = {
         a: "Absolutely. Upload your photo to our Design Studio or WhatsApp it to us. We print photos on t-shirts, mugs, cushions, and more.",
       },
       {
-        q: "What is the price range for birthday gifts at TryNex?",
+        q: "What is the price range for birthday gifts at Trynext?",
         a: "Birthday gifts range from ৳399 (custom mug or t-shirt) to ৳3,999+ for premium hamper packages. Something for every budget.",
       },
     ],

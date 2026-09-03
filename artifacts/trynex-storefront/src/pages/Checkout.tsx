@@ -701,6 +701,8 @@ export default function Checkout() {
         headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
         body: JSON.stringify({
           paymentMethod,
+          customerEmail: watch("customerEmail") || undefined,
+          customerPhone: watch("customerPhone"),
           lastFourDigits: lastFour || undefined,
           transactionId: undefined,
           paymentProofUrl,
@@ -764,7 +766,7 @@ export default function Checkout() {
       // proof appear to disappear even after the PUT completed.
       const entityId = String(objectPath).replace(/^\/objects\//, '').replace(/^\/+/, '');
       if (!entityId) throw new Error('The upload completed without an object reference');
-      setPaymentProofUrl(getApiUrl(`/api/storage/objects/${entityId}`));
+      setPaymentProofUrl(`/api/storage/objects/${entityId}`);
       setPaymentProofName(file.name);
       setPaymentProofNotice(null);
       toast({ title: 'Payment proof attached', description: 'Your screenshot is ready to submit.' });

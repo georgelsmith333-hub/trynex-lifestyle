@@ -60,7 +60,7 @@ export default function OrdersScreen() {
     }
   };
 
-  const order = result?.order;
+      const order = result;
   const timeline = result?.timeline ?? [];
   const statusInfo = order ? getStatus(order.status) : null;
 

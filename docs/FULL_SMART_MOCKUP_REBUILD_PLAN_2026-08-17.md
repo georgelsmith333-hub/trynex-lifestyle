@@ -26,4 +26,12 @@ The safe migration order is: complete and validate the base master pair for each
 
 ## Release gate
 
-The release must fail if any required surface is missing, if two unrelated families share an asset key, if front/back frames differ beyond the accepted tolerance, if a required file contains a baked checkerboard or chroma-key artifact, or if a resolver returns a legacy fallback. Until all 202 surfaces pass, the rebuild is not complete.
+This historical v4 plan used a 202-surface count because it included eight
+non-canonical water-bottle colors. The current release contract is the
+intentional 188-surface Smart v9 matrix defined in
+`docs/superpowers/specs/2026-09-01-six-family-psd-smart-mockup-design.md`.
+The release must fail if any required surface is missing, if two unrelated
+families share an asset key, if front/back frames differ beyond the accepted
+tolerance, if a required file contains a baked checkerboard or chroma-key
+artifact, or if a resolver returns a legacy fallback. The active release gate
+is `scripts/validate-mockup-matrix.mjs`.

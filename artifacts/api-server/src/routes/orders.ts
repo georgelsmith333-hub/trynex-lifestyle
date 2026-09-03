@@ -91,6 +91,39 @@ class ProductMissingError extends Error {
 
 const router: IRouter = Router();
 
+function normalizeContactEmail(value: unknown): string {
+  return String(value ?? "").trim().toLowerCase();
+}
+
+function normalizeBangladeshPhone(value: unknown): string {
+  const digits = String(value ?? "").replace(/\D/g, "");
+  return digits.startsWith("880") ? `0${digits.slice(3)}` : digits;
+}
+
+function isValidBangladeshPhone(value: string): boolean {
+  return /^01[3-9]\d{8}$/.test(value);
+}
+
+function normalizePaymentProofPath(value: unknown): string | null {
+  const raw = String(value ?? "").trim();
+  if (!raw) return null;
+  try {
+    const parsed = new URL(raw, "http://payment-proof.local");
+    const pathname = parsed.pathname;
+    // Payment evidence may only point at a private object path issued by our
+    // storage API, never at an arbitrary external URL.
+    if (
+      !/^\/api\/storage\/objects\/[A-Za-z0-9._~!$&'()*+,;=:@/-]+$/.test(pathname) ||
+      pathname.includes("..") ||
+      parsed.search ||
+      parsed.hash
+    ) return null;
+    return pathname;
+  } catch {
+    return null;
+  }
+}
+
 async function migrateOrdersTable() {
   try {
     await db.execute(sql`
@@ -1432,21 +1465,57 @@ router.put("/orders/:id/payment-info", async (req, res) => {
       return;
     }
 
+    const suppliedEmail = normalizeContactEmail(req.body?.customerEmail);
+    const suppliedPhone = normalizeBangladeshPhone(req.body?.customerPhone);
+    const customerToken = extractCustomerToken(req);
+    const customer = customerToken ? verifyCustomerToken(customerToken) : null;
+    const tokenAuthorized = Boolean(
+      customer && (
+        (existingOrder.customerId != null && String(existingOrder.customerId) === String(customer.id)) ||
+        (normalizeContactEmail(existingOrder.customerEmail) &&
+          normalizeContactEmail(existingOrder.customerEmail) === normalizeContactEmail(customer.email))
+      ),
+    );
+    const contactAuthorized = Boolean(
+      (suppliedEmail && normalizeContactEmail(existingOrder.customerEmail) === suppliedEmail) ||
+      (suppliedPhone && normalizeBangladeshPhone(existingOrder.customerPhone) === suppliedPhone),
+    );
+    if (!tokenAuthorized && !contactAuthorized) {
+      res.status(403).json({
+        error: "forbidden",
+        message: "Order contact verification is required before submitting payment evidence.",
+      });
+      return;
+    }
+
     const rawPaymentMethod = String(req.body?.paymentMethod ?? existingOrder.paymentMethod ?? "").trim().toLowerCase();
     if (req.body?.paymentMethod && rawPaymentMethod !== String(existingOrder.paymentMethod ?? "").toLowerCase()) {
       res.status(400).json({ error: "validation_error", message: "Payment method does not match this order." });
       return;
     }
     const rawLastFour = String(req.body?.lastFourDigits ?? "").replace(/\D/g, "").slice(0, 4);
-    const rawPaymentProofUrl = String(req.body?.paymentProofUrl ?? "").trim().slice(0, 1000);
+    const submittedPaymentProof = String(req.body?.paymentProofUrl ?? "").trim().slice(0, 1000);
+    if (submittedPaymentProof && !normalizePaymentProofPath(submittedPaymentProof)) {
+      res.status(400).json({
+        error: "validation_error",
+        message: "Payment proof must be an uploaded Trynext storage object.",
+      });
+      return;
+    }
+    const rawPaymentProofUrl = normalizePaymentProofPath(submittedPaymentProof) ?? "";
     const rawSenderName = String(req.body?.senderName ?? "").replace(/[^a-zA-Z0-9.\- ]/gi, "").slice(0, 100);
     const rawBankReference = String(req.body?.bankReference ?? "").replace(/[^a-zA-Z0-9\-]/gi, "").slice(0, 100);
+    const rawSenderNumber = normalizeBangladeshPhone(req.body?.senderNumber);
     const rawPromo = String(req.body?.promoCode ?? "").replace(/[^A-Z0-9_\-]/gi, "").toUpperCase().slice(0, 50);
     const walletMethod = ["bkash", "nagad", "upay"].includes(rawPaymentMethod);
 
     if (walletMethod) {
       if (rawLastFour.length !== 4) {
         res.status(400).json({ error: "validation_error", message: "Enter the last 4 digits of your sending wallet number." });
+        return;
+      }
+      if (rawSenderNumber && !isValidBangladeshPhone(rawSenderNumber)) {
+        res.status(400).json({ error: "validation_error", message: "Enter a valid Bangladesh mobile number used to send the payment." });
         return;
       }
     }

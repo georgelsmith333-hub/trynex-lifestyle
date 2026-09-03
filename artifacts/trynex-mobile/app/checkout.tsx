@@ -182,8 +182,8 @@ export default function CheckoutScreen() {
   const validatePayment = () => {
     setPaymentError(null);
     if (isWallet(paymentMethod)) {
-      if (senderNumber.replace(/\D/g, "").length < 10) {
-        setPaymentError("Enter your 11-digit sending number.");
+      if (!/^01[3-9]\d{8}$/.test(senderNumber.replace(/\D/g, ""))) {
+        setPaymentError("Enter a valid Bangladesh mobile number used to send the payment.");
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         return false;
       }
@@ -217,6 +217,8 @@ export default function CheckoutScreen() {
         headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
         body: JSON.stringify({
           paymentMethod,
+          customerEmail: email.trim() || undefined,
+          customerPhone: phone,
           lastFourDigits: lastFour,
           senderNumber,
           transactionId,

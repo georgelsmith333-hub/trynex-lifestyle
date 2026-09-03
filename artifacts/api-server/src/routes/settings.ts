@@ -88,9 +88,16 @@ function fallback(value: string | null | undefined, def: string): string {
   return trimmed && trimmed.length > 0 ? trimmed : def;
 }
 
+function normalizeCustomerBrand(value: string | null | undefined): string {
+  return fallback(value, "Trynext Lifestyle").replace(/\bTryNex\b/gi, "Trynext");
+}
+
 async function buildSettings(map: Record<string, string | null>) {
   return {
-    siteName: fallback(map["siteName"], "Trynext Lifestyle"),
+    // Existing databases may still contain the previous visible spelling.
+    // Normalize it at the public boundary without changing technical keys,
+    // routes, storage names, or infrastructure identifiers.
+    siteName: normalizeCustomerBrand(map["siteName"]),
     tagline: fallback(map["tagline"], "You imagine, we craft."),
     // Contact details are admin-owned. Empty values stay empty so customers
     // never see invented phone numbers, email addresses, or locations.
@@ -104,15 +111,12 @@ async function buildSettings(map: Record<string, string | null>) {
     heroSubtitle: map["heroSubtitle"] ?? "",
     announcementBar: map["announcementBar"] ?? "🚚 Free delivery on orders above ৳1,500!",
     freeShippingThreshold: parseFloat(map["freeShippingThreshold"] ?? "1500"),
-    // The merchant supplied the same personal Send Money number for all three
-    // supported wallets. Admin-configured values still take precedence.
-    bkashNumber: map["bkashNumber"]?.trim() || "01747292277",
-    nagadNumber: map["nagadNumber"]?.trim() || "01747292277",
+    // Payment destinations are admin-owned. Empty means the method is hidden
+    // from checkout rather than exposing an invented or stale number.
+    bkashNumber: map["bkashNumber"]?.trim() || "",
+    nagadNumber: map["nagadNumber"]?.trim() || "",
     rocketNumber: map["rocketNumber"] ?? "",
-    // User-provided canonical uPay number. An admin value still takes precedence;
-    // the fallback prevents checkout from silently hiding uPay when the settings row
-    // is missing during a partial deployment/configuration.
-    upayNumber: map["upayNumber"]?.trim() || "01747292277",
+    upayNumber: map["upayNumber"]?.trim() || "",
     whatsappNumber: map["whatsappNumber"] ?? "",
     shippingCost: parseFloat(map["shippingCost"] ?? "100"),
     // Bank / card payment details exposed publicly to the checkout flow.
