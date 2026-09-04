@@ -75,6 +75,31 @@ quarantine structural gate. The remaining release work is controlled visual and
 runtime acceptance of all 188 surfaces; production promotion is intentionally
 blocked until that evidence is available.
 
+### Current session checkpoint (2026-09-05)
+
+```text
+Status: ready for spec review — implementation not started
+Last completed: Read the production-blocking repair brief and current renderer,
+  compared the documented defects with the live compositor/resolver structure, and
+  received owner approval for the full fail-closed source-kit and unified
+  compositor architecture.
+Stopped at: Written design spec is complete and awaiting owner review before any
+  runtime code changes.
+Files/areas changed: docs/superpowers/specs/2026-09-05-design-studio-unified-mockup-design.md
+  and this handoff only.
+Remaining work: Review the written spec, then create the implementation plan and
+  implement the typed manifest/resolver, unified compositor, consumer integration,
+  focused tests, and real uploaded-artwork visual evidence.
+Blocker: Owner review of the written spec is required by the brainstorming gate.
+The existing browser/artifact preview limitation remains recorded below for the
+  eventual visual acceptance step.
+Next safe action: Review the design spec and request any changes or approve it for
+  implementation planning.
+Verification: Design self-review completed for placeholders, contradictions,
+  scope, and ambiguous fallback behavior; no runtime code or release manifest was
+  changed.
+```
+
 
 ## Controlled review checkpoint (2026-09-03)
 
