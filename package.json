@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "mockups:audit-sources": "python tools/audit_trynex_mockups.py",
+    "mockups:audit-sources": "python scripts/audit_trynex_mockups.py",
     "mockups:prepare": "python tools/extract-photoreal-face-templates.py dist-mockups/staging/smart-v1/templates",
     "mockups:build": "node tools/build-smartobject-mockups.mjs",
     "mockups:audit-psd": "python tools/audit_psd_masters.py",
