@@ -156,6 +156,10 @@ interface ComposeOptions {
   smartShading?: boolean;
   /** Strength of the smart shading (0-1). */
   shadingStrength?: number;
+  /** Keep an existing base pass when the unified surface compositor adds artwork. */
+  clearCanvas?: boolean;
+  /** Text-only blend mode; shapes and images remain source-over. */
+  textBlendMode?: GlobalCompositeOperation;
 }
 
 const IMAGE_CACHE_MAX = 60;
@@ -462,7 +466,7 @@ export async function composeLayers(opts: ComposeOptions): Promise<HTMLCanvasEle
   const {
     canvas, baseHeight, printZone, layers, garmentColor,
     outW, outH, imageCache, clipToPrintZone = true, blendMode = "source-over",
-    curvature = 0, fabricTexture = false,
+    curvature = 0, fabricTexture = false, clearCanvas = true, textBlendMode = blendMode,
   } = opts;
   canvas.width = outW;
   canvas.height = outH;
@@ -472,7 +476,7 @@ export async function composeLayers(opts: ComposeOptions): Promise<HTMLCanvasEle
   const sx = outW / baseHeight;
   const sy = outH / baseHeight;
 
-  ctx.clearRect(0, 0, outW, outH);
+  if (clearCanvas) ctx.clearRect(0, 0, outW, outH);
   if (garmentColor) {
     ctx.fillStyle = garmentColor;
     ctx.fillRect(0, 0, outW, outH);
@@ -515,18 +519,10 @@ export async function composeLayers(opts: ComposeOptions): Promise<HTMLCanvasEle
 
         if (cssFilter) ctx.filter = "none";
       } catch (imgErr) {
-        ctx.globalCompositeOperation = "source-over";
-        ctx.strokeStyle = "rgba(239,68,68,0.6)";
-        ctx.lineWidth = 2;
-        ctx.setLineDash([6, 4]);
-        ctx.strokeRect(-(g.w * sx) / 2, -(g.h * sy) / 2, g.w * sx, g.h * sy);
-        ctx.setLineDash([]);
-        ctx.fillStyle = "rgba(239,68,68,0.15)";
-        ctx.fillRect(-(g.w * sx) / 2, -(g.h * sy) / 2, g.w * sx, g.h * sy);
-        console.warn("[composer] Failed to load image layer:", (imgErr as Error)?.message ?? imgErr, l.src);
+        throw new Error(`Artwork layer could not be rendered: ${l.src}`, { cause: imgErr });
       }
     } else if (l.type === "text") {
-      ctx.globalCompositeOperation = blendMode;
+      ctx.globalCompositeOperation = textBlendMode;
       const fs = Math.round(l.fontSize * l.transform.scale * sy);
       ctx.font = `${l.fontStyle} ${l.fontWeight} ${fs}px ${l.fontFamily}`;
 
@@ -578,12 +574,8 @@ export async function composeGarmentMockup(opts: {
     outSize,
     imageCache,
     curvature = 0,
-    isColorPhoto = false,
-    requiresTint = !isColorPhoto,
+    requiresTint = false,
     fabricTexture = false,
-    smartShading = false,
-    shadingStrength = 0.025,
-    psdMaterialEffects = [],
   } = opts;
   canvas.width = outSize;
   canvas.height = outSize;
@@ -598,94 +590,40 @@ export async function composeGarmentMockup(opts: {
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, outSize, outSize);
 
-  try {
-    const garmentImg = await loadImage(garmentSrc, imageCache);
-    ctx.drawImage(garmentImg, 0, 0, outSize, outSize);
+  const garmentImg = await loadImage(garmentSrc, imageCache);
+  ctx.drawImage(garmentImg, 0, 0, outSize, outSize);
 
-    // A transparent fallback is the only source that can be colourized.
-    // Keep the tint inside the source alpha; never paint a full rectangular
-    // colour layer over an opaque photo or a transparent canvas.
-    if (requiresTint && garmentColor) {
-      ctx.globalCompositeOperation = "multiply";
-      ctx.fillStyle = garmentColor;
-      ctx.fillRect(0, 0, outSize, outSize);
-      ctx.globalCompositeOperation = "destination-in";
-      ctx.drawImage(garmentImg, 0, 0, outSize, outSize);
-      ctx.globalCompositeOperation = "source-over";
-    }
-  } catch {
+  // Exact runtime sources are already color-specific. Keep the alpha contract
+  // explicit for the few legacy transparent cutouts that still opt into tinting.
+  if (requiresTint && garmentColor) {
+    ctx.globalCompositeOperation = "multiply";
     ctx.fillStyle = garmentColor;
-    ctx.beginPath();
-    const rr = outSize * 0.06;
-    const x = outSize * 0.12, y = outSize * 0.10, w = outSize * 0.76, h = outSize * 0.80;
-    ctx.moveTo(x + rr, y);
-    ctx.arcTo(x + w, y, x + w, y + h, rr);
-    ctx.arcTo(x + w, y + h, x, y + h, rr);
-    ctx.arcTo(x, y + h, x, y, rr);
-    ctx.arcTo(x, y, x + w, y, rr);
-    ctx.closePath();
-    ctx.fill();
+    ctx.fillRect(0, 0, outSize, outSize);
+    ctx.globalCompositeOperation = "destination-in";
+    ctx.drawImage(garmentImg, 0, 0, outSize, outSize);
+    ctx.globalCompositeOperation = "source-over";
   }
 
-  ctx.save();
-  ctx.beginPath();
-  tracePrintZone(ctx, printZone, s, s);
-  ctx.clip();
-
-  for (const layer of layers) {
-    if (!layer.visible) continue;
-    const geom = layerGeom(layer, printZone);
-    const cx = geom.cx * s;
-    const cy = geom.cy * s;
-
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate((layer.transform.rotation * Math.PI) / 180);
-    ctx.globalAlpha = layer.transform.opacity;
-
-    if (layer.type === "image") {
-      try {
-        const img = await loadImage(layer.src, imageCache);
-        const w = geom.w * s;
-        const h = geom.h * s;
-
-        const cssFilter = buildImageFilter(layer);
-        if (cssFilter) ctx.filter = cssFilter;
-
-        const flipSX = layer.flipH ? -1 : 1;
-        const flipSY = layer.flipV ? -1 : 1;
-        if (layer.flipH || layer.flipV) ctx.scale(flipSX, flipSY);
-
-        if (curvature > 0) {
-          drawImageCurved(ctx, img, w, h, curvature);
-        } else {
-          ctx.drawImage(img, -w / 2, -h / 2, w, h);
-        }
-        if (cssFilter) ctx.filter = "none";
-      } catch {}
-    } else if (layer.type === "text") {
-      const fs = Math.round(layer.fontSize * layer.transform.scale * s);
-      ctx.font = `${layer.fontStyle} ${layer.fontWeight} ${fs}px ${layer.fontFamily}`;
-      const align = layer.textAlign ?? "center";
-      const xOffset = textAlignOffset(align, (geom.w * s) / 2);
-      // Use multiply blend for text only on light/white garments (lum > 0.92).
-      // On dark/coloured garments (navy, maroon, grey, …) text must use source-over
-      // so white and bright text colours are not swallowed by the garment tint.
-      const gr = parseInt(garmentColor?.slice(1, 3) ?? "ff", 16);
-      const gg = parseInt(garmentColor?.slice(3, 5) ?? "ff", 16);
-      const gb = parseInt(garmentColor?.slice(5, 7) ?? "ff", 16);
-      const glum = (0.299 * gr + 0.587 * gg + 0.114 * gb) / 255;
-      const textBlend = glum > 0.92 ? "multiply" : "source-over";
-      ctx.globalCompositeOperation = textBlend as GlobalCompositeOperation;
-      drawText(ctx, layer, fs, xOffset, 0, s, s);
-      ctx.globalCompositeOperation = "source-over";
-    } else {
-      drawShape(ctx, layer, geom.w * s, geom.h * s, s, s);
-    }
-    ctx.restore();
-  }
-
-  ctx.restore();
+  const gr = parseInt(garmentColor?.slice(1, 3) ?? "ff", 16);
+  const gg = parseInt(garmentColor?.slice(3, 5) ?? "ff", 16);
+  const gb = parseInt(garmentColor?.slice(5, 7) ?? "ff", 16);
+  const glum = (0.299 * gr + 0.587 * gg + 0.114 * gb) / 255;
+  await composeLayers({
+    canvas,
+    baseHeight: 1000,
+    printZone,
+    layers,
+    garmentColor: null,
+    outW: outSize,
+    outH: outSize,
+    imageCache,
+    clipToPrintZone: true,
+    blendMode: "source-over",
+    textBlendMode: glum > 0.92 ? "multiply" : "source-over",
+    curvature,
+    fabricTexture,
+    clearCanvas: false,
+  });
 
   // Do not redraw the full garment over the artwork here. A whole-frame
   // multiply pass creates the duplicate/ghost silhouette users see on dark
@@ -699,107 +637,86 @@ export async function composeGarmentMockup(opts: {
     ctx.restore();
   }
 
-  // PSD-native material passes are deliberately scoped to the product print
-  // zone. They can affect ink already painted there, but cannot alter the
-  // silhouette, the customer artwork payload, cart metadata, or unrelated
-  // products. Invalid/CORS-blocked files are non-fatal like the legacy
-  // smart-shading fallback.
-  if (psdMaterialEffects.length > 0 && layers.some(l => l.visible)) {
-    ctx.save();
-    ctx.beginPath();
-    tracePrintZone(ctx, printZone, s, s);
-    ctx.clip();
-    for (const effect of psdMaterialEffects) {
-      if (!effect.src || !Number.isFinite(effect.opacity) || effect.opacity <= 0) continue;
-      try {
-        const effectImage = await loadImage(effect.src, imageCache);
-        ctx.globalCompositeOperation = effect.blendMode;
-        ctx.globalAlpha = Math.max(0, Math.min(1, effect.opacity));
-        ctx.drawImage(effectImage, 0, 0, outSize, outSize);
-      } catch (err) {
-        console.warn("[composer] PSD material effect skipped:", err);
-      }
-    }
-    ctx.restore();
-  }
-
-  // --- SMART SHADING (transparent fallback only) ---
-  // Canonical opaque source-kit photos already contain product lighting. Reapplying
-  // their luminance above customer artwork creates the duplicate/ghost shadow bug.
-  // Keep this optional pass exclusively for transparent cutout assets that need
-  // restrained fabric separation; never run it on an opaque color photo.
-  const useSmartShading = smartShading && requiresTint && !isColorPhoto;
-  if (useSmartShading && layers.some(l => l.visible)) {
-    try {
-      const garmentImg = await loadImage(garmentSrc, imageCache);
-      const source = document.createElement("canvas");
-      source.width = outSize;
-      source.height = outSize;
-      const sourceCtx = source.getContext("2d", { willReadFrequently: true });
-      if (sourceCtx) {
-        sourceCtx.drawImage(garmentImg, 0, 0, outSize, outSize);
-        if (requiresTint && garmentColor) {
-          sourceCtx.globalCompositeOperation = "multiply";
-          sourceCtx.fillStyle = garmentColor;
-          sourceCtx.fillRect(0, 0, outSize, outSize);
-          sourceCtx.globalCompositeOperation = "destination-in";
-          sourceCtx.drawImage(garmentImg, 0, 0, outSize, outSize);
-          sourceCtx.globalCompositeOperation = "source-over";
-        }
-
-        const pixels = sourceCtx.getImageData(0, 0, outSize, outSize).data;
-        const shadowCanvas = document.createElement("canvas");
-        const highlightCanvas = document.createElement("canvas");
-        shadowCanvas.width = highlightCanvas.width = outSize;
-        shadowCanvas.height = highlightCanvas.height = outSize;
-        const shadowCtx = shadowCanvas.getContext("2d");
-        const highlightCtx = highlightCanvas.getContext("2d");
-        if (shadowCtx && highlightCtx) {
-          const shadow = shadowCtx.createImageData(outSize, outSize);
-          const highlight = highlightCtx.createImageData(outSize, outSize);
-          const strength = Math.max(0, Math.min(1, shadingStrength));
-
-          for (let i = 0; i < pixels.length; i += 4) {
-            const alpha = pixels[i + 3] / 255;
-            const luminance = (0.299 * pixels[i] + 0.587 * pixels[i + 1] + 0.114 * pixels[i + 2]) / 255;
-            const shadowAmount = Math.max(0, (0.38 - luminance) / 0.38) * strength * 0.34 * alpha;
-            const highlightAmount = Math.max(0, (luminance - 0.68) / 0.32) * strength * 0.018 * alpha;
-
-            // Black with variable alpha becomes a controlled Multiply shadow.
-            shadow.data[i] = 0;
-            shadow.data[i + 1] = 0;
-            shadow.data[i + 2] = 0;
-            shadow.data[i + 3] = Math.round(shadowAmount * 255);
-
-            // White with variable alpha becomes a controlled Screen highlight.
-            highlight.data[i] = 255;
-            highlight.data[i + 1] = 255;
-            highlight.data[i + 2] = 255;
-            highlight.data[i + 3] = Math.round(highlightAmount * 255);
-          }
-
-          shadowCtx.putImageData(shadow, 0, 0);
-          highlightCtx.putImageData(highlight, 0, 0);
-
-          ctx.save();
-          ctx.beginPath();
-          tracePrintZone(ctx, printZone, s, s);
-          ctx.clip();
-          ctx.globalCompositeOperation = "multiply";
-          ctx.globalAlpha = 1;
-          ctx.drawImage(shadowCanvas, 0, 0);
-          ctx.globalCompositeOperation = "screen";
-          ctx.drawImage(highlightCanvas, 0, 0);
-          ctx.restore();
-        }
-      }
-    } catch (err) {
-      // A CORS-tainted or unsupported source must never block cart/export.
-      console.warn("[composer] Smart shading skipped:", err);
-    }
-  }
-
   return canvas;
+}
+
+export interface UnifiedMockupSurface {
+  sourceKitKey: string;
+  manifestRevision: string;
+  runtimeStatus: "approved" | "disabled";
+  disabledReason?: string;
+  contractErrors: readonly string[];
+  alphaMode: "opaque-photo" | "transparent-cutout";
+  baseSrc: string;
+  printZone: ComposerPrintZone;
+}
+
+export interface UnifiedMockupRenderRequest {
+  canvas: HTMLCanvasElement;
+  surface: UnifiedMockupSurface;
+  garmentColor: string;
+  layers: ComposerLayer[];
+  outSize: number;
+  imageCache?: Map<string, HTMLImageElement>;
+  curvature?: number;
+  fabricTexture?: boolean;
+}
+
+function assertRenderableSurface(surface: UnifiedMockupSurface): void {
+  if (surface.runtimeStatus !== "approved") {
+    throw new Error(surface.disabledReason ?? `Mockup surface ${surface.sourceKitKey} is not approved for runtime rendering.`);
+  }
+  if (surface.contractErrors.length > 0) {
+    throw new Error(`Mockup surface ${surface.sourceKitKey} failed validation: ${surface.contractErrors.join(", ")}`);
+  }
+  if (!surface.baseSrc) {
+    throw new Error(`Mockup surface ${surface.sourceKitKey} has no runtime asset.`);
+  }
+}
+
+/** The only customer-facing base compositor. Every thumbnail and export must
+ * use the same serialized surface request and release validation. */
+export async function composeMockupSurface(request: UnifiedMockupRenderRequest): Promise<HTMLCanvasElement> {
+  assertRenderableSurface(request.surface);
+  return composeGarmentMockup({
+    canvas: request.canvas,
+    garmentSrc: request.surface.baseSrc,
+    garmentColor: request.garmentColor,
+    printZone: request.surface.printZone,
+    layers: request.layers,
+    outSize: request.outSize,
+    imageCache: request.imageCache,
+    curvature: request.curvature,
+    fabricTexture: request.fabricTexture,
+    isColorPhoto: request.surface.alphaMode === "opaque-photo",
+    requiresTint: false,
+  });
+}
+
+/** Shared artwork-only pass for 3D face textures. It uses the same release
+ * guard as the full thumbnail/export pass instead of silently drawing against
+ * an unrelated face or legacy photo. */
+export async function composeMockupSurfaceTexture(opts: {
+  canvas: HTMLCanvasElement;
+  surface: Pick<UnifiedMockupSurface, "sourceKitKey" | "manifestRevision" | "runtimeStatus" | "disabledReason" | "contractErrors" | "alphaMode" | "printZone">;
+  layers: ComposerLayer[];
+  outSize: number;
+  imageCache?: Map<string, HTMLImageElement>;
+  curvature?: number;
+  fabricTexture?: boolean;
+  clipToPrintZone?: boolean;
+}): Promise<HTMLCanvasElement> {
+  assertRenderableSurface({ ...opts.surface, baseSrc: "texture-only" });
+  return composeDesignTexture({
+    canvas: opts.canvas,
+    printZone: opts.surface.printZone,
+    layers: opts.layers,
+    outSize: opts.outSize,
+    imageCache: opts.imageCache,
+    curvature: opts.curvature,
+    fabricTexture: opts.fabricTexture,
+    clipToPrintZone: opts.clipToPrintZone,
+  });
 }
 
 export async function composeDesignTexture(opts: {
@@ -812,71 +729,21 @@ export async function composeDesignTexture(opts: {
   curvature?: number;
   fabricTexture?: boolean;
 }): Promise<HTMLCanvasElement> {
-  const { canvas, printZone, layers, outSize, imageCache, clipToPrintZone = true, curvature = 0, fabricTexture = false } = opts;
-  canvas.width = outSize;
-  canvas.height = outSize;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return canvas;
-  const s = outSize / 1000;
-
-  ctx.clearRect(0, 0, outSize, outSize);
-
-  if (clipToPrintZone) {
-    ctx.save();
-    ctx.beginPath();
-    tracePrintZone(ctx, printZone, s, s);
-    ctx.clip();
-  }
-
-  for (const layer of layers) {
-    if (!layer.visible) continue;
-    const geom = layerGeom(layer, printZone);
-    const cx = geom.cx * s;
-    const cy = geom.cy * s;
-
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate((layer.transform.rotation * Math.PI) / 180);
-    ctx.globalAlpha = layer.transform.opacity;
-
-    if (layer.type === "image") {
-      try {
-        const img = await loadImage(layer.src, imageCache);
-        const w = geom.w * s;
-        const h = geom.h * s;
-
-        const cssFilter = buildImageFilter(layer);
-        if (cssFilter) ctx.filter = cssFilter;
-
-        const flipSX = layer.flipH ? -1 : 1;
-        const flipSY = layer.flipV ? -1 : 1;
-        if (layer.flipH || layer.flipV) ctx.scale(flipSX, flipSY);
-
-        if (curvature > 0) {
-          drawImageCurved(ctx, img, w, h, curvature);
-        } else {
-          ctx.drawImage(img, -w / 2, -h / 2, w, h);
-        }
-        if (cssFilter) ctx.filter = "none";
-      } catch {}
-    } else if (layer.type === "text") {
-      const fs = Math.round(layer.fontSize * layer.transform.scale * s);
-      ctx.font = `${layer.fontStyle} ${layer.fontWeight} ${fs}px ${layer.fontFamily}`;
-      const align = layer.textAlign ?? "center";
-      const xOffset = textAlignOffset(align, (geom.w * s) / 2);
-      drawText(ctx, layer, fs, xOffset, 0, s, s);
-    } else {
-      drawShape(ctx, layer, geom.w * s, geom.h * s, s, s);
-    }
-    ctx.restore();
-  }
-
-  if (fabricTexture) {
-    applyFabricGrain(ctx, outSize, outSize, 0.10);
-  }
-
-  if (clipToPrintZone) ctx.restore();
-  return canvas;
+  return composeLayers({
+    canvas: opts.canvas,
+    baseHeight: 1000,
+    printZone: opts.printZone,
+    layers: opts.layers,
+    garmentColor: null,
+    outW: opts.outSize,
+    outH: opts.outSize,
+    imageCache: opts.imageCache,
+    clipToPrintZone: opts.clipToPrintZone,
+    curvature: opts.curvature,
+    fabricTexture: opts.fabricTexture,
+    blendMode: "source-over",
+    textBlendMode: "source-over",
+  });
 }
 
 /** Analyse a small downscaled copy of the image and return suggested

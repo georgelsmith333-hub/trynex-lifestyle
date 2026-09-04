@@ -4,7 +4,7 @@
    The mockup PNGs live in /public/mockups/<id>-?face?.png
 ════════════════════════════════════════════════════════ */
 
-import { createSmartMockupManifest, type SmartMockupManifest } from "./smart-mockup-manifest";
+import { createSmartMockupManifest, validateSmartMockupManifest, type SmartMockupManifest } from "./smart-mockup-manifest";
 import { getCanonicalMockupSpec, type MockupFamily } from "./canonical-mockup-spec";
 import { COMPLETE_MOCKUP_MATRIX, getCompleteMockupEntry, type CompleteMockupFamily, type CompleteMockupView } from "./complete-mockup-matrix";
 import { ACCEPTED_SMART_V8_RELEASE } from "./smart-v8-release";
@@ -501,9 +501,18 @@ export interface MockupResolution {
   /** Repository-relative editable master generated from the same source kit. */
   editableMasterPath?: string;
   /** Stable source-kit document key used by export/admin tooling. */
-  sourceKitKey?: string;
+  sourceKitKey: string;
   /** Explicit PSD/PSB smart-object recipe used by compositor/export tooling. */
   smartObject: SmartMockupManifest;
+  /** One immutable runtime revision shared by preview, export, cart, and orders. */
+  manifestRevision: string;
+  /** Explicit runtime contract state; disabled surfaces cannot be purchased. */
+  runtimeStatus: "approved" | "disabled";
+  disabledReason?: string;
+  /** Contract validation errors retained for diagnostics and actionable UI. */
+  contractErrors: readonly string[];
+  /** Explicit alpha semantics consumed by the shared compositor. */
+  alphaMode: "opaque-photo" | "transparent-cutout";
   /** Reviewed raster effects for the isolated PSD-derived T-shirt release only. */
   psdMaterialEffects?: readonly PsdMaterialEffectLayer[];
   source: "source-kit" | "curated";
@@ -885,7 +894,8 @@ export function resolveMockup(
   const sourceKitKey = `${category}:${sourceKitSlug ?? "white"}:${face}`;
   const runtimeOverride = runtimeMockupOverrides.get(normalizeRuntimeKey(sourceKitKey))
     ?? runtimeMockupOverrides.get(normalizeRuntimeKey(`${category}:${color}:${face}`));
-  const runtimePhoto = runtimeOverride?.imageUrl;
+  const releaseColorSlug = getSmartV9ColorSlug(category, sourceKitSlug) ?? sourceKitSlug;
+  const releaseSourceKey = `${category}:${releaseColorSlug}:${face}`;
   const isPsdTshirtRuntime = category === "tshirt"
     && (face === "front" || face === "back")
     && isPsdDerivedTshirtCustomerReleaseSurface(sourceKitSlug, face);
@@ -897,23 +907,46 @@ export function resolveMockup(
   const waterBottleV11Photo = category === "waterbottle"
     ? WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets[face === "back" ? "back" : "front"].url
     : undefined;
-  // A reviewed T-shirt base is selected ahead of remote metadata. Runtime
-  // gallery records remain useful for unsupported T-shirt views and other
-  // families, but cannot replace an accepted PSD-derived colour/face pair.
-  // The accepted 188-surface release is the customer-facing source of truth.
-  // Keep the older PSD/source-matrix overrides behind it so an old admin record
-  // can never put the green-screen runtime back into the Studio.
-  const acceptedReleasePhoto = category === "waterbottle"
+  const acceptedRuntimePhoto = acceptedSmartV9Release?.assetUrls[releaseSourceKey]
+    // These are independently reviewed, exact source-kit derivatives. They
+    // remain valid per-surface releases until the complete smart-v9 matrix is
+    // promoted, but are never used as a generic fallback for another key.
+    ?? psdPhoto
+    ?? waterBottleV11Photo
+    ?? sourceMatrixPhoto
+    ?? acceptedSmartV8Release?.assetUrls[releaseSourceKey]
+    ?? acceptedSmartV8Release?.assetUrls[completeView.sourceKey];
+  const resolvedPrintZone = sourceMatrix?.printZone ?? completeView.geometry.printZone;
+  const resolvedNormalizedFrame = sourceMatrix?.normalizedFrame ?? normalizedFrame;
+  const photoSrc = acceptedRuntimePhoto ?? "";
+  const cutoutSrc = acceptedRuntimePhoto ?? "";
+  const runtimeStatus = acceptedRuntimePhoto ? "approved" as const : "disabled" as const;
+  const disabledReason = acceptedRuntimePhoto
     ? undefined
-    : (() => {
-      const smartV9ColorSlug = getSmartV9ColorSlug(category, sourceKitSlug);
-      return smartV9ColorSlug
-        ? acceptedSmartV9Release?.assetUrls[`${category}:${smartV9ColorSlug}:${face}`]
-        : undefined;
-    })();
-  const photoSrc = psdPhoto ?? acceptedReleasePhoto ?? waterBottleV11Photo ?? sourceMatrixPhoto ?? runtimePhoto ?? curated.photoSrc;
-  const cutoutSrc = psdPhoto ?? acceptedReleasePhoto ?? waterBottleV11Photo ?? sourceMatrixPhoto ?? runtimePhoto ?? curated.cutoutSrc;
-  const hasExactColorBase = Boolean(psdPhoto || acceptedReleasePhoto || waterBottleV11Photo || sourceMatrixPhoto || runtimePhoto);
+    : `No approved ${category} ${releaseColorSlug} ${face} source-kit surface is available.`;
+  const manifestRevision = acceptedSmartV9Release ? "smart-v9-accepted" : "smart-v8-accepted";
+  const smartObject = createSmartMockupManifest({
+    category,
+    colorSlug: releaseColorSlug,
+    face,
+    sourceKitKey,
+    manifestRevision,
+    editableMasterPath: sourceMatrix?.editableMasterPath ?? runtimeOverride?.masterFileUrl ?? masterPath,
+    masterStatus: "manifest-only",
+    runtimeStatus,
+    disabledReason,
+    baseSrc: photoSrc,
+    cutoutSrc,
+    alphaMode: acceptedRuntimePhoto?.endsWith(".jpg") ? "opaque-photo" : "transparent-cutout",
+    normalizedFrame: resolvedNormalizedFrame,
+    printZone: resolvedPrintZone,
+  });
+  const contractErrors = validateSmartMockupManifest(smartObject, {
+    category,
+    colorSlug: releaseColorSlug,
+    face,
+    sourceKitKey,
+  });
 
   return {
     colorHex: hex,
@@ -923,34 +956,24 @@ export function resolveMockup(
     // the final colorway. Treat them as exact color photos through every 2D,
     // 3D, cart, and export consumer; adding any synthetic tint would corrupt
     // the selected physical color.
-    isColorPhoto: hasExactColorBase ? true : curated.isColorPhoto,
-    cutoutNeedsTint: hasExactColorBase ? false : curated.cutoutNeedsTint,
-    photoKind: acceptedReleasePhoto || psdPhoto || sourceMatrixPhoto || runtimePhoto ? "opaque-photo" : curated.photoKind,
-    requiresTint: hasExactColorBase ? false : curated.requiresTint,
+    isColorPhoto: Boolean(acceptedRuntimePhoto),
+    cutoutNeedsTint: false,
+    photoKind: "transparent-cutout",
+    requiresTint: false,
     allowSilhouetteShadow: false,
-    printZone: sourceMatrix?.printZone ?? completeView.geometry.printZone,
-    normalizedFrame: sourceMatrix?.normalizedFrame ?? normalizedFrame,
-    isOpaquePhoto: acceptedReleasePhoto || psdPhoto || sourceMatrixPhoto || runtimePhoto ? true : curated.photoKind === "opaque-photo",
+    printZone: resolvedPrintZone,
+    normalizedFrame: resolvedNormalizedFrame,
+    isOpaquePhoto: smartObject.assets.alphaMode === "opaque-photo",
     editableMasterPath: sourceMatrix?.editableMasterPath ?? runtimeOverride?.masterFileUrl ?? masterPath,
     sourceKitKey,
-    smartObject: createSmartMockupManifest({
-      category,
-      colorSlug: sourceKitSlug ?? "white",
-      face,
-      sourceKitKey,
-      editableMasterPath: sourceMatrix?.editableMasterPath ?? masterPath,
-      // The audited source-kit PSD/PSB files are openable raster masters, but
-      // contain no genuine Photoshop Smart Object layers yet. Keep the runtime
-      // manifest honest and fail closed until a structurally verified master is
-      // promoted for this exact surface.
-      masterStatus: "manifest-only",
-      baseSrc: photoSrc,
-      cutoutSrc,
-      normalizedFrame: sourceMatrix?.normalizedFrame ?? normalizedFrame,
-      printZone: sourceMatrix?.printZone ?? completeView.geometry.printZone,
-    }),
+    smartObject,
+    manifestRevision,
+    runtimeStatus,
+    disabledReason,
+    contractErrors,
+    alphaMode: smartObject.assets.alphaMode,
     psdMaterialEffects: isPsdTshirtRuntime ? getPsdTshirtMaterialEffects(color, face) : undefined,
-    source: acceptedReleasePhoto || sourceMatrixPhoto || runtimePhoto || psdPhoto ? "curated" : "source-kit",
+    source: acceptedRuntimePhoto ? "source-kit" : "curated",
   };
 }
 

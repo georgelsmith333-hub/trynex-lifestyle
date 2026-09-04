@@ -10,12 +10,10 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Environment, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
 import {
-  composeLayers,
-  loadImage,
-  tracePrintZone,
+  composeMockupSurfaceTexture,
   type ComposerLayer,
-  type PsdMaterialEffectLayer,
   type ComposerPrintZone,
+  type UnifiedMockupSurface,
 } from "./composer";
 import { resolveMockup, type DesignProduct } from "./mockups";
 import {
@@ -34,7 +32,7 @@ interface FacePayload {
   layers: ComposerLayer[];
   printZone: ComposerPrintZone;
   baseHeight: number;
-  psdMaterialEffects?: readonly PsdMaterialEffectLayer[];
+  surface: UnifiedMockupSurface;
 }
 
 export interface ProductViewer3DProps {
@@ -51,7 +49,7 @@ export interface ProductViewer3DProps {
 function useFaceTexture(
   face: FacePayload | undefined,
   garmentColor: string | null,
-  opts: { outW: number; outH: number; clipToPrintZone?: boolean; curvature?: number; psdMaterialEffects?: readonly PsdMaterialEffectLayer[] }
+  opts: { outW: number; outH: number; clipToPrintZone?: boolean; curvature?: number }
 ): THREE.CanvasTexture | null {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const cacheRef = useRef<Map<string, HTMLImageElement>>(new Map());
@@ -71,7 +69,7 @@ function useFaceTexture(
         g: garmentColor,
         z: face.printZone,
         h: face.baseHeight,
-        m: opts.psdMaterialEffects?.map((effect) => [effect.src, effect.blendMode, effect.opacity]),
+         r: [face.surface.sourceKitKey, face.surface.manifestRevision, face.surface.runtimeStatus, face.surface.contractErrors],
         l: face.layers.map((l) =>
             l.type === "image"
             ? [
@@ -101,48 +99,24 @@ function useFaceTexture(
     const f = faceRef.current;
     if (!f) return;
     let cancelled = false;
-    composeLayers({
+    composeMockupSurfaceTexture({
       canvas: canvasRef.current!,
-      baseHeight: f.baseHeight,
-      printZone: f.printZone,
+      surface: { ...f.surface, printZone: f.printZone },
       layers: f.layers,
-      garmentColor,
-      outW: opts.outW,
-      outH: opts.outH,
+      outSize: opts.outW,
       imageCache: cacheRef.current,
       clipToPrintZone: clipFlag,
-      blendMode: "multiply",
       curvature: opts.curvature ?? 0,
-    }).then(async () => {
-      const effects = opts.psdMaterialEffects ?? [];
-      if (effects.length > 0 && f.layers.some((layer) => layer.visible)) {
-        const canvas = canvasRef.current!;
-        const context = canvas.getContext("2d");
-        if (context) {
-          context.save();
-          context.beginPath();
-          tracePrintZone(context, f.printZone, opts.outW / f.baseHeight, opts.outH / f.baseHeight);
-          context.clip();
-          for (const effect of effects) {
-            try {
-              const image = await loadImage(effect.src, cacheRef.current);
-              context.globalCompositeOperation = effect.blendMode;
-              context.globalAlpha = effect.opacity;
-              context.drawImage(image, 0, 0, opts.outW, opts.outH);
-            } catch {
-              // A missing reviewed effect must not prevent the existing 3D preview.
-            }
-          }
-          context.restore();
-        }
-      }
+    }).then(() => {
       if (cancelled) return;
       if (textureRef.current) textureRef.current.needsUpdate = true;
       setVersion((v) => v + 1);
+    }).catch((error) => {
+      if (!cancelled) console.error("[3d] mockup surface rejected:", error);
     });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sig, garmentColor, opts.outW, opts.outH, clipFlag, opts.psdMaterialEffects]);
+  }, [sig, opts.outW, opts.outH, clipFlag, opts.curvature]);
 
   return face ? textureRef.current : null;
 }
@@ -192,17 +166,13 @@ function useMugWrapTexture(
       const composeFace = async (face: FacePayload | undefined) => {
         const faceCanvas = document.createElement("canvas");
         if (!face) return faceCanvas;
-        await composeLayers({
+        await composeMockupSurfaceTexture({
           canvas: faceCanvas,
-          baseHeight: face.baseHeight,
-          printZone: face.printZone,
+          surface: { ...face.surface, printZone: face.printZone },
           layers: face.layers,
-          garmentColor: null,
-          outW: 1024,
-          outH: 1024,
+          outSize: 1024,
           imageCache: cacheRef.current,
           clipToPrintZone: true,
-          blendMode: "multiply",
           curvature: 0.16,
         });
         return faceCanvas;
@@ -305,12 +275,12 @@ export default function ProductViewer3D({
   const frontTex = useFaceTexture(
     front,
     null,
-    { outW: 1024, outH: 1024, clipToPrintZone: true, curvature: surfaceCurvature, psdMaterialEffects: front?.psdMaterialEffects }
+    { outW: 1024, outH: 1024, clipToPrintZone: true, curvature: surfaceCurvature }
   );
   const backTex = useFaceTexture(
     back,
     null,
-    { outW: 1024, outH: 1024, clipToPrintZone: true, curvature: surfaceCurvature, psdMaterialEffects: back?.psdMaterialEffects }
+    { outW: 1024, outH: 1024, clipToPrintZone: true, curvature: surfaceCurvature }
   );
   const mugWrapTex = useMugWrapTexture(
     isMug && isWrapMode ? front : undefined,
@@ -324,39 +294,18 @@ export default function ProductViewer3D({
   useEffect(() => {
     if (supports3D || !front) return;
     const c = document.createElement("canvas");
-    const fallbackImageCache = new Map<string, HTMLImageElement>();
-    composeLayers({
+      const fallbackImageCache = new Map<string, HTMLImageElement>();
+    composeMockupSurfaceTexture({
       canvas: c,
-      baseHeight: front.baseHeight,
-      printZone: front.printZone,
+      surface: { ...front.surface, printZone: front.printZone },
       layers: front.layers,
-      garmentColor: null,
-      outW: 1024,
-      outH: 1024,
-      imageCache: new Map(),
+      outSize: 1024,
+      imageCache: fallbackImageCache,
       clipToPrintZone: true,
-      blendMode: "source-over",
-    }).then(async () => {
-      const effects = front.psdMaterialEffects ?? [];
-      if (effects.length > 0 && front.layers.some((layer) => layer.visible)) {
-        const context = c.getContext("2d");
-        if (context) {
-          context.save();
-          context.beginPath();
-          tracePrintZone(context, front.printZone, 1024 / front.baseHeight, 1024 / front.baseHeight);
-          context.clip();
-          for (const effect of effects) {
-            try {
-              const image = await loadImage(effect.src, fallbackImageCache);
-              context.globalCompositeOperation = effect.blendMode;
-              context.globalAlpha = effect.opacity;
-              context.drawImage(image, 0, 0, 1024, 1024);
-            } catch {}
-          }
-          context.restore();
-        }
-      }
+    }).then(() => {
       setFallbackUrl(c.toDataURL("image/png"));
+    }).catch((error) => {
+      console.error("[3d] fallback surface rejected:", error);
     });
   }, [supports3D, front]);
 

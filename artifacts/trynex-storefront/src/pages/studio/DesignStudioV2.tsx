@@ -23,7 +23,7 @@ import {
   type PrintZone, type DesignProduct, type Face,
 } from "../design-studio/mockups";
 import {
-  composeLayers, composeGarmentMockup, composeDesignTexture, autoFixImage,
+  composeMockupSurface, composeMockupSurfaceTexture, autoFixImage,
   type ComposerLayer,
 } from "../design-studio/composer";
 
@@ -880,6 +880,9 @@ export default function DesignStudioV2() {
         toast({ title: "Improve image quality first", description: "Replace the low-resolution image or use HD preparation before adding this design to cart.", variant: "destructive" });
         return;
       }
+      if (frontMockup.runtimeStatus !== "approved" || frontMockup.contractErrors.length > 0) {
+        throw new Error(frontMockup.disabledReason ?? "This product surface is not ready for customer artwork yet. Please try again later.");
+      }
     const imageCache = new Map<string, HTMLImageElement>();
     const originalAssets: OriginalAsset[] = [];
     const originalAssetUrls: string[] = [];
@@ -931,7 +934,7 @@ export default function DesignStudioV2() {
     let mockupUrl: string;
     try {
       const mockupCanvas = document.createElement("canvas");
-      await composeGarmentMockup({ canvas: mockupCanvas, garmentSrc, garmentColor: selectedColor.hex, printZone: frontPZ, layers: frontLayers, outSize: 400, imageCache, isColorPhoto, requiresTint: frontMockup.requiresTint, fabricTexture, psdMaterialEffects: frontMockup.psdMaterialEffects });
+      await composeMockupSurface({ canvas: mockupCanvas, surface: { ...frontMockup, baseSrc: garmentSrc, printZone: frontPZ }, garmentColor: selectedColor.hex, layers: frontLayers, outSize: 400, imageCache, fabricTexture });
       mockupUrl = mockupCanvas.toDataURL("image/webp", 0.8);
     } catch (err) {
       console.error("Mockup compose failed", err);
@@ -943,9 +946,9 @@ export default function DesignStudioV2() {
     try {
       const frontTexCanvas = document.createElement("canvas");
       if (isMug) {
-        await composeLayers({ canvas: frontTexCanvas, baseHeight: selectedProduct.baseHeight, printZone: frontPZ, layers: frontLayers, garmentColor: null, outW: 2048, outH: 768, imageCache, clipToPrintZone: true, blendMode: "multiply", curvature: 0.16, fabricTexture });
+         await composeMockupSurfaceTexture({ canvas: frontTexCanvas, surface: { ...frontMockup, printZone: frontPZ }, layers: frontLayers, outSize: 2048, imageCache, clipToPrintZone: true, curvature: 0.16, fabricTexture });
       } else {
-        await composeDesignTexture({ canvas: frontTexCanvas, printZone: frontPZ, layers: frontLayers, outSize: 1024, imageCache, curvature: isWaterBottle ? 0.16 : isCap ? 0.1 : 0, fabricTexture });
+         await composeMockupSurfaceTexture({ canvas: frontTexCanvas, surface: { ...frontMockup, printZone: frontPZ }, layers: frontLayers, outSize: 1024, imageCache, curvature: isWaterBottle ? 0.16 : isCap ? 0.1 : 0, fabricTexture });
       }
       frontTexUrl = frontTexCanvas.toDataURL("image/webp", 0.85);
     } catch (err) {
@@ -957,7 +960,7 @@ export default function DesignStudioV2() {
     let backTexUrl: string | undefined;
     if (!isMug && backLayers.length > 0) {
       const backTexCanvas = document.createElement("canvas");
-      await composeDesignTexture({ canvas: backTexCanvas, printZone: backPZ, layers: backLayers, outSize: 1024, imageCache, fabricTexture });
+       await composeMockupSurfaceTexture({ canvas: backTexCanvas, surface: { ...backMockup, printZone: backPZ }, layers: backLayers, outSize: 1024, imageCache, fabricTexture });
       backTexUrl = backTexCanvas.toDataURL("image/webp", 0.85);
     }
 
@@ -968,17 +971,17 @@ export default function DesignStudioV2() {
       const { SLEEVE_PZ, NECK_LABEL_PZ } = await import("../design-studio/mockups");
       if (leftSleeveLayers.length > 0) {
         const c = document.createElement("canvas");
-        await composeDesignTexture({ canvas: c, printZone: SLEEVE_PZ, layers: leftSleeveLayers, outSize: 1024, imageCache, fabricTexture });
+         await composeMockupSurfaceTexture({ canvas: c, surface: { ...resolveMockup(selectedProduct, selectedColor.hex, "left-sleeve"), printZone: SLEEVE_PZ }, layers: leftSleeveLayers, outSize: 1024, imageCache, fabricTexture });
         leftSleeveTexUrl = c.toDataURL("image/webp", 0.85);
       }
       if (rightSleeveLayers.length > 0) {
         const c = document.createElement("canvas");
-        await composeDesignTexture({ canvas: c, printZone: SLEEVE_PZ, layers: rightSleeveLayers, outSize: 1024, imageCache, fabricTexture });
+         await composeMockupSurfaceTexture({ canvas: c, surface: { ...resolveMockup(selectedProduct, selectedColor.hex, "right-sleeve"), printZone: SLEEVE_PZ }, layers: rightSleeveLayers, outSize: 1024, imageCache, fabricTexture });
         rightSleeveTexUrl = c.toDataURL("image/webp", 0.85);
       }
       if (neckLabelLayers.length > 0) {
         const c = document.createElement("canvas");
-        await composeDesignTexture({ canvas: c, printZone: NECK_LABEL_PZ, layers: neckLabelLayers, outSize: 1024, imageCache, fabricTexture });
+         await composeMockupSurfaceTexture({ canvas: c, surface: { ...resolveMockup(selectedProduct, selectedColor.hex, "neck-label"), printZone: NECK_LABEL_PZ }, layers: neckLabelLayers, outSize: 1024, imageCache, fabricTexture });
         neckLabelTexUrl = c.toDataURL("image/webp", 0.85);
       }
     }
@@ -1017,7 +1020,7 @@ export default function DesignStudioV2() {
       customImages: [frontTexUrl, ...(backTexUrl ? [backTexUrl] : []), ...(leftSleeveTexUrl ? [leftSleeveTexUrl] : []), ...(rightSleeveTexUrl ? [rightSleeveTexUrl] : []), ...(neckLabelTexUrl ? [neckLabelTexUrl] : [])],
       originalAssetUrls,
       originalAssets,
-      customNote: JSON.stringify({ studioDesign: true, sessionId, mockupRelease, product: selectedProduct.name, category: selectedProduct.category, color: selectedColor.name, colorHex: selectedColor.hex, size: selectedSize, layerCount: layers.length, frontLayerCount: frontLayers.length, backLayerCount: backLayers.length, mockupSrc: garmentSrc, mockupSource: frontMockup.source, mockupPhotoSrc: frontMockup.photoSrc, mockupIsColorPhoto: frontMockup.isColorPhoto, printZone: frontPZ, printZoneBack: backPZ, originalAssets }),
+      customNote: JSON.stringify({ studioDesign: true, sessionId, mockupRelease, product: selectedProduct.name, category: selectedProduct.category, color: selectedColor.name, colorHex: selectedColor.hex, size: selectedSize, layerCount: layers.length, frontLayerCount: frontLayers.length, backLayerCount: backLayers.length, mockupSrc: garmentSrc, mockupSource: frontMockup.source, mockupPhotoSrc: frontMockup.photoSrc, mockupIsColorPhoto: frontMockup.isColorPhoto, mockupManifestRevision: frontMockup.manifestRevision, mockupSourceKitKey: frontMockup.sourceKitKey, mockupRuntimeStatus: frontMockup.runtimeStatus, printZone: frontPZ, printZoneBack: backPZ, originalAssets }),
     });
     toast({ title: "✓ Added to cart!", description: `Custom ${selectedProduct.name} (${selectedColor.name}) is ready.` });
     try { localStorage.removeItem(DRAFT_STORAGE_KEY); } catch {}
@@ -1047,12 +1050,15 @@ export default function DesignStudioV2() {
       const activeLayers = layers.filter(l => (l.face ?? "front") === activeFace) as unknown as ComposerLayer[];
       if (activeLayers.length === 0) { toast({ title: "Nothing to export", description: "Add a layer first." }); return; }
       const exportMockup = activeFace === "front" ? frontMockup : activeFace === "back" ? backMockup : activeMockup;
+      if (exportMockup.runtimeStatus !== "approved" || exportMockup.contractErrors.length > 0) {
+        throw new Error(exportMockup.disabledReason ?? "This product surface is not ready for export yet. Please try again later.");
+      }
       const garmentSrc = exportMockup.cutoutSrc;
       const canvas = document.createElement("canvas");
       const exportPrintZone = isMug
         ? (mugMode === "wrap" ? (activeFace === "back" ? MUG_WRAP_BACK_PZ : MUG_PZ) : (activeFace === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ))
         : getZonePZ(activeFace, selectedProduct, selectedColor.hex);
-      await composeGarmentMockup({ canvas, garmentSrc, garmentColor: selectedColor.hex, printZone: exportPrintZone, layers: activeLayers, outSize: 1200, isColorPhoto: exportMockup.isColorPhoto, requiresTint: exportMockup.requiresTint, fabricTexture, psdMaterialEffects: exportMockup.psdMaterialEffects });
+      await composeMockupSurface({ canvas, surface: { ...exportMockup, baseSrc: garmentSrc, printZone: exportPrintZone }, garmentColor: selectedColor.hex, layers: activeLayers, outSize: 1200, imageCache: new Map(), fabricTexture });
       const a = document.createElement("a"); a.href = canvas.toDataURL("image/png"); a.download = `trynex-${selectedProduct.id}-${activeFace}-design.png`; a.click();
       toast({ title: "PNG exported!", description: "High-res PNG saved to your downloads." });
     } catch (error) {
@@ -1223,7 +1229,7 @@ export default function DesignStudioV2() {
                 {show3D && !isFlatZone && !isPsdTshirtStaging && (
                   <div className="absolute inset-0 z-20 rounded-3xl overflow-hidden flex items-center justify-center" style={{ background: "radial-gradient(ellipse at 50% 40%, #f4f4f4 0%, #e8e8e8 100%)" }}>
                     <Suspense fallback={<Loader2 className="w-8 h-8 animate-spin text-blue-400" />}>
-                      <LazyProductViewer3D product={selectedProduct} garmentColor={selectedColor.hex} front={{ layers: frontLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ) : getZonePZ("front", selectedProduct, selectedColor.hex), baseHeight: selectedProduct.baseHeight, psdMaterialEffects: frontMockup.psdMaterialEffects }} back={supportsBack && backLayers.length > 0 ? { layers: backLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ) : getZonePZ("back", selectedProduct, selectedColor.hex), baseHeight: selectedProduct.baseHeight, psdMaterialEffects: backMockup.psdMaterialEffects } : undefined} activeFace={activeFace as "front" | "back"} isWrapMode={isMug && mugMode === "wrap"} />
+                      <LazyProductViewer3D product={selectedProduct} garmentColor={selectedColor.hex} front={{ layers: frontLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ) : getZonePZ("front", selectedProduct, selectedColor.hex), baseHeight: selectedProduct.baseHeight, surface: { ...frontMockup, baseSrc: frontMockup.cutoutSrc, printZone: isMug ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ) : getZonePZ("front", selectedProduct, selectedColor.hex) } }} back={supportsBack && backLayers.length > 0 ? { layers: backLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ) : getZonePZ("back", selectedProduct, selectedColor.hex), baseHeight: selectedProduct.baseHeight, surface: { ...backMockup, baseSrc: backMockup.cutoutSrc, printZone: isMug ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ) : getZonePZ("back", selectedProduct, selectedColor.hex) } } : undefined} activeFace={activeFace as "front" | "back"} isWrapMode={isMug && mugMode === "wrap"} />
                     </Suspense>
                      <button type="button" onClick={() => setShow3D(false)} aria-label="Return to 2D editor" className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full text-xs font-bold text-white shadow-xl" style={{ background: "rgba(17,24,39,0.85)", backdropFilter: "blur(8px)" }}><Eye className="w-3 h-3 inline mr-1" /> Back to 2D</button>
                   </div>
