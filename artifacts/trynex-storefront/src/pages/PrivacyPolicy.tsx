@@ -8,7 +8,7 @@ export default function PrivacyPolicy() {
     <div className="min-h-screen flex flex-col bg-white">
       <SEOHead
         title="Privacy Policy"
-        description="TryNex Lifestyle privacy policy. Learn how we collect, use, and protect your personal data."
+        description="Trynext Lifestyle privacy policy. Learn how we collect, use, and protect your personal data."
         canonical="/privacy-policy"
       />
       <Navbar />
@@ -20,7 +20,7 @@ export default function PrivacyPolicy() {
             </span>
             <h1 className="section-heading mt-4">Privacy Policy</h1>
             <p className="text-gray-500 mt-4 max-w-2xl">
-              Your privacy matters to us. This policy explains how TryNex Lifestyle collects, uses, and protects your information.
+              Your privacy matters to us. This policy explains how Trynext Lifestyle collects, uses, and protects your information.
             </p>
             <p className="text-xs text-gray-400 mt-2">Last updated: April 7, 2026</p>
           </div>

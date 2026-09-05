@@ -7,5 +7,5 @@
   <!-- Shopping bag icon -->
   <path d="M168 340 L232 340 L226 420 L174 420 Z" fill="none" stroke="#D97706" stroke-width="3" stroke-linejoin="round"/>
   <path d="M183 340 C183 322 217 322 217 340" fill="none" stroke="#D97706" stroke-width="3" stroke-linecap="round"/>
-  <text x="200" y="450" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" fill="#92400E" font-weight="600">TryNex Lifestyle</text>
+  <text x="200" y="450" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" fill="#92400E" font-weight="600">Trynext Lifestyle</text>
 </svg>

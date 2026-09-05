@@ -140,10 +140,10 @@ const defaults: SiteSettings = {
   googleAdsId: c("googleAdsId") || "",
   freeShippingThreshold: c("freeShippingThreshold") ?? 0,
   shippingCost: c("shippingCost") ?? 0,
-  bkashNumber: c("bkashNumber") || "01747292277",
-  nagadNumber: c("nagadNumber") || "01747292277",
+  bkashNumber: c("bkashNumber") || "",
+  nagadNumber: c("nagadNumber") || "",
   rocketNumber: c("rocketNumber") || "",
-  upayNumber: c("upayNumber") || "01747292277",
+  upayNumber: c("upayNumber") || "",
   bankName: c("bankName") || "",
   bankAccountName: c("bankAccountName") || "",
   bankAccountNumber: c("bankAccountNumber") || "",
@@ -224,7 +224,7 @@ const defaults: SiteSettings = {
   spinWheelSubtitle: c("spinWheelSubtitle") || "One free spin — no purchase needed.",
   spinWheelResetAt: Number(c("spinWheelResetAt")) || 0,
   spinWheelCooldownHours: Number(c("spinWheelCooldownHours")) || 24,
-  seoDefaultTitle: c("seoDefaultTitle") || "TryNex Lifestyle — Custom Apparel & Gifts in Bangladesh",
+  seoDefaultTitle: c("seoDefaultTitle") || "Trynext Lifestyle — Custom Apparel & Gifts in Bangladesh",
   seoDefaultDescription: c("seoDefaultDescription") || "Design and order custom T-shirts, hoodies, mugs, caps, and gift hampers in Bangladesh. Premium quality, nationwide delivery, pay just 25% in advance.",
   seoDefaultKeywords: c("seoDefaultKeywords") || "custom t-shirt bangladesh, personalized mug, gift hamper, custom hoodie, design studio, trynex",
   seoOgImage: c("seoOgImage") || "",
@@ -242,8 +242,9 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
   const settings: SiteSettings = {
     ...defaults,
     ...remote,
-    // An empty admin setting must not hide the canonical fallback wallet.
-    upayNumber: remote.upayNumber?.trim() || defaults.upayNumber || "01747292277",
+    // Keep the configured wallet destination authoritative; empty means the
+    // method is unavailable rather than inventing a customer-facing number.
+    upayNumber: remote.upayNumber?.trim() || defaults.upayNumber || "",
     isLoaded: !!data,
   };
 

@@ -259,7 +259,7 @@ export default function Cart() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <SEOHead title="Your Cart" description="Review your shopping cart at TryNex Lifestyle." noindex />
+      <SEOHead title="Your Cart" description="Review your shopping cart at Trynext Lifestyle." noindex />
       <Navbar />
 
       <main className={`flex-1 pt-header ${items.length > 0 ? 'pb-32 lg:pb-24' : 'pb-24'}`}>

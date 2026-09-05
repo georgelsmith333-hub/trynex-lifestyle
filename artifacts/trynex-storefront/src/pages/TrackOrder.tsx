@@ -292,7 +292,7 @@ export default function TrackOrder() {
     <div className="min-h-screen flex flex-col bg-white">
       <SEOHead
         title="Track Your Order"
-        description="Track your TryNex Lifestyle order in real-time. Enter your order number to see live delivery status updates."
+        description="Track your Trynext Lifestyle order in real-time. Enter your order number to see live delivery status updates."
         canonical="/track"
         keywords="track order trynex, order tracking bangladesh"
       />
@@ -312,7 +312,7 @@ export default function TrackOrder() {
             </div>
             <p className="text-xs font-black uppercase tracking-widest text-primary mb-3">Live Tracking</p>
             <h1 className="text-5xl font-black font-display tracking-tighter mb-4">Track Your Order</h1>
-            <p className="text-gray-400 text-base">Real-time updates on your TryNex order status.</p>
+            <p className="text-gray-400 text-base">Real-time updates on your Trynext order status.</p>
           </motion.div>
 
           <motion.div
@@ -733,7 +733,7 @@ export default function TrackOrder() {
                     >
                       <span className="flex items-center gap-2">
                         <MessageSquare className="w-4 h-4 text-orange-500" />
-                        Messages from TryNex
+                        Messages from Trynext
                         {orderMessages.length > 0 && (
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-orange-100 text-orange-600">
                             {orderMessages.length}
@@ -767,7 +767,7 @@ export default function TrackOrder() {
                                     }}
                                   >
                                     {isAdmin && (
-                                      <p className="text-[10px] font-bold mb-0.5 text-orange-600">{msg.sender_name || "TryNex Team"}</p>
+                                      <p className="text-[10px] font-bold mb-0.5 text-orange-600">{msg.sender_name || "Trynext Team"}</p>
                                     )}
                                     <p className="leading-snug">{msg.message}</p>
                                     <p className="text-[10px] opacity-60 mt-0.5">
@@ -785,7 +785,7 @@ export default function TrackOrder() {
                             value={newMessage}
                             onChange={e => setNewMessage(e.target.value)}
                             onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSendMsg(); } }}
-                            placeholder="Send a message to TryNex…"
+                            placeholder="Send a message to Trynext…"
                             rows={2}
                             maxLength={2000}
                             className="flex-1 resize-none text-sm px-3 py-2 rounded-xl focus:outline-none focus:ring-1 focus:ring-orange-400"

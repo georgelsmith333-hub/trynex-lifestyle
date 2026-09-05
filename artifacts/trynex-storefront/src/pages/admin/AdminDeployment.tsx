@@ -84,15 +84,16 @@ export default function AdminDeployment() {
   const [showToken, setShowToken] = useState(false);
   const [copied, setCopied] = useState(false);
   const [clearTokenConfirm, setClearTokenConfirm] = useState(false);
+  const [systemFeedback, setSystemFeedback] = useState<string | null>(null);
 
   const [owner, setOwner] = useState("");
   const [repo, setRepo] = useState("");
   const [branch, setBranch] = useState("main");
   const [token, setToken] = useState("");
-  const [authorName, setAuthorName] = useState("TryNex Admin");
+  const [authorName, setAuthorName] = useState("Trynext Admin");
   const [authorEmail, setAuthorEmail] = useState("admin@trynex.local");
   const [renderDeployHook, setRenderDeployHook] = useState("");
-  const [commitMessage, setCommitMessage] = useState("chore: deploy from TryNex admin");
+  const [commitMessage, setCommitMessage] = useState("chore: deploy from Trynext admin");
 
   const fetchStatus = async () => {
     setLoading(true);
@@ -129,10 +130,15 @@ export default function AdminDeployment() {
 
   const checkHealth = async () => {
     setCheckingHealth(true);
+    setSystemFeedback(null);
     try {
       const r = await fetch(getApiUrl("/api/admin/system/health"), { headers: getAuthHeaders() });
-      if (r.ok) setHealth(await r.json());
-    } catch (e) {}
+      if (!r.ok) throw new Error(`Health check failed (HTTP ${r.status})`);
+      setHealth(await r.json());
+      setSystemFeedback("System health checked just now.");
+    } catch (e) {
+      setSystemFeedback(e instanceof Error ? e.message : "Could not check system health.");
+    }
     setCheckingHealth(false);
   };
 
@@ -140,9 +146,14 @@ export default function AdminDeployment() {
   const doFlushCache = async () => {
     setFlushCacheConfirm(false);
     setFlushingCache(true);
+    setSystemFeedback(null);
     try {
-      await fetch(getApiUrl("/api/admin/system/flush-cache"), { method: "POST", headers: getAuthHeaders() });
-    } catch (e) {}
+      const r = await fetch(getApiUrl("/api/admin/system/flush-cache"), { method: "POST", headers: getAuthHeaders() });
+      if (!r.ok) throw new Error(`Cache flush failed (HTTP ${r.status})`);
+      setSystemFeedback("Cache flushed successfully.");
+    } catch (e) {
+      setSystemFeedback(e instanceof Error ? e.message : "Could not flush cache.");
+    }
     setFlushingCache(false);
   };
 
@@ -306,6 +317,7 @@ export default function AdminDeployment() {
               <div className="pt-2 flex flex-wrap gap-3">
                 <button
                   onClick={checkHealth}
+                  type="button"
                   disabled={checkingHealth}
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-900 text-white text-xs font-bold hover:bg-black transition-colors disabled:opacity-50"
                 >
@@ -314,6 +326,7 @@ export default function AdminDeployment() {
                 </button>
                 <button
                   onClick={() => setFlushCacheConfirm(true)}
+                  type="button"
                   disabled={flushingCache}
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-100 text-orange-700 text-xs font-bold hover:bg-orange-200 transition-colors disabled:opacity-50"
                 >
@@ -339,6 +352,14 @@ export default function AdminDeployment() {
               </div>
             </div>
           </div>
+
+          {systemFeedback && (
+            <div className="px-6 pb-6">
+              <p role="status" className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-xs font-semibold text-blue-700">
+                {systemFeedback}
+              </p>
+            </div>
+          )}
 
           <AnimatePresence>
             {health && (
@@ -629,7 +650,7 @@ export default function AdminDeployment() {
                   </div>
                   <div>
                     <div className="text-[10px] font-bold text-green-700 uppercase tracking-wider">Commit</div>
-                    <button type="button" onClick={copySha} className="font-mono font-bold text-gray-900 inline-flex items-center gap-1 hover:text-orange-600">
+                    <button type="button" onClick={copySha} aria-label="Copy commit SHA" className="font-mono font-bold text-gray-900 inline-flex items-center gap-1 hover:text-orange-600">
                       {pushResult.shortSha}
                       {copied ? <Check className="w-3 h-3 text-green-600" /> : <Copy className="w-3 h-3 opacity-50" />}
                     </button>
@@ -651,7 +672,10 @@ export default function AdminDeployment() {
         {/* RENDER DEPLOY TRIGGER CARD */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           <button
+            type="button"
             onClick={() => setShowLegacy(!showLegacy)}
+            aria-expanded={showLegacy}
+            aria-controls="legacy-render-deploy"
             className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
           >
             <div className="flex items-center gap-2 text-gray-400">
@@ -668,6 +692,7 @@ export default function AdminDeployment() {
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 className="overflow-hidden"
+                id="legacy-render-deploy"
               >
                 <div className="p-6 pt-0 space-y-4">
                   <p className="text-xs text-gray-500">

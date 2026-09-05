@@ -418,7 +418,7 @@ export default function BlogPost() {
       "dateModified": post.updatedAt || post.createdAt,
       "publisher": {
         "@type": "Organization",
-        "name": "TryNex Lifestyle",
+        "name": "Trynext Lifestyle",
         "logo": { "@type": "ImageObject", "url": "https://trynex-lifestyle-shop.pages.dev/logo.png" },
       },
       "image": post.imageUrl || undefined,
@@ -451,7 +451,7 @@ export default function BlogPost() {
       <ReadingProgress />
       <SEOHead
         title={post.title}
-        description={post.excerpt || `Read "${post.title}" on TryNex Lifestyle blog.`}
+        description={post.excerpt || `Read "${post.title}" on Trynext Lifestyle blog.`}
         canonical={`/blog/${post.slug}`}
         ogType="article"
         ogImage={post.imageUrl || undefined}
@@ -606,7 +606,7 @@ export default function BlogPost() {
                 <Link href="/products"
                   className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white text-sm"
                   style={{ background: "linear-gradient(135deg, #E85D04, #FB8500)" }}>
-                  <BookOpen className="w-4 h-4" /> Shop TryNex Collection
+                  <BookOpen className="w-4 h-4" /> Shop Trynext Collection
                 </Link>
               </div>
             </div>

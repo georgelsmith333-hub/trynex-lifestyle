@@ -15,7 +15,7 @@ export default function NotFound() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <SEOHead title="Page Not Found | TryNex Lifestyle" noindex />
+      <SEOHead title="Page Not Found | Trynext Lifestyle" noindex />
       <Navbar />
       <main className="flex-1 pt-header pb-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">

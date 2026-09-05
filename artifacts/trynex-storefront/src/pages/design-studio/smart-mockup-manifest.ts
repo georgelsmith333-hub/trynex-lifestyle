@@ -1,5 +1,7 @@
 export type SmartMockupCategory = "mug" | "cap" | "waterbottle" | "tshirt" | "longsleeve" | "hoodie";
 export type SmartMockupFace = "front" | "back" | "left-sleeve" | "right-sleeve" | "neck-label" | "wrap";
+export type SmartMockupAlphaMode = "opaque-photo" | "transparent-cutout";
+export type SmartMockupRuntimeStatus = "approved" | "disabled";
 
 export interface SmartObjectPrintZone {
   x: number;
@@ -11,8 +13,11 @@ export interface SmartObjectPrintZone {
 
 export interface SmartMockupManifest {
   schema: "trynex-smart-mockup/v3";
+  manifestRevision: string;
   masterFormat: "psd" | "psb";
   masterStatus: "verified" | "manifest-only";
+  runtimeStatus: SmartMockupRuntimeStatus;
+  disabledReason?: string;
   category: SmartMockupCategory;
   colorSlug: string;
   face: SmartMockupFace;
@@ -21,6 +26,9 @@ export interface SmartMockupManifest {
   assets: {
     baseSrc: string;
     cutoutSrc: string;
+    alphaMode: SmartMockupAlphaMode;
+    printableMaskSrc?: string;
+    exclusionMaskSrc?: string;
     detailMaskSrc?: string;
   };
   normalizedFrame: { canvasWidth: number; canvasHeight: number; x: number; y: number; w: number; h: number };
@@ -69,10 +77,16 @@ export function createSmartMockupManifest(args: {
   colorSlug?: string;
   face?: SmartMockupFace;
   sourceKitKey: string;
+  manifestRevision?: string;
   editableMasterPath?: string;
   masterStatus?: SmartMockupManifest["masterStatus"];
+  runtimeStatus?: SmartMockupRuntimeStatus;
+  disabledReason?: string;
   baseSrc?: string;
   cutoutSrc?: string;
+  alphaMode?: SmartMockupAlphaMode;
+  printableMaskSrc?: string;
+  exclusionMaskSrc?: string;
   detailMaskSrc?: string;
   normalizedFrame: SmartMockupManifest["normalizedFrame"];
   printZone: SmartObjectPrintZone;
@@ -83,14 +97,24 @@ export function createSmartMockupManifest(args: {
   const cutoutSrc = args.cutoutSrc ?? baseSrc;
   return {
     schema: "trynex-smart-mockup/v3",
+    manifestRevision: args.manifestRevision ?? "runtime-v3.1",
     masterFormat: args.editableMasterPath?.toLowerCase().endsWith(".psb") ? "psb" : "psd",
     masterStatus: args.masterStatus ?? "manifest-only",
+    runtimeStatus: args.runtimeStatus ?? "approved",
+    disabledReason: args.disabledReason,
     category: args.category,
     colorSlug,
     face,
     sourceKitKey: args.sourceKitKey,
     editableMasterPath: args.editableMasterPath,
-    assets: { baseSrc, cutoutSrc, detailMaskSrc: args.detailMaskSrc },
+    assets: {
+      baseSrc,
+      cutoutSrc,
+      alphaMode: args.alphaMode ?? "transparent-cutout",
+      printableMaskSrc: args.printableMaskSrc,
+      exclusionMaskSrc: args.exclusionMaskSrc,
+      detailMaskSrc: args.detailMaskSrc,
+    },
     normalizedFrame: args.normalizedFrame,
     printZone: args.printZone,
     protectedDetails: PROTECTED_DETAILS[args.category],
@@ -110,4 +134,42 @@ export function createSmartMockupManifest(args: {
       grainOpacity: 0.02,
     },
   };
+}
+
+export function validateSmartMockupManifest(
+  manifest: SmartMockupManifest,
+  expected?: Partial<Pick<SmartMockupManifest, "category" | "colorSlug" | "face" | "sourceKitKey">>,
+): string[] {
+  const errors: string[] = [];
+  if (manifest.schema !== "trynex-smart-mockup/v3") errors.push("unsupported schema");
+  if (!manifest.manifestRevision.trim()) errors.push("missing manifest revision");
+  if (!manifest.sourceKitKey.trim()) errors.push("missing source-kit key");
+  if (manifest.runtimeStatus !== "approved" && manifest.runtimeStatus !== "disabled") errors.push("unsupported runtime status");
+  if (manifest.runtimeStatus === "disabled" && !manifest.disabledReason?.trim()) errors.push("disabled surface is missing a reason");
+  if (!manifest.assets.baseSrc || !manifest.assets.cutoutSrc) errors.push("base and cutout assets are required");
+  if (manifest.assets.alphaMode !== "opaque-photo" && manifest.assets.alphaMode !== "transparent-cutout") errors.push("unsupported alpha mode");
+  if (manifest.assets.alphaMode === "opaque-photo" && manifest.runtimeStatus === "approved" && manifest.assets.cutoutSrc !== manifest.assets.baseSrc) {
+    errors.push("opaque photo must not have a separate tintable cutout");
+  }
+  const numericValues = [
+    manifest.normalizedFrame.canvasWidth, manifest.normalizedFrame.canvasHeight,
+    manifest.normalizedFrame.x, manifest.normalizedFrame.y, manifest.normalizedFrame.w, manifest.normalizedFrame.h,
+    manifest.printZone.x, manifest.printZone.y, manifest.printZone.w, manifest.printZone.h,
+    manifest.warp.curvature, manifest.warp.seamPadding,
+  ];
+  if (numericValues.some((value) => !Number.isFinite(value))) errors.push("geometry contains a non-finite value");
+  if (manifest.normalizedFrame.canvasWidth <= 0 || manifest.normalizedFrame.canvasHeight <= 0 || manifest.normalizedFrame.w <= 0 || manifest.normalizedFrame.h <= 0) {
+    errors.push("normalized frame is invalid");
+  }
+  if (manifest.printZone.w <= 0 || manifest.printZone.h <= 0) errors.push("print zone is invalid");
+  if (!manifest.masks.clipToPrintZone || !manifest.masks.preserveProtectedDetails || manifest.masks.duplicateBasePass) {
+    errors.push("mask contract is unsafe");
+  }
+  if (expected) {
+    if (expected.category && manifest.category !== expected.category) errors.push("category does not match source-kit key");
+    if (expected.colorSlug && manifest.colorSlug !== expected.colorSlug) errors.push("color does not match source-kit key");
+    if (expected.face && manifest.face !== expected.face) errors.push("face does not match source-kit key");
+    if (expected.sourceKitKey && manifest.sourceKitKey !== expected.sourceKitKey) errors.push("source-kit key mismatch");
+  }
+  return errors;
 }

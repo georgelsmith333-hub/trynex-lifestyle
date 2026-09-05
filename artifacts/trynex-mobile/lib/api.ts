@@ -11,6 +11,20 @@ const getBaseUrl = () => {
   return `https://${domain}`;
 };
 
+export class ApiError extends Error {
+  readonly status: number;
+  readonly code?: string;
+  readonly details?: unknown;
+
+  constructor(message: string, status: number, code?: string, details?: unknown) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.code = code;
+    this.details = details;
+  }
+}
+
 export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const base = getBaseUrl();
   const url = `${base}${path}`;
@@ -23,7 +37,7 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({ message: "Request failed" }));
-    throw new Error(err.message || `HTTP ${res.status}`);
+    throw new ApiError(err.message || err.error || `HTTP ${res.status}`, res.status, err.code, err);
   }
   return res.json();
 }
@@ -101,7 +115,25 @@ export interface OrderItem {
 }
 
 export interface OrderTrackResponse {
-  order: Order;
+  id: number;
+  orderNumber: string;
+  customerName: string;
+  customerPhone: string;
+  customerEmail?: string;
+  shippingAddress: string;
+  shippingCity?: string;
+  shippingDistrict?: string;
+  status: string;
+  paymentMethod?: string;
+  paymentStatus?: string;
+  items: OrderItem[];
+  subtotal: number;
+  shippingCost: number;
+  total: number;
+  trackingNumber?: string;
+  trackingUrl?: string;
+  courierName?: string;
+  createdAt?: string;
   timeline: { status: string; timestamp: string; note?: string }[];
 }
 
@@ -196,7 +228,7 @@ export const api = {
     }),
 
   createOrder: (data: CreateOrderPayload) =>
-    apiFetch<{ order: Order; message?: string }>(`/api/orders`, {
+    apiFetch<Order>(`/api/orders`, {
       method: "POST",
       headers: { "X-Requested-With": "XMLHttpRequest" },
       body: JSON.stringify(data),

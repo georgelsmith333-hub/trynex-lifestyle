@@ -173,7 +173,7 @@ export default function FAQ() {
     <div className="min-h-screen flex flex-col bg-white">
       <SEOHead
         title="FAQ — Frequently Asked Questions"
-        description="Answers to common questions about shipping, returns, custom orders, sizing, and payments at TryNex Lifestyle Bangladesh."
+        description="Answers to common questions about shipping, returns, custom orders, sizing, and payments at Trynext Lifestyle Bangladesh."
         canonical="/faq"
         keywords="trynex faq, shipping bangladesh faq, custom apparel questions, return policy bd"
         jsonLd={faqSchema}
@@ -198,7 +198,7 @@ export default function FAQ() {
               <span style={{ color: "#E85D04" }}>Questions</span>
             </h1>
             <p className="text-gray-500 text-lg max-w-lg mx-auto">
-              Everything you need to know about TryNex. Can't find the answer?{" "}
+              Everything you need to know about Trynext. Can't find the answer?{" "}
               {waNum ? (
                 <a
                   href={`https://wa.me/${waNum}`}

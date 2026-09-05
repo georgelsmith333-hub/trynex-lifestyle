@@ -22,4 +22,4 @@ User-agent: facebookexternalhit
 Allow: /
 
 # Sitemap location
-Sitemap: https://trynex-lifestyle-shop.pages.dev/api/sitemap.xml
+Sitemap: https://trynex-lifestyle-shop.pages.dev/sitemap.xml

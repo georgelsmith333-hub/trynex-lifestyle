@@ -229,20 +229,34 @@ function TelegramSection() {
   );
 }
 
+const sectionSummaries: Record<string, string> = {
+  "General Information": "The storefront identity and first impression.",
+  "Homepage Promo Banner": "The campaign customers see before they shop.",
+  "Contact Information": "The details customers use when they need a human.",
+  "Payment Methods": "Merchant numbers shown at checkout.",
+  "Shipping & Delivery": "Thresholds and delivery economics.",
+  "Design Studio": "Base prices, fees and product colour swatches.",
+  "Flash Sale & Urgency": "Time-sensitive merchandising controls.",
+  "Spin-the-Wheel Offer Game": "Visitor offer game and reset controls.",
+  "SEO Defaults & Auto-SEO": "Search and social defaults for new pages.",
+  "Telegram Order Notifications": "Operational alerts for new orders.",
+  "Meta CAPI (Server-Side Events)": "Server-side conversion tracking status.",
+};
+
 const SectionCard = ({ icon: Icon, title, iconColor = "#E85D04", children }: {
   icon: any; title: string; iconColor?: string; children: React.ReactNode;
 }) => (
-  <div className="rounded-2xl overflow-hidden" style={{ background: 'white', border: '1px solid #e5e7eb', boxShadow: '0 1px 8px rgba(0,0,0,0.05)' }}>
-    <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100" style={{ background: '#f9fafb' }}>
-      <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: `${iconColor}15`, border: `1px solid ${iconColor}25` }}>
+  <section id={`settings-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} data-testid={`section-settings-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} className="admin-panel overflow-hidden">
+    <div className="flex items-center gap-3 border-b border-[#e8ede6] bg-[#fafcf9] px-4 py-4 sm:px-6">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl" style={{ background: `${iconColor}15`, border: `1px solid ${iconColor}25` }}>
         <Icon className="w-4 h-4" style={{ color: iconColor }} />
       </div>
-      <h2 className="font-bold text-sm text-gray-800">{title}</h2>
+      <div><h2 className="text-sm font-black text-[#172019]">{title}</h2>{sectionSummaries[title] && <p className="mt-0.5 text-[11px] text-[#8b948a]">{sectionSummaries[title]}</p>}</div>
     </div>
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">{children}</div>
     </div>
-  </div>
+  </section>
 );
 
 const Field = ({ label, children, full = false }: { label: string; children: React.ReactNode; full?: boolean }) => (
@@ -260,7 +274,9 @@ export default function AdminSettings() {
   const { mutateAsync: updateSettings, isPending } = useUpdateSettings({
     request: { headers: getAuthHeaders() }
   });
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, reset, formState: { isDirty } } = useForm();
+  const [saveState, setSaveState] = useState<"idle" | "dirty" | "saved" | "error">("idle");
+  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
 
   // Studio colors managed outside react-hook-form — separate per product type
   const [tshirtColorsJson, setTshirtColorsJson] = useState("");
@@ -283,6 +299,7 @@ export default function AdminSettings() {
   useEffect(() => {
     if (settings) {
       reset(settings);
+      setSaveState("idle");
       setTshirtColorsJson((settings as any).studioTshirtColors ?? "");
       setMugColorsJson((settings as any).studioMugColors ?? "");
       setHoodieColorsJson((settings as any).studioHoodieColors ?? "");
@@ -291,6 +308,10 @@ export default function AdminSettings() {
       setWaterbottleColorsJson((settings as any).studioWaterbottleColors ?? "");
     }
   }, [settings, reset]);
+
+  useEffect(() => {
+    if (isDirty) setSaveState("dirty");
+  }, [isDirty]);
 
   const validateSettings = (data: Record<string, string | undefined>): string | null => {
     const requiredFields: Array<{ key: string; label: string }> = [
@@ -411,8 +432,11 @@ export default function AdminSettings() {
       };
       if (turningWheelOn) payload.spinWheelResetAt = String(Date.now());
 
-      await updateSettings({ data: payload as any });
+      const savedSettings = await updateSettings({ data: payload as any });
+      reset(savedSettings as Record<string, unknown>);
       queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
+      setSaveState("saved");
+      setLastSavedAt(new Date());
       toast({ title: "✓ Settings saved successfully!" });
       // Refresh remove.bg configured status so the badge reflects any newly-saved key immediately
       fetch(getApiUrl("/api/remove-bg/status"))
@@ -420,26 +444,71 @@ export default function AdminSettings() {
         .then((d: { configured: boolean }) => setRemoveBgConfigured(d.configured))
         .catch(() => {});
     } catch {
+      setSaveState("error");
       toast({ title: "Failed to save settings", variant: "destructive" });
     }
   };
 
   if (isLoading) return <AdminLayout><Loader /></AdminLayout>;
 
+  const sectionIndex = [
+    ["settings-general-information", "General"],
+    ["settings-homepage-promo-banner", "Homepage promo"],
+    ["settings-contact-information", "Contact"],
+    ["settings-social-media", "Social media"],
+    ["settings-payment-methods", "Payment"],
+    ["settings-analytics-tracking", "Analytics"],
+    ["settings-shipping-delivery", "Shipping"],
+    ["settings-branding-logo", "Branding"],
+    ["settings-authentication-oauth", "Authentication"],
+    ["settings-google-search-console", "Search Console"],
+    ["settings-design-studio", "Design Studio"],
+    ["settings-flash-sale-urgency", "Flash sale"],
+    ["settings-exit-intent-promo-popup", "Exit-intent"],
+    ["settings-spin-the-wheel-offer-game", "Spin wheel"],
+    ["settings-seo-defaults-auto-seo", "SEO defaults"],
+    ["settings-telegram-order-notifications", "Telegram"],
+    ["settings-meta-capi-server-side-events", "Meta CAPI"],
+  ] as const;
+
   return (
     <AdminLayout>
-      <div className="mb-10">
-        <p className="text-xs font-bold uppercase tracking-widest text-orange-500 mb-2">Configuration</p>
-        <h1 className="text-4xl font-black font-display tracking-tighter text-gray-900">Store Settings</h1>
-        <p className="text-sm text-gray-400 mt-2">Configure your store details, payment numbers and more.</p>
+      <div className="mb-8 flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
+        <div>
+          <p className="admin-kicker">Store control</p>
+          <h1 className="mt-1 font-display text-4xl font-black tracking-[-.055em] text-[#172019] sm:text-5xl">Store settings</h1>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-[#6f7d70]">One place for the storefront voice, checkout rules, creative studio pricing and operator alerts.</p>
+        </div>
+        <div className="rounded-xl border border-[#dfe5dd] bg-white px-3.5 py-2.5 text-xs text-[#6f7d70]" data-testid="status-settings-header">
+          <span className={`mr-2 inline-block h-2 w-2 rounded-full ${isPending ? "bg-[#e85d04]" : saveState === "saved" ? "bg-[#2ebc68]" : saveState === "error" ? "bg-red-500" : isDirty ? "bg-[#d89017]" : "bg-[#9aa39a]"}`} />
+          {isPending ? "Saving changes…" : saveState === "saved" && lastSavedAt ? `Saved ${lastSavedAt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}` : saveState === "error" ? "Save failed — changes kept" : isDirty ? "Unsaved changes" : "All changes saved"}
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-3xl">
+      <details className="admin-panel mb-6 xl:hidden" data-testid="details-settings-index">
+        <summary className="cursor-pointer list-none px-4 py-3 text-xs font-black uppercase tracking-[.13em] text-[#687468]">Jump to settings section</summary>
+        <nav className="grid grid-cols-2 gap-1 border-t border-[#e8ede6] p-3 sm:grid-cols-3">
+          {sectionIndex.map(([id, label]) => (
+            <a key={id} href={`#${id}`} data-testid={`link-mobile-settings-${id.replace("settings-", "")}`} className="rounded-lg px-2 py-2 text-[11px] font-bold text-[#718071] hover:bg-[#fff0e5] hover:text-[#c94e00]">{label}</a>
+          ))}
+        </nav>
+      </details>
+
+      <div className="grid items-start gap-6 xl:grid-cols-[190px_minmax(0,1fr)]">
+        <aside className="admin-panel sticky top-4 hidden p-3 xl:block" aria-label="Settings sections">
+          <p className="px-2 pb-2 text-[10px] font-black uppercase tracking-[.14em] text-[#8b948a]">Jump to section</p>
+          <nav className="space-y-0.5">
+            {sectionIndex.map(([id, label]) => (
+              <a key={id} href={`#${id}`} data-testid={`link-settings-${id.replace("settings-", "")}`} className="block rounded-lg px-2 py-2 text-[11px] font-bold text-[#718071] transition-colors hover:bg-[#fff0e5] hover:text-[#c94e00]">{label}</a>
+            ))}
+          </nav>
+        </aside>
+        <form onSubmit={handleSubmit(onSubmit)} data-testid="form-store-settings" className="min-w-0 space-y-6 pb-8">
 
         {/* General */}
         <SectionCard icon={Store} title="General Information">
           <Field label="Store Name">
-            <input {...register("siteName")} className={inputClass} style={inputStyle} placeholder="TryNex Lifestyle" />
+            <input {...register("siteName")} className={inputClass} style={inputStyle} placeholder="Trynext Lifestyle" />
           </Field>
           <Field label="Tagline">
             <input {...register("tagline")} className={inputClass} style={inputStyle} placeholder="You imagine, we craft." />
@@ -807,7 +876,7 @@ export default function AdminSettings() {
 
         <SectionCard icon={Search} title="SEO Defaults & Auto-SEO" iconColor="#16a34a">
           <Field label="Default Page Title" full>
-            <input {...register("seoDefaultTitle")} className={inputClass} style={inputStyle} placeholder="TryNex Lifestyle — Custom Apparel & Gifts in Bangladesh" />
+            <input {...register("seoDefaultTitle")} className={inputClass} style={inputStyle} placeholder="Trynext Lifestyle — Custom Apparel & Gifts in Bangladesh" />
             <p className="text-xs text-gray-400 mt-1">Used on every page that doesn't set its own title. Keep under 60 characters for best Google ranking.</p>
           </Field>
           <Field label="Default Meta Description" full>
@@ -856,19 +925,26 @@ export default function AdminSettings() {
         </SectionCard>
 
         {/* Save Button */}
-        <div className="flex items-center gap-4 pt-2">
+        <div className="sticky bottom-4 z-20 flex flex-col gap-3 rounded-2xl border border-[#dfe5dd] bg-[#f8faf7]/95 p-3 shadow-[0_12px_35px_rgba(23,32,25,.12)] backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between sm:p-4" data-testid="panel-settings-save">
+          <div className="flex items-center gap-2 text-xs text-[#6f7d70]" data-testid="status-settings-save">
+            <span className={`h-2 w-2 rounded-full ${isPending ? "bg-[#e85d04]" : saveState === "saved" ? "bg-[#2ebc68]" : saveState === "error" ? "bg-red-500" : isDirty ? "bg-[#d89017]" : "bg-[#9aa39a]"}`} />
+            {isPending ? "Publishing settings…" : saveState === "error" ? "Save failed. Nothing was overwritten." : isDirty ? "You have changes ready to publish." : saveState === "saved" ? "Published to the storefront." : "No unpublished changes."}
+          </div>
+          <div className="flex items-center gap-3">
+            <p className="hidden text-xs text-[#8b948a] md:block">Changes take effect immediately.</p>
           <button
             type="submit"
+            data-testid="button-save-settings"
             disabled={isPending}
-            className="btn-glow flex items-center gap-2.5 px-8 py-4 rounded-xl font-bold text-white text-sm disabled:opacity-50 disabled:transform-none"
-            style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), rgba(255,152,64,1))', boxShadow: '0 8px 30px rgba(255,107,43,0.35)' }}
+            className="btn-glow flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#e85d04] px-7 py-3.5 text-sm font-bold text-white shadow-[0_8px_24px_rgba(232,93,4,.25)] disabled:opacity-50 disabled:transform-none sm:w-auto"
           >
             <Save className="w-4 h-4" />
-            {isPending ? "Saving Changes..." : "Save All Settings"}
+            {isPending ? "Saving changes…" : "Save all settings"}
           </button>
-          <p className="text-xs text-gray-400">Changes take effect immediately.</p>
+          </div>
         </div>
       </form>
+      </div>
     </AdminLayout>
   );
 }

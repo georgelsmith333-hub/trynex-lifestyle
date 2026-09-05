@@ -104,6 +104,7 @@ interface EditModal {
 export default function AdminMockups() {
   const [mockups, setMockups] = useState<Mockup[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [search, setSearch] = useState("");
   const [filterProduct, setFilterProduct] = useState<string>("");
@@ -119,6 +120,7 @@ export default function AdminMockups() {
   const [editIngestionStatus, setEditIngestionStatus] = useState<NonNullable<Mockup["ingestionStatus"]>>("preview-only");
   const [saving, setSaving] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const [lightbox, setLightbox] = useState<string | null>(null);
   const [uploadTarget, setUploadTarget] = useState<Mockup | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -128,6 +130,7 @@ export default function AdminMockups() {
 
   const fetchMockups = useCallback(async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const params = new URLSearchParams();
       if (search) params.set("q", search);
@@ -136,6 +139,7 @@ export default function AdminMockups() {
       const data = await apiFetch(`/api/admin/mockups?${params}`);
       setMockups(Array.isArray(data) ? data : []);
     } catch (err: any) {
+      setLoadError(err.message || "Could not load mockups.");
       toast({ title: "Failed to load mockups", description: err.message, variant: "destructive" });
     } finally {
       setLoading(false);
@@ -260,6 +264,7 @@ export default function AdminMockups() {
   };
 
   const deleteMockup = async (id: number) => {
+    setDeletingId(id);
     try {
       await apiFetch(`/api/admin/mockups/${id}`, { method: "DELETE" });
       toast({ title: "Mockup deleted" });
@@ -267,6 +272,8 @@ export default function AdminMockups() {
       setConfirmDelete(null);
     } catch (err: any) {
       toast({ title: "Delete failed", description: err.message, variant: "destructive" });
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -305,7 +312,9 @@ export default function AdminMockups() {
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={fetchMockups}
+              type="button"
+              onClick={() => void fetchMockups()}
+              aria-label="Refresh mockup gallery"
               disabled={loading}
               className="p-2.5 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
               title="Refresh"
@@ -384,10 +393,18 @@ export default function AdminMockups() {
         </div>
 
         {/* Grid */}
-        {loading ? (
+         {loading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
           </div>
+         ) : loadError ? (
+           <div className="rounded-2xl border border-red-200 bg-red-50 px-6 py-12 text-center">
+             <p className="font-black text-red-700">Could not load mockups</p>
+             <p className="mt-1 text-sm text-red-600">{loadError}</p>
+             <button type="button" onClick={() => void fetchMockups()} className="mt-4 rounded-xl border border-red-200 bg-white px-4 py-2 text-sm font-bold text-red-700 hover:bg-red-100">
+               Try again
+             </button>
+           </div>
         ) : mockups.length === 0 ? (
           <div className="text-center py-20">
             <ImageIcon className="w-12 h-12 text-gray-200 mx-auto mb-4" />
@@ -398,7 +415,7 @@ export default function AdminMockups() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             <AnimatePresence>
               {mockups.map((m, idx) => (
-                <motion.div
+               <motion.div
                   key={m.id}
                   layout
                   initial={{ opacity: 0, scale: 0.95 }}
@@ -697,8 +714,8 @@ export default function AdminMockups() {
               <h3 className="font-black text-gray-800 mb-2">Delete Mockup?</h3>
               <p className="text-sm text-gray-500 mb-5">This cannot be undone.</p>
               <div className="flex gap-2">
-                <button onClick={() => setConfirmDelete(null)} className="flex-1 py-2.5 rounded-xl text-sm font-bold border border-gray-200 text-gray-600 hover:bg-gray-50">Cancel</button>
-                <button onClick={() => deleteMockup(confirmDelete!)} className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white bg-red-500 hover:bg-red-600">Delete</button>
+               <button type="button" onClick={() => deletingId === null && setConfirmDelete(null)} disabled={deletingId !== null} className="flex-1 py-2.5 rounded-xl text-sm font-bold border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50">Cancel</button>
+                <button type="button" onClick={() => deleteMockup(confirmDelete!)} disabled={deletingId !== null} className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white bg-red-500 hover:bg-red-600 disabled:opacity-60">{deletingId !== null ? "Deleting…" : "Delete"}</button>
               </div>
             </motion.div>
           </motion.div>

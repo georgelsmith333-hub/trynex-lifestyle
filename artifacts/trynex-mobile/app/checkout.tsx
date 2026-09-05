@@ -106,8 +106,18 @@ export default function CheckoutScreen() {
   const [senderName, setSenderName] = useState("");
   const [bankReference, setBankReference] = useState("");
   const [paymentError, setPaymentError] = useState<string | null>(null);
+  const [paymentSubmissionError, setPaymentSubmissionError] = useState<string | null>(null);
+  const [retryingPaymentSubmission, setRetryingPaymentSubmission] = useState(false);
 
-  const [createdOrder, setCreatedOrder] = useState<{ orderNumber: string; id: number } | null>(null);
+  const [createdOrder, setCreatedOrder] = useState<{
+    orderNumber: string;
+    id: number;
+    total: number;
+    advance: number;
+    paymentMethod: MobilePaymentMethod;
+    paymentMode: "full" | "advance" | "cod";
+    paymentSubmitted?: boolean;
+  } | null>(null);
 
   // Fetch dynamic site settings (shipping cost, payment numbers, etc.)
   const { data: siteSettings } = useQuery({
@@ -172,8 +182,8 @@ export default function CheckoutScreen() {
   const validatePayment = () => {
     setPaymentError(null);
     if (isWallet(paymentMethod)) {
-      if (senderNumber.replace(/\D/g, "").length < 10) {
-        setPaymentError("Enter your 11-digit sending number.");
+      if (!/^01[3-9]\d{8}$/.test(senderNumber.replace(/\D/g, ""))) {
+        setPaymentError("Enter a valid Bangladesh mobile number used to send the payment.");
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         return false;
       }
@@ -199,7 +209,34 @@ export default function CheckoutScreen() {
     return true;
   };
 
+  const submitPaymentInfo = async (orderId: number) => {
+    setPaymentSubmissionError(null);
+    try {
+      await apiFetch(`/api/orders/${orderId}/payment-info`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
+        body: JSON.stringify({
+          paymentMethod,
+          customerEmail: email.trim() || undefined,
+          customerPhone: phone,
+          lastFourDigits: lastFour,
+          senderNumber,
+          transactionId,
+          senderName,
+          bankReference,
+          promoCode: promoApplied || undefined,
+        }),
+      });
+      setCreatedOrder((previous) => previous ? { ...previous, paymentSubmitted: true } : previous);
+      return true;
+    } catch (error: any) {
+      setPaymentSubmissionError(error?.message || "Payment details could not be submitted yet.");
+      return false;
+    }
+  };
+
   const placeOrder = async () => {
+    if (loading) return;
     if (!validateStep1()) return;
     if (!validatePayment()) return;
     setLoading(true);
@@ -214,7 +251,7 @@ export default function CheckoutScreen() {
         customImages: i.customImages,
       }));
 
-      const res = await api.createOrder({
+      const order = await api.createOrder({
         customerName: name.trim(),
         customerPhone: phone.trim(),
         customerEmail: email.trim() || undefined,
@@ -222,7 +259,10 @@ export default function CheckoutScreen() {
         shippingCity: thana.trim() || undefined,
         shippingDistrict: district,
         paymentMethod,
-        notes: notes.trim() || undefined,
+        notes: [
+          notes.trim(),
+          paymentMode === "full" ? "Payment plan: full payment" : "Payment plan: 25% advance + cash on delivery",
+        ].filter(Boolean).join(" | "),
         promoCode: promoApplied || undefined,
         items: orderItems,
         subtotal,
@@ -232,27 +272,22 @@ export default function CheckoutScreen() {
         source: "mobile",
       });
 
-      setCreatedOrder({ orderNumber: res.order.orderNumber, id: res.order.id });
+      const serverTotal = Number(order.total) || total;
+      const serverAdvance = Math.ceil(serverTotal * 0.25);
+      setCreatedOrder({
+        orderNumber: order.orderNumber,
+        id: order.id,
+        total: serverTotal,
+        advance: serverAdvance,
+        paymentMethod,
+        paymentMode,
+      });
       clearCart();
 
-      // Auto-submit payment verification for wallet/bank payments.
+      // Auto-submit payment verification for wallet/bank payments. The order
+      // remains usable and retryable if this second request fails.
       if (isWallet(paymentMethod) || paymentMethod === "bank") {
-        try {
-          await apiFetch(`/api/orders/${res.order.id}/payment-info`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
-            body: JSON.stringify({
-              lastFourDigits: lastFour,
-              senderNumber,
-              transactionId,
-              senderName,
-              bankReference,
-              promoCode: promoApplied || undefined,
-            }),
-          });
-        } catch {
-          // Non-blocking: order is created; payment verification can be retried manually.
-        }
+        await submitPaymentInfo(order.id);
       }
 
       setStep("success");
@@ -276,6 +311,34 @@ export default function CheckoutScreen() {
           Your order <Text style={{ color: colors.primary, fontFamily: "Inter_700Bold" }}>#{createdOrder.orderNumber}</Text> has been placed successfully.
         </Text>
         <View style={[styles.successCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <View style={styles.summaryRow}>
+            <Text style={[styles.summaryLabel, { color: colors.mutedForeground }]}>Payment method</Text>
+            <Text style={[styles.summaryValue, { color: colors.foreground }]}>
+              {paymentOptions.find((method) => method.value === createdOrder.paymentMethod)?.label ?? createdOrder.paymentMethod}
+            </Text>
+          </View>
+          <View style={styles.summaryRow}>
+            <Text style={[styles.summaryLabel, { color: colors.mutedForeground }]}>Order total</Text>
+            <Text style={[styles.summaryValue, { color: colors.foreground }]}>{formatPrice(createdOrder.total)}</Text>
+          </View>
+          <View style={styles.summaryRow}>
+            <Text style={[styles.summaryLabel, { color: colors.mutedForeground }]}>
+              {createdOrder.paymentMode === "full" ? "Amount due now" : "25% advance"}
+            </Text>
+            <Text style={[styles.summaryValue, { color: colors.primary }]}>
+              {formatPrice(createdOrder.paymentMode === "full" ? createdOrder.total : createdOrder.advance)}
+            </Text>
+          </View>
+          {createdOrder.paymentMode !== "full" && (
+            <View style={styles.summaryRow}>
+              <Text style={[styles.summaryLabel, { color: colors.mutedForeground }]}>Remaining on delivery</Text>
+              <Text style={[styles.summaryValue, { color: colors.foreground }]}>
+                {formatPrice(createdOrder.total - createdOrder.advance)}
+              </Text>
+            </View>
+          )}
+        </View>
+        <View style={[styles.successCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <Text style={[styles.successCardTitle, { color: colors.foreground }]}>What happens next?</Text>
           <View style={styles.successStep}>
             <Feather name="phone" size={16} color={colors.primary} />
@@ -290,6 +353,29 @@ export default function CheckoutScreen() {
             <Text style={[styles.successStepText, { color: colors.mutedForeground }]}>Delivered within 24-48 hours</Text>
           </View>
         </View>
+        {paymentSubmissionError && (
+          <View style={[styles.successCard, { backgroundColor: "#FFF7ED", borderColor: "#FDBA74" }]}>
+            <Text style={[styles.successCardTitle, { color: "#9A3412" }]}>Payment details still need to be sent</Text>
+            <Text style={[styles.successStepText, { color: "#9A3412", marginTop: 4 }]}>
+              Your order is safe. Retry now to submit the payment information for verification.
+            </Text>
+            <Pressable
+              style={[styles.trackBtn, { backgroundColor: "#EA580C", marginTop: 12 }]}
+              disabled={retryingPaymentSubmission}
+              onPress={async () => {
+                setRetryingPaymentSubmission(true);
+                try {
+                  await submitPaymentInfo(createdOrder.id);
+                } finally {
+                  setRetryingPaymentSubmission(false);
+                }
+              }}
+            >
+              <Feather name="refresh-cw" size={18} color="#fff" />
+              <Text style={styles.trackBtnText}>{retryingPaymentSubmission ? "Retrying…" : "Retry Payment Submission"}</Text>
+            </Pressable>
+          </View>
+        )}
         <Pressable
           style={[styles.trackBtn, { backgroundColor: colors.primary }]}
           onPress={() => {

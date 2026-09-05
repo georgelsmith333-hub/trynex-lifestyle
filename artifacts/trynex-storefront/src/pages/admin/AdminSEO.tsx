@@ -33,6 +33,7 @@ export default function AdminSEO() {
 
   const fetchStatus = async () => {
     setLoading(true);
+    setError("");
     try {
       const r = await fetch(getApiUrl("/api/admin/seo/status"), { headers: getAuthHeaders() });
       if (!r.ok) throw new Error("Failed to load SEO status");
@@ -148,10 +149,12 @@ export default function AdminSEO() {
     setRemoveConfigConfirm(false);
     setRemovingConfig(true);
     try {
-      await fetch(getApiUrl("/api/admin/seo/gsc-config"), {
+      const r = await fetch(getApiUrl("/api/admin/seo/gsc-config"), {
         method: "DELETE",
         headers: getAuthHeaders(),
       });
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(data.message || "Failed to remove config");
       flash("Service account credentials removed.");
       await fetchStatus();
     } catch (e: any) {

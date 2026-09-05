@@ -19,7 +19,7 @@ const STATUS_OPTIONS = ["all", "pending", "processing", "shipped", "ongoing", "d
 type StatusFilter = typeof STATUS_OPTIONS[number];
 
 function getPaymentProofUrl(notes?: string | null): string | null {
-  return notes?.match(/Payment proof:\s*(https?:\/\/\S+)/i)?.[1] ?? null;
+  return notes?.match(/Payment proof:\s*((?:https?:\/\/\S+)?\/api\/storage\/objects\/\S+)/i)?.[1] ?? null;
 }
 
 const PAYMENT_LABELS: Record<string, { label: string; color: string }> = {
@@ -52,7 +52,7 @@ export default function AdminOrders() {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [newOrderAlert, setNewOrderAlert] = useState(false);
   const [lastCount, setLastCount] = useState<number | null>(null);
-  const [isUpdatingPayment, setIsUpdatingPayment] = useState(false);
+  const [updatingPaymentOrderId, setUpdatingPaymentOrderId] = useState<number | null>(null);
   const [lightbox, setLightbox] = useState<{ items: PreviewItem[]; index: number } | null>(null);
   const openLightbox = (items: PreviewItem[], index: number) => setLightbox({ items, index });
   const closeLightbox = () => setLightbox(null);
@@ -71,24 +71,22 @@ export default function AdminOrders() {
 
   const [dateRange, setDateRange] = useState<{ start: string; end: string }>({ start: "", end: "" });
 
-  const { data, isLoading, refetch, dataUpdatedAt } = useListOrders(
+  const ordersQueryParams = {
+    limit: 200,
+    ...(statusFilter !== "all" ? { status: statusFilter } : {}),
+    ...(debouncedSearch ? { search: debouncedSearch } : {}),
+    ...(dateRange.start ? { startDate: dateRange.start } : {}),
+    ...(dateRange.end ? { endDate: dateRange.end } : {}),
+  };
+  const ordersQueryKey = getListOrdersQueryKey(ordersQueryParams);
+  const { data, isLoading, isError, error, refetch, dataUpdatedAt } = useListOrders(
     {
-      limit: 200,
-      ...(statusFilter !== "all" ? { status: statusFilter } : {}),
-      ...(debouncedSearch ? { search: debouncedSearch } : {}),
-      ...(dateRange.start ? { startDate: dateRange.start } : {}),
-      ...(dateRange.end ? { endDate: dateRange.end } : {}),
+         ...ordersQueryParams,
     },
     {
       request: { headers: getAuthHeaders() },
       query: {
-        queryKey: getListOrdersQueryKey({
-          limit: 200,
-          ...(statusFilter !== "all" ? { status: statusFilter } : {}),
-          ...(debouncedSearch ? { search: debouncedSearch } : {}),
-          ...(dateRange.start ? { startDate: dateRange.start } : {}),
-          ...(dateRange.end ? { endDate: dateRange.end } : {}),
-        }),
+         queryKey: ordersQueryKey,
         refetchInterval: 15000,
         refetchIntervalInBackground: false,
         refetchOnWindowFocus: true,
@@ -98,7 +96,7 @@ export default function AdminOrders() {
     }
   );
 
-  const [isUpdating, setIsUpdating] = useState(false);
+  const [updatingOrderId, setUpdatingOrderId] = useState<number | null>(null);
 
   // Cross-tab + cross-window instant sync: when any admin tab updates an order,
   // every other admin tab refetches immediately via BroadcastChannel.
@@ -107,11 +105,7 @@ export default function AdminOrders() {
     const ch = new BroadcastChannel("trynex-admin-orders");
     ch.onmessage = (ev) => {
       if (ev.data?.type === "orders:invalidate") {
-        queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey({
-          limit: 200,
-          ...(statusFilter !== "all" ? { status: statusFilter } : {}),
-          ...(debouncedSearch ? { search: debouncedSearch } : {}),
-        }) });
+        queryClient.invalidateQueries({ queryKey: ordersQueryKey });
         refetch();
       }
     };
@@ -147,11 +141,7 @@ export default function AdminOrders() {
   }, [data?.total]);
 
   const patchOrdersCache = (id: number, patch: Record<string, string>) => {
-    queryClient.setQueriesData({ queryKey: getListOrdersQueryKey({
-          limit: 200,
-          ...(statusFilter !== "all" ? { status: statusFilter } : {}),
-          ...(debouncedSearch ? { search: debouncedSearch } : {}),
-        }) }, (old: any) => {
+    queryClient.setQueriesData({ queryKey: ordersQueryKey }, (old: any) => {
       if (!old?.orders) return old;
       return { ...old, orders: old.orders.map((o: any) => o.id === id ? { ...o, ...patch } : o) };
     });
@@ -160,7 +150,7 @@ export default function AdminOrders() {
   const handleStatusChange = async (id: number, status: string) => {
     patchOrdersCache(id, { status });
     if (selectedOrder?.id === id) setSelectedOrder((prev: any) => ({ ...prev, status }));
-    setIsUpdating(true);
+    setUpdatingOrderId(id);
     try {
       const res = await fetch(getApiUrl(`/api/orders/${id}/status`), {
         method: 'PUT',
@@ -168,29 +158,21 @@ export default function AdminOrders() {
         body: JSON.stringify({ status }),
       });
       if (!res.ok) throw new Error('Failed');
-      queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey({
-          limit: 200,
-          ...(statusFilter !== "all" ? { status: statusFilter } : {}),
-          ...(debouncedSearch ? { search: debouncedSearch } : {}),
-        }) });
+       queryClient.invalidateQueries({ queryKey: ordersQueryKey });
       broadcastInvalidate();
       toast({ title: "✓ Status updated" });
     } catch {
-      queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey({
-          limit: 200,
-          ...(statusFilter !== "all" ? { status: statusFilter } : {}),
-          ...(debouncedSearch ? { search: debouncedSearch } : {}),
-        }) });
+      queryClient.invalidateQueries({ queryKey: ordersQueryKey });
       toast({ title: "Update failed", variant: "destructive" });
     } finally {
-      setIsUpdating(false);
+      setUpdatingOrderId(null);
     }
   };
 
   const handlePaymentStatusChange = async (id: number, paymentStatus: string) => {
     patchOrdersCache(id, { paymentStatus });
     if (selectedOrder?.id === id) setSelectedOrder((prev: any) => ({ ...prev, paymentStatus }));
-    setIsUpdatingPayment(true);
+    setUpdatingPaymentOrderId(id);
     try {
       const res = await fetch(getApiUrl(`/api/orders/${id}/payment-status`), {
         method: 'PUT',
@@ -198,22 +180,14 @@ export default function AdminOrders() {
         body: JSON.stringify({ paymentStatus }),
       });
       if (!res.ok) throw new Error('Failed');
-      queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey({
-          limit: 200,
-          ...(statusFilter !== "all" ? { status: statusFilter } : {}),
-          ...(debouncedSearch ? { search: debouncedSearch } : {}),
-        }) });
+       queryClient.invalidateQueries({ queryKey: ordersQueryKey });
       broadcastInvalidate();
       toast({ title: "✓ Payment status updated" });
     } catch {
-      queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey({
-          limit: 200,
-          ...(statusFilter !== "all" ? { status: statusFilter } : {}),
-          ...(debouncedSearch ? { search: debouncedSearch } : {}),
-        }) });
+      queryClient.invalidateQueries({ queryKey: ordersQueryKey });
       toast({ title: "Failed to update payment status", variant: "destructive" });
     } finally {
-      setIsUpdatingPayment(false);
+      setUpdatingPaymentOrderId(null);
     }
   };
 
@@ -533,7 +507,7 @@ export default function AdminOrders() {
                           <select
                             value={order.paymentStatus || 'pending'}
                             onChange={e => handlePaymentStatusChange(order.id, e.target.value)}
-                            disabled={isUpdatingPayment}
+                            disabled={updatingPaymentOrderId === order.id}
                             className="text-xs font-bold px-2 py-1.5 rounded-lg border border-gray-200 outline-none cursor-pointer"
                             style={{ background: `${payColor}15`, color: payColor }}
                           >
@@ -546,7 +520,7 @@ export default function AdminOrders() {
                           <select
                             value={order.status}
                             onChange={e => handleStatusChange(order.id, e.target.value)}
-                            disabled={isUpdating}
+                            disabled={updatingOrderId === order.id}
                             className={`text-xs font-bold px-2 py-1.5 rounded-xl border border-gray-200 outline-none cursor-pointer capitalize ${statusClass(order.status ?? "")}`}
                             style={{ background: 'white' }}
                           >
@@ -727,7 +701,7 @@ export default function AdminOrders() {
                     <select
                       value={selectedOrder.paymentStatus || 'pending'}
                       onChange={e => handlePaymentStatusChange(selectedOrder.id, e.target.value)}
-                      disabled={isUpdatingPayment}
+                      disabled={updatingPaymentOrderId === selectedOrder.id}
                       className="w-full px-3 py-3 rounded-xl text-sm font-bold focus:outline-none focus:ring-1 focus:ring-primary transition-all cursor-pointer"
                       style={{ background: 'white', border: '1px solid #e5e7eb', color: '#111827' }}
                     >

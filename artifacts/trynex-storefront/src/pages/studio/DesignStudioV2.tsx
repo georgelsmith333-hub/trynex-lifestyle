@@ -23,7 +23,7 @@ import {
   type PrintZone, type DesignProduct, type Face,
 } from "../design-studio/mockups";
 import {
-  composeLayers, composeGarmentMockup, composeDesignTexture, autoFixImage,
+  composeMockupSurface, composeMockupSurfaceTexture, autoFixImage,
   type ComposerLayer,
 } from "../design-studio/composer";
 
@@ -43,6 +43,19 @@ import { FONT_FAMILIES, type Layer, type ImageLayer, type TextLayer, type ShapeL
 import { StudioFirstUseGuide, StudioQualityBanner } from "./v1-components/V1StudioSupport";
 
 const LazyProductViewer3D = lazy(() => import("../design-studio/ProductViewer3D"));
+
+function getSwitchPrintZone(
+  face: Face,
+  product: DesignProduct,
+  colorHex: string,
+  mugMode: "side1" | "side2" | "wrap",
+): PrintZone {
+  if (product.category === "mug") {
+    if (mugMode === "wrap") return face === "back" ? MUG_WRAP_BACK_PZ : MUG_PZ;
+    return face === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ;
+  }
+  return getZonePZ(face, product, colorHex);
+}
 
 const DRAFT_STORAGE_KEY = "trynex-design-draft-v2";
 const LOCAL_PSD_TSHIRT_STAGE_ROOT = "/@fs/home/ubuntu/webdev-static-assets/trynex-tshirt-psd-staging";
@@ -197,8 +210,8 @@ export default function DesignStudioV2() {
     [selectedProduct, selectedColor.hex],
   );
   const activeMockup = useMemo(
-    () => resolveMockup(selectedProduct, selectedColor.hex, activeFace as Face),
-    [selectedProduct, selectedColor.hex, activeFace],
+    () => resolveMockup(selectedProduct, selectedColor.hex, isMug && mugMode === "wrap" ? "wrap" : activeFace as Face),
+    [activeFace, isMug, mugMode, selectedColor.hex, selectedProduct],
   );
   const activePsdMaterialEffects = useMemo(() => {
     if (psdTshirtStageAssets) {
@@ -216,6 +229,22 @@ export default function DesignStudioV2() {
   );
   const activeZoneConfig = useMemo(() => apparelZones.find(z => z.face === activeFace) ?? apparelZones[0], [apparelZones, activeFace]);
   const isFlatZone = activeFace === "left-sleeve" || activeFace === "right-sleeve" || activeFace === "neck-label";
+  const activeSurfaceUnavailable = activeMockup.runtimeStatus !== "approved" || activeMockup.contractErrors.length > 0;
+  const frontSurfaceUnavailable = frontMockup.runtimeStatus !== "approved" || frontMockup.contractErrors.length > 0;
+  const unavailableSurfaceReason = activeMockup.disabledReason
+    ?? (activeMockup.contractErrors.length > 0 ? activeMockup.contractErrors.join(", ") : "This product surface is not ready for artwork rendering.");
+  const requiredArtworkSurfaceUnavailable = useMemo(() => {
+    const faces = new Set(
+      layers
+        .filter((layer) => layer.visible)
+        .map((layer) => (layer.face ?? "front") as Face),
+    );
+    if (faces.size === 0) return frontSurfaceUnavailable;
+    return Array.from(faces).some((face) => {
+      const surface = resolveMockup(selectedProduct, selectedColor.hex, face);
+      return surface.runtimeStatus !== "approved" || surface.contractErrors.length > 0;
+    });
+  }, [frontSurfaceUnavailable, layers, selectedColor.hex, selectedProduct]);
 
   const pz = useMemo(() => {
     if (isMug) {
@@ -444,10 +473,12 @@ export default function DesignStudioV2() {
   const handleQuickProductSwitch = (prod: DesignProduct) => {
     if (prod.id === selectedProduct.id) return;
     const matchingColor = prod.colors.find(c => c.hex.toLowerCase() === selectedColor.hex.toLowerCase()) ?? prod.colors[0];
+    const oldMugMode = selectedProduct.category === "mug" ? mugMode : "side1";
+    const nextMugMode = selectedProduct.category === "mug" && prod.category === "mug" ? mugMode : "side1";
     const layerTransforms = layers.map((layer) => {
       const face = layer.face ?? "front";
-      const oldZone = getZonePZ(face, selectedProduct, selectedColor.hex);
-      const nextZone = getZonePZ(face, prod, matchingColor.hex);
+      const oldZone = getSwitchPrintZone(face, selectedProduct, selectedColor.hex, oldMugMode);
+      const nextZone = getSwitchPrintZone(face, prod, matchingColor.hex, nextMugMode);
       const widthRatio = nextZone.w / Math.max(1, oldZone.w);
       const heightRatio = nextZone.h / Math.max(1, oldZone.h);
       const fitRatio = Math.min(widthRatio, heightRatio);
@@ -865,6 +896,9 @@ export default function DesignStudioV2() {
         toast({ title: "Improve image quality first", description: "Replace the low-resolution image or use HD preparation before adding this design to cart.", variant: "destructive" });
         return;
       }
+      if (requiredArtworkSurfaceUnavailable) {
+        throw new Error(frontMockup.disabledReason ?? "This product surface is not ready for customer artwork yet. Please try again later.");
+      }
     const imageCache = new Map<string, HTMLImageElement>();
     const originalAssets: OriginalAsset[] = [];
     const originalAssetUrls: string[] = [];
@@ -916,7 +950,7 @@ export default function DesignStudioV2() {
     let mockupUrl: string;
     try {
       const mockupCanvas = document.createElement("canvas");
-      await composeGarmentMockup({ canvas: mockupCanvas, garmentSrc, garmentColor: selectedColor.hex, printZone: frontPZ, layers: frontLayers, outSize: 400, imageCache, isColorPhoto, requiresTint: frontMockup.requiresTint, fabricTexture, psdMaterialEffects: frontMockup.psdMaterialEffects });
+      await composeMockupSurface({ canvas: mockupCanvas, surface: { ...frontMockup, baseSrc: garmentSrc, printZone: frontPZ }, garmentColor: selectedColor.hex, layers: frontLayers, outSize: 400, imageCache, fabricTexture });
       mockupUrl = mockupCanvas.toDataURL("image/webp", 0.8);
     } catch (err) {
       console.error("Mockup compose failed", err);
@@ -928,9 +962,9 @@ export default function DesignStudioV2() {
     try {
       const frontTexCanvas = document.createElement("canvas");
       if (isMug) {
-        await composeLayers({ canvas: frontTexCanvas, baseHeight: selectedProduct.baseHeight, printZone: frontPZ, layers: frontLayers, garmentColor: null, outW: 2048, outH: 768, imageCache, clipToPrintZone: true, blendMode: "multiply", curvature: 0.16, fabricTexture });
+         await composeMockupSurfaceTexture({ canvas: frontTexCanvas, surface: { ...frontMockup, printZone: frontPZ }, layers: frontLayers, outSize: 2048, imageCache, clipToPrintZone: true, curvature: 0.16, fabricTexture });
       } else {
-        await composeDesignTexture({ canvas: frontTexCanvas, printZone: frontPZ, layers: frontLayers, outSize: 1024, imageCache, curvature: isWaterBottle ? 0.16 : isCap ? 0.1 : 0, fabricTexture });
+         await composeMockupSurfaceTexture({ canvas: frontTexCanvas, surface: { ...frontMockup, printZone: frontPZ }, layers: frontLayers, outSize: 1024, imageCache, curvature: isWaterBottle ? 0.16 : isCap ? 0.1 : 0, fabricTexture });
       }
       frontTexUrl = frontTexCanvas.toDataURL("image/webp", 0.85);
     } catch (err) {
@@ -942,7 +976,7 @@ export default function DesignStudioV2() {
     let backTexUrl: string | undefined;
     if (!isMug && backLayers.length > 0) {
       const backTexCanvas = document.createElement("canvas");
-      await composeDesignTexture({ canvas: backTexCanvas, printZone: backPZ, layers: backLayers, outSize: 1024, imageCache, fabricTexture });
+       await composeMockupSurfaceTexture({ canvas: backTexCanvas, surface: { ...backMockup, printZone: backPZ }, layers: backLayers, outSize: 1024, imageCache, fabricTexture });
       backTexUrl = backTexCanvas.toDataURL("image/webp", 0.85);
     }
 
@@ -953,17 +987,17 @@ export default function DesignStudioV2() {
       const { SLEEVE_PZ, NECK_LABEL_PZ } = await import("../design-studio/mockups");
       if (leftSleeveLayers.length > 0) {
         const c = document.createElement("canvas");
-        await composeDesignTexture({ canvas: c, printZone: SLEEVE_PZ, layers: leftSleeveLayers, outSize: 1024, imageCache, fabricTexture });
+         await composeMockupSurfaceTexture({ canvas: c, surface: { ...resolveMockup(selectedProduct, selectedColor.hex, "left-sleeve"), printZone: SLEEVE_PZ }, layers: leftSleeveLayers, outSize: 1024, imageCache, fabricTexture });
         leftSleeveTexUrl = c.toDataURL("image/webp", 0.85);
       }
       if (rightSleeveLayers.length > 0) {
         const c = document.createElement("canvas");
-        await composeDesignTexture({ canvas: c, printZone: SLEEVE_PZ, layers: rightSleeveLayers, outSize: 1024, imageCache, fabricTexture });
+         await composeMockupSurfaceTexture({ canvas: c, surface: { ...resolveMockup(selectedProduct, selectedColor.hex, "right-sleeve"), printZone: SLEEVE_PZ }, layers: rightSleeveLayers, outSize: 1024, imageCache, fabricTexture });
         rightSleeveTexUrl = c.toDataURL("image/webp", 0.85);
       }
       if (neckLabelLayers.length > 0) {
         const c = document.createElement("canvas");
-        await composeDesignTexture({ canvas: c, printZone: NECK_LABEL_PZ, layers: neckLabelLayers, outSize: 1024, imageCache, fabricTexture });
+         await composeMockupSurfaceTexture({ canvas: c, surface: { ...resolveMockup(selectedProduct, selectedColor.hex, "neck-label"), printZone: NECK_LABEL_PZ }, layers: neckLabelLayers, outSize: 1024, imageCache, fabricTexture });
         neckLabelTexUrl = c.toDataURL("image/webp", 0.85);
       }
     }
@@ -1002,7 +1036,7 @@ export default function DesignStudioV2() {
       customImages: [frontTexUrl, ...(backTexUrl ? [backTexUrl] : []), ...(leftSleeveTexUrl ? [leftSleeveTexUrl] : []), ...(rightSleeveTexUrl ? [rightSleeveTexUrl] : []), ...(neckLabelTexUrl ? [neckLabelTexUrl] : [])],
       originalAssetUrls,
       originalAssets,
-      customNote: JSON.stringify({ studioDesign: true, sessionId, mockupRelease, product: selectedProduct.name, category: selectedProduct.category, color: selectedColor.name, colorHex: selectedColor.hex, size: selectedSize, layerCount: layers.length, frontLayerCount: frontLayers.length, backLayerCount: backLayers.length, mockupSrc: garmentSrc, mockupSource: frontMockup.source, mockupPhotoSrc: frontMockup.photoSrc, mockupIsColorPhoto: frontMockup.isColorPhoto, printZone: frontPZ, printZoneBack: backPZ, originalAssets }),
+      customNote: JSON.stringify({ studioDesign: true, sessionId, mockupRelease, product: selectedProduct.name, category: selectedProduct.category, color: selectedColor.name, colorHex: selectedColor.hex, size: selectedSize, layerCount: layers.length, frontLayerCount: frontLayers.length, backLayerCount: backLayers.length, mockupSrc: garmentSrc, mockupSource: frontMockup.source, mockupPhotoSrc: frontMockup.photoSrc, mockupIsColorPhoto: frontMockup.isColorPhoto, mockupManifestRevision: frontMockup.manifestRevision, mockupSourceKitKey: frontMockup.sourceKitKey, mockupRuntimeStatus: frontMockup.runtimeStatus, printZone: frontPZ, printZoneBack: backPZ, originalAssets }),
     });
     toast({ title: "✓ Added to cart!", description: `Custom ${selectedProduct.name} (${selectedColor.name}) is ready.` });
     try { localStorage.removeItem(DRAFT_STORAGE_KEY); } catch {}
@@ -1032,12 +1066,15 @@ export default function DesignStudioV2() {
       const activeLayers = layers.filter(l => (l.face ?? "front") === activeFace) as unknown as ComposerLayer[];
       if (activeLayers.length === 0) { toast({ title: "Nothing to export", description: "Add a layer first." }); return; }
       const exportMockup = activeFace === "front" ? frontMockup : activeFace === "back" ? backMockup : activeMockup;
+      if (exportMockup.runtimeStatus !== "approved" || exportMockup.contractErrors.length > 0) {
+        throw new Error(exportMockup.disabledReason ?? "This product surface is not ready for export yet. Please try again later.");
+      }
       const garmentSrc = exportMockup.cutoutSrc;
       const canvas = document.createElement("canvas");
       const exportPrintZone = isMug
         ? (mugMode === "wrap" ? (activeFace === "back" ? MUG_WRAP_BACK_PZ : MUG_PZ) : (activeFace === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ))
         : getZonePZ(activeFace, selectedProduct, selectedColor.hex);
-      await composeGarmentMockup({ canvas, garmentSrc, garmentColor: selectedColor.hex, printZone: exportPrintZone, layers: activeLayers, outSize: 1200, isColorPhoto: exportMockup.isColorPhoto, requiresTint: exportMockup.requiresTint, fabricTexture, psdMaterialEffects: exportMockup.psdMaterialEffects });
+      await composeMockupSurface({ canvas, surface: { ...exportMockup, baseSrc: garmentSrc, printZone: exportPrintZone }, garmentColor: selectedColor.hex, layers: activeLayers, outSize: 1200, imageCache: new Map(), fabricTexture });
       const a = document.createElement("a"); a.href = canvas.toDataURL("image/png"); a.download = `trynex-${selectedProduct.id}-${activeFace}-design.png`; a.click();
       toast({ title: "PNG exported!", description: "High-res PNG saved to your downloads." });
     } catch (error) {
@@ -1076,7 +1113,7 @@ export default function DesignStudioV2() {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#F5F3F0" }}>
-      <SEOHead title="Design Studio | Create Custom Apparel Online — TryNex Lifestyle" description="Design your own custom T-shirts, hoodies, mugs & more." canonical="/design-studio" />
+      <SEOHead title="Design Studio | Create Custom Apparel Online — Trynext Lifestyle" description="Design your own custom T-shirts, hoodies, mugs & more." canonical="/design-studio" />
       <Navbar />
       <div style={{ height: "calc(var(--announcement-height, 0px) + 4.25rem)" }} />
 
@@ -1105,7 +1142,7 @@ export default function DesignStudioV2() {
             <button type="button" onClick={redo} disabled={store.future.length === 0} aria-label="Redo last change" className="p-2 rounded-xl bg-gray-100 text-gray-600 disabled:opacity-30 active:scale-95 transition-transform"><Redo2 className="w-3.5 h-3.5" /></button>
             <button type="button" onClick={() => setShowPrintZone(!showPrintZone)} aria-pressed={showPrintZone} className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold ${showPrintZone ? "text-orange-500 bg-orange-50" : "text-gray-500 bg-gray-100 hover:bg-gray-200"}`}><Eye className="w-3 h-3" /> Print Zone</button>
             {!isFlatZone && <button type="button" onClick={() => setShow3D(!show3D)} aria-pressed={show3D} className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold ${show3D ? "text-blue-500 bg-blue-50" : "text-gray-500 bg-gray-100 hover:bg-gray-200"}`}><Package className="w-3 h-3" /> {show3D ? "2D Edit" : "3D Preview"}</button>}
-             <motion.button type="button" onClick={handleAddToCart} disabled={isAddingToCart} aria-label={isAddingToCart ? "Adding design to cart" : "Add design to cart"} whileTap={{ scale: 0.97 }} className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-5 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm text-white shadow-lg shadow-orange-500/20 disabled:cursor-wait disabled:opacity-70" style={{ background: "linear-gradient(135deg, #E85D04, #FB8500)" }}>
+             <motion.button type="button" onClick={handleAddToCart} disabled={isAddingToCart || requiredArtworkSurfaceUnavailable} aria-label={isAddingToCart ? "Adding design to cart" : requiredArtworkSurfaceUnavailable ? "Add to cart unavailable for this surface" : "Add design to cart"} title={requiredArtworkSurfaceUnavailable ? unavailableSurfaceReason : undefined} whileTap={{ scale: 0.97 }} className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-5 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm text-white shadow-lg shadow-orange-500/20 disabled:cursor-not-allowed disabled:opacity-50" style={{ background: "linear-gradient(135deg, #E85D04, #FB8500)" }}>
                {isAddingToCart ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShoppingCart className="w-3.5 h-3.5" />} <span className="hidden sm:inline">{isAddingToCart ? "Preparing…" : "Add to Cart"}</span><span className="sm:hidden">{isAddingToCart ? "Wait" : "Cart"}</span>
             </motion.button>
           </div>
@@ -1134,7 +1171,7 @@ export default function DesignStudioV2() {
           <div className="flex-1 min-w-0" ref={containerRef}>
             <ProductSwitcher />
             <div className="mt-3 mb-3">
-             <MainToolbar onExport={handleExportPNG} isExporting={isExporting} />
+             <MainToolbar onExport={handleExportPNG} isExporting={isExporting} exportDisabled={activeSurfaceUnavailable} />
               <div className="mb-3 flex items-center gap-2 overflow-x-auto rounded-2xl border border-orange-100 bg-orange-50/70 p-2 md:hidden no-scrollbar">
                 <button type="button" onClick={() => setShowProductPicker(true)} aria-label="Choose product" className="flex shrink-0 items-center gap-1.5 rounded-xl bg-white px-3 py-2 text-[11px] font-black text-gray-800 shadow-sm active:scale-95"><Package className="h-3.5 w-3.5 text-orange-500" /> Product</button>
                 <button type="button" onClick={() => fileInputRef.current?.click()} aria-label="Upload design image" className="flex shrink-0 items-center gap-1.5 rounded-xl bg-gradient-to-r from-orange-600 to-orange-500 px-3 py-2 text-[11px] font-black text-white shadow-sm active:scale-95"><Upload className="h-3.5 w-3.5" /> Upload</button>
@@ -1203,12 +1240,19 @@ export default function DesignStudioV2() {
               </div>
             </div>
 
-            <div className="relative rounded-3xl overflow-hidden select-none" style={{ background: "radial-gradient(ellipse at 50% 35%, #ffffff 0%, #f8f8f8 55%, #f0f0f0 100%)", border: "1px solid #e5e5e7", boxShadow: "0 6px 40px rgba(0,0,0,0.08)" }} onDrop={handleDrop} onDragOver={e => e.preventDefault()}>
+             <div className="relative rounded-3xl overflow-hidden select-none" style={{ background: "radial-gradient(ellipse at 50% 35%, #ffffff 0%, #f8f8f8 55%, #f0f0f0 100%)", border: "1px solid #e5e5e7", boxShadow: "0 6px 40px rgba(0,0,0,0.08)" }} onDrop={handleDrop} onDragOver={e => e.preventDefault()}>
+               {activeSurfaceUnavailable && (
+                 <div role="alert" className="absolute inset-x-4 top-4 z-30 rounded-2xl border border-amber-300 bg-amber-50/95 px-4 py-3 text-center shadow-lg backdrop-blur">
+                   <div className="flex items-center justify-center gap-2 text-sm font-black text-amber-950"><ShieldCheck className="h-4 w-4" /> Surface unavailable</div>
+                   <p className="mt-1 text-xs font-medium text-amber-900">{unavailableSurfaceReason}</p>
+                   <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-amber-700">Preview, export, and checkout are disabled for this surface</p>
+                 </div>
+               )}
               <div style={{ position: "relative", width: canvasSize, height: canvasSize, margin: "0 auto" }}>
-                {show3D && !isFlatZone && !isPsdTshirtStaging && (
+                 {show3D && !isFlatZone && !isPsdTshirtStaging && !activeSurfaceUnavailable && (
                   <div className="absolute inset-0 z-20 rounded-3xl overflow-hidden flex items-center justify-center" style={{ background: "radial-gradient(ellipse at 50% 40%, #f4f4f4 0%, #e8e8e8 100%)" }}>
                     <Suspense fallback={<Loader2 className="w-8 h-8 animate-spin text-blue-400" />}>
-                      <LazyProductViewer3D product={selectedProduct} garmentColor={selectedColor.hex} front={{ layers: frontLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ) : getZonePZ("front", selectedProduct, selectedColor.hex), baseHeight: selectedProduct.baseHeight, psdMaterialEffects: frontMockup.psdMaterialEffects }} back={supportsBack && backLayers.length > 0 ? { layers: backLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ) : getZonePZ("back", selectedProduct, selectedColor.hex), baseHeight: selectedProduct.baseHeight, psdMaterialEffects: backMockup.psdMaterialEffects } : undefined} activeFace={activeFace as "front" | "back"} isWrapMode={isMug && mugMode === "wrap"} />
+                      <LazyProductViewer3D product={selectedProduct} garmentColor={selectedColor.hex} front={{ layers: frontLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ) : getZonePZ("front", selectedProduct, selectedColor.hex), baseHeight: selectedProduct.baseHeight, surface: { ...frontMockup, baseSrc: frontMockup.cutoutSrc, printZone: isMug ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ) : getZonePZ("front", selectedProduct, selectedColor.hex) } }} back={supportsBack && backLayers.length > 0 ? { layers: backLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ) : getZonePZ("back", selectedProduct, selectedColor.hex), baseHeight: selectedProduct.baseHeight, surface: { ...backMockup, baseSrc: backMockup.cutoutSrc, printZone: isMug ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ) : getZonePZ("back", selectedProduct, selectedColor.hex) } } : undefined} activeFace={activeFace as "front" | "back"} isWrapMode={isMug && mugMode === "wrap"} />
                     </Suspense>
                      <button type="button" onClick={() => setShow3D(false)} aria-label="Return to 2D editor" className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full text-xs font-bold text-white shadow-xl" style={{ background: "rgba(17,24,39,0.85)", backdropFilter: "blur(8px)" }}><Eye className="w-3 h-3 inline mr-1" /> Back to 2D</button>
                   </div>
@@ -1244,7 +1288,7 @@ export default function DesignStudioV2() {
                     Local PSD T-shirt staging · {selectedColor.name} {activeFace} · 2D review · Cart and export disabled
                   </div>
                 )}
-                {!show3D && !isFlatZone && layers.length === 0 && (
+                 {!show3D && !isFlatZone && layers.length === 0 && !activeSurfaceUnavailable && (
                   <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
                     <button
                       type="button"
@@ -1295,7 +1339,7 @@ export default function DesignStudioV2() {
                   { id: "text" as const, label: "Text", icon: Type },
                   { id: "ai" as const, label: "AI Art", icon: Wand2 },
                   { id: "layers" as const, label: "Layers", icon: LayersIcon },
-                  { id: "templates" as const, label: "Templates", icon: Sparkles },
+                  { id: "templates" as const, label: "Stickers", icon: Sparkles },
                   { id: "qrcode" as const, label: "QR", icon: Crosshair },
                 ].map(({ id, label, icon: Icon }) => (
                   <button key={id} onClick={() => setActiveTab(id)} className="relative flex-1 flex flex-col items-center justify-center gap-0.5 py-2 rounded-xl text-[9px] font-black transition-all active:scale-90" style={{ background: activeTab === id ? "white" : "transparent", color: activeTab === id ? "#E85D04" : "#9ca3af", boxShadow: activeTab === id ? "0 1px 6px rgba(0,0,0,0.10)" : "none" }}>
@@ -1350,7 +1394,7 @@ export default function DesignStudioV2() {
             <div className={`p-4 rounded-2xl bg-white border border-gray-200 shadow-sm ${isMobile ? 'mx-2 mb-4' : ''}`}>
               <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2 block">Export Design</label>
               <div className="flex gap-2">
-                 <button onClick={handleExportPNG} disabled={isExporting} className="flex-1 py-2 rounded-xl text-xs font-bold border border-gray-200 bg-white hover:bg-gray-50 active:scale-95 transition-all flex items-center justify-center gap-1 disabled:cursor-wait disabled:opacity-60">{isExporting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Download className="w-3 h-3" />} {isExporting ? "Preparing…" : "PNG"}</button>
+                 <button onClick={handleExportPNG} disabled={isExporting || activeSurfaceUnavailable} title={activeSurfaceUnavailable ? "Export is unavailable for this surface" : "Export design as PNG"} className="flex-1 py-2 rounded-xl text-xs font-bold border border-gray-200 bg-white hover:bg-gray-50 active:scale-95 transition-all flex items-center justify-center gap-1 disabled:cursor-not-allowed disabled:opacity-60">{isExporting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Download className="w-3 h-3" />} {isExporting ? "Preparing…" : "PNG"}</button>
               </div>
             </div>
           </div>

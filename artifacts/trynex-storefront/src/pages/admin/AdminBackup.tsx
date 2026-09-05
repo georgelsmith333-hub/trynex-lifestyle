@@ -1,6 +1,7 @@
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { getAuthHeaders, getApiUrl } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useState, useRef, useEffect } from "react";
 import {
   Download, Upload, FileSpreadsheet, Database,
@@ -32,14 +33,23 @@ export default function AdminBackup() {
   const [syncStatus, setSyncStatus] = useState<SyncStatus | null>(null);
   const [syncNowLoading, setSyncNowLoading] = useState(false);
   const [repairLoading, setRepairLoading] = useState(false);
+  const [repairConfirm, setRepairConfirm] = useState(false);
+  const [syncStatusError, setSyncStatusError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const importMutation = useImportBackup();
 
   useEffect(() => {
+    let mounted = true;
     fetch(getApiUrl("/api/admin/backup/sync-status"), { headers: getAuthHeaders() })
-      .then(r => r.json())
-      .then(d => setSyncStatus(d))
-      .catch(() => {});
+      .then(r => {
+        if (!r.ok) throw new Error(`Could not load sync status (HTTP ${r.status})`);
+        return r.json();
+      })
+      .then(d => { if (mounted) setSyncStatus(d); })
+      .catch((err: unknown) => {
+        if (mounted) setSyncStatusError(err instanceof Error ? err.message : "Could not load sync status.");
+      });
+    return () => { mounted = false; };
   }, []);
 
   const handleSyncNow = async () => {
@@ -49,6 +59,7 @@ export default function AdminBackup() {
         method: "POST",
         headers: getAuthHeaders(),
       });
+      if (!res.ok) throw new Error(`Sync failed (HTTP ${res.status})`);
       const data = await res.json();
       const ok = data.results?.filter((r: any) => r.status === "ok").length ?? 0;
       const total = data.results?.length ?? 0;
@@ -74,7 +85,7 @@ export default function AdminBackup() {
   };
 
   const handleRepairSchemas = async () => {
-    if (!window.confirm("This applies additive-only schema patches to configured backup databases. It does not delete data. Continue?")) return;
+    setRepairConfirm(false);
     setRepairLoading(true);
     try {
       const res = await fetch(getApiUrl("/api/admin/backup/repair-schemas"), {
@@ -197,7 +208,8 @@ export default function AdminBackup() {
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={handleRepairSchemas}
+                  type="button"
+                  onClick={() => setRepairConfirm(true)}
                   disabled={repairLoading}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs border transition-all hover:-translate-y-0.5 disabled:opacity-50"
                   style={{ background: '#fff7ed', borderColor: '#fed7aa', color: '#c2410c' }}
@@ -206,6 +218,7 @@ export default function AdminBackup() {
                   Repair Schema
                 </button>
                 <button
+                  type="button"
                   onClick={handleSyncNow}
                   disabled={syncNowLoading}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs border transition-all hover:-translate-y-0.5 disabled:opacity-50"
@@ -216,7 +229,12 @@ export default function AdminBackup() {
                 </button>
               </div>
             </div>
-            {syncStatus ? (
+            {syncStatusError ? (
+              <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+                <p className="font-semibold">Sync status unavailable.</p>
+                <p className="mt-1">{syncStatusError}</p>
+              </div>
+            ) : syncStatus ? (
               <div className="grid grid-cols-3 gap-3">
                 <div className="p-3 rounded-xl text-center" style={{ background: '#f9fafb' }}>
                   <div className={`text-base font-black ${syncStatus.circuitOpen ? 'text-red-600' : 'text-green-600'}`}>
@@ -380,6 +398,16 @@ export default function AdminBackup() {
           </div>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={repairConfirm}
+        title="Repair backup schemas?"
+        description="This applies additive-only schema patches to configured backup databases. It does not delete data."
+        confirmText={repairLoading ? "Repairing…" : "Repair schemas"}
+        variant="warning"
+        onConfirm={() => void handleRepairSchemas()}
+        onCancel={() => !repairLoading && setRepairConfirm(false)}
+      />
     </AdminLayout>
   );
 }

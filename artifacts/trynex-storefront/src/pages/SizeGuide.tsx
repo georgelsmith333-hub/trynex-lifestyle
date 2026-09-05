@@ -71,8 +71,8 @@ export default function SizeGuide() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <SEOHead
-        title="Size Guide | TryNex Lifestyle — Find Your Perfect Fit"
-        description="Find your perfect fit with the TryNex Lifestyle size guide. Detailed measurement charts for T-shirts, Hoodies, and more. All measurements in inches."
+        title="Size Guide | Trynext Lifestyle — Find Your Perfect Fit"
+        description="Find your perfect fit with the Trynext Lifestyle size guide. Detailed measurement charts for T-shirts, Hoodies, and more. All measurements in inches."
       />
       <Navbar />
 

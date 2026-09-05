@@ -206,6 +206,10 @@ router.get("/storage/public-objects/*filePath", async (req: Request, res: Respon
     const filePath = Array.isArray(raw) ? raw.join("/") : raw;
     await objectStorageService.streamPublicObject(filePath, res);
   } catch (error) {
+    if (error instanceof ObjectNotFoundError) {
+      res.status(404).json({ error: "File not found" });
+      return;
+    }
     req.log.error({ err: error }, "Error serving public object");
     if (!res.headersSent) res.status(500).json({ error: "Failed to serve public object" });
   }

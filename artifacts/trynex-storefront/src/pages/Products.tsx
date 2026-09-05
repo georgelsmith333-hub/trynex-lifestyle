@@ -177,8 +177,8 @@ export default function Products() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <SEOHead
-        title={activeTab === "offers" ? "Special Offers & Deals | TryNex Lifestyle" : activeCategoryData ? `${activeCategoryData.name} Collection | TryNex Lifestyle` : "Shop All Products | TryNex Lifestyle"}
-        description={activeTab === "offers" ? "Exclusive deals, combo offers and limited-time discounts on custom apparel from TryNex Lifestyle Bangladesh." : activeCategoryData ? `Browse our ${activeCategoryData.name} collection. Premium quality custom apparel, best prices in Bangladesh.` : "Browse premium custom T-shirts, Hoodies, Mugs & Caps from TryNex Lifestyle. Best prices in Bangladesh with fast delivery to all 64 districts."}
+        title={activeTab === "offers" ? "Special Offers & Deals | Trynext Lifestyle" : activeCategoryData ? `${activeCategoryData.name} Collection | Trynext Lifestyle` : "Shop All Products | Trynext Lifestyle"}
+        description={activeTab === "offers" ? "Exclusive deals, combo offers and limited-time discounts on custom apparel from Trynext Lifestyle Bangladesh." : activeCategoryData ? `Browse our ${activeCategoryData.name} collection. Premium quality custom apparel, best prices in Bangladesh.` : "Browse premium custom T-shirts, Hoodies, Mugs & Caps from Trynext Lifestyle. Best prices in Bangladesh with fast delivery to all 64 districts."}
         canonical={activeTab === "offers" ? "/products?tab=offers" : activeCategoryData ? `/products?category=${activeCategoryData.slug}` : "/products"}
         keywords={activeTab === "offers" ? "special offers bangladesh, combo deals custom tshirt, discount apparel dhaka, gift deals bangladesh" : "buy custom tshirt bangladesh, premium hoodie bd, custom mug dhaka, branded cap bangladesh, কাস্টম গিফট বাংলাদেশ"}
         jsonLd={jsonLd}

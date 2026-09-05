@@ -7,7 +7,13 @@ production.env
 # Replit chat / history (may contain secrets)
 .replit
 .repl*
+artifacts/*/.replit-artifact/
+!artifacts/api-server/.replit-artifact/
+!artifacts/api-server/.replit-artifact/artifact.toml
+!artifacts/trynex-storefront/.replit-artifact/
+!artifacts/trynex-storefront/.replit-artifact/artifact.toml
 *.log
+attached_assets/Pasted-*.txt
 .DS_Store
 
 # Dependencies & Build

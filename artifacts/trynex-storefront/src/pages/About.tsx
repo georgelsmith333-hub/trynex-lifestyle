@@ -39,7 +39,7 @@ const timeline = [
   {
     year: "2020",
     title: "The Beginning",
-    desc: "TryNex started in a small Dhaka apartment with a single printing machine and a big dream — to make premium custom apparel accessible to every Bangladeshi.",
+    desc: "Trynext started in a small Dhaka apartment with a single printing machine and a big dream — to make premium custom apparel accessible to every Bangladeshi.",
   },
   {
     year: "2021",
@@ -49,7 +49,7 @@ const timeline = [
   {
     year: "2022",
     title: "Going National",
-    desc: "We expanded delivery to all 64 districts. Students, startups, and corporations across Bangladesh started trusting TryNex for their custom apparel needs.",
+    desc: "We expanded delivery to all 64 districts. Students, startups, and corporations across Bangladesh started trusting Trynext for their custom apparel needs.",
   },
   {
     year: "2023",
@@ -67,8 +67,8 @@ export default function About() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <SEOHead
-        title="About TryNex Lifestyle | Custom Apparel in Bangladesh"
-        description="Learn about TryNex Lifestyle, our custom apparel process, and our commitment to thoughtful production in Bangladesh."
+        title="About Trynext Lifestyle | Custom Apparel in Bangladesh"
+        description="Learn about Trynext Lifestyle, our custom apparel process, and our commitment to thoughtful production in Bangladesh."
       />
       <Navbar />
 
@@ -98,7 +98,7 @@ export default function About() {
               <span style={{ color: "#FB8500" }}>We Craft.</span>
             </h1>
             <p className="text-white/70 text-lg max-w-2xl mx-auto leading-relaxed">
-              TryNex Lifestyle was born from a simple belief: everyone in Bangladesh deserves access to premium custom apparel — without compromising on quality, speed, or service.
+              Trynext Lifestyle was born from a simple belief: everyone in Bangladesh deserves access to premium custom apparel — without compromising on quality, speed, or service.
             </p>
           </motion.div>
         </div>
@@ -133,10 +133,10 @@ export default function About() {
                 Premium apparel for every Bangladeshi
               </h2>
               <p className="text-gray-600 leading-relaxed mb-4">
-                We believe that premium quality shouldn't be reserved for international brands. Bangladesh has world-class manufacturing capability — TryNex proves that home-grown brands can deliver products that rival anything imported.
+                We believe that premium quality shouldn't be reserved for international brands. Bangladesh has world-class manufacturing capability — Trynext proves that home-grown brands can deliver products that rival anything imported.
               </p>
               <p className="text-gray-600 leading-relaxed">
-                From a student who wants a custom hoodie to a startup needing 200 branded shirts, we treat every order with the same care and precision. When you choose TryNex, you choose Bangladesh-made excellence.
+                From a student who wants a custom hoodie to a startup needing 200 branded shirts, we treat every order with the same care and precision. When you choose Trynext, you choose Bangladesh-made excellence.
               </p>
             </motion.div>
             <motion.div
@@ -211,7 +211,7 @@ export default function About() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
-                { name: "Nabil Rahman", role: "Founder & CEO", initials: "NR", color: "#E85D04", desc: "Launched TryNex from his bedroom in Dhaka with a mission to democratize premium custom apparel for all Bangladeshis." },
+                { name: "Nabil Rahman", role: "Founder & CEO", initials: "NR", color: "#E85D04", desc: "Launched Trynext from his bedroom in Dhaka with a mission to democratize premium custom apparel for all Bangladeshis." },
                 { name: "Tasnim Hossain", role: "Head of Design", initials: "TH", color: "#FB8500", desc: "Former fashion designer with 8 years of experience crafting premium garments. Leads our design studio and quality control." },
                 { name: "Arif Chowdhury", role: "Operations Lead", initials: "AC", color: "#d97706", desc: "Oversees production, supplier relationships, and logistics to ensure every order arrives on time and meets our standards." },
               ].map((member, i) => (
@@ -249,7 +249,7 @@ export default function About() {
               Proudly Made in Bangladesh
             </h2>
             <p className="text-gray-600 max-w-xl mx-auto mb-6">
-              Every product is manufactured in Bangladesh by skilled local craftspeople. By choosing TryNex, you're supporting local industry and helping Bangladesh build world-class manufacturing brands.
+              Every product is manufactured in Bangladesh by skilled local craftspeople. By choosing Trynext, you're supporting local industry and helping Bangladesh build world-class manufacturing brands.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link

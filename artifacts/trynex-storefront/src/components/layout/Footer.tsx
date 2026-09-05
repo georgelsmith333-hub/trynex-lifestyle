@@ -192,7 +192,7 @@ export function Footer() {
               </div>
               <span className="text-2xl font-black font-display tracking-tight text-white">
                 {(() => {
-                  const name = settings.siteName?.trim() || "TryNex Lifestyle";
+                  const name = settings.siteName?.trim() || "Trynext Lifestyle";
                   const parts = name.split(' ');
                   const head = parts[0];
                   const tail = parts.slice(1).join(' ');
@@ -222,7 +222,7 @@ export function Footer() {
             <div className="flex gap-3">
               {socialLinks.map(({ icon: Icon, label, href, color }) => (
                 <a key={href} href={href} target="_blank" rel="noopener noreferrer"
-                  aria-label={`Visit TryNex Lifestyle on ${label}`}
+                  aria-label={`Visit Trynext Lifestyle on ${label}`}
                   className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 hover:-translate-y-1 hover:scale-110"
                   style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}
                   onMouseEnter={e => {

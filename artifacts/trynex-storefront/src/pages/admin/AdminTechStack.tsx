@@ -190,7 +190,7 @@ export default function AdminTechStack() {
             <Code2 className="w-7 h-7 text-orange-500" />
             Site Tech Stack & Configuration
           </h1>
-          <p className="text-gray-500 mt-1">Complete technical overview of the TryNex Lifestyle platform</p>
+          <p className="text-gray-500 mt-1">Complete technical overview of the Trynext Lifestyle platform</p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">

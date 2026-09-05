@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Image as ImageIcon } from "lucide-react";
+import { Search, Image as ImageIcon, X } from "lucide-react";
 import { useDesignStore } from "@/hooks/useDesignStore";
 import { fitImageTransform } from "./autoFit";
 import { getZonePZ, MUG_PZ, MUG_SIDE_BACK_PZ, MUG_SIDE_PZ, STICKERS } from "@/pages/design-studio/mockups";
@@ -26,6 +26,10 @@ export function ClipArtBrowser() {
 
   return (
     <div className="p-4 space-y-3">
+      <div>
+        <h3 className="text-sm font-black text-stone-900">Stickers & clip art</h3>
+        <p className="mt-1 text-[11px] leading-4 text-stone-500">Add a ready-made graphic to the active print area.</p>
+      </div>
       <div className="relative">
         <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
         <input
@@ -68,7 +72,14 @@ export function ClipArtBrowser() {
         ))}
       </div>
       {filtered.length === 0 && (
-        <div className="text-center py-6 text-[11px] text-gray-400">No stickers found.</div>
+        <div className="rounded-xl border border-dashed border-stone-200 bg-stone-50 px-4 py-6 text-center">
+          <p className="text-[11px] text-stone-500">No stickers found.</p>
+          {query && (
+            <button type="button" onClick={() => setQuery("")} className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-orange-600 hover:text-orange-700">
+              <X className="h-3 w-3" /> Clear search
+            </button>
+          )}
+        </div>
       )}
     </div>
   );

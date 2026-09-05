@@ -115,7 +115,7 @@ export default function HamperDetail() {
     <div className="min-h-screen flex flex-col bg-white">
       <SEOHead
         title={`${hamper.name} | Gift Hamper`}
-        description={hamper.description || `Premium ${hamper.name} gift hamper from TryNex Lifestyle Bangladesh — beautifully wrapped, delivered nationwide.`}
+        description={hamper.description || `Premium ${hamper.name} gift hamper from Trynext Lifestyle Bangladesh — beautifully wrapped, delivered nationwide.`}
         canonical={`/hampers/${hamper.slug}`}
         ogImage={hamper.imageUrl}
         ogType="product"
@@ -125,17 +125,17 @@ export default function HamperDetail() {
             "@context": "https://schema.org",
             "@type": "Product",
             "name": hamper.name,
-            "description": hamper.description || `Premium ${hamper.name} gift hamper from TryNex Lifestyle.`,
+            "description": hamper.description || `Premium ${hamper.name} gift hamper from Trynext Lifestyle.`,
             "image": hamper.imageUrl || "",
             "sku": `hamper-${hamper.id}`,
-            "brand": { "@type": "Brand", "name": "TryNex Lifestyle" },
+            "brand": { "@type": "Brand", "name": "Trynext Lifestyle" },
             "category": "Gift Hamper",
             "offers": {
               "@type": "Offer",
               "priceCurrency": "BDT",
               "price": price,
               "availability": "https://schema.org/InStock",
-              "seller": { "@type": "Organization", "name": "TryNex Lifestyle" },
+              "seller": { "@type": "Organization", "name": "Trynext Lifestyle" },
               "url": `https://trynex-lifestyle-shop.pages.dev/hampers/${hamper.slug}`,
             },
           },
@@ -170,7 +170,7 @@ export default function HamperDetail() {
                 {hamper.imageUrl ? (
                   <img
                     src={hamper.imageUrl}
-                    alt={`${hamper.name} — premium gift hamper from TryNex Lifestyle`}
+                    alt={`${hamper.name} — premium gift hamper from Trynext Lifestyle`}
                     className="w-full h-full object-cover"
                     width={800}
                     height={800}
