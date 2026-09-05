@@ -28,7 +28,10 @@ export function ViewerCount({ productId, className = "" }: ViewerCountProps) {
       try {
         const res = await fetch(getApiUrl(`/api/products/${pid}/viewers`), {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest",
+          },
           body: JSON.stringify({ viewerId: vid }),
         });
         if (res.ok) {

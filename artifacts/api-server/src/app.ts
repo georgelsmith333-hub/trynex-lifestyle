@@ -163,6 +163,15 @@ app.use((req: express.Request, res: express.Response, next: express.NextFunction
   const isMutation = ["POST", "PUT", "PATCH", "DELETE"].includes(req.method);
   if (!isMutation) { next(); return; }
 
+  // Viewer heartbeats are deliberately public and only update an in-memory,
+  // decorative counter. They must continue to work for visitors who happen to
+  // have a customer cookie, including clients running a cached older bundle.
+  const requestPath = req.originalUrl.split("?")[0];
+  const isPublicViewerHeartbeat =
+    req.method === "PUT" &&
+    /^\/(?:api\/)?products\/\d+\/viewers$/.test(requestPath);
+  if (isPublicViewerHeartbeat) { next(); return; }
+
   const hasBearerToken = /^Bearer\s+\S+/i.test(req.headers.authorization || "");
   const parsedCookies = (req as any).cookies ?? {};
   const hasCookie = !!(parsedCookies.admin_token || parsedCookies.customer_token);
