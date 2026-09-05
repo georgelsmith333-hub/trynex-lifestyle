@@ -1,0 +1,66 @@
+Spec approved. I’ll now implement the repair in one coordinated pass: first the typed source-kit contract and fail-closed resolver, then the shared compositor and its consumers, followed by focused tests and real render evidence. I’ll preserve the current upload/layer/product-switch behavior and keep production promotion blocked until the visual gate passes.
+
+The first runtime patch did not apply because the resolver’s current context differs from the documented snapshot. I’m splitting the change into smaller, targeted patches so existing source-matrix safeguards stay intact.
+
+Use a more capable model when needed for this request?
+Got it, staying on Free.
+You've reached your daily free quota limit. It will reset at 12:00 AM UTC.
+
+Okets start now
+
+I’m picking up from the handoff: the accidental resolver reference is fixed. I’ll run the storefront typecheck and resolver tests now, then address any remaining contract or parity gaps before checking the live preview.
+
+The storefront is clean: typecheck passes, all 76 existing tests pass, and both API/frontend workflows are serving. Next I’m checking the new manifest/compositor surfaces and test structure so I can add focused coverage without disturbing the reviewed resolver releases.
+
+The reviewed resolver behavior is intact. I found the new contract is already fail-closed at the compositor boundary; I’m adding targeted tests for manifest validation and disabled/invalid surfaces, then I’ll inspect the studio’s user-facing block state to ensure failures are visible rather than only thrown internally.
+
+I found one real completeness gap: failures were blocked only after a click, while the toolbar and canvas still looked available. I’m tightening that now: the active surface will show an explicit unavailable state, 3D will not mount for it, and both export controls plus add-to-cart will be disabled before the user starts an operation. I’ll also add the focused contract/failure tests.
+
+The contract tests and UI guard are in place. I’m running the full storefront checks now; if they pass, I’ll capture the running studio at desktop and mobile sizes and inspect the browser console for regressions.
+
+All checks pass now: 24 test files and 82 tests, plus TypeScript. I’m doing the final runtime verification next, including the actual Design Studio preview at desktop and mobile sizes, then I’ll update the handoff with the completed status.
+
+The app is not registered in the artifact preview registry in this checkout, so the standard screenshot target cannot resolve. I’ll still verify the served route and assets directly through the proxied development domain, then record that the visual screenshot remains blocked by the environment rather than claiming a visual pass.
+
+The code checks remain good, but the proxied curl briefly saw the dev domain before the workflow was fully reachable. I’m restarting the configured application workflow once after the code batch, then I’ll re-check the route/API and make one screenshot attempt with the registry limitation documented.
+
+The managed workflow is healthy, but this checkout’s external proxy is unavailable and the artifact registry still has no trynex-storefront entry, so screenshot capture cannot run. I’m switching to local service checks now and will update the handoff with the exact verification and remaining visual-review blocker.
+
+I also corrected the mug full-wrap readiness check so it validates the explicit wrap surface instead of accidentally checking the front face. I’m doing the final post-fix checks and then updating the durable handoff.
+
+The implementation and local verification are complete. The only genuine deferred scope is the controlled visual acceptance of the 188 uploaded-artwork surfaces, which is still blocked by the missing artifact registration/proxy access; I’m recording that as the one follow-up rather than implying Smart v9 is production-ready.
+
+Completed the unified mockup pipeline continuation.
+
+Done
+Fixed the accidental smartObject scope error.
+Added strict manifest validation for runtime status.
+Added fail-closed compositor tests:
+Disabled surfaces
+Contract errors
+Missing runtime assets
+Artwork image-load failures
+Added visible “Surface unavailable” messaging in Design Studio.
+Disabled:
+Add to Cart for invalid required surfaces
+PNG export for invalid active surfaces
+3D preview mounting for invalid surfaces
+Corrected mug full-wrap validation to use the dedicated wrap surface.
+Preserved reviewed PSD-derived T-shirt, Water Bottle v1.1, and source-matrix resolver precedence.
+Verification
+Typecheck: passed
+Tests: 24 files / 82 tests passed
+Production build: passed
+Managed workflow restarted successfully
+Local Design Studio route: HTTP 200
+API liveness: HTTP 200
+Representative source-matrix asset: available
+git diff --check: passed
+The artifact preview registry still cannot resolve this checkout, and the external development proxy is unavailable, so screenshot/browser visual verification could not be completed. Smart v9 remains intentionally unpromoted until real visual evidence is reviewed.
+
+A follow-up task was proposed for the 188-surface visual acceptance review.
+
+
+Start application
+Website
+Open Start application
