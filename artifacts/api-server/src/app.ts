@@ -112,6 +112,11 @@ app.use(
       // have no Origin header — allow them.
       if (!origin) return callback(null, true);
       if (allowedOrigins.includes(origin)) return callback(null, true);
+      // Keep the local preview origins available in development even when an
+      // operator has supplied ALLOWED_ORIGINS for a deployed environment.
+      if (process.env.NODE_ENV !== "production" && DEFAULT_DEV_ORIGINS.includes(origin)) {
+        return callback(null, true);
+      }
       // Allow any *.replit.app origin (user-owned autoscale deployments).
       if (process.env.NODE_ENV !== "production" && /^https:\/\/[^/]+\.replit\.app$/.test(origin)) {
         return callback(null, true);

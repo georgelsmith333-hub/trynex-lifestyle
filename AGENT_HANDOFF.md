@@ -131,6 +131,36 @@ Verification: API tests passed (6 files/26 tests); storefront tests passed (24 f
   checksum validation; managed application workflow is running cleanly.
 ```
 
+### Current visual review checkpoint (2026-09-06)
+
+```text
+Status: local storefront/API visual review complete; Smart v9 production promotion remains blocked
+Last completed: Reviewed the public storefront across desktop and mobile, including
+  homepage, shop, product detail, Design Studio, cart, empty checkout, FAQ, size guide,
+  tracking, contact, about, blog, terms, and privacy. Fixed the product viewer heartbeat
+  browser error by preserving the CSRF marker in the client and allowing known local
+  preview origins in development even when ALLOWED_ORIGINS is set. The public viewer
+  endpoint remains explicitly non-sensitive and works for cached clients with customer
+  cookies.
+Stopped at: Final product/mobile screenshot and non-mutating API/browser verification.
+Files/areas changed: API CORS development-origin handling, public viewer-heartbeat
+  handling, and the current visual-review evidence.
+Remaining work: Review authenticated customer/admin surfaces with a real browser if
+  required, and complete visual/runtime acceptance of all 188 Smart v9 surfaces before
+  any production mockup promotion.
+Blocker: Smart v9 visual approval is still intentionally unavailable; Redis credentials
+  remain rejected locally while the documented fallback is healthy. The legacy
+  Start application workflow was removed because it conflicted with the artifact-owned
+  storefront/API workflows; both managed artifact workflows are running.
+Next safe action: Use the artifact-owned storefront and API workflows for future local
+  verification, then publish only after the owner reviews the remaining gated surfaces.
+Verification: Product viewer PUT returned 200 with and without the client CSRF header
+  when a customer cookie and local preview Origin were present; CORS preflight returned
+  204; protected admin mutation returned 401; all sampled public SPA routes returned
+  200; shop cards loaded real product images; storefront typecheck and API build passed;
+  git diff --check passed; no order, payment, or production data was mutated.
+```
+
 
 ## Controlled review checkpoint (2026-09-03)
 
