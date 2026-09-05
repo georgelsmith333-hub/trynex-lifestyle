@@ -105,6 +105,32 @@ Verification: Storefront typecheck passed; storefront Vitest passed with 24 file
   the artifact registry.
 ```
 
+### Current session checkpoint (2026-09-06)
+
+```text
+Status: verified local release merged with GitHub main; Smart v9 production promotion remains blocked
+Last completed: Reconnected GitHub, confirmed the remote main ancestry, merged the five
+  remote-only commits without force-pushing, and retained the newer local Design Studio
+  surface guards, compositor path, mug-aware product switching, and export state.
+  Completed full workspace typecheck, API/storefront tests, storefront build, design-system
+  typecheck/build, and both 188-surface mockup validators.
+Stopped at: Post-merge verification and normal push of the merge result.
+Files/areas changed: merge reconciliation, design-system native theme support, and
+  release cleanup removing the attached transcript and local node_modules symlink from git.
+Remaining work: Run post-merge tests and non-mutating route/API checks, push the merge
+  result to GitHub, then confirm GitHub Actions and the live Cloudflare Pages/Render
+  surfaces. Do not promote Smart v9 without real visual acceptance.
+Blocker: The design-system artifact files are complete and buildable, but the platform
+  artifact registry still returns ARTIFACT_NOT_FOUND, so it cannot be presented through
+  the artifact preview or screenshot path. Redis remains optional and is using fallback.
+Next safe action: Finish post-merge non-mutating verification and publish the verified
+  application history through the connected GitHub integration.
+Verification: API tests passed (6 files/26 tests); storefront tests passed (24 files/82
+  tests); full workspace typecheck passed; storefront production build passed; design-system
+  build passed with its required PORT and BASE_PATH; mockup validators passed 188/188 and
+  checksum validation; managed application workflow is running cleanly.
+```
+
 
 ## Controlled review checkpoint (2026-09-03)
 
