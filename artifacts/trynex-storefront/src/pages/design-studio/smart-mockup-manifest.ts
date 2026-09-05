@@ -144,6 +144,7 @@ export function validateSmartMockupManifest(
   if (manifest.schema !== "trynex-smart-mockup/v3") errors.push("unsupported schema");
   if (!manifest.manifestRevision.trim()) errors.push("missing manifest revision");
   if (!manifest.sourceKitKey.trim()) errors.push("missing source-kit key");
+  if (manifest.runtimeStatus !== "approved" && manifest.runtimeStatus !== "disabled") errors.push("unsupported runtime status");
   if (manifest.runtimeStatus === "disabled" && !manifest.disabledReason?.trim()) errors.push("disabled surface is missing a reason");
   if (!manifest.assets.baseSrc || !manifest.assets.cutoutSrc) errors.push("base and cutout assets are required");
   if (manifest.assets.alphaMode !== "opaque-photo" && manifest.assets.alphaMode !== "transparent-cutout") errors.push("unsupported alpha mode");

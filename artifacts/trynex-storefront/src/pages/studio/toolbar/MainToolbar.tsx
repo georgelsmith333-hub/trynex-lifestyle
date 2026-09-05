@@ -13,9 +13,10 @@ const TOOLS: { id: ToolType; label: string; icon: React.ReactNode; hint: string 
 interface MainToolbarProps {
   onExport?: () => void;
   isExporting?: boolean;
+  exportDisabled?: boolean;
 }
 
-export function MainToolbar({ onExport, isExporting = false }: MainToolbarProps) {
+export function MainToolbar({ onExport, isExporting = false, exportDisabled = false }: MainToolbarProps) {
   const activeTool = useDesignStore((s) => s.activeTool);
   const setActiveTool = useDesignStore((s) => s.setActiveTool);
   const undo = useDesignStore((s) => s.undo);
@@ -59,7 +60,7 @@ export function MainToolbar({ onExport, isExporting = false }: MainToolbarProps)
         <span className="mx-1 h-5 w-px shrink-0 bg-gray-200" />
         <button type="button" title="Toggle printable area" aria-pressed={showPrintZone} onClick={() => setShowPrintZone(!showPrintZone)} className={`flex shrink-0 items-center gap-1.5 rounded-xl px-2.5 py-2 text-[10px] font-bold transition-all active:scale-95 ${showPrintZone ? "border border-orange-200 bg-orange-50 text-orange-600" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}><Ruler className="h-3.5 w-3.5" /> Print zone</button>
         <button type="button" title="Toggle fabric texture" aria-pressed={fabricTexture} onClick={() => setFabricTexture(!fabricTexture)} className={`flex shrink-0 items-center gap-1.5 rounded-xl px-2.5 py-2 text-[10px] font-bold transition-all active:scale-95 ${fabricTexture ? "border border-amber-200 bg-amber-50 text-amber-700" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}><Shirt className="h-3.5 w-3.5" /> Texture</button>
-         <button type="button" onClick={onExport} disabled={!onExport || isExporting} title="Export design as PNG" className="flex shrink-0 items-center gap-1.5 rounded-xl bg-gray-900 px-2.5 py-2 text-[10px] font-bold text-white transition hover:bg-gray-800 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"><Download className="h-3.5 w-3.5" /> {isExporting ? "Exporting…" : "Export"}</button>
+          <button type="button" onClick={onExport} disabled={!onExport || isExporting || exportDisabled} title={exportDisabled ? "Export is unavailable for this surface" : "Export design as PNG"} className="flex shrink-0 items-center gap-1.5 rounded-xl bg-gray-900 px-2.5 py-2 text-[10px] font-bold text-white transition hover:bg-gray-800 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"><Download className="h-3.5 w-3.5" /> {isExporting ? "Exporting…" : "Export"}</button>
       </div>
     </div>
   );

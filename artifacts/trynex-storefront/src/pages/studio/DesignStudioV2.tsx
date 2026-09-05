@@ -210,8 +210,8 @@ export default function DesignStudioV2() {
     [selectedProduct, selectedColor.hex],
   );
   const activeMockup = useMemo(
-    () => resolveMockup(selectedProduct, selectedColor.hex, activeFace as Face),
-    [selectedProduct, selectedColor.hex, activeFace],
+    () => resolveMockup(selectedProduct, selectedColor.hex, isMug && mugMode === "wrap" ? "wrap" : activeFace as Face),
+    [activeFace, isMug, mugMode, selectedColor.hex, selectedProduct],
   );
   const activePsdMaterialEffects = useMemo(() => {
     if (psdTshirtStageAssets) {
@@ -229,6 +229,22 @@ export default function DesignStudioV2() {
   );
   const activeZoneConfig = useMemo(() => apparelZones.find(z => z.face === activeFace) ?? apparelZones[0], [apparelZones, activeFace]);
   const isFlatZone = activeFace === "left-sleeve" || activeFace === "right-sleeve" || activeFace === "neck-label";
+  const activeSurfaceUnavailable = activeMockup.runtimeStatus !== "approved" || activeMockup.contractErrors.length > 0;
+  const frontSurfaceUnavailable = frontMockup.runtimeStatus !== "approved" || frontMockup.contractErrors.length > 0;
+  const unavailableSurfaceReason = activeMockup.disabledReason
+    ?? (activeMockup.contractErrors.length > 0 ? activeMockup.contractErrors.join(", ") : "This product surface is not ready for artwork rendering.");
+  const requiredArtworkSurfaceUnavailable = useMemo(() => {
+    const faces = new Set(
+      layers
+        .filter((layer) => layer.visible)
+        .map((layer) => (layer.face ?? "front") as Face),
+    );
+    if (faces.size === 0) return frontSurfaceUnavailable;
+    return Array.from(faces).some((face) => {
+      const surface = resolveMockup(selectedProduct, selectedColor.hex, face);
+      return surface.runtimeStatus !== "approved" || surface.contractErrors.length > 0;
+    });
+  }, [frontSurfaceUnavailable, layers, selectedColor.hex, selectedProduct]);
 
   const pz = useMemo(() => {
     if (isMug) {
@@ -880,7 +896,7 @@ export default function DesignStudioV2() {
         toast({ title: "Improve image quality first", description: "Replace the low-resolution image or use HD preparation before adding this design to cart.", variant: "destructive" });
         return;
       }
-      if (frontMockup.runtimeStatus !== "approved" || frontMockup.contractErrors.length > 0) {
+      if (requiredArtworkSurfaceUnavailable) {
         throw new Error(frontMockup.disabledReason ?? "This product surface is not ready for customer artwork yet. Please try again later.");
       }
     const imageCache = new Map<string, HTMLImageElement>();
@@ -1126,7 +1142,7 @@ export default function DesignStudioV2() {
             <button type="button" onClick={redo} disabled={store.future.length === 0} aria-label="Redo last change" className="p-2 rounded-xl bg-gray-100 text-gray-600 disabled:opacity-30 active:scale-95 transition-transform"><Redo2 className="w-3.5 h-3.5" /></button>
             <button type="button" onClick={() => setShowPrintZone(!showPrintZone)} aria-pressed={showPrintZone} className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold ${showPrintZone ? "text-orange-500 bg-orange-50" : "text-gray-500 bg-gray-100 hover:bg-gray-200"}`}><Eye className="w-3 h-3" /> Print Zone</button>
             {!isFlatZone && <button type="button" onClick={() => setShow3D(!show3D)} aria-pressed={show3D} className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold ${show3D ? "text-blue-500 bg-blue-50" : "text-gray-500 bg-gray-100 hover:bg-gray-200"}`}><Package className="w-3 h-3" /> {show3D ? "2D Edit" : "3D Preview"}</button>}
-             <motion.button type="button" onClick={handleAddToCart} disabled={isAddingToCart} aria-label={isAddingToCart ? "Adding design to cart" : "Add design to cart"} whileTap={{ scale: 0.97 }} className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-5 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm text-white shadow-lg shadow-orange-500/20 disabled:cursor-wait disabled:opacity-70" style={{ background: "linear-gradient(135deg, #E85D04, #FB8500)" }}>
+             <motion.button type="button" onClick={handleAddToCart} disabled={isAddingToCart || requiredArtworkSurfaceUnavailable} aria-label={isAddingToCart ? "Adding design to cart" : requiredArtworkSurfaceUnavailable ? "Add to cart unavailable for this surface" : "Add design to cart"} title={requiredArtworkSurfaceUnavailable ? unavailableSurfaceReason : undefined} whileTap={{ scale: 0.97 }} className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-5 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm text-white shadow-lg shadow-orange-500/20 disabled:cursor-not-allowed disabled:opacity-50" style={{ background: "linear-gradient(135deg, #E85D04, #FB8500)" }}>
                {isAddingToCart ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShoppingCart className="w-3.5 h-3.5" />} <span className="hidden sm:inline">{isAddingToCart ? "Preparing…" : "Add to Cart"}</span><span className="sm:hidden">{isAddingToCart ? "Wait" : "Cart"}</span>
             </motion.button>
           </div>
@@ -1155,7 +1171,7 @@ export default function DesignStudioV2() {
           <div className="flex-1 min-w-0" ref={containerRef}>
             <ProductSwitcher />
             <div className="mt-3 mb-3">
-             <MainToolbar onExport={handleExportPNG} isExporting={isExporting} />
+             <MainToolbar onExport={handleExportPNG} isExporting={isExporting} exportDisabled={activeSurfaceUnavailable} />
               <div className="mb-3 flex items-center gap-2 overflow-x-auto rounded-2xl border border-orange-100 bg-orange-50/70 p-2 md:hidden no-scrollbar">
                 <button type="button" onClick={() => setShowProductPicker(true)} aria-label="Choose product" className="flex shrink-0 items-center gap-1.5 rounded-xl bg-white px-3 py-2 text-[11px] font-black text-gray-800 shadow-sm active:scale-95"><Package className="h-3.5 w-3.5 text-orange-500" /> Product</button>
                 <button type="button" onClick={() => fileInputRef.current?.click()} aria-label="Upload design image" className="flex shrink-0 items-center gap-1.5 rounded-xl bg-gradient-to-r from-orange-600 to-orange-500 px-3 py-2 text-[11px] font-black text-white shadow-sm active:scale-95"><Upload className="h-3.5 w-3.5" /> Upload</button>
@@ -1224,9 +1240,16 @@ export default function DesignStudioV2() {
               </div>
             </div>
 
-            <div className="relative rounded-3xl overflow-hidden select-none" style={{ background: "radial-gradient(ellipse at 50% 35%, #ffffff 0%, #f8f8f8 55%, #f0f0f0 100%)", border: "1px solid #e5e5e7", boxShadow: "0 6px 40px rgba(0,0,0,0.08)" }} onDrop={handleDrop} onDragOver={e => e.preventDefault()}>
+             <div className="relative rounded-3xl overflow-hidden select-none" style={{ background: "radial-gradient(ellipse at 50% 35%, #ffffff 0%, #f8f8f8 55%, #f0f0f0 100%)", border: "1px solid #e5e5e7", boxShadow: "0 6px 40px rgba(0,0,0,0.08)" }} onDrop={handleDrop} onDragOver={e => e.preventDefault()}>
+               {activeSurfaceUnavailable && (
+                 <div role="alert" className="absolute inset-x-4 top-4 z-30 rounded-2xl border border-amber-300 bg-amber-50/95 px-4 py-3 text-center shadow-lg backdrop-blur">
+                   <div className="flex items-center justify-center gap-2 text-sm font-black text-amber-950"><ShieldCheck className="h-4 w-4" /> Surface unavailable</div>
+                   <p className="mt-1 text-xs font-medium text-amber-900">{unavailableSurfaceReason}</p>
+                   <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-amber-700">Preview, export, and checkout are disabled for this surface</p>
+                 </div>
+               )}
               <div style={{ position: "relative", width: canvasSize, height: canvasSize, margin: "0 auto" }}>
-                {show3D && !isFlatZone && !isPsdTshirtStaging && (
+                 {show3D && !isFlatZone && !isPsdTshirtStaging && !activeSurfaceUnavailable && (
                   <div className="absolute inset-0 z-20 rounded-3xl overflow-hidden flex items-center justify-center" style={{ background: "radial-gradient(ellipse at 50% 40%, #f4f4f4 0%, #e8e8e8 100%)" }}>
                     <Suspense fallback={<Loader2 className="w-8 h-8 animate-spin text-blue-400" />}>
                       <LazyProductViewer3D product={selectedProduct} garmentColor={selectedColor.hex} front={{ layers: frontLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ) : getZonePZ("front", selectedProduct, selectedColor.hex), baseHeight: selectedProduct.baseHeight, surface: { ...frontMockup, baseSrc: frontMockup.cutoutSrc, printZone: isMug ? (mugMode === "wrap" ? MUG_PZ : MUG_SIDE_PZ) : getZonePZ("front", selectedProduct, selectedColor.hex) } }} back={supportsBack && backLayers.length > 0 ? { layers: backLayers, printZone: isMug ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ) : getZonePZ("back", selectedProduct, selectedColor.hex), baseHeight: selectedProduct.baseHeight, surface: { ...backMockup, baseSrc: backMockup.cutoutSrc, printZone: isMug ? (mugMode === "wrap" ? MUG_WRAP_BACK_PZ : MUG_SIDE_BACK_PZ) : getZonePZ("back", selectedProduct, selectedColor.hex) } } : undefined} activeFace={activeFace as "front" | "back"} isWrapMode={isMug && mugMode === "wrap"} />
@@ -1265,7 +1288,7 @@ export default function DesignStudioV2() {
                     Local PSD T-shirt staging · {selectedColor.name} {activeFace} · 2D review · Cart and export disabled
                   </div>
                 )}
-                {!show3D && !isFlatZone && layers.length === 0 && (
+                 {!show3D && !isFlatZone && layers.length === 0 && !activeSurfaceUnavailable && (
                   <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
                     <button
                       type="button"
@@ -1371,7 +1394,7 @@ export default function DesignStudioV2() {
             <div className={`p-4 rounded-2xl bg-white border border-gray-200 shadow-sm ${isMobile ? 'mx-2 mb-4' : ''}`}>
               <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2 block">Export Design</label>
               <div className="flex gap-2">
-                 <button onClick={handleExportPNG} disabled={isExporting} className="flex-1 py-2 rounded-xl text-xs font-bold border border-gray-200 bg-white hover:bg-gray-50 active:scale-95 transition-all flex items-center justify-center gap-1 disabled:cursor-wait disabled:opacity-60">{isExporting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Download className="w-3 h-3" />} {isExporting ? "Preparing…" : "PNG"}</button>
+                 <button onClick={handleExportPNG} disabled={isExporting || activeSurfaceUnavailable} title={activeSurfaceUnavailable ? "Export is unavailable for this surface" : "Export design as PNG"} className="flex-1 py-2 rounded-xl text-xs font-bold border border-gray-200 bg-white hover:bg-gray-50 active:scale-95 transition-all flex items-center justify-center gap-1 disabled:cursor-not-allowed disabled:opacity-60">{isExporting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Download className="w-3 h-3" />} {isExporting ? "Preparing…" : "PNG"}</button>
               </div>
             </div>
           </div>

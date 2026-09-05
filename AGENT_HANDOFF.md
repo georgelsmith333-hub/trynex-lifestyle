@@ -78,21 +78,31 @@ blocked until that evidence is available.
 ### Current session checkpoint (2026-09-05)
 
 ```text
-Status: in progress — unified mockup repair implementation
-Last completed: Owner approved the written design spec for the full fail-closed
-  source-kit and unified compositor architecture.
-Stopped at: Implementation planning is complete; runtime contract and compositor
-  changes are beginning.
-Files/areas changed: docs/superpowers/specs/2026-09-05-design-studio-unified-mockup-design.md
-  and this handoff only before implementation.
-Remaining work: Implement the typed manifest/resolver, unified compositor,
-  consumer integration, focused tests, and real uploaded-artwork visual evidence.
+Status: implementation complete locally — production promotion remains blocked on visual acceptance
+Last completed: Repaired the typed fail-closed source-kit contract, routed Studio,
+  3D, cart, export, and order metadata through the shared surface compositor,
+  preserved reviewed PSD/source-matrix/Water Bottle releases, and added explicit
+  disabled-surface UI blocking plus focused manifest/compositor failure tests.
+Stopped at: Final local verification after restarting the managed application.
+Files/areas changed: design-studio manifest/resolver/compositor integration,
+  DesignStudioV2 surface blocking, MainToolbar export guard, focused contract tests,
+  and this handoff.
+Remaining work: Generate and review real uploaded-artwork diagnostic-grid and
+  transparent-upload evidence across the six product families and required faces,
+  then compare Studio, 3D, cart, and export output before any Smart v9 promotion.
 Blocker: Production promotion remains blocked until real visual evidence is
-  reviewed. The existing browser/artifact preview limitation is recorded below.
-Next safe action: Add the fail-closed surface contract and route Studio, 3D,
-  export, cart, and order snapshots through it.
-Verification: Approved spec committed; no runtime code or release manifest has
-  been changed yet.
+  reviewed. This checkout is not registered in the artifact preview registry,
+  and its external development proxy is unavailable, so screenshot/browser
+  verification could not be completed here.
+Next safe action: Obtain an authenticated browser/runtime review or equivalent
+  visual evidence without creating test orders, and record per-surface approval
+  or rejection before promoting Smart v9.
+Verification: Storefront typecheck passed; storefront Vitest passed with 24 files
+  and 82 tests; storefront production build passed; managed workflow restarted
+  cleanly; local Design Studio route returned 200; local API liveness returned
+  200; representative source-matrix asset returned successfully; git diff check
+  passed. Artifact screenshot failed because `trynex-storefront` is absent from
+  the artifact registry.
 ```
 
 
