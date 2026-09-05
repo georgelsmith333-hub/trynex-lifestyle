@@ -41,6 +41,10 @@ packages:
   - scripts
   - vendor/*
 
+patchedDependencies:
+  metro@0.83.3: patches/metro@0.83.3.patch
+  metro@0.83.7: patches/metro@0.83.7.patch
+
 catalog:
   '@replit/vite-plugin-cartographer': ^0.5.1
   '@replit/vite-plugin-dev-banner': ^0.1.1
