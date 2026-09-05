@@ -163,7 +163,6 @@ export enum CreateOrderRequestPaymentMethod {
   bkash = "bkash",
   nagad = "nagad",
   upay = "upay",
-  rocket = "rocket",
   bank = "bank",
   card = "card",
 }
@@ -213,7 +212,7 @@ export interface AdminStatsPaymentDistributionItem {
 
 export interface CreateOrderRequest {
   customerName: string;
-  customerEmail: string;
+  customerEmail?: string | null;
   customerPhone: string;
   shippingAddress: string;
   shippingCity?: string;
@@ -229,11 +228,6 @@ export interface CreateOrderRequest {
   utmSource?: string;
   utmMedium?: string;
   utmCampaign?: string;
-  paymentEvidence?: {
-    senderNumber?: string;
-    lastFourDigits?: string;
-    transactionId?: string;
-  };
 }
 
 export interface CreateProductRequest {
