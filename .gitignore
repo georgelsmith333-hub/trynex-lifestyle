@@ -7,6 +7,8 @@ production.env
 # Replit chat / history (may contain secrets)
 .replit
 .repl*
+!.replit-artifact/
+!.replit-artifact/artifact.toml
 *.log
 attached_assets/Pasted-*.txt
 .DS_Store
