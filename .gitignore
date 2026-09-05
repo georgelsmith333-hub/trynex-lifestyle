@@ -8,6 +8,7 @@ production.env
 .replit
 .repl*
 *.log
+attached_assets/Pasted-*.txt
 .DS_Store
 
 # Dependencies & Build
