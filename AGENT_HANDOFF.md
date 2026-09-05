@@ -70,10 +70,32 @@ the active V2 implementation; `/design-studio-v1` and `/design-studio-v2`
 are compatibility aliases to that route. The source-kit/runtime mockup audit
 now validates the editable manifest as well as public assets.
 
-The genuine six-family PSD/PSB Smart Mockup workstream is complete for its
-quarantine structural gate. The remaining release work is controlled visual and
-runtime acceptance of all 188 surfaces; production promotion is intentionally
-blocked until that evidence is available.
+The genuine six-family PSD/PSB Smart Mockup workstream has passed its quarantine
+structural gate and the complete Smart v9 candidate is active in the local
+customer runtime. Production deployment remains a separate publish step; do not
+describe local promotion as a production deploy.
+
+### Current Smart v9 acceptance checkpoint (2026-09-06)
+
+```text
+Status: complete locally — Smart v9 is active in the customer runtime
+Last completed: Validated and accepted all 188 canonical Smart v9 surfaces,
+  verified their manifest paths and hashes, reviewed representative front/back/
+  wrap surfaces across T-shirt, Hoodie, Long Sleeve, Mug, Cap, and Water Bottle,
+  activated SMART_V9_CANDIDATE through the guarded acceptSmartV9Release path, and
+  confirmed the live Design Studio renders the promoted T-shirt surface.
+Compatibility rule: exact catalog-color matches use Smart v9. Ambiguous shades
+  such as Charcoal, Royal Blue, and Sand remain on their reviewed color-specific
+  source-matrix assets rather than being silently mapped to a wrong v9 hue.
+Verification: canonical matrix validator 188/188; Smart Object release gate
+  188/188; all v9 PNGs present as 1024x1024 RGBA; storefront tests 24 files/
+  82 tests passed; storefront typecheck and production build passed; managed
+  storefront workflow restarted cleanly; live /design-studio screenshot had no
+  browser errors; git diff --check passed. No orders, payments, or production
+  data were created or changed.
+Next safe action: publish only when the owner wants the current local runtime
+  released; preserve the exact-color compatibility fallback during deployment.
+```
 
 ### Current session checkpoint (2026-09-05)
 

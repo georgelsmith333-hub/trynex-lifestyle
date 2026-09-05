@@ -13,18 +13,16 @@ describe("Water Bottle v1.1 runtime candidate", () => {
     expect(WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.back.fixedProductClaims).toEqual([]);
   });
 
-  it("routes Water Bottle Front and Back through the verified v1.1 candidate assets", () => {
+  it("routes Water Bottle Front and Back through the accepted Smart v9 surfaces", () => {
     const bottle = PRODUCTS.find((product) => product.id === "waterbottle");
     expect(bottle).toBeDefined();
-    expect(resolveMockup(bottle!, bottle!.colors[0]!.hex, "front").photoSrc).toBe(
-      WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.front.url,
-    );
-    expect(resolveMockup(bottle!, bottle!.colors[0]!.hex, "back").photoSrc).toBe(
-      WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.back.url,
-    );
+    expect(resolveMockup(bottle!, bottle!.colors[0]!.hex, "front").photoSrc)
+      .toBe("/mockups/smart-v9/waterbottle/white/front.png");
+    expect(resolveMockup(bottle!, bottle!.colors[0]!.hex, "back").photoSrc)
+      .toBe("/mockups/smart-v9/waterbottle/white/back.png");
   });
 
-  it("rejects a stale ready Water Bottle gallery record instead of requesting smart-v4", () => {
+  it("keeps accepted Smart v9 ahead of a stale Water Bottle gallery record", () => {
     const bottle = PRODUCTS.find((product) => product.id === "waterbottle");
     expect(bottle).toBeDefined();
 
@@ -38,14 +36,14 @@ describe("Water Bottle v1.1 runtime candidate", () => {
       ]);
 
       expect(resolveMockup(bottle!, bottle!.colors[0]!.hex, "front").photoSrc).toBe(
-        WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.front.url,
+        "/mockups/smart-v9/waterbottle/white/front.png",
       );
     } finally {
       setRuntimeMockupOverrides([]);
     }
   });
 
-  it("keeps reviewed PSD-derived T-shirt colour bases ahead of stale smart-v4 gallery metadata", () => {
+  it("keeps accepted Smart v9 T-shirt surfaces ahead of stale gallery metadata", () => {
     const tshirt = PRODUCTS.find((product) => product.id === "tshirt");
     expect(tshirt).toBeDefined();
 
@@ -59,7 +57,7 @@ describe("Water Bottle v1.1 runtime candidate", () => {
       ]);
 
       expect(resolveMockup(tshirt!, "#1e3a5f", "front").photoSrc).toBe(
-        "/mockups/psd-tshirt-v1/navy/front.png",
+        "/mockups/smart-v9/tshirt/navy/front.png",
       );
     } finally {
       setRuntimeMockupOverrides([]);

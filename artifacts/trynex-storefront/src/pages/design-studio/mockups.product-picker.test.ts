@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { COMPLETE_MOCKUP_MATRIX } from "./complete-mockup-matrix";
 import {
   activateSmartV9Release,
+  getActiveMockupReleaseVersion,
   getProductPickerFallbackSrc,
   getProductPickerPreviewSrc,
   PRODUCTS,
@@ -26,16 +27,17 @@ function acceptedCandidate() {
 }
 
 describe("smart-v9 product picker previews", () => {
-  it("keeps the curated picker asset until activation, then uses the accepted v9 surface", () => {
+  it("uses the accepted v9 surface for product picker previews", () => {
     const tshirt = PRODUCTS.find((product) => product.id === "tshirt");
     if (!tshirt) throw new Error("fixture requires the T-shirt product");
 
-    expect(getProductPickerPreviewSrc(tshirt)).toBe(tshirt.gallerySrc ?? tshirt.frontSrc);
-    expect(getProductPickerFallbackSrc(tshirt)).toBe(tshirt.frontSrc);
-
-    activateSmartV9Release(acceptedCandidate());
-
     expect(getProductPickerPreviewSrc(tshirt)).toBe("/mockups/smart-v9/tshirt/white/front.png");
     expect(getProductPickerFallbackSrc(tshirt)).toBeUndefined();
+    expect(getActiveMockupReleaseVersion()).toBe("smart-v9");
+
+    // The activation API remains covered independently for callers that load
+    // an approved candidate after startup.
+    activateSmartV9Release(acceptedCandidate());
+    expect(getProductPickerPreviewSrc(tshirt)).toBe("/mockups/smart-v9/tshirt/white/front.png");
   });
 });

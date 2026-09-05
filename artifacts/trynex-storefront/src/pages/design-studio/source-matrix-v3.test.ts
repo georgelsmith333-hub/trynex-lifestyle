@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getApparelZones, getZonePZ, PRODUCTS, resolveMockup, setRuntimeMockupOverrides } from "./mockups";
+import { getApparelZones, getSmartV9ColorSlug, getZonePZ, PRODUCTS, resolveMockup, setRuntimeMockupOverrides } from "./mockups";
 import { getSourceMatrixV3Entry, validateSourceMatrixV3 } from "./source-matrix-v3";
 
 describe("Hoodie source matrix v3", () => {
@@ -7,7 +7,7 @@ describe("Hoodie source matrix v3", () => {
     expect(validateSourceMatrixV3()).toEqual([]);
   });
 
-  it("resolves every Hoodie colour and view to the reviewed v3 derivative before Smart v9 promotion", () => {
+  it("resolves every Hoodie colour and view to the accepted Smart v9 surface", () => {
     const family = "hoodie";
     const product = PRODUCTS.find((candidate) => candidate.category === family)!;
     for (const colour of product.colors) for (const face of ["front", "back", "left-sleeve", "right-sleeve", "neck-label"] as const) {
@@ -15,10 +15,13 @@ describe("Hoodie source matrix v3", () => {
       const sourceColour = resolved.sourceKitKey.split(":")[1]!;
       const entry = getSourceMatrixV3Entry(family, sourceColour, face);
       expect(entry).toBeDefined();
-      expect(resolved.photoSrc).toBe(entry!.assetPath);
-      expect(resolved.cutoutSrc).toBe(entry!.assetPath);
-      expect(resolved.photoSrc).not.toContain("smart-v4");
-      expect(resolved.editableMasterPath).toMatch(/^quarantine\/source-matrix-v3\//);
+      const smartV9Colour = getSmartV9ColorSlug("hoodie", sourceColour);
+      expect(resolved.photoSrc).toBe(
+        smartV9Colour
+          ? `/mockups/smart-v9/hoodie/${smartV9Colour}/${face}.png`
+          : entry!.assetPath,
+      );
+      expect(resolved.cutoutSrc).toBe(resolved.photoSrc);
       expect(resolved.printZone).toEqual(entry!.printZone);
     }
   });
@@ -38,11 +41,11 @@ describe("Hoodie source matrix v3", () => {
     expect(resolveMockup(hoodie, sand.hex, "front").photoSrc).toBe("/mockups/source-matrix-v3/hoodie/sand/front.jpg");
   });
 
-  it("rejects stale runtime smart-v4 metadata for verified Hoodie v3 surfaces", () => {
+  it("keeps accepted Smart v9 ahead of stale runtime overrides", () => {
     const hoodie = PRODUCTS.find((product) => product.category === "hoodie")!;
     try {
       setRuntimeMockupOverrides([{ sourceKitKey: "hoodie/navy/front", imageUrl: "/mockups/smart-v4/hoodie/navy/front.png?v=smart-v4", ingestionStatus: "ready" }]);
-      expect(resolveMockup(hoodie, "#1e3a5f", "front").photoSrc).toBe("/mockups/source-matrix-v3/hoodie/navy/front.jpg");
+      expect(resolveMockup(hoodie, "#1e3a5f", "front").photoSrc).toBe("/mockups/smart-v9/hoodie/navy/front.png");
     } finally {
       setRuntimeMockupOverrides([]);
     }
