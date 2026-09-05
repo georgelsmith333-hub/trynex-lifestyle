@@ -12,8 +12,6 @@ artifacts/*/.replit-artifact/
 !artifacts/api-server/.replit-artifact/artifact.toml
 !artifacts/trynex-storefront/.replit-artifact/
 !artifacts/trynex-storefront/.replit-artifact/artifact.toml
-!.replit-artifact/
-!.replit-artifact/artifact.toml
 *.log
 attached_assets/Pasted-*.txt
 .DS_Store
