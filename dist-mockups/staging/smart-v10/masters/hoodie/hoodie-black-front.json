@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "hoodie",
+  "color": "black",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/hoodie-front.png",
+  "sourceChecksum": "6c41c227474c9603c115af7a309252458b26de744e0918b65850a0722edc2c24",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/hoodie/black/front.png",
+  "baseChecksum": "cf9159494dd1e00870a46262735eba3937760b07e177cad16d829a9e8175ac5e",
+  "printZone": {
+    "x": 240,
+    "y": 270,
+    "w": 520,
+    "h": 400
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - hoodie-black-front",
+    "id": "60b7e361-60b7-e361-60b7-e36160b7e361",
+    "placed": "60b7e361-60b7-e361-60b7-e36160b7e361-placed",
+    "transform": [
+      240,
+      270,
+      760,
+      270,
+      760,
+      670,
+      240,
+      670
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/hoodie/hoodie-black-front.psd",
+  "masterChecksum": "cac2b4bb1f9ac5dd66cda427263a0ec63da8bf7587deb2501c1dfa06319cfd29",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/hoodie/black/front.png",
+  "previewChecksum": "ea9580d47ababc2d84bbd3af906c96c188cc17ccf9ab2891401f5c962e9794d9",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/hoodie/black/front.png",
+  "proofPreviewChecksum": "8303843f0bd9df027fe268b7eeebd9a36b4a67fc99b15395992e7577c7a57c0f",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "mug",
+  "color": "navy",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/mug-front.png",
+  "sourceChecksum": "2eafdbf0b43f48ae6731ced1ea70582fd84f4f8bb80dd380f4693467482473bf",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/mug/navy/front.png",
+  "baseChecksum": "7fbebe74d0f1b07cf8c01c2caef16ac62b3624846970811bf604bd8142abba2f",
+  "printZone": {
+    "x": 165,
+    "y": 220,
+    "w": 475,
+    "h": 580
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "cylinder",
+    "curvature": 0.16,
+    "seamPadding": 0.035,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - mug-navy-front",
+    "id": "79b58e35-79b5-8e35-79b5-8e3579b58e35",
+    "placed": "79b58e35-79b5-8e35-79b5-8e3579b58e35-placed",
+    "transform": [
+      165,
+      220,
+      640,
+      220,
+      640,
+      800,
+      165,
+      800
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/mug/mug-navy-front.psb",
+  "masterChecksum": "056151ab512367b55bd93e8be1fabcfbd11f99f4ef03a64ee1f3c43ebd5e0ca1",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/mug/navy/front.png",
+  "previewChecksum": "40bc18d52f1418db1b53173223f81409c30fcb6c5514f59b7adacfea1b40be3e",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/mug/navy/front.png",
+  "proofPreviewChecksum": "e399287e80f8f828c1725bb6aa91aa245592da9f56a0627738306f93001d9aea",
+  "masterFormat": "psb",
+  "reviewStatus": "candidate"
+}

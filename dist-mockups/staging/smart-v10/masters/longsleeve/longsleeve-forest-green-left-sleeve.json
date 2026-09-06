@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "longsleeve",
+  "color": "forest-green",
+  "view": "left-sleeve",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/longsleeve-front.png",
+  "sourceChecksum": "857571a5b7bc38c700fb70049b200d4af89abd0f8e0386707f819eeebdb7f183",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v10/templates/longsleeve/left-sleeve-alpha.png",
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/longsleeve/forest-green/left-sleeve.png",
+  "baseChecksum": "628040aaecf82a315266340fd3e4e59fa5b9f00ad1bcb780fe8bf97802d515ed",
+  "printZone": {
+    "x": 175,
+    "y": 175,
+    "w": 650,
+    "h": 650
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "left-sleeve-polygon",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - longsleeve-forest-green-left-sleeve",
+    "id": "634fd7e8-634f-d7e8-634f-d7e8634fd7e8",
+    "placed": "634fd7e8-634f-d7e8-634f-d7e8634fd7e8-placed",
+    "transform": [
+      175,
+      175,
+      825,
+      175,
+      825,
+      825,
+      175,
+      825
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/longsleeve/longsleeve-forest-green-left-sleeve.psd",
+  "masterChecksum": "93ffed33396afac7da6c95d843b874b55d198c940d66ea207d599a1a136371dc",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/longsleeve/forest-green/left-sleeve.png",
+  "previewChecksum": "0fd9581ac3602f80de7c9423b4ab019608af4353bd4d064dca83c899efd8c924",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/longsleeve/forest-green/left-sleeve.png",
+  "proofPreviewChecksum": "12c9545193fe280b62323eda0d45a50e2a111dc479d14a9113528559845c606f",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

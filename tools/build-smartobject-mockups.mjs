@@ -9,6 +9,7 @@
  *
  * Usage:
  *   node tools/build-smartobject-mockups.mjs [--out dir] [--only family]
+ *   node tools/build-smartobject-mockups.mjs --v10 --out dist-mockups/staging/smart-v10/masters
  */
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
@@ -21,9 +22,14 @@ const REPO = path.resolve(import.meta.dirname, "..");
 const SOURCE_KIT = path.join(REPO, "attached_assets", "trynex-mockup-source-kit");
 const SOURCE_PREVIEWS = path.join(SOURCE_KIT, "previews");
 const SOURCE_MANIFEST = path.join(SOURCE_KIT, "manifest.json");
+const V10_SOURCE_ROOT = path.resolve(
+  process.env.TRYNEX_V10_SOURCE_ROOT ??
+    path.join(REPO, "attached_assets", "generated_images", "v10-sources-v3"),
+);
 
 const CANVAS = 1024;
 const BUILD_VERSION = "smart-v1.4";
+const V10_BUILD_VERSION = "smart-v10.3";
 
 /** The complete canonical matrix. Missing faces are explicitly derived below. */
 export const CANONICAL = {
@@ -40,7 +46,7 @@ export const CANONICAL = {
   },
   longsleeve: {
     label: "Unisex Long Sleeve",
-    colors: ["white", "black", "navy", "maroon", "olive", "grey", "red", "sky-blue", "burgundy", "forest"],
+    colors: ["white", "black", "charcoal", "heather-grey", "navy", "royal-blue", "forest-green", "burgundy", "red", "sand"],
     views: {
       front: { zone: { x: 312, y: 222, w: 376, h: 404 }, sourceView: "front", provenance: "authentic-preserved" },
       back: { zone: { x: 292, y: 195, w: 416, h: 458 }, sourceView: "back", provenance: "authentic-preserved" },
@@ -51,7 +57,7 @@ export const CANONICAL = {
   },
   hoodie: {
     label: "Unisex Hoodie",
-    colors: ["white", "black", "navy", "grey", "maroon", "olive", "red", "sky-blue", "forest", "burgundy"],
+    colors: ["white", "black", "charcoal", "heather-grey", "navy", "royal-blue", "forest-green", "burgundy", "red", "sand"],
     views: {
       front: { zone: { x: 240, y: 270, w: 520, h: 400 }, sourceView: "front", provenance: "authentic-preserved" },
       back: { zone: { x: 292, y: 184, w: 416, h: 448 }, sourceView: "back", provenance: "authentic-preserved" },
@@ -115,6 +121,21 @@ function readPng(file) {
   return { data: new Uint8Array(png.data.buffer, png.data.byteOffset, png.data.length), width: png.width, height: png.height };
 }
 
+function mirrorPng(source) {
+  const data = new Uint8Array(source.data.length);
+  for (let y = 0; y < source.height; y++) {
+    for (let x = 0; x < source.width; x++) {
+      const from = (y * source.width + x) * 4;
+      const to = (y * source.width + (source.width - 1 - x)) * 4;
+      data[to] = source.data[from];
+      data[to + 1] = source.data[from + 1];
+      data[to + 2] = source.data[from + 2];
+      data[to + 3] = source.data[from + 3];
+    }
+  }
+  return { data, width: source.width, height: source.height };
+}
+
 function pngBytes({ data, width, height }) {
   const png = new PNG({ width, height });
   Buffer.from(data.buffer, data.byteOffset, data.length).copy(png.data);
@@ -161,8 +182,9 @@ function polygonContains(x, y, points) {
 const COLOR_HEX = {
   white: "#f8f7f4", black: "#1a1a1a", navy: "#1e3a5f", maroon: "#7f1d1d",
   olive: "#4a5240", "sky-blue": "#0ea5e9", grey: "#6b7280", red: "#dc2626",
-  burgundy: "#6b1a2c", forest: "#166534", green: "#16a34a", purple: "#7c3aed",
-  pink: "#ec4899", orange: "#ea580c",
+  burgundy: "#6b1a2c", forest: "#166534", "forest-green": "#166534",
+  charcoal: "#303030", "heather-grey": "#a3a3a3", "royal-blue": "#2563eb",
+  sand: "#d2bd88", green: "#16a34a", purple: "#7c3aed", pink: "#ec4899", orange: "#ea580c",
 };
 
 function colorizeTemplate(template, color, alphaMask) {
@@ -182,6 +204,45 @@ function colorizeTemplate(template, color, alphaMask) {
     data[i + 3] = Math.round(template.data[i + 3] * (alphaMask ? alphaMask.data[i] / 255 : 1));
   }
   return { data, width: template.width, height: template.height };
+}
+
+/**
+ * Apply a material colour to a photoreal source while retaining its lighting,
+ * alpha silhouette, folds, seams, and protected details. White and the
+ * sublimation bottle remain source-authentic rather than being tinted.
+ */
+function colorizePhoto(source, color, family) {
+  if (color === "white" || family === "waterbottle") return source;
+  const hex = COLOR_HEX[color];
+  if (!hex) throw new Error(`no approved photoreal color transform for ${color}`);
+  const target = [
+    Number.parseInt(hex.slice(1, 3), 16),
+    Number.parseInt(hex.slice(3, 5), 16),
+    Number.parseInt(hex.slice(5, 7), 16),
+  ];
+  const data = new Uint8Array(source.data.length);
+  for (let i = 0; i < source.data.length; i += 4) {
+    const luminance = (0.2126 * source.data[i] + 0.7152 * source.data[i + 1] + 0.0722 * source.data[i + 2]) / 255;
+    const value = Math.max(0.08, Math.min(1, 0.16 + luminance * 0.84));
+    data[i] = Math.round(target[0] * value);
+    data[i + 1] = Math.round(target[1] * value);
+    data[i + 2] = Math.round(target[2] * value);
+    data[i + 3] = source.data[i + 3];
+  }
+  return { data, width: source.width, height: source.height };
+}
+
+function v10SourceSurface(family, color, view) {
+  const sourcePath = path.join(V10_SOURCE_ROOT, `${family}-${view}.png`);
+  if (!existsSync(sourcePath)) throw new Error(`missing v10 source ${path.relative(REPO, sourcePath)}`);
+  const original = readPng(sourcePath);
+  const source = family === "mug" && view === "back" ? mirrorPng(original) : original;
+  return {
+    path: sourcePath,
+    bytes: readFileSync(sourcePath),
+    png: colorizePhoto(source, color, family),
+    transform: family === "mug" && view === "back" ? "horizontal-mirror-for-opposite-handle" : "preserved-source",
+  };
 }
 
 function clipFaceTemplateAlpha(alphaMask, family, view) {
@@ -220,13 +281,13 @@ function deriveSurfaceBase({ family, color, view, source, sourceBack, faceTempla
     const selected = view === "left-sleeve" ? points : points.map(([x, y]) => [mirror(x), y]);
     for (let y = 0; y < source.height; y++) {
       for (let x = 0; x < source.width; x++) {
-        if (polygonContains(x, y, selected)) copyPixel(source, out, x, y);
+        if (polygonContains(x, y, selected)) copyPixel(source, out, x, y, x, y);
       }
     }
   } else if (view === "neck-label") {
     const box = { x: 300, y: 35, w: 424, h: 285 };
     for (let y = box.y; y < box.y + box.h; y++) {
-      for (let x = box.x; x < box.x + box.w; x++) copyPixel(source, out, x, y);
+      for (let x = box.x; x < box.x + box.w; x++) copyPixel(source, out, x, y, x, y);
     }
   } else if (view === "wrap") {
     // A wrap is a distinct body derivation: blend the front body with the
@@ -518,6 +579,7 @@ function parseArgs(argv) {
   return {
     outRoot: path.resolve(get("--out", path.join(REPO, "dist-mockups", "staging", "smart-v1", "masters"))),
     stage1: argv.includes("--stage1"),
+    v10: argv.includes("--v10"),
     only: get("--only"),
     resume: argv.includes("--resume"),
   };
@@ -525,8 +587,8 @@ function parseArgs(argv) {
 
 function main() {
   const argv = process.argv.slice(2);
-  const { outRoot, stage1, only, resume } = parseArgs(argv);
-  const sourceManifest = readSourceManifest();
+  const { outRoot, stage1, v10, only, resume } = parseArgs(argv);
+  const sourceManifest = v10 ? null : readSourceManifest();
   const stagingRoot = path.dirname(outRoot);
   const sourceRoot = path.join(stagingRoot, "sources");
   const templateRoot = path.join(stagingRoot, "templates");
@@ -543,26 +605,28 @@ function main() {
       try {
         const viewSpec = spec.views[view];
         const sourceView = viewSpec.sourceView;
-        const source = sourceSurface(family, color, sourceView, sourceManifest);
-        const sourceBackRow = view === "wrap" ? sourceSurface(family, color, "back", sourceManifest) : null;
-        const basePath = path.join(SOURCE_KIT, source.preview);
-        const backPath = sourceBackRow ? path.join(SOURCE_KIT, sourceBackRow.preview) : null;
-        if (!existsSync(basePath)) throw new Error(`missing source preview ${source.preview}`);
-        if (backPath && !existsSync(backPath)) throw new Error(`missing source preview ${sourceBackRow.preview}`);
-        const sourceBytes = readFileSync(basePath);
-        const sourcePng = readPng(basePath);
-        const templatePath = view !== "front" && view !== "back" ? path.join(templateRoot, family, `${view}.png`) : null;
+          const source = v10 ? v10SourceSurface(family, color, sourceView) : sourceSurface(family, color, sourceView, sourceManifest);
+          const sourceBack = view === "wrap"
+            ? (v10 ? v10SourceSurface(family, color, "back") : sourceSurface(family, color, "back", sourceManifest))
+            : null;
+          const basePath = v10 ? source.path : path.join(SOURCE_KIT, source.preview);
+          const backPath = sourceBack ? (v10 ? sourceBack.path : path.join(SOURCE_KIT, sourceBack.preview)) : null;
+          if (!existsSync(basePath)) throw new Error(`missing source preview ${v10 ? path.relative(REPO, basePath) : source.preview}`);
+          if (backPath && !existsSync(backPath)) throw new Error(`missing source preview ${v10 ? path.relative(REPO, backPath) : sourceBack.preview}`);
+          const sourceBytes = v10 ? source.bytes : readFileSync(basePath);
+          const sourcePng = v10 ? source.png : readPng(basePath);
+          const templatePath = !v10 && view !== "front" && view !== "back" ? path.join(templateRoot, family, `${view}.png`) : null;
         const templateAlphaPath = view !== "front" && view !== "back" ? path.join(templateRoot, family, `${view}-alpha.png`) : null;
         const faceTemplate = templatePath && existsSync(templatePath) ? readPng(templatePath) : undefined;
         const faceTemplateChecksum = templatePath && existsSync(templatePath) ? sha256(readFileSync(templatePath)) : null;
-        const faceAlpha = templateAlphaPath && existsSync(templateAlphaPath) ? readPng(templateAlphaPath) : undefined;
+          const faceAlpha = !v10 && templateAlphaPath && existsSync(templateAlphaPath) ? readPng(templateAlphaPath) : undefined;
         const faceAlphaTemplateChecksum = templateAlphaPath && existsSync(templateAlphaPath) ? sha256(readFileSync(templateAlphaPath)) : null;
         const base = deriveSurfaceBase({
           family,
           color,
           view,
           source: sourcePng,
-          sourceBack: backPath ? readPng(backPath) : undefined,
+            sourceBack: backPath ? (v10 ? sourceBack.png : readPng(backPath)) : undefined,
           faceTemplate,
           faceAlpha,
         });
@@ -580,12 +644,13 @@ function main() {
         const proofPath = path.join(proofDir, `${view}.png`);
         writeFileSync(derivedBasePath, baseBytes);
         const zone = viewSpec.zone;
-        const outputPath = path.join(famDir, `${family}-${color}-${view}.psd`);
+          const masterFormat = v10 && (family === "mug" || family === "waterbottle") ? "psb" : "psd";
+          const outputPath = path.join(famDir, `${family}-${color}-${view}.${masterFormat}`);
         const metadataPath = path.join(famDir, `${family}-${color}-${view}.json`);
         if (resume && existsSync(outputPath) && existsSync(metadataPath)) {
           try {
             const prior = JSON.parse(readFileSync(metadataPath, "utf8"));
-            if (prior.schema === "trynex-smart-master/v3" && prior.generatorVersion === BUILD_VERSION && prior.sourceChecksum === sourceChecksum && prior.baseChecksum === baseChecksum && prior.faceTemplateChecksum === faceTemplateChecksum && prior.faceAlphaTemplateChecksum === faceAlphaTemplateChecksum && prior.derivation === (viewSpec.derivation ?? "preserved-source")) {
+            if (prior.schema === "trynex-smart-master/v3" && prior.generatorVersion === (v10 ? V10_BUILD_VERSION : BUILD_VERSION) && prior.sourceChecksum === sourceChecksum && prior.baseChecksum === baseChecksum && prior.faceTemplateChecksum === faceTemplateChecksum && prior.faceAlphaTemplateChecksum === faceAlphaTemplateChecksum && prior.derivation === (viewSpec.derivation ?? "preserved-source")) {
               console.log(`  = resume ${family}/${color}/${view}`);
               built++;
               continue;
@@ -602,20 +667,22 @@ function main() {
           basePng: base,
           proofLabel: stage1 ? `STAGE 1 - ${family}` : "TRY NEX",
         });
-        writeFileSync(outputPath, writePsdUint8Array(psd));
+         writeFileSync(outputPath, writePsdUint8Array(psd, { psb: masterFormat === "psb" }));
         writeFileSync(runtimePreviewPath, pngBytes(flattenBase(base)));
         writeFileSync(proofPath, pngBytes(psd.imageData));
         const masterBytes = readFileSync(outputPath);
         writeFileSync(metadataPath, JSON.stringify({
           schema: "trynex-smart-master/v3",
           generator: "tools/build-smartobject-mockups.mjs",
-          generatorVersion: BUILD_VERSION,
+           generatorVersion: v10 ? V10_BUILD_VERSION : BUILD_VERSION,
           family, color, view,
           sourceView,
-          sourcePreview: source.preview,
-          sourceChecksum,
-          sourceBackPreview: sourceBackRow?.preview ?? null,
-          sourceBackChecksum: sourceBackRow ? sha256(readFileSync(backPath)) : null,
+           sourcePreview: v10 ? path.relative(REPO, source.path) : source.preview,
+           sourceChecksum,
+           sourceTransform: v10 ? source.transform : "preserved-source",
+           sourceBackPreview: sourceBack ? (v10 ? path.relative(REPO, sourceBack.path) : sourceBack.preview) : null,
+           sourceBackChecksum: sourceBack ? sha256(readFileSync(backPath)) : null,
+           sourceBackTransform: sourceBack ? (v10 ? sourceBack.transform : "preserved-source") : null,
           faceTemplatePath: templatePath ? path.relative(REPO, templatePath) : null,
           faceTemplateChecksum,
           faceAlphaTemplatePath: templateAlphaPath ? path.relative(REPO, templateAlphaPath) : null,
@@ -644,7 +711,7 @@ function main() {
           previewChecksum: sha256(readFileSync(runtimePreviewPath)),
           proofPreviewPath: path.relative(REPO, proofPath),
           proofPreviewChecksum: sha256(readFileSync(proofPath)),
-          masterFormat: "psd",
+           masterFormat,
           reviewStatus: "candidate",
         }, null, 2) + "\n");
         built++;
@@ -661,7 +728,7 @@ function main() {
       JSON.stringify({
         schema: "trynex-smart-mockup-stage1/v1",
         status: "candidate",
-        generatedAt: "2026-09-01",
+           generatedAt: v10 ? "2026-09-06" : "2026-09-01",
         representatives: Object.keys(CANONICAL).map((family) => ({
           family,
           color: "white",
@@ -682,7 +749,7 @@ function main() {
     writeFileSync(path.join(stagingRoot, "manifest.json"), JSON.stringify({
       schema: "trynex-smart-mockup-staging/v2",
       status: "candidate",
-      generatedAt: "2026-09-01",
+      generatedAt: v10 ? "2026-09-06" : "2026-09-01",
       surfaceCount: records.length,
       canonicalSurfaceCount: 188,
       editableMastersOutsidePublic: true,

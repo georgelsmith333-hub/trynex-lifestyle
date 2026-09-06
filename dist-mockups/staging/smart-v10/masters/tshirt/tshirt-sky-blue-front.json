@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "tshirt",
+  "color": "sky-blue",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/tshirt-front.png",
+  "sourceChecksum": "23b0ff8fc51287929e8d18410acc669c319ca7e963f220ca6c351919e5c5118c",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/tshirt/sky-blue/front.png",
+  "baseChecksum": "9cccbc7f179fb5f57f094778d28bb9d4c86c393a9564220f6165f650f2532831",
+  "printZone": {
+    "x": 240,
+    "y": 185,
+    "w": 520,
+    "h": 580
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - tshirt-sky-blue-front",
+    "id": "e1ed14b8-e1ed-14b8-e1ed-14b8e1ed14b8",
+    "placed": "e1ed14b8-e1ed-14b8-e1ed-14b8e1ed14b8-placed",
+    "transform": [
+      240,
+      185,
+      760,
+      185,
+      760,
+      765,
+      240,
+      765
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/tshirt/tshirt-sky-blue-front.psd",
+  "masterChecksum": "272b31602a3be8e72f47cb18d0a09cb993f4b941d808b2b954b682f7bef5f763",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/tshirt/sky-blue/front.png",
+  "previewChecksum": "667b2bcfeecf4eba7af4b273736f247ff3e42a9296e273b5496a050f7b976822",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/tshirt/sky-blue/front.png",
+  "proofPreviewChecksum": "0f88397fceb1108c9dc727816532929992ee6a3dd515afcdbdf5838eccbfa2a3",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

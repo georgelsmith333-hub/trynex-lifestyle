@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "longsleeve",
+  "color": "forest-green",
+  "view": "neck-label",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/longsleeve-front.png",
+  "sourceChecksum": "857571a5b7bc38c700fb70049b200d4af89abd0f8e0386707f819eeebdb7f183",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v10/templates/longsleeve/neck-label-alpha.png",
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/longsleeve/forest-green/neck-label.png",
+  "baseChecksum": "79b08e57c27a52998c022363f780a8716477814a01d13f1225564faf2ec0f5fd",
+  "printZone": {
+    "x": 150,
+    "y": 265,
+    "w": 700,
+    "h": 470
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "neck-label-crop",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - longsleeve-forest-green-neck-label",
+    "id": "00a1e9ec-00a1-e9ec-00a1-e9ec00a1e9ec",
+    "placed": "00a1e9ec-00a1-e9ec-00a1-e9ec00a1e9ec-placed",
+    "transform": [
+      150,
+      265,
+      850,
+      265,
+      850,
+      735,
+      150,
+      735
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/longsleeve/longsleeve-forest-green-neck-label.psd",
+  "masterChecksum": "9c5b520b8f95e7e6628ddd8afe1b3310de456cffcba92b5766cabb67558f5f02",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/longsleeve/forest-green/neck-label.png",
+  "previewChecksum": "65b601f22893f6b1a44dc5bb1860e8a1c13ffcc07cc1d1c225cad2eca2a62299",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/longsleeve/forest-green/neck-label.png",
+  "proofPreviewChecksum": "e957870998dcde180042d393a728a9c135ae2126da053e3741d3e21b745d3efd",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "waterbottle",
+  "color": "white",
+  "view": "back",
+  "sourceView": "back",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/waterbottle-back.png",
+  "sourceChecksum": "b70223baeeaa9b9cd5bdcf32a33ac85731b99bfc61e7e486d55cb6b7c3dad69e",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/waterbottle/white/back.png",
+  "baseChecksum": "4e4d949b2480ab515261681e4c3f36c9ce0bbeccb5a8162831501b48f93bfe08",
+  "printZone": {
+    "x": 335,
+    "y": 320,
+    "w": 276,
+    "h": 590
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "cylinder",
+    "curvature": 0.16,
+    "seamPadding": 0.035,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - waterbottle-white-back",
+    "id": "022a8c4a-022a-8c4a-022a-8c4a022a8c4a",
+    "placed": "022a8c4a-022a-8c4a-022a-8c4a022a8c4a-placed",
+    "transform": [
+      335,
+      320,
+      611,
+      320,
+      611,
+      910,
+      335,
+      910
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/waterbottle/waterbottle-white-back.psb",
+  "masterChecksum": "7b648b96258c3efab22b448bb11b8df8758d4af579dbce76926d2b34c2f17f51",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/waterbottle/white/back.png",
+  "previewChecksum": "ecadf46de1616dc79686c54faba6604e28a5607c2d5afb63083afcc0d143c53e",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/waterbottle/white/back.png",
+  "proofPreviewChecksum": "1eb907f9a89cf7b3920259ef01202ccdf0848977f5a398cfe38553f24a09419e",
+  "masterFormat": "psb",
+  "reviewStatus": "candidate"
+}

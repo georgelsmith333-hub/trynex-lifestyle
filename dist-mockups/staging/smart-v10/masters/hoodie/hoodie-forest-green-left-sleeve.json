@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "hoodie",
+  "color": "forest-green",
+  "view": "left-sleeve",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/hoodie-front.png",
+  "sourceChecksum": "6c41c227474c9603c115af7a309252458b26de744e0918b65850a0722edc2c24",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v10/templates/hoodie/left-sleeve-alpha.png",
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/hoodie/forest-green/left-sleeve.png",
+  "baseChecksum": "3729209ea919391ee0702a491e7acf7f68bafec6f7f0335c9dfa84fbe316b7f8",
+  "printZone": {
+    "x": 175,
+    "y": 175,
+    "w": 650,
+    "h": 650
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "left-sleeve-polygon",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - hoodie-forest-green-left-sleeve",
+    "id": "69903954-6990-3954-6990-395469903954",
+    "placed": "69903954-6990-3954-6990-395469903954-placed",
+    "transform": [
+      175,
+      175,
+      825,
+      175,
+      825,
+      825,
+      175,
+      825
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/hoodie/hoodie-forest-green-left-sleeve.psd",
+  "masterChecksum": "c78d5e87e2eaff5ad053acc3aab88824b471b4f1e7c37632ab39daa462a8a84e",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/hoodie/forest-green/left-sleeve.png",
+  "previewChecksum": "53f90b38636f89caeb0fbea7d0b2078b2c9826168dd83e32d7520a0eb973330a",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/hoodie/forest-green/left-sleeve.png",
+  "proofPreviewChecksum": "ed1a16f0def2d45d89ac17c9f92f6afd883c04ad98ec734bae7b5ad917ed8d49",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

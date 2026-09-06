@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "tshirt",
+  "color": "navy",
+  "view": "left-sleeve",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/tshirt-front.png",
+  "sourceChecksum": "23b0ff8fc51287929e8d18410acc669c319ca7e963f220ca6c351919e5c5118c",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v10/templates/tshirt/left-sleeve-alpha.png",
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/tshirt/navy/left-sleeve.png",
+  "baseChecksum": "e5156cae75c53b66200db14a84884bc73718a8fe2107e2bb4e763196334a4e2e",
+  "printZone": {
+    "x": 175,
+    "y": 175,
+    "w": 650,
+    "h": 650
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "left-sleeve-polygon",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - tshirt-navy-left-sleeve",
+    "id": "07c4cc2d-07c4-cc2d-07c4-cc2d07c4cc2d",
+    "placed": "07c4cc2d-07c4-cc2d-07c4-cc2d07c4cc2d-placed",
+    "transform": [
+      175,
+      175,
+      825,
+      175,
+      825,
+      825,
+      175,
+      825
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/tshirt/tshirt-navy-left-sleeve.psd",
+  "masterChecksum": "399e8696d10498b924f53b12d95fc292cbfc2d5fe0340e130221820007148f59",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/tshirt/navy/left-sleeve.png",
+  "previewChecksum": "3bf5db485a222598e9f880aad419ca47eb6ca2a7e8e1bc70ce14b49af887d996",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/tshirt/navy/left-sleeve.png",
+  "proofPreviewChecksum": "f52f61d534dc2af909643cd52011cb2818644d0e31edf41e08dcc6df2c3abaa9",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

@@ -16,6 +16,7 @@ const approveVisual = process.argv.includes("--approve-visual");
 const manifestPath = path.join(root, "manifest.json");
 const auditPath = path.join(root, "structural-audit.json");
 const releasePath = path.join(root, "release-manifest.json");
+const runtimeRolesPath = path.join(root, "runtime-roles", "manifest.json");
 
 function fail(message) {
   throw new Error(message);
@@ -27,9 +28,11 @@ function sha256(filePath) {
 
 if (!existsSync(manifestPath)) fail(`missing staging manifest: ${manifestPath}`);
 if (!existsSync(auditPath)) fail(`missing structural audit: ${auditPath}`);
+if (!existsSync(runtimeRolesPath)) fail(`missing PSD-derived runtime role manifest: ${runtimeRolesPath}`);
 
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
 const audit = JSON.parse(readFileSync(auditPath, "utf8"));
+const runtimeRoles = JSON.parse(readFileSync(runtimeRolesPath, "utf8"));
 const errors = [];
 const seen = new Set();
 
@@ -38,6 +41,11 @@ if (manifest.surfaceCount !== 188 || manifest.canonicalSurfaceCount !== 188) err
 if (manifest.editableMastersOutsidePublic !== true) errors.push("editableMastersOutsidePublic must be true");
 if (!Array.isArray(manifest.surfaces) || manifest.surfaces.length !== 188) errors.push("manifest surface list is not exactly 188 rows");
 if (!Array.isArray(audit) || audit.length !== 188) errors.push("structural audit is not exactly 188 rows");
+if (runtimeRoles.schema !== "trynex-smartobject-runtime-roles/v1") errors.push("unexpected runtime role manifest schema");
+if (runtimeRoles.status !== "candidate") errors.push("runtime role manifest must remain candidate before visual approval");
+if (runtimeRoles.surfaceCount !== 188 || !Array.isArray(runtimeRoles.surfaces) || runtimeRoles.surfaces.length !== 188) {
+  errors.push("runtime role manifest is not exactly 188 surfaces");
+}
 
 for (const row of manifest.surfaces ?? []) {
   const key = `${row.family}/${row.color}/${row.view}`;
@@ -53,6 +61,7 @@ for (const row of manifest.surfaces ?? []) {
 }
 
 const auditByFile = new Map(audit.map((row) => [row.file, row]));
+const runtimeByKey = new Map((runtimeRoles.surfaces ?? []).map((row) => [row.surfaceKey, row]));
 for (const row of manifest.surfaces ?? []) {
   const filename = path.basename(row.masterPath);
   const result = auditByFile.get(filename);
@@ -67,6 +76,24 @@ for (const row of manifest.surfaces ?? []) {
   if (!result.artwork_layers?.some((name) => result.smart_objects?.includes(name))) errors.push(`${key}: artwork layer is not the audited Smart Object`);
   if (!Object.values(result.embedded_smart_objects ?? {}).some((item) => item.kind === "data" && item.bytes > 0)) errors.push(`${key}: embedded Smart Object payload is empty`);
   if (!result.has_composite_preview || !result.composite_nonempty) errors.push(`${key}: composite preview is missing or empty`);
+
+  const runtime = runtimeByKey.get(key);
+  if (!runtime) {
+    errors.push(`${key}: no PSD-derived runtime role row`);
+    continue;
+  }
+  if (runtime.masterChecksum !== row.masterChecksum) errors.push(`${key}: runtime role points at a different master checksum`);
+  for (const [role, asset] of Object.entries(runtime.roles ?? {})) {
+    const rolePath = path.resolve(repo, asset.path);
+    if (!existsSync(rolePath)) {
+      errors.push(`${key}: missing runtime role ${role}`);
+    } else if (sha256(rolePath) !== asset.sha256) {
+      errors.push(`${key}: runtime role checksum mismatch for ${role}`);
+    }
+    if (asset.path.includes("/public/") || asset.path.includes("\\public\\")) {
+      errors.push(`${key}: runtime role is incorrectly inside public`);
+    }
+  }
 }
 
 if (errors.length) {
@@ -78,14 +105,14 @@ if (errors.length) {
 const output = {
   schema: "trynex-smart-mockup-release/v1",
   status: approveVisual ? "verified" : "structurally-verified",
-  generatedAt: "2026-09-02",
+  generatedAt: "2026-09-06",
   surfaceCount: 188,
   nativeSmartObjects: true,
   editableMastersOutsidePublic: true,
   visualApproval: approveVisual,
-  visualEvidence: "verification/smart-object-contact-sheets",
-  sourceManifest: "dist-mockups/staging/smart-v1/manifest.json",
-  structuralAudit: "dist-mockups/staging/smart-v1/structural-audit.json",
+  visualEvidence: "verification/smart-v10-v3-contact-sheets",
+  sourceManifest: path.relative(repo, manifestPath),
+  structuralAudit: path.relative(repo, auditPath),
   surfaces: manifest.surfaces.map((row) => ({
     ...row,
     reviewStatus: approveVisual ? "verified" : "structurally-verified",

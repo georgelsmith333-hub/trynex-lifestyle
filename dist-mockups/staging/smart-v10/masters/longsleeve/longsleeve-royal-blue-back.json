@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "longsleeve",
+  "color": "royal-blue",
+  "view": "back",
+  "sourceView": "back",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/longsleeve-back.png",
+  "sourceChecksum": "3442a28ec5fe6a1244972286024399f37f27c46b67737827ba164bd1b63f8044",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/longsleeve/royal-blue/back.png",
+  "baseChecksum": "57262bdf0980e71838c673e0d2b5e32938f550fa71406e5641c8bd854849f73f",
+  "printZone": {
+    "x": 292,
+    "y": 195,
+    "w": 416,
+    "h": 458
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - longsleeve-royal-blue-back",
+    "id": "5e72db20-5e72-db20-5e72-db205e72db20",
+    "placed": "5e72db20-5e72-db20-5e72-db205e72db20-placed",
+    "transform": [
+      292,
+      195,
+      708,
+      195,
+      708,
+      653,
+      292,
+      653
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/longsleeve/longsleeve-royal-blue-back.psd",
+  "masterChecksum": "e280d30990805db6b83c1a87e6e87b9cee18dc80286f227738eb1f49351fa1dc",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/longsleeve/royal-blue/back.png",
+  "previewChecksum": "823d08e46ebf76cdd7534ab0fad0253074171c29857a669c22536c011099e56e",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/longsleeve/royal-blue/back.png",
+  "proofPreviewChecksum": "57831220f4e3a8fcbfed8d4b889e9566591a5a59d5eee71675a45381044d5b4f",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

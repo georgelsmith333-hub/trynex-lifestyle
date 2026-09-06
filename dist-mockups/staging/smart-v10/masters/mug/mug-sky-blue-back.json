@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "mug",
+  "color": "sky-blue",
+  "view": "back",
+  "sourceView": "back",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/mug-back.png",
+  "sourceChecksum": "e9ef5fea6ec0330234ff4518bbec7cb2c010a39bb65ac14d529e627577118b3c",
+  "sourceTransform": "horizontal-mirror-for-opposite-handle",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/mug/sky-blue/back.png",
+  "baseChecksum": "cd4c820a9f15ae2c22379e4af22ae2c51e17ef454b3c844016cd4591814416b3",
+  "printZone": {
+    "x": 384,
+    "y": 220,
+    "w": 451,
+    "h": 580
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "cylinder",
+    "curvature": 0.16,
+    "seamPadding": 0.035,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - mug-sky-blue-back",
+    "id": "391ce8eb-391c-e8eb-391c-e8eb391ce8eb",
+    "placed": "391ce8eb-391c-e8eb-391c-e8eb391ce8eb-placed",
+    "transform": [
+      384,
+      220,
+      835,
+      220,
+      835,
+      800,
+      384,
+      800
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/mug/mug-sky-blue-back.psb",
+  "masterChecksum": "ae03076342ed5035427e2f6b613bc6128cf5694ee88af944f00ab40d681d4712",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/mug/sky-blue/back.png",
+  "previewChecksum": "c3c9f71301c57536cdf4bcb13325f78206e55f8361a4198714e85a29808b43dd",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/mug/sky-blue/back.png",
+  "proofPreviewChecksum": "139156f2c82baddbd9e8ee0b1ba43c42f354a6bedf78b897b4a371e644a48656",
+  "masterFormat": "psb",
+  "reviewStatus": "candidate"
+}

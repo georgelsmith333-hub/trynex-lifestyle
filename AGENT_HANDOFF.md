@@ -71,30 +71,70 @@ are compatibility aliases to that route. The source-kit/runtime mockup audit
 now validates the editable manifest as well as public assets.
 
 The genuine six-family PSD/PSB Smart Mockup workstream has passed its quarantine
-structural gate and the complete Smart v9 candidate is active in the local
-customer runtime. Production deployment remains a separate publish step; do not
-describe local promotion as a production deploy.
+structural and visual gates. The complete Smart v10 runtime package is active in
+the local customer runtime; Smart v9 remains a separate protected release
+contract. Production deployment remains a separate publish step; do not describe
+local promotion as a production deploy.
 
 ### Current Smart v9 acceptance checkpoint (2026-09-06)
 
 ```text
-Status: complete locally — Smart v9 is active in the customer runtime
-Last completed: Validated and accepted all 188 canonical Smart v9 surfaces,
-  verified their manifest paths and hashes, reviewed representative front/back/
-  wrap surfaces across T-shirt, Hoodie, Long Sleeve, Mug, Cap, and Water Bottle,
-  activated SMART_V9_CANDIDATE through the guarded acceptSmartV9Release path, and
-  confirmed the live Design Studio renders the promoted T-shirt surface.
-Compatibility rule: exact catalog-color matches use Smart v9. Ambiguous shades
-  such as Charcoal, Royal Blue, and Sand remain on their reviewed color-specific
-  source-matrix assets rather than being silently mapped to a wrong v9 hue.
-Verification: canonical matrix validator 188/188; Smart Object release gate
-  188/188; all v9 PNGs present as 1024x1024 RGBA; storefront tests 24 files/
-  82 tests passed; storefront typecheck and production build passed; managed
-  storefront workflow restarted cleanly; live /design-studio screenshot had no
-  browser errors; git diff --check passed. No orders, payments, or production
-  data were created or changed.
-Next safe action: publish only when the owner wants the current local runtime
-  released; preserve the exact-color compatibility fallback during deployment.
+Status: in progress — Smart v9 remains fail-closed while visual acceptance is
+  incomplete.
+Last completed: Fixed curved-product 3D billboard framing for mug, cap, and
+  water bottle; restarted the storefront; captured fresh real uploaded-artwork
+  Studio/3D evidence for all six product families; and confirmed the bottle
+  now fits from cap to base while the cap visor no longer clips.
+Compatibility rule: exact catalog-color matches may use Smart v9 only after the
+  full evidence gate is accepted. Ambiguous shades such as Charcoal, Royal
+  Blue, and Sand remain on reviewed color-specific assets.
+Verification: canonical matrix and Smart Object structural gates remain
+  188/188; storefront typecheck passed; storefront workflow is running; fresh
+  uploaded-artwork evidence has no browser console errors; API healthz and
+  mockups/settings/products/readiness routes returned 200; storefront tests
+  passed (25 files/85 tests); storefront production build passed; root
+  workspace typecheck passed; git diff --check passed. No orders, payments, or
+  production data were created or changed.
+Remaining work: Run the full storefront test/build/validator pass; capture and
+  review all required color/face evidence plus transparent-upload, cart, and
+  export outputs; only then consider Smart v9 activation and production
+  promotion.
+Next safe action: complete the non-mutating release verification and keep
+  SMART_V9_PROMOTION_ALLOWED=false until every required evidence category is
+  recorded and accepted.
+```
+
+### Current v10 implementation checkpoint (2026-09-06)
+
+```text
+Status: verified local v10.3 release — GitHub/live rollout pending
+Last completed: Replaced the weak/inconsistent v10 source inputs with a reviewed,
+  consistent photoreal six-family source set; rebuilt the complete 188-surface
+  matrix with genuine embedded Smart Objects and 1,128 browser-safe role PNGs;
+  archived the superseded runtime; promoted the verified replacement into the
+  active v10 path; and confirmed the customer Design Studio renders it.
+Stopped at: Final local verification after storefront/API restart and Design
+  Studio screenshot, immediately before the release commit and GitHub push.
+Files/areas changed: `attached_assets/generated_images/v10-sources-v3`,
+  `tools/build-smartobject-mockups.mjs`, `tools/validate-smartobject-release.mjs`,
+  `dist-mockups/staging/smart-v10`, archived prior v10 staging assets,
+  `artifacts/trynex-storefront/public/mockups/psd-master-v10/runtime-roles`,
+  visual evidence, and this handoff.
+Remaining work: Commit and push the verified v10.3 source/runtime release, then
+  confirm the GitHub-connected live deployment serves the new runtime. Keep the
+  separate Smart v9 production contract fail-closed.
+Blocker: No local implementation blocker. Live rollout depends on the connected
+  GitHub/hosting deployment completing normally.
+Next safe action: Stage only the v10.3 source, builder/validator, active runtime,
+  archive, evidence, and handoff files; exclude attached screenshots/transcripts;
+  push and run non-mutating live asset/health checks.
+Verification: v10.3 structural gate passed 188/188; every master reopened at
+  1024×1024, 8-bit RGB with one non-empty embedded Smart Object; 1,128 runtime
+  roles were exported; representative runtime assets returned HTTP 200;
+  storefront tests passed (25 files/85 tests); storefront and root typechecks
+  passed; storefront production build passed; managed workflows restarted
+  cleanly; and the Design Studio preview showed the photoreal T-shirt runtime
+  without browser console errors. Redis remains an optional degraded fallback.
 ```
 
 ### Current session checkpoint (2026-09-05)

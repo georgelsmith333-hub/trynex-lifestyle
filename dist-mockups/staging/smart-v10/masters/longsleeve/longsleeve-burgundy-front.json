@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "longsleeve",
+  "color": "burgundy",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/longsleeve-front.png",
+  "sourceChecksum": "857571a5b7bc38c700fb70049b200d4af89abd0f8e0386707f819eeebdb7f183",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/longsleeve/burgundy/front.png",
+  "baseChecksum": "7210e65ceae33ab6c680885ddbfc181ec21c184c50a3fc8b501e220720bf9366",
+  "printZone": {
+    "x": 312,
+    "y": 222,
+    "w": 376,
+    "h": 404
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - longsleeve-burgundy-front",
+    "id": "ff489486-ff48-9486-ff48-9486ff489486",
+    "placed": "ff489486-ff48-9486-ff48-9486ff489486-placed",
+    "transform": [
+      312,
+      222,
+      688,
+      222,
+      688,
+      626,
+      312,
+      626
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/longsleeve/longsleeve-burgundy-front.psd",
+  "masterChecksum": "514c55489659307dd59747d8133bbd566d6824db799b06b31bda77767a7bd275",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/longsleeve/burgundy/front.png",
+  "previewChecksum": "cb091f89de6820668d39c26ac59421e42747c6b98011815fa1637eaaa1ed9c32",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/longsleeve/burgundy/front.png",
+  "proofPreviewChecksum": "4b21d5253eaef2e26e2c7dc405ecbcb8f32f922eddccc5ecac6709b1e8df2bbb",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

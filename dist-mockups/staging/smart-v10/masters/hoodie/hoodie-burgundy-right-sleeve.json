@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "hoodie",
+  "color": "burgundy",
+  "view": "right-sleeve",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/hoodie-front.png",
+  "sourceChecksum": "6c41c227474c9603c115af7a309252458b26de744e0918b65850a0722edc2c24",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v10/templates/hoodie/right-sleeve-alpha.png",
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/hoodie/burgundy/right-sleeve.png",
+  "baseChecksum": "f9a9dd30641278d278b1d53d2f91d8a889835770f2424cd0ff872ea0b8803d2f",
+  "printZone": {
+    "x": 175,
+    "y": 175,
+    "w": 650,
+    "h": 650
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "right-sleeve-polygon",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - hoodie-burgundy-right-sleeve",
+    "id": "558b4f70-558b-4f70-558b-4f70558b4f70",
+    "placed": "558b4f70-558b-4f70-558b-4f70558b4f70-placed",
+    "transform": [
+      175,
+      175,
+      825,
+      175,
+      825,
+      825,
+      175,
+      825
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/hoodie/hoodie-burgundy-right-sleeve.psd",
+  "masterChecksum": "7da0ad7a48b3b7cdf851073b19d1488913bc0b529a553b1a8c9d0076f78365a6",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/hoodie/burgundy/right-sleeve.png",
+  "previewChecksum": "28de99db5ba93246eb7a82377b04151e5062fe4d7780c855c5980f0d9fdb2c65",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/hoodie/burgundy/right-sleeve.png",
+  "proofPreviewChecksum": "8bc4e16b56193ccdeeb2b26256fb003e51c37145d173d0bb576f19988cb34523",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}
