@@ -952,13 +952,13 @@ export default function Home() {
             }).map((cat, i) => {
               /* Use crisp mockup photos for category cards — clean on any background */
               const imageMap: Record<string, string> = {
-                tshirt:      "/mockups/smart-v4/tshirt/white/front.png",
-                longsleeve:  "/mockups/smart-v4/longsleeve/white/front.png",
-                hoodie:      "/mockups/smart-v4/hoodie/white/front.png",
-                cap:         "/mockups/smart-v4/cap/white/front.png",
-                mug:         "/mockups/smart-v4/mug/white/front.png",
-                waterbottle: "/mockups/waterbottle-v11/white/front.png",
-                watertumbler:"/mockups/waterbottle-v11/white/front.png",
+                tshirt:      "/mockups/psd-master-v10/runtime-roles/tshirt/white/front-base.png",
+                longsleeve:  "/mockups/psd-master-v10/runtime-roles/longsleeve/white/front-base.png",
+                hoodie:      "/mockups/psd-master-v10/runtime-roles/hoodie/white/front-base.png",
+                cap:         "/mockups/psd-master-v10/runtime-roles/cap/white/front-base.png",
+                mug:         "/mockups/psd-master-v10/runtime-roles/mug/white/front-base.png",
+                waterbottle: "/mockups/psd-master-v10/runtime-roles/waterbottle/white/front-base.png",
+                watertumbler:"/mockups/psd-master-v10/runtime-roles/waterbottle/white/front-base.png",
               };
 
               return (

@@ -17,18 +17,18 @@ export function prefetchDesignStudio(): void {
   // V2 studio resolves reviewed sources without falling back to retired previews.
   try {
     [
-      "/mockups/smart-v4/tshirt/white/front.png",
-      "/mockups/smart-v4/tshirt/white/back.png",
-      "/mockups/smart-v4/longsleeve/white/front.png",
-      "/mockups/smart-v4/longsleeve/white/back.png",
-      "/mockups/smart-v4/hoodie/white/front.png",
-      "/mockups/smart-v4/hoodie/white/back.png",
-      "/mockups/smart-v4/mug/white/front.png",
-      "/mockups/smart-v4/mug/white/back.png",
-      "/mockups/smart-v4/cap/white/front.png",
-      "/mockups/smart-v4/cap/white/back.png",
-      "/mockups/waterbottle-v11/white/front.png",
-      "/mockups/waterbottle-v11/white/back.png",
+      "/mockups/psd-master-v10/runtime-roles/tshirt/white/front-base.png",
+      "/mockups/psd-master-v10/runtime-roles/tshirt/white/back-base.png",
+      "/mockups/psd-master-v10/runtime-roles/longsleeve/white/front-base.png",
+      "/mockups/psd-master-v10/runtime-roles/longsleeve/white/back-base.png",
+      "/mockups/psd-master-v10/runtime-roles/hoodie/white/front-base.png",
+      "/mockups/psd-master-v10/runtime-roles/hoodie/white/back-base.png",
+      "/mockups/psd-master-v10/runtime-roles/mug/white/front-base.png",
+      "/mockups/psd-master-v10/runtime-roles/mug/white/back-base.png",
+      "/mockups/psd-master-v10/runtime-roles/cap/white/front-base.png",
+      "/mockups/psd-master-v10/runtime-roles/cap/white/back-base.png",
+      "/mockups/psd-master-v10/runtime-roles/waterbottle/white/front-base.png",
+      "/mockups/psd-master-v10/runtime-roles/waterbottle/white/back-base.png",
     ].forEach((src) => {
       const img = new Image();
       img.src = src;

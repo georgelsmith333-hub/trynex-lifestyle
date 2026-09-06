@@ -13,13 +13,13 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 const REPO = path.resolve(import.meta.dirname, "..");
-const ROOT = path.resolve(process.argv[2] ?? path.join(REPO, "dist-mockups", "staging", "smart-v1"));
+const ROOT = path.resolve(process.argv[2] ?? path.join(REPO, "dist-mockups", "staging", "smart-v10"));
 const MANIFEST_PATH = path.join(ROOT, "manifest.json");
 
 const EXPECTED = {
   tshirt: { colors: ["white", "black", "navy", "maroon", "olive", "sky-blue", "grey", "red"], views: ["front", "back", "left-sleeve", "right-sleeve", "neck-label"] },
-  longsleeve: { colors: ["white", "black", "navy", "maroon", "olive", "grey", "red", "sky-blue", "burgundy", "forest"], views: ["front", "back", "left-sleeve", "right-sleeve", "neck-label"] },
-  hoodie: { colors: ["white", "black", "navy", "grey", "maroon", "olive", "red", "sky-blue", "forest", "burgundy"], views: ["front", "back", "left-sleeve", "right-sleeve", "neck-label"] },
+  longsleeve: { colors: ["white", "black", "charcoal", "heather-grey", "navy", "royal-blue", "forest-green", "burgundy", "red", "sand"], views: ["front", "back", "left-sleeve", "right-sleeve", "neck-label"] },
+  hoodie: { colors: ["white", "black", "charcoal", "heather-grey", "navy", "royal-blue", "forest-green", "burgundy", "red", "sand"], views: ["front", "back", "left-sleeve", "right-sleeve", "neck-label"] },
   mug: { colors: ["white", "black", "navy", "red", "green", "purple", "sky-blue", "pink", "maroon", "orange"], views: ["front", "back", "wrap"] },
   cap: { colors: ["white", "black", "navy", "maroon", "olive", "red", "grey", "forest"], views: ["front", "back"] },
   waterbottle: { colors: ["white"], views: ["front", "back"] },

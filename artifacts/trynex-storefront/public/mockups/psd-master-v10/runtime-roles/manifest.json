@@ -1,6 +1,6 @@
 {
   "schema": "trynex-smartobject-runtime-roles/v1",
-  "status": "candidate",
+  "status": "accepted",
   "sourceManifest": "dist-mockups/staging/smart-v10/manifest.json",
   "sourceMasterCount": 188,
   "surfaceCount": 188,

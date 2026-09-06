@@ -44,7 +44,7 @@ describe("Hoodie source matrix v3", () => {
   it("keeps accepted Smart v10.3 ahead of stale runtime overrides", () => {
     const hoodie = PRODUCTS.find((product) => product.category === "hoodie")!;
     try {
-      setRuntimeMockupOverrides([{ sourceKitKey: "hoodie/navy/front", imageUrl: "/mockups/smart-v4/hoodie/navy/front.png?v=smart-v4", ingestionStatus: "ready" }]);
+       setRuntimeMockupOverrides([{ sourceKitKey: "hoodie/navy/front", imageUrl: "/mockups/retired-preview/hoodie/navy/front.png", ingestionStatus: "ready" }]);
        expect(resolveMockup(hoodie, "#1e3a5f", "front").photoSrc).toBe(
          "/mockups/psd-master-v10/runtime-roles/hoodie/navy/front-base.png",
        );

@@ -35,11 +35,10 @@ describe("licensed PSD-derived T-shirt workflow", () => {
     expect(PSD_DERIVED_TSHIRT_STAGING_PROFILE.customerRuntimeEnabled).toBe(false);
   });
 
-  it("defines a customer-ready T-shirt-only PNG release without activating the legacy release or exposing PSD sources", () => {
+  it("defines a customer-ready T-shirt-only PNG release without exposing PSD sources", () => {
     expect(PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE.supportedColors).toHaveLength(8);
     expect(PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE.supportedFaces).toEqual(["front", "back"]);
     expect(PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE.customerRuntimeEnabled).toBe(true);
-    expect(PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE.activatesSmartV9).toBe(false);
     expect(PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE.allowsPsdOrPsbInBrowser).toBe(false);
     expect(isPsdDerivedTshirtCustomerReleaseSurface("black", "back")).toBe(true);
     expect(isPsdDerivedTshirtCustomerReleaseSurface("white", "left-sleeve")).toBe(false);

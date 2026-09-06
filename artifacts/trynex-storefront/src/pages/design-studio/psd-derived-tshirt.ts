@@ -13,8 +13,8 @@ export interface PsdDerivedTshirtStagingProfile {
 
 /**
  * Customer-runtime boundary for reviewed derived PNG outputs only. This is a
- * T-shirt-specific source release; it cannot activate smart-v9, change another
- * product family, or transfer the licensed PSD/PSB into the browser.
+ * T-shirt-specific source release; it cannot change another product family or
+ * transfer the licensed PSD/PSB into the browser.
  */
 export interface PsdDerivedTshirtCustomerRelease {
   version: "psd-tshirt-v1";
@@ -24,7 +24,6 @@ export interface PsdDerivedTshirtCustomerRelease {
   cartEnabled: true;
   exportEnabled: true;
   customerRuntimeEnabled: true;
-  activatesSmartV9: false;
   allowsPsdOrPsbInBrowser: false;
   displacementStatus: "not-claimed-as-native-photoshop";
 }
@@ -110,7 +109,6 @@ export const PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE: PsdDerivedTshirtCustomerReleas
   cartEnabled: true,
   exportEnabled: true,
   customerRuntimeEnabled: true,
-  activatesSmartV9: false,
   allowsPsdOrPsbInBrowser: false,
   displacementStatus: "not-claimed-as-native-photoshop",
 };

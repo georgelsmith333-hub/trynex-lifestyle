@@ -55,7 +55,7 @@ describe("Long Sleeve source-matrix v4 corrective release", () => {
     try {
       setRuntimeMockupOverrides([{
         sourceKitKey: "longsleeve/navy/front",
-        imageUrl: "/mockups/smart-v4/longsleeve/navy/front.png?v=smart-v4",
+         imageUrl: "/mockups/retired-preview/longsleeve/navy/front.png",
         ingestionStatus: "ready",
       }]);
         expect(resolveMockup(longsleeve, "#1e3a5f", "front").photoSrc)

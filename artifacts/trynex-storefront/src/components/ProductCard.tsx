@@ -30,12 +30,12 @@ const COLOR_MAP: Record<string, string> = {
 
 function getProductFallback(product: Product): string {
   const text = `${product.name ?? ""} ${(product as any).category?.name ?? ""} ${(product as any).categoryName ?? ""}`.toLowerCase();
-  if (text.includes("mug") || text.includes("cup")) return "/mockups/smart-v4/mug/white/front.png";
-  if (text.includes("hoodie") || text.includes("sweatshirt")) return "/mockups/smart-v4/hoodie/white/front.png";
-  if (text.includes("bottle") || text.includes("flask") || text.includes("tumbler")) return "/mockups/waterbottle-v11/white/front.png";
-  if (text.includes("cap") || text.includes("hat")) return "/mockups/smart-v4/cap/white/front.png";
-  if (text.includes("long sleeve") || text.includes("longsleeve") || text.includes("long-sleeve")) return "/mockups/smart-v4/longsleeve/white/front.png";
-  return "/mockups/smart-v4/tshirt/white/front.png";
+  if (text.includes("mug") || text.includes("cup")) return "/mockups/psd-master-v10/runtime-roles/mug/white/front-base.png";
+  if (text.includes("hoodie") || text.includes("sweatshirt")) return "/mockups/psd-master-v10/runtime-roles/hoodie/white/front-base.png";
+  if (text.includes("bottle") || text.includes("flask") || text.includes("tumbler")) return "/mockups/psd-master-v10/runtime-roles/waterbottle/white/front-base.png";
+  if (text.includes("cap") || text.includes("hat")) return "/mockups/psd-master-v10/runtime-roles/cap/white/front-base.png";
+  if (text.includes("long sleeve") || text.includes("longsleeve") || text.includes("long-sleeve")) return "/mockups/psd-master-v10/runtime-roles/longsleeve/white/front-base.png";
+  return "/mockups/psd-master-v10/runtime-roles/tshirt/white/front-base.png";
 }
 
 export function ProductCard({ product, index = 0, eagerImage = true }: ProductCardProps) {

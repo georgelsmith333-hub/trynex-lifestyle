@@ -20,8 +20,8 @@ export interface CompleteMockupEntry {
 
 const colors: Record<CompleteMockupFamily, readonly string[]> = {
   tshirt: ["white", "black", "navy", "maroon", "olive", "sky-blue", "grey", "red"],
-  longsleeve: ["white", "black", "navy", "maroon", "olive", "grey", "red", "sky-blue", "burgundy", "forest"],
-  hoodie: ["white", "black", "navy", "grey", "maroon", "olive", "red", "sky-blue", "forest", "burgundy"],
+  longsleeve: ["white", "black", "charcoal", "heather-grey", "navy", "royal-blue", "forest-green", "burgundy", "red", "sand"],
+  hoodie: ["white", "black", "charcoal", "heather-grey", "navy", "royal-blue", "forest-green", "burgundy", "red", "sand"],
   mug: ["white", "black", "navy", "red", "green", "purple", "sky-blue", "pink", "maroon", "orange"],
   cap: ["white", "black", "navy", "maroon", "olive", "red", "grey", "forest"],
   // This product is a white sublimation-coated aluminium blank. Do not expose
@@ -90,7 +90,7 @@ export function completeMockupEntry(family: CompleteMockupFamily, color: string,
     family,
     color,
     view,
-    assetPath: `/mockups/smart-v9/${family}/${color}/${view}.png`,
+    assetPath: `/mockups/psd-master-v10/runtime-roles/${family}/${color}/${view}-base.png`,
     sourceKey: `${family}:${color}:${view}`,
     geometry: { normalizedFrame: frames[family], printZone: zone, warp: warp[family], protectedDetails: protectedDetails[family] },
   };
@@ -111,7 +111,7 @@ export function validateCompleteMockupMatrix(): string[] {
     if (keys.has(entry.sourceKey)) errors.push(`duplicate source key: ${entry.sourceKey}`);
     keys.add(entry.sourceKey);
     if (entry.geometry.normalizedFrame.canvasWidth !== 1024 || entry.geometry.normalizedFrame.canvasHeight !== 1024) errors.push(`bad frame: ${entry.sourceKey}`);
-    if (!entry.assetPath.startsWith("/mockups/smart-v9/")) errors.push(`inactive asset path: ${entry.sourceKey}`);
+    if (!entry.assetPath.startsWith("/mockups/psd-master-v10/runtime-roles/")) errors.push(`inactive asset path: ${entry.sourceKey}`);
   }
   return errors;
 }

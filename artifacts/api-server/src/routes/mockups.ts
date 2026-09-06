@@ -51,7 +51,7 @@ function canonicalMockups() {
     description: "Canonical source-kit mockup used by the Design Studio",
     productId: null,
     productName: variant.productName,
-    imageUrl: `/mockups/smart-v4/${variant.category}/${variant.color}/${face}.png?v=smart-v4`,
+    imageUrl: `/mockups/psd-master-v10/runtime-roles/${variant.category}/${variant.color}/${face}-base.png?v=smart-v10.3`,
     thumbUrl: null,
     tags: ["source-kit", variant.category, variant.color, face],
     isActive: true,
@@ -66,7 +66,7 @@ function canonicalMockups() {
     color: variant.color,
     manifestJson: {
       schema: "trynex-photoreal-mockup-manifest/v1",
-      assetPath: `/mockups/smart-v4/${variant.category}/${variant.color}/${face}.png`,
+      assetPath: `/mockups/psd-master-v10/runtime-roles/${variant.category}/${variant.color}/${face}-base.png`,
       sourceKitKey: `${variant.category}:${variant.color}:${face}`,
       masterStatus: "verified-source-package",
       masterStorageStatus: "not-uploaded",
@@ -132,7 +132,7 @@ router.get("/mockups", async (req: Request, res: Response) => {
     // Public Design Studio consumers need a complete canonical matrix even
     // when no administrator-uploaded override rows have been ingested yet.
     // Keep valid DB overrides first, then fill only missing source-kit keys
-    // with the same smart-v4 assets used by the storefront resolver.
+    // with the same Smart v10.3 assets used by the storefront resolver.
     const existingKeys = new Set(rows.map((row) => row.sourceKitKey).filter((key): key is string => Boolean(key)));
     const canonicalFallback = canonicalMockups().filter((row) => !existingKeys.has(row.sourceKitKey));
     res.json([...rows, ...canonicalFallback]);

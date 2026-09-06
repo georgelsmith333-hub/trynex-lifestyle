@@ -10,7 +10,7 @@ export const SMART_V10_RELEASE_VERSION = "smart-v10.3" as const;
 /**
  * These are the color folders emitted by the reviewed v10.3 source-kit
  * package. Long Sleeve and Hoodie intentionally use the product-facing
- * vocabulary rather than the older v9 aliases.
+ * vocabulary rather than legacy aliases.
  */
 export const SMART_V10_COLORS: Readonly<Record<SmartMockupCategory, readonly string[]>> = {
   tshirt: ["white", "black", "navy", "maroon", "olive", "sky-blue", "grey", "red"],
