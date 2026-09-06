@@ -7,7 +7,7 @@ description: How to push to GitHub from the main agent environment, including to
 
 ## What works now
 
-`git push` and `git fetch` work when the remote URL includes a token in the HTTPS URL:
+`git push` and `git fetch` can work when the remote URL includes a token in the HTTPS URL:
 
 ```bash
 git remote set-url origin https://x-access-token:$TOKEN@github.com/OWNER/REPO.git
@@ -33,11 +33,16 @@ Replit's `replit-git-askpass` intercepts plain `https://TOKEN@github.com/...` UR
 
 ## Integration fallback
 
-Shell Git authentication can reject a stale workspace token even while the installed GitHub integration has a healthy, write-capable connection. In that case, use the integration's SDK Git Data API to create a tree, commit, and update `heads/main`; do not request or expose a token.
+Shell Git authentication can be unavailable even when Replit's secret inventory contains
+GitHub credentials, because those secrets are not necessarily exported to the Agent's
+shell. An attached GitHub integration may also not expose a helper named
+`connectorFetch` in code execution. In that case, use `listConnections("github")`
+inside a `"use impure"` function and the returned connection's `proxyFetch` method
+to call the Git Data API; do not request or expose a token.
 
 **Why:** The integration can refresh its own authorization, while environment-provided tokens can expire independently. Publishing through the SDK also avoids putting credentials in process arguments or logs.
 
-**How to apply:** Verify the current remote ref first, build the new tree from that parent, create one commit, and update the branch with `force: false`. Record the returned commit SHA and verify the branch again.
+**How to apply:** Verify the current remote ref first, build the new tree from that parent, create one commit, and update the branch with `force: false`. Record the returned commit SHA and verify the branch again. Guard each update against the SHA just read.
 
 ## Push protection
 
