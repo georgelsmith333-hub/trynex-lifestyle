@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "hoodie",
+  "color": "forest-green",
+  "view": "neck-label",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/hoodie-front.png",
+  "sourceChecksum": "7ea0c8abc3fec5205eb3dbf7339b6cab4c19c4b059ddc9c8dccf1e8b2b9f40f1",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v10/templates/hoodie/neck-label-alpha.png",
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/hoodie/forest-green/neck-label.png",
+  "baseChecksum": "a86709dacb4c8ef3b9cf275ce2036ef78533d010e52cdfbcc74c281a66c855cb",
+  "printZone": {
+    "x": 150,
+    "y": 265,
+    "w": 700,
+    "h": 470
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "neck-label-crop",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - hoodie-forest-green-neck-label",
+    "id": "1159ab00-1159-ab00-1159-ab001159ab00",
+    "placed": "1159ab00-1159-ab00-1159-ab001159ab00-placed",
+    "transform": [
+      150,
+      265,
+      850,
+      265,
+      850,
+      735,
+      150,
+      735
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/hoodie/hoodie-forest-green-neck-label.psd",
+  "masterChecksum": "52dd5fe1811920872da413243787a84ecac1ec35cb38a8477578af057cc42576",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/hoodie/forest-green/neck-label.png",
+  "previewChecksum": "45fb28781c26ac87e913b08860fce0b5db725e0194b854dd300d8f30fcea03ca",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/hoodie/forest-green/neck-label.png",
+  "proofPreviewChecksum": "d7c9dbf25655bb80ae2f826c245aee459d23bb332c7786f18f87538f6899e349",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

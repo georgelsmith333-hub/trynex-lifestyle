@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "tshirt",
+  "color": "red",
+  "view": "right-sleeve",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/tshirt-front.png",
+  "sourceChecksum": "a29d2c8865145ec47f2bc26bd01e084c74c69a0bc2e06703493fac5834e3964e",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v10/templates/tshirt/right-sleeve-alpha.png",
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/tshirt/red/right-sleeve.png",
+  "baseChecksum": "7e976387aaca7c9dcba49e1b46290352ab121d0f87d2fbfd5d8b39b955a2d911",
+  "printZone": {
+    "x": 175,
+    "y": 175,
+    "w": 650,
+    "h": 650
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "right-sleeve-polygon",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - tshirt-red-right-sleeve",
+    "id": "0f9e5e85-0f9e-5e85-0f9e-5e850f9e5e85",
+    "placed": "0f9e5e85-0f9e-5e85-0f9e-5e850f9e5e85-placed",
+    "transform": [
+      175,
+      175,
+      825,
+      175,
+      825,
+      825,
+      175,
+      825
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/tshirt/tshirt-red-right-sleeve.psd",
+  "masterChecksum": "171efc516ad585895ad9b2e442b4d18f74d14563864642920316a916125e5f13",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/tshirt/red/right-sleeve.png",
+  "previewChecksum": "51085eacb344514a5c1acd2195c72f45d9528abe92812ac39c4e7f3eda5226ac",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/tshirt/red/right-sleeve.png",
+  "proofPreviewChecksum": "77b3e8edfa1f0539377631db0dd572f869764564f7c9fd677a7d300c8632ca00",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

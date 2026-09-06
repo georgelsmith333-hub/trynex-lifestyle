@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "tshirt",
+  "color": "olive",
+  "view": "back",
+  "sourceView": "back",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/tshirt-back.png",
+  "sourceChecksum": "b4f725ce0b1f9e2256b75934a407ddf4f8e22cd1fd79df81b62a5cc78b251edb",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/tshirt/olive/back.png",
+  "baseChecksum": "3687d4396520932d7bf3404644be7de9e325c50d54f06671a0eae7f821fa773a",
+  "printZone": {
+    "x": 240,
+    "y": 185,
+    "w": 520,
+    "h": 580
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - tshirt-olive-back",
+    "id": "d0f563a9-d0f5-63a9-d0f5-63a9d0f563a9",
+    "placed": "d0f563a9-d0f5-63a9-d0f5-63a9d0f563a9-placed",
+    "transform": [
+      240,
+      185,
+      760,
+      185,
+      760,
+      765,
+      240,
+      765
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/tshirt/tshirt-olive-back.psd",
+  "masterChecksum": "09cb91675d3127a1e5e583d0853f8d29e068f39eb45049e80792a45ed5a73c15",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/tshirt/olive/back.png",
+  "previewChecksum": "1c888a866ddc9057628be4d84b3dfba76af54fb81ddf2a4d73f59ba9f04ae2d9",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/tshirt/olive/back.png",
+  "proofPreviewChecksum": "981a7eb38bc335648c60706014a95c7632a3589671f09542e0e91683a40ad2b1",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

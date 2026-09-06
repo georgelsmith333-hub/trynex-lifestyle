@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "tshirt",
+  "color": "red",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/tshirt-front.png",
+  "sourceChecksum": "23b0ff8fc51287929e8d18410acc669c319ca7e963f220ca6c351919e5c5118c",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10-v3/sources/tshirt/red/front.png",
+  "baseChecksum": "3d9a8fd5abd72ef175fdbca59ddb0c46564eee8effb801ad46b2d5ffa17b0078",
+  "printZone": {
+    "x": 240,
+    "y": 185,
+    "w": 520,
+    "h": 580
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - tshirt-red-front",
+    "id": "a5f81b7d-a5f8-1b7d-a5f8-1b7da5f81b7d",
+    "placed": "a5f81b7d-a5f8-1b7d-a5f8-1b7da5f81b7d-placed",
+    "transform": [
+      240,
+      185,
+      760,
+      185,
+      760,
+      765,
+      240,
+      765
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10-v3/masters/tshirt/tshirt-red-front.psd",
+  "masterChecksum": "549b8681cd9f475ce441d457b841dfffe12a96f5dd6a81e5770ee8bb01fa1974",
+  "previewPath": "dist-mockups/staging/smart-v10-v3/previews/tshirt/red/front.png",
+  "previewChecksum": "7b3ae36a5ae09c070e77e39337ea9ae1e16d6b22211c68ff615196d1c3d387b5",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10-v3/proof-previews/tshirt/red/front.png",
+  "proofPreviewChecksum": "cd2c415cde454d154be9f291a68295b91774894d69ebda297c58f7923a2dd6a1",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

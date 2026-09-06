@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "tshirt",
+  "color": "olive",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/tshirt-front.png",
+  "sourceChecksum": "23b0ff8fc51287929e8d18410acc669c319ca7e963f220ca6c351919e5c5118c",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10-v3/sources/tshirt/olive/front.png",
+  "baseChecksum": "f3caf27162519432db3c99ea1c6d37706b5b68c81452d5d762d8e43e0e765811",
+  "printZone": {
+    "x": 240,
+    "y": 185,
+    "w": 520,
+    "h": 580
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - tshirt-olive-front",
+    "id": "7b681d07-7b68-1d07-7b68-1d077b681d07",
+    "placed": "7b681d07-7b68-1d07-7b68-1d077b681d07-placed",
+    "transform": [
+      240,
+      185,
+      760,
+      185,
+      760,
+      765,
+      240,
+      765
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10-v3/masters/tshirt/tshirt-olive-front.psd",
+  "masterChecksum": "07d24e949c64ff62049fb9bef7099bd4b10dc13f454d247ba59104b810136648",
+  "previewPath": "dist-mockups/staging/smart-v10-v3/previews/tshirt/olive/front.png",
+  "previewChecksum": "2f62bbd244af84e196ac68e36d416c380ec45d8b10627cf52f613788abf84252",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10-v3/proof-previews/tshirt/olive/front.png",
+  "proofPreviewChecksum": "1cefb1d690a60bf66ffaf28be8c1d3f1e013f78e8f8535e3ecc8e32ce9fae03d",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

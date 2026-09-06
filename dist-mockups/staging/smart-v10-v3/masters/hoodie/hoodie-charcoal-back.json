@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "hoodie",
+  "color": "charcoal",
+  "view": "back",
+  "sourceView": "back",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/hoodie-back.png",
+  "sourceChecksum": "2a4419814642ef1044eea322f6d69ec28f172b5b5ca0471c85643ab0912f99be",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10-v3/sources/hoodie/charcoal/back.png",
+  "baseChecksum": "d4117398d5f2aacfd22e5f7949c1f023eb0b412b9aac5752ead844b8754a4554",
+  "printZone": {
+    "x": 292,
+    "y": 184,
+    "w": 416,
+    "h": 448
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - hoodie-charcoal-back",
+    "id": "2eb7e707-2eb7-e707-2eb7-e7072eb7e707",
+    "placed": "2eb7e707-2eb7-e707-2eb7-e7072eb7e707-placed",
+    "transform": [
+      292,
+      184,
+      708,
+      184,
+      708,
+      632,
+      292,
+      632
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10-v3/masters/hoodie/hoodie-charcoal-back.psd",
+  "masterChecksum": "76e496bac2e528208fcc35159820394f1bec9676375f2f685de946d17c3da79c",
+  "previewPath": "dist-mockups/staging/smart-v10-v3/previews/hoodie/charcoal/back.png",
+  "previewChecksum": "2d79bb8385a328479eabe1ee6f6838a9a22f0a1f79da195aaabbe930521db377",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10-v3/proof-previews/hoodie/charcoal/back.png",
+  "proofPreviewChecksum": "b7dc11147238932cc8d98f8dd919fba739c59062629c56aeaabe48b0e0f393eb",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

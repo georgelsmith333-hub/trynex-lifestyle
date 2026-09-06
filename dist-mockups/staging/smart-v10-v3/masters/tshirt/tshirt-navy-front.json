@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "tshirt",
+  "color": "navy",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/tshirt-front.png",
+  "sourceChecksum": "23b0ff8fc51287929e8d18410acc669c319ca7e963f220ca6c351919e5c5118c",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10-v3/sources/tshirt/navy/front.png",
+  "baseChecksum": "4c43885730e3bb9a9a59ac1f5e0e2f10cc4c674d294c9aa4bb9c34cae555933a",
+  "printZone": {
+    "x": 240,
+    "y": 185,
+    "w": 520,
+    "h": 580
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - tshirt-navy-front",
+    "id": "6125b468-6125-b468-6125-b4686125b468",
+    "placed": "6125b468-6125-b468-6125-b4686125b468-placed",
+    "transform": [
+      240,
+      185,
+      760,
+      185,
+      760,
+      765,
+      240,
+      765
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10-v3/masters/tshirt/tshirt-navy-front.psd",
+  "masterChecksum": "c99272df98d44f08f9916975c926830f18a34547ab59493e8906a87ad58ba766",
+  "previewPath": "dist-mockups/staging/smart-v10-v3/previews/tshirt/navy/front.png",
+  "previewChecksum": "746fed804d5ab752a08287bdc0d68154d44324ac96bcf46e55dc75449ef4fb31",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10-v3/proof-previews/tshirt/navy/front.png",
+  "proofPreviewChecksum": "75c0b2e28dde8dd751c422270b714618af802b54895ac0fc0fa114cb995462d3",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

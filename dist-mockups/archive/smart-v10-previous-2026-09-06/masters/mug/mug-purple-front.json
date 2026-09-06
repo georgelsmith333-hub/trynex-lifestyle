@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "mug",
+  "color": "purple",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/mug-front.png",
+  "sourceChecksum": "11c1a362880cb265767359ef353d59cbbcb069b1578de63345cbcecbde672540",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/mug/purple/front.png",
+  "baseChecksum": "108059ab4fc2ff63749fa2561282c247ab9e364d52e8734e12a0b4bd1ac08733",
+  "printZone": {
+    "x": 165,
+    "y": 220,
+    "w": 475,
+    "h": 580
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "cylinder",
+    "curvature": 0.16,
+    "seamPadding": 0.035,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - mug-purple-front",
+    "id": "94ea16bb-94ea-16bb-94ea-16bb94ea16bb",
+    "placed": "94ea16bb-94ea-16bb-94ea-16bb94ea16bb-placed",
+    "transform": [
+      165,
+      220,
+      640,
+      220,
+      640,
+      800,
+      165,
+      800
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/mug/mug-purple-front.psb",
+  "masterChecksum": "a0814b490d27bf7472e0e4740681de6f566fc5dc3b34b9b07c55d20f901144ed",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/mug/purple/front.png",
+  "previewChecksum": "809c7676de104c5844fd8fbcddea949df71ff41713f0994f1166cfacfa3ca42f",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/mug/purple/front.png",
+  "proofPreviewChecksum": "351b1456371cdf8f4b68e0d8fb2efdcf0abed72dffe8934aef8982bc0cb6b8a7",
+  "masterFormat": "psb",
+  "reviewStatus": "candidate"
+}

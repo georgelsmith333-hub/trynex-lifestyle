@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "hoodie",
+  "color": "burgundy",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/hoodie-front.png",
+  "sourceChecksum": "7ea0c8abc3fec5205eb3dbf7339b6cab4c19c4b059ddc9c8dccf1e8b2b9f40f1",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/hoodie/burgundy/front.png",
+  "baseChecksum": "fdb2a26ba6e71a3a4e78a34f0ad7c48ec3fbe24c4f3e2914c9c78896a47a1486",
+  "printZone": {
+    "x": 240,
+    "y": 270,
+    "w": 520,
+    "h": 400
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - hoodie-burgundy-front",
+    "id": "c0638cf2-c063-8cf2-c063-8cf2c0638cf2",
+    "placed": "c0638cf2-c063-8cf2-c063-8cf2c0638cf2-placed",
+    "transform": [
+      240,
+      270,
+      760,
+      270,
+      760,
+      670,
+      240,
+      670
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/hoodie/hoodie-burgundy-front.psd",
+  "masterChecksum": "44c048d73eb4cf6b6f83aa4e0cd56020909cd4a2ad40a88e4bdcb9d35f709c9b",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/hoodie/burgundy/front.png",
+  "previewChecksum": "3cf437b029664438ab46c68f26563b923928a9926494e2735ff5e4ee41682c56",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/hoodie/burgundy/front.png",
+  "proofPreviewChecksum": "056444ff4f441a59eedc1b1caa36e68e9127dae93ac274fe772b2e0957b041df",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

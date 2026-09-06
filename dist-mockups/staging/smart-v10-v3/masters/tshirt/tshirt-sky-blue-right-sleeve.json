@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "tshirt",
+  "color": "sky-blue",
+  "view": "right-sleeve",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/tshirt-front.png",
+  "sourceChecksum": "23b0ff8fc51287929e8d18410acc669c319ca7e963f220ca6c351919e5c5118c",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v10-v3/templates/tshirt/right-sleeve-alpha.png",
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10-v3/sources/tshirt/sky-blue/right-sleeve.png",
+  "baseChecksum": "f6a864cde4082e4710d041990139faa800c0e8b36ef07cb9944e92f7c4f3722e",
+  "printZone": {
+    "x": 175,
+    "y": 175,
+    "w": 650,
+    "h": 650
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "right-sleeve-polygon",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - tshirt-sky-blue-right-sleeve",
+    "id": "2eb49cea-2eb4-9cea-2eb4-9cea2eb49cea",
+    "placed": "2eb49cea-2eb4-9cea-2eb4-9cea2eb49cea-placed",
+    "transform": [
+      175,
+      175,
+      825,
+      175,
+      825,
+      825,
+      175,
+      825
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10-v3/masters/tshirt/tshirt-sky-blue-right-sleeve.psd",
+  "masterChecksum": "788ca83e66c74f889bb486291684e035247443bcbb51db7bec58df50e7ce4ecc",
+  "previewPath": "dist-mockups/staging/smart-v10-v3/previews/tshirt/sky-blue/right-sleeve.png",
+  "previewChecksum": "0df1be97fc4717897b42b42bd530278409a0aee89b092916c17b0d234aa85fc3",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10-v3/proof-previews/tshirt/sky-blue/right-sleeve.png",
+  "proofPreviewChecksum": "9ce92abbe30ea3544a578b6911c8a567f3003af3746a2c65ec3ea8ed6a5a85e9",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

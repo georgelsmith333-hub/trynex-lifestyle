@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "hoodie",
+  "color": "white",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/hoodie-front.png",
+  "sourceChecksum": "7ea0c8abc3fec5205eb3dbf7339b6cab4c19c4b059ddc9c8dccf1e8b2b9f40f1",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/hoodie/white/front.png",
+  "baseChecksum": "09feb8cad7b12329d28425eef81ec2decceab37de0d1efe69bfd7c30d801ccb2",
+  "printZone": {
+    "x": 240,
+    "y": 270,
+    "w": 520,
+    "h": 400
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - hoodie-white-front",
+    "id": "0597df0b-0597-df0b-0597-df0b0597df0b",
+    "placed": "0597df0b-0597-df0b-0597-df0b0597df0b-placed",
+    "transform": [
+      240,
+      270,
+      760,
+      270,
+      760,
+      670,
+      240,
+      670
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/hoodie/hoodie-white-front.psd",
+  "masterChecksum": "55bb41ee35a4e67a62755a24f4778747f0d51628009b70599dfee7a659c04a10",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/hoodie/white/front.png",
+  "previewChecksum": "2de9511e60204c05b62c7b3555c5ebf4b522ffe23d432c96612e651c7f7e5c08",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/hoodie/white/front.png",
+  "proofPreviewChecksum": "d1066be8aee8316ca1eb131bdaa3f24923b290376622fe9c2241ec722c87cdd9",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "longsleeve",
+  "color": "black",
+  "view": "neck-label",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/longsleeve-front.png",
+  "sourceChecksum": "414c6d22cc87a8d02a6db8ea608ad1a3d98653a4ad89803a9fe9e25b29b52cb7",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v10/templates/longsleeve/neck-label-alpha.png",
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/longsleeve/black/neck-label.png",
+  "baseChecksum": "e8d44be37beb0e26d6b52ab6228acbffa864041e7e570c62d9085c26ea084a59",
+  "printZone": {
+    "x": 150,
+    "y": 265,
+    "w": 700,
+    "h": 470
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "neck-label-crop",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - longsleeve-black-neck-label",
+    "id": "9e8d9042-9e8d-9042-9e8d-90429e8d9042",
+    "placed": "9e8d9042-9e8d-9042-9e8d-90429e8d9042-placed",
+    "transform": [
+      150,
+      265,
+      850,
+      265,
+      850,
+      735,
+      150,
+      735
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/longsleeve/longsleeve-black-neck-label.psd",
+  "masterChecksum": "8f45101e9c701974baab6711934e57ca3ee26b108d2d69db8815e900cce4833d",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/longsleeve/black/neck-label.png",
+  "previewChecksum": "a5990412cbeaaa9eae19b3ad84ce7fef7e44ddb97b7357d516de650298aaa2a5",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/longsleeve/black/neck-label.png",
+  "proofPreviewChecksum": "a33bc45b067ece54f114549e80e01cb761b98e4955103cb4b52dd9e1ea0e0a16",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

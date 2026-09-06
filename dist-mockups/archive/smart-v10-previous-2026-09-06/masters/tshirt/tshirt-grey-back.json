@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "tshirt",
+  "color": "grey",
+  "view": "back",
+  "sourceView": "back",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/tshirt-back.png",
+  "sourceChecksum": "b4f725ce0b1f9e2256b75934a407ddf4f8e22cd1fd79df81b62a5cc78b251edb",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/tshirt/grey/back.png",
+  "baseChecksum": "f2ccdda8e4a8bc05bd1d0ba5c099556fc080d6afe36d2474deb689438550d7ea",
+  "printZone": {
+    "x": 240,
+    "y": 185,
+    "w": 520,
+    "h": 580
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - tshirt-grey-back",
+    "id": "07b6fd1f-07b6-fd1f-07b6-fd1f07b6fd1f",
+    "placed": "07b6fd1f-07b6-fd1f-07b6-fd1f07b6fd1f-placed",
+    "transform": [
+      240,
+      185,
+      760,
+      185,
+      760,
+      765,
+      240,
+      765
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/tshirt/tshirt-grey-back.psd",
+  "masterChecksum": "efc9f6184460887f0c95b09eba6262260a9d00f963a3bc671bff2eacf298cc44",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/tshirt/grey/back.png",
+  "previewChecksum": "997bb3141ead184bc78f4b34f2da8fca4ad87050c4b1d1a067b47f0fdf549bcc",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/tshirt/grey/back.png",
+  "proofPreviewChecksum": "16220d02cb6bc0cca610db1b23e9c87376418a9bab86eea94a3afc39c360ad73",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

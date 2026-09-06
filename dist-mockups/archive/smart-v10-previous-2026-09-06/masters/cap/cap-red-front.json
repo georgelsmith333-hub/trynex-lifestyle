@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "cap",
+  "color": "red",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/cap-front.png",
+  "sourceChecksum": "8a8d2a5e4f3a4d4454a559538eaf49b2fba71099f86c07212e47cd623c12cac8",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/cap/red/front.png",
+  "baseChecksum": "d6c26a423a9b8f9d58582b4e5c1e5070d86946bd5e8b806007d4646936d36a58",
+  "printZone": {
+    "x": 240,
+    "y": 260,
+    "w": 540,
+    "h": 320
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "cap-panel",
+    "curvature": 0.1,
+    "seamPadding": 0.025,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - cap-red-front",
+    "id": "064c08e3-064c-08e3-064c-08e3064c08e3",
+    "placed": "064c08e3-064c-08e3-064c-08e3064c08e3-placed",
+    "transform": [
+      240,
+      260,
+      780,
+      260,
+      780,
+      580,
+      240,
+      580
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/cap/cap-red-front.psd",
+  "masterChecksum": "be345f694796519241a0b0b3e65f9f8bc997a5bc38fee1cd9261e44259e27646",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/cap/red/front.png",
+  "previewChecksum": "9657c4a619d7a9a1d8136ae9fb4eb9f548c0ad6f55f08a49f6048b3babe80459",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/cap/red/front.png",
+  "proofPreviewChecksum": "0ea6d322d66a3fed7c0c9eb285fe549016806122f48f1a865833718df3861116",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

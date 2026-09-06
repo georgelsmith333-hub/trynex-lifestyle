@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "cap",
+  "color": "red",
+  "view": "back",
+  "sourceView": "back",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/cap-back.png",
+  "sourceChecksum": "24adfe8f94ece3943dff91d2490163583ea47b75e54033fa8e59b5be947d7ae0",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/cap/red/back.png",
+  "baseChecksum": "edf3b2b12b38e67f9edc682f4ca563f3ff90311d680d13410c7e7a7761a14dee",
+  "printZone": {
+    "x": 285,
+    "y": 270,
+    "w": 430,
+    "h": 230
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "cap-panel",
+    "curvature": 0.1,
+    "seamPadding": 0.025,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - cap-red-back",
+    "id": "ee368c4d-ee36-8c4d-ee36-8c4dee368c4d",
+    "placed": "ee368c4d-ee36-8c4d-ee36-8c4dee368c4d-placed",
+    "transform": [
+      285,
+      270,
+      715,
+      270,
+      715,
+      500,
+      285,
+      500
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/cap/cap-red-back.psd",
+  "masterChecksum": "046a2291f2c36b17755047da66c27ce5c610149868686a44ef2f725a86d0d579",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/cap/red/back.png",
+  "previewChecksum": "69d4b22dffa33863c0514baabd4f5b095b66fbb8fbdf5f6d0c8dd9c1b1105eec",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/cap/red/back.png",
+  "proofPreviewChecksum": "b3e13ea74f3756eecdf3e013d3c0dc5d6b869b03267115d2df5df53e299dc9f1",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

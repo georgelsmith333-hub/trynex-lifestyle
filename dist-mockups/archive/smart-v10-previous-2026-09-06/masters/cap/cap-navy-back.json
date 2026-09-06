@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "cap",
+  "color": "navy",
+  "view": "back",
+  "sourceView": "back",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/cap-back.png",
+  "sourceChecksum": "24adfe8f94ece3943dff91d2490163583ea47b75e54033fa8e59b5be947d7ae0",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/cap/navy/back.png",
+  "baseChecksum": "3aec8e34c88d9f6a408c581316bb5e351e5a7942ad9e37a439d0cc9452b0565a",
+  "printZone": {
+    "x": 285,
+    "y": 270,
+    "w": 430,
+    "h": 230
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "cap-panel",
+    "curvature": 0.1,
+    "seamPadding": 0.025,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - cap-navy-back",
+    "id": "59bac98e-59ba-c98e-59ba-c98e59bac98e",
+    "placed": "59bac98e-59ba-c98e-59ba-c98e59bac98e-placed",
+    "transform": [
+      285,
+      270,
+      715,
+      270,
+      715,
+      500,
+      285,
+      500
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/cap/cap-navy-back.psd",
+  "masterChecksum": "079ef80aabc48c95b16c4f2388d184585633d66f1feecb1630b005ae7bb17f15",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/cap/navy/back.png",
+  "previewChecksum": "42f482c235e9e0bb9043d5df8cc2b2ed6a3195215646eb979a2b37f4cde4bebb",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/cap/navy/back.png",
+  "proofPreviewChecksum": "55b825d8641e6f34b5179086d711f4bac262512edbc5cb4b899782014a7c3b6a",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

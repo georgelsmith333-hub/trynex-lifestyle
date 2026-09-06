@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "cap",
+  "color": "forest",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/cap-front.png",
+  "sourceChecksum": "4095c8057a6c726aedb2408add5da1f5a6f7a6bdded73ef4f7826afd2f737e59",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10-v3/sources/cap/forest/front.png",
+  "baseChecksum": "5d34a18e2da5f924ceb96d6d0b4bb73e1af7af545840cb01787dcb86c00edf59",
+  "printZone": {
+    "x": 240,
+    "y": 260,
+    "w": 540,
+    "h": 320
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "cap-panel",
+    "curvature": 0.1,
+    "seamPadding": 0.025,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - cap-forest-front",
+    "id": "8351fa29-8351-fa29-8351-fa298351fa29",
+    "placed": "8351fa29-8351-fa29-8351-fa298351fa29-placed",
+    "transform": [
+      240,
+      260,
+      780,
+      260,
+      780,
+      580,
+      240,
+      580
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10-v3/masters/cap/cap-forest-front.psd",
+  "masterChecksum": "ef48efe8c922859e35398ac4c19cba8968a690a79c9ee9b0a67ca98273d5a865",
+  "previewPath": "dist-mockups/staging/smart-v10-v3/previews/cap/forest/front.png",
+  "previewChecksum": "8726eb7998b966159c8542bca06b3069d8b80a336422d7eb14420d4b298f4e39",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10-v3/proof-previews/cap/forest/front.png",
+  "proofPreviewChecksum": "7eee60a694fdcd608cc9e9a3420f7e3c0086ec676b180050beb8c4196ab5d266",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

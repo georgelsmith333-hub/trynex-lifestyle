@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "longsleeve",
+  "color": "heather-grey",
+  "view": "neck-label",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/longsleeve-front.png",
+  "sourceChecksum": "414c6d22cc87a8d02a6db8ea608ad1a3d98653a4ad89803a9fe9e25b29b52cb7",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v10/templates/longsleeve/neck-label-alpha.png",
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/longsleeve/heather-grey/neck-label.png",
+  "baseChecksum": "8ad29b23773c4e1f3a2c79730dc3eacb42016a07c7fed35e250f17bdaade0c50",
+  "printZone": {
+    "x": 150,
+    "y": 265,
+    "w": 700,
+    "h": 470
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "neck-label-crop",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - longsleeve-heather-grey-neck-label",
+    "id": "6db5dc38-6db5-dc38-6db5-dc386db5dc38",
+    "placed": "6db5dc38-6db5-dc38-6db5-dc386db5dc38-placed",
+    "transform": [
+      150,
+      265,
+      850,
+      265,
+      850,
+      735,
+      150,
+      735
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/longsleeve/longsleeve-heather-grey-neck-label.psd",
+  "masterChecksum": "f9e4514a6f0fa79ee64a9a0352385efe56823a2b343fc37eabcb0417b4eff5d2",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/longsleeve/heather-grey/neck-label.png",
+  "previewChecksum": "f71a4a13e415f0200e6e4adb5630b57cb145639f8d8264d9dcd0de94eb44cb80",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/longsleeve/heather-grey/neck-label.png",
+  "proofPreviewChecksum": "2592d74b2de42c58d200f2d29af0ea9130eef6a7448ce2f361c186b9ca15e6fb",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

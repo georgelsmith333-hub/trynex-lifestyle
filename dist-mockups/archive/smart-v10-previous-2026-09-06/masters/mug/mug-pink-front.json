@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "mug",
+  "color": "pink",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/mug-front.png",
+  "sourceChecksum": "11c1a362880cb265767359ef353d59cbbcb069b1578de63345cbcecbde672540",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/mug/pink/front.png",
+  "baseChecksum": "fee9f55e00f805c0ac0b0ad50a27a4c9fb984ed88487a8e2b931b9a2a5ed437e",
+  "printZone": {
+    "x": 165,
+    "y": 220,
+    "w": 475,
+    "h": 580
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "cylinder",
+    "curvature": 0.16,
+    "seamPadding": 0.035,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - mug-pink-front",
+    "id": "1c96e3f5-1c96-e3f5-1c96-e3f51c96e3f5",
+    "placed": "1c96e3f5-1c96-e3f5-1c96-e3f51c96e3f5-placed",
+    "transform": [
+      165,
+      220,
+      640,
+      220,
+      640,
+      800,
+      165,
+      800
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/mug/mug-pink-front.psb",
+  "masterChecksum": "6aca1e369b7b6a7ef522579f0be83a8625ee89220f6a14d25540db8a1197bed3",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/mug/pink/front.png",
+  "previewChecksum": "48e2b18659a6dcda89f98c85ccc041b52dad346c2c274ec8ae3abf24c6b62fe6",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/mug/pink/front.png",
+  "proofPreviewChecksum": "ab82e57f49edc85e53f6d70703669e7c7f5b03d67f71546bf511b9d777628fb1",
+  "masterFormat": "psb",
+  "reviewStatus": "candidate"
+}

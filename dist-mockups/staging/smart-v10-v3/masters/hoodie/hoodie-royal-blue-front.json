@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "hoodie",
+  "color": "royal-blue",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/hoodie-front.png",
+  "sourceChecksum": "6c41c227474c9603c115af7a309252458b26de744e0918b65850a0722edc2c24",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10-v3/sources/hoodie/royal-blue/front.png",
+  "baseChecksum": "f4a4e94d4c51aea749ac4381c45df4b827db7bd124d290b9720c34a5f407bae7",
+  "printZone": {
+    "x": 240,
+    "y": 270,
+    "w": 520,
+    "h": 400
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - hoodie-royal-blue-front",
+    "id": "83d821dc-83d8-21dc-83d8-21dc83d821dc",
+    "placed": "83d821dc-83d8-21dc-83d8-21dc83d821dc-placed",
+    "transform": [
+      240,
+      270,
+      760,
+      270,
+      760,
+      670,
+      240,
+      670
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10-v3/masters/hoodie/hoodie-royal-blue-front.psd",
+  "masterChecksum": "4d511592a816d8987c621851f506bcb8156a675557f2f1f9e75bd592ebdc24f6",
+  "previewPath": "dist-mockups/staging/smart-v10-v3/previews/hoodie/royal-blue/front.png",
+  "previewChecksum": "301c50924c3ba049ff7ac4acb5af618486f8879cd3f90a24da296084e5c61d25",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10-v3/proof-previews/hoodie/royal-blue/front.png",
+  "proofPreviewChecksum": "4c415754c74491850987ee162090fccd5cff52c2f930c42718581f28ee0ec480",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

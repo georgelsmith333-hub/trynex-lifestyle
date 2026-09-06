@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "hoodie",
+  "color": "navy",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/hoodie-front.png",
+  "sourceChecksum": "7ea0c8abc3fec5205eb3dbf7339b6cab4c19c4b059ddc9c8dccf1e8b2b9f40f1",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/hoodie/navy/front.png",
+  "baseChecksum": "dae02864bfec45f0e23626a6d0741d29803ec5f1f732c0e940a9522ecf309846",
+  "printZone": {
+    "x": 240,
+    "y": 270,
+    "w": 520,
+    "h": 400
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - hoodie-navy-front",
+    "id": "db2ff872-db2f-f872-db2f-f872db2ff872",
+    "placed": "db2ff872-db2f-f872-db2f-f872db2ff872-placed",
+    "transform": [
+      240,
+      270,
+      760,
+      270,
+      760,
+      670,
+      240,
+      670
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/hoodie/hoodie-navy-front.psd",
+  "masterChecksum": "3d7d908548746a9c1c034ef32a8885a71ad85433bc8abf3ff0a7aace6ae945b5",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/hoodie/navy/front.png",
+  "previewChecksum": "82fc7052df899f75e62a0da30d83dc3c5576dab122a1c14439fc3c291a7e9964",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/hoodie/navy/front.png",
+  "proofPreviewChecksum": "2feed1320b3ce842951af2c33b907931560f030f0b0f76d7bdfb66cc6fd40f77",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

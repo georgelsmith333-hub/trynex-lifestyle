@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "tshirt",
+  "color": "white",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/tshirt-front.png",
+  "sourceChecksum": "23b0ff8fc51287929e8d18410acc669c319ca7e963f220ca6c351919e5c5118c",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10-v3/sources/tshirt/white/front.png",
+  "baseChecksum": "b770a1ed674ceb22b6230e1448d36e9fcdc1465cee33caa8bd1e5d738f595f3d",
+  "printZone": {
+    "x": 240,
+    "y": 185,
+    "w": 520,
+    "h": 580
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - tshirt-white-front",
+    "id": "3e59a1d5-3e59-a1d5-3e59-a1d53e59a1d5",
+    "placed": "3e59a1d5-3e59-a1d5-3e59-a1d53e59a1d5-placed",
+    "transform": [
+      240,
+      185,
+      760,
+      185,
+      760,
+      765,
+      240,
+      765
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10-v3/masters/tshirt/tshirt-white-front.psd",
+  "masterChecksum": "44e479c0979069136fed39ca9c4bb5dc9817e2426453d708805540b80f996495",
+  "previewPath": "dist-mockups/staging/smart-v10-v3/previews/tshirt/white/front.png",
+  "previewChecksum": "6b8e6c4fdc40555bf6456b1bdac8f87b865964004298108056c03cc985d5fca8",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10-v3/proof-previews/tshirt/white/front.png",
+  "proofPreviewChecksum": "89a86e9e98f9267bcc3f8694a84589b9f28cb313d61875f5fb7ce63a03e84093",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

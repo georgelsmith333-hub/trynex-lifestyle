@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "longsleeve",
+  "color": "royal-blue",
+  "view": "left-sleeve",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/longsleeve-front.png",
+  "sourceChecksum": "414c6d22cc87a8d02a6db8ea608ad1a3d98653a4ad89803a9fe9e25b29b52cb7",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v10/templates/longsleeve/left-sleeve-alpha.png",
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/longsleeve/royal-blue/left-sleeve.png",
+  "baseChecksum": "40111994b977c2068cd23409ae7eebc4d65d146e88125822d57af8844683c624",
+  "printZone": {
+    "x": 175,
+    "y": 175,
+    "w": 650,
+    "h": 650
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "left-sleeve-polygon",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - longsleeve-royal-blue-left-sleeve",
+    "id": "fd028635-fd02-8635-fd02-8635fd028635",
+    "placed": "fd028635-fd02-8635-fd02-8635fd028635-placed",
+    "transform": [
+      175,
+      175,
+      825,
+      175,
+      825,
+      825,
+      175,
+      825
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/longsleeve/longsleeve-royal-blue-left-sleeve.psd",
+  "masterChecksum": "9512f7f2839e8bbc1c5fcec6790c00986cc8743ed66ed737837b0f3600c13d79",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/longsleeve/royal-blue/left-sleeve.png",
+  "previewChecksum": "a2038b4a1c481846f6493b4686f28d5232ac53644a8c72fbc56cfc0ef4bfa147",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/longsleeve/royal-blue/left-sleeve.png",
+  "proofPreviewChecksum": "4bccf5b7f724d4f48a0a416dc2cfa4611ef5427a66a59c24f60bbffcf3e97541",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

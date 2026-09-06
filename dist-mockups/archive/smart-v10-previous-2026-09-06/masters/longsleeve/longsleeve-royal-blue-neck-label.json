@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "longsleeve",
+  "color": "royal-blue",
+  "view": "neck-label",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/longsleeve-front.png",
+  "sourceChecksum": "414c6d22cc87a8d02a6db8ea608ad1a3d98653a4ad89803a9fe9e25b29b52cb7",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v10/templates/longsleeve/neck-label-alpha.png",
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/longsleeve/royal-blue/neck-label.png",
+  "baseChecksum": "d0a9ca57788288dffc867d135363e0c6db92fc6b83338a91776373946044def7",
+  "printZone": {
+    "x": 150,
+    "y": 265,
+    "w": 700,
+    "h": 470
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "neck-label-crop",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - longsleeve-royal-blue-neck-label",
+    "id": "4fe9bdff-4fe9-bdff-4fe9-bdff4fe9bdff",
+    "placed": "4fe9bdff-4fe9-bdff-4fe9-bdff4fe9bdff-placed",
+    "transform": [
+      150,
+      265,
+      850,
+      265,
+      850,
+      735,
+      150,
+      735
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/longsleeve/longsleeve-royal-blue-neck-label.psd",
+  "masterChecksum": "7e5232a0556ef1969c50b005dde3bc6c76d0231b556ab9b3192884e8f5c0e143",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/longsleeve/royal-blue/neck-label.png",
+  "previewChecksum": "002fd297f77a64004d925256916465162841ee11a4d982aaf5755870a54a4890",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/longsleeve/royal-blue/neck-label.png",
+  "proofPreviewChecksum": "9c9e27723d8c5c99335f7c49c64be0c9bdd8496d22455bb29e527336188a746c",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "hoodie",
+  "color": "sand",
+  "view": "right-sleeve",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/hoodie-front.png",
+  "sourceChecksum": "7ea0c8abc3fec5205eb3dbf7339b6cab4c19c4b059ddc9c8dccf1e8b2b9f40f1",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v10/templates/hoodie/right-sleeve-alpha.png",
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/hoodie/sand/right-sleeve.png",
+  "baseChecksum": "24fede689116325f512d5dff5b5565a81ddb92a3377508dc7a688ce00983b2cb",
+  "printZone": {
+    "x": 175,
+    "y": 175,
+    "w": 650,
+    "h": 650
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "right-sleeve-polygon",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - hoodie-sand-right-sleeve",
+    "id": "f37d00e2-f37d-00e2-f37d-00e2f37d00e2",
+    "placed": "f37d00e2-f37d-00e2-f37d-00e2f37d00e2-placed",
+    "transform": [
+      175,
+      175,
+      825,
+      175,
+      825,
+      825,
+      175,
+      825
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/hoodie/hoodie-sand-right-sleeve.psd",
+  "masterChecksum": "88c079669faada56896b24a192caf1f6a9b0cbe576d08a1490be26080b7239ee",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/hoodie/sand/right-sleeve.png",
+  "previewChecksum": "17ea2c02b6757a4d1902accb1b196f4b386784fd9646755eac3e0dc8fda1a22d",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/hoodie/sand/right-sleeve.png",
+  "proofPreviewChecksum": "a20f4657247625d0fdcde2046328615d8b91dad292ab2c552484d330129d0290",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

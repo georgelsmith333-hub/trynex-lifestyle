@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "tshirt",
+  "color": "black",
+  "view": "back",
+  "sourceView": "back",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/tshirt-back.png",
+  "sourceChecksum": "b4f725ce0b1f9e2256b75934a407ddf4f8e22cd1fd79df81b62a5cc78b251edb",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/tshirt/black/back.png",
+  "baseChecksum": "c9d9bb7c5cce800a28616359cea953cbacf6a17ef7a8ec3bac13d65625ae8931",
+  "printZone": {
+    "x": 240,
+    "y": 185,
+    "w": 520,
+    "h": 580
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - tshirt-black-back",
+    "id": "0bbc2605-0bbc-2605-0bbc-26050bbc2605",
+    "placed": "0bbc2605-0bbc-2605-0bbc-26050bbc2605-placed",
+    "transform": [
+      240,
+      185,
+      760,
+      185,
+      760,
+      765,
+      240,
+      765
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/tshirt/tshirt-black-back.psd",
+  "masterChecksum": "df34ab9928c1db39452cf363367436df52822bf58d7c71b5ce084c8ec8c6e6ed",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/tshirt/black/back.png",
+  "previewChecksum": "32cd7e18c15bc4a8cdcacca0e9ce9235e675e6fad4e1a7a4c2ccab1e2ef39ded",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/tshirt/black/back.png",
+  "proofPreviewChecksum": "0548daf55bd83b95b34743f1c5616d756b94cf6dadfecefdc88c2b3f2e73db12",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

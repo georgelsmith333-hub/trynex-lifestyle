@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "tshirt",
+  "color": "white",
+  "view": "neck-label",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/tshirt-front.png",
+  "sourceChecksum": "a29d2c8865145ec47f2bc26bd01e084c74c69a0bc2e06703493fac5834e3964e",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v10/templates/tshirt/neck-label-alpha.png",
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/tshirt/white/neck-label.png",
+  "baseChecksum": "0945a9c41e86d85c6432ef5b435cf96f02521ae85e3b4fd1ac5a433b5e05c178",
+  "printZone": {
+    "x": 150,
+    "y": 265,
+    "w": 700,
+    "h": 470
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "neck-label-crop",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - tshirt-white-neck-label",
+    "id": "028347ba-0283-47ba-0283-47ba028347ba",
+    "placed": "028347ba-0283-47ba-0283-47ba028347ba-placed",
+    "transform": [
+      150,
+      265,
+      850,
+      265,
+      850,
+      735,
+      150,
+      735
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/tshirt/tshirt-white-neck-label.psd",
+  "masterChecksum": "8f8a1d33585401c56f7c4c44120576a7d514ca503bb6b03abd221c8aaaf96248",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/tshirt/white/neck-label.png",
+  "previewChecksum": "0a23896d499f6fbbcd1ee5f1cd6d241b765fe5a2668597ba0e517856ee25b19d",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/tshirt/white/neck-label.png",
+  "proofPreviewChecksum": "57f5dd3ab143075ed4afe3b047bd7fcbe8e0208c6bbb29b172cb056a10d91961",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

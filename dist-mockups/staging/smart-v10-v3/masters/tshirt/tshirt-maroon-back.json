@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "tshirt",
+  "color": "maroon",
+  "view": "back",
+  "sourceView": "back",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/tshirt-back.png",
+  "sourceChecksum": "4e136d6d74174d88c19989dbfcb3f87c6496f3d17e38e6a27ad0d8b4cc6cf30e",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10-v3/sources/tshirt/maroon/back.png",
+  "baseChecksum": "fdf38ba11e8867a3d38607d56f961c66998a9adfe51b6c96755a7284622d0059",
+  "printZone": {
+    "x": 240,
+    "y": 185,
+    "w": 520,
+    "h": 580
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - tshirt-maroon-back",
+    "id": "0556596e-0556-596e-0556-596e0556596e",
+    "placed": "0556596e-0556-596e-0556-596e0556596e-placed",
+    "transform": [
+      240,
+      185,
+      760,
+      185,
+      760,
+      765,
+      240,
+      765
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10-v3/masters/tshirt/tshirt-maroon-back.psd",
+  "masterChecksum": "1dcc3899cf4928ad29e42225421f6362efc7e39b397b63c7d23494dcc45d93ce",
+  "previewPath": "dist-mockups/staging/smart-v10-v3/previews/tshirt/maroon/back.png",
+  "previewChecksum": "63158bdb4fe519609db5ebbe157ed3fbdb8ebadbe854ff877cebf9183d7c2574",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10-v3/proof-previews/tshirt/maroon/back.png",
+  "proofPreviewChecksum": "ba11a76c903b138389c25ab2eacb691e65dc846ddb79d106c96d445f11372f8a",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

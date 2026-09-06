@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "mug",
+  "color": "maroon",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/mug-front.png",
+  "sourceChecksum": "11c1a362880cb265767359ef353d59cbbcb069b1578de63345cbcecbde672540",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/mug/maroon/front.png",
+  "baseChecksum": "efeaf0fdef8771230f978442ef99ad1efa14af478a1813c75f854e59d35726c8",
+  "printZone": {
+    "x": 165,
+    "y": 220,
+    "w": 475,
+    "h": 580
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "cylinder",
+    "curvature": 0.16,
+    "seamPadding": 0.035,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - mug-maroon-front",
+    "id": "07267a6f-0726-7a6f-0726-7a6f07267a6f",
+    "placed": "07267a6f-0726-7a6f-0726-7a6f07267a6f-placed",
+    "transform": [
+      165,
+      220,
+      640,
+      220,
+      640,
+      800,
+      165,
+      800
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/mug/mug-maroon-front.psb",
+  "masterChecksum": "be8333eaa70774346334acf2feb12a0a098921a47e43921a256e01ae0df306cc",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/mug/maroon/front.png",
+  "previewChecksum": "d834d89eac393c15c5e6e33c1debd9736f533431542706b06cb5073ce361546e",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/mug/maroon/front.png",
+  "proofPreviewChecksum": "e00c9743c000c2b2376c666807bf713b944b41213e4dfc23a10c7f0ac2610f62",
+  "masterFormat": "psb",
+  "reviewStatus": "candidate"
+}

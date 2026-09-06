@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "longsleeve",
+  "color": "black",
+  "view": "right-sleeve",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/longsleeve-front.png",
+  "sourceChecksum": "414c6d22cc87a8d02a6db8ea608ad1a3d98653a4ad89803a9fe9e25b29b52cb7",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v10/templates/longsleeve/right-sleeve-alpha.png",
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/longsleeve/black/right-sleeve.png",
+  "baseChecksum": "097f9533b3f416b47a033c5ad5a6a9ff5026c3b33e4c0c439c2c2b4d98b5b11d",
+  "printZone": {
+    "x": 175,
+    "y": 175,
+    "w": 650,
+    "h": 650
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "right-sleeve-polygon",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - longsleeve-black-right-sleeve",
+    "id": "cd9bcbb5-cd9b-cbb5-cd9b-cbb5cd9bcbb5",
+    "placed": "cd9bcbb5-cd9b-cbb5-cd9b-cbb5cd9bcbb5-placed",
+    "transform": [
+      175,
+      175,
+      825,
+      175,
+      825,
+      825,
+      175,
+      825
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/longsleeve/longsleeve-black-right-sleeve.psd",
+  "masterChecksum": "9bc1a6d213d392ee31a66eafb216144d29190b49e19244c2a2ac06aa72f91e13",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/longsleeve/black/right-sleeve.png",
+  "previewChecksum": "9caba9efa5fddc1f64ad3b997d4203dd7a409a30b9404e64e4d13d740bede749",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/longsleeve/black/right-sleeve.png",
+  "proofPreviewChecksum": "71658434c7b2e79c8717ce8cb83d57e7dc4cad612472afaaf14963df7e009f7d",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

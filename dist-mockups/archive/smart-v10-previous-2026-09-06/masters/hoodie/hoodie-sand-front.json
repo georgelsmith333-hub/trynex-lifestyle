@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "hoodie",
+  "color": "sand",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/hoodie-front.png",
+  "sourceChecksum": "7ea0c8abc3fec5205eb3dbf7339b6cab4c19c4b059ddc9c8dccf1e8b2b9f40f1",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/hoodie/sand/front.png",
+  "baseChecksum": "b9ae1217b301973879bdd8d5a69aed783a93081324b9d915fa320991b3fea7b6",
+  "printZone": {
+    "x": 240,
+    "y": 270,
+    "w": 520,
+    "h": 400
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - hoodie-sand-front",
+    "id": "a460b7c0-a460-b7c0-a460-b7c0a460b7c0",
+    "placed": "a460b7c0-a460-b7c0-a460-b7c0a460b7c0-placed",
+    "transform": [
+      240,
+      270,
+      760,
+      270,
+      760,
+      670,
+      240,
+      670
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/hoodie/hoodie-sand-front.psd",
+  "masterChecksum": "9b676a54694e68533ffcabbd422b34c587c070e1a017a328e7ca475f21cb4deb",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/hoodie/sand/front.png",
+  "previewChecksum": "00e401fdbd36b2671e92ed88058bfa780dd8d83a178dba5884bbf6185e57ec1f",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/hoodie/sand/front.png",
+  "proofPreviewChecksum": "0977113486eea0c24f356ddcbefec5fafe3bf897330852ea8ffe7c7d74bdc777",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

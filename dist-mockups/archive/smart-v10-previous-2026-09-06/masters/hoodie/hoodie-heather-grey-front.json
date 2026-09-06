@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "hoodie",
+  "color": "heather-grey",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/hoodie-front.png",
+  "sourceChecksum": "7ea0c8abc3fec5205eb3dbf7339b6cab4c19c4b059ddc9c8dccf1e8b2b9f40f1",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/hoodie/heather-grey/front.png",
+  "baseChecksum": "b00c0f4c161ff601a1da1b82439deca64d94edeb08408721189ed481cb4b4aea",
+  "printZone": {
+    "x": 240,
+    "y": 270,
+    "w": 520,
+    "h": 400
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - hoodie-heather-grey-front",
+    "id": "73b09903-73b0-9903-73b0-990373b09903",
+    "placed": "73b09903-73b0-9903-73b0-990373b09903-placed",
+    "transform": [
+      240,
+      270,
+      760,
+      270,
+      760,
+      670,
+      240,
+      670
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/hoodie/hoodie-heather-grey-front.psd",
+  "masterChecksum": "ce771e488e328e928ecf10f119d9fc1d09adbff768366842e0ebfebad086826a",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/hoodie/heather-grey/front.png",
+  "previewChecksum": "76b2ab62cfbf04f0e04f82ba3c3678e906c65f9aa138fb96e162f8bdc9a8a43c",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/hoodie/heather-grey/front.png",
+  "proofPreviewChecksum": "6e2c0434fab7c1025b25bd446e4f766d55c0d05707ef9debb23b99fb3b3a0789",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

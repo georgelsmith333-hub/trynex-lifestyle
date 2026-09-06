@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "tshirt",
+  "color": "maroon",
+  "view": "left-sleeve",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/tshirt-front.png",
+  "sourceChecksum": "a29d2c8865145ec47f2bc26bd01e084c74c69a0bc2e06703493fac5834e3964e",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v10/templates/tshirt/left-sleeve-alpha.png",
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/tshirt/maroon/left-sleeve.png",
+  "baseChecksum": "6a50689adb8d37733c5d6f34c035aa06937f7482ca9cb0877c7d26cad7920803",
+  "printZone": {
+    "x": 175,
+    "y": 175,
+    "w": 650,
+    "h": 650
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "left-sleeve-polygon",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - tshirt-maroon-left-sleeve",
+    "id": "db70f427-db70-f427-db70-f427db70f427",
+    "placed": "db70f427-db70-f427-db70-f427db70f427-placed",
+    "transform": [
+      175,
+      175,
+      825,
+      175,
+      825,
+      825,
+      175,
+      825
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/tshirt/tshirt-maroon-left-sleeve.psd",
+  "masterChecksum": "35cf628b954e9a8dd2846bf1eafbac8d5453cda86e7de2ce3ff9b19627983208",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/tshirt/maroon/left-sleeve.png",
+  "previewChecksum": "7cb2b9aa555315c16bc036ebf5a9fac40794f93c1e6dd097ee0588f93ebb86b6",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/tshirt/maroon/left-sleeve.png",
+  "proofPreviewChecksum": "4c5025b556e3791d9a827f5ec91471838c6a00a947f8e8a8decdac52982baea6",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

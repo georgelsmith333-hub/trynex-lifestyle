@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "longsleeve",
+  "color": "red",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/longsleeve-front.png",
+  "sourceChecksum": "414c6d22cc87a8d02a6db8ea608ad1a3d98653a4ad89803a9fe9e25b29b52cb7",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/longsleeve/red/front.png",
+  "baseChecksum": "f9fa49c2c7a4782441f92edfbf49e20d02c01cff0d1745ea7019e9e936fd87c9",
+  "printZone": {
+    "x": 312,
+    "y": 222,
+    "w": 376,
+    "h": 404
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - longsleeve-red-front",
+    "id": "b301ba1f-b301-ba1f-b301-ba1fb301ba1f",
+    "placed": "b301ba1f-b301-ba1f-b301-ba1fb301ba1f-placed",
+    "transform": [
+      312,
+      222,
+      688,
+      222,
+      688,
+      626,
+      312,
+      626
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/longsleeve/longsleeve-red-front.psd",
+  "masterChecksum": "c328408610f9ba3c6fa46958723e4400c3cb8262d7605539ebf146e58aa88a38",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/longsleeve/red/front.png",
+  "previewChecksum": "d73a7880849a4e31e3d7ea86cdd0231b6b2c87d96bbd186d25648e5b7436faf6",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/longsleeve/red/front.png",
+  "proofPreviewChecksum": "a4f646015b87098d9aa994f05be4156cb0b5de933fc1b0244a6cf837d31a5aaf",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

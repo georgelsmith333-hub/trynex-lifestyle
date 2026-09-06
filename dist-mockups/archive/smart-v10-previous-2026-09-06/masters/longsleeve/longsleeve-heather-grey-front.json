@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "longsleeve",
+  "color": "heather-grey",
+  "view": "front",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/longsleeve-front.png",
+  "sourceChecksum": "414c6d22cc87a8d02a6db8ea608ad1a3d98653a4ad89803a9fe9e25b29b52cb7",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/longsleeve/heather-grey/front.png",
+  "baseChecksum": "6848c94f42ee4c9c4571f5f37fd3fd7f5801efaec2e5ca1475ae320b13c4ba40",
+  "printZone": {
+    "x": 312,
+    "y": 222,
+    "w": 376,
+    "h": 404
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - longsleeve-heather-grey-front",
+    "id": "22dfb697-22df-b697-22df-b69722dfb697",
+    "placed": "22dfb697-22df-b697-22df-b69722dfb697-placed",
+    "transform": [
+      312,
+      222,
+      688,
+      222,
+      688,
+      626,
+      312,
+      626
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/longsleeve/longsleeve-heather-grey-front.psd",
+  "masterChecksum": "69ff871c1947394f69964971ec528bd1c40488f9f6b01f70dd15fe0d941f9437",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/longsleeve/heather-grey/front.png",
+  "previewChecksum": "3deccbf55d7114609ed0caa9361c09cf49a93322993e448e0cbc07eca2a21148",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/longsleeve/heather-grey/front.png",
+  "proofPreviewChecksum": "5f6f615ccb40e9e9885dea5e0a97b13f708e28f40e96a96f49da40266d9eba7a",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

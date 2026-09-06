@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "hoodie",
+  "color": "royal-blue",
+  "view": "neck-label",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/hoodie-front.png",
+  "sourceChecksum": "6c41c227474c9603c115af7a309252458b26de744e0918b65850a0722edc2c24",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v10-v3/templates/hoodie/neck-label-alpha.png",
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10-v3/sources/hoodie/royal-blue/neck-label.png",
+  "baseChecksum": "7ab1b6cea0e45e16fd3da98abca5ef9da00ec385f5fd6170b9414eb1e704a84a",
+  "printZone": {
+    "x": 150,
+    "y": 265,
+    "w": 700,
+    "h": 470
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "neck-label-crop",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - hoodie-royal-blue-neck-label",
+    "id": "f406b413-f406-b413-f406-b413f406b413",
+    "placed": "f406b413-f406-b413-f406-b413f406b413-placed",
+    "transform": [
+      150,
+      265,
+      850,
+      265,
+      850,
+      735,
+      150,
+      735
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10-v3/masters/hoodie/hoodie-royal-blue-neck-label.psd",
+  "masterChecksum": "f8850f26ca31365060a4cc93630d91e5a1633f47b40a7ee13801119d9ac1df0e",
+  "previewPath": "dist-mockups/staging/smart-v10-v3/previews/hoodie/royal-blue/neck-label.png",
+  "previewChecksum": "f0b2f2ffcffd6dc827678a586cb2e85549e5584720b0d1e20ab8dc29c39697ca",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10-v3/proof-previews/hoodie/royal-blue/neck-label.png",
+  "proofPreviewChecksum": "263e929b18b69834d73bdaa83820ebb7ec386187ba122cc212b68bc49f0bb101",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

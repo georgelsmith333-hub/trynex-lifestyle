@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "cap",
+  "color": "maroon",
+  "view": "back",
+  "sourceView": "back",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/cap-back.png",
+  "sourceChecksum": "24adfe8f94ece3943dff91d2490163583ea47b75e54033fa8e59b5be947d7ae0",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": null,
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/cap/maroon/back.png",
+  "baseChecksum": "256abbd3affed03064b0edbd0966e6e0e067ff98a6e2776dcc5028752070dbc9",
+  "printZone": {
+    "x": 285,
+    "y": 270,
+    "w": 430,
+    "h": 230
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "preserved-source",
+  "provenance": "authentic-preserved",
+  "warp": {
+    "mode": "cap-panel",
+    "curvature": 0.1,
+    "seamPadding": 0.025,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - cap-maroon-back",
+    "id": "a0648554-a064-8554-a064-8554a0648554",
+    "placed": "a0648554-a064-8554-a064-8554a0648554-placed",
+    "transform": [
+      285,
+      270,
+      715,
+      270,
+      715,
+      500,
+      285,
+      500
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/cap/cap-maroon-back.psd",
+  "masterChecksum": "2a1ec35295f4660711f83aba58589a7aa5586245dbc8f9bea41eefce87fcb07e",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/cap/maroon/back.png",
+  "previewChecksum": "fb5675ee5e61fe92c6cc0b0db7c4c5a702e914deffa4e12c554f48dbc0cc0082",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/cap/maroon/back.png",
+  "proofPreviewChecksum": "295cb6e17bab0dbe232d9770af3b196f77afb2e72a8981d7275e11e73bf7d824",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

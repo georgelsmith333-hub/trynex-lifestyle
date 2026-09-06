@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.2",
+  "family": "hoodie",
+  "color": "white",
+  "view": "neck-label",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources/hoodie-front.png",
+  "sourceChecksum": "7ea0c8abc3fec5205eb3dbf7339b6cab4c19c4b059ddc9c8dccf1e8b2b9f40f1",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v10/templates/hoodie/neck-label-alpha.png",
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10/sources/hoodie/white/neck-label.png",
+  "baseChecksum": "e8f1ab0288fe3af33dffe0b4c353bc29bcbbe0e89743998fcfebe9c243986573",
+  "printZone": {
+    "x": 150,
+    "y": 265,
+    "w": 700,
+    "h": 470
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "neck-label-crop",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - hoodie-white-neck-label",
+    "id": "85c8dc44-85c8-dc44-85c8-dc4485c8dc44",
+    "placed": "85c8dc44-85c8-dc44-85c8-dc4485c8dc44-placed",
+    "transform": [
+      150,
+      265,
+      850,
+      265,
+      850,
+      735,
+      150,
+      735
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10/masters/hoodie/hoodie-white-neck-label.psd",
+  "masterChecksum": "20bd13326111229f80d7da907ac4aa4ceabee77c26158735f57c197f3a7e64a1",
+  "previewPath": "dist-mockups/staging/smart-v10/previews/hoodie/white/neck-label.png",
+  "previewChecksum": "5562aad9f708debf30f084e3d2d0ba501c10df9644673966ea7031dfaece444a",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10/proof-previews/hoodie/white/neck-label.png",
+  "proofPreviewChecksum": "101e916b51492f2c30d32bdb11bf2b1166c46603621baaffeaae26c927037ba6",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}

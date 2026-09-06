@@ -1,0 +1,67 @@
+{
+  "schema": "trynex-smart-master/v3",
+  "generator": "tools/build-smartobject-mockups.mjs",
+  "generatorVersion": "smart-v10.3",
+  "family": "longsleeve",
+  "color": "heather-grey",
+  "view": "left-sleeve",
+  "sourceView": "front",
+  "sourcePreview": "attached_assets/generated_images/v10-sources-v3/longsleeve-front.png",
+  "sourceChecksum": "857571a5b7bc38c700fb70049b200d4af89abd0f8e0386707f819eeebdb7f183",
+  "sourceTransform": "preserved-source",
+  "sourceBackPreview": null,
+  "sourceBackChecksum": null,
+  "sourceBackTransform": null,
+  "faceTemplatePath": null,
+  "faceTemplateChecksum": null,
+  "faceAlphaTemplatePath": "dist-mockups/staging/smart-v10-v3/templates/longsleeve/left-sleeve-alpha.png",
+  "faceAlphaTemplateChecksum": null,
+  "derivedBasePath": "dist-mockups/staging/smart-v10-v3/sources/longsleeve/heather-grey/left-sleeve.png",
+  "baseChecksum": "b7ca3f6bc880762b4646d07b30ededbb59c3ec2d4ac32f5fd60251706804842d",
+  "printZone": {
+    "x": 175,
+    "y": 175,
+    "w": 650,
+    "h": 650
+  },
+  "normalizedFrame": {
+    "canvasWidth": 1024,
+    "canvasHeight": 1024,
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 1024
+  },
+  "derivation": "left-sleeve-polygon",
+  "provenance": "generated-master",
+  "warp": {
+    "mode": "flat",
+    "curvature": 0,
+    "seamPadding": 0.02,
+    "preserveAspect": true
+  },
+  "smartObject": {
+    "layerName": "30 Artwork - SMART OBJECT - longsleeve-heather-grey-left-sleeve",
+    "id": "98ba2f1c-98ba-2f1c-98ba-2f1c98ba2f1c",
+    "placed": "98ba2f1c-98ba-2f1c-98ba-2f1c98ba2f1c-placed",
+    "transform": [
+      175,
+      175,
+      825,
+      175,
+      825,
+      825,
+      175,
+      825
+    ],
+    "proofDesign": "embedded-linked-file"
+  },
+  "masterPath": "dist-mockups/staging/smart-v10-v3/masters/longsleeve/longsleeve-heather-grey-left-sleeve.psd",
+  "masterChecksum": "6d07a3f0b808950f914ea397b607609501ee8598d052bc078168424a0bd69626",
+  "previewPath": "dist-mockups/staging/smart-v10-v3/previews/longsleeve/heather-grey/left-sleeve.png",
+  "previewChecksum": "8b7e774c1a1c52fe8a36f80d7b08f8cd6d89d2c566442a7f6ea22cb05c49e599",
+  "proofPreviewPath": "dist-mockups/staging/smart-v10-v3/proof-previews/longsleeve/heather-grey/left-sleeve.png",
+  "proofPreviewChecksum": "c78909bc43e9f92e4a71dd149ad0473792839e7c7975e33eedd3ef8d16674d32",
+  "masterFormat": "psd",
+  "reviewStatus": "candidate"
+}
