@@ -76,49 +76,44 @@ in the local customer runtime and is published to GitHub; Smart v9 remains a
 separate protected migration contract. The public hosting rollout remains a
 separate provider step; do not describe local promotion as a production deploy.
 
-### Current live audit checkpoint (2026-09-07)
+### Current live audit checkpoint (2026-09-06)
 
 ```text
-Status: clean Smart v10.3 source release pushed; public rollout in progress
-Last completed: Reconciled stale Smart v9-era tests with the accepted Smart
-  v10.3 resolver, corrected the active matrix validators, rebuilt and restarted
-  both managed workflows, captured clean local storefront and Design Studio
-  previews, and pushed the release through the connected GitHub integration.
-  The pushed commit is 99c0be0226779c8701b2f3708700b1be04bc93db, based directly
-  on ad23aa58eaf6c27edab495aaa3dba1c07040c1fe. Evidence screenshots, PDFs, and
-  generated evidence metadata were excluded from the pushed tree.
-Stopped at: GitHub CI and Active app verification for 99c0be0226779c8701b2f3708700b1be04bc93db
-  are still in progress. The public Pages bundle now contains a v10 runtime
-  marker but also retains stale fallback strings; public /api/mockups still
-  returns 188 smart-v4 URLs and no v10 URLs. Replit deployment metadata reports
-  no published Replit deployment.
-Files/areas changed: API mockup fallback routing, storefront fallback/preload/
-  category references, Smart v10.3 runtime matrix and release metadata, stale
-  v8/v9/v11 runtime cleanup, and active validator defaults/matrix definitions.
-  Local visual evidence remains outside the release commit.
-Remaining work: Wait for the connected Cloudflare Pages/Render rollout to finish,
-  then re-fetch the public bundle and API mockup payload until all public runtime
-  references are v10.3. Complete the interactive upload/cart/export audit when
-  a usable authenticated browser mechanism is available. Do not rename the Pages
-  hostname or change CORS/canonical URLs until a replacement hostname is owned
-  and resolvable.
-Blocker: The source release is complete, but the connected public API/hosting
-  rollout has not converged. The current Cloudflare API token is invalid for
-  direct provider operations, and browser-use is unavailable, so authenticated
-  interactive evidence is not fully claimed.
-Next safe action: Re-check the two GitHub Actions runs and public Pages/API
-  surfaces after deployment completes. If public mockups remain on smart-v4
-  after successful checks, use the hosting dashboard or repair
-  CLOUDFLARE_API_TOKEN through secure Secrets before any provider operation.
-  Never add an unowned Pages hostname to production CORS or canonical SEO URLs.
-Verification: API tests passed (6 files/26 tests); storefront tests passed; full
-  workspace typecheck passed; storefront production build passed; API rebuilt;
-  Smart Object and canonical matrix gates passed 188/188 with 1,128 runtime
-  roles; capability verification passed 22/22; both managed workflows restarted
-  cleanly; local proxied routes/assets returned 200; local previews had no
-  browser console errors; and GitHub remote ref/tree verified at the pushed
-  commit. Public health/products/settings/sitemap/robots routes returned 200,
-  but public mockups and some bundle fallbacks remain stale pending rollout.
+Status: clean Smart v10.3 source release pushed; public rollout pending provider CI
+Last completed: Corrected the public sitemap to emit absolute image URLs, aligned
+  the API's Long Sleeve/Hoodie color folders with the actual v10.3 runtime matrix,
+  ran the full local typecheck/test/build and Smart Object validation gates, and
+  published the release through the connected GitHub integration. GitHub main is
+  verified at commit 5cf31dc63e785ec597d16ee51c2421614bc43930, based on the
+  fetched remote head 8e397fdf400b3887ed86ebc504085c16390d56a7.
+Stopped at: GitHub CI and Active app verification for 5cf31dc63e785ec597d16ee51c2421614bc43930
+  are still in progress. Both public endpoints return HTTP 200 but still serve
+  the previous release: /api/mockups has 188 rows without the v10.3 release
+  metadata, sitemap image locations are still relative, and the Pages bundle
+  still contains stale runtime fallback strings.
+Files/areas changed: canonical public mockup matrix and regression test, v10.3
+  resolver/compositor and manifest fixtures, retired runtime asset/source cleanup,
+  AI default image routing, and technical SEO sitemap output.
+Remaining work: Wait for CI and the connected Cloudflare Pages/Render rollout,
+  then rerun exact public checks for 188 v10.3 rows, all runtime assets, absolute
+  sitemap image URLs, and retired-string absence in deployed bundles. Do not
+  claim production is current until those checks pass.
+Blocker: No local implementation blocker. Public convergence is provider-managed;
+  the Cloudflare management token is invalid for direct provider operations.
+  Authenticated interactive upload/cart/export evidence remains outside this pass.
+Next safe action: Re-check the two GitHub Actions runs and the public Pages/API
+  surfaces after deployment completes. If public data remains stale after both
+  runs succeed, use the hosting dashboard or repair CLOUDFLARE_API_TOKEN through
+  secure Secrets before any provider operation. Never change the Pages hostname,
+  CORS allowlist, or canonical SEO origin.
+Verification: API tests passed (7 files/27 tests); storefront tests passed (18
+  files/53 tests); full workspace typecheck passed; storefront and API production
+  builds passed; Smart Object and canonical matrix gates passed 188/188 with
+  1,128 runtime roles; every staged master/preview exists; both managed workflows
+  restarted cleanly; local API mockups returned 188 unique canonical v10.3 rows;
+  local sitemap had 118 URLs and 91 absolute image URLs; and GitHub's ref update
+  was verified at 5cf31dc. Public health, readiness, mockups, sitemap, and robots
+  routes all returned 200, but their content remains stale pending rollout.
 ```
 
 ### Current Smart v9 acceptance checkpoint (2026-09-06)
