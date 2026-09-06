@@ -79,41 +79,42 @@ separate provider step; do not describe local promotion as a production deploy.
 ### Current live audit checkpoint (2026-09-06)
 
 ```text
-Status: clean Smart v10.3 source release pushed; public rollout pending provider CI
-Last completed: Corrected the public sitemap to emit absolute image URLs, aligned
-  the API's Long Sleeve/Hoodie color folders with the actual v10.3 runtime matrix,
-  ran the full local typecheck/test/build and Smart Object validation gates, and
-  published the release through the connected GitHub integration. GitHub main is
-  verified at commit 5cf31dc63e785ec597d16ee51c2421614bc43930, based on the
-  fetched remote head 8e397fdf400b3887ed86ebc504085c16390d56a7.
-Stopped at: GitHub CI and Active app verification for 5cf31dc63e785ec597d16ee51c2421614bc43930
-  are still in progress. Both public endpoints return HTTP 200 but still serve
-  the previous release: /api/mockups has 188 rows without the v10.3 release
-  metadata, sitemap image locations are still relative, and the Pages bundle
-  still contains stale runtime fallback strings.
-Files/areas changed: canonical public mockup matrix and regression test, v10.3
-  resolver/compositor and manifest fixtures, retired runtime asset/source cleanup,
-  AI default image routing, and technical SEO sitemap output.
-Remaining work: Wait for CI and the connected Cloudflare Pages/Render rollout,
-  then rerun exact public checks for 188 v10.3 rows, all runtime assets, absolute
-  sitemap image URLs, and retired-string absence in deployed bundles. Do not
-  claim production is current until those checks pass.
-Blocker: No local implementation blocker. Public convergence is provider-managed;
-  the Cloudflare management token is invalid for direct provider operations.
-  Authenticated interactive upload/cart/export evidence remains outside this pass.
-Next safe action: Re-check the two GitHub Actions runs and the public Pages/API
-  surfaces after deployment completes. If public data remains stale after both
-  runs succeed, use the hosting dashboard or repair CLOUDFLARE_API_TOKEN through
-  secure Secrets before any provider operation. Never change the Pages hostname,
-  CORS allowlist, or canonical SEO origin.
-Verification: API tests passed (7 files/27 tests); storefront tests passed (18
-  files/53 tests); full workspace typecheck passed; storefront and API production
-  builds passed; Smart Object and canonical matrix gates passed 188/188 with
-  1,128 runtime roles; every staged master/preview exists; both managed workflows
-  restarted cleanly; local API mockups returned 188 unique canonical v10.3 rows;
-  local sitemap had 118 URLs and 91 absolute image URLs; and GitHub's ref update
-  was verified at 5cf31dc. Public health, readiness, mockups, sitemap, and robots
-  routes all returned 200, but their content remains stale pending rollout.
+Status: blocked — source release is verified, but the public provider rollout has
+  not converged
+Last completed: Published the verified Smart v10.3 release through GitHub main and
+  rechecked the public Cloudflare Pages origin plus the active Render primary.
+  Active app verification passed for commit fe4a72384a3eba3d9139ce1dc8833e60bc9d16fd;
+  the separate CI run for that same commit is still in progress.
+Stopped at: Both public API surfaces return HTTP 200 and exactly 188 canonical rows
+  with the six expected v10 runtime folders, but every live manifest omits the
+  smart-v10.3 releaseVersion field. Both public sitemap responses return 91 image
+  locations, of which 61 are still relative. The Pages origin serves all 1,128
+  referenced Smart v10.3 runtime-role assets successfully, and its deployed JS
+  bundle contains no retired Smart v4/v7/v8/v9 or waterbottle-v11 runtime roots.
+Files/areas changed: AGENT_HANDOFF.md only for this verification task; no source or
+  deployed application code was changed.
+Remaining work: Wait for GitHub CI and the connected Cloudflare Pages/Render
+  deployments to finish, then rerun the exact 188-row metadata, 1,128-asset,
+  absolute-sitemap, and retired-bundle checks. Production must not be called
+  current until those checks pass.
+Blocker: Public convergence is provider-managed. The active Render primary
+  readiness endpoint is healthy and reports runtimeRole=primary, but it and the
+  Pages gateway are still serving the previous API/sitemap response. The
+  Cloudflare management token is invalid for direct provider operations.
+Next safe action: Re-check the GitHub CI run and public Pages/Render surfaces after
+  the providers report the published main revision deployed. If the responses
+  remain stale after successful CI, use the hosting dashboard or repair
+  CLOUDFLARE_API_TOKEN through secure Secrets before any provider operation. Never
+  change the Pages hostname, CORS allowlist, or canonical SEO origin.
+Verification: Public Pages and active Render primary mockups both returned 200 with
+  188 rows and the exact /mockups/psd-master-v10/runtime-roles category folders;
+  Pages HEAD checks passed for all 1,128 runtime-role assets; representative
+  runtime asset checks passed; Pages and primary readiness/sitemap routes returned
+  200; deployed storefront JS had zero retired runtime-root matches. The Pages
+  gateway read was routed to trynex-api-standby-2 while the direct primary check
+  was trynex-lifestyle-main-render. GitHub Active app verification passed, while
+  GitHub CI remained in_progress at the final check. The live metadata and 61
+  relative sitemap image locations remain provider-stale.
 ```
 
 ### Current Smart v9 acceptance checkpoint (2026-09-06)
