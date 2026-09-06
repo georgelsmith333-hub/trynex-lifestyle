@@ -71,10 +71,51 @@ are compatibility aliases to that route. The source-kit/runtime mockup audit
 now validates the editable manifest as well as public assets.
 
 The genuine six-family PSD/PSB Smart Mockup workstream has passed its quarantine
-structural and visual gates. The complete Smart v10 runtime package is active in
-the local customer runtime; Smart v9 remains a separate protected release
-contract. Production deployment remains a separate publish step; do not describe
-local promotion as a production deploy.
+structural and visual gates. The complete Smart v10.3 runtime package is active
+in the local customer runtime and is published to GitHub; Smart v9 remains a
+separate protected migration contract. The public hosting rollout remains a
+separate provider step; do not describe local promotion as a production deploy.
+
+### Current live audit checkpoint (2026-09-06)
+
+```text
+Status: verified source release pushed; public rollout pending
+Last completed: Reconciled the stale Smart v9-era tests with the accepted Smart
+  v10.3 resolver, ran the corrected Smart Object validator against
+  dist-mockups/staging/smart-v10, restarted both managed workflows, and pushed
+  the ten-file v10.3 source/test release through the connected GitHub integration.
+  Generated verification/trynex-live-end-to-end-audit-2026-09-06.pdf.
+Stopped at: GitHub main is 40ca2020eac2f1a0cc00610b3f62b373d231149c and its CI plus
+  Active app verification runs are still in progress. The public Pages bundle
+  remains the older index-DTerrr6B.js after repeated checks, with no
+  smart-v10.3 or /mockups/psd-master-v10/runtime-roles markers. The public
+  hostname still returns healthy routes, but trynext-lifestyle.pages.dev does
+  not resolve.
+Files/areas changed: Design Studio v10.3 runtime resolver/release contract,
+  compositor role metadata, v10.3-focused tests, and this handoff. Four fresh
+  live screenshots and the audit PDF remain local verification outputs and are
+  intentionally excluded from the release commit.
+Remaining work: Wait for the GitHub-connected Pages deployment to complete, then
+  re-fetch the public bundle and repeat live route/asset checks. Complete the
+  interactive upload/cart/export audit when a usable browser mechanism is
+  available. Rename the Pages hostname and update CORS/canonical URLs only after
+  the replacement hostname is owned and resolvable.
+Blocker: The current Cloudflare API token returns HTTP 401 "Invalid API Token";
+  the requested replacement hostname is not configured or resolvable. Browser-use
+  is unavailable, so interactive upload evidence is not fully claimed.
+Next safe action: Verify the two GitHub Actions runs and the Pages bundle once
+  deployment finishes. If the rollout remains stale after successful checks,
+  use the Pages dashboard or replace CLOUDFLARE_API_TOKEN through secure Secrets
+  before any Cloudflare API operation. Do not add an unowned Pages hostname to
+  production CORS or canonical SEO URLs.
+Verification: Public Pages and Design Studio routes returned 200; public
+  liveness/readiness/products/settings/robots/sitemap returned 200; all 1,128
+  public v10 role PNGs returned 200; storefront tests passed (24 files/82
+  tests); storefront typecheck and production build passed; Smart Object gate
+  passed 188/188; canonical matrix validator passed; both managed workflows
+  restarted cleanly; GitHub ref was verified at the release commit; the live
+  bundle remained stale at the final check.
+```
 
 ### Current Smart v9 acceptance checkpoint (2026-09-06)
 
