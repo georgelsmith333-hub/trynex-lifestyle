@@ -3,11 +3,11 @@ import { composeMockupSurface, composeMockupSurfaceTexture, loadImage, type Unif
 
 const surface = (overrides: Partial<UnifiedMockupSurface> = {}): UnifiedMockupSurface => ({
   sourceKitKey: "tshirt:white:front",
-  manifestRevision: "source-matrix-v3",
+  manifestRevision: "smart-v10.3",
   runtimeStatus: "approved",
   contractErrors: [],
   alphaMode: "transparent-cutout",
-  baseSrc: "/mockups/source-matrix-v3/tshirt/white/front.png",
+  baseSrc: "/mockups/psd-master-v10/runtime-roles/tshirt/white/front-base.png",
   printZone: { x: 200, y: 200, w: 600, h: 600 },
   ...overrides,
 });

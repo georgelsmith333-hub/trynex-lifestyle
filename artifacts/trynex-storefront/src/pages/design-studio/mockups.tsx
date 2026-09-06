@@ -15,12 +15,6 @@ import {
 } from "./smart-v10-runtime";
 import { ACCEPTED_SMART_V10_RELEASE, assertSmartV10Release } from "./smart-v10-release";
 import type { PsdMaterialEffectLayer } from "./composer";
-import {
-  PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE,
-  isPsdDerivedTshirtCustomerReleaseSurface,
-} from "./psd-derived-tshirt";
-import { getSourceMatrixV3Entry, isSourceMatrixV3Family } from "./source-matrix-v3";
-import { getSourceMatrixV4LongSleeveEntry } from "./source-matrix-v4";
 
 // ── T-Shirt: unified studio photos from normalized/ folder ──
 const tshirtFront       = "/mockups/psd-master-v10/runtime-roles/tshirt/white/front-base.png";
@@ -177,7 +171,7 @@ export function getApparelZones(
   const backPZ  = productBackPZ ?? frontPZ;
   const sourceColour = colourHex ? SOURCE_KIT_COLOR_SLUGS[category]?.[normalizeMockupHex(colourHex)] : undefined;
   const sourceMatrix = sourceColour
-    ? (face: CompleteMockupView) => getApprovedSourceMatrixEntry(category, sourceColour, face)?.printZone
+    ? (face: CompleteMockupView) => getCompleteMockupEntry(category as CompleteMockupFamily, sourceColour, face).geometry.printZone
     : undefined;
   switch (category) {
     case "tshirt":
@@ -201,8 +195,8 @@ export function getApparelZones(
 export function getZonePZ(face: Face, product: DesignProduct, colourHex?: string): PrintZone {
   if (product.category === "mug") return face === "back" ? MUG_SIDE_BACK_PZ : MUG_SIDE_PZ;
   const sourceColour = colourHex ? SOURCE_KIT_COLOR_SLUGS[product.category]?.[normalizeMockupHex(colourHex)] : undefined;
-  if (isSourceMatrixV3Family(product.category) && sourceColour) {
-    const sourceZone = getSourceMatrixV3Entry(product.category, sourceColour, face)?.printZone;
+  if (sourceColour) {
+    const sourceZone = getCompleteMockupEntry(product.category as CompleteMockupFamily, sourceColour, face).geometry.printZone;
     if (sourceZone) return sourceZone;
   }
   if (face === "left-sleeve" || face === "right-sleeve") return SLEEVE_PZ;
@@ -228,7 +222,7 @@ export const PRODUCTS: DesignProduct[] = [
     description: "230GSM Cotton", badge: "Best Seller",
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: TSHIRT_PZ, printZoneBack: TSHIRT_BACK_PZ,
-    frontSrc: tshirtFront, gallerySrc: "/mockups/gallery-v1/tshirt-white-front.png", backSrc: tshirtBack,
+    frontSrc: tshirtFront, gallerySrc: tshirtFront, backSrc: tshirtBack,
   },
   {
     id: "longsleeve", name: "Unisex Long Sleeve", icon: "👔", category: "longsleeve",
@@ -243,7 +237,7 @@ export const PRODUCTS: DesignProduct[] = [
     description: "240GSM Cotton",
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: LONGSLEEVE_PZ, printZoneBack: LONGSLEEVE_BACK_PZ,
-    frontSrc: longsleeveFront, gallerySrc: "/mockups/gallery-v1/longsleeve-white-front.png", backSrc: longsleeveBack,
+    frontSrc: longsleeveFront, gallerySrc: longsleeveFront, backSrc: longsleeveBack,
   },
   {
     id: "hoodie", name: "Unisex Hoodie", icon: "🧥", category: "hoodie",
@@ -258,7 +252,7 @@ export const PRODUCTS: DesignProduct[] = [
     description: "320GSM Fleece", badge: "New",
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: HOODIE_PZ, printZoneBack: HOODIE_BACK_PZ,
-    frontSrc: hoodieFront, gallerySrc: "/mockups/gallery-v1/hoodie-white-front.png", backSrc: hoodieBack,
+    frontSrc: hoodieFront, gallerySrc: hoodieFront, backSrc: hoodieBack,
   },
   {
     id: "mug", name: "Coffee Mug", icon: "☕", category: "mug",
@@ -273,7 +267,7 @@ export const PRODUCTS: DesignProduct[] = [
     description: "11oz Ceramic", badge: "Popular",
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: MUG_SIDE_PZ,
-    frontSrc: mugFront, gallerySrc: "/mockups/gallery-v1/mug-white-front.png", backSrc: mugBack,
+    frontSrc: mugFront, gallerySrc: mugFront, backSrc: mugBack,
   },
   {
     id: "cap", name: "Structured Cap", icon: "🧢", category: "cap",
@@ -287,7 +281,7 @@ export const PRODUCTS: DesignProduct[] = [
     description: "Cotton Twill",
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: CAP_PZ, printZoneBack: CAP_BACK_PZ,
-    frontSrc: capFront, gallerySrc: "/mockups/gallery-v1/cap-white-front.png", backSrc: capBack,
+    frontSrc: capFront, gallerySrc: capFront, backSrc: capBack,
   },
   {
     id: "waterbottle", name: "Water Bottle", icon: "🥤", category: "waterbottle",
@@ -500,15 +494,6 @@ export interface NormalizedMockupFrame {
   h: number;
 }
 
-export interface RuntimeMockupOverride {
-  sourceKitKey: string;
-  imageUrl: string;
-  masterFileUrl?: string | null;
-  ingestionStatus: "ready";
-}
-
-const runtimeMockupOverrides = new Map<string, RuntimeMockupOverride>();
-
 assertSmartV10Release(ACCEPTED_SMART_V10_RELEASE);
 
 export function getActiveMockupReleaseVersion(): typeof SMART_V10_RELEASE_VERSION {
@@ -523,41 +508,6 @@ export function getProductPickerPreviewSrc(product: DesignProduct): string {
 
 export function getProductPickerFallbackSrc(_product: DesignProduct): string | undefined {
   return undefined;
-}
-
-function normalizeRuntimeKey(value: string): string {
-  return value.trim().toLowerCase().replace(/[\\/]+/g, ":");
-}
-
-/** Replace only an explicitly approved visual source; canonical geometry stays local. */
-export function setRuntimeMockupOverrides(overrides: RuntimeMockupOverride[]): void {
-  runtimeMockupOverrides.clear();
-  for (const override of overrides) {
-    if (override.ingestionStatus !== "ready" || !override.sourceKitKey || !override.imageUrl) continue;
-    const normalizedKey = normalizeRuntimeKey(override.sourceKitKey);
-    // The white sublimation bottle has a single reviewed two-face contract.
-    // Older gallery records must never override it merely because their
-    // ingestion status is "ready".
-    if (normalizedKey.startsWith("waterbottle:")) {
-      const expectedUrl = normalizedKey.endsWith(":back")
-        ? waterBottleBack
-        : waterBottleFront;
-      if (override.imageUrl !== expectedUrl) continue;
-    }
-    // Reviewed PSD-derived T-shirt Front/Back bases are authoritative for the
-    // colour/face matrix they actually cover. Older gallery records otherwise
-    // take precedence merely
-    // because their ingestion status is "ready".
-    if (normalizedKey.startsWith("tshirt:")) {
-      const [, colorSlug, face] = normalizedKey.split(":");
-      const isReviewedFace = face === "front" || face === "back";
-      if (colorSlug && isReviewedFace && isPsdDerivedTshirtCustomerReleaseSurface(colorSlug, face)) {
-        const expectedUrl = `${PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE.assetRoot}/${colorSlug}/${face}.png`;
-        if (override.imageUrl !== expectedUrl) continue;
-      }
-    }
-    runtimeMockupOverrides.set(normalizedKey, override);
-  }
 }
 
 /**
@@ -679,109 +629,20 @@ function normalizeMockupHex(hex: string): string {
   return hex.trim().toLowerCase();
 }
 
-/**
- * The source-controlled v4 corrective matrix is deliberately limited to Long
- * Sleeve. All other v3-family products retain their independently reviewed v3
- * contracts and assets.
- */
-function getApprovedSourceMatrixEntry(
-  category: DesignProduct["category"],
-  colour: string,
-  face: CompleteMockupView,
-) {
-  if (category === "longsleeve") return getSourceMatrixV4LongSleeveEntry(colour, face);
-  return isSourceMatrixV3Family(category) ? getSourceMatrixV3Entry(category, colour, face) : undefined;
-}
-
-function colorLuminance(hex: string): number {
-  const normalized = hex.replace("#", "");
-  if (normalized.length !== 6) return 1;
-  const red = Number.parseInt(normalized.slice(0, 2), 16) || 0;
-  const green = Number.parseInt(normalized.slice(2, 4), 16) || 0;
-  const blue = Number.parseInt(normalized.slice(4, 6), 16) || 0;
-  return (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255;
-}
-
-function getPsdTshirtMaterialEffects(color: string, face: "front" | "back"): readonly PsdMaterialEffectLayer[] {
-  const luminance = colorLuminance(color);
-  const root = PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE.assetRoot;
-  const isDarkGarment = luminance < 0.35;
-
-  // The reviewed color-specific bases already contain their garment lighting.
-  // A shared white screen map turns dark bases into pale streaked variants in
-  // the live preview, so retain only restrained ink shading for those colors.
-  return [
-    { src: `${root}/effects/${face}-multiply.png`, blendMode: "multiply", opacity: isDarkGarment ? 0.35 : 0.77 },
-    { src: `${root}/effects/${face}-screen.png`, blendMode: "screen", opacity: isDarkGarment ? 0 : 0.38 * Math.max(0.1, luminance) },
-  ];
-}
-
-function canonicalMasterPath(category: DesignProduct["category"], _colorSlug: string, face: CompleteMockupView): string {
-  // The attached 22-master package contains one layered PSD/PSB per family/view.
-  // Colorways are controlled by the source layer contract and exported into the
-  // color-scoped v10.3 role derivatives; the master is therefore view-scoped
-  // rather than falsely represented as a nonexistent per-color editable document.
-  const familyDir: Record<DesignProduct["category"], string> = {
-    tshirt: "TShirt",
-    longsleeve: "LongSleeve",
-    hoodie: "Hoodie",
-    mug: "Mug",
-    cap: "Cap",
-    waterbottle: "Bottle",
-  };
+function canonicalMasterPath(category: DesignProduct["category"], colorSlug: string, face: CompleteMockupView): string {
+  // Every accepted v10.3 surface has its own layered PSD/PSB Smart Object
+  // master. Masters stay outside public/; only validated runtime role
+  // derivatives are browser-served.
   const extension = category === "mug" || category === "waterbottle" ? "psb" : "psd";
-  return `attached_assets/trynex-mockup-source-kit/masters-22-photoreal/masters/${familyDir[category]}/${face}.${extension}`;
-}
-
-function findColorPhoto(
-  colorPhotos: Record<string, { front: string; back?: string }> | undefined,
-  color: string,
-): { front: string; back?: string } | undefined {
-  if (!colorPhotos) return undefined;
-  const normalized = normalizeMockupHex(color);
-  return Object.entries(colorPhotos).find(
-    ([key]) => normalizeMockupHex(key) === normalized,
-  )?.[1];
-}
-
-function getCuratedMockup(
-  product: DesignProduct,
-  color: string,
-  face: CompleteMockupView,
-): {
-  photoSrc: string;
-  cutoutSrc: string;
-  isColorPhoto: boolean;
-  cutoutNeedsTint: boolean;
-  photoKind: "opaque-photo" | "transparent-cutout";
-  requiresTint: boolean;
-  allowSilhouetteShadow: boolean;
-} {
-  const category = product.category;
-  const hex = normalizeMockupHex(color);
-  const slug = SOURCE_KIT_COLOR_SLUGS[category]?.[hex] || "white";
-  const v10ColorSlug = getSmartV10ColorSlug(category, slug) ?? "white";
-  const cutoutSrc = getSmartV10RuntimeRoles(category, v10ColorSlug, face).base;
-  const photoSrc = cutoutSrc;
-  return {
-    photoSrc,
-    cutoutSrc,
-    isColorPhoto: false,
-    cutoutNeedsTint: false,
-    photoKind: "transparent-cutout",
-    requiresTint: false,
-    // The v3 cutouts already carry product lighting and have clean alpha.
-    // Never add a full-frame shadow or duplicate source pass.
-    allowSilhouetteShadow: false,
-  };
+  const releaseFamily = category === "waterbottle" ? "waterbottle" : category;
+  return `dist-mockups/staging/smart-v10/masters/${releaseFamily}/${releaseFamily}-${colorSlug}-${face}.${extension}`;
 }
 
 /**
  * Resolves one canonical mockup key for every customer-facing surface.
  *
  * v10.3 role exports (public/mockups/psd-master-v10/runtime-roles/*) are the
- * only customer-facing product sources. Legacy matrices remain available for
- * migration tooling but are never selected by this resolver.
+ * only customer-facing product sources.
  *
  * Rendering path summary:
  *   Every family/color/face resolves to one v10.3 base plus its five role maps.
@@ -801,20 +662,14 @@ export function resolveMockup(
   const completeView = getCompleteMockupEntry(category as CompleteMockupFamily, sourceKitSlug, face);
   const normalizedFrame = completeView.geometry.normalizedFrame;
 
-  // The supplied source package has one shared layered PSD/PSB master per
-  // family/view; its color control is shared across all exported colorways.
-  // The browser renders the validated PNG export. Master files remain source
-  // provenance until an authenticated storage ingestion publishes them.
-  const curated = getCuratedMockup(product, color, face);
+  // The browser renders the validated v10.3 PNG roles. The corresponding
+  // layered master remains outside public/ as editable source provenance.
   const masterPath = canonicalMasterPath(category, sourceKitSlug, face);
   const sourceKitKey = `${category}:${sourceKitSlug ?? "white"}:${face}`;
-  const runtimeOverride = runtimeMockupOverrides.get(normalizeRuntimeKey(sourceKitKey))
-    ?? runtimeMockupOverrides.get(normalizeRuntimeKey(`${category}:${color}:${face}`));
   const releaseColorSlug = getSmartV10ColorSlug(category, sourceKitSlug);
-  const sourceMatrix = releaseColorSlug ? getApprovedSourceMatrixEntry(category, sourceKitSlug, face) : undefined;
   const v10Roles = releaseColorSlug ? getSmartV10RuntimeRoles(category, releaseColorSlug, face) : undefined;
-  const resolvedPrintZone = sourceMatrix?.printZone ?? completeView.geometry.printZone;
-  const resolvedNormalizedFrame = sourceMatrix?.normalizedFrame ?? normalizedFrame;
+  const resolvedPrintZone = completeView.geometry.printZone;
+  const resolvedNormalizedFrame = normalizedFrame;
   const photoSrc = v10Roles?.base ?? "";
   const cutoutSrc = photoSrc;
   const runtimeStatus = v10Roles ? "approved" as const : "disabled" as const;
@@ -828,7 +683,7 @@ export function resolveMockup(
     face,
     sourceKitKey,
     manifestRevision,
-    editableMasterPath: sourceMatrix?.editableMasterPath ?? runtimeOverride?.masterFileUrl ?? masterPath,
+    editableMasterPath: masterPath,
     masterStatus: "manifest-only",
     runtimeStatus,
     disabledReason,
@@ -862,7 +717,7 @@ export function resolveMockup(
     printZone: resolvedPrintZone,
     normalizedFrame: resolvedNormalizedFrame,
     isOpaquePhoto: smartObject.assets.alphaMode === "opaque-photo",
-    editableMasterPath: sourceMatrix?.editableMasterPath ?? runtimeOverride?.masterFileUrl ?? masterPath,
+    editableMasterPath: masterPath,
     sourceKitKey,
     smartObject,
     manifestRevision,

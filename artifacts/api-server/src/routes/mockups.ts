@@ -6,10 +6,10 @@ import { requireAdmin } from "../middlewares/adminAuth";
 const router = Router();
 
 /**
- * The Design Studio is source-kit driven: customer-facing mockups live in the
- * storefront's normalized asset catalog, while the mockups table stores
- * administrator-uploaded overrides. Keep both sources visible in admin so an
- * empty table cannot masquerade as an empty storefront.
+ * The Design Studio is source-kit driven. The public endpoint is deliberately
+ * release-pinned: administrator-uploaded rows remain available through the
+ * admin endpoint, but legacy database rows must never be allowed to reintroduce
+ * an older customer-facing runtime.
  */
 type CanonicalCategory = "tshirt" | "longsleeve" | "hoodie" | "mug" | "cap" | "waterbottle";
 
@@ -17,8 +17,8 @@ type CanonicalVariant = { category: CanonicalCategory; productName: string; colo
 
 const CANONICAL_COLORS: Record<CanonicalCategory, readonly string[]> = {
   tshirt: ["white", "black", "navy", "maroon", "olive", "sky-blue", "grey", "red"],
-  longsleeve: ["white", "black", "navy", "maroon", "olive", "grey", "red", "sky-blue", "burgundy", "forest"],
-  hoodie: ["white", "black", "navy", "grey", "maroon", "olive", "red", "sky-blue", "forest", "burgundy"],
+  longsleeve: ["white", "black", "charcoal", "heather-grey", "navy", "royal-blue", "forest-green", "burgundy", "red", "sand"],
+  hoodie: ["white", "black", "charcoal", "heather-grey", "navy", "royal-blue", "forest-green", "burgundy", "red", "sand"],
   mug: ["white", "black", "navy", "red", "green", "purple", "sky-blue", "pink", "maroon", "orange"],
   cap: ["white", "black", "navy", "maroon", "olive", "red", "grey", "forest"],
   // White sublimation-coated aluminium blank; do not synthesize colored-body variants.
@@ -43,7 +43,7 @@ const CANONICAL_VARIANTS: CanonicalVariant[] = (Object.keys(CANONICAL_COLORS) as
   CANONICAL_COLORS[category].map((color) => ({ category, productName: PRODUCT_NAMES[category], color }))
 );
 
-function canonicalMockups() {
+export function canonicalMockups() {
   let id = -1;
   return CANONICAL_VARIANTS.flatMap((variant) => CANONICAL_VIEWS[variant.category].map((face) => ({
     id: id--,
@@ -68,6 +68,7 @@ function canonicalMockups() {
       schema: "trynex-photoreal-mockup-manifest/v1",
       assetPath: `/mockups/psd-master-v10/runtime-roles/${variant.category}/${variant.color}/${face}-base.png`,
       sourceKitKey: `${variant.category}:${variant.color}:${face}`,
+      releaseVersion: "smart-v10.3",
       masterStatus: "verified-source-package",
       masterStorageStatus: "not-uploaded",
     },
@@ -114,28 +115,10 @@ function parseOptionalPositiveInt(value: unknown): number | null | undefined {
 
 router.get("/mockups", async (req: Request, res: Response) => {
   try {
-    const rows = await db.select({
-      id: mockupsTable.id,
-      name: mockupsTable.name,
-      productName: mockupsTable.productName,
-      imageUrl: mockupsTable.imageUrl,
-      thumbUrl: mockupsTable.thumbUrl,
-      tags: mockupsTable.tags,
-      isActive: mockupsTable.isActive,
-      updatedAt: mockupsTable.updatedAt,
-      sourceKitKey: mockupsTable.sourceKitKey,
-      face: mockupsTable.face,
-      color: mockupsTable.color,
-      ingestionStatus: mockupsTable.ingestionStatus,
-    }).from(mockupsTable).where(eq(mockupsTable.isActive, true)).orderBy(asc(mockupsTable.sortOrder), desc(mockupsTable.updatedAt));
-
-    // Public Design Studio consumers need a complete canonical matrix even
-    // when no administrator-uploaded override rows have been ingested yet.
-    // Keep valid DB overrides first, then fill only missing source-kit keys
-    // with the same Smart v10.3 assets used by the storefront resolver.
-    const existingKeys = new Set(rows.map((row) => row.sourceKitKey).filter((key): key is string => Boolean(key)));
-    const canonicalFallback = canonicalMockups().filter((row) => !existingKeys.has(row.sourceKitKey));
-    res.json([...rows, ...canonicalFallback]);
+    // This endpoint is the public runtime contract. Do not merge arbitrary
+    // database rows here: older rows can contain retired paths and would
+    // otherwise win over the accepted v10.3 source-kit package.
+    res.json(canonicalMockups());
   } catch (err) {
     req.log.error({ err }, "Failed to list public mockup overrides");
     res.status(500).json({ error: "internal_error", message: "Failed to list mockups" });

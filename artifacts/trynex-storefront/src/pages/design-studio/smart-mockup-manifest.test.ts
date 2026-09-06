@@ -6,9 +6,9 @@ const validManifest = () => createSmartMockupManifest({
   colorSlug: "navy",
   face: "front",
   sourceKitKey: "hoodie:navy:front",
-  manifestRevision: "source-matrix-v3",
-  baseSrc: "/mockups/source-matrix-v3/hoodie/navy/front.jpg",
-  cutoutSrc: "/mockups/source-matrix-v3/hoodie/navy/front.jpg",
+  manifestRevision: "smart-v10.3",
+  baseSrc: "/mockups/psd-master-v10/runtime-roles/hoodie/navy/front-base.png",
+  cutoutSrc: "/mockups/psd-master-v10/runtime-roles/hoodie/navy/front-base.png",
   alphaMode: "opaque-photo",
   normalizedFrame: { canvasWidth: 1000, canvasHeight: 1000, x: 0, y: 0, w: 1000, h: 1000 },
   printZone: { x: 170, y: 120, w: 677, h: 737 },
@@ -45,7 +45,7 @@ describe("smart mockup manifest contract", () => {
 
   it("rejects an opaque approved photo with a separate tintable cutout", () => {
     const manifest = validManifest();
-    manifest.assets.cutoutSrc = "/mockups/source-matrix-v3/hoodie/navy/front-cutout.png";
+    manifest.assets.cutoutSrc = "/mockups/psd-master-v10/runtime-roles/hoodie/navy/front-shadow.png";
     expect(validateSmartMockupManifest(manifest)).toContain("opaque photo must not have a separate tintable cutout");
   });
 });
