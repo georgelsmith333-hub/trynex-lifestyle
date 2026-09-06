@@ -107,27 +107,26 @@ Next safe action: complete the non-mutating release verification and keep
 ### Current v10 implementation checkpoint (2026-09-06)
 
 ```text
-Status: verified local v10.3 release — GitHub/live rollout pending
+Status: verified and pushed v10.3 release — hosting rollout remains separate
 Last completed: Replaced the weak/inconsistent v10 source inputs with a reviewed,
   consistent photoreal six-family source set; rebuilt the complete 188-surface
   matrix with genuine embedded Smart Objects and 1,128 browser-safe role PNGs;
   archived the superseded runtime; promoted the verified replacement into the
   active v10 path; and confirmed the customer Design Studio renders it.
-Stopped at: Final local verification after storefront/API restart and Design
-  Studio screenshot, immediately before the release commit and GitHub push.
+Stopped at: GitHub `main` update after final local verification; the connected
+  hosting rollout can now proceed independently.
 Files/areas changed: `attached_assets/generated_images/v10-sources-v3`,
   `tools/build-smartobject-mockups.mjs`, `tools/validate-smartobject-release.mjs`,
   `dist-mockups/staging/smart-v10`, archived prior v10 staging assets,
   `artifacts/trynex-storefront/public/mockups/psd-master-v10/runtime-roles`,
   visual evidence, and this handoff.
-Remaining work: Commit and push the verified v10.3 source/runtime release, then
-  confirm the GitHub-connected live deployment serves the new runtime. Keep the
-  separate Smart v9 production contract fail-closed.
-Blocker: No local implementation blocker. Live rollout depends on the connected
-  GitHub/hosting deployment completing normally.
-Next safe action: Stage only the v10.3 source, builder/validator, active runtime,
-  archive, evidence, and handoff files; exclude attached screenshots/transcripts;
-  push and run non-mutating live asset/health checks.
+Remaining work: Confirm the connected hosting deployment serves the new runtime
+  when its normal GitHub rollout completes. Keep the separate Smart v9
+  production contract fail-closed.
+Blocker: No local or GitHub implementation blocker. Live rollout depends on the
+  connected hosting deployment completing normally.
+Next safe action: Run non-mutating live asset/health checks after the hosting
+  provider reports the pushed `main` revision is deployed.
 Verification: v10.3 structural gate passed 188/188; every master reopened at
   1024×1024, 8-bit RGB with one non-empty embedded Smart Object; 1,128 runtime
   roles were exported; representative runtime assets returned HTTP 200;
