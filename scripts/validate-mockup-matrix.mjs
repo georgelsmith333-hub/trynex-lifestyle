@@ -1,60 +1,92 @@
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, relative } from "node:path";
 
-const root = join(process.cwd(), "artifacts/trynex-storefront/public/mockups/smart-v9");
-const candidatePath = join(process.cwd(), "artifacts/trynex-storefront/src/pages/design-studio/smart-v9-candidate.generated.ts");
-const colors = {
+const projectRoot = process.cwd();
+const runtimeRoot = join(projectRoot, "artifacts/trynex-storefront/public/mockups/psd-master-v10/runtime-roles");
+const manifestPath = join(runtimeRoot, "manifest.json");
+const expectedColors = {
   tshirt: ["white", "black", "navy", "maroon", "olive", "sky-blue", "grey", "red"],
-  longsleeve: ["white", "black", "navy", "maroon", "olive", "grey", "red", "sky-blue", "burgundy", "forest"],
-  hoodie: ["white", "black", "navy", "grey", "maroon", "olive", "red", "sky-blue", "forest", "burgundy"],
+  longsleeve: ["white", "black", "charcoal", "heather-grey", "navy", "royal-blue", "forest-green", "burgundy", "red", "sand"],
+  hoodie: ["white", "black", "charcoal", "heather-grey", "navy", "royal-blue", "forest-green", "burgundy", "red", "sand"],
   mug: ["white", "black", "navy", "red", "green", "purple", "sky-blue", "pink", "maroon", "orange"],
   cap: ["white", "black", "navy", "maroon", "olive", "red", "grey", "forest"],
-  // White sublimation-coated aluminium blank; colored-body variants require
-  // distinct physical masters and are intentionally not generated.
   waterbottle: ["white"],
 };
-const views = {
+const expectedViews = {
   tshirt: ["front", "back", "left-sleeve", "right-sleeve", "neck-label"],
   longsleeve: ["front", "back", "left-sleeve", "right-sleeve", "neck-label"],
   hoodie: ["front", "back", "left-sleeve", "right-sleeve", "neck-label"],
-  mug: ["front", "back", "wrap"], cap: ["front", "back"], waterbottle: ["front", "back"],
+  mug: ["front", "back", "wrap"],
+  cap: ["front", "back"],
+  waterbottle: ["front", "back"],
 };
-const candidateText = readFileSync(candidatePath, "utf8");
-const assets = [...candidateText.matchAll(/"sourceKey": "([^"]+)",\s*"assetUrl": "([^"]+)",\s*"sha256": "([a-f0-9]{64})",\s*"status": "([^"]+)",\s*"provenance": "([^"]+)"/g)]
-  .map((match) => ({ sourceKey: match[1], assetUrl: match[2], sha256: match[3], status: match[4], provenance: match[5] }));
-const byPath = new Map(assets.map((asset) => [asset.assetUrl, asset]));
+const expectedRoles = ["studioBackground", "base", "shadow", "protected", "highlight", "printMask"];
+
+if (!existsSync(manifestPath)) throw new Error(`Missing v10.3 runtime manifest: ${relative(projectRoot, manifestPath)}`);
+const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
 const errors = [];
-let expected = 0;
-function sha256(path) { return createHash("sha256").update(readFileSync(path)).digest("hex"); }
-function pngInfo(buffer) {
-  if (buffer.length < 26 || buffer.readUInt32BE(0) !== 0x89504e47 || buffer.toString("ascii", 12, 16) !== "IHDR") return null;
-  return { width: buffer.readUInt32BE(16), height: buffer.readUInt32BE(20), colorType: buffer[25] };
+if (manifest.schema !== "trynex-smartobject-runtime-roles/v1") errors.push("unexpected runtime role manifest schema");
+if (manifest.status !== "accepted") errors.push(`runtime manifest status is ${manifest.status}, expected accepted`);
+if (manifest.surfaceCount !== 188 || manifest.surfaces?.length !== 188) {
+  errors.push(`runtime surface count is ${manifest.surfaces?.length ?? 0}, expected 188`);
 }
-for (const [family, familyColors] of Object.entries(colors)) {
-  for (const color of familyColors) for (const view of views[family]) {
-    expected++;
-    const rel = `/mockups/smart-v9/${family}/${color}/${view}.png`;
-    const path = join(root, family, color, `${view}.png`);
-    if (!existsSync(path)) { errors.push(`${rel}: missing`); continue; }
-    const stat = statSync(path);
-    const info = pngInfo(readFileSync(path));
-    if (stat.size === 0) errors.push(`${rel}: zero-byte`);
-    if (!info || info.width !== 1024 || info.height !== 1024 || info.colorType !== 6) errors.push(`${rel}: invalid PNG/RGBA/dimensions`);
-    const asset = byPath.get(rel);
-    if (!asset) errors.push(`${rel}: missing manifest row`);
-    else {
-      if (asset.status !== "accepted") errors.push(`${rel}: candidate row is not accepted`);
-      if (asset.sha256 !== sha256(path)) errors.push(`${rel}: candidate hash mismatch`);
+
+const expectedKeys = new Set(
+  Object.entries(expectedColors).flatMap(([family, colors]) =>
+    colors.flatMap((color) => expectedViews[family].map((view) => `${family}/${color}/${view}`)),
+  ),
+);
+const actualKeys = new Set();
+for (const surface of manifest.surfaces ?? []) {
+  if (actualKeys.has(surface.surfaceKey)) errors.push(`duplicate surface: ${surface.surfaceKey}`);
+  actualKeys.add(surface.surfaceKey);
+  if (!expectedKeys.has(surface.surfaceKey)) errors.push(`unexpected surface: ${surface.surfaceKey}`);
+  for (const role of expectedRoles) {
+    const entry = surface.roles?.[role];
+    if (!entry?.path || !/^[a-f0-9]{64}$/.test(entry.sha256 ?? "")) {
+      errors.push(`${surface.surfaceKey}: invalid ${role} manifest entry`);
+      continue;
+    }
+    const marker = "runtime-roles/";
+    const markerIndex = entry.path.indexOf(marker);
+    const publicPath = markerIndex >= 0
+      ? join(runtimeRoot, entry.path.slice(markerIndex + marker.length))
+      : "";
+    if (!publicPath || !existsSync(publicPath)) {
+      errors.push(`${surface.surfaceKey}: missing ${role} asset`);
+      continue;
+    }
+    const digest = createHash("sha256").update(readFileSync(publicPath)).digest("hex");
+    if (digest !== entry.sha256) errors.push(`${surface.surfaceKey}: ${role} checksum mismatch`);
+    const png = readFileSync(publicPath);
+    if (png.length < 26 || png.readUInt32BE(0) !== 0x89504e47 || png.toString("ascii", 12, 16) !== "IHDR") {
+      errors.push(`${surface.surfaceKey}: ${role} is not a PNG`);
+    } else if (png.readUInt32BE(16) !== 1024 || png.readUInt32BE(20) !== 1024) {
+      errors.push(`${surface.surfaceKey}: ${role} is not 1024x1024`);
     }
   }
 }
-if (assets.length !== expected) errors.push(`candidate asset count ${assets.length}; expected ${expected}`);
-const sourceRoot = join(process.cwd(), "artifacts/trynex-storefront/src");
-function walk(dir) { return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => entry.isDirectory() ? walk(join(dir, entry.name)) : [join(dir, entry.name)]); }
+for (const key of expectedKeys) if (!actualKeys.has(key)) errors.push(`missing surface: ${key}`);
+
+const sourceRoot = join(projectRoot, "artifacts/trynex-storefront/src");
+const forbiddenRoots = ["/mockups/smart-v4/", "/mockups/smart-v7/", "/mockups/smart-v8/", "/mockups/smart-v9/", "/mockups/waterbottle-v11/"];
+const walk = (dir) => {
+  const entries = readdirSync(dir, { withFileTypes: true });
+  return entries.flatMap((entry) => entry.isDirectory() ? walk(join(dir, entry.name)) : [join(dir, entry.name)]);
+};
 for (const file of walk(sourceRoot).filter((file) => /\.(ts|tsx|js|jsx)$/.test(file))) {
   const text = readFileSync(file, "utf8");
-  if (text.includes("/mockups/new/") || text.includes("source-kit-v3")) errors.push(`${relative(process.cwd(), file)}: stale mockup reference`);
+  for (const root of forbiddenRoots) if (text.includes(root)) errors.push(`${relative(projectRoot, file)}: retired runtime reference ${root}`);
 }
-if (errors.length) { console.error(JSON.stringify({ expected, candidateAssets: assets.length, errors }, null, 2)); process.exit(1); }
-console.log(JSON.stringify({ expected, candidateAssets: assets.length, status: "ok", root: relative(process.cwd(), root) }, null, 2));
+
+if (errors.length) {
+  console.error(JSON.stringify({ expectedSurfaces: expectedKeys.size, actualSurfaces: actualKeys.size, errors }, null, 2));
+  process.exit(1);
+}
+console.log(JSON.stringify({
+  expectedSurfaces: expectedKeys.size,
+  runtimeRoles: expectedKeys.size * expectedRoles.length,
+  status: "accepted",
+  root: relative(projectRoot, runtimeRoot),
+}, null, 2));

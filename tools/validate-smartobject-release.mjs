@@ -11,7 +11,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 
 const repo = path.resolve(import.meta.dirname, "..");
-const root = path.resolve(process.argv[2] ?? path.join(repo, "dist-mockups", "staging", "smart-v1"));
+const root = path.resolve(process.argv[2] ?? path.join(repo, "dist-mockups", "staging", "smart-v10"));
 const approveVisual = process.argv.includes("--approve-visual");
 const manifestPath = path.join(root, "manifest.json");
 const auditPath = path.join(root, "structural-audit.json");
@@ -37,12 +37,13 @@ const errors = [];
 const seen = new Set();
 
 if (manifest.schema !== "trynex-smart-mockup-staging/v2") errors.push(`unexpected manifest schema ${manifest.schema}`);
+if (manifest.status !== "accepted") errors.push(`staging manifest is not accepted: ${manifest.status}`);
 if (manifest.surfaceCount !== 188 || manifest.canonicalSurfaceCount !== 188) errors.push("manifest does not declare exactly 188 canonical surfaces");
 if (manifest.editableMastersOutsidePublic !== true) errors.push("editableMastersOutsidePublic must be true");
 if (!Array.isArray(manifest.surfaces) || manifest.surfaces.length !== 188) errors.push("manifest surface list is not exactly 188 rows");
 if (!Array.isArray(audit) || audit.length !== 188) errors.push("structural audit is not exactly 188 rows");
 if (runtimeRoles.schema !== "trynex-smartobject-runtime-roles/v1") errors.push("unexpected runtime role manifest schema");
-if (runtimeRoles.status !== "candidate") errors.push("runtime role manifest must remain candidate before visual approval");
+if (!["candidate", "accepted"].includes(runtimeRoles.status)) errors.push(`unexpected runtime role manifest status: ${runtimeRoles.status}`);
 if (runtimeRoles.surfaceCount !== 188 || !Array.isArray(runtimeRoles.surfaces) || runtimeRoles.surfaces.length !== 188) {
   errors.push("runtime role manifest is not exactly 188 surfaces");
 }
@@ -51,7 +52,9 @@ for (const row of manifest.surfaces ?? []) {
   const key = `${row.family}/${row.color}/${row.view}`;
   if (seen.has(key)) errors.push(`duplicate surface ${key}`);
   seen.add(key);
-  if (row.reviewStatus !== "candidate") errors.push(`${key}: unexpected pre-release review status ${row.reviewStatus}`);
+   if (!["candidate", "accepted", "structurally-verified"].includes(row.reviewStatus)) {
+     errors.push(`${key}: unexpected review status ${row.reviewStatus}`);
+   }
   if (!row.masterPath || row.masterPath.includes("/public/") || row.masterPath.includes("\\public\\")) errors.push(`${key}: master path is public or missing`);
   const masterPath = path.resolve(repo, row.masterPath);
   if (!existsSync(masterPath)) errors.push(`${key}: missing master ${row.masterPath}`);
@@ -83,7 +86,9 @@ for (const row of manifest.surfaces ?? []) {
     continue;
   }
   if (runtime.masterChecksum !== row.masterChecksum) errors.push(`${key}: runtime role points at a different master checksum`);
-  for (const [role, asset] of Object.entries(runtime.roles ?? {})) {
+  const roleEntries = Object.entries(runtime.roles ?? {});
+  if (roleEntries.length !== 6) errors.push(`${key}: expected six runtime roles, found ${roleEntries.length}`);
+  for (const [role, asset] of roleEntries) {
     const rolePath = path.resolve(repo, asset.path);
     if (!existsSync(rolePath)) {
       errors.push(`${key}: missing runtime role ${role}`);

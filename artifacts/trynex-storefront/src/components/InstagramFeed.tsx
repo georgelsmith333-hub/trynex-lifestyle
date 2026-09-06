@@ -4,21 +4,21 @@ import { motion } from "framer-motion";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 
 const FEED_IMAGES = [
-  "/mockups/smart-v4/tshirt/white/front.png",
-  "/mockups/smart-v4/hoodie/white/front.png",
-  "/mockups/smart-v4/mug/white/front.png",
-  "/mockups/smart-v4/cap/white/front.png",
-  "/mockups/smart-v4/tshirt/black/front.png",
-  "/mockups/smart-v4/hoodie/grey/front.png",
+  "/mockups/psd-master-v10/runtime-roles/tshirt/white/front-base.png",
+  "/mockups/psd-master-v10/runtime-roles/hoodie/white/front-base.png",
+  "/mockups/psd-master-v10/runtime-roles/mug/white/front-base.png",
+  "/mockups/psd-master-v10/runtime-roles/cap/white/front-base.png",
+  "/mockups/psd-master-v10/runtime-roles/tshirt/black/front-base.png",
+  "/mockups/psd-master-v10/runtime-roles/hoodie/grey/front-base.png",
 ];
 
 const FALLBACK_IMAGES = [
-  "/mockups/smart-v4/tshirt/white/front.png",
-  "/mockups/smart-v4/hoodie/white/front.png",
-  "/mockups/smart-v4/mug/white/front.png",
-  "/mockups/smart-v4/cap/white/front.png",
-  "/mockups/smart-v4/tshirt/black/front.png",
-  "/mockups/smart-v4/tshirt/white/front.png",
+  "/mockups/psd-master-v10/runtime-roles/tshirt/white/front-base.png",
+  "/mockups/psd-master-v10/runtime-roles/hoodie/white/front-base.png",
+  "/mockups/psd-master-v10/runtime-roles/mug/white/front-base.png",
+  "/mockups/psd-master-v10/runtime-roles/cap/white/front-base.png",
+  "/mockups/psd-master-v10/runtime-roles/tshirt/black/front-base.png",
+  "/mockups/psd-master-v10/runtime-roles/tshirt/white/front-base.png",
 ];
 
 const LIKES = [1284, 976, 2103, 843, 1567, 729];

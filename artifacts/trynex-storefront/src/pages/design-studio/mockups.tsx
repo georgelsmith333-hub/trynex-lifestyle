@@ -19,25 +19,25 @@ import {
   PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE,
   isPsdDerivedTshirtCustomerReleaseSurface,
 } from "./psd-derived-tshirt";
-import { WATER_BOTTLE_V11_RUNTIME_CANDIDATE } from "./waterbottle-v11-runtime-candidate";
 import { getSourceMatrixV3Entry, isSourceMatrixV3Family } from "./source-matrix-v3";
 import { getSourceMatrixV4LongSleeveEntry } from "./source-matrix-v4";
 
 // ── T-Shirt: unified studio photos from normalized/ folder ──
-const tshirtFront       = "/mockups/smart-v4/tshirt/white/front.png";
-const tshirtBack        = "/mockups/smart-v4/tshirt/white/back.png";
-const longsleeveFront   = "/mockups/source-matrix-v4/longsleeve/white/front.jpg";
-const longsleeveBack    = "/mockups/source-matrix-v4/longsleeve/white/back.jpg";
-const hoodieFront       = "/mockups/source-matrix-v3/hoodie/white/front.jpg";
-const hoodieBack        = "/mockups/source-matrix-v3/hoodie/white/back.jpg";
-const mugFront          = "/mockups/smart-v4/mug/white/front.png";
-const mugBack           = "/mockups/smart-v4/mug/white/back.png";
-const capFront          = "/mockups/smart-v4/cap/white/front.png";
-const capBack           = "/mockups/smart-v4/cap/white/back.png";
-const waterBottleFront  = WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.front.url;
+const tshirtFront       = "/mockups/psd-master-v10/runtime-roles/tshirt/white/front-base.png";
+const tshirtBack        = "/mockups/psd-master-v10/runtime-roles/tshirt/white/back-base.png";
+const longsleeveFront   = "/mockups/psd-master-v10/runtime-roles/longsleeve/white/front-base.png";
+const longsleeveBack    = "/mockups/psd-master-v10/runtime-roles/longsleeve/white/back-base.png";
+const hoodieFront       = "/mockups/psd-master-v10/runtime-roles/hoodie/white/front-base.png";
+const hoodieBack        = "/mockups/psd-master-v10/runtime-roles/hoodie/white/back-base.png";
+const mugFront          = "/mockups/psd-master-v10/runtime-roles/mug/white/front-base.png";
+const mugBack           = "/mockups/psd-master-v10/runtime-roles/mug/white/back-base.png";
+const capFront          = "/mockups/psd-master-v10/runtime-roles/cap/white/front-base.png";
+const capBack           = "/mockups/psd-master-v10/runtime-roles/cap/white/back-base.png";
+const waterBottleFront  = "/mockups/psd-master-v10/runtime-roles/waterbottle/white/front-base.png";
+const waterBottleBack   = "/mockups/psd-master-v10/runtime-roles/waterbottle/white/back-base.png";
 
 // All active color and view assets resolve through the accepted v10.3 role
-// matrix. Older roots remain only in migration-era source files and tests.
+// matrix.
 
 /** A single available garment colour (name + hex). */
 export interface ProductColor { name: string; hex: string }
@@ -301,8 +301,8 @@ export const PRODUCTS: DesignProduct[] = [
     viewBox: VIEWBOX, aspect: ASPECT, baseHeight: BASE,
     printZone: WATERBOTTLE_PZ,
     frontSrc: WATERBOTTLE_MOCKUP_URL,
-    gallerySrc: WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.front.url,
-    backSrc: WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.back.url,
+    gallerySrc: waterBottleFront,
+    backSrc: waterBottleBack,
   },
   // NOTE: Water Tumbler removed — it was a duplicate of Water Bottle with identical
   // mockup, colors, and print zone. Re-add if a distinct tumbler mockup is provided.
@@ -327,12 +327,12 @@ export const BASE_BY_CATEGORY: Record<
   longsleeve:  { front: longsleeveFront, back: longsleeveBack, frontCutout: longsleeveFront, backCutout: longsleeveBack },
   hoodie:      { front: hoodieFront, back: hoodieBack, frontCutout: hoodieFront, backCutout: hoodieBack },
   mug:         { front: mugFront, back: mugBack, frontCutout: mugFront, backCutout: mugBack },
-  cap:         { front: capFront, back: capBack, frontCutout: capFront, backCutout: "/mockups/smart-v4/cap/white/back.png" },
+  cap:         { front: capFront, back: capBack, frontCutout: capFront, backCutout: capBack },
   waterbottle: {
     front: waterBottleFront,
-    back: WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.back.url,
+    back: waterBottleBack,
     frontCutout: waterBottleFront,
-    backCutout: WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.back.url,
+    backCutout: waterBottleBack,
   },
   // watertumbler uses category "waterbottle" — shares the same base entry
 };
@@ -384,38 +384,6 @@ const SOURCE_KIT_COLOR_SLUGS: Record<
     "#f4f3f1": "white",
   },
 };
-
-/**
- * The staged release uses the older canonical color vocabulary for hoodies and
- * long sleeves. Only exact product-color matches are allowed at the runtime
- * asset boundary; an ambiguous shade must use its reviewed color-specific
- * source-matrix asset rather than silently showing the wrong garment color.
- */
-const SMART_V9_EXACT_COLOR_SLUGS: Record<"longsleeve" | "hoodie", Readonly<Record<string, string>>> = {
-  longsleeve: {
-    white: "white",
-    black: "black",
-    "heather-grey": "grey",
-    navy: "navy",
-    "forest-green": "forest",
-    burgundy: "burgundy",
-    red: "red",
-  },
-  hoodie: {
-    white: "white",
-    black: "black",
-    "heather-grey": "grey",
-    navy: "navy",
-    "forest-green": "forest",
-    burgundy: "burgundy",
-    red: "red",
-  },
-};
-
-export function getSmartV9ColorSlug(category: DesignProduct["category"], sourceKitSlug: string): string | undefined {
-  if (category !== "longsleeve" && category !== "hoodie") return sourceKitSlug;
-  return SMART_V9_EXACT_COLOR_SLUGS[category][sourceKitSlug];
-}
 
 const SOURCE_KIT_PRINT_ZONES: Record<
   DesignProduct["category"],
@@ -567,19 +535,18 @@ export function setRuntimeMockupOverrides(overrides: RuntimeMockupOverride[]): v
   for (const override of overrides) {
     if (override.ingestionStatus !== "ready" || !override.sourceKitKey || !override.imageUrl) continue;
     const normalizedKey = normalizeRuntimeKey(override.sourceKitKey);
-    // Water Bottle v1.1 is a reviewed two-face, hash-pinned browser contract.
-    // Older gallery records still reference smart-v4 and must never override it
-    // merely because their ingestion status is "ready". Permit only the exact
-    // reviewed v1.1 URL for the face encoded in the metadata key.
+    // The white sublimation bottle has a single reviewed two-face contract.
+    // Older gallery records must never override it merely because their
+    // ingestion status is "ready".
     if (normalizedKey.startsWith("waterbottle:")) {
       const expectedUrl = normalizedKey.endsWith(":back")
-        ? WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.back.url
-        : WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.front.url;
+        ? waterBottleBack
+        : waterBottleFront;
       if (override.imageUrl !== expectedUrl) continue;
     }
     // Reviewed PSD-derived T-shirt Front/Back bases are authoritative for the
-    // colour/face matrix they actually cover. Older gallery records point at
-    // green-contaminated smart-v4 files and otherwise take precedence merely
+    // colour/face matrix they actually cover. Older gallery records otherwise
+    // take precedence merely
     // because their ingestion status is "ready".
     if (normalizedKey.startsWith("tshirt:")) {
       const [, colorSlug, face] = normalizedKey.split(":");
@@ -752,8 +719,8 @@ function getPsdTshirtMaterialEffects(color: string, face: "front" | "back"): rea
 function canonicalMasterPath(category: DesignProduct["category"], _colorSlug: string, face: CompleteMockupView): string {
   // The attached 22-master package contains one layered PSD/PSB per family/view.
   // Colorways are controlled by the source layer contract and exported into the
-  // color-scoped smart-v4 derivatives; the master is therefore view-scoped rather
-  // than falsely represented as a nonexistent per-color editable document.
+  // color-scoped v10.3 role derivatives; the master is therefore view-scoped
+  // rather than falsely represented as a nonexistent per-color editable document.
   const familyDir: Record<DesignProduct["category"], string> = {
     tshirt: "TShirt",
     longsleeve: "LongSleeve",
