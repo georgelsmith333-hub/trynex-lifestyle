@@ -76,45 +76,49 @@ in the local customer runtime and is published to GitHub; Smart v9 remains a
 separate protected migration contract. The public hosting rollout remains a
 separate provider step; do not describe local promotion as a production deploy.
 
-### Current live audit checkpoint (2026-09-06)
+### Current live audit checkpoint (2026-09-07)
 
 ```text
-Status: verified source release pushed; public rollout pending
-Last completed: Reconciled the stale Smart v9-era tests with the accepted Smart
-  v10.3 resolver, ran the corrected Smart Object validator against
-  dist-mockups/staging/smart-v10, restarted both managed workflows, and pushed
-  the ten-file v10.3 source/test release through the connected GitHub integration.
-  Generated verification/trynex-live-end-to-end-audit-2026-09-06.pdf.
-Stopped at: GitHub main is 40ca2020eac2f1a0cc00610b3f62b373d231149c and its CI plus
-  Active app verification runs are still in progress. The public Pages bundle
-  remains the older index-DTerrr6B.js after repeated checks, with no
-  smart-v10.3 or /mockups/psd-master-v10/runtime-roles markers. The public
-  hostname still returns healthy routes, but trynext-lifestyle.pages.dev does
-  not resolve.
-Files/areas changed: Design Studio v10.3 runtime resolver/release contract,
-  compositor role metadata, v10.3-focused tests, and this handoff. Four fresh
-  live screenshots and the audit PDF remain local verification outputs and are
-  intentionally excluded from the release commit.
-Remaining work: Wait for the GitHub-connected Pages deployment to complete, then
-  re-fetch the public bundle and repeat live route/asset checks. Complete the
-  interactive upload/cart/export audit when a usable browser mechanism is
-  available. Rename the Pages hostname and update CORS/canonical URLs only after
-  the replacement hostname is owned and resolvable.
-Blocker: The current Cloudflare API token returns HTTP 401 "Invalid API Token";
-  the requested replacement hostname is not configured or resolvable. Browser-use
-  is unavailable, so interactive upload evidence is not fully claimed.
-Next safe action: Verify the two GitHub Actions runs and the Pages bundle once
-  deployment finishes. If the rollout remains stale after successful checks,
-  use the Pages dashboard or replace CLOUDFLARE_API_TOKEN through secure Secrets
-  before any Cloudflare API operation. Do not add an unowned Pages hostname to
-  production CORS or canonical SEO URLs.
-Verification: Public Pages and Design Studio routes returned 200; public
-  liveness/readiness/products/settings/robots/sitemap returned 200; all 1,128
-  public v10 role PNGs returned 200; storefront tests passed (24 files/82
-  tests); storefront typecheck and production build passed; Smart Object gate
-  passed 188/188; canonical matrix validator passed; both managed workflows
-  restarted cleanly; GitHub ref was verified at the release commit; the live
-  bundle remained stale at the final check.
+Status: clean Smart v10.3 source release pushed; public rollout in progress
+Last completed: Reconciled stale Smart v9-era tests with the accepted Smart
+  v10.3 resolver, corrected the active matrix validators, rebuilt and restarted
+  both managed workflows, captured clean local storefront and Design Studio
+  previews, and pushed the release through the connected GitHub integration.
+  The pushed commit is 99c0be0226779c8701b2f3708700b1be04bc93db, based directly
+  on ad23aa58eaf6c27edab495aaa3dba1c07040c1fe. Evidence screenshots, PDFs, and
+  generated evidence metadata were excluded from the pushed tree.
+Stopped at: GitHub CI and Active app verification for 99c0be0226779c8701b2f3708700b1be04bc93db
+  are still in progress. The public Pages bundle now contains a v10 runtime
+  marker but also retains stale fallback strings; public /api/mockups still
+  returns 188 smart-v4 URLs and no v10 URLs. Replit deployment metadata reports
+  no published Replit deployment.
+Files/areas changed: API mockup fallback routing, storefront fallback/preload/
+  category references, Smart v10.3 runtime matrix and release metadata, stale
+  v8/v9/v11 runtime cleanup, and active validator defaults/matrix definitions.
+  Local visual evidence remains outside the release commit.
+Remaining work: Wait for the connected Cloudflare Pages/Render rollout to finish,
+  then re-fetch the public bundle and API mockup payload until all public runtime
+  references are v10.3. Complete the interactive upload/cart/export audit when
+  a usable authenticated browser mechanism is available. Do not rename the Pages
+  hostname or change CORS/canonical URLs until a replacement hostname is owned
+  and resolvable.
+Blocker: The source release is complete, but the connected public API/hosting
+  rollout has not converged. The current Cloudflare API token is invalid for
+  direct provider operations, and browser-use is unavailable, so authenticated
+  interactive evidence is not fully claimed.
+Next safe action: Re-check the two GitHub Actions runs and public Pages/API
+  surfaces after deployment completes. If public mockups remain on smart-v4
+  after successful checks, use the hosting dashboard or repair
+  CLOUDFLARE_API_TOKEN through secure Secrets before any provider operation.
+  Never add an unowned Pages hostname to production CORS or canonical SEO URLs.
+Verification: API tests passed (6 files/26 tests); storefront tests passed; full
+  workspace typecheck passed; storefront production build passed; API rebuilt;
+  Smart Object and canonical matrix gates passed 188/188 with 1,128 runtime
+  roles; capability verification passed 22/22; both managed workflows restarted
+  cleanly; local proxied routes/assets returned 200; local previews had no
+  browser console errors; and GitHub remote ref/tree verified at the pushed
+  commit. Public health/products/settings/sitemap/robots routes returned 200,
+  but public mockups and some bundle fallbacks remain stale pending rollout.
 ```
 
 ### Current Smart v9 acceptance checkpoint (2026-09-06)
