@@ -7,9 +7,13 @@
 import { createSmartMockupManifest, validateSmartMockupManifest, type SmartMockupManifest } from "./smart-mockup-manifest";
 import { getCanonicalMockupSpec, type MockupFamily } from "./canonical-mockup-spec";
 import { COMPLETE_MOCKUP_MATRIX, getCompleteMockupEntry, type CompleteMockupFamily, type CompleteMockupView } from "./complete-mockup-matrix";
-import { ACCEPTED_SMART_V8_RELEASE } from "./smart-v8-release";
-import { acceptSmartV9Release, type AcceptedSmartV9Release, type SmartV9CandidateRelease } from "./smart-v9-release";
-import { SMART_V9_CANDIDATE } from "./smart-v9-candidate.generated";
+import {
+  getSmartV10ColorSlug,
+  getSmartV10RuntimeRoles,
+  SMART_V10_RELEASE_VERSION,
+  SMART_V10_RUNTIME_ROOT,
+} from "./smart-v10-runtime";
+import { ACCEPTED_SMART_V10_RELEASE, assertSmartV10Release } from "./smart-v10-release";
 import type { PsdMaterialEffectLayer } from "./composer";
 import {
   PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE,
@@ -32,8 +36,8 @@ const capFront          = "/mockups/smart-v4/cap/white/front.png";
 const capBack           = "/mockups/smart-v4/cap/white/back.png";
 const waterBottleFront  = WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.front.url;
 
-// All active color and view assets resolve through the accepted smart-v9 matrix.
-// Older roots remain only as fail-closed compatibility fallbacks.
+// All active color and view assets resolve through the accepted v10.3 role
+// matrix. Older roots remain only in migration-era source files and tests.
 
 /** A single available garment colour (name + hex). */
 export interface ProductColor { name: string; hex: string }
@@ -537,71 +541,21 @@ export interface RuntimeMockupOverride {
 
 const runtimeMockupOverrides = new Map<string, RuntimeMockupOverride>();
 
-/**
- * A release is deliberately inactive until every canonical surface has supplied
- * a reviewed asset URL and both visual and technical gates have passed.
- */
-export interface SmartV8ReleaseAcceptance {
-  version: "smart-v8";
-  assetUrls: Record<string, string>;
-  visualGatePassed: boolean;
-  technicalGatePassed: boolean;
+assertSmartV10Release(ACCEPTED_SMART_V10_RELEASE);
+
+export function getActiveMockupReleaseVersion(): typeof SMART_V10_RELEASE_VERSION {
+  return SMART_V10_RELEASE_VERSION;
 }
 
-const REQUIRED_SMART_V8_SURFACE_KEYS = COMPLETE_MOCKUP_MATRIX.map((entry) => entry.sourceKey);
-let acceptedSmartV8Release: SmartV8ReleaseAcceptance | null = null;
-let acceptedSmartV9Release: AcceptedSmartV9Release | null = null;
-
-export function activateSmartV8Release(acceptance: SmartV8ReleaseAcceptance): void {
-  if (!acceptance.visualGatePassed || !acceptance.technicalGatePassed) {
-    throw new Error("smart-v8 cannot activate before visual and technical acceptance.");
-  }
-  const suppliedKeys = Object.keys(acceptance.assetUrls);
-  if (suppliedKeys.length !== REQUIRED_SMART_V8_SURFACE_KEYS.length) {
-    throw new Error(`smart-v8 requires ${REQUIRED_SMART_V8_SURFACE_KEYS.length} accepted surfaces; received ${suppliedKeys.length}.`);
-  }
-  for (const key of REQUIRED_SMART_V8_SURFACE_KEYS) {
-    const url = acceptance.assetUrls[key];
-    if (!url || url.includes("smart-v7")) {
-      throw new Error(`smart-v8 asset is missing or invalid for ${key}.`);
-    }
-  }
-  acceptedSmartV8Release = acceptance;
-}
-
-/** Smart-v9 stays inert until its full candidate manifest passes the stricter gate. */
-export function activateSmartV9Release(candidate: SmartV9CandidateRelease): void {
-  acceptedSmartV9Release = acceptSmartV9Release(candidate);
-}
-
-export function getActiveMockupReleaseVersion(): "smart-v4" | "smart-v8" | "smart-v9" {
-  if (acceptedSmartV9Release) return "smart-v9";
-  return acceptedSmartV8Release ? "smart-v8" : "smart-v4";
-}
-
-/**
- * Product picker thumbnails remain on their curated gallery assets until a
- * complete smart-v9 release is explicitly accepted. Once v9 is active, the
- * picker moves to the same accepted white-front surface as the Studio canvas
- * and never falls back to an older release if that v9 asset fails to load.
- */
+/** Product picker thumbnails use the same accepted v10.3 surface as Studio. */
 export function getProductPickerPreviewSrc(product: DesignProduct): string {
-  if (product.category === "waterbottle") return WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets.front.url;
-  if (!acceptedSmartV9Release) return product.gallerySrc ?? product.frontSrc;
   const baseColor = product.colors[0]?.hex ?? product.garmentColor;
-  return getCuratedMockup(product, baseColor, "front").photoSrc;
+  return resolveMockup(product, baseColor, "front").photoSrc;
 }
 
-export function getProductPickerFallbackSrc(product: DesignProduct): string | undefined {
-  return acceptedSmartV9Release ? undefined : product.frontSrc;
+export function getProductPickerFallbackSrc(_product: DesignProduct): string | undefined {
+  return undefined;
 }
-
-// These generated assets were promoted from the validated staging matrix. The
-// all-or-nothing guard above remains the sole activation path.
-activateSmartV8Release(ACCEPTED_SMART_V8_RELEASE);
-// The complete 188-surface candidate has passed the structural, hash, and
-// representative browser review gates, so v9 is now the active runtime release.
-activateSmartV9Release(SMART_V9_CANDIDATE);
 
 function normalizeRuntimeKey(value: string): string {
   return value.trim().toLowerCase().replace(/[\\/]+/g, ":");
@@ -839,12 +793,8 @@ function getCuratedMockup(
   const category = product.category;
   const hex = normalizeMockupHex(color);
   const slug = SOURCE_KIT_COLOR_SLUGS[category]?.[hex] || "white";
-  const completeView = getCompleteMockupEntry(category as CompleteMockupFamily, slug, face);
-  const smartV9ColorSlug = getSmartV9ColorSlug(category, slug);
-  const smartV9SourceKey = smartV9ColorSlug ? `${category}:${smartV9ColorSlug}:${face}` : undefined;
-  const cutoutSrc = (smartV9SourceKey ? acceptedSmartV9Release?.assetUrls[smartV9SourceKey] : undefined)
-    ?? acceptedSmartV8Release?.assetUrls[completeView.sourceKey]
-    ?? (completeView.assetPath + "?v=smart-v4");
+  const v10ColorSlug = getSmartV10ColorSlug(category, slug) ?? "white";
+  const cutoutSrc = getSmartV10RuntimeRoles(category, v10ColorSlug, face).base;
   const photoSrc = cutoutSrc;
   return {
     photoSrc,
@@ -862,16 +812,14 @@ function getCuratedMockup(
 /**
  * Resolves one canonical mockup key for every customer-facing surface.
  *
- * Smart-v4 PNGs (public/mockups/smart-v4/*) remain bound for all
- * products, colors, and faces until the complete smart-v8 acceptance contract
- * has passed. Retired smart-v7 assets are never permitted in this renderer.
+ * v10.3 role exports (public/mockups/psd-master-v10/runtime-roles/*) are the
+ * only customer-facing product sources. Legacy matrices remain available for
+ * migration tooling but are never selected by this resolver.
  *
  * Rendering path summary:
- *   Every family/color/face resolves to one v3 transparent cutout at runtime.
- *   Opaque normalized photos remain metadata/admin references only; they are
- *   never stacked with the cutout in the editor because that creates ghost
- *   silhouettes and pale wedges. Curved products use the same face contract
- *   in the compositor and 3D texture path.
+ *   Every family/color/face resolves to one v10.3 base plus its five role maps.
+ *   The base and role maps are shared by the SVG, canvas, export, cart, and 3D
+ *   surfaces; no older release is used as an implicit fallback.
  */
 export function resolveMockup(
   product: DesignProduct,
@@ -895,40 +843,21 @@ export function resolveMockup(
   const sourceKitKey = `${category}:${sourceKitSlug ?? "white"}:${face}`;
   const runtimeOverride = runtimeMockupOverrides.get(normalizeRuntimeKey(sourceKitKey))
     ?? runtimeMockupOverrides.get(normalizeRuntimeKey(`${category}:${color}:${face}`));
-  const releaseColorSlug = getSmartV9ColorSlug(category, sourceKitSlug) ?? sourceKitSlug;
-  const releaseSourceKey = `${category}:${releaseColorSlug}:${face}`;
-  const isPsdTshirtRuntime = category === "tshirt"
-    && (face === "front" || face === "back")
-    && isPsdDerivedTshirtCustomerReleaseSurface(sourceKitSlug, face);
-  const psdPhoto = isPsdTshirtRuntime
-    ? `${PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE.assetRoot}/${sourceKitSlug}/${face}.png`
-    : undefined;
-  const sourceMatrix = getApprovedSourceMatrixEntry(category, sourceKitSlug, face);
-  const sourceMatrixPhoto = sourceMatrix?.assetPath;
-  const waterBottleV11Photo = category === "waterbottle"
-    ? WATER_BOTTLE_V11_RUNTIME_CANDIDATE.assets[face === "back" ? "back" : "front"].url
-    : undefined;
-  const acceptedRuntimePhoto = acceptedSmartV9Release?.assetUrls[releaseSourceKey]
-    // These are independently reviewed, exact source-kit derivatives. They
-    // remain valid per-surface releases until the complete smart-v9 matrix is
-    // promoted, but are never used as a generic fallback for another key.
-    ?? psdPhoto
-    ?? waterBottleV11Photo
-    ?? sourceMatrixPhoto
-    ?? acceptedSmartV8Release?.assetUrls[releaseSourceKey]
-    ?? acceptedSmartV8Release?.assetUrls[completeView.sourceKey];
+  const releaseColorSlug = getSmartV10ColorSlug(category, sourceKitSlug);
+  const sourceMatrix = releaseColorSlug ? getApprovedSourceMatrixEntry(category, sourceKitSlug, face) : undefined;
+  const v10Roles = releaseColorSlug ? getSmartV10RuntimeRoles(category, releaseColorSlug, face) : undefined;
   const resolvedPrintZone = sourceMatrix?.printZone ?? completeView.geometry.printZone;
   const resolvedNormalizedFrame = sourceMatrix?.normalizedFrame ?? normalizedFrame;
-  const photoSrc = acceptedRuntimePhoto ?? "";
-  const cutoutSrc = acceptedRuntimePhoto ?? "";
-  const runtimeStatus = acceptedRuntimePhoto ? "approved" as const : "disabled" as const;
-  const disabledReason = acceptedRuntimePhoto
+  const photoSrc = v10Roles?.base ?? "";
+  const cutoutSrc = photoSrc;
+  const runtimeStatus = v10Roles ? "approved" as const : "disabled" as const;
+  const disabledReason = v10Roles
     ? undefined
-    : `No approved ${category} ${releaseColorSlug} ${face} source-kit surface is available.`;
-  const manifestRevision = acceptedSmartV9Release ? "smart-v9-accepted" : "smart-v8-accepted";
+    : `No approved ${category} ${sourceKitSlug} ${face} v10.3 source-kit surface is available.`;
+  const manifestRevision = SMART_V10_RELEASE_VERSION;
   const smartObject = createSmartMockupManifest({
     category,
-    colorSlug: releaseColorSlug,
+    colorSlug: releaseColorSlug ?? sourceKitSlug,
     face,
     sourceKitKey,
     manifestRevision,
@@ -938,13 +867,14 @@ export function resolveMockup(
     disabledReason,
     baseSrc: photoSrc,
     cutoutSrc,
-    alphaMode: acceptedRuntimePhoto?.endsWith(".jpg") ? "opaque-photo" : "transparent-cutout",
+    alphaMode: "transparent-cutout",
+    runtimeRoles: v10Roles,
     normalizedFrame: resolvedNormalizedFrame,
     printZone: resolvedPrintZone,
   });
   const contractErrors = validateSmartMockupManifest(smartObject, {
     category,
-    colorSlug: releaseColorSlug,
+    colorSlug: releaseColorSlug ?? sourceKitSlug,
     face,
     sourceKitKey,
   });
@@ -957,7 +887,7 @@ export function resolveMockup(
     // the final colorway. Treat them as exact color photos through every 2D,
     // 3D, cart, and export consumer; adding any synthetic tint would corrupt
     // the selected physical color.
-    isColorPhoto: Boolean(acceptedRuntimePhoto),
+    isColorPhoto: Boolean(v10Roles),
     cutoutNeedsTint: false,
     photoKind: "transparent-cutout",
     requiresTint: false,
@@ -973,8 +903,8 @@ export function resolveMockup(
     disabledReason,
     contractErrors,
     alphaMode: smartObject.assets.alphaMode,
-    psdMaterialEffects: isPsdTshirtRuntime ? getPsdTshirtMaterialEffects(color, face) : undefined,
-    source: acceptedRuntimePhoto ? "source-kit" : "curated",
+    psdMaterialEffects: undefined,
+    source: v10Roles ? "source-kit" : "curated",
   };
 }
 

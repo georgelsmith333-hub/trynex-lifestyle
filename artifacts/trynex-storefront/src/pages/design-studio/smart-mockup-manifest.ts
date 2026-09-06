@@ -3,6 +3,15 @@ export type SmartMockupFace = "front" | "back" | "left-sleeve" | "right-sleeve" 
 export type SmartMockupAlphaMode = "opaque-photo" | "transparent-cutout";
 export type SmartMockupRuntimeStatus = "approved" | "disabled";
 
+export interface SmartMockupRuntimeRoles {
+  studioBackground: string;
+  base: string;
+  shadow: string;
+  protected: string;
+  highlight: string;
+  printMask: string;
+}
+
 export interface SmartObjectPrintZone {
   x: number;
   y: number;
@@ -27,6 +36,7 @@ export interface SmartMockupManifest {
     baseSrc: string;
     cutoutSrc: string;
     alphaMode: SmartMockupAlphaMode;
+    runtimeRoles?: SmartMockupRuntimeRoles;
     printableMaskSrc?: string;
     exclusionMaskSrc?: string;
     detailMaskSrc?: string;
@@ -85,6 +95,7 @@ export function createSmartMockupManifest(args: {
   baseSrc?: string;
   cutoutSrc?: string;
   alphaMode?: SmartMockupAlphaMode;
+  runtimeRoles?: SmartMockupRuntimeRoles;
   printableMaskSrc?: string;
   exclusionMaskSrc?: string;
   detailMaskSrc?: string;
@@ -111,6 +122,7 @@ export function createSmartMockupManifest(args: {
       baseSrc,
       cutoutSrc,
       alphaMode: args.alphaMode ?? "transparent-cutout",
+      runtimeRoles: args.runtimeRoles,
       printableMaskSrc: args.printableMaskSrc,
       exclusionMaskSrc: args.exclusionMaskSrc,
       detailMaskSrc: args.detailMaskSrc,

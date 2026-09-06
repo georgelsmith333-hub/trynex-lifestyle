@@ -5,6 +5,8 @@
      • add-to-cart snapshot (downloadable thumbnail)
 ════════════════════════════════════════════════════════ */
 
+import type { SmartMockupRuntimeRoles } from "./smart-mockup-manifest";
+
 export interface ComposerTransform {
   x: number; y: number; scale: number; rotation: number; opacity: number;
   scaleX?: number; scaleY?: number;
@@ -564,6 +566,8 @@ export async function composeGarmentMockup(opts: {
   shadingStrength?: number;
   /** Optional reviewed PSD-native fold/detail passes for an isolated staging source. */
   psdMaterialEffects?: readonly PsdMaterialEffectLayer[];
+  /** v10.3 role exports used to keep artwork beneath authentic folds/details. */
+  runtimeRoles?: SmartMockupRuntimeRoles;
 }): Promise<HTMLCanvasElement> {
   const {
     canvas,
@@ -576,6 +580,7 @@ export async function composeGarmentMockup(opts: {
     curvature = 0,
     requiresTint = false,
     fabricTexture = false,
+    runtimeRoles,
   } = opts;
   canvas.width = outSize;
   canvas.height = outSize;
@@ -584,13 +589,19 @@ export async function composeGarmentMockup(opts: {
   const s = outSize / 1000;
 
   ctx.clearRect(0, 0, outSize, outSize);
-  // The product cutout carries the complete silhouette and embedded lighting.
-  // Paint one neutral studio background behind it instead of relying on an
-  // opaque source photo that can introduce pale duplicate wedges at the edges.
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, outSize, outSize);
+  // v10.3 separates the studio background, product base, and material roles.
+  // Draw the background and base once; never stack a second full garment photo.
+  if (runtimeRoles) {
+    const studioBackground = await loadImage(runtimeRoles.studioBackground, imageCache);
+    ctx.drawImage(studioBackground, 0, 0, outSize, outSize);
+  } else {
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, outSize, outSize);
+  }
 
-  const garmentImg = await loadImage(garmentSrc, imageCache);
+  const garmentImg = runtimeRoles
+    ? await loadImage(runtimeRoles.base, imageCache)
+    : await loadImage(garmentSrc, imageCache);
   ctx.drawImage(garmentImg, 0, 0, outSize, outSize);
 
   // Exact runtime sources are already color-specific. Keep the alpha contract
@@ -625,6 +636,41 @@ export async function composeGarmentMockup(opts: {
     clearCanvas: false,
   });
 
+  if (runtimeRoles && layers.some((layer) => layer.visible)) {
+    // Role exports are already alpha-isolated and are clipped to the reviewed
+    // print mask boundary by the source contract. The print-zone clip here is
+    // an additional guard against artwork shading outside the printable area.
+    ctx.save();
+    ctx.beginPath();
+    tracePrintZone(ctx, printZone, s, s);
+    ctx.clip();
+
+    const drawRole = async (
+      src: string,
+      blend: GlobalCompositeOperation,
+      opacity: number,
+    ) => {
+      const role = await loadImage(src, imageCache);
+      ctx.save();
+      ctx.globalCompositeOperation = blend;
+      ctx.globalAlpha = opacity;
+      ctx.drawImage(role, 0, 0, outSize, outSize);
+      ctx.restore();
+    };
+
+    await drawRole(runtimeRoles.shadow, "multiply", 1);
+    await drawRole(runtimeRoles.highlight, "screen", 1);
+    ctx.restore();
+
+    // Protected details are intentionally outside the print-zone clip so
+    // collars, seams, cuffs, and handles remain above artwork at their edges.
+    const protectedDetails = await loadImage(runtimeRoles.protected, imageCache);
+    ctx.save();
+    ctx.globalCompositeOperation = "source-over";
+    ctx.drawImage(protectedDetails, 0, 0, outSize, outSize);
+    ctx.restore();
+  }
+
   // Do not redraw the full garment over the artwork here. A whole-frame
   // multiply pass creates the duplicate/ghost silhouette users see on dark
   // variants. The clipped luminosity masks below are the single shading source.
@@ -648,6 +694,7 @@ export interface UnifiedMockupSurface {
   contractErrors: readonly string[];
   alphaMode: "opaque-photo" | "transparent-cutout";
   baseSrc: string;
+  runtimeRoles?: SmartMockupRuntimeRoles;
   printZone: ComposerPrintZone;
 }
 
@@ -681,6 +728,7 @@ export async function composeMockupSurface(request: UnifiedMockupRenderRequest):
   return composeGarmentMockup({
     canvas: request.canvas,
     garmentSrc: request.surface.baseSrc,
+    runtimeRoles: request.surface.runtimeRoles,
     garmentColor: request.garmentColor,
     printZone: request.surface.printZone,
     layers: request.layers,

@@ -35,7 +35,7 @@ describe("licensed PSD-derived T-shirt workflow", () => {
     expect(PSD_DERIVED_TSHIRT_STAGING_PROFILE.customerRuntimeEnabled).toBe(false);
   });
 
-  it("defines a customer-ready T-shirt-only PNG release without activating smart-v9 or exposing PSD sources", () => {
+  it("defines a customer-ready T-shirt-only PNG release without activating the legacy release or exposing PSD sources", () => {
     expect(PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE.supportedColors).toHaveLength(8);
     expect(PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE.supportedFaces).toEqual(["front", "back"]);
     expect(PSD_DERIVED_TSHIRT_CUSTOMER_RELEASE.customerRuntimeEnabled).toBe(true);
@@ -45,33 +45,34 @@ describe("licensed PSD-derived T-shirt workflow", () => {
     expect(isPsdDerivedTshirtCustomerReleaseSurface("white", "left-sleeve")).toBe(false);
   });
 
-  it("uses the accepted Smart v9 color base through the runtime resolver", () => {
+  it("uses the accepted Smart v10.3 color base and role maps through the runtime resolver", () => {
     const tshirt = PRODUCTS.find((product) => product.category === "tshirt");
     expect(tshirt).toBeDefined();
 
     for (const color of tshirt!.colors) {
       for (const face of ["front", "back"] as const) {
         const resolution = resolveMockup(tshirt!, color.hex, face);
-        expect(resolution.cutoutSrc).toContain("/mockups/smart-v9/tshirt/");
+        expect(resolution.cutoutSrc).toContain("/mockups/psd-master-v10/runtime-roles/tshirt/");
         expect(resolution.isColorPhoto).toBe(true);
         expect(resolution.cutoutNeedsTint).toBe(false);
         expect(resolution.requiresTint).toBe(false);
-        expect(resolution.manifestRevision).toBe("smart-v9-accepted");
+        expect(resolution.manifestRevision).toBe("smart-v10.3");
+        expect(resolution.smartObject.assets.runtimeRoles).toBeDefined();
         expect(resolution.smartObject.masterStatus).toBe("manifest-only");
       }
     }
   });
 
-  it("does not apply the shared white screen effect to dark T-shirt colorways", () => {
+  it("uses the v10.3 role maps instead of synthetic colorway effects", () => {
     const tshirt = PRODUCTS.find((product) => product.category === "tshirt")!;
     for (const colorName of ["Black", "Navy", "Maroon"]) {
       const color = tshirt.colors.find((entry) => entry.name === colorName)!;
-      const effects = resolveMockup(tshirt, color.hex, "front").psdMaterialEffects ?? [];
-      expect(effects.find((effect) => effect.blendMode === "screen")?.opacity).toBe(0);
-      expect(effects.find((effect) => effect.blendMode === "multiply")?.opacity).toBe(0.35);
+      const resolution = resolveMockup(tshirt, color.hex, "front");
+      expect(resolution.psdMaterialEffects).toBeUndefined();
+      expect(resolution.smartObject.assets.runtimeRoles?.shadow).toContain("front-shadow.png");
+      expect(resolution.smartObject.assets.runtimeRoles?.highlight).toContain("front-highlight.png");
     }
     const white = tshirt.colors.find((entry) => entry.name === "White")!;
-    const whiteEffects = resolveMockup(tshirt, white.hex, "front").psdMaterialEffects ?? [];
-    expect(whiteEffects.find((effect) => effect.blendMode === "screen")?.opacity).toBeGreaterThan(0);
+    expect(resolveMockup(tshirt, white.hex, "front").smartObject.assets.runtimeRoles).toBeDefined();
   });
 });
