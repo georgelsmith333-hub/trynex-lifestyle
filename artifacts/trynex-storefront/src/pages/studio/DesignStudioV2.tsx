@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import {
   PRODUCTS, GarmentSVG, FlatZoneSVG, MUG_PZ, MUG_WRAP_BACK_PZ, MUG_SIDE_PZ, MUG_SIDE_BACK_PZ, resolveMockup,
-  getActiveMockupReleaseVersion, getApparelZones, getZonePZ, setRuntimeMockupOverrides, type ApparelZone, isNearBlack, isLightTint,
+  getActiveMockupReleaseVersion, getApparelZones, getZonePZ, type ApparelZone, isNearBlack, isLightTint,
   type PrintZone, type DesignProduct, type Face,
 } from "../design-studio/mockups";
 import {
@@ -286,42 +286,6 @@ export default function DesignStudioV2() {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [redo, undo]);
-
-  // Gallery records never replace canonical geometry. Only explicitly approved
-  // ready records may replace the visual preview; failures fall back silently.
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const response = await fetch(getApiUrl("/api/mockups"), { headers: { Accept: "application/json" } });
-        if (!response.ok) return;
-        const rows = await response.json() as Array<{
-          sourceKitKey?: string | null;
-          imageUrl?: string | null;
-          masterFileUrl?: string | null;
-          ingestionStatus?: string;
-        }>;
-        if (cancelled) return;
-        setRuntimeMockupOverrides(rows.filter((row): row is {
-          sourceKitKey: string;
-          imageUrl: string;
-          masterFileUrl?: string | null;
-          ingestionStatus: "ready";
-        } => row.ingestionStatus === "ready" && !!row.sourceKitKey && !!row.imageUrl).map(row => ({
-          sourceKitKey: row.sourceKitKey,
-          imageUrl: row.imageUrl,
-          masterFileUrl: row.masterFileUrl,
-          ingestionStatus: "ready" as const,
-        })));
-      } catch {
-        // The local v3 resolver remains authoritative when the public API is unavailable.
-      }
-    })();
-    return () => {
-      cancelled = true;
-      setRuntimeMockupOverrides([]);
-    };
-  }, []);
 
   // URL params + draft restore. An explicit product query is authoritative;
   // cloud/local draft restoration must not silently replace it with Hoodie.

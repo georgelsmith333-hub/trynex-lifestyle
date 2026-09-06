@@ -666,7 +666,7 @@ router.post("/admin/ai-execute", requireAdmin, async (req, res) => {
           slug,
           price: String(price),
           description: String(parsed.description ?? `${name} — premium quality custom apparel from TryNex Lifestyle.`),
-          imageUrl: "/mockups/white-tshirt-front.png",
+          imageUrl: "/mockups/psd-master-v10/runtime-roles/tshirt/white/front-base.png",
           categoryId,
           stock: 50,
           featured: false,

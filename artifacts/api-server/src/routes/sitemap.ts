@@ -113,7 +113,7 @@ router.get("/sitemap.xml", async (_req, res) => {
       xml += `    <priority>0.8</priority>\n`;
       if (product.imageUrl) {
         xml += `    <image:image>\n`;
-        xml += `      <image:loc>${escapeXml(product.imageUrl)}</image:loc>\n`;
+        xml += `      <image:loc>${escapeXml(toAbsoluteSiteUrl(product.imageUrl))}</image:loc>\n`;
         xml += `      <image:title>${escapeXml(product.name)}</image:title>\n`;
         xml += `    </image:image>\n`;
       }
@@ -129,7 +129,7 @@ router.get("/sitemap.xml", async (_req, res) => {
       xml += `    <priority>0.6</priority>\n`;
       if (post.imageUrl) {
         xml += `    <image:image>\n`;
-        xml += `      <image:loc>${escapeXml(post.imageUrl)}</image:loc>\n`;
+        xml += `      <image:loc>${escapeXml(toAbsoluteSiteUrl(post.imageUrl))}</image:loc>\n`;
         xml += `      <image:title>${escapeXml(post.title)}</image:title>\n`;
         xml += `    </image:image>\n`;
       }
@@ -180,6 +180,11 @@ function escapeXml(str: string): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&apos;");
+}
+
+function toAbsoluteSiteUrl(value: string): string {
+  if (/^https?:\/\//i.test(value)) return value;
+  return `${SITE_URL}${value.startsWith("/") ? value : `/${value}`}`;
 }
 
 function formatDate(value: Date | string | null | undefined): string | null {
