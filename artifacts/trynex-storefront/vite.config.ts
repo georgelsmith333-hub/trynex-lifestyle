@@ -9,6 +9,36 @@ const basePath = process.env.BASE_PATH ?? "/";
 // API_PORT must point to the API server. In this monorepo the API server runs on 8082.
 // Override with API_PORT env var if the port ever changes.
 const apiPort = process.env.API_PORT ?? "8082";
+const CANONICAL_MOCKUP_PREFIX = "/mockups/psd-master-v10/runtime-roles/";
+
+function isRetiredMockupPath(url: string | undefined): boolean {
+  const pathname = (url ?? "").split("?", 1)[0];
+  return pathname.startsWith("/mockups/") && !pathname.startsWith(CANONICAL_MOCKUP_PREFIX);
+}
+
+function blockRetiredMockups() {
+  const middleware = (
+    req: { url?: string },
+    res: { statusCode: number; setHeader: (name: string, value: string) => void; end: (body: string) => void },
+    next: () => void,
+  ) => {
+    if (!isRetiredMockupPath(req.url)) return next();
+    res.statusCode = 410;
+    res.setHeader("Cache-Control", "public, max-age=86400");
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.end("This mockup runtime has been retired.");
+  };
+
+  return {
+    name: "trynex:block-retired-mockups",
+    configureServer(server: { middlewares: { use: (handler: typeof middleware) => void } }) {
+      server.middlewares.use(middleware);
+    },
+    configurePreviewServer(server: { middlewares: { use: (handler: typeof middleware) => void } }) {
+      server.middlewares.use(middleware);
+    },
+  };
+}
 
 /**
  * Cloudflare Rocket Loader rewrites every `<script>` it sees, including
@@ -88,6 +118,7 @@ const cfDisableRocketLoader = {
 export default defineConfig({
   base: basePath,
   plugins: [
+    blockRetiredMockups(),
     react(),
     tailwindcss(),
     cfDisableRocketLoader,

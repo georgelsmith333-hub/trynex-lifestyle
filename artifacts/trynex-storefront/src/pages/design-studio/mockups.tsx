@@ -658,15 +658,23 @@ export function resolveMockup(
   const zones = SOURCE_KIT_PRINT_ZONES[category];
   const canonicalSpec = getCanonicalMockupSpec(category as MockupFamily);
   const hex = normalizeMockupHex(color);
-  const sourceKitSlug = SOURCE_KIT_COLOR_SLUGS[category]?.[hex] ?? "white";
-  const completeView = getCompleteMockupEntry(category as CompleteMockupFamily, sourceKitSlug, face);
+  // An unknown or ambiguous color must not silently become a white product.
+  // That was especially dangerous for persisted carts and custom API payloads:
+  // the UI looked valid while the physical color was wrong. Resolve geometry
+  // from the white template only so the disabled result still has stable layout,
+  // but never expose the white runtime asset as a fallback.
+  const sourceKitSlug = SOURCE_KIT_COLOR_SLUGS[category]?.[hex];
+  const geometryColorSlug = sourceKitSlug ?? "white";
+  const completeView = getCompleteMockupEntry(category as CompleteMockupFamily, geometryColorSlug, face);
   const normalizedFrame = completeView.geometry.normalizedFrame;
 
   // The browser renders the validated v10.3 PNG roles. The corresponding
   // layered master remains outside public/ as editable source provenance.
-  const masterPath = canonicalMasterPath(category, sourceKitSlug, face);
-  const sourceKitKey = `${category}:${sourceKitSlug ?? "white"}:${face}`;
-  const releaseColorSlug = getSmartV10ColorSlug(category, sourceKitSlug);
+  const masterPath = sourceKitSlug ? canonicalMasterPath(category, sourceKitSlug, face) : undefined;
+  const sourceKitKey = `${category}:${sourceKitSlug ?? "unresolved"}:${face}`;
+  const releaseColorSlug = sourceKitSlug
+    ? getSmartV10ColorSlug(category, sourceKitSlug)
+    : undefined;
   const v10Roles = releaseColorSlug ? getSmartV10RuntimeRoles(category, releaseColorSlug, face) : undefined;
   const resolvedPrintZone = completeView.geometry.printZone;
   const resolvedNormalizedFrame = normalizedFrame;
@@ -679,7 +687,7 @@ export function resolveMockup(
   const manifestRevision = SMART_V10_RELEASE_VERSION;
   const smartObject = createSmartMockupManifest({
     category,
-    colorSlug: releaseColorSlug ?? sourceKitSlug,
+    colorSlug: releaseColorSlug ?? sourceKitSlug ?? "unresolved",
     face,
     sourceKitKey,
     manifestRevision,

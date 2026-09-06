@@ -65,10 +65,12 @@ export function useCartItemPreview(item: CartItemPreviewInput): CartItemPreviewP
   }, [meta]);
 
   useEffect(() => {
-    const garmentSrc = (meta?.mockupSrc as string | undefined)
-      ?? (resolvedMockup?.requiresTint || !resolvedMockup?.isColorPhoto
-        ? resolvedMockup?.cutoutSrc
-        : resolvedMockup?.photoSrc);
+    // Re-resolve every fallback through the accepted v10.3 catalog. Persisted
+    // cart notes can outlive a release and must never reintroduce an old
+    // source-kit path or silently substitute a different garment color.
+    const garmentSrc = resolvedMockup?.runtimeStatus === "approved"
+      ? resolvedMockup.cutoutSrc
+      : undefined;
     const printZone = (meta?.printZone as ComposerPrintZone | undefined) ?? resolvedMockup?.printZone;
     if (item.imageUrl || !garmentSrc || !meta?.colorHex || !printZone) {
       setFallbackSrc(null);
@@ -85,6 +87,7 @@ export function useCartItemPreview(item: CartItemPreviewInput): CartItemPreviewP
           printZone,
           layers: [],
           outSize: 400,
+          runtimeRoles: resolvedMockup?.smartObject.assets.runtimeRoles,
           isColorPhoto: meta.mockupIsColorPhoto === true
             || (resolvedMockup?.isColorPhoto === true && !meta.mockupSrc),
           requiresTint: resolvedMockup?.requiresTint === true,
