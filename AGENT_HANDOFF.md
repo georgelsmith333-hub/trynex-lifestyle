@@ -79,7 +79,7 @@ separate provider step; do not describe local promotion as a production deploy.
 ### Current live audit checkpoint (2026-09-06, latest)
 
 ```text
-Status: source-fixed and locally verified; GitHub publication is blocked by authorization
+Status: GitHub-published and locally verified; provider rollout is pending
 Last completed: Re-audited the Smart v10.3 source/runtime matrix, inspected
   representative PNG layers, fixed fail-open color resolution, made cart fallback
   composition resolve only through the accepted v10.3 runtime roles, and added
@@ -89,27 +89,21 @@ Last completed: Re-audited the Smart v10.3 source/runtime matrix, inspected
   locations.
 Stopped at: Local tests, typechecks, build, workflow restarts, proxied API/asset
   checks, and desktop/mobile previews all passed. The release commit is present
-  locally with a clean worktree, but the connected GitHub write path returned HTTP
-  403 and the token-backed shell path has no available credential. The currently
-  live Pages static layer predates the new 410 retired-path guard.
+  locally with a clean worktree, then reconciled the newer remote main history and
+  published the merge commit to GitHub main. The currently live Pages static layer
+  predates the new 410 retired-path guard.
 Files/areas changed: Design Studio resolver, cart preview fallback, storefront
   Vite middleware, Cloudflare Pages mockup function, focused resolver test, and
   this handoff.
-Remaining work: Publish the existing local commit to GitHub main after the
-  connected GitHub write authorization is repaired, then wait for the connected
-  Pages deployment and recheck a retired URL returns 410 while the canonical
-  v10.3 URL remains 200. Do not claim the edge guard is live until that provider
-  check passes.
-Blocker: The connected GitHub integration can read the repository but rejected
-  the Git Data write with HTTP 403, while the configured token names are not
-  available in the shell. Cloudflare Pages management is also provider-managed;
-  the public Pages origin is healthy but old static mockup files still answer
-  200 until the normal GitHub-connected deployment consumes the new function.
-Next safe action: Repair or reauthorize the existing GitHub write connection
-  outside source code, push the already-created local commit, monitor the
-  provider rollout, and rerun the 188-row API, 1,128-role asset, sitemap,
-  canonical asset, retired-path, and deployed-bundle checks. Keep the Pages
-  hostname and canonical SEO origin unchanged.
+Remaining work: Wait for the connected Pages deployment and recheck a retired URL
+  returns 410 while the canonical v10.3 URL remains 200. Do not claim the edge
+  guard is live until that provider check passes.
+Blocker: Cloudflare Pages management is provider-managed; the public Pages origin
+  is healthy but old static mockup files still answer 200 until the
+  GitHub-connected deployment consumes the new function.
+Next safe action: Monitor the provider rollout and rerun the 188-row API,
+  1,128-role asset, sitemap, canonical asset, retired-path, and deployed-bundle
+  checks. Keep the Pages hostname and canonical SEO origin unchanged.
 Verification: Smart v10.3 manifest contains 188 surfaces and all 1,128 role files;
   base PNGs have non-empty alpha and representative silhouettes show no baked
   duplicate garment; storefront tests passed 18 files/54 tests; API tests passed
