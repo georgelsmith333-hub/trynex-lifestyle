@@ -24,7 +24,7 @@ import {
 } from "../design-studio/mockups";
 import {
   composeMockupSurface, composeMockupSurfaceTexture, autoFixImage,
-  type ComposerLayer,
+  type ComposerLayer, type UnifiedMockupSurface,
 } from "../design-studio/composer";
 
 import { useDesignStore } from "@/hooks/useDesignStore";
@@ -253,6 +253,14 @@ export default function DesignStudioV2() {
     }
     return getZonePZ(activeFace, selectedProduct, selectedColor.hex);
   }, [isMug, mugMode, activeFace, selectedProduct, selectedColor.hex]);
+  const liveSurface = useMemo<UnifiedMockupSurface>(
+    () => ({
+      ...activeMockup,
+      baseSrc: activeMockup.cutoutSrc,
+      printZone: pz,
+    }),
+    [activeMockup, pz],
+  );
 
   const isBlackGarment = isNearBlack(selectedColor.hex);
   const isLightGarment = isLightTint(selectedColor.hex);
@@ -1221,6 +1229,13 @@ export default function DesignStudioV2() {
                   width={canvasSize}
                   height={canvasSize}
                   printZone={pz}
+                   liveSurface={liveSurface}
+                   liveGarmentColor={selectedColor.hex}
+                   liveLayers={currentFaceLayers as unknown as ComposerLayer[]}
+                   liveCurvature={isMug ? 0.16 : isWaterBottle ? 0.16 : isCap ? 0.1 : 0}
+                   liveFabricTexture={fabricTexture}
+                   liveEnabled={!isPsdTshirtStaging && !activeSurfaceUnavailable}
+                   interactionOnly={!isPsdTshirtStaging && !activeSurfaceUnavailable}
                   onCanvasAction={handleCanvasAction}
                   onDrawStart={handleDrawStart}
                   onDrawMove={handleDrawMove}
@@ -1319,6 +1334,7 @@ export default function DesignStudioV2() {
                               onUpscale={() => void handleUpscale()}
                               onAutoFix={() => void handleAutoFix()}
                               onOpenAiReference={() => setActiveTab("ai")}
+                              onApplyImage={(dataUrl) => replaceSelectedImage(dataUrl)}
                               busyAction={imageAction}
                             />
                           )}

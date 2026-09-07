@@ -79,38 +79,165 @@ separate provider step; do not describe local promotion as a production deploy.
 ### Current live audit checkpoint (2026-09-06, latest)
 
 ```text
-Status: GitHub-published and locally verified; provider rollout is pending
-Last completed: Re-audited the Smart v10.3 source/runtime matrix, inspected
-  representative PNG layers, fixed fail-open color resolution, made cart fallback
-  composition resolve only through the accepted v10.3 runtime roles, and added
-  local/Cloudflare edge guards that retire every non-canonical /mockups/* URL.
-  The active public Pages API already returns exactly 188 rows with
-  releaseVersion=smart-v10.3, and the public sitemap now has 91 absolute image
-  locations.
-Stopped at: Local tests, typechecks, build, workflow restarts, proxied API/asset
-  checks, and desktop/mobile previews all passed. The release commit is present
-  locally with a clean worktree, then reconciled the newer remote main history and
-  published the merge commit to GitHub main. The currently live Pages static layer
-  predates the new 410 retired-path guard.
-Files/areas changed: Design Studio resolver, cart preview fallback, storefront
-  Vite middleware, Cloudflare Pages mockup function, focused resolver test, and
-  this handoff.
-Remaining work: Wait for the connected Pages deployment and recheck a retired URL
-  returns 410 while the canonical v10.3 URL remains 200. Do not claim the edge
-  guard is live until that provider check passes.
-Blocker: Cloudflare Pages management is provider-managed; the public Pages origin
-  is healthy but old static mockup files still answer 200 until the
-  GitHub-connected deployment consumes the new function.
-Next safe action: Monitor the provider rollout and rerun the 188-row API,
-  1,128-role asset, sitemap, canonical asset, retired-path, and deployed-bundle
-  checks. Keep the Pages hostname and canonical SEO origin unchanged.
-Verification: Smart v10.3 manifest contains 188 surfaces and all 1,128 role files;
-  base PNGs have non-empty alpha and representative silhouettes show no baked
-  duplicate garment; storefront tests passed 18 files/54 tests; API tests passed
-  7 files/27 tests; both package typechecks passed; storefront build passed;
-  both managed workflows restarted cleanly; local API and proxy returned 188
-  canonical rows; canonical asset returned 200; retired local path returned 410;
-  desktop homepage and mobile Design Studio previews showed no browser errors.
+Status: complete — provider rollout independently verified
+Last completed: Rechecked the connected Cloudflare Pages deployment at
+  `https://trynex-lifestyle-shop.pages.dev` after the Smart v10.3 release. The
+  deployed gateway returns the current primary Render origin and exposes the
+  reviewed canonical runtime package.
+Stopped at: Non-mutating live API, asset, retired-path, bundle, sitemap, and
+  robots checks all passed. The public rollout is certified for the requested
+  Smart v10.3 serving contract; Smart v9 remains a separate fail-closed contract.
+Files/areas changed: this handoff only. No application, mockup, order, payment,
+  or production data was changed.
+Remaining work: Keep the live smoke checks repeatable after future provider
+  deployments; no blocker remains for this rollout verification.
+Blocker: None for the verified Cloudflare Pages + Render serving contract.
+Next safe action: Add a scheduled or deployment-triggered equivalent of the
+  non-mutating live mockup smoke check so edge regressions are caught promptly.
+Verification: The deployed `/api/mockups` response contains exactly 188 rows,
+  all canonical and all `smart-v10.3`; all 188 unique API-derived canonical
+  runtime-role PNG URLs returned 200 `image/png`; representative retired
+  `/mockups/*` namespaces returned 410; the deployed JavaScript bundle loaded
+  by the HTML contains `smart-v10.3` and `runtime-roles`; `/sitemap.xml`
+  redirects to the healthy 200 `/api/sitemap.xml` (118 URLs); and
+  `/robots.txt` returned 200 with a sitemap directive. No order, payment, or
+  production data changed.
+```
+
+## Latest studio correction checkpoint (2026-09-06)
+
+```text
+Status: locally verified; GitHub publication of this continuation is still pending
+Last completed: Added deterministic selection-aware undo/redo coverage, grouped
+  drag/resize/rotate history transactions, the shared red 44px delete control,
+  grouped product and mug-view switching, and removed the redundant post-switch
+  transform loop. Fixed the compositor canvas-reset regression so artwork no
+  longer erases the already-drawn studio background/base. Runtime shadow and
+  highlight roles now use the reviewed grayscale print mask, and 3D artwork
+  textures receive the same protected/detail role pass as the 2D compositor.
+  Updated the asset audit script to inspect the active v10.3 runtime tree.
+Stopped at: Local storefront/API workflows are running cleanly. Storefront
+  typecheck, 18 test files/59 tests, production build, API typecheck, 188-surface
+  matrix validation, 1,128-role validation, route/API smoke checks, and desktop
+  plus mobile Design Studio previews passed. The water-bottle preview visibly
+  retains the cap key-ring loop from the reviewed base asset.
+Files/areas changed: Design Studio history/store, CanvasArea/DesignLayer controls,
+  product and mug routing, shared 2D/3D compositor role handling, focused store
+  tests, and the active mockup audit script.
+Remaining work: Commit and push only these verified source changes, then recheck
+  the GitHub-connected Cloudflare Pages rollout independently. The current public
+  Pages host returns healthy 200 responses, but its current HTML bundle has not
+  exposed a new Smart v10.3 marker and the edge rollout must not be called
+  complete without checking canonical and retired mockup URLs.
+Blocker: Replit publishing is not configured for this workspace. Cloudflare
+  management API access is provider-managed; public Pages health is available,
+  but rollout freshness is separate from the local/GitHub result.
+Next safe action: Commit/push the verified continuation, re-run the public
+  Pages API/asset/sitemap/robots and retired-path checks, then record the result
+  without changing the Smart v9 fail-closed contract.
+Verification: storefront typecheck/build/tests passed; API typecheck passed;
+  both managed workflows restarted cleanly; local route/API checks returned 200;
+  protected admin probes returned 401; active matrix validators passed 188/188
+  and 1,128/1,128; desktop and mobile previews showed no browser console errors;
+  Cloudflare Pages root, Design Studio, liveness, sitemap, and robots returned
+  200; no order, payment, or production data was mutated.
+```
+
+### Current image-tools continuation checkpoint (2026-09-07)
+
+```text
+Status: locally verified — GitHub publication pending
+Last completed: Implemented the selected Tools-first image interaction. A successful
+  upload selects the image and opens the Upload image-tools panel immediately;
+  one click on an image only selects it; double-click/double-tap opens the same
+  full tools surface; and the panel now provides functional crop-frame handles
+  plus transparent canvas extension controls for desktop and mobile.
+Stopped at: The storefront and API workflows are running cleanly after the final
+  build and proxied smoke checks.
+Files/areas changed: DesignStudioV2 upload/tool routing, ImagePanel controls, and
+  the new ImageCropExtendDialog editor.
+Remaining work: Commit and push this verified continuation, then let the connected
+  hosting rollout publish it normally.
+Blocker: The browser-use helper is not installed in this checkout, so direct
+  file-chooser automation was unavailable; static preview, build, tests, and
+  route/API checks all passed.
+Next safe action: Push the focused storefront change and verify the published
+  Design Studio bundle after the normal hosting rollout.
+Verification: Storefront typecheck passed; storefront tests passed (19 files/64
+  tests); storefront production build passed; both managed workflows are running;
+  `/design-studio`, `/api/healthz`, and `/api/products` returned 200; and
+  `git diff --check` passed. No order, payment, or production data changed.
+```
+
+## Current studio correction plan (2026-09-06)
+
+```text
+Goal: make the Design Studio trustworthy for real customer editing and photoreal
+  product previews, using the reviewed Smart v10.3 runtime without overlapping
+  controls, duplicate garment passes, or silent fallback assets.
+
+Stage 1 — Selection and editing controls
+  - Add a clearly visible red circular remove button at the selected artwork
+    bounds, positioned outside the top-right edge and kept above the artwork.
+  - Make the remove control a 44px minimum touch target with an accessible label,
+    keyboard activation, pointer capture isolation, and a delete action that
+    records exactly one undo frame.
+  - Make selection hit areas transparent and reliable for mouse, touch, and
+    stylus; prevent the rotate/resize/delete controls from starting a drag.
+  - Verify the control on desktop and mobile, including rotated artwork and
+    artwork near the canvas edge.
+
+Stage 2 — History correctness
+  - Audit every meaningful mutation path: add, delete, drag, resize, rotate,
+    text edits, visibility/lock changes, reorder, product/color/face changes.
+  - Group pointer gestures into one history entry on pointer-up rather than one
+    entry per movement; preserve redo only until a new edit occurs.
+  - Preserve selection state and product/face context across undo/redo without
+    restoring stale runtime asset URLs.
+  - Add focused store tests for one-step delete undo/redo, grouped transforms,
+    redo invalidation, product/face restoration, and empty-stack no-ops.
+
+Stage 3 — Photoreal composition and protected details
+  - Trace the v10.3 print mask/role order so artwork is clipped to the real print
+    area and garment details remain above it.
+  - Ensure hoodie drawstrings, collar, pocket seam, sleeve seams, mug handles,
+    cap brim/panel seams, and bottle cap/key-ring hardware are protected details,
+    never painted over by artwork.
+  - Remove any remaining full-frame duplicate base/shadow pass; keep one base
+    silhouette plus intentional role layers only.
+  - Compare browser SVG, canvas export, cart preview, and 3D preview for the
+    same surface and artwork placement.
+
+Stage 4 — Product-specific surface routing
+  - Fix mug side1/side2/front/back mapping so the visible handle orientation,
+    print zone, and runtime surface agree; keep Wrap explicit and wider.
+  - Verify long sleeve/hoodie sleeve faces route to the corresponding canonical
+    v10.3 role files rather than reusing the front.
+  - Repair the water-bottle front/back source/role composition and restore the
+    cap key-ring detail from reviewed source assets or a reviewed runtime role;
+    fail closed if the required detail source is absent rather than inventing it.
+  - Add route/asset contract tests for all curved-product faces and representative
+    apparel protected details.
+
+Stage 5 — Runtime/source audit and rollout
+  - Audit the source manifests, role PNG alpha bounds, protected/detail layers,
+    and representative photoreal composites for all six product families.
+  - Keep editable PSD/PSB masters outside public/ and expose only reviewed v10.3
+    runtime derivatives.
+  - Run storefront/API typechecks, focused/full tests, production build, local
+    proxy checks, desktop/mobile browser previews, and no-legacy-path checks.
+  - Commit/push the verified source, wait for Cloudflare Pages deployment, then
+    verify public API=188 canonical rows, canonical assets=200, retired paths=410,
+    sitemap/robots, and deployed bundle markers.
+
+Acceptance gates:
+  - No selection control overlaps artwork or is swallowed by the canvas edge.
+  - Delete/undo/redo works deterministically for mouse and touch gestures.
+  - No hoodie strings, collars, seams, handles, or bottle hardware are painted
+    over by artwork in browser, cart, export, or 3D previews.
+  - Mug side routing and water-bottle detail are visually and structurally
+    verified; missing source data fails loudly.
+  - Public rollout is not called complete until the Pages checks pass.
 ```
 
 ## Latest studio correction checkpoint (2026-09-06)
@@ -885,3 +1012,35 @@ The project owner has approved this handoff protocol:
 > **Files/areas changed**, **Remaining work**, **Blocker**, **Next safe action**,
 > and **Verification** in `AGENT_HANDOFF.md`. If work stops early, provide the
 > same handoff instead of leaving the next Agent to infer anything from chat.
+
+## Runtime-role regeneration checkpoint (2026-09-06)
+
+```text
+Status: ready for review — local structural release verified
+Last completed: Finished the pending Smart v10.3 runtime-role generation from the
+  regenerated 188 PSD/source surfaces, promoted only the six reviewed PNG roles
+  plus manifest into the public runtime tree, and repaired the release validator
+  to accept the generator's intentional candidate staging status while keeping
+  the release output structurally-verified.
+Stopped at: After restarting both managed services and completing the local
+  non-mutating verification pass.
+Files/areas changed: tools/build-smartobject-mockups.mjs,
+  tools/build-smartobject-runtime-roles.mjs,
+  tools/validate-smartobject-release.mjs, the v10-v3 staging/runtime-role
+  outputs, and the active public v10 runtime-role PNG/manifest tree.
+Remaining work: Publish/commit this verified local continuation through the
+  normal owner-controlled GitHub/hosting rollout if desired; do not mark visual
+  approval from this checkpoint alone.
+Blocker: None for local structural verification. Production/public rollout is a
+  separate provider step and was not performed in this continuation.
+Next safe action: Review or publish the verified runtime-role continuation, then
+  repeat the non-mutating public canonical/retired-path checks after deployment.
+Verification: Smart matrix 188/188; Smart Object release gate
+  structurally-verified 188/188; public runtime matrix 188 surfaces and 1,128
+  roles; protected roles non-empty; storefront typecheck passed; storefront
+  tests passed (19 files/64 tests); storefront production build passed; API
+  typecheck passed; proxied root, Design Studio, health, readiness, products,
+  mockups, and settings routes returned 200; both managed workflows are
+  running; desktop preview rendered without browser-console errors. No order,
+  payment, or production data was changed.
+```
